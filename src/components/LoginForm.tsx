@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, Mail, Key, ArrowRight, Google } from "lucide-react";
+import { Eye, EyeOff, Mail, Key, ArrowRight, LogIn } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +25,7 @@ const LoginForm = () => {
         title: "Login bem-sucedido",
         description: "Você foi conectado com sucesso.",
       });
+      navigate("/bi-geral"); // Redirect to BI Geral module
     }, 1500);
   };
 
@@ -95,7 +98,7 @@ const LoginForm = () => {
           variant="outline" 
           className="w-full border-gray-700 bg-biodina-darkblue/50 text-white hover:bg-biodina-darkblue hover:text-white flex items-center justify-center gap-2 h-11"
         >
-          <Google className="h-5 w-5" />
+          <LogIn className="h-5 w-5" />
           Entrar com Google
         </Button>
       </form>
