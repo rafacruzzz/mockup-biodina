@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, Mail, Key, ArrowRight, LogIn } from "lucide-react";
+import { Eye, EyeOff, Mail, Key, ArrowRight, User } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -98,7 +98,7 @@ const LoginForm = () => {
           variant="outline" 
           className="w-full border-gray-700 bg-biodina-darkblue/50 text-white hover:bg-biodina-darkblue hover:text-white flex items-center justify-center gap-2 h-11"
         >
-          <LogIn className="h-5 w-5" />
+          <User className="h-5 w-5" />
           Entrar com Google
         </Button>
       </form>
