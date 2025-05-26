@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,9 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import SidebarLayout from "@/components/SidebarLayout";
+import LicitacaoCard from "@/components/licitacao/LicitacaoCard";
+import LicitacaoForm from "@/components/licitacao/LicitacaoForm";
+import { licitacoes } from "@/data/licitacaoData";
+import { Licitacao } from "@/types/licitacao";
 import { 
   TrendingUp, Users, Target, FileText, BarChart3, Plus, Search, Edit,
-  DollarSign, Calendar, Phone, Mail, MapPin, Star 
+  DollarSign, Calendar, Phone, Mail, MapPin, Star, Gavel 
 } from "lucide-react";
 import { 
   FunnelChart, Funnel, LabelList, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
@@ -19,6 +22,9 @@ import {
 const Comercial = () => {
   const [activeTab, setActiveTab] = useState('funil');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showLicitacaoForm, setShowLicitacaoForm] = useState(false);
+  const [editingLicitacao, setEditingLicitacao] = useState<Licitacao | undefined>();
+  const [licitacaoData, setLicitacaoData] = useState(licitacoes);
 
   // Dados do funil de oportunidades
   const funnelData = [
@@ -131,6 +137,49 @@ const Comercial = () => {
       default: return 'bg-gray-500';
     }
   };
+
+  const handleEditLicitacao = (licitacao: Licitacao) => {
+    setEditingLicitacao(licitacao);
+    setShowLicitacaoForm(true);
+  };
+
+  const handleConvertLicitacao = (licitacao: Licitacao) => {
+    console.log('Converter licitação para oportunidade:', licitacao.id);
+    setLicitacaoData(prev => 
+      prev.map(l => 
+        l.id === licitacao.id 
+          ? { ...l, status: 'convertida' as const }
+          : l
+      )
+    );
+  };
+
+  const handleSaveLicitacao = (formData: Partial<Licitacao>) => {
+    if (editingLicitacao) {
+      setLicitacaoData(prev => 
+        prev.map(l => 
+          l.id === editingLicitacao.id 
+            ? { ...l, ...formData }
+            : l
+        )
+      );
+    } else {
+      const newLicitacao: Licitacao = {
+        id: Math.max(...licitacaoData.map(l => l.id)) + 1,
+        ...formData,
+        createdAt: new Date().toISOString().split('T')[0]
+      } as Licitacao;
+      setLicitacaoData(prev => [...prev, newLicitacao]);
+    }
+    setShowLicitacaoForm(false);
+    setEditingLicitacao(undefined);
+  };
+
+  const filteredLicitacoes = licitacaoData.filter(licitacao =>
+    licitacao.nomeInstituicao.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    licitacao.numeroPregao.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    licitacao.objetoLicitacao.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const renderFunil = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -389,11 +438,69 @@ const Comercial = () => {
     </div>
   );
 
+  const renderLicitacoes = () => (
+    <div className="space-y-6">
+      <Card className="shadow-lg">
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle className="flex items-center gap-2">
+              <Gavel className="h-5 w-5" />
+              Licitações
+            </CardTitle>
+            <Button 
+              className="bg-biodina-gold hover:bg-biodina-gold/90"
+              onClick={() => {
+                setEditingLicitacao(undefined);
+                setShowLicitacaoForm(true);
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Licitação
+            </Button>
+          </div>
+          <div className="flex gap-4 mt-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input 
+                placeholder="Pesquisar licitações..." 
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredLicitacoes.map((licitacao) => (
+          <LicitacaoCard
+            key={licitacao.id}
+            licitacao={licitacao}
+            onEdit={handleEditLicitacao}
+            onConvert={handleConvertLicitacao}
+          />
+        ))}
+      </div>
+
+      {filteredLicitacoes.length === 0 && (
+        <Card className="shadow-lg">
+          <CardContent className="text-center py-12">
+            <Gavel className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500 text-lg">Nenhuma licitação encontrada</p>
+            <p className="text-gray-400 text-sm">Clique em "Nova Licitação" para começar</p>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+
   const tabs = [
     { id: 'funil', label: 'Funil de Oportunidades', icon: TrendingUp },
     { id: 'propostas', label: 'Propostas', icon: FileText },
     { id: 'metas', label: 'Metas Comerciais', icon: Target },
     { id: 'clientes', label: 'Clientes', icon: Users },
+    { id: 'licitacoes', label: 'Licitações', icon: Gavel },
     { id: 'analise', label: 'Análise de Conversão', icon: BarChart3 },
   ];
 
@@ -403,6 +510,7 @@ const Comercial = () => {
       case 'propostas': return renderPropostas();
       case 'metas': return renderMetas();
       case 'clientes': return renderClientes();
+      case 'licitacoes': return renderLicitacoes();
       case 'analise': return renderAnaliseConversao();
       default: return renderFunil();
     }
@@ -441,6 +549,17 @@ const Comercial = () => {
           {renderContent()}
         </div>
       </div>
+
+      {showLicitacaoForm && (
+        <LicitacaoForm
+          licitacao={editingLicitacao}
+          onClose={() => {
+            setShowLicitacaoForm(false);
+            setEditingLicitacao(undefined);
+          }}
+          onSave={handleSaveLicitacao}
+        />
+      )}
     </SidebarLayout>
   );
 };
