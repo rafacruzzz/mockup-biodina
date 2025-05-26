@@ -1,5 +1,6 @@
 
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { modules } from "@/data/cadastroModules";
 
 interface CadastroSidebarProps {
@@ -17,6 +18,11 @@ const CadastroSidebar = ({
   onModuleToggle, 
   onModuleSelect 
 }: CadastroSidebarProps) => {
+  const handleCollapseModule = (moduleKey: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    onModuleToggle(moduleKey);
+  };
+
   return (
     <div className="w-80 bg-white border-r border-gray-200/80 overflow-y-auto shadow-sm">
       <div className="p-6 border-b border-gray-100">
@@ -29,46 +35,61 @@ const CadastroSidebar = ({
           <div key={key} className="space-y-1">
             <button
               onClick={() => onModuleToggle(key)}
-              className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${
+              className={cn(
+                "w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200",
                 activeModule === key 
-                  ? 'bg-gradient-to-r from-biodina-blue to-biodina-lightblue text-white shadow-md' 
+                  ? 'bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md' 
                   : 'hover:bg-gray-50 text-gray-700 hover:shadow-sm'
-              }`}
+              )}
             >
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${
+                <div className={cn(
+                  "p-2 rounded-lg",
                   activeModule === key ? 'bg-white/20' : 'bg-biodina-gold/10'
-                }`}>
-                  <module.icon className={`h-5 w-5 ${
+                )}>
+                  <module.icon className={cn(
+                    "h-5 w-5",
                     activeModule === key ? 'text-white' : 'text-biodina-gold'
-                  }`} />
+                  )} />
                 </div>
                 <span className="font-medium">{module.name}</span>
               </div>
-              {expandedModules.includes(key) ? 
-                <ChevronDown className="h-4 w-4" /> : 
-                <ChevronRight className="h-4 w-4" />
-              }
+              <div className="flex items-center gap-1">
+                {expandedModules.includes(key) && (
+                  <button
+                    onClick={(e) => handleCollapseModule(key, e)}
+                    className="p-1 rounded-md hover:bg-white/20 transition-colors"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+                {expandedModules.includes(key) ? 
+                  <ChevronDown className="h-4 w-4" /> : 
+                  <ChevronRight className="h-4 w-4" />
+                }
+              </div>
             </button>
             
             {expandedModules.includes(key) && (
-              <div className="ml-4 space-y-1 animate-slide-in-left">
+              <div className="ml-4 space-y-1 animate-fade-in">
                 {Object.entries(module.subModules).map(([subKey, subModule]) => (
                   <button
                     key={subKey}
                     onClick={() => onModuleSelect(key, subKey)}
-                    className={`w-full text-left p-3 rounded-lg text-sm transition-all duration-200 ${
+                    className={cn(
+                      "w-full text-left p-3 rounded-lg text-sm transition-all duration-200",
                       activeModule === key && activeSubModule === subKey
                         ? 'bg-biodina-gold text-white shadow-sm'
                         : 'hover:bg-gray-50 text-gray-600'
-                    }`}
+                    )}
                   >
                     <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${
+                      <div className={cn(
+                        "w-2 h-2 rounded-full",
                         activeModule === key && activeSubModule === subKey
                           ? 'bg-white'
                           : 'bg-biodina-gold/60'
-                      }`} />
+                      )} />
                       {subModule.name}
                     </div>
                   </button>

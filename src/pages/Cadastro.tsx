@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import ProductForm from "@/components/ProductForm";
 import CadastroSidebar from "@/components/cadastro/CadastroSidebar";
@@ -9,17 +9,37 @@ import EmptyState from "@/components/cadastro/EmptyState";
 import { modules } from "@/data/cadastroModules";
 
 const Cadastro = () => {
-  const [activeModule, setActiveModule] = useState('produtos');
-  const [activeSubModule, setActiveSubModule] = useState('produtos');
+  const [activeModule, setActiveModule] = useState('');
+  const [activeSubModule, setActiveSubModule] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [expandedModules, setExpandedModules] = useState<string[]>(['produtos']);
+  const [expandedModules, setExpandedModules] = useState<string[]>([]);
   const [showProductForm, setShowProductForm] = useState(false);
+
+  // Reset state when no module is selected
+  useEffect(() => {
+    if (!activeModule) {
+      setActiveSubModule('');
+      setSearchTerm('');
+    }
+  }, [activeModule]);
 
   const toggleModule = (module: string) => {
     if (expandedModules.includes(module)) {
       setExpandedModules(expandedModules.filter(m => m !== module));
+      // If we're collapsing the active module, reset selection
+      if (activeModule === module) {
+        setActiveModule('');
+        setActiveSubModule('');
+      }
     } else {
       setExpandedModules([...expandedModules, module]);
+      // Auto-select the first submodule when expanding
+      const moduleData = modules[module as keyof typeof modules];
+      if (moduleData) {
+        const firstSubModule = Object.keys(moduleData.subModules)[0];
+        setActiveModule(module);
+        setActiveSubModule(firstSubModule);
+      }
     }
   };
 
@@ -42,7 +62,7 @@ const Cadastro = () => {
     setExpandedModules(['produtos']);
   };
 
-  const currentSubModule = activeSubModule ? 
+  const currentSubModule = activeModule && activeSubModule ? 
     modules[activeModule as keyof typeof modules]?.subModules[activeSubModule] : null;
 
   return (

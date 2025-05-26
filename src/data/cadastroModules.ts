@@ -1,320 +1,355 @@
 
-import { 
-  Users, Package, Settings, Building, Tag, Clock, CreditCard, Mail, FileText
-} from "lucide-react";
+import { Package, Users, Settings, Wrench, Building, CreditCard, Tag, Clock, Mail, FileText, ShoppingCart, Calculator } from "lucide-react";
 import { ModulesConfig } from "@/types/cadastro";
 
 export const modules: ModulesConfig = {
   leads: {
-    name: 'Leads',
+    name: "Leads",
     icon: Users,
     subModules: {
-      fontes: { 
-        name: 'Fontes dos Leads', 
+      fontes: {
+        name: "Fontes dos Leads",
         data: [
-          { id: 1, nome: 'Website Corporativo', tipo: 'Digital', conversao: '3.2%', leads: 156, custo: 'R$ 2.450', ativo: true },
-          { id: 2, nome: 'Facebook Ads', tipo: 'Redes Sociais', conversao: '2.8%', leads: 89, custo: 'R$ 3.200', ativo: true },
-          { id: 3, nome: 'Google Ads', tipo: 'Search', conversao: '4.1%', leads: 203, custo: 'R$ 5.800', ativo: true },
-          { id: 4, nome: 'Indicação de Clientes', tipo: 'Orgânico', conversao: '8.5%', leads: 45, custo: 'R$ 0', ativo: true },
+          { id: 1, nome: "Website Biodina", origem: "Site Corporativo", conversao: "15%", leads_mes: 45, status: "Ativo" },
+          { id: 2, nome: "Google Ads", origem: "Publicidade Paga", conversao: "8%", leads_mes: 120, status: "Ativo" },
+          { id: 3, nome: "LinkedIn", origem: "Rede Social", conversao: "12%", leads_mes: 30, status: "Ativo" },
+          { id: 4, nome: "Indicação", origem: "Networking", conversao: "35%", leads_mes: 15, status: "Ativo" }
         ]
       },
-      segmentos: { 
-        name: 'Segmentos dos Leads', 
+      segmentos: {
+        name: "Segmentos dos Leads",
         data: [
-          { id: 1, segmento: 'Empresas de Grande Porte', descricao: 'Acima de 500 funcionários', leads: 67, ticketMedio: 'R$ 45.000', conversao: '12%' },
-          { id: 2, segmento: 'Médias Empresas', descricao: 'Entre 100-500 funcionários', leads: 134, ticketMedio: 'R$ 18.500', conversao: '8%' },
-          { id: 3, segmento: 'Pequenas Empresas', descricao: 'Entre 20-100 funcionários', leads: 298, ticketMedio: 'R$ 8.200', conversao: '5%' },
-          { id: 4, segmento: 'Startups', descricao: 'Até 20 funcionários', leads: 156, ticketMedio: 'R$ 3.500', conversao: '6%' },
+          { id: 1, segmento: "Agricultura de Precisão", descricao: "Produtores rurais tecnológicos", leads_total: 150, conversao: "18%" },
+          { id: 2, segmento: "Cooperativas Agrícolas", descricao: "Cooperativas e associações", leads_total: 85, conversao: "25%" },
+          { id: 3, segmento: "Consultoria Rural", descricao: "Consultores e agrônomos", leads_total: 60, conversao: "20%" },
+          { id: 4, segmento: "Empresas Agro", descricao: "Empresas do agronegócio", leads_total: 45, conversao: "30%" }
         ]
       }
     }
   },
   produtos: {
-    name: 'Produtos',
+    name: "Produtos",
     icon: Package,
     subModules: {
-      produtos: { 
-        name: 'Produtos', 
+      produtos: {
+        name: "Produtos",
         data: [
           { 
             id: 1, 
-            nome: 'Sistema de Gestão ERP Pro', 
-            codigo: 'ERP001', 
-            valorVenda: 2500.00, 
-            precoCusto: 1200.00, 
-            estoque: 150, 
-            estoqueDisponivel: 142,
-            marca: 'Biodina Tech',
-            categoria: 'Software',
-            ativo: true 
+            nome: "Drone Mavic 3 Enterprise Advanced", 
+            codigo: "DJI-M3E-ADV", 
+            valor_venda: 25890.00, 
+            estoque: 8, 
+            estoque_disponivel: 6,
+            unidade_medida: "UN",
+            peso: 0.895,
+            ncm: "88062090",
+            ean: "6941565929853",
+            marca: "DJI",
+            tipo_produto: "Drone",
+            familia_produto: "Drones Profissionais",
+            grupo_produto: "Equipamentos de Voo",
+            subgrupo_produto: "Drones Enterprise",
+            preco_custo: 18500.00,
+            ativo: true,
+            tags: "drone, mapeamento, inspeção, agricultura"
           },
           { 
             id: 2, 
-            nome: 'Módulo CRM Advanced', 
-            codigo: 'CRM002', 
-            valorVenda: 1800.00, 
-            precoCusto: 850.00, 
-            estoque: 89, 
-            estoqueDisponivel: 85,
-            marca: 'Biodina Tech',
-            categoria: 'Software',
-            ativo: true 
+            nome: "Sensor Multiespectral MicaSense RedEdge-MX", 
+            codigo: "MICA-RE-MX", 
+            valor_venda: 8750.00, 
+            estoque: 12, 
+            estoque_disponivel: 10,
+            unidade_medida: "UN",
+            peso: 0.232,
+            ncm: "90069090",
+            marca: "MicaSense",
+            tipo_produto: "Sensor",
+            familia_produto: "Sensores Multiespectrais",
+            grupo_produto: "Sensores Avançados",
+            subgrupo_produto: "Agricultura de Precisão",
+            preco_custo: 6200.00,
+            ativo: true,
+            tags: "sensor, multiespectral, agricultura, ndvi"
           },
           { 
             id: 3, 
-            nome: 'Dashboard Analytics', 
-            codigo: 'DAS003', 
-            valorVenda: 950.00, 
-            precoCusto: 450.00, 
-            estoque: 67, 
-            estoqueDisponivel: 67,
-            marca: 'Biodina Analytics',
-            categoria: 'Software',
-            ativo: false 
+            nome: "Sistema de Navegação RTK Base + Rover", 
+            codigo: "RTK-BASE-ROV", 
+            valor_venda: 15650.00, 
+            estoque: 5, 
+            estoque_disponivel: 4,
+            unidade_medida: "KIT",
+            peso: 2.5,
+            ncm: "85171100",
+            marca: "Biodina Systems",
+            tipo_produto: "Sistema RTK",
+            familia_produto: "Navegação e Posicionamento",
+            grupo_produto: "GPS/GNSS",
+            subgrupo_produto: "RTK",
+            preco_custo: 11200.00,
+            ativo: true,
+            tags: "rtk, gps, navegação, precisão"
           },
+          { 
+            id: 4, 
+            nome: "Software PIX4Dmapper - Licença Anual", 
+            codigo: "PIX4D-MAP-1Y", 
+            valor_venda: 4200.00, 
+            estoque: 999, 
+            estoque_disponivel: 999,
+            unidade_medida: "LIC",
+            peso: 0,
+            tipo_produto: "Software",
+            familia_produto: "Software de Processamento",
+            grupo_produto: "Mapeamento",
+            subgrupo_produto: "Processamento de Imagens",
+            preco_custo: 3150.00,
+            ativo: true,
+            tags: "software, mapeamento, processamento, pix4d"
+          }
         ]
       },
-      kits: { 
-        name: 'Kits', 
+      kits: {
+        name: "Kits",
         data: [
-          { id: 1, nome: 'Kit Empresarial Básico', codigo: 'KIT001', produtos: 3, valorTotal: 4200.00, margem: '45%', ativo: true },
-          { id: 2, nome: 'Kit Premium Completo', codigo: 'KIT002', produtos: 7, valorTotal: 8900.00, margem: '52%', ativo: true },
-          { id: 3, nome: 'Kit Startup', codigo: 'KIT003', produtos: 2, valorTotal: 1800.00, margem: '38%', ativo: true },
+          { id: 1, nome: "Kit Completo Agricultura de Precisão", codigo: "KIT-AGR-PREC", produtos_inclusos: 4, valor_total: 42890.00 },
+          { id: 2, nome: "Kit Mapeamento Básico", codigo: "KIT-MAP-BAS", produtos_inclusos: 2, valor_total: 28500.00 },
+          { id: 3, nome: "Kit Inspeção Industrial", codigo: "KIT-INSP-IND", produtos_inclusos: 3, valor_total: 35600.00 }
         ]
       },
-      precos: { 
-        name: 'Tabela de Preços', 
+      tabela_preco: {
+        name: "Tabela de Preço",
         data: [
-          { id: 1, nome: 'Tabela Varejo Nacional', tipo: 'Padrão', desconto: '0%', produtos: 245, vigencia: '01/01/2024 - 31/12/2024', ativa: true },
-          { id: 2, nome: 'Tabela Atacado', tipo: 'Desconto 15%', desconto: '15%', produtos: 198, vigencia: '01/01/2024 - 31/12/2024', ativa: true },
-          { id: 3, nome: 'Tabela Parceiros', tipo: 'Desconto 25%', desconto: '25%', produtos: 156, vigencia: '01/01/2024 - 31/12/2024', ativa: true },
+          { id: 1, nome: "Padrão Varejo", descricao: "Preços para venda direta", margem: "40%", ativa: true },
+          { id: 2, nome: "Distribuidores", descricao: "Preços para revendas", margem: "25%", ativa: true },
+          { id: 3, nome: "Cooperativas", descricao: "Preços especiais cooperativas", margem: "30%", ativa: true }
         ]
       },
-      locais: { 
-        name: 'Locais de Estoque', 
+      locais_estoque: {
+        name: "Locais de Estoque",
         data: [
-          { id: 1, codigo: 'EST001', descricao: 'Estoque Principal - Matriz', tipo: 'Físico', endereco: 'Galpão A - Setor Industrial', responsavel: 'João Silva', ativo: true },
-          { id: 2, codigo: 'EST002', descricao: 'Estoque Filial SP', tipo: 'Físico', endereco: 'Galpão B - Vila Olimpia', responsavel: 'Maria Santos', ativo: true },
-          { id: 3, codigo: 'EST003', descricao: 'Estoque Virtual - Produtos Digitais', tipo: 'Virtual', endereco: 'Cloud Storage', responsavel: 'Sistema Automático', ativo: true },
+          { id: 1, codigo: "EST-SP-01", descricao: "Estoque Principal São Paulo", tipo: "Principal", padrao: true, responsavel_separacao: "João Silva", responsavel_despacho: "Maria Santos", ativo: true },
+          { id: 2, codigo: "EST-RS-02", descricao: "Estoque Filial Rio Grande do Sul", tipo: "Filial", padrao: false, responsavel_separacao: "Carlos Lima", responsavel_despacho: "Ana Costa", ativo: true },
+          { id: 3, codigo: "EST-GO-03", descricao: "Estoque Regional Goiás", tipo: "Regional", padrao: false, responsavel_separacao: "Pedro Oliveira", responsavel_despacho: "Lucia Ferreira", ativo: true }
         ]
       },
-      movimentacao: { 
-        name: 'Movimentação de Estoque', 
+      movimentacao_estoque: {
+        name: "Movimentação de Estoque",
         data: [
-          { id: 1, codigo: 'MOV001', tipo: 'Entrada', produto: 'Sistema ERP Pro', quantidade: 25, data: '15/01/2024', origem: 'Fornecedor Tech', destino: 'EST001' },
-          { id: 2, codigo: 'MOV002', tipo: 'Saída', produto: 'Módulo CRM', quantidade: 8, data: '14/01/2024', origem: 'EST001', destino: 'Cliente ABC' },
-          { id: 3, codigo: 'MOV003', tipo: 'Transferência', produto: 'Dashboard Analytics', quantidade: 12, data: '13/01/2024', origem: 'EST001', destino: 'EST002' },
+          { id: 1, codigo: "MOV-001", tipo_movimento: "Entrada", data: "2024-01-15", motivo: "Compra de fornecedor", estoque_origem: "", estoque_destino: "EST-SP-01", observacao: "Recebimento nota fiscal 12345" },
+          { id: 2, codigo: "MOV-002", tipo_movimento: "Saída", data: "2024-01-16", motivo: "Venda", estoque_origem: "EST-SP-01", estoque_destino: "", observacao: "Venda para cliente ABC Ltda" },
+          { id: 3, codigo: "MOV-003", tipo_movimento: "Transferência", data: "2024-01-17", motivo: "Reposição estoque", estoque_origem: "EST-SP-01", estoque_destino: "EST-RS-02", observacao: "Transferência inter-filial" }
         ]
       },
-      rastreio: { 
-        name: 'Rastreio de Lotes/Séries', 
+      rastreio_lotes: {
+        name: "Rastreio de Lotes ou Séries",
         data: [
-          { id: 1, codigo: 'LT001', produto: 'Sistema ERP Pro', lote: 'LT20240115', quantidade: 25, validade: '15/01/2026', nfe: 'NFe 12345', status: 'Ativo' },
-          { id: 2, codigo: 'LT002', produto: 'Módulo CRM', lote: 'LT20240110', quantidade: 30, validade: '10/01/2026', nfe: 'NFe 12346', status: 'Ativo' },
-          { id: 3, codigo: 'LT003', produto: 'Dashboard Analytics', lote: 'LT20240105', quantidade: 15, validade: '05/01/2026', nfe: 'NFe 12347', status: 'Vencido' },
+          { id: 1, codigo: "LOTE-001", produto: "Drone Mavic 3 Enterprise", lote_serie: "DJI2024001", quantidade: 1, nfe: "000123456", ativo: true, criado_por: "Sistema", criado_em: "2024-01-15" },
+          { id: 2, codigo: "LOTE-002", produto: "Sensor RedEdge-MX", lote_serie: "MICA2024002", quantidade: 2, nfe: "000123457", ativo: true, criado_por: "João Silva", criado_em: "2024-01-16" }
         ]
       },
-      marcas: { 
-        name: 'Marcas', 
+      marcas: {
+        name: "Marcas",
         data: [
-          { id: 1, nome: 'Biodina Tech', produtos: 156, categoria: 'Software', pais: 'Brasil', ativa: true },
-          { id: 2, nome: 'Biodina Analytics', produtos: 89, categoria: 'Business Intelligence', pais: 'Brasil', ativa: true },
-          { id: 3, nome: 'Biodina Cloud', produtos: 67, categoria: 'Cloud Computing', pais: 'Brasil', ativa: true },
+          { id: 1, nome: "DJI", descricao: "Líder mundial em drones", pais_origem: "China", ativo: true },
+          { id: 2, nome: "MicaSense", descricao: "Sensores multiespectrais avançados", pais_origem: "EUA", ativo: true },
+          { id: 3, nome: "Biodina Systems", descricao: "Soluções próprias Biodina", pais_origem: "Brasil", ativo: true }
         ]
       },
-      familias: { 
-        name: 'Famílias de Produtos', 
+      familias_produtos: {
+        name: "Famílias de Produtos",
         data: [
-          { id: 1, nome: 'Sistemas de Gestão', descricao: 'ERPs e sistemas administrativos', produtos: 45, categoria: 'Software', ativa: true },
-          { id: 2, nome: 'Business Intelligence', descricao: 'Dashboards e relatórios', produtos: 28, categoria: 'Analytics', ativa: true },
-          { id: 3, nome: 'CRM e Vendas', descricao: 'Gestão de relacionamento', produtos: 34, categoria: 'Software', ativa: true },
+          { id: 1, nome: "Drones Profissionais", descricao: "Drones para uso comercial e industrial", ativo: true },
+          { id: 2, nome: "Sensores Multiespectrais", descricao: "Sensores para agricultura de precisão", ativo: true },
+          { id: 3, nome: "Software de Processamento", descricao: "Softwares para análise de dados", ativo: true }
         ]
       },
-      grupos: { 
-        name: 'Grupos de Produtos', 
+      grupos_produtos: {
+        name: "Grupo de Produtos",
         data: [
-          { id: 1, nome: 'ERP Empresarial', familia: 'Sistemas de Gestão', produtos: 23, descricao: 'ERPs para grandes empresas' },
-          { id: 2, nome: 'ERP PME', familia: 'Sistemas de Gestão', produtos: 22, descricao: 'ERPs para pequenas e médias empresas' },
-          { id: 3, nome: 'Dashboards Executivos', familia: 'Business Intelligence', produtos: 15, descricao: 'Painéis para alta gestão' },
+          { id: 1, nome: "Equipamentos de Voo", descricao: "Todos os equipamentos aéreos", familia: "Drones Profissionais", ativo: true },
+          { id: 2, nome: "Sensores Avançados", descricao: "Sensores de alta tecnologia", familia: "Sensores Multiespectrais", ativo: true },
+          { id: 3, nome: "Mapeamento", descricao: "Ferramentas de mapeamento", familia: "Software de Processamento", ativo: true }
         ]
       },
-      subgrupos: { 
-        name: 'Subgrupos de Produtos', 
+      subgrupos_produtos: {
+        name: "Subgrupos de Produtos",
         data: [
-          { id: 1, nome: 'ERP Financeiro', grupo: 'ERP Empresarial', produtos: 12, descricao: 'Módulos financeiros avançados' },
-          { id: 2, nome: 'ERP Comercial', grupo: 'ERP Empresarial', produtos: 11, descricao: 'Módulos de vendas e CRM' },
-          { id: 3, nome: 'ERP Estoque', grupo: 'ERP PME', produtos: 9, descricao: 'Controle de estoque simplificado' },
+          { id: 1, nome: "Drones Enterprise", descricao: "Drones para uso empresarial", grupo: "Equipamentos de Voo", ativo: true },
+          { id: 2, nome: "Agricultura de Precisão", descricao: "Equipamentos para agricultura", grupo: "Sensores Avançados", ativo: true },
+          { id: 3, nome: "Processamento de Imagens", descricao: "Software para imagens aéreas", grupo: "Mapeamento", ativo: true }
         ]
       }
     }
   },
   servicos: {
-    name: 'Serviços',
-    icon: Settings,
+    name: "Serviços",
+    icon: Wrench,
     subModules: {
-      categorias: { 
-        name: 'Categorias de Serviços', 
+      categoria_servicos: {
+        name: "Categoria de Serviços",
         data: [
-          { id: 1, categoria: 'Consultoria Estratégica', descricao: 'Consultoria em gestão e processos', servicos: 15, valorMedio: 'R$ 2.500/dia', ativa: true },
-          { id: 2, categoria: 'Suporte Técnico', descricao: 'Suporte e manutenção de sistemas', servicos: 23, valorMedio: 'R$ 150/hora', ativa: true },
-          { id: 3, categoria: 'Treinamento', descricao: 'Capacitação de usuários', servicos: 12, valorMedio: 'R$ 800/dia', ativa: true },
+          { id: 1, nome: "Mapeamento Aéreo", descricao: "Serviços de mapeamento com drones", ativo: true },
+          { id: 2, nome: "Consultoria Técnica", descricao: "Consultoria em agricultura de precisão", ativo: true },
+          { id: 3, nome: "Treinamento", descricao: "Capacitação em tecnologias", ativo: true }
         ]
       },
-      unidades: { 
-        name: 'Unidades de Serviços', 
+      unidade_servicos: {
+        name: "Unidade de Serviços",
         data: [
-          { id: 1, codigo: 'HORA', nome: 'Hora', descricao: 'Cobrança por hora trabalhada', sigla: 'h', ativa: true },
-          { id: 2, codigo: 'DIA', nome: 'Dia', descricao: 'Cobrança por dia de trabalho', sigla: 'd', ativa: true },
-          { id: 3, codigo: 'PROJ', nome: 'Projeto', descricao: 'Cobrança por projeto completo', sigla: 'proj', ativa: true },
+          { id: 1, codigo: "SERV-001", nome: "Mapeamento por Hectare", valor: 25.00, codigo_servico: "MAP-HA", unidade_medida: "HA", categoria: "Mapeamento Aéreo", ativo: true },
+          { id: 2, codigo: "SERV-002", nome: "Consultoria por Hora", valor: 150.00, codigo_servico: "CONS-HR", unidade_medida: "HR", categoria: "Consultoria Técnica", ativo: true },
+          { id: 3, codigo: "SERV-003", nome: "Treinamento por Pessoa", valor: 800.00, codigo_servico: "TREI-PESS", unidade_medida: "PESS", categoria: "Treinamento", ativo: true }
         ]
       }
     }
   },
   usuarios: {
-    name: 'Usuários',
+    name: "Usuários",
     icon: Users,
     subModules: {
-      lista: { 
-        name: 'Lista de Usuários', 
+      usuarios: {
+        name: "Usuários",
         data: [
-          { 
-            id: 1, 
-            nomeUsuario: 'admin.silva', 
-            email: 'joao.silva@biodina.com.br', 
-            perfil: 'Administrador', 
-            departamento: 'TI',
-            ultimoAcesso: '15/01/2024 14:30',
-            ipUltimoAcesso: '192.168.1.10',
-            idadeSenha: '45 dias',
-            status: 'Ativo',
-            ativo: true 
-          },
-          { 
-            id: 2, 
-            nomeUsuario: 'maria.santos', 
-            email: 'maria.santos@biodina.com.br', 
-            perfil: 'Gerente Comercial', 
-            departamento: 'Comercial',
-            ultimoAcesso: '15/01/2024 09:15',
-            ipUltimoAcesso: '192.168.1.25',
-            idadeSenha: '23 dias',
-            status: 'Ativo',
-            ativo: true 
-          },
-          { 
-            id: 3, 
-            nomeUsuario: 'carlos.lima', 
-            email: 'carlos.lima@biodina.com.br', 
-            perfil: 'Analista Financeiro', 
-            departamento: 'Financeiro',
-            ultimoAcesso: '12/01/2024 16:45',
-            ipUltimoAcesso: '192.168.1.33',
-            idadeSenha: '89 dias',
-            status: 'Bloqueado',
-            ativo: false 
-          },
+          { id: 1, nome_usuario: "admin", email: "admin@biodina.com.br", ip_registro: "192.168.1.100", criado_em: "2024-01-01", ultimo_acesso: "2024-01-20", ip_ultimo_acesso: "192.168.1.105" },
+          { id: 2, nome_usuario: "joao.silva", email: "joao.silva@biodina.com.br", ip_registro: "192.168.1.101", criado_em: "2024-01-02", ultimo_acesso: "2024-01-19", ip_ultimo_acesso: "192.168.1.110" }
         ]
       }
     }
   },
-  camposPersonalizados: {
-    name: 'Campos Personalizados',
-    icon: Tag,
+  campos_personalizados: {
+    name: "Campos Personalizados",
+    icon: Settings,
     subModules: {
-      lista: { name: 'Campos Personalizados', data: [
-        { id: 1, nome: 'Observações', tipo: 'Texto', obrigatorio: false, ativo: true },
-        { id: 2, nome: 'Prioridade', tipo: 'Lista', obrigatorio: true, ativo: true },
-      ]}
+      campos_personalizados: {
+        name: "Campos Personalizados",
+        data: [
+          { id: 1, nome: "Altitude Máxima", tipo: "Número", modulo: "Produtos", obrigatorio: false, ativo: true },
+          { id: 2, nome: "Certificação ANATEL", tipo: "Sim/Não", modulo: "Produtos", obrigatorio: true, ativo: true }
+        ]
+      }
     }
   },
-  camposObrigatorios: {
-    name: 'Campos Obrigatórios',
-    icon: FileText,
+  campos_obrigatorios: {
+    name: "Campos Obrigatórios",
+    icon: Settings,
     subModules: {
-      lista: { name: 'Campos Obrigatórios', data: [
-        { id: 1, campo: 'Nome', modulo: 'Clientes', obrigatorio: true },
-        { id: 2, campo: 'E-mail', modulo: 'Leads', obrigatorio: true },
-      ]}
+      campos_obrigatorios: {
+        name: "Campos Obrigatórios",
+        data: [
+          { id: 1, campo: "NCM", modulo: "Produtos", obrigatorio: true, ativo: true },
+          { id: 2, campo: "Peso", modulo: "Produtos", obrigatorio: false, ativo: true }
+        ]
+      }
     }
   },
   departamentos: {
-    name: 'Departamentos',
+    name: "Departamentos",
     icon: Building,
     subModules: {
-      lista: { name: 'Departamentos', data: [
-        { id: 1, nome: 'Vendas', responsavel: 'João Silva', funcionarios: 12 },
-        { id: 2, nome: 'Financeiro', responsavel: 'Maria Santos', funcionarios: 8 },
-      ]}
+      departamentos: {
+        name: "Departamentos",
+        data: [
+          { id: 1, nome: "Comercial", descricao: "Vendas e relacionamento com clientes", responsavel: "Maria Santos", ativo: true },
+          { id: 2, nome: "Técnico", descricao: "Suporte técnico e desenvolvimento", responsavel: "Carlos Lima", ativo: true },
+          { id: 3, nome: "Administrativo", descricao: "Gestão administrativa", responsavel: "Ana Costa", ativo: true }
+        ]
+      }
     }
   },
   caracteristicas: {
-    name: 'Características',
+    name: "Características",
     icon: Tag,
     subModules: {
-      lista: { name: 'Características', data: [
-        { id: 1, nome: 'Cor', tipo: 'Lista', valores: 'Azul,Verde,Vermelho' },
-        { id: 2, nome: 'Tamanho', tipo: 'Lista', valores: 'P,M,G,GG' },
-      ]}
+      caracteristicas: {
+        name: "Características",
+        data: [
+          { id: 1, nome: "Resistência à Água", tipo: "IP Rating", valores_possiveis: "IP44, IP54, IP65", ativo: true },
+          { id: 2, nome: "Autonomia de Voo", tipo: "Tempo", valores_possiveis: "15min, 30min, 45min", ativo: true }
+        ]
+      }
     }
   },
   recorrencia: {
-    name: 'Recorrência',
+    name: "Recorrência",
     icon: Clock,
     subModules: {
-      lista: { name: 'Recorrência', data: [
-        { id: 1, nome: 'Mensal', dias: 30, ativo: true },
-        { id: 2, nome: 'Semanal', dias: 7, ativo: true },
-      ]}
+      recorrencia: {
+        name: "Recorrência",
+        data: [
+          { id: 1, nome: "Mensal", periodo: "30 dias", descricao: "Cobrança mensal", ativo: true },
+          { id: 2, nome: "Anual", periodo: "365 dias", descricao: "Cobrança anual", ativo: true }
+        ]
+      }
     }
   },
-  contasBancarias: {
-    name: 'Contas Bancárias',
+  contas_bancarias: {
+    name: "Contas Bancárias",
     icon: CreditCard,
     subModules: {
-      lista: { name: 'Contas Bancárias', data: [
-        { id: 1, banco: 'Banco do Brasil', agencia: '1234-5', conta: '67890-1', tipo: 'Corrente' },
-        { id: 2, banco: 'Caixa Econômica', agencia: '9876-5', conta: '54321-0', tipo: 'Poupança' },
-      ]}
+      contas_bancarias: {
+        name: "Contas Bancárias",
+        data: [
+          { id: 1, banco: "Banco do Brasil", agencia: "1234-5", conta: "12345-6", tipo: "Conta Corrente", ativo: true },
+          { id: 2, banco: "Itaú", agencia: "5678-9", conta: "98765-4", tipo: "Conta Corrente", ativo: true }
+        ]
+      }
     }
   },
   categorias: {
-    name: 'Categorias',
+    name: "Categorias",
     icon: Tag,
     subModules: {
-      lista: { name: 'Categorias', data: [
-        { id: 1, nome: 'Receita', tipo: 'Financeira', ativa: true },
-        { id: 2, nome: 'Despesa', tipo: 'Financeira', ativa: true },
-      ]}
+      categorias: {
+        name: "Categorias",
+        data: [
+          { id: 1, nome: "Equipamentos", descricao: "Categoria para equipamentos físicos", tipo: "Produtos", ativo: true },
+          { id: 2, nome: "Software", descricao: "Categoria para softwares e licenças", tipo: "Produtos", ativo: true },
+          { id: 3, nome: "Serviços", descricao: "Categoria para prestação de serviços", tipo: "Serviços", ativo: true }
+        ]
+      }
     }
   },
-  prazosPagamento: {
-    name: 'Prazos de Pagamento',
+  prazos_pagamento: {
+    name: "Prazos de Pagamento",
     icon: Clock,
     subModules: {
-      lista: { name: 'Prazos de Pagamento', data: [
-        { id: 1, nome: 'À Vista', dias: 0, desconto: 5 },
-        { id: 2, nome: '30 dias', dias: 30, desconto: 0 },
-      ]}
+      prazos_pagamento: {
+        name: "Prazos de Pagamento",
+        data: [
+          { id: 1, nome: "À Vista", dias: 0, descricao: "Pagamento imediato", ativo: true },
+          { id: 2, nome: "30 dias", dias: 30, descricao: "Pagamento em 30 dias", ativo: true },
+          { id: 3, nome: "60 dias", dias: 60, descricao: "Pagamento em 60 dias", ativo: true }
+        ]
+      }
     }
   },
-  modelosEmails: {
-    name: 'Modelos de E-mails',
+  modelos_emails: {
+    name: "Modelos de E-mails",
     icon: Mail,
     subModules: {
-      lista: { name: 'Modelos de E-mails', data: [
-        { id: 1, nome: 'Boas-vindas', assunto: 'Bem-vindo!', ativo: true },
-        { id: 2, nome: 'Cobrança', assunto: 'Fatura em atraso', ativo: true },
-      ]}
+      modelos_emails: {
+        name: "Modelos de E-mails",
+        data: [
+          { id: 1, nome: "Boas Vindas", assunto: "Bem-vindo à Biodina!", tipo: "Cliente", ativo: true },
+          { id: 2, nome: "Confirmação Pedido", assunto: "Pedido Confirmado", tipo: "Vendas", ativo: true }
+        ]
+      }
     }
   },
-  modelosFormularios: {
-    name: 'Modelos de Formulários',
+  modelos_formularios: {
+    name: "Modelos de Formulários",
     icon: FileText,
     subModules: {
-      lista: { name: 'Modelos de Formulários', data: [
-        { id: 1, nome: 'Cadastro Cliente', campos: 8, ativo: true },
-        { id: 2, nome: 'Pesquisa Satisfação', campos: 12, ativo: true },
-      ]}
+      modelos_formularios: {
+        name: "Modelos de Formulários",
+        data: [
+          { id: 1, nome: "Cadastro de Cliente", descricao: "Formulário para novos clientes", campos: 8, ativo: true },
+          { id: 2, nome: "Solicitação de Orçamento", descricao: "Formulário para orçamentos", campos: 12, ativo: true }
+        ]
+      }
     }
   }
 };
