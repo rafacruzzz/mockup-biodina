@@ -23,6 +23,14 @@ const CadastroSidebar = ({
     onModuleToggle(moduleKey);
   };
 
+  const handleSubModuleSelect = (module: string, subModule: string) => {
+    onModuleSelect(module, subModule);
+    // Automatically close the expanded module after selecting a submodule
+    setTimeout(() => {
+      onModuleToggle(module);
+    }, 150);
+  };
+
   return (
     <div className="w-80 bg-white border-r border-gray-200/80 overflow-y-auto shadow-sm">
       <div className="p-6 border-b border-gray-100">
@@ -75,7 +83,7 @@ const CadastroSidebar = ({
                 {Object.entries(module.subModules).map(([subKey, subModule]) => (
                   <button
                     key={subKey}
-                    onClick={() => onModuleSelect(key, subKey)}
+                    onClick={() => handleSubModuleSelect(key, subKey)}
                     className={cn(
                       "w-full text-left p-3 rounded-lg text-sm transition-all duration-200",
                       activeModule === key && activeSubModule === subKey

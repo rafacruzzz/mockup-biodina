@@ -26,26 +26,20 @@ const Cadastro = () => {
   const toggleModule = (module: string) => {
     if (expandedModules.includes(module)) {
       setExpandedModules(expandedModules.filter(m => m !== module));
-      // If we're collapsing the active module, reset selection
-      if (activeModule === module) {
+      // Only reset selection if we're collapsing the currently active module
+      if (activeModule === module && !activeSubModule) {
         setActiveModule('');
         setActiveSubModule('');
       }
     } else {
       setExpandedModules([...expandedModules, module]);
-      // Auto-select the first submodule when expanding
-      const moduleData = modules[module as keyof typeof modules];
-      if (moduleData) {
-        const firstSubModule = Object.keys(moduleData.subModules)[0];
-        setActiveModule(module);
-        setActiveSubModule(firstSubModule);
-      }
     }
   };
 
   const handleModuleSelect = (module: string, subModule: string) => {
     setActiveModule(module);
     setActiveSubModule(subModule);
+    setSearchTerm(''); // Reset search when changing modules
   };
 
   const handleNewRecord = () => {
@@ -76,9 +70,9 @@ const Cadastro = () => {
           onModuleSelect={handleModuleSelect}
         />
 
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col min-h-0">
           {activeSubModule && currentSubModule ? (
-            <div className="h-full flex flex-col">
+            <>
               <ContentHeader
                 title={currentSubModule.name}
                 description={`Gerencie os registros de ${currentSubModule.name.toLowerCase()}`}
@@ -87,13 +81,13 @@ const Cadastro = () => {
                 onNewRecord={handleNewRecord}
               />
 
-              <div className="flex-1 p-6 overflow-auto">
+              <div className="flex-1 p-6 min-h-0">
                 <DataTable 
                   data={currentSubModule.data} 
                   moduleName={currentSubModule.name}
                 />
               </div>
-            </div>
+            </>
           ) : (
             <EmptyState onGetStarted={handleGetStarted} />
           )}
