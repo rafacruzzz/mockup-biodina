@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,64 +7,100 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import SidebarLayout from "@/components/SidebarLayout";
-import LicitacaoCard from "@/components/licitacao/LicitacaoCard";
-import LicitacaoForm from "@/components/licitacao/LicitacaoForm";
-import { licitacoes } from "@/data/licitacaoData";
-import { Licitacao } from "@/types/licitacao";
+import OportunidadeForm from "@/components/comercial/OportunidadeForm";
+import PedidoModal from "@/components/comercial/PedidoModal";
 import { 
-  TrendingUp, Users, Target, FileText, BarChart3, Plus, Search, Edit,
-  DollarSign, Calendar, Phone, Mail, MapPin, Star, Gavel 
+  TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
+  DollarSign, Calendar, Phone, MapPin, Briefcase, Eye
 } from "lucide-react";
 import { 
-  FunnelChart, Funnel, LabelList, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
-  CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
+  PieChart, Pie, Cell, ResponsiveContainer 
 } from 'recharts';
 
 const Comercial = () => {
   const [activeTab, setActiveTab] = useState('funil');
   const [searchTerm, setSearchTerm] = useState('');
-  const [showLicitacaoForm, setShowLicitacaoForm] = useState(false);
-  const [editingLicitacao, setEditingLicitacao] = useState<Licitacao | undefined>();
-  const [licitacaoData, setLicitacaoData] = useState(licitacoes);
+  const [showOportunidadeForm, setShowOportunidadeForm] = useState(false);
+  const [editingOportunidade, setEditingOportunidade] = useState<any>();
+  const [showPedidoModal, setShowPedidoModal] = useState(false);
+  const [selectedOportunidade, setSelectedOportunidade] = useState<any>();
 
-  // Dados do funil de oportunidades
+  // Dados do funil reformulado baseado na imagem
   const funnelData = [
-    { name: 'Leads', value: 1000, fill: '#0A2342' },
-    { name: 'Qualificados', value: 600, fill: '#1E4D8C' },
-    { name: 'Propostas', value: 300, fill: '#D5A021' },
-    { name: 'Negociação', value: 150, fill: '#B8941C' },
-    { name: 'Fechamento', value: 75, fill: '#A0821A' },
+    { fase: 'Temperatura < 60', cor: '#ff8c00', valor: 120, percentual: 100 },
+    { fase: 'Em Processo (60-80)', cor: '#ff6600', valor: 85, percentual: 70 },
+    { fase: 'Boas Chances (80-90)', cor: '#ff4400', valor: 45, percentual: 37 },
+    { fase: 'Comprometido (90)', cor: '#cc0000', valor: 28, percentual: 23 },
+    { fase: 'Conquistado (100)', cor: '#990000', valor: 15, percentual: 12 }
   ];
 
-  // Dados das propostas
-  const propostas = [
+  // Dados das oportunidades
+  const oportunidades = [
     { 
-      id: 'PROP001', 
-      cliente: 'Empresa ABC', 
-      valor: 150000, 
-      status: 'Em Análise', 
-      vendedor: 'João Silva',
-      dataVencimento: '2025-02-15',
-      probabilidade: 70
+      id: 1,
+      codigo: '10678',
+      cliente: 'Associação das Pioneiras Sociais',
+      contato: 'Ramal - 3319-1111',
+      responsavel: 'Faber Oliveira',
+      origem: 'Vendas RJ',
+      familiaComercial: 'Radiometer ABL',
+      situacao: 'ganha',
+      tipoAplicacao: 'venda',
+      tipoOportunidade: 'pontual',
+      valor: 782530,
+      dataAbertura: '20/03/2024',
+      dataContato: '20/03/2024',
+      descricao: 'DOS 3 EQUIPAMENTOS ADQUIRIDOS POR (ID) O DE Nº SERIE 754R2826N025 IRA SER INSTALADO NO SARAH-DF.'
     },
     { 
-      id: 'PROP002', 
-      cliente: 'Tech Solutions', 
-      valor: 85000, 
-      status: 'Enviada', 
-      vendedor: 'Maria Santos',
-      dataVencimento: '2025-02-10',
-      probabilidade: 45
+      id: 2,
+      codigo: '10679',
+      cliente: 'Hospital Universitário Onofre Lopes',
+      contato: 'contato@huol.ufrn.br',
+      responsavel: 'Maria Santos',
+      origem: 'Vendas RN',
+      familiaComercial: 'Nova Biomedical',
+      situacao: 'em_analise',
+      tipoAplicacao: 'locacao',
+      tipoOportunidade: 'periodica',
+      valor: 450000,
+      dataAbertura: '15/03/2024',
+      dataContato: '16/03/2024',
+      descricao: 'Equipamentos para laboratório de análises clínicas'
     },
     { 
-      id: 'PROP003', 
-      cliente: 'Indústria XYZ', 
-      valor: 320000, 
-      status: 'Aprovada', 
-      vendedor: 'Carlos Oliveira',
-      dataVencimento: '2025-01-30',
-      probabilidade: 95
+      id: 3,
+      codigo: '10680',
+      cliente: 'CEMA - Central de Medicamentos',
+      contato: '(85) 3101-1234',
+      responsavel: 'João Silva',
+      origem: 'Vendas CE',
+      familiaComercial: 'WEBMED',
+      situacao: 'perdida',
+      tipoAplicacao: 'servico',
+      tipoOportunidade: 'pontual',
+      valor: 280000,
+      dataAbertura: '10/03/2024',
+      dataContato: '12/03/2024',
+      descricao: 'Sistema de gestão hospitalar integrado'
     },
+    { 
+      id: 4,
+      codigo: '10681',
+      cliente: 'Prefeitura de São Paulo',
+      contato: 'licitacoes@saude.sp.gov.br',
+      responsavel: 'Carlos Oliveira',
+      origem: 'Vendas SP',
+      familiaComercial: 'Stat Profile',
+      situacao: 'cancelada',
+      tipoAplicacao: 'venda',
+      tipoOportunidade: 'pontual',
+      valor: 1250000,
+      dataAbertura: '05/03/2024',
+      dataContato: '08/03/2024',
+      descricao: 'Gasômetros para rede municipal de saúde'
+    }
   ];
 
   // Dados das metas comerciais
@@ -71,52 +108,7 @@ const Comercial = () => {
     { vendedor: 'João Silva', meta: 200000, realizado: 165000, percentual: 82.5 },
     { vendedor: 'Maria Santos', meta: 180000, realizado: 195000, percentual: 108.3 },
     { vendedor: 'Carlos Oliveira', meta: 250000, realizado: 187000, percentual: 74.8 },
-    { vendedor: 'Ana Costa', meta: 150000, realizado: 142000, percentual: 94.7 },
-  ];
-
-  // Dados dos clientes
-  const clientes = [
-    { 
-      id: 1, 
-      nome: 'Empresa ABC', 
-      segmento: 'Tecnologia', 
-      valorTotal: 450000, 
-      ultimaCompra: '2024-12-15',
-      status: 'Ativo',
-      vendedor: 'João Silva',
-      telefone: '(11) 9999-9999',
-      email: 'contato@empresaabc.com'
-    },
-    { 
-      id: 2, 
-      nome: 'Tech Solutions', 
-      segmento: 'Software', 
-      valorTotal: 280000, 
-      ultimaCompra: '2024-11-20',
-      status: 'Ativo',
-      vendedor: 'Maria Santos',
-      telefone: '(11) 8888-8888',
-      email: 'vendas@techsolutions.com'
-    },
-    { 
-      id: 3, 
-      nome: 'Indústria XYZ', 
-      segmento: 'Industrial', 
-      valorTotal: 720000, 
-      ultimaCompra: '2024-12-28',
-      status: 'Premium',
-      vendedor: 'Carlos Oliveira',
-      telefone: '(11) 7777-7777',
-      email: 'compras@industriaxyz.com'
-    },
-  ];
-
-  // Dados de conversão por fase
-  const conversaoData = [
-    { fase: 'Lead → Qualificado', taxa: 60, cor: '#0A2342' },
-    { fase: 'Qualificado → Proposta', taxa: 50, cor: '#1E4D8C' },
-    { fase: 'Proposta → Negociação', taxa: 50, cor: '#D5A021' },
-    { fase: 'Negociação → Fechamento', taxa: 50, cor: '#B8941C' },
+    { vendedor: 'Faber Oliveira', meta: 300000, realizado: 282000, percentual: 94.0 },
   ];
 
   const formatCurrency = (value: number) => {
@@ -126,59 +118,46 @@ const Comercial = () => {
     }).format(value);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Ativo': return 'bg-green-500';
-      case 'Premium': return 'bg-purple-500';
-      case 'Enviada': return 'bg-blue-500';
-      case 'Em Análise': return 'bg-yellow-500';
-      case 'Aprovada': return 'bg-green-500';
-      case 'Rejeitada': return 'bg-red-500';
-      default: return 'bg-gray-500';
+  const getSituacaoColor = (situacao: string) => {
+    switch (situacao) {
+      case 'ganha': return 'bg-green-500';
+      case 'em_analise': return 'bg-yellow-500';
+      case 'perdida': return 'bg-red-500';
+      case 'cancelada': return 'bg-gray-500';
+      default: return 'bg-blue-500';
     }
   };
 
-  const handleEditLicitacao = (licitacao: Licitacao) => {
-    setEditingLicitacao(licitacao);
-    setShowLicitacaoForm(true);
-  };
-
-  const handleConvertLicitacao = (licitacao: Licitacao) => {
-    console.log('Converter licitação para oportunidade:', licitacao.id);
-    setLicitacaoData(prev => 
-      prev.map(l => 
-        l.id === licitacao.id 
-          ? { ...l, status: 'convertida' as const }
-          : l
-      )
-    );
-  };
-
-  const handleSaveLicitacao = (formData: Partial<Licitacao>) => {
-    if (editingLicitacao) {
-      setLicitacaoData(prev => 
-        prev.map(l => 
-          l.id === editingLicitacao.id 
-            ? { ...l, ...formData }
-            : l
-        )
-      );
-    } else {
-      const newLicitacao: Licitacao = {
-        id: Math.max(...licitacaoData.map(l => l.id)) + 1,
-        ...formData,
-        createdAt: new Date().toISOString().split('T')[0]
-      } as Licitacao;
-      setLicitacaoData(prev => [...prev, newLicitacao]);
+  const getSituacaoLabel = (situacao: string) => {
+    switch (situacao) {
+      case 'ganha': return 'Ganha';
+      case 'em_analise': return 'Em Análise';
+      case 'perdida': return 'Perdida';
+      case 'cancelada': return 'Cancelada';
+      default: return situacao;
     }
-    setShowLicitacaoForm(false);
-    setEditingLicitacao(undefined);
   };
 
-  const filteredLicitacoes = licitacaoData.filter(licitacao =>
-    licitacao.nomeInstituicao.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    licitacao.numeroPregao.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    licitacao.objetoLicitacao.toLowerCase().includes(searchTerm.toLowerCase())
+  const handleEditOportunidade = (oportunidade: any) => {
+    setEditingOportunidade(oportunidade);
+    setShowOportunidadeForm(true);
+  };
+
+  const handleSaveOportunidade = (formData: any) => {
+    console.log('Salvando oportunidade:', formData);
+    setShowOportunidadeForm(false);
+    setEditingOportunidade(undefined);
+  };
+
+  const handleGerarPedido = (oportunidade: any) => {
+    setSelectedOportunidade(oportunidade);
+    setShowPedidoModal(true);
+  };
+
+  const filteredOportunidades = oportunidades.filter(oportunidade =>
+    oportunidade.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    oportunidade.codigo.includes(searchTerm) ||
+    oportunidade.responsavel.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const renderFunil = () => (
@@ -191,104 +170,149 @@ const Comercial = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <FunnelChart>
-              <Tooltip formatter={(value) => [`${value} leads`, 'Quantidade']} />
-              <Funnel
-                dataKey="value"
-                data={funnelData}
-                isAnimationActive
-              >
-                <LabelList position="center" fill="#fff" stroke="none" />
-              </Funnel>
-            </FunnelChart>
-          </ResponsiveContainer>
+          <div className="space-y-4">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-semibold mb-2">Temperatura</h3>
+              <div className="relative">
+                {/* Funil visual baseado na imagem */}
+                <div className="space-y-1">
+                  {funnelData.map((item, index) => (
+                    <div key={index} className="relative">
+                      <div 
+                        className="mx-auto flex items-center justify-center text-white font-bold py-3 text-sm"
+                        style={{
+                          backgroundColor: item.cor,
+                          width: `${Math.max(item.percentual, 20)}%`,
+                          clipPath: index === funnelData.length - 1 
+                            ? 'polygon(0 0, 100% 0, 50% 100%)' 
+                            : 'polygon(0 0, 100% 0, 95% 100%, 5% 100%)'
+                        }}
+                      >
+                        {item.fase}
+                      </div>
+                      <div className="text-center mt-1">
+                        <span className="text-sm text-gray-600">{item.valor} oportunidades</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Taxa de Conversão por Fase</CardTitle>
+          <CardTitle>Saúde do Pipeline</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {conversaoData.map((item, index) => (
-              <div key={index} className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">{item.fase}</span>
-                  <span className="text-sm text-gray-600">{item.taxa}%</span>
-                </div>
-                <Progress value={item.taxa} className="h-2" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center p-4 bg-gray-50 rounded">
+                <div className="text-2xl font-bold text-blue-600">782,53</div>
+                <div className="text-sm text-gray-600">Conquistado</div>
               </div>
-            ))}
+              <div className="text-center p-4 bg-gray-50 rounded">
+                <div className="text-2xl font-bold text-green-600">x3</div>
+                <div className="text-sm text-gray-600">Meta</div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm">Pipeline Necessário</span>
+                <span className="text-sm font-medium">2.347,59</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm">Pipeline Existente</span>
+                <span className="text-sm font-medium">1.962,53</span>
+              </div>
+              <div className="flex justify-between text-red-600">
+                <span className="text-sm">A Realizar</span>
+                <span className="text-sm font-medium">385,06</span>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
     </div>
   );
 
-  const renderPropostas = () => (
+  const renderOportunidades = () => (
     <Card className="shadow-lg">
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Propostas Comerciais
+            <Briefcase className="h-5 w-5" />
+            Oportunidades Comerciais
           </CardTitle>
-          <Button className="bg-biodina-gold hover:bg-biodina-gold/90">
+          <Button 
+            className="bg-biodina-gold hover:bg-biodina-gold/90"
+            onClick={() => {
+              setEditingOportunidade(undefined);
+              setShowOportunidadeForm(true);
+            }}
+          >
             <Plus className="h-4 w-4 mr-2" />
-            Nova Proposta
+            Nova Oportunidade
           </Button>
         </div>
         <div className="flex gap-4 mt-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input placeholder="Pesquisar propostas..." className="pl-10" />
+            <Input 
+              placeholder="Pesquisar oportunidades..." 
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Cliente</TableHead>
-              <TableHead>Valor</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Vendedor</TableHead>
-              <TableHead>Vencimento</TableHead>
-              <TableHead>Probabilidade</TableHead>
-              <TableHead>Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {propostas.map((proposta) => (
-              <TableRow key={proposta.id}>
-                <TableCell className="font-medium">{proposta.id}</TableCell>
-                <TableCell>{proposta.cliente}</TableCell>
-                <TableCell>{formatCurrency(proposta.valor)}</TableCell>
-                <TableCell>
-                  <Badge className={`${getStatusColor(proposta.status)} text-white`}>
-                    {proposta.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>{proposta.vendedor}</TableCell>
-                <TableCell>{proposta.dataVencimento}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Progress value={proposta.probabilidade} className="w-16 h-2" />
-                    <span className="text-sm">{proposta.probabilidade}%</span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Button size="sm" variant="outline">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </TableCell>
+        <div className="overflow-x-auto max-h-96 overflow-y-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Código</TableHead>
+                <TableHead>Cliente</TableHead>
+                <TableHead>Responsável</TableHead>
+                <TableHead>Situação</TableHead>
+                <TableHead>Tipo</TableHead>
+                <TableHead>Valor</TableHead>
+                <TableHead>Data Abertura</TableHead>
+                <TableHead>Ações</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {filteredOportunidades.map((oportunidade) => (
+                <TableRow key={oportunidade.id}>
+                  <TableCell className="font-medium">{oportunidade.codigo}</TableCell>
+                  <TableCell>{oportunidade.cliente}</TableCell>
+                  <TableCell>{oportunidade.responsavel}</TableCell>
+                  <TableCell>
+                    <Badge className={`${getSituacaoColor(oportunidade.situacao)} text-white`}>
+                      {getSituacaoLabel(oportunidade.situacao)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="capitalize">{oportunidade.tipoAplicacao}</TableCell>
+                  <TableCell>{formatCurrency(oportunidade.valor)}</TableCell>
+                  <TableCell>{oportunidade.dataAbertura}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={() => handleEditOportunidade(oportunidade)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => handleGerarPedido(oportunidade)}>
+                        <FileText className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
@@ -326,71 +350,6 @@ const Comercial = () => {
     </Card>
   );
 
-  const renderClientes = () => (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Clientes
-          </CardTitle>
-          <Button className="bg-biodina-gold hover:bg-biodina-gold/90">
-            <Plus className="h-4 w-4 mr-2" />
-            Novo Cliente
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {clientes.map((cliente) => (
-            <Card key={cliente.id} className="border hover:shadow-md transition-shadow">
-              <CardContent className="p-4">
-                <div className="flex justify-between items-start mb-3">
-                  <h4 className="font-semibold">{cliente.nome}</h4>
-                  <Badge className={`${getStatusColor(cliente.status)} text-white`}>
-                    {cliente.status}
-                  </Badge>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-gray-400" />
-                    <span>{cliente.segmento}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-gray-400" />
-                    <span>{formatCurrency(cliente.valorTotal)}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-gray-400" />
-                    <span>Última: {cliente.ultimaCompra}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-gray-400" />
-                    <span>{cliente.vendedor}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-gray-400" />
-                    <span>{cliente.telefone}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-gray-400" />
-                    <span className="truncate">{cliente.email}</span>
-                  </div>
-                </div>
-                <div className="mt-3 pt-3 border-t">
-                  <Button size="sm" variant="outline" className="w-full">
-                    <Edit className="h-4 w-4 mr-2" />
-                    Editar
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-
   const renderAnaliseConversao = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card className="shadow-lg">
@@ -412,16 +371,17 @@ const Comercial = () => {
 
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Distribuição por Segmento</CardTitle>
+          <CardTitle>Distribuição por Situação</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
                 data={[
-                  { name: 'Tecnologia', value: 45, fill: '#0A2342' },
-                  { name: 'Industrial', value: 30, fill: '#D5A021' },
-                  { name: 'Software', value: 25, fill: '#1E4D8C' }
+                  { name: 'Ganha', value: 1, fill: '#22c55e' },
+                  { name: 'Em Análise', value: 1, fill: '#eab308' },
+                  { name: 'Perdida', value: 1, fill: '#ef4444' },
+                  { name: 'Cancelada', value: 1, fill: '#6b7280' }
                 ]}
                 cx="50%"
                 cy="50%"
@@ -438,79 +398,18 @@ const Comercial = () => {
     </div>
   );
 
-  const renderLicitacoes = () => (
-    <div className="space-y-6">
-      <Card className="shadow-lg">
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="flex items-center gap-2">
-              <Gavel className="h-5 w-5" />
-              Licitações
-            </CardTitle>
-            <Button 
-              className="bg-biodina-gold hover:bg-biodina-gold/90"
-              onClick={() => {
-                setEditingLicitacao(undefined);
-                setShowLicitacaoForm(true);
-              }}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Licitação
-            </Button>
-          </div>
-          <div className="flex gap-4 mt-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input 
-                placeholder="Pesquisar licitações..." 
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-          </div>
-        </CardHeader>
-      </Card>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredLicitacoes.map((licitacao) => (
-          <LicitacaoCard
-            key={licitacao.id}
-            licitacao={licitacao}
-            onEdit={handleEditLicitacao}
-            onConvert={handleConvertLicitacao}
-          />
-        ))}
-      </div>
-
-      {filteredLicitacoes.length === 0 && (
-        <Card className="shadow-lg">
-          <CardContent className="text-center py-12">
-            <Gavel className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg">Nenhuma licitação encontrada</p>
-            <p className="text-gray-400 text-sm">Clique em "Nova Licitação" para começar</p>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
-
   const tabs = [
     { id: 'funil', label: 'Funil de Oportunidades', icon: TrendingUp },
-    { id: 'propostas', label: 'Propostas', icon: FileText },
+    { id: 'oportunidades', label: 'Oportunidades', icon: Briefcase },
     { id: 'metas', label: 'Metas Comerciais', icon: Target },
-    { id: 'clientes', label: 'Clientes', icon: Users },
-    { id: 'licitacoes', label: 'Licitações', icon: Gavel },
     { id: 'analise', label: 'Análise de Conversão', icon: BarChart3 },
   ];
 
   const renderContent = () => {
     switch (activeTab) {
       case 'funil': return renderFunil();
-      case 'propostas': return renderPropostas();
+      case 'oportunidades': return renderOportunidades();
       case 'metas': return renderMetas();
-      case 'clientes': return renderClientes();
-      case 'licitacoes': return renderLicitacoes();
       case 'analise': return renderAnaliseConversao();
       default: return renderFunil();
     }
@@ -550,14 +449,29 @@ const Comercial = () => {
         </div>
       </div>
 
-      {showLicitacaoForm && (
-        <LicitacaoForm
-          licitacao={editingLicitacao}
+      {showOportunidadeForm && (
+        <OportunidadeForm
+          oportunidade={editingOportunidade}
           onClose={() => {
-            setShowLicitacaoForm(false);
-            setEditingLicitacao(undefined);
+            setShowOportunidadeForm(false);
+            setEditingOportunidade(undefined);
           }}
-          onSave={handleSaveLicitacao}
+          onSave={handleSaveOportunidade}
+        />
+      )}
+
+      {showPedidoModal && selectedOportunidade && (
+        <PedidoModal
+          oportunidade={selectedOportunidade}
+          onClose={() => {
+            setShowPedidoModal(false);
+            setSelectedOportunidade(undefined);
+          }}
+          onSave={(pedido) => {
+            console.log('Salvando pedido:', pedido);
+            setShowPedidoModal(false);
+            setSelectedOportunidade(undefined);
+          }}
         />
       )}
     </SidebarLayout>

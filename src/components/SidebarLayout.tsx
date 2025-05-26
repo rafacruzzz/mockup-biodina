@@ -98,12 +98,22 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
           >
             <Menu size={20} />
           </button>
-          <h2 className="text-xl font-semibold text-biodina-blue ml-4">Biodina Sistemas</h2>
-          
-          <div className="ml-auto flex items-center">
-            <button className="p-2 text-gray-600 hover:text-biodina-blue rounded-lg hover:bg-gray-50 transition-colors">
-              <Settings size={20} />
-            </button>
+          <div className="flex items-center justify-between w-full">
+            <h2 className="text-xl font-semibold text-biodina-blue ml-4">Biodina Sistemas</h2>
+            
+            {/* Botão X para fechar submenu inteiro */}
+            <div className="ml-auto flex items-center gap-4">
+              <button 
+                onClick={() => setIsSidebarOpen(false)}
+                className="p-2 text-gray-600 hover:text-biodina-blue rounded-lg hover:bg-gray-50 transition-colors"
+                title="Fechar menu"
+              >
+                <X size={20} />
+              </button>
+              <button className="p-2 text-gray-600 hover:text-biodina-blue rounded-lg hover:bg-gray-50 transition-colors">
+                <Settings size={20} />
+              </button>
+            </div>
           </div>
         </header>
         
