@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,16 +5,19 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import SidebarLayout from "@/components/SidebarLayout";
+import ProductForm from "@/components/ProductForm";
 import { 
   Plus, Search, Edit, Trash2, Users, Package, Settings, 
-  Building, Tag, Clock, CreditCard, Mail, FileText, ChevronDown, ChevronRight 
+  Building, Tag, Clock, CreditCard, Mail, FileText, ChevronDown, ChevronRight,
+  Filter, Download, Upload, MoreHorizontal
 } from "lucide-react";
 
 const Cadastro = () => {
-  const [activeModule, setActiveModule] = useState('leads');
-  const [activeSubModule, setActiveSubModule] = useState('');
+  const [activeModule, setActiveModule] = useState('produtos');
+  const [activeSubModule, setActiveSubModule] = useState('produtos');
   const [searchTerm, setSearchTerm] = useState('');
-  const [expandedModules, setExpandedModules] = useState<string[]>(['leads']);
+  const [expandedModules, setExpandedModules] = useState<string[]>(['produtos']);
+  const [showProductForm, setShowProductForm] = useState(false);
 
   const toggleModule = (module: string) => {
     if (expandedModules.includes(module)) {
@@ -30,87 +32,212 @@ const Cadastro = () => {
       name: 'Leads',
       icon: Users,
       subModules: {
-        fontes: { name: 'Fontes dos Leads', data: [
-          { id: 1, nome: 'Website', tipo: 'Digital', ativo: true, leads: 45 },
-          { id: 2, nome: 'Facebook Ads', tipo: 'Redes Sociais', ativo: true, leads: 32 },
-          { id: 3, nome: 'Indicação', tipo: 'Orgânico', ativo: true, leads: 28 },
-        ]},
-        segmentos: { name: 'Segmentos dos Leads', data: [
-          { id: 1, segmento: 'Empresas de Grande Porte', descricao: 'Acima de 500 funcionários', leads: 12 },
-          { id: 2, segmento: 'PMEs', descricao: 'Entre 50-500 funcionários', leads: 67 },
-          { id: 3, segmento: 'Startups', descricao: 'Até 50 funcionários', leads: 26 },
-        ]}
+        fontes: { 
+          name: 'Fontes dos Leads', 
+          data: [
+            { id: 1, nome: 'Website Corporativo', tipo: 'Digital', conversao: '3.2%', leads: 156, custo: 'R$ 2.450', ativo: true },
+            { id: 2, nome: 'Facebook Ads', tipo: 'Redes Sociais', conversao: '2.8%', leads: 89, custo: 'R$ 3.200', ativo: true },
+            { id: 3, nome: 'Google Ads', tipo: 'Search', conversao: '4.1%', leads: 203, custo: 'R$ 5.800', ativo: true },
+            { id: 4, nome: 'Indicação de Clientes', tipo: 'Orgânico', conversao: '8.5%', leads: 45, custo: 'R$ 0', ativo: true },
+          ]
+        },
+        segmentos: { 
+          name: 'Segmentos dos Leads', 
+          data: [
+            { id: 1, segmento: 'Empresas de Grande Porte', descricao: 'Acima de 500 funcionários', leads: 67, ticketMedio: 'R$ 45.000', conversao: '12%' },
+            { id: 2, segmento: 'Médias Empresas', descricao: 'Entre 100-500 funcionários', leads: 134, ticketMedio: 'R$ 18.500', conversao: '8%' },
+            { id: 3, segmento: 'Pequenas Empresas', descricao: 'Entre 20-100 funcionários', leads: 298, ticketMedio: 'R$ 8.200', conversao: '5%' },
+            { id: 4, segmento: 'Startups', descricao: 'Até 20 funcionários', leads: 156, ticketMedio: 'R$ 3.500', conversao: '6%' },
+          ]
+        }
       }
     },
     produtos: {
       name: 'Produtos',
       icon: Package,
       subModules: {
-        produtos: { name: 'Produtos', data: [
-          { id: 1, nome: 'Produto A', codigo: 'PRD001', preco: 150.00, estoque: 100, ativo: true },
-          { id: 2, nome: 'Produto B', codigo: 'PRD002', preco: 250.00, estoque: 75, ativo: true },
-          { id: 3, nome: 'Produto C', codigo: 'PRD003', preco: 350.00, estoque: 50, ativo: false },
-        ]},
-        kits: { name: 'Kits', data: [
-          { id: 1, nome: 'Kit Básico', produtos: 3, preco: 450.00, ativo: true },
-          { id: 2, nome: 'Kit Premium', produtos: 5, preco: 750.00, ativo: true },
-        ]},
-        precos: { name: 'Tabela de Preço', data: [
-          { id: 1, nome: 'Tabela Varejo', tipo: 'Padrão', ativa: true, produtos: 125 },
-          { id: 2, nome: 'Tabela Atacado', tipo: 'Desconto 15%', ativa: true, produtos: 98 },
-        ]},
-        locais: { name: 'Locais de Estoque', data: [
-          { id: 1, nome: 'Estoque Principal', endereco: 'Galpão A', capacidade: '1000m²' },
-          { id: 2, nome: 'Estoque Filial', endereco: 'Galpão B', capacidade: '500m²' },
-        ]},
-        movimentacao: { name: 'Movimentação de Estoque', data: [
-          { id: 1, produto: 'Produto A', tipo: 'Entrada', quantidade: 50, data: '2024-01-15' },
-          { id: 2, produto: 'Produto B', tipo: 'Saída', quantidade: 25, data: '2024-01-14' },
-        ]},
-        rastreio: { name: 'Rastreio de Lotes ou Séries', data: [
-          { id: 1, lote: 'LT001', produto: 'Produto A', validade: '2025-06-30', quantidade: 100 },
-          { id: 2, lote: 'LT002', produto: 'Produto B', validade: '2025-08-15', quantidade: 75 },
-        ]},
-        marcas: { name: 'Marcas', data: [
-          { id: 1, nome: 'Marca A', produtos: 45, ativa: true },
-          { id: 2, nome: 'Marca B', produtos: 32, ativa: true },
-        ]},
-        familias: { name: 'Famílias de Produtos', data: [
-          { id: 1, nome: 'Eletrônicos', produtos: 67, ativa: true },
-          { id: 2, nome: 'Móveis', produtos: 23, ativa: true },
-        ]},
-        grupos: { name: 'Grupo de Produtos', data: [
-          { id: 1, nome: 'Grupo A', familia: 'Eletrônicos', produtos: 35 },
-          { id: 2, nome: 'Grupo B', familia: 'Móveis', produtos: 15 },
-        ]},
-        subgrupos: { name: 'Subgrupos de Produtos', data: [
-          { id: 1, nome: 'Subgrupo A1', grupo: 'Grupo A', produtos: 18 },
-          { id: 2, nome: 'Subgrupo A2', grupo: 'Grupo A', produtos: 17 },
-        ]}
+        produtos: { 
+          name: 'Produtos', 
+          data: [
+            { 
+              id: 1, 
+              nome: 'Sistema de Gestão ERP Pro', 
+              codigo: 'ERP001', 
+              valorVenda: 2500.00, 
+              precoCusto: 1200.00, 
+              estoque: 150, 
+              estoqueDisponivel: 142,
+              marca: 'Biodina Tech',
+              categoria: 'Software',
+              ativo: true 
+            },
+            { 
+              id: 2, 
+              nome: 'Módulo CRM Advanced', 
+              codigo: 'CRM002', 
+              valorVenda: 1800.00, 
+              precoCusto: 850.00, 
+              estoque: 89, 
+              estoqueDisponivel: 85,
+              marca: 'Biodina Tech',
+              categoria: 'Software',
+              ativo: true 
+            },
+            { 
+              id: 3, 
+              nome: 'Dashboard Analytics', 
+              codigo: 'DAS003', 
+              valorVenda: 950.00, 
+              precoCusto: 450.00, 
+              estoque: 67, 
+              estoqueDisponivel: 67,
+              marca: 'Biodina Analytics',
+              categoria: 'Software',
+              ativo: false 
+            },
+          ]
+        },
+        kits: { 
+          name: 'Kits', 
+          data: [
+            { id: 1, nome: 'Kit Empresarial Básico', codigo: 'KIT001', produtos: 3, valorTotal: 4200.00, margem: '45%', ativo: true },
+            { id: 2, nome: 'Kit Premium Completo', codigo: 'KIT002', produtos: 7, valorTotal: 8900.00, margem: '52%', ativo: true },
+            { id: 3, nome: 'Kit Startup', codigo: 'KIT003', produtos: 2, valorTotal: 1800.00, margem: '38%', ativo: true },
+          ]
+        },
+        precos: { 
+          name: 'Tabela de Preços', 
+          data: [
+            { id: 1, nome: 'Tabela Varejo Nacional', tipo: 'Padrão', desconto: '0%', produtos: 245, vigencia: '01/01/2024 - 31/12/2024', ativa: true },
+            { id: 2, nome: 'Tabela Atacado', tipo: 'Desconto 15%', desconto: '15%', produtos: 198, vigencia: '01/01/2024 - 31/12/2024', ativa: true },
+            { id: 3, nome: 'Tabela Parceiros', tipo: 'Desconto 25%', desconto: '25%', produtos: 156, vigencia: '01/01/2024 - 31/12/2024', ativa: true },
+          ]
+        },
+        locais: { 
+          name: 'Locais de Estoque', 
+          data: [
+            { id: 1, codigo: 'EST001', descricao: 'Estoque Principal - Matriz', tipo: 'Físico', endereco: 'Galpão A - Setor Industrial', responsavel: 'João Silva', ativo: true },
+            { id: 2, codigo: 'EST002', descricao: 'Estoque Filial SP', tipo: 'Físico', endereco: 'Galpão B - Vila Olimpia', responsavel: 'Maria Santos', ativo: true },
+            { id: 3, codigo: 'EST003', descricao: 'Estoque Virtual - Produtos Digitais', tipo: 'Virtual', endereco: 'Cloud Storage', responsavel: 'Sistema Automático', ativo: true },
+          ]
+        },
+        movimentacao: { 
+          name: 'Movimentação de Estoque', 
+          data: [
+            { id: 1, codigo: 'MOV001', tipo: 'Entrada', produto: 'Sistema ERP Pro', quantidade: 25, data: '15/01/2024', origem: 'Fornecedor Tech', destino: 'EST001' },
+            { id: 2, codigo: 'MOV002', tipo: 'Saída', produto: 'Módulo CRM', quantidade: 8, data: '14/01/2024', origem: 'EST001', destino: 'Cliente ABC' },
+            { id: 3, codigo: 'MOV003', tipo: 'Transferência', produto: 'Dashboard Analytics', quantidade: 12, data: '13/01/2024', origem: 'EST001', destino: 'EST002' },
+          ]
+        },
+        rastreio: { 
+          name: 'Rastreio de Lotes/Séries', 
+          data: [
+            { id: 1, codigo: 'LT001', produto: 'Sistema ERP Pro', lote: 'LT20240115', quantidade: 25, validade: '15/01/2026', nfe: 'NFe 12345', status: 'Ativo' },
+            { id: 2, codigo: 'LT002', produto: 'Módulo CRM', lote: 'LT20240110', quantidade: 30, validade: '10/01/2026', nfe: 'NFe 12346', status: 'Ativo' },
+            { id: 3, codigo: 'LT003', produto: 'Dashboard Analytics', lote: 'LT20240105', quantidade: 15, validade: '05/01/2026', nfe: 'NFe 12347', status: 'Vencido' },
+          ]
+        },
+        marcas: { 
+          name: 'Marcas', 
+          data: [
+            { id: 1, nome: 'Biodina Tech', produtos: 156, categoria: 'Software', pais: 'Brasil', ativa: true },
+            { id: 2, nome: 'Biodina Analytics', produtos: 89, categoria: 'Business Intelligence', pais: 'Brasil', ativa: true },
+            { id: 3, nome: 'Biodina Cloud', produtos: 67, categoria: 'Cloud Computing', pais: 'Brasil', ativa: true },
+          ]
+        },
+        familias: { 
+          name: 'Famílias de Produtos', 
+          data: [
+            { id: 1, nome: 'Sistemas de Gestão', descricao: 'ERPs e sistemas administrativos', produtos: 45, categoria: 'Software', ativa: true },
+            { id: 2, nome: 'Business Intelligence', descricao: 'Dashboards e relatórios', produtos: 28, categoria: 'Analytics', ativa: true },
+            { id: 3, nome: 'CRM e Vendas', descricao: 'Gestão de relacionamento', produtos: 34, categoria: 'Software', ativa: true },
+          ]
+        },
+        grupos: { 
+          name: 'Grupos de Produtos', 
+          data: [
+            { id: 1, nome: 'ERP Empresarial', familia: 'Sistemas de Gestão', produtos: 23, descricao: 'ERPs para grandes empresas' },
+            { id: 2, nome: 'ERP PME', familia: 'Sistemas de Gestão', produtos: 22, descricao: 'ERPs para pequenas e médias empresas' },
+            { id: 3, nome: 'Dashboards Executivos', familia: 'Business Intelligence', produtos: 15, descricao: 'Painéis para alta gestão' },
+          ]
+        },
+        subgrupos: { 
+          name: 'Subgrupos de Produtos', 
+          data: [
+            { id: 1, nome: 'ERP Financeiro', grupo: 'ERP Empresarial', produtos: 12, descricao: 'Módulos financeiros avançados' },
+            { id: 2, nome: 'ERP Comercial', grupo: 'ERP Empresarial', produtos: 11, descricao: 'Módulos de vendas e CRM' },
+            { id: 3, nome: 'ERP Estoque', grupo: 'ERP PME', produtos: 9, descricao: 'Controle de estoque simplificado' },
+          ]
+        }
       }
     },
     servicos: {
       name: 'Serviços',
       icon: Settings,
       subModules: {
-        categorias: { name: 'Categoria de Serviços', data: [
-          { id: 1, categoria: 'Consultoria', servicos: 12, ativa: true },
-          { id: 2, categoria: 'Suporte Técnico', servicos: 8, ativa: true },
-        ]},
-        unidades: { name: 'Unidade de Serviços', data: [
-          { id: 1, unidade: 'Hora', sigla: 'h', ativa: true },
-          { id: 2, unidade: 'Projeto', sigla: 'proj', ativa: true },
-        ]}
+        categorias: { 
+          name: 'Categorias de Serviços', 
+          data: [
+            { id: 1, categoria: 'Consultoria Estratégica', descricao: 'Consultoria em gestão e processos', servicos: 15, valorMedio: 'R$ 2.500/dia', ativa: true },
+            { id: 2, categoria: 'Suporte Técnico', descricao: 'Suporte e manutenção de sistemas', servicos: 23, valorMedio: 'R$ 150/hora', ativa: true },
+            { id: 3, categoria: 'Treinamento', descricao: 'Capacitação de usuários', servicos: 12, valorMedio: 'R$ 800/dia', ativa: true },
+          ]
+        },
+        unidades: { 
+          name: 'Unidades de Serviços', 
+          data: [
+            { id: 1, codigo: 'HORA', nome: 'Hora', descricao: 'Cobrança por hora trabalhada', sigla: 'h', ativa: true },
+            { id: 2, codigo: 'DIA', nome: 'Dia', descricao: 'Cobrança por dia de trabalho', sigla: 'd', ativa: true },
+            { id: 3, codigo: 'PROJ', nome: 'Projeto', descricao: 'Cobrança por projeto completo', sigla: 'proj', ativa: true },
+          ]
+        }
       }
     },
     usuarios: {
       name: 'Usuários',
       icon: Users,
       subModules: {
-        lista: { name: 'Lista de Usuários', data: [
-          { id: 1, nome: 'João Silva', email: 'joao@empresa.com', perfil: 'Admin', ativo: true },
-          { id: 2, nome: 'Maria Santos', email: 'maria@empresa.com', perfil: 'Usuário', ativo: true },
-        ]}
+        lista: { 
+          name: 'Lista de Usuários', 
+          data: [
+            { 
+              id: 1, 
+              nomeUsuario: 'admin.silva', 
+              email: 'joao.silva@biodina.com.br', 
+              perfil: 'Administrador', 
+              departamento: 'TI',
+              ultimoAcesso: '15/01/2024 14:30',
+              ipUltimoAcesso: '192.168.1.10',
+              idadeSenha: '45 dias',
+              status: 'Ativo',
+              ativo: true 
+            },
+            { 
+              id: 2, 
+              nomeUsuario: 'maria.santos', 
+              email: 'maria.santos@biodina.com.br', 
+              perfil: 'Gerente Comercial', 
+              departamento: 'Comercial',
+              ultimoAcesso: '15/01/2024 09:15',
+              ipUltimoAcesso: '192.168.1.25',
+              idadeSenha: '23 dias',
+              status: 'Ativo',
+              ativo: true 
+            },
+            { 
+              id: 3, 
+              nomeUsuario: 'carlos.lima', 
+              email: 'carlos.lima@biodina.com.br', 
+              perfil: 'Analista Financeiro', 
+              departamento: 'Financeiro',
+              ultimoAcesso: '12/01/2024 16:45',
+              ipUltimoAcesso: '192.168.1.33',
+              idadeSenha: '89 dias',
+              status: 'Bloqueado',
+              ativo: false 
+            },
+          ]
+        }
       }
     },
     camposPersonalizados: {
@@ -220,80 +347,119 @@ const Cadastro = () => {
     if (!subModule || !subModule.data) return null;
 
     const data = subModule.data;
-    if (data.length === 0) return <p className="text-gray-500 text-center py-8">Nenhum registro encontrado</p>;
+    if (data.length === 0) return (
+      <div className="text-center py-12">
+        <Package className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+        <p className="text-gray-500 text-lg">Nenhum registro encontrado</p>
+        <p className="text-gray-400 text-sm">Clique em "Novo Registro" para começar</p>
+      </div>
+    );
 
     const headers = Object.keys(data[0]).filter(key => key !== 'id');
 
     return (
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {headers.map(header => (
-              <TableHead key={header} className="font-semibold">
-                {header.charAt(0).toUpperCase() + header.slice(1)}
-              </TableHead>
-            ))}
-            <TableHead className="w-24">Ações</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((item: any) => (
-            <TableRow key={item.id} className="hover:bg-gray-50">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50/50">
               {headers.map(header => (
-                <TableCell key={header}>
-                  {typeof item[header] === 'boolean' ? (
-                    <Badge className={item[header] ? 'bg-green-500' : 'bg-red-500'}>
-                      {item[header] ? 'Sim' : 'Não'}
-                    </Badge>
-                  ) : typeof item[header] === 'number' && header === 'preco' ? (
-                    `R$ ${item[header].toFixed(2)}`
-                  ) : (
-                    item[header]
-                  )}
-                </TableCell>
+                <TableHead key={header} className="font-semibold text-gray-700 py-4">
+                  {header.charAt(0).toUpperCase() + header.slice(1).replace(/([A-Z])/g, ' $1')}
+                </TableHead>
               ))}
-              <TableCell>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline" className="h-8 w-8 p-0">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button size="sm" variant="outline" className="h-8 w-8 p-0 text-red-600 hover:text-red-700">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </TableCell>
+              <TableHead className="w-24 text-center">Ações</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {data.map((item: any) => (
+              <TableRow key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                {headers.map(header => (
+                  <TableCell key={header} className="py-4">
+                    {typeof item[header] === 'boolean' ? (
+                      <Badge className={`${item[header] ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200'} px-2 py-1`}>
+                        {item[header] ? 'Sim' : 'Não'}
+                      </Badge>
+                    ) : typeof item[header] === 'number' && (header.includes('valor') || header.includes('preco') || header.includes('custo')) ? (
+                      <span className="font-medium text-biodina-blue">
+                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item[header])}
+                      </span>
+                    ) : header === 'status' || header === 'categoria' || header === 'tipo' ? (
+                      <Badge variant="outline" className="border-biodina-gold/30 text-biodina-blue">
+                        {item[header]}
+                      </Badge>
+                    ) : (
+                      <span className="text-gray-700">{item[header]}</span>
+                    )}
+                  </TableCell>
+                ))}
+                <TableCell className="text-center">
+                  <div className="flex justify-center gap-1">
+                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-biodina-gold/10">
+                      <Edit className="h-4 w-4 text-biodina-gold" />
+                    </Button>
+                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-red-50">
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-gray-100">
+                      <MoreHorizontal className="h-4 w-4 text-gray-500" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     );
+  };
+
+  const handleNewRecord = () => {
+    if (activeModule === 'produtos' && activeSubModule === 'produtos') {
+      setShowProductForm(true);
+    } else {
+      console.log(`Criar novo registro para ${activeModule} - ${activeSubModule}`);
+    }
   };
 
   return (
     <SidebarLayout>
-      <div className="flex h-full">
-        {/* Menu lateral do módulo */}
-        <div className="w-80 bg-white border-r border-gray-200 p-4 overflow-y-auto">
-          <h2 className="text-xl font-bold text-biodina-blue mb-6">Cadastros</h2>
+      <div className="flex h-full bg-gray-50/50">
+        {/* Modern Sidebar */}
+        <div className="w-80 bg-white border-r border-gray-200/80 overflow-y-auto shadow-sm">
+          <div className="p-6 border-b border-gray-100">
+            <h2 className="text-2xl font-bold text-biodina-blue mb-2">Cadastros</h2>
+            <p className="text-gray-600 text-sm">Gerencie todos os cadastros do sistema</p>
+          </div>
           
-          <div className="space-y-2">
+          <div className="p-4 space-y-2">
             {Object.entries(modules).map(([key, module]) => (
-              <div key={key}>
+              <div key={key} className="space-y-1">
                 <button
                   onClick={() => toggleModule(key)}
-                  className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${
-                    activeModule === key ? 'bg-biodina-blue text-white' : 'hover:bg-gray-100'
+                  className={`w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200 ${
+                    activeModule === key 
+                      ? 'bg-gradient-to-r from-biodina-blue to-biodina-lightblue text-white shadow-md' 
+                      : 'hover:bg-gray-50 text-gray-700 hover:shadow-sm'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <module.icon className="h-5 w-5" />
+                    <div className={`p-2 rounded-lg ${
+                      activeModule === key ? 'bg-white/20' : 'bg-biodina-gold/10'
+                    }`}>
+                      <module.icon className={`h-5 w-5 ${
+                        activeModule === key ? 'text-white' : 'text-biodina-gold'
+                      }`} />
+                    </div>
                     <span className="font-medium">{module.name}</span>
                   </div>
-                  {expandedModules.includes(key) ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                  {expandedModules.includes(key) ? 
+                    <ChevronDown className="h-4 w-4" /> : 
+                    <ChevronRight className="h-4 w-4" />
+                  }
                 </button>
                 
                 {expandedModules.includes(key) && (
-                  <div className="ml-8 mt-2 space-y-1">
+                  <div className="ml-4 space-y-1 animate-slide-in-left">
                     {Object.entries(module.subModules).map(([subKey, subModule]) => (
                       <button
                         key={subKey}
@@ -301,13 +467,20 @@ const Cadastro = () => {
                           setActiveModule(key);
                           setActiveSubModule(subKey);
                         }}
-                        className={`w-full text-left p-2 rounded-md text-sm transition-colors ${
+                        className={`w-full text-left p-3 rounded-lg text-sm transition-all duration-200 ${
                           activeModule === key && activeSubModule === subKey
-                            ? 'bg-biodina-gold text-white'
-                            : 'hover:bg-gray-100'
+                            ? 'bg-biodina-gold text-white shadow-sm'
+                            : 'hover:bg-gray-50 text-gray-600'
                         }`}
                       >
-                        {subModule.name}
+                        <div className="flex items-center gap-2">
+                          <div className={`w-2 h-2 rounded-full ${
+                            activeModule === key && activeSubModule === subKey
+                              ? 'bg-white'
+                              : 'bg-biodina-gold/60'
+                          }`} />
+                          {subModule.name}
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -317,56 +490,89 @@ const Cadastro = () => {
           </div>
         </div>
 
-        {/* Conteúdo principal */}
-        <div className="flex-1 p-6 bg-gray-50">
+        {/* Modern Main Content */}
+        <div className="flex-1">
           {activeSubModule ? (
-            <>
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h1 className="text-2xl font-bold text-biodina-blue">
-                    {modules[activeModule as keyof typeof modules]?.subModules[activeSubModule]?.name}
-                  </h1>
-                  <p className="text-gray-600">
-                    Gerencie os registros de {modules[activeModule as keyof typeof modules]?.subModules[activeSubModule]?.name.toLowerCase()}
-                  </p>
+            <div className="h-full flex flex-col">
+              {/* Header */}
+              <div className="bg-white border-b border-gray-200/80 p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h1 className="text-3xl font-bold text-biodina-blue mb-2">
+                      {modules[activeModule as keyof typeof modules]?.subModules[activeSubModule]?.name}
+                    </h1>
+                    <p className="text-gray-600">
+                      Gerencie os registros de {modules[activeModule as keyof typeof modules]?.subModules[activeSubModule]?.name.toLowerCase()}
+                    </p>
+                  </div>
+                  <Button 
+                    onClick={handleNewRecord}
+                    className="bg-gradient-to-r from-biodina-gold to-biodina-gold/90 hover:from-biodina-gold/90 hover:to-biodina-gold text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Novo Registro
+                  </Button>
                 </div>
-                <Button className="bg-biodina-gold hover:bg-biodina-gold/90 text-white">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Novo Registro
-                </Button>
+
+                {/* Search and Filters */}
+                <div className="flex gap-4 items-center">
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      placeholder="Pesquisar registros..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10 border-gray-200 focus:border-biodina-gold rounded-xl"
+                    />
+                  </div>
+                  <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50 rounded-xl">
+                    <Filter className="h-4 w-4 mr-2" />
+                    Filtros
+                  </Button>
+                  <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50 rounded-xl">
+                    <Download className="h-4 w-4 mr-2" />
+                    Exportar
+                  </Button>
+                  <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50 rounded-xl">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Importar
+                  </Button>
+                </div>
               </div>
 
-              <Card className="shadow-lg">
-                <CardHeader className="border-b">
-                  <div className="flex justify-between items-center">
-                    <CardTitle>Registros</CardTitle>
-                    <div className="relative w-64">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        placeholder="Pesquisar..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-10"
-                      />
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-0">
-                  {renderTable(activeModule, activeSubModule)}
-                </CardContent>
-              </Card>
-            </>
+              {/* Content */}
+              <div className="flex-1 p-6 overflow-auto">
+                {renderTable(activeModule, activeSubModule)}
+              </div>
+            </div>
           ) : (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <h2 className="text-xl font-semibold text-gray-600 mb-2">Selecione um módulo</h2>
-                <p className="text-gray-500">Escolha um módulo no menu lateral para começar</p>
+            <div className="flex items-center justify-center h-full bg-gradient-to-br from-gray-50 to-gray-100">
+              <div className="text-center max-w-md">
+                <div className="w-24 h-24 bg-biodina-gold/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Package className="h-12 w-12 text-biodina-gold" />
+                </div>
+                <h2 className="text-2xl font-bold text-biodina-blue mb-3">Selecione um módulo</h2>
+                <p className="text-gray-600 mb-6">Escolha um módulo no menu lateral para começar a gerenciar seus cadastros</p>
+                <Button 
+                  onClick={() => {
+                    setActiveModule('produtos');
+                    setActiveSubModule('produtos');
+                    setExpandedModules(['produtos']);
+                  }}
+                  className="bg-biodina-gold hover:bg-biodina-gold/90 text-white"
+                >
+                  Começar com Produtos
+                </Button>
               </div>
             </div>
           )}
         </div>
       </div>
+
+      {/* Product Form Modal */}
+      {showProductForm && (
+        <ProductForm onClose={() => setShowProductForm(false)} />
+      )}
     </SidebarLayout>
   );
 };
