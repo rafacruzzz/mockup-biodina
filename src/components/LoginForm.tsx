@@ -18,7 +18,7 @@ const LoginForm = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate login process
+    // Redireciona diretamente para BI sem verificação
     setTimeout(() => {
       setIsLoading(false);
       toast({
@@ -26,7 +26,7 @@ const LoginForm = () => {
         description: "Você foi conectado com sucesso.",
       });
       navigate("/bi-geral");
-    }, 1500);
+    }, 800);
   };
 
   return (

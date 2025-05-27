@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import ProductForm from "@/components/ProductForm";
+import ProductFormDetailed from "@/components/cadastro/ProductFormDetailed";
 import CadastroSidebar from "@/components/cadastro/CadastroSidebar";
 import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
@@ -14,6 +15,7 @@ const Cadastro = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
   const [showProductForm, setShowProductForm] = useState(false);
+  const [showProductFormDetailed, setShowProductFormDetailed] = useState(false);
 
   // Reset state when no module is selected
   useEffect(() => {
@@ -44,16 +46,16 @@ const Cadastro = () => {
 
   const handleNewRecord = () => {
     if (activeModule === 'produtos' && activeSubModule === 'produtos') {
-      setShowProductForm(true);
+      setShowProductFormDetailed(true);
     } else {
       console.log(`Criar novo registro para ${activeModule} - ${activeSubModule}`);
     }
   };
 
   const handleGetStarted = () => {
-    setActiveModule('produtos');
-    setActiveSubModule('produtos');
-    setExpandedModules(['produtos']);
+    setActiveModule('entidades');
+    setActiveSubModule('clientes');
+    setExpandedModules(['entidades']);
   };
 
   const currentSubModule = activeModule && activeSubModule ? 
@@ -96,6 +98,10 @@ const Cadastro = () => {
 
       {showProductForm && (
         <ProductForm onClose={() => setShowProductForm(false)} />
+      )}
+
+      {showProductFormDetailed && (
+        <ProductFormDetailed onClose={() => setShowProductFormDetailed(false)} />
       )}
     </SidebarLayout>
   );
