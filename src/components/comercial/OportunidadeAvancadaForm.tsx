@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { X, Save, Plus, Trash2, Upload, Download, MessageSquare, Send, User, Eye } from "lucide-react";
+import { X, Save, Plus, Trash2, Upload, Download, MessageSquare, Send, User, Eye, FileText } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import LicitacaoValidationModal from "./LicitacaoValidationModal";
 import ConcorrenteModal from "./ConcorrenteModal";
@@ -673,7 +673,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
               </TabsContent>
 
               <TabsContent value="historico" className="space-y-6 mt-6">
-                <ChatInterno />
+                <ChatInterno oportunidadeId={oportunidade?.id || formData.chaveLicitacao || 'nova'} />
               </TabsContent>
 
               <TabsContent value="documentos" className="space-y-6 mt-6">
@@ -725,14 +725,17 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
       </Card>
 
       {showLicitacaoModal && (
-        <LicitacaoValidationModal onClose={() => setShowLicitacaoModal(false)} />
+        <LicitacaoValidationModal 
+          chave={formData.chaveLicitacao}
+          onClose={() => setShowLicitacaoModal(false)} 
+        />
       )}
 
       {showConcorrenteModal && (
         <ConcorrenteModal
           onClose={() => setShowConcorrenteModal(false)}
           onSave={handleAddConcorrente}
-          valorNegocio={formData.valorNegocio}
+          valorReferencia={formData.valorNegocio}
         />
       )}
 
