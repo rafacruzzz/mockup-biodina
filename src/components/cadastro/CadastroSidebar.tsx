@@ -25,10 +25,6 @@ const CadastroSidebar = ({
 
   const handleSubModuleSelect = (module: string, subModule: string) => {
     onModuleSelect(module, subModule);
-    // Automatically close the expanded module after selecting a submodule
-    setTimeout(() => {
-      onModuleToggle(module);
-    }, 150);
   };
 
   return (
