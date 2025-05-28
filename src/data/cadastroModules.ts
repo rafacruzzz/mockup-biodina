@@ -1,5 +1,5 @@
 
-import { Package, Users, Settings, Wrench, Building, CreditCard, Tag, Clock, Mail, FileText, ShoppingCart, Calculator } from "lucide-react";
+import { Package, Users, Settings, Wrench, Building, CreditCard, Tag, Clock } from "lucide-react";
 import { ModulesConfig } from "@/types/cadastro";
 
 export const modules: ModulesConfig = {
@@ -7,25 +7,12 @@ export const modules: ModulesConfig = {
     name: "Entidades",
     icon: Users,
     subModules: {
-      fornecedores: {
-        name: "Fornecedores",
+      entidades: {
+        name: "Entidades",
         data: [
-          { id: 1, razao_social: "Fornecedor Medicamentos ABC Ltda", cnpj: "12.345.678/0001-90", contato: "João Silva", telefone: "(11) 9999-8888", email: "joao@abc.com.br", status: "Ativo" },
-          { id: 2, razao_social: "Distribuidora Pharma Solutions", cnpj: "98.765.432/0001-10", contato: "Maria Santos", telefone: "(21) 8888-7777", email: "maria@pharma.com.br", status: "Ativo" }
-        ]
-      },
-      clientes: {
-        name: "Clientes",
-        data: [
-          { id: 1, razao_social: "Hospital São Lucas", cnpj: "11.222.333/0001-44", contato: "Dr. Carlos Lima", telefone: "(11) 7777-6666", email: "carlos@saolucas.com.br", tipo: "Pessoa Jurídica", status: "Ativo" },
-          { id: 2, razao_social: "Clínica Vida Saudável", cnpj: "44.555.666/0001-77", contato: "Dra. Ana Costa", telefone: "(21) 6666-5555", email: "ana@vidasaudavel.com.br", tipo: "Pessoa Jurídica", status: "Ativo" }
-        ]
-      },
-      leads: {
-        name: "Leads",
-        data: [
-          { id: 1, nome: "Hospital Regional Norte", contato: "Dr. Pedro Oliveira", telefone: "(85) 5555-4444", email: "pedro@regionalrte.com.br", origem: "Website", status: "Novo", interesse: "Medicamentos Oncológicos" },
-          { id: 2, nome: "Farmácia Central", contato: "Lucia Ferreira", telefone: "(31) 4444-3333", email: "lucia@farmaciacentral.com.br", origem: "Indicação", status: "Qualificado", interesse: "Antibióticos" }
+          { id: 1, nome_razao_social: "Hospital São Lucas", tipo: "Cliente", cnpj_cpf: "11.222.333/0001-44", contato: "Dr. Carlos Lima", telefone: "(11) 7777-6666", email: "carlos@saolucas.com.br", status: "Ativo" },
+          { id: 2, nome_razao_social: "Fornecedor Medicamentos ABC Ltda", tipo: "Fornecedor", cnpj_cpf: "12.345.678/0001-90", contato: "João Silva", telefone: "(11) 9999-8888", email: "joao@abc.com.br", status: "Ativo" },
+          { id: 3, nome_razao_social: "Hospital Regional Norte", tipo: "Lead", cnpj_cpf: "", contato: "Dr. Pedro Oliveira", telefone: "(85) 5555-4444", email: "pedro@regionalrte.com.br", status: "Novo" }
         ]
       }
     }
@@ -37,8 +24,8 @@ export const modules: ModulesConfig = {
       produtos: {
         name: "Produtos",
         data: [
-          { id: 1, codigo: "MED001", nome: "Paracetamol 500mg", marca: "Genérico", categoria: "Analgésicos", estoque: 250, preco_venda: 12.50, status: "Ativo" },
-          { id: 2, codigo: "MED002", nome: "Amoxicilina 875mg", marca: "EMS", categoria: "Antibióticos", estoque: 180, preco_venda: 28.90, status: "Ativo" }
+          { id: 1, codigo: "MED001", nome: "Paracetamol 500mg", categoria: "Analgésicos", unidade: "Caixa", fabricante: "EMS", codigo_barras: "7891234567890", estoque: 250, preco_venda: 12.50, preco_custo: 8.50, ativo: true },
+          { id: 2, codigo: "MED002", nome: "Amoxicilina 875mg", categoria: "Antibióticos", unidade: "Caixa", fabricante: "Eurofarma", codigo_barras: "7891234567891", estoque: 180, preco_venda: 28.90, preco_custo: 19.50, ativo: true }
         ]
       },
       tabela_preco: {

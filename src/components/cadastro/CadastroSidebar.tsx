@@ -9,6 +9,7 @@ interface CadastroSidebarProps {
   expandedModules: string[];
   onModuleToggle: (module: string) => void;
   onModuleSelect: (module: string, subModule: string) => void;
+  onClose: () => void;
 }
 
 const CadastroSidebar = ({ 
@@ -16,7 +17,8 @@ const CadastroSidebar = ({
   activeSubModule, 
   expandedModules, 
   onModuleToggle, 
-  onModuleSelect 
+  onModuleSelect,
+  onClose
 }: CadastroSidebarProps) => {
   const handleCollapseModule = (moduleKey: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -29,9 +31,18 @@ const CadastroSidebar = ({
 
   return (
     <div className="w-80 bg-white border-r border-gray-200/80 overflow-y-auto shadow-sm">
-      <div className="p-6 border-b border-gray-100">
-        <h2 className="text-2xl font-bold text-biodina-blue mb-2">Cadastros</h2>
-        <p className="text-gray-600 text-sm">Gerencie todos os cadastros do sistema</p>
+      <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-biodina-blue mb-2">Cadastros</h2>
+          <p className="text-gray-600 text-sm">Gerencie todos os cadastros do sistema</p>
+        </div>
+        <button
+          onClick={onClose}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          title="Fechar cadastros"
+        >
+          <X className="h-5 w-5 text-gray-500" />
+        </button>
       </div>
       
       <div className="p-4 space-y-2">

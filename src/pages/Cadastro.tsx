@@ -9,6 +9,7 @@ import EmptyState from "@/components/cadastro/EmptyState";
 import ServiceModal from "@/components/cadastro/ServiceModal";
 import UserModal from "@/components/cadastro/UserModal";
 import GenericModal from "@/components/cadastro/GenericModal";
+import EntidadeModal from "@/components/cadastro/EntidadeModal";
 import { modules } from "@/data/cadastroModules";
 
 const Cadastro = () => {
@@ -20,6 +21,7 @@ const Cadastro = () => {
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showGenericModal, setShowGenericModal] = useState(false);
+  const [showEntidadeModal, setShowEntidadeModal] = useState(false);
   const [genericModalConfig, setGenericModalConfig] = useState<any>(null);
 
   // Reset state when no module is selected
@@ -49,60 +51,15 @@ const Cadastro = () => {
     setSearchTerm(''); // Reset search when changing modules
   };
 
+  const handleCloseSidebar = () => {
+    setActiveModule('');
+    setActiveSubModule('');
+    setExpandedModules([]);
+    setSearchTerm('');
+  };
+
   const getModalFields = (module: string, subModule: string) => {
     const configs: Record<string, any> = {
-      'entidades-fornecedores': {
-        title: 'Cadastro de Fornecedor',
-        fields: [
-          { key: 'razao_social', label: 'Razão Social', type: 'text', required: true },
-          { key: 'cnpj', label: 'CNPJ', type: 'text', required: true },
-          { key: 'contato', label: 'Contato', type: 'text' },
-          { key: 'telefone', label: 'Telefone', type: 'text' },
-          { key: 'email', label: 'Email', type: 'email' },
-          { key: 'status', label: 'Status', type: 'select', options: [
-            { value: 'ativo', label: 'Ativo' },
-            { value: 'inativo', label: 'Inativo' }
-          ]}
-        ]
-      },
-      'entidades-clientes': {
-        title: 'Cadastro de Cliente',
-        fields: [
-          { key: 'razao_social', label: 'Razão Social', type: 'text', required: true },
-          { key: 'cnpj', label: 'CNPJ', type: 'text', required: true },
-          { key: 'contato', label: 'Contato', type: 'text' },
-          { key: 'telefone', label: 'Telefone', type: 'text' },
-          { key: 'email', label: 'Email', type: 'email' },
-          { key: 'tipo', label: 'Tipo', type: 'select', options: [
-            { value: 'pessoa_fisica', label: 'Pessoa Física' },
-            { value: 'pessoa_juridica', label: 'Pessoa Jurídica' }
-          ]},
-          { key: 'status', label: 'Status', type: 'select', options: [
-            { value: 'ativo', label: 'Ativo' },
-            { value: 'inativo', label: 'Inativo' }
-          ]}
-        ]
-      },
-      'entidades-leads': {
-        title: 'Cadastro de Lead',
-        fields: [
-          { key: 'nome', label: 'Nome', type: 'text', required: true },
-          { key: 'contato', label: 'Contato', type: 'text' },
-          { key: 'telefone', label: 'Telefone', type: 'text' },
-          { key: 'email', label: 'Email', type: 'email' },
-          { key: 'origem', label: 'Origem', type: 'select', options: [
-            { value: 'website', label: 'Website' },
-            { value: 'indicacao', label: 'Indicação' },
-            { value: 'publicidade', label: 'Publicidade' }
-          ]},
-          { key: 'status', label: 'Status', type: 'select', options: [
-            { value: 'novo', label: 'Novo' },
-            { value: 'qualificado', label: 'Qualificado' },
-            { value: 'convertido', label: 'Convertido' }
-          ]},
-          { key: 'interesse', label: 'Interesse', type: 'textarea' }
-        ]
-      },
       'departamentos-departamentos': {
         title: 'Cadastro de Departamento',
         fields: [
@@ -191,6 +148,8 @@ const Cadastro = () => {
       setShowServiceModal(true);
     } else if (activeModule === 'usuarios' && activeSubModule === 'usuarios') {
       setShowUserModal(true);
+    } else if (activeModule === 'entidades' && activeSubModule === 'entidades') {
+      setShowEntidadeModal(true);
     } else {
       const config = getModalFields(activeModule, activeSubModule);
       if (config) {
@@ -202,7 +161,7 @@ const Cadastro = () => {
 
   const handleGetStarted = () => {
     setActiveModule('entidades');
-    setActiveSubModule('fornecedores');
+    setActiveSubModule('entidades');
     setExpandedModules(['entidades']);
   };
 
@@ -218,6 +177,7 @@ const Cadastro = () => {
           expandedModules={expandedModules}
           onModuleToggle={toggleModule}
           onModuleSelect={handleModuleSelect}
+          onClose={handleCloseSidebar}
         />
 
         <div className="flex-1 flex flex-col min-h-0">
@@ -254,6 +214,10 @@ const Cadastro = () => {
 
       {showUserModal && (
         <UserModal onClose={() => setShowUserModal(false)} />
+      )}
+
+      {showEntidadeModal && (
+        <EntidadeModal onClose={() => setShowEntidadeModal(false)} />
       )}
 
       {showGenericModal && genericModalConfig && (
