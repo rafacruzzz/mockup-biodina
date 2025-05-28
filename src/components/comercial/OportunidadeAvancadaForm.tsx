@@ -9,10 +9,12 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { X, Save, Upload, Plus, Send, TrendingUp, AlertTriangle, CheckCircle } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { X, Save, Upload, Plus, Send, TrendingUp, AlertTriangle, CheckCircle, FileText } from "lucide-react";
 import LicitacaoValidationModal from "./LicitacaoValidationModal";
 import ConcorrenteModal from "./ConcorrenteModal";
 import ChatInterno from "./ChatInterno";
+import PedidoForm from "./PedidoForm";
 
 interface OportunidadeAvancadaFormProps {
   oportunidade?: any;
@@ -48,7 +50,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     dataInicio: oportunidade?.dataInicio || '',
     dataLimite: oportunidade?.dataLimite || '',
     dataVisita: oportunidade?.dataVisita || '',
-    fluxoTrabalho: oportunidade?.fluxoTrabalho || 'em_triagem',
+    fluxoTrabalho: oportunidade?.fluxoTrabalho || '',
     status: oportunidade?.status || 'em_triagem',
     descricao: oportunidade?.descricao || '',
     chaveLicitacao: oportunidade?.chaveLicitacao || '',
@@ -69,7 +71,18 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
 
   const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
   const [showConcorrenteModal, setShowConcorrenteModal] = useState(false);
+  const [showPedidoForm, setShowPedidoForm] = useState(false);
   const [concorrentes, setConcorrentes] = useState([]);
+  const [pedidos, setPedidos] = useState([
+    {
+      id: 1,
+      codigo: 'PED-001',
+      dataGeracao: '28/05/2025',
+      cliente: formData.nome || 'Cliente Exemplo',
+      situacao: 'em_aberto',
+      valor: 25000
+    }
+  ]);
   const [clienteValidation, setClienteValidation] = useState('');
 
   const handleChaveLicitacaoChange = (value: string) => {
@@ -97,11 +110,72 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     setConcorrentes([...concorrentes, { ...concorrente, id: Date.now() }]);
   };
 
+  const handleSavePedido = (pedido: any) => {
+    const novoPedido = {
+      id: Date.now(),
+      codigo: `PED-${String(pedidos.length + 1).padStart(3, '0')}`,
+      dataGeracao: new Date().toLocaleDateString('pt-BR'),
+      cliente: pedido.cliente || formData.nome,
+      situacao: pedido.situacao || 'em_aberto',
+      valor: pedido.produtos?.reduce((total: number, produto: any) => total + (produto.valorUnitario * produto.quantidade), 0) || 0
+    };
+    setPedidos([...pedidos, novoPedido]);
+    setShowPedidoForm(false);
+  };
+
   const getTermometroColor = (value: number) => {
     if (value < 30) return 'bg-red-500';
     if (value < 60) return 'bg-yellow-500';
     if (value < 80) return 'bg-orange-500';
     return 'bg-green-500';
+  };
+
+  const getSituacaoColor = (situacao: string) => {
+    switch (situacao) {
+      case 'em_aberto': return 'bg-blue-500';
+      case 'faturado': return 'bg-green-500';
+      case 'aguardando_importacao': return 'bg-yellow-500';
+      case 'cancelado': return 'bg-red-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const getSituacaoLabel = (situacao: string) => {
+    switch (situacao) {
+      case 'em_aberto': return 'Em Aberto';
+      case 'faturado': return 'Faturado';
+      case 'aguardando_importacao': return 'Aguardando Importação';
+      case 'cancelado': return 'Cancelado';
+      default: return situacao;
+    }
+  };
+
+  const isPedidosTabEnabled = formData.resultadoOportunidade === 'ganho' || formData.resultadoOportunidade === 'em_andamento';
+
+  // Auto-generate order when products/services are selected and opportunity result is won/in progress
+  const handleProdutosServicosChange = (value: string[]) => {
+    const prevProdutos = formData.produtosServicos;
+    setFormData({...formData, produtosServicos: value});
+    
+    // If products/services were added and opportunity is won/in progress, auto-generate order
+    if (value.length > prevProdutos.length && isPedidosTabEnabled) {
+      const novoPedido = {
+        id: Date.now(),
+        codigo: `PED-${String(pedidos.length + 1).padStart(3, '0')}`,
+        dataGeracao: new Date().toLocaleDateString('pt-BR'),
+        cliente: formData.nome || 'Cliente',
+        situacao: 'em_aberto',
+        valor: formData.valorNegocio || 0
+      };
+      setPedidos([...pedidos, novoPedido]);
+    }
+  };
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
   };
 
   return (
@@ -137,15 +211,22 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
               </Select>
             </div>
 
-            <Tabs defaultValue="triagem" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="triagem">Dados Gerais e Triagem</TabsTrigger>
+            <Tabs defaultValue="dados_gerais" className="w-full">
+              <TabsList className="grid w-full grid-cols-5">
+                <TabsTrigger value="dados_gerais">Dados Gerais</TabsTrigger>
                 <TabsTrigger value="analise">Análise Técnica</TabsTrigger>
                 <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
                 <TabsTrigger value="documentos">Documentos</TabsTrigger>
+                <TabsTrigger 
+                  value="pedidos" 
+                  disabled={!isPedidosTabEnabled}
+                  className={!isPedidosTabEnabled ? 'opacity-50 cursor-not-allowed' : ''}
+                >
+                  Pedidos
+                </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="triagem" className="space-y-8 mt-6">
+              <TabsContent value="dados_gerais" className="space-y-8 mt-6">
                 {/* Chave da Licitação */}
                 <div className="p-4 bg-blue-50 rounded-lg">
                   <div>
@@ -350,6 +431,24 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                     </div>
 
                     <div>
+                      <Label htmlFor="produtosServicos">Produtos e Serviços</Label>
+                      <Select 
+                        value={formData.produtosServicos.join(',')} 
+                        onValueChange={(value) => handleProdutosServicosChange(value ? value.split(',') : [])}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione produtos/serviços" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="produto1">Produto 1</SelectItem>
+                          <SelectItem value="produto2">Produto 2</SelectItem>
+                          <SelectItem value="servico1">Serviço 1</SelectItem>
+                          <SelectItem value="servico2">Serviço 2</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
                       <Label htmlFor="procurandoPor">Procurando por (Contatos vinculados)</Label>
                       <Input
                         id="procurandoPor"
@@ -367,6 +466,20 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         onChange={(e) => setFormData({...formData, tags: e.target.value})}
                         placeholder="Tag1, Tag2, Tag3"
                       />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="colaboradoresResponsaveis">Colaboradores Responsáveis</Label>
+                      <Select value={formData.colaboradoresResponsaveis.join(',')} onValueChange={(value) => setFormData({...formData, colaboradoresResponsaveis: value ? value.split(',') : []})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione os responsáveis" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="joao">João Silva</SelectItem>
+                          <SelectItem value="maria">Maria Santos</SelectItem>
+                          <SelectItem value="carlos">Carlos Oliveira</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
@@ -418,18 +531,12 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
 
                     <div>
                       <Label htmlFor="fluxoTrabalho">Fluxo de Trabalho</Label>
-                      <Select value={formData.fluxoTrabalho} onValueChange={(value) => setFormData({...formData, fluxoTrabalho: value})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="em_triagem">Em Triagem</SelectItem>
-                          <SelectItem value="qualificacao">Qualificação</SelectItem>
-                          <SelectItem value="proposta">Proposta</SelectItem>
-                          <SelectItem value="negociacao">Negociação</SelectItem>
-                          <SelectItem value="fechamento">Fechamento</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Input
+                        id="fluxoTrabalho"
+                        value={formData.fluxoTrabalho}
+                        onChange={(e) => setFormData({...formData, fluxoTrabalho: e.target.value})}
+                        placeholder="Descreva o fluxo de trabalho..."
+                      />
                     </div>
 
                     <div>
@@ -523,68 +630,19 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                   </div>
                 </div>
 
-                {/* Campos específicos para Importação Direta */}
-                {formData.tipoOportunidade === 'importacao_direta' && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Dados de Importação</h3>
-                    <div className="grid grid-cols-2 gap-6">
-                      <div>
-                        <Label htmlFor="fornecedorInternacional">Fornecedor Internacional</Label>
-                        <Input
-                          id="fornecedorInternacional"
-                          value={formData.fornecedorInternacional}
-                          onChange={(e) => setFormData({...formData, fornecedorInternacional: e.target.value})}
-                          placeholder="Nome do fornecedor internacional"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="moeda">Moeda</Label>
-                        <Select value={formData.moeda} onValueChange={(value) => setFormData({...formData, moeda: value})}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="USD">USD - Dólar Americano</SelectItem>
-                            <SelectItem value="EUR">EUR - Euro</SelectItem>
-                            <SelectItem value="GBP">GBP - Libra Esterlina</SelectItem>
-                            <SelectItem value="JPY">JPY - Iene Japonês</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="numeroInvoice">Número do Invoice</Label>
-                        <Input
-                          id="numeroInvoice"
-                          value={formData.numeroInvoice}
-                          onChange={(e) => setFormData({...formData, numeroInvoice: e.target.value})}
-                          placeholder="Número do invoice"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="numeroDI">Número da DI</Label>
-                        <Input
-                          id="numeroDI"
-                          value={formData.numeroDI}
-                          onChange={(e) => setFormData({...formData, numeroDI: e.target.value})}
-                          placeholder="Número da Declaração de Importação"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="dataChegadaEstimada">Data de Chegada Estimada</Label>
-                        <Input
-                          id="dataChegadaEstimada"
-                          type="date"
-                          value={formData.dataChegadaEstimada}
-                          onChange={(e) => setFormData({...formData, dataChegadaEstimada: e.target.value})}
-                        />
-                      </div>
-                    </div>
+                {/* Upload de Documentos */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Upload de Documentos</h3>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500">Arraste arquivos aqui ou clique para fazer upload</p>
+                    <p className="text-sm text-gray-400 mt-2">Edital, Proposta, Ata, Contrato, Termo</p>
+                    <Button variant="outline" className="mt-4">
+                      <Upload className="h-4 w-4 mr-2" />
+                      Selecionar Arquivos
+                    </Button>
                   </div>
-                )}
+                </div>
 
                 {/* Termômetro e Resultado */}
                 <div className="space-y-4">
@@ -657,19 +715,68 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                   )}
                 </div>
 
-                {/* Upload de Documentos */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Upload de Documentos</h3>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">Arraste arquivos aqui ou clique para fazer upload</p>
-                    <p className="text-sm text-gray-400 mt-2">Edital, Proposta, Ata, Contrato, Termo</p>
-                    <Button variant="outline" className="mt-4">
-                      <Upload className="h-4 w-4 mr-2" />
-                      Selecionar Arquivos
-                    </Button>
+                {/* Campos específicos para Importação Direta */}
+                {formData.tipoOportunidade === 'importacao_direta' && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Dados de Importação</h3>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <Label htmlFor="fornecedorInternacional">Fornecedor Internacional</Label>
+                        <Input
+                          id="fornecedorInternacional"
+                          value={formData.fornecedorInternacional}
+                          onChange={(e) => setFormData({...formData, fornecedorInternacional: e.target.value})}
+                          placeholder="Nome do fornecedor internacional"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="moeda">Moeda</Label>
+                        <Select value={formData.moeda} onValueChange={(value) => setFormData({...formData, moeda: value})}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="USD">USD - Dólar Americano</SelectItem>
+                            <SelectItem value="EUR">EUR - Euro</SelectItem>
+                            <SelectItem value="GBP">GBP - Libra Esterlina</SelectItem>
+                            <SelectItem value="JPY">JPY - Iene Japonês</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="numeroInvoice">Número do Invoice</Label>
+                        <Input
+                          id="numeroInvoice"
+                          value={formData.numeroInvoice}
+                          onChange={(e) => setFormData({...formData, numeroInvoice: e.target.value})}
+                          placeholder="Número do invoice"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="numeroDI">Número da DI</Label>
+                        <Input
+                          id="numeroDI"
+                          value={formData.numeroDI}
+                          onChange={(e) => setFormData({...formData, numeroDI: e.target.value})}
+                          placeholder="Número da Declaração de Importação"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="dataChegadaEstimada">Data de Chegada Estimada</Label>
+                        <Input
+                          id="dataChegadaEstimada"
+                          type="date"
+                          value={formData.dataChegadaEstimada}
+                          onChange={(e) => setFormData({...formData, dataChegadaEstimada: e.target.value})}
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
               </TabsContent>
 
               <TabsContent value="analise" className="space-y-6 mt-6">
@@ -733,6 +840,65 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                   </div>
                 </div>
               </TabsContent>
+
+              <TabsContent value="pedidos" className="mt-6">
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">Pedidos da Oportunidade</h3>
+                    <Button 
+                      onClick={() => setShowPedidoForm(true)}
+                      className="bg-biodina-gold hover:bg-biodina-gold/90"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar novos pedidos
+                    </Button>
+                  </div>
+
+                  <div className="border rounded-lg">
+                    <div className="p-4 border-b">
+                      <h4 className="font-medium">Tabela Resumo de Pedidos</h4>
+                    </div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Código do pedido</TableHead>
+                          <TableHead>Dt. Gerado</TableHead>
+                          <TableHead>Cliente</TableHead>
+                          <TableHead>Situação</TableHead>
+                          <TableHead>Valor</TableHead>
+                          <TableHead>Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {pedidos.map((pedido) => (
+                          <TableRow key={pedido.id}>
+                            <TableCell className="font-medium">{pedido.codigo}</TableCell>
+                            <TableCell>{pedido.dataGeracao}</TableCell>
+                            <TableCell>{pedido.cliente}</TableCell>
+                            <TableCell>
+                              <Badge className={`${getSituacaoColor(pedido.situacao)} text-white`}>
+                                {getSituacaoLabel(pedido.situacao)}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>{formatCurrency(pedido.valor)}</TableCell>
+                            <TableCell>
+                              <Button size="sm" variant="outline">
+                                <FileText className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {!isPedidosTabEnabled && (
+                    <div className="text-center text-gray-500 py-8">
+                      <p>Para acessar os pedidos, defina o resultado da oportunidade como "Ganho" ou "Em Andamento"</p>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
             </Tabs>
 
             <div className="flex justify-end gap-2 pt-6 border-t">
@@ -760,6 +926,14 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
           onClose={() => setShowConcorrenteModal(false)}
           onSave={handleAddConcorrente}
           valorReferencia={formData.valorNegocio}
+        />
+      )}
+
+      {showPedidoForm && (
+        <PedidoForm
+          onClose={() => setShowPedidoForm(false)}
+          onSave={handleSavePedido}
+          oportunidade={formData}
         />
       )}
     </div>
