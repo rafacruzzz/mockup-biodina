@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { X, Save, Plus, Trash2, Upload, Download, MessageSquare, Send, User, Eye, FileText } from "lucide-react";
+import { X, Save, Plus, Trash2, Upload, Download, MessageSquare, Send, User, Eye, File } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import LicitacaoValidationModal from "./LicitacaoValidationModal";
 import ConcorrenteModal from "./ConcorrenteModal";
@@ -689,7 +689,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                       </div>
                       
                       <div className="flex flex-col items-center p-4 border rounded-lg">
-                        <FileText className="h-8 w-8 text-blue-500 mb-2" />
+                        <File className="h-8 w-8 text-blue-500 mb-2" />
                         <span className="text-sm font-medium">Edital.pdf</span>
                         <span className="text-xs text-gray-500">27/05/2025</span>
                         <Button size="sm" variant="outline" className="mt-2">
@@ -698,7 +698,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                       </div>
                       
                       <div className="flex flex-col items-center p-4 border rounded-lg">
-                        <FileText className="h-8 w-8 text-green-500 mb-2" />
+                        <File className="h-8 w-8 text-green-500 mb-2" />
                         <span className="text-sm font-medium">Proposta.xlsx</span>
                         <span className="text-xs text-gray-500">26/05/2025</span>
                         <Button size="sm" variant="outline" className="mt-2">
