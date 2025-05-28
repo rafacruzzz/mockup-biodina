@@ -9,9 +9,10 @@ import SidebarLayout from "@/components/SidebarLayout";
 import OportunidadeForm from "@/components/comercial/OportunidadeForm";
 import OportunidadeAvancadaForm from "@/components/comercial/OportunidadeAvancadaForm";
 import PedidoModal from "@/components/comercial/PedidoModal";
+import PedidoForm from "@/components/comercial/PedidoForm";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
-  DollarSign, Calendar, Phone, MapPin, Briefcase, Eye
+  DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -25,18 +26,10 @@ const Comercial = () => {
   const [showOportunidadeAvancadaForm, setShowOportunidadeAvancadaForm] = useState(false);
   const [editingOportunidade, setEditingOportunidade] = useState<any>();
   const [showPedidoModal, setShowPedidoModal] = useState(false);
+  const [showPedidoForm, setShowPedidoForm] = useState(false);
   const [selectedOportunidade, setSelectedOportunidade] = useState<any>();
 
-  // Dados do funil reformulado baseado na imagem
-  const funnelData = [
-    { fase: 'Temperatura < 60', cor: '#ff8c00', valor: 120, percentual: 100 },
-    { fase: 'Em Processo (60-80)', cor: '#ff6600', valor: 85, percentual: 70 },
-    { fase: 'Boas Chances (80-90)', cor: '#ff4400', valor: 45, percentual: 37 },
-    { fase: 'Comprometido (90)', cor: '#cc0000', valor: 28, percentual: 23 },
-    { fase: 'Conquistado (100)', cor: '#990000', valor: 15, percentual: 12 }
-  ];
-
-  // Dados das oportunidades
+  // Dados das oportunidades atualizados com novos campos
   const oportunidades = [
     { 
       id: 1,
@@ -47,11 +40,16 @@ const Comercial = () => {
       origem: 'Vendas RJ',
       familiaComercial: 'Radiometer ABL',
       situacao: 'ganha',
+      resultadoOportunidade: 'ganho',
       tipoAplicacao: 'venda',
       tipoOportunidade: 'pontual',
       valor: 782530,
       dataAbertura: '20/03/2024',
       dataContato: '20/03/2024',
+      termometro: 100,
+      fonteLead: 'Site',
+      segmento: 'Hospitalar',
+      status: 'Ganha',
       descricao: 'DOS 3 EQUIPAMENTOS ADQUIRIDOS POR (ID) O DE Nº SERIE 754R2826N025 IRA SER INSTALADO NO SARAH-DF.'
     },
     { 
@@ -63,11 +61,16 @@ const Comercial = () => {
       origem: 'Vendas RN',
       familiaComercial: 'Nova Biomedical',
       situacao: 'em_analise',
+      resultadoOportunidade: 'em_andamento',
       tipoAplicacao: 'locacao',
       tipoOportunidade: 'periodica',
       valor: 450000,
       dataAbertura: '15/03/2024',
       dataContato: '16/03/2024',
+      termometro: 85,
+      fonteLead: 'Indicação',
+      segmento: 'Universitário',
+      status: 'Em Análise',
       descricao: 'Equipamentos para laboratório de análises clínicas'
     },
     { 
@@ -79,11 +82,16 @@ const Comercial = () => {
       origem: 'Vendas CE',
       familiaComercial: 'WEBMED',
       situacao: 'perdida',
+      resultadoOportunidade: 'perda',
       tipoAplicacao: 'servico',
       tipoOportunidade: 'pontual',
       valor: 280000,
       dataAbertura: '10/03/2024',
       dataContato: '12/03/2024',
+      termometro: 45,
+      fonteLead: 'Cold Call',
+      segmento: 'Público',
+      status: 'Perdida',
       descricao: 'Sistema de gestão hospitalar integrado'
     },
     { 
@@ -95,14 +103,85 @@ const Comercial = () => {
       origem: 'Vendas SP',
       familiaComercial: 'Stat Profile',
       situacao: 'cancelada',
+      resultadoOportunidade: 'em_andamento',
       tipoAplicacao: 'venda',
       tipoOportunidade: 'pontual',
       valor: 1250000,
       dataAbertura: '05/03/2024',
       dataContato: '08/03/2024',
+      termometro: 75,
+      fonteLead: 'Licitação',
+      segmento: 'Municipal',
+      status: 'Cancelada',
       descricao: 'Gasômetros para rede municipal de saúde'
+    },
+    {
+      id: 5,
+      codigo: '10682',
+      cliente: 'Hospital Albert Einstein',
+      contato: 'compras@einstein.br',
+      responsavel: 'Ana Costa',
+      origem: 'Vendas SP',
+      familiaComercial: 'Radiometer ABL',
+      situacao: 'em_andamento',
+      resultadoOportunidade: 'em_andamento',
+      tipoAplicacao: 'venda',
+      tipoOportunidade: 'pontual',
+      valor: 890000,
+      dataAbertura: '25/03/2024',
+      dataContato: '26/03/2024',
+      termometro: 95,
+      fonteLead: 'Referência',
+      segmento: 'Privado',
+      status: 'Em Andamento',
+      descricao: 'Modernização do laboratório de análises'
     }
   ];
+
+  // Calcular dados do funil baseado no termômetro e resultado da oportunidade
+  const calculateFunnelData = () => {
+    const activeOportunidades = oportunidades.filter(op => op.resultadoOportunidade !== 'perda');
+    
+    const funnelStages = [
+      {
+        fase: 'Temperatura < 60',
+        cor: '#ff8c00',
+        count: activeOportunidades.filter(op => op.termometro < 60).length,
+        valor: activeOportunidades.filter(op => op.termometro < 60).reduce((sum, op) => sum + op.valor, 0)
+      },
+      {
+        fase: 'Em Processo (60-80)',
+        cor: '#ff6600',
+        count: activeOportunidades.filter(op => op.termometro >= 60 && op.termometro < 80).length,
+        valor: activeOportunidades.filter(op => op.termometro >= 60 && op.termometro < 80).reduce((sum, op) => sum + op.valor, 0)
+      },
+      {
+        fase: 'Boas Chances (80-90)',
+        cor: '#ff4400',
+        count: activeOportunidades.filter(op => op.termometro >= 80 && op.termometro < 90).length,
+        valor: activeOportunidades.filter(op => op.termometro >= 80 && op.termometro < 90).reduce((sum, op) => sum + op.valor, 0)
+      },
+      {
+        fase: 'Comprometido (90+)',
+        cor: '#cc0000',
+        count: activeOportunidades.filter(op => op.termometro >= 90 && op.resultadoOportunidade !== 'ganho').length,
+        valor: activeOportunidades.filter(op => op.termometro >= 90 && op.resultadoOportunidade !== 'ganho').reduce((sum, op) => sum + op.valor, 0)
+      },
+      {
+        fase: 'Conquistado (100)',
+        cor: '#990000',
+        count: activeOportunidades.filter(op => op.resultadoOportunidade === 'ganho').length,
+        valor: activeOportunidades.filter(op => op.resultadoOportunidade === 'ganho').reduce((sum, op) => sum + op.valor, 0)
+      }
+    ];
+
+    return funnelStages.map((stage, index) => ({
+      ...stage,
+      percentual: Math.max((stage.count / Math.max(funnelStages[0].count, 1)) * 100, 20)
+    }));
+  };
+
+  const funnelData = calculateFunnelData();
 
   // Dados das metas comerciais
   const metasData = [
@@ -123,6 +202,7 @@ const Comercial = () => {
     switch (situacao) {
       case 'ganha': return 'bg-green-500';
       case 'em_analise': return 'bg-yellow-500';
+      case 'em_andamento': return 'bg-blue-500';
       case 'perdida': return 'bg-red-500';
       case 'cancelada': return 'bg-gray-500';
       default: return 'bg-blue-500';
@@ -133,10 +213,18 @@ const Comercial = () => {
     switch (situacao) {
       case 'ganha': return 'Ganha';
       case 'em_analise': return 'Em Análise';
+      case 'em_andamento': return 'Em Andamento';
       case 'perdida': return 'Perdida';
       case 'cancelada': return 'Cancelada';
       default: return situacao;
     }
+  };
+
+  const getTermometroColor = (termometro: number) => {
+    if (termometro < 60) return 'bg-red-500';
+    if (termometro < 80) return 'bg-yellow-500';
+    if (termometro < 90) return 'bg-orange-500';
+    return 'bg-green-500';
   };
 
   const handleEditOportunidade = (oportunidade: any) => {
@@ -154,6 +242,15 @@ const Comercial = () => {
   const handleGerarPedido = (oportunidade: any) => {
     setSelectedOportunidade(oportunidade);
     setShowPedidoModal(true);
+  };
+
+  const handleAdicionarPedido = () => {
+    setShowPedidoForm(true);
+  };
+
+  const handleSavePedido = (pedidoData: any) => {
+    console.log('Salvando pedido:', pedidoData);
+    setShowPedidoForm(false);
   };
 
   const filteredOportunidades = oportunidades.filter(oportunidade =>
@@ -174,30 +271,27 @@ const Comercial = () => {
         <CardContent>
           <div className="space-y-4">
             <div className="text-center mb-6">
-              <h3 className="text-lg font-semibold mb-2">Temperatura</h3>
-              <div className="relative">
-                {/* Funil visual baseado na imagem */}
-                <div className="space-y-1">
-                  {funnelData.map((item, index) => (
-                    <div key={index} className="relative">
-                      <div 
-                        className="mx-auto flex items-center justify-center text-white font-bold py-3 text-sm"
-                        style={{
-                          backgroundColor: item.cor,
-                          width: `${Math.max(item.percentual, 20)}%`,
-                          clipPath: index === funnelData.length - 1 
-                            ? 'polygon(0 0, 100% 0, 50% 100%)' 
-                            : 'polygon(0 0, 100% 0, 95% 100%, 5% 100%)'
-                        }}
-                      >
-                        {item.fase}
-                      </div>
-                      <div className="text-center mt-1">
-                        <span className="text-sm text-gray-600">{item.valor} oportunidades</span>
-                      </div>
+              <h3 className="text-lg font-semibold mb-4">Pipeline de Vendas</h3>
+              <div className="space-y-3">
+                {funnelData.map((item, index) => (
+                  <div key={index} className="relative">
+                    <div 
+                      className="mx-auto flex items-center justify-between px-4 py-3 text-white font-medium text-sm rounded-lg"
+                      style={{
+                        backgroundColor: item.cor,
+                        width: `${Math.max(item.percentual, 30)}%`,
+                      }}
+                    >
+                      <span>{item.fase}</span>
+                      <span className="font-bold">{item.count}</span>
                     </div>
-                  ))}
-                </div>
+                    <div className="text-center mt-1">
+                      <span className="text-xs text-gray-600">
+                        {item.count} oportunidades - {formatCurrency(item.valor)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -212,26 +306,30 @@ const Comercial = () => {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center p-4 bg-gray-50 rounded">
-                <div className="text-2xl font-bold text-blue-600">782,53</div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {formatCurrency(funnelData[4].valor / 1000)}K
+                </div>
                 <div className="text-sm text-gray-600">Conquistado</div>
               </div>
               <div className="text-center p-4 bg-gray-50 rounded">
-                <div className="text-2xl font-bold text-green-600">x3</div>
-                <div className="text-sm text-gray-600">Meta</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {funnelData.reduce((sum, stage) => sum + stage.count, 0)}
+                </div>
+                <div className="text-sm text-gray-600">Total Oportunidades</div>
               </div>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm">Pipeline Necessário</span>
-                <span className="text-sm font-medium">2.347,59</span>
+                <span className="text-sm">Pipeline Total</span>
+                <span className="text-sm font-medium">
+                  {formatCurrency(funnelData.reduce((sum, stage) => sum + stage.valor, 0))}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-sm">Pipeline Existente</span>
-                <span className="text-sm font-medium">1.962,53</span>
-              </div>
-              <div className="flex justify-between text-red-600">
-                <span className="text-sm">A Realizar</span>
-                <span className="text-sm font-medium">385,06</span>
+                <span className="text-sm">Taxa de Conversão</span>
+                <span className="text-sm font-medium">
+                  {((funnelData[4].count / Math.max(funnelData.reduce((sum, stage) => sum + stage.count, 0), 1)) * 100).toFixed(1)}%
+                </span>
               </div>
             </div>
           </div>
@@ -249,6 +347,7 @@ const Comercial = () => {
             Oportunidades Comerciais
           </CardTitle>
           <div className="flex gap-2">
+            {/* Comentado: Nova Oportunidade Simples
             <Button 
               variant="outline"
               className="border-biodina-gold text-biodina-gold hover:bg-biodina-gold/10"
@@ -260,6 +359,7 @@ const Comercial = () => {
               <Plus className="h-4 w-4 mr-2" />
               Nova Oportunidade Simples
             </Button>
+            */}
             <Button 
               className="bg-biodina-gold hover:bg-biodina-gold/90"
               onClick={() => {
@@ -292,8 +392,10 @@ const Comercial = () => {
                 <TableHead>Código</TableHead>
                 <TableHead>Cliente</TableHead>
                 <TableHead>Responsável</TableHead>
-                <TableHead>Situação</TableHead>
-                <TableHead>Tipo</TableHead>
+                <TableHead>Fonte</TableHead>
+                <TableHead>Segmento</TableHead>
+                <TableHead>Termômetro</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Valor</TableHead>
                 <TableHead>Data Abertura</TableHead>
                 <TableHead>Ações</TableHead>
@@ -305,12 +407,25 @@ const Comercial = () => {
                   <TableCell className="font-medium">{oportunidade.codigo}</TableCell>
                   <TableCell>{oportunidade.cliente}</TableCell>
                   <TableCell>{oportunidade.responsavel}</TableCell>
+                  <TableCell>{oportunidade.fonteLead}</TableCell>
+                  <TableCell>{oportunidade.segmento}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <Thermometer className="h-4 w-4" />
+                        <span className="text-sm font-medium">{oportunidade.termometro}°</span>
+                      </div>
+                      <div 
+                        className={`w-3 h-3 rounded-full ${getTermometroColor(oportunidade.termometro)}`}
+                        title={`Termômetro: ${oportunidade.termometro}°`}
+                      />
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <Badge className={`${getSituacaoColor(oportunidade.situacao)} text-white`}>
                       {getSituacaoLabel(oportunidade.situacao)}
                     </Badge>
                   </TableCell>
-                  <TableCell className="capitalize">{oportunidade.tipoAplicacao}</TableCell>
                   <TableCell>{formatCurrency(oportunidade.valor)}</TableCell>
                   <TableCell>{oportunidade.dataAbertura}</TableCell>
                   <TableCell>
@@ -498,6 +613,13 @@ const Comercial = () => {
             setShowPedidoModal(false);
             setSelectedOportunidade(undefined);
           }}
+        />
+      )}
+
+      {showPedidoForm && (
+        <PedidoForm
+          onClose={() => setShowPedidoForm(false)}
+          onSave={handleSavePedido}
         />
       )}
     </SidebarLayout>

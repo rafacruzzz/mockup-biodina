@@ -1,16 +1,16 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { X, Save, Upload, Plus, Send, TrendingUp, AlertTriangle, CheckCircle, FileText } from "lucide-react";
+import { X, Save, Plus, Trash2, Upload, Download, MessageSquare, Send, User, Eye } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 import LicitacaoValidationModal from "./LicitacaoValidationModal";
 import ConcorrenteModal from "./ConcorrenteModal";
 import ChatInterno from "./ChatInterno";
@@ -23,9 +23,28 @@ interface OportunidadeAvancadaFormProps {
 }
 
 const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: OportunidadeAvancadaFormProps) => {
+  const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
+  const [showConcorrenteModal, setShowConcorrenteModal] = useState(false);
+  const [showPedidoForm, setShowPedidoForm] = useState(false);
+  const [concorrentes, setConcorrentes] = useState([
+    { id: 1, nome: 'MedTech SA', produto: 'Kit diagnóstico rápido', preco: 4200 },
+    { id: 2, nome: 'Global Diagnóstico', produto: 'Serviço de instalação', preco: 1200 }
+  ]);
+
+  const [pedidos, setPedidos] = useState([
+    { 
+      id: 1, 
+      codigo: 'PED-001', 
+      cliente: 'Associação das Pioneiras Sociais',
+      dataGeracao: '2024-03-20',
+      situacao: 'Em Aberto',
+      valor: 782530
+    }
+  ]);
+
   const [formData, setFormData] = useState({
     tipoOportunidade: oportunidade?.tipoOportunidade || '',
-    // Dados do Cliente
+    chaveLicitacao: oportunidade?.chaveLicitacao || '',
     cpfCnpj: oportunidade?.cpfCnpj || '',
     nome: oportunidade?.nome || '',
     nomeFantasia: oportunidade?.nomeFantasia || '',
@@ -36,7 +55,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     telefone: oportunidade?.telefone || '',
     website: oportunidade?.website || '',
     ativo: oportunidade?.ativo || true,
-    // Dados do Lead/Negócio
     fonteLead: oportunidade?.fonteLead || '',
     segmentoLead: oportunidade?.segmentoLead || '',
     metodoContato: oportunidade?.metodoContato || '',
@@ -46,22 +64,18 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     procurandoPor: oportunidade?.procurandoPor || '',
     tags: oportunidade?.tags || '',
     caracteristicas: oportunidade?.caracteristicas || '',
-    // Dados do Processo
     dataInicio: oportunidade?.dataInicio || '',
     dataLimite: oportunidade?.dataLimite || '',
     dataVisita: oportunidade?.dataVisita || '',
     fluxoTrabalho: oportunidade?.fluxoTrabalho || '',
     status: oportunidade?.status || 'em_triagem',
     descricao: oportunidade?.descricao || '',
-    chaveLicitacao: oportunidade?.chaveLicitacao || '',
-    // Dados Técnicos
     analiseTecnica: oportunidade?.analiseTecnica || '',
     termometro: oportunidade?.termometro || 50,
-    resultadoOportunidade: oportunidade?.resultadoOportunidade || '',
+    resultadoOportunidade: oportunidade?.resultadoOportunidade || 'em_andamento',
     motivoGanho: oportunidade?.motivoGanho || '',
     motivoPerda: oportunidade?.motivoPerda || '',
     propostaNegociacao: oportunidade?.propostaNegociacao || false,
-    // Campos para Importação Direta
     fornecedorInternacional: oportunidade?.fornecedorInternacional || '',
     moeda: oportunidade?.moeda || 'USD',
     numeroInvoice: oportunidade?.numeroInvoice || '',
@@ -69,106 +83,28 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     dataChegadaEstimada: oportunidade?.dataChegadaEstimada || ''
   });
 
-  const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
-  const [showConcorrenteModal, setShowConcorrenteModal] = useState(false);
-  const [showPedidoForm, setShowPedidoForm] = useState(false);
-  const [concorrentes, setConcorrentes] = useState([]);
-  const [pedidos, setPedidos] = useState([
-    {
-      id: 1,
-      codigo: 'PED-001',
-      dataGeracao: '28/05/2025',
-      cliente: formData.nome || 'Cliente Exemplo',
-      situacao: 'em_aberto',
-      valor: 25000
-    }
-  ]);
-  const [clienteValidation, setClienteValidation] = useState('');
-
   const handleChaveLicitacaoChange = (value: string) => {
-    setFormData({...formData, chaveLicitacao: value});
+    setFormData({ ...formData, chaveLicitacao: value });
     if (value === '123') {
       setShowLicitacaoModal(true);
     }
-  };
-
-  const handleClienteChange = (value: string) => {
-    setFormData({...formData, nome: value});
-    if (value.toLowerCase().includes('sabesp')) {
-      setClienteValidation('Cliente com pendência financeira');
-    } else {
-      setClienteValidation('');
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
   };
 
   const handleAddConcorrente = (concorrente: any) => {
     setConcorrentes([...concorrentes, { ...concorrente, id: Date.now() }]);
   };
 
-  const handleSavePedido = (pedido: any) => {
+  const handleAddPedido = (pedidoData: any) => {
     const novoPedido = {
       id: Date.now(),
       codigo: `PED-${String(pedidos.length + 1).padStart(3, '0')}`,
-      dataGeracao: new Date().toLocaleDateString('pt-BR'),
-      cliente: pedido.cliente || formData.nome,
-      situacao: pedido.situacao || 'em_aberto',
-      valor: pedido.produtos?.reduce((total: number, produto: any) => total + (produto.valorUnitario * produto.quantidade), 0) || 0
+      cliente: formData.nome,
+      dataGeracao: new Date().toISOString().split('T')[0],
+      situacao: 'Em Aberto',
+      valor: pedidoData.produtos?.reduce((sum: number, prod: any) => sum + (prod.valorTotal || 0), 0) || 0
     };
     setPedidos([...pedidos, novoPedido]);
     setShowPedidoForm(false);
-  };
-
-  const getTermometroColor = (value: number) => {
-    if (value < 30) return 'bg-red-500';
-    if (value < 60) return 'bg-yellow-500';
-    if (value < 80) return 'bg-orange-500';
-    return 'bg-green-500';
-  };
-
-  const getSituacaoColor = (situacao: string) => {
-    switch (situacao) {
-      case 'em_aberto': return 'bg-blue-500';
-      case 'faturado': return 'bg-green-500';
-      case 'aguardando_importacao': return 'bg-yellow-500';
-      case 'cancelado': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getSituacaoLabel = (situacao: string) => {
-    switch (situacao) {
-      case 'em_aberto': return 'Em Aberto';
-      case 'faturado': return 'Faturado';
-      case 'aguardando_importacao': return 'Aguardando Importação';
-      case 'cancelado': return 'Cancelado';
-      default: return situacao;
-    }
-  };
-
-  const isPedidosTabEnabled = formData.resultadoOportunidade === 'ganho' || formData.resultadoOportunidade === 'em_andamento';
-
-  // Auto-generate order when products/services are selected and opportunity result is won/in progress
-  const handleProdutosServicosChange = (value: string[]) => {
-    const prevProdutos = formData.produtosServicos;
-    setFormData({...formData, produtosServicos: value});
-    
-    // If products/services were added and opportunity is won/in progress, auto-generate order
-    if (value.length > prevProdutos.length && isPedidosTabEnabled) {
-      const novoPedido = {
-        id: Date.now(),
-        codigo: `PED-${String(pedidos.length + 1).padStart(3, '0')}`,
-        dataGeracao: new Date().toLocaleDateString('pt-BR'),
-        cliente: formData.nome || 'Cliente',
-        situacao: 'em_aberto',
-        valor: formData.valorNegocio || 0
-      };
-      setPedidos([...pedidos, novoPedido]);
-    }
   };
 
   const formatCurrency = (value: number) => {
@@ -178,115 +114,117 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     }).format(value);
   };
 
+  const getTermometroColor = (valor: number) => {
+    if (valor < 60) return '#ff8c00';
+    if (valor < 80) return '#ff6600';
+    if (valor < 90) return '#ff4400';
+    if (valor >= 90) return '#cc0000';
+    return '#990000';
+  };
+
+  const getTermometroStage = (valor: number) => {
+    if (valor < 60) return 'Temperatura < 60';
+    if (valor < 80) return 'Em Processo (60-80)';
+    if (valor < 90) return 'Boas Chances (80-90)';
+    if (valor >= 90) return 'Comprometido (90+)';
+    return 'Conquistado (100)';
+  };
+
+  const canShowPedidosTab = () => {
+    return formData.resultadoOportunidade === 'ganho' || formData.resultadoOportunidade === 'em_andamento';
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-7xl max-h-[95vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between border-b">
-          <div className="flex items-center gap-3">
-            <CardTitle className="text-2xl">
-              {oportunidade ? 'Editar Oportunidade Comercial' : 'Nova Oportunidade Comercial'}
-            </CardTitle>
-            <Badge variant="outline" className="text-biodina-blue border-biodina-blue">
-              {formData.status.replace('_', ' ').toUpperCase()}
-            </Badge>
-          </div>
+          <CardTitle className="text-2xl">
+            {oportunidade ? 'Editar Oportunidade' : 'Nova Oportunidade Comercial'}
+          </CardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-5 w-5" />
           </Button>
         </CardHeader>
 
         <CardContent className="p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Tipo de Oportunidade - Campo Inicial Obrigatório */}
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <Label htmlFor="tipoOportunidade" className="text-lg font-semibold">Tipo de Oportunidade *</Label>
-              <Select value={formData.tipoOportunidade} onValueChange={(value) => setFormData({...formData, tipoOportunidade: value})} required>
-                <SelectTrigger className="mt-2">
-                  <SelectValue placeholder="Selecione o tipo de oportunidade" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="licitacao">Licitação</SelectItem>
-                  <SelectItem value="importacao_direta">Importação Direta</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <Tabs defaultValue="dados_gerais" className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="dados_gerais">Dados Gerais</TabsTrigger>
-                <TabsTrigger value="analise">Análise Técnica</TabsTrigger>
+          <form onSubmit={handleSubmit}>
+            <Tabs defaultValue="dados-gerais" className="w-full">
+              <TabsList className="grid w-full grid-cols-6">
+                <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
+                <TabsTrigger value="analise-tecnica">Análise Técnica</TabsTrigger>
                 <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
-                <TabsTrigger value="documentos">Documentos</TabsTrigger>
                 <TabsTrigger 
                   value="pedidos" 
-                  disabled={!isPedidosTabEnabled}
-                  className={!isPedidosTabEnabled ? 'opacity-50 cursor-not-allowed' : ''}
+                  disabled={!canShowPedidosTab()}
+                  className={!canShowPedidosTab() ? "opacity-50 cursor-not-allowed" : ""}
                 >
                   Pedidos
                 </TabsTrigger>
+                <TabsTrigger value="documentos">Documentos</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="dados_gerais" className="space-y-8 mt-6">
-                {/* Chave da Licitação */}
-                <div className="p-4 bg-blue-50 rounded-lg">
-                  <div>
-                    <Label htmlFor="chaveLicitacao" className="text-lg font-semibold">Chave da Licitação</Label>
-                    <Input
-                      id="chaveLicitacao"
-                      value={formData.chaveLicitacao}
-                      onChange={(e) => handleChaveLicitacaoChange(e.target.value)}
-                      placeholder="Digite a chave da licitação"
-                      className="mt-2"
-                    />
-                    {formData.chaveLicitacao && formData.chaveLicitacao !== '123' && (
-                      <p className="text-green-600 text-sm mt-1 flex items-center gap-1">
-                        <CheckCircle className="h-4 w-4" />
-                        Nenhuma licitação anterior
-                      </p>
-                    )}
-                  </div>
+              <TabsContent value="dados-gerais" className="space-y-6 mt-6">
+                <div className="mb-6">
+                  <Label htmlFor="tipoOportunidade" className="text-base font-semibold">
+                    Tipo de Oportunidade *
+                  </Label>
+                  <Select 
+                    value={formData.tipoOportunidade} 
+                    onValueChange={(value) => setFormData({...formData, tipoOportunidade: value})}
+                  >
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Selecione o tipo de oportunidade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="licitacao">Licitação</SelectItem>
+                      <SelectItem value="importacao_direta">Importação Direta</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                {/* Dados do Cliente */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Dados do Cliente</h3>
-                  <div className="grid grid-cols-2 gap-6">
+                <div className="mb-6">
+                  <Label htmlFor="chaveLicitacao">Chave da Licitação</Label>
+                  <Input
+                    id="chaveLicitacao"
+                    value={formData.chaveLicitacao}
+                    onChange={(e) => handleChaveLicitacaoChange(e.target.value)}
+                    placeholder="Digite a chave da licitação"
+                    className="mt-2"
+                  />
+                  {formData.chaveLicitacao && formData.chaveLicitacao !== '123' && (
+                    <p className="text-green-600 text-sm mt-1">✓ Nenhuma licitação anterior</p>
+                  )}
+                </div>
+
+                <div className="border rounded-lg p-4 space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800">Dados do Cliente</h3>
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="cpfCnpj">CPF/CNPJ</Label>
                       <Input
                         id="cpfCnpj"
                         value={formData.cpfCnpj}
                         onChange={(e) => setFormData({...formData, cpfCnpj: e.target.value})}
-                        placeholder="000.000.000-00 ou 00.000.000/0001-00"
+                        placeholder="000.000.000-00"
                       />
                     </div>
-
                     <div>
-                      <Label htmlFor="nome">Nome</Label>
+                      <Label htmlFor="nome">Nome / Nome Fantasia</Label>
                       <Input
                         id="nome"
                         value={formData.nome}
-                        onChange={(e) => handleClienteChange(e.target.value)}
+                        onChange={(e) => setFormData({...formData, nome: e.target.value})}
                         placeholder="Nome do cliente"
                       />
-                      {clienteValidation && (
-                        <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
-                          <AlertTriangle className="h-4 w-4" />
-                          {clienteValidation}
-                        </p>
+                      {formData.nome.toLowerCase() === 'sabesp' && (
+                        <p className="text-red-600 text-sm mt-1">⚠️ Cliente com pendência financeira</p>
                       )}
                     </div>
-
-                    <div>
-                      <Label htmlFor="nomeFantasia">Nome Fantasia</Label>
-                      <Input
-                        id="nomeFantasia"
-                        value={formData.nomeFantasia}
-                        onChange={(e) => setFormData({...formData, nomeFantasia: e.target.value})}
-                        placeholder="Nome fantasia"
-                      />
-                    </div>
-
                     <div>
                       <Label htmlFor="razaoSocial">Razão Social</Label>
                       <Input
@@ -296,9 +234,8 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         placeholder="Razão social"
                       />
                     </div>
-
                     <div>
-                      <Label htmlFor="endereco">Endereço Completo</Label>
+                      <Label htmlFor="endereco">Endereço do Cliente</Label>
                       <Input
                         id="endereco"
                         value={formData.endereco}
@@ -306,24 +243,19 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         placeholder="Endereço completo"
                       />
                     </div>
-
                     <div>
                       <Label htmlFor="uf">UF</Label>
                       <Select value={formData.uf} onValueChange={(value) => setFormData({...formData, uf: value})}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione a UF" />
+                          <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="SP">São Paulo</SelectItem>
                           <SelectItem value="RJ">Rio de Janeiro</SelectItem>
                           <SelectItem value="MG">Minas Gerais</SelectItem>
-                          <SelectItem value="RS">Rio Grande do Sul</SelectItem>
-                          <SelectItem value="PR">Paraná</SelectItem>
-                          <SelectItem value="SC">Santa Catarina</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-
                     <div>
                       <Label htmlFor="email">E-mail</Label>
                       <Input
@@ -334,7 +266,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         placeholder="email@exemplo.com"
                       />
                     </div>
-
                     <div>
                       <Label htmlFor="telefone">Telefone</Label>
                       <Input
@@ -344,161 +275,84 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         placeholder="(11) 99999-9999"
                       />
                     </div>
-
                     <div>
                       <Label htmlFor="website">Website</Label>
                       <Input
                         id="website"
                         value={formData.website}
                         onChange={(e) => setFormData({...formData, website: e.target.value})}
-                        placeholder="https://exemplo.com.br"
+                        placeholder="https://website.com"
                       />
                     </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="ativo" 
-                        checked={formData.ativo}
-                        onCheckedChange={(checked) => setFormData({...formData, ativo: checked as boolean})}
-                      />
-                      <Label htmlFor="ativo">Cliente Ativo</Label>
-                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="ativo" 
+                      checked={formData.ativo}
+                      onCheckedChange={(checked) => setFormData({...formData, ativo: checked as boolean})}
+                    />
+                    <Label htmlFor="ativo">Ativo</Label>
                   </div>
                 </div>
 
-                {/* Dados do Lead/Negócio */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Dados do Lead/Negócio</h3>
-                  <div className="grid grid-cols-2 gap-6">
+                <div className="border rounded-lg p-4 space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800">Dados do Lead/Negócio</h3>
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="fonteLead">Fonte do Lead</Label>
                       <Select value={formData.fonteLead} onValueChange={(value) => setFormData({...formData, fonteLead: value})}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione a fonte" />
+                          <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="site">Site</SelectItem>
-                          <SelectItem value="telefone">Telefone</SelectItem>
-                          <SelectItem value="parceiro">Parceiro</SelectItem>
                           <SelectItem value="indicacao">Indicação</SelectItem>
-                          <SelectItem value="linkedin">LinkedIn</SelectItem>
-                          <SelectItem value="feira">Feira/Evento</SelectItem>
+                          <SelectItem value="cold_call">Cold Call</SelectItem>
+                          <SelectItem value="licitacao">Licitação</SelectItem>
+                          <SelectItem value="referencia">Referência</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-
                     <div>
                       <Label htmlFor="segmentoLead">Segmento do Lead</Label>
                       <Select value={formData.segmentoLead} onValueChange={(value) => setFormData({...formData, segmentoLead: value})}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione o segmento" />
+                          <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="hospitalar">Hospitalar</SelectItem>
-                          <SelectItem value="laboratorio">Laboratório</SelectItem>
-                          <SelectItem value="veterinario">Veterinário</SelectItem>
-                          <SelectItem value="industria">Indústria</SelectItem>
-                          <SelectItem value="universidade">Universidade</SelectItem>
+                          <SelectItem value="universitario">Universitário</SelectItem>
+                          <SelectItem value="publico">Público</SelectItem>
+                          <SelectItem value="municipal">Municipal</SelectItem>
+                          <SelectItem value="privado">Privado</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-
                     <div>
                       <Label htmlFor="metodoContato">Método de Contato</Label>
                       <Select value={formData.metodoContato} onValueChange={(value) => setFormData({...formData, metodoContato: value})}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione o método" />
+                          <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="telefone">Telefone</SelectItem>
                           <SelectItem value="email">E-mail</SelectItem>
-                          <SelectItem value="whatsapp">WhatsApp</SelectItem>
                           <SelectItem value="presencial">Presencial</SelectItem>
-                          <SelectItem value="teams">Teams/Zoom</SelectItem>
+                          <SelectItem value="video_chamada">Videochamada</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-
                     <div>
-                      <Label htmlFor="valorNegocio">Valor do Negócio (R$)</Label>
+                      <Label htmlFor="valorNegocio">Valor do Negócio</Label>
                       <Input
                         id="valorNegocio"
                         type="number"
+                        step="0.01"
                         value={formData.valorNegocio}
                         onChange={(e) => setFormData({...formData, valorNegocio: Number(e.target.value)})}
                         placeholder="0,00"
                       />
                     </div>
-
-                    <div>
-                      <Label htmlFor="produtosServicos">Produtos e Serviços</Label>
-                      <Select 
-                        value={formData.produtosServicos.join(',')} 
-                        onValueChange={(value) => handleProdutosServicosChange(value ? value.split(',') : [])}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione produtos/serviços" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="produto1">Produto 1</SelectItem>
-                          <SelectItem value="produto2">Produto 2</SelectItem>
-                          <SelectItem value="servico1">Serviço 1</SelectItem>
-                          <SelectItem value="servico2">Serviço 2</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="procurandoPor">Procurando por (Contatos vinculados)</Label>
-                      <Input
-                        id="procurandoPor"
-                        value={formData.procurandoPor}
-                        onChange={(e) => setFormData({...formData, procurandoPor: e.target.value})}
-                        placeholder="Equipamentos médicos, serviços..."
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="tags">Tags</Label>
-                      <Input
-                        id="tags"
-                        value={formData.tags}
-                        onChange={(e) => setFormData({...formData, tags: e.target.value})}
-                        placeholder="Tag1, Tag2, Tag3"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="colaboradoresResponsaveis">Colaboradores Responsáveis</Label>
-                      <Select value={formData.colaboradoresResponsaveis.join(',')} onValueChange={(value) => setFormData({...formData, colaboradoresResponsaveis: value ? value.split(',') : []})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione os responsáveis" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="joao">João Silva</SelectItem>
-                          <SelectItem value="maria">Maria Santos</SelectItem>
-                          <SelectItem value="carlos">Carlos Oliveira</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="caracteristicas">Características</Label>
-                    <Textarea
-                      id="caracteristicas"
-                      value={formData.caracteristicas}
-                      onChange={(e) => setFormData({...formData, caracteristicas: e.target.value})}
-                      placeholder="Descreva as características específicas..."
-                      rows={2}
-                    />
-                  </div>
-                </div>
-
-                {/* Dados do Processo */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Dados do Processo</h3>
-                  <div className="grid grid-cols-2 gap-6">
                     <div>
                       <Label htmlFor="dataInicio">Data de Início</Label>
                       <Input
@@ -508,7 +362,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         onChange={(e) => setFormData({...formData, dataInicio: e.target.value})}
                       />
                     </div>
-
                     <div>
                       <Label htmlFor="dataLimite">Data Limite</Label>
                       <Input
@@ -518,7 +371,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         onChange={(e) => setFormData({...formData, dataLimite: e.target.value})}
                       />
                     </div>
-
                     <div>
                       <Label htmlFor="dataVisita">Data da Visita</Label>
                       <Input
@@ -528,340 +380,197 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         onChange={(e) => setFormData({...formData, dataVisita: e.target.value})}
                       />
                     </div>
-
                     <div>
-                      <Label htmlFor="fluxoTrabalho">Fluxo de Trabalho</Label>
+                      <Label htmlFor="procurandoPor">Procurando por (Contatos vinculados)</Label>
                       <Input
-                        id="fluxoTrabalho"
-                        value={formData.fluxoTrabalho}
-                        onChange={(e) => setFormData({...formData, fluxoTrabalho: e.target.value})}
-                        placeholder="Descreva o fluxo de trabalho..."
+                        id="procurandoPor"
+                        value={formData.procurandoPor}
+                        onChange={(e) => setFormData({...formData, procurandoPor: e.target.value})}
+                        placeholder="Descrição dos contatos"
                       />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="status">Status</Label>
-                      <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="em_triagem">Em Triagem</SelectItem>
-                          <SelectItem value="acompanhamento">Acompanhamento</SelectItem>
-                          <SelectItem value="ganha">Ganha</SelectItem>
-                          <SelectItem value="perdida">Perdida</SelectItem>
-                          <SelectItem value="finalizada">Finalizada</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="propostaNegociacao" 
-                        checked={formData.propostaNegociacao}
-                        onCheckedChange={(checked) => setFormData({...formData, propostaNegociacao: checked as boolean})}
-                      />
-                      <Label htmlFor="propostaNegociacao">Proposta em Negociação</Label>
                     </div>
                   </div>
-
+                  
+                  <div>
+                    <Label htmlFor="tags">Tags</Label>
+                    <Input
+                      id="tags"
+                      value={formData.tags}
+                      onChange={(e) => setFormData({...formData, tags: e.target.value})}
+                      placeholder="Separadas por vírgula"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="caracteristicas">Características</Label>
+                    <Textarea
+                      id="caracteristicas"
+                      value={formData.caracteristicas}
+                      onChange={(e) => setFormData({...formData, caracteristicas: e.target.value})}
+                      placeholder="Descreva as características da oportunidade"
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="fluxoTrabalho">Fluxo de Trabalho</Label>
+                    <Textarea
+                      id="fluxoTrabalho"
+                      value={formData.fluxoTrabalho}
+                      onChange={(e) => setFormData({...formData, fluxoTrabalho: e.target.value})}
+                      placeholder="Descreva o fluxo de trabalho"
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="status">Status</Label>
+                    <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="em_triagem">Em Triagem</SelectItem>
+                        <SelectItem value="em_acompanhamento">Em Acompanhamento</SelectItem>
+                        <SelectItem value="ganha">Ganha</SelectItem>
+                        <SelectItem value="perdida">Perdida</SelectItem>
+                        <SelectItem value="finalizada">Finalizada</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
                   <div>
                     <Label htmlFor="descricao">Descrição da Oportunidade</Label>
                     <Textarea
                       id="descricao"
                       value={formData.descricao}
                       onChange={(e) => setFormData({...formData, descricao: e.target.value})}
-                      placeholder="Descreva detalhadamente a oportunidade..."
-                      rows={3}
+                      placeholder="Descrição detalhada da oportunidade"
+                      rows={4}
                     />
                   </div>
                 </div>
 
-                {/* Análise Técnica */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Análise Técnica</h3>
+                <div className="border rounded-lg p-4 space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800">Dados Técnicos</h3>
+                  
                   <div>
                     <Label htmlFor="analiseTecnica">Análise Técnica-Científica</Label>
                     <Textarea
                       id="analiseTecnica"
                       value={formData.analiseTecnica}
                       onChange={(e) => setFormData({...formData, analiseTecnica: e.target.value})}
-                      placeholder="Descreva a análise técnica da oportunidade..."
+                      placeholder="Análise técnica detalhada"
                       rows={4}
                     />
                   </div>
 
                   <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <Label className="text-base font-medium">Análise da Concorrência</Label>
-                      <Button 
-                        type="button"
-                        onClick={() => setShowConcorrenteModal(true)}
-                        className="bg-biodina-gold hover:bg-biodina-gold/90"
-                        size="sm"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Adicionar Concorrente
-                      </Button>
-                    </div>
-
-                    {concorrentes.length > 0 && (
-                      <div className="space-y-3">
-                        {concorrentes.map((concorrente: any) => (
-                          <div key={concorrente.id} className="p-4 border rounded-lg bg-gray-50">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h4 className="font-medium">{concorrente.nome}</h4>
-                                <p className="text-sm text-gray-600">{concorrente.produto}</p>
-                                <p className="text-sm font-medium">
-                                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(concorrente.preco)}
-                                </p>
-                              </div>
-                              <Badge 
-                                className={concorrente.preco > formData.valorNegocio ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}
-                              >
-                                {concorrente.preco > formData.valorNegocio ? 'Acima' : 'Abaixo'} do nosso valor
-                              </Badge>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Upload de Documentos */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Upload de Documentos</h3>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">Arraste arquivos aqui ou clique para fazer upload</p>
-                    <p className="text-sm text-gray-400 mt-2">Edital, Proposta, Ata, Contrato, Termo</p>
-                    <Button variant="outline" className="mt-4">
-                      <Upload className="h-4 w-4 mr-2" />
-                      Selecionar Arquivos
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Termômetro e Resultado */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Avaliação da Oportunidade</h3>
-                  <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <Label className="block mb-2">Termômetro de Oportunidade: {formData.termometro}%</Label>
+                    <Label>Termômetro ({formData.termometro}°)</Label>
+                    <div className="mt-2 space-y-2">
                       <div className="flex items-center gap-4">
-                        <input
-                          type="range"
-                          min="0"
-                          max="100"
-                          value={formData.termometro}
-                          onChange={(e) => setFormData({...formData, termometro: Number(e.target.value)})}
+                        <Slider
+                          value={[formData.termometro]}
+                          onValueChange={(value) => setFormData({...formData, termometro: value[0]})}
+                          max={100}
+                          min={0}
+                          step={5}
                           className="flex-1"
                         />
-                        <div className={`w-6 h-6 rounded-full ${getTermometroColor(formData.termometro)}`}></div>
+                        <div 
+                          className="w-6 h-6 rounded-full border-2 border-white shadow-lg"
+                          style={{ backgroundColor: getTermometroColor(formData.termometro) }}
+                        />
                       </div>
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <span>0°</span>
+                        <span>25°</span>
+                        <span>50°</span>
+                        <span>75°</span>
+                        <span>100°</span>
+                      </div>
+                      <p className="text-sm font-medium" style={{ color: getTermometroColor(formData.termometro) }}>
+                        {getTermometroStage(formData.termometro)}
+                      </p>
                     </div>
+                  </div>
 
-                    <div>
-                      <Label htmlFor="resultadoOportunidade">Resultado da Oportunidade</Label>
-                      <Select value={formData.resultadoOportunidade} onValueChange={(value) => setFormData({...formData, resultadoOportunidade: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o resultado" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="ganho">Ganho</SelectItem>
-                          <SelectItem value="perda">Perda</SelectItem>
-                          <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  <div>
+                    <Label htmlFor="resultadoOportunidade">Resultado da Oportunidade</Label>
+                    <Select 
+                      value={formData.resultadoOportunidade} 
+                      onValueChange={(value) => setFormData({...formData, resultadoOportunidade: value})}
+                    >
+                      <SelectTrigger className="mt-2">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="em_andamento">Em Andamento</SelectItem>
+                        <SelectItem value="ganho">Ganho</SelectItem>
+                        <SelectItem value="perda">Perda</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   {formData.resultadoOportunidade === 'ganho' && (
                     <div>
                       <Label htmlFor="motivoGanho">Motivo do Ganho</Label>
-                      <Select value={formData.motivoGanho} onValueChange={(value) => setFormData({...formData, motivoGanho: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o motivo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="melhor_preco">Melhor Preço</SelectItem>
-                          <SelectItem value="melhor_qualidade">Melhor Qualidade</SelectItem>
-                          <SelectItem value="prazo_entrega">Prazo de Entrega</SelectItem>
-                          <SelectItem value="relacionamento">Relacionamento</SelectItem>
-                          <SelectItem value="suporte_tecnico">Suporte Técnico</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Textarea
+                        id="motivoGanho"
+                        value={formData.motivoGanho}
+                        onChange={(e) => setFormData({...formData, motivoGanho: e.target.value})}
+                        placeholder="Descreva o motivo do ganho"
+                        rows={3}
+                      />
                     </div>
                   )}
 
                   {formData.resultadoOportunidade === 'perda' && (
                     <div>
                       <Label htmlFor="motivoPerda">Motivo da Perda</Label>
-                      <Select value={formData.motivoPerda} onValueChange={(value) => setFormData({...formData, motivoPerda: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o motivo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="preco_alto">Preço Alto</SelectItem>
-                          <SelectItem value="prazo_entrega">Prazo de Entrega</SelectItem>
-                          <SelectItem value="especificacao">Especificação Técnica</SelectItem>
-                          <SelectItem value="concorrencia">Concorrência</SelectItem>
-                          <SelectItem value="orcamento_cancelado">Orçamento Cancelado</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Textarea
+                        id="motivoPerda"
+                        value={formData.motivoPerda}
+                        onChange={(e) => setFormData({...formData, motivoPerda: e.target.value})}
+                        placeholder="Descreva o motivo da perda"
+                        rows={3}
+                      />
                     </div>
                   )}
-                </div>
 
-                {/* Campos específicos para Importação Direta */}
-                {formData.tipoOportunidade === 'importacao_direta' && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Dados de Importação</h3>
-                    <div className="grid grid-cols-2 gap-6">
-                      <div>
-                        <Label htmlFor="fornecedorInternacional">Fornecedor Internacional</Label>
-                        <Input
-                          id="fornecedorInternacional"
-                          value={formData.fornecedorInternacional}
-                          onChange={(e) => setFormData({...formData, fornecedorInternacional: e.target.value})}
-                          placeholder="Nome do fornecedor internacional"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="moeda">Moeda</Label>
-                        <Select value={formData.moeda} onValueChange={(value) => setFormData({...formData, moeda: value})}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="USD">USD - Dólar Americano</SelectItem>
-                            <SelectItem value="EUR">EUR - Euro</SelectItem>
-                            <SelectItem value="GBP">GBP - Libra Esterlina</SelectItem>
-                            <SelectItem value="JPY">JPY - Iene Japonês</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="numeroInvoice">Número do Invoice</Label>
-                        <Input
-                          id="numeroInvoice"
-                          value={formData.numeroInvoice}
-                          onChange={(e) => setFormData({...formData, numeroInvoice: e.target.value})}
-                          placeholder="Número do invoice"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="numeroDI">Número da DI</Label>
-                        <Input
-                          id="numeroDI"
-                          value={formData.numeroDI}
-                          onChange={(e) => setFormData({...formData, numeroDI: e.target.value})}
-                          placeholder="Número da Declaração de Importação"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="dataChegadaEstimada">Data de Chegada Estimada</Label>
-                        <Input
-                          id="dataChegadaEstimada"
-                          type="date"
-                          value={formData.dataChegadaEstimada}
-                          onChange={(e) => setFormData({...formData, dataChegadaEstimada: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </TabsContent>
-
-              <TabsContent value="analise" className="space-y-6 mt-6">
-                <div>
-                  <Label htmlFor="analiseTecnica">Análise Técnica-Científica</Label>
-                  <Textarea
-                    id="analiseTecnica"
-                    value={formData.analiseTecnica}
-                    onChange={(e) => setFormData({...formData, analiseTecnica: e.target.value})}
-                    rows={4}
-                    placeholder="Descreva a análise técnica da oportunidade..."
-                  />
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold">Concorrentes</h3>
-                    <Button 
-                      type="button"
-                      onClick={() => setShowConcorrenteModal(true)}
-                      className="bg-biodina-gold hover:bg-biodina-gold/90"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Adicionar Concorrente
-                    </Button>
-                  </div>
-
-                  {concorrentes.length > 0 && (
-                    <div className="space-y-3">
-                      {concorrentes.map((concorrente: any) => (
-                        <div key={concorrente.id} className="p-4 border rounded-lg bg-gray-50">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="font-medium">{concorrente.nome}</h4>
-                              <p className="text-sm text-gray-600">{concorrente.produto}</p>
-                              <p className="text-sm font-medium">
-                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(concorrente.preco)}
-                              </p>
-                            </div>
-                            <Badge 
-                              className={concorrente.preco > formData.valorNegocio ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}
-                            >
-                              {concorrente.preco > formData.valorNegocio ? 'Maior' : 'Menor'}
-                            </Badge>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-
-              <TabsContent value="historico" className="mt-6">
-                <ChatInterno oportunidadeId={oportunidade?.id || 'nova'} />
-              </TabsContent>
-
-              <TabsContent value="documentos" className="mt-6">
-                <div className="space-y-6">
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">Documentos enviados no chat interno aparecerão aqui</p>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="propostaNegociacao" 
+                      checked={formData.propostaNegociacao}
+                      onCheckedChange={(checked) => setFormData({...formData, propostaNegociacao: checked as boolean})}
+                    />
+                    <Label htmlFor="propostaNegociacao">Proposta em Negociação</Label>
                   </div>
                 </div>
               </TabsContent>
 
-              <TabsContent value="pedidos" className="mt-6">
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-semibold">Pedidos da Oportunidade</h3>
-                    <Button 
-                      onClick={() => setShowPedidoForm(true)}
-                      className="bg-biodina-gold hover:bg-biodina-gold/90"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Adicionar novos pedidos
-                    </Button>
-                  </div>
+              <TabsContent value="pedidos" className="space-y-6 mt-6">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold">Pedidos da Oportunidade</h3>
+                  <Button 
+                    type="button"
+                    className="bg-biodina-gold hover:bg-biodina-gold/90"
+                    onClick={() => setShowPedidoForm(true)}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Adicionar novos pedidos
+                  </Button>
+                </div>
 
-                  <div className="border rounded-lg">
-                    <div className="p-4 border-b">
-                      <h4 className="font-medium">Tabela Resumo de Pedidos</h4>
-                    </div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Resumo de Pedidos</CardTitle>
+                  </CardHeader>
+                  <CardContent>
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Código do pedido</TableHead>
+                          <TableHead>Código</TableHead>
                           <TableHead>Dt. Gerado</TableHead>
                           <TableHead>Cliente</TableHead>
                           <TableHead>Situação</TableHead>
@@ -876,32 +585,133 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                             <TableCell>{pedido.dataGeracao}</TableCell>
                             <TableCell>{pedido.cliente}</TableCell>
                             <TableCell>
-                              <Badge className={`${getSituacaoColor(pedido.situacao)} text-white`}>
-                                {getSituacaoLabel(pedido.situacao)}
+                              <Badge className="bg-blue-500 text-white">
+                                {pedido.situacao}
                               </Badge>
                             </TableCell>
                             <TableCell>{formatCurrency(pedido.valor)}</TableCell>
                             <TableCell>
                               <Button size="sm" variant="outline">
-                                <FileText className="h-4 w-4" />
+                                <Eye className="h-4 w-4" />
                               </Button>
                             </TableCell>
                           </TableRow>
                         ))}
+                        {pedidos.length === 0 && (
+                          <TableRow>
+                            <TableCell colSpan={6} className="text-center text-gray-500 py-4">
+                              Nenhum pedido cadastrado
+                            </TableCell>
+                          </TableRow>
+                        )}
                       </TableBody>
                     </Table>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="analise-tecnica" className="space-y-6 mt-6">
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">Análise da Concorrência</h3>
+                    <Button onClick={() => setShowConcorrenteModal(true)}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar Concorrente
+                    </Button>
                   </div>
 
-                  {!isPedidosTabEnabled && (
-                    <div className="text-center text-gray-500 py-8">
-                      <p>Para acessar os pedidos, defina o resultado da oportunidade como "Ganho" ou "Em Andamento"</p>
-                    </div>
-                  )}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Concorrentes Cadastrados</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Concorrente</TableHead>
+                            <TableHead>Produto/Serviço</TableHead>
+                            <TableHead>Preço</TableHead>
+                            <TableHead>Comparação</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {concorrentes.map((concorrente) => (
+                            <TableRow key={concorrente.id}>
+                              <TableCell className="font-medium">{concorrente.nome}</TableCell>
+                              <TableCell>{concorrente.produto}</TableCell>
+                              <TableCell>{formatCurrency(concorrente.preco)}</TableCell>
+                              <TableCell>
+                                <Badge className={concorrente.preco > formData.valorNegocio ? "bg-red-500" : "bg-green-500"}>
+                                  {concorrente.preco > formData.valorNegocio ? "Acima do nosso valor" : "Abaixo do nosso valor"}
+                                </Badge>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Histórico Técnico</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        <div className="p-3 bg-gray-50 rounded">
+                          <p className="text-sm"><strong>27/05/2025 - Análise realizada por Maria Santos:</strong></p>
+                          <p className="text-sm text-gray-600">"Concorrente tem um valor inferior, mas não inclui instalação."</p>
+                        </div>
+                        <div className="p-3 bg-gray-50 rounded">
+                          <p className="text-sm"><strong>26/05/2025 - Assessoria Técnica:</strong></p>
+                          <p className="text-sm text-gray-600">"Produto aprovado conforme edital. Requisitos mínimos atendidos."</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
+              </TabsContent>
+
+              <TabsContent value="historico" className="space-y-6 mt-6">
+                <ChatInterno />
+              </TabsContent>
+
+              <TabsContent value="documentos" className="space-y-6 mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Documentos da Oportunidade</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg">
+                        <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                        <span className="text-sm text-gray-500">Clique para fazer upload</span>
+                      </div>
+                      
+                      <div className="flex flex-col items-center p-4 border rounded-lg">
+                        <FileText className="h-8 w-8 text-blue-500 mb-2" />
+                        <span className="text-sm font-medium">Edital.pdf</span>
+                        <span className="text-xs text-gray-500">27/05/2025</span>
+                        <Button size="sm" variant="outline" className="mt-2">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      
+                      <div className="flex flex-col items-center p-4 border rounded-lg">
+                        <FileText className="h-8 w-8 text-green-500 mb-2" />
+                        <span className="text-sm font-medium">Proposta.xlsx</span>
+                        <span className="text-xs text-gray-500">26/05/2025</span>
+                        <Button size="sm" variant="outline" className="mt-2">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
             </Tabs>
 
-            <div className="flex justify-end gap-2 pt-6 border-t">
+            <div className="flex justify-end gap-2 pt-6 border-t mt-6">
               <Button type="button" variant="outline" onClick={onClose}>
                 Cancelar
               </Button>
@@ -915,24 +725,21 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
       </Card>
 
       {showLicitacaoModal && (
-        <LicitacaoValidationModal
-          onClose={() => setShowLicitacaoModal(false)}
-          chave={formData.chaveLicitacao}
-        />
+        <LicitacaoValidationModal onClose={() => setShowLicitacaoModal(false)} />
       )}
 
       {showConcorrenteModal && (
         <ConcorrenteModal
           onClose={() => setShowConcorrenteModal(false)}
           onSave={handleAddConcorrente}
-          valorReferencia={formData.valorNegocio}
+          valorNegocio={formData.valorNegocio}
         />
       )}
 
       {showPedidoForm && (
         <PedidoForm
           onClose={() => setShowPedidoForm(false)}
-          onSave={handleSavePedido}
+          onSave={handleAddPedido}
           oportunidade={formData}
         />
       )}
