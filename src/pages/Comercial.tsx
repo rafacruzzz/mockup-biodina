@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import SidebarLayout from "@/components/SidebarLayout";
 import OportunidadeForm from "@/components/comercial/OportunidadeForm";
+import OportunidadeAvancadaForm from "@/components/comercial/OportunidadeAvancadaForm";
 import PedidoModal from "@/components/comercial/PedidoModal";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
@@ -22,6 +22,7 @@ const Comercial = () => {
   const [activeTab, setActiveTab] = useState('funil');
   const [searchTerm, setSearchTerm] = useState('');
   const [showOportunidadeForm, setShowOportunidadeForm] = useState(false);
+  const [showOportunidadeAvancadaForm, setShowOportunidadeAvancadaForm] = useState(false);
   const [editingOportunidade, setEditingOportunidade] = useState<any>();
   const [showPedidoModal, setShowPedidoModal] = useState(false);
   const [selectedOportunidade, setSelectedOportunidade] = useState<any>();
@@ -140,12 +141,13 @@ const Comercial = () => {
 
   const handleEditOportunidade = (oportunidade: any) => {
     setEditingOportunidade(oportunidade);
-    setShowOportunidadeForm(true);
+    setShowOportunidadeAvancadaForm(true);
   };
 
   const handleSaveOportunidade = (formData: any) => {
     console.log('Salvando oportunidade:', formData);
     setShowOportunidadeForm(false);
+    setShowOportunidadeAvancadaForm(false);
     setEditingOportunidade(undefined);
   };
 
@@ -246,16 +248,29 @@ const Comercial = () => {
             <Briefcase className="h-5 w-5" />
             Oportunidades Comerciais
           </CardTitle>
-          <Button 
-            className="bg-biodina-gold hover:bg-biodina-gold/90"
-            onClick={() => {
-              setEditingOportunidade(undefined);
-              setShowOportunidadeForm(true);
-            }}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Nova Oportunidade
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              className="border-biodina-gold text-biodina-gold hover:bg-biodina-gold/10"
+              onClick={() => {
+                setEditingOportunidade(undefined);
+                setShowOportunidadeForm(true);
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Oportunidade Simples
+            </Button>
+            <Button 
+              className="bg-biodina-gold hover:bg-biodina-gold/90"
+              onClick={() => {
+                setEditingOportunidade(undefined);
+                setShowOportunidadeAvancadaForm(true);
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Oportunidade Avançada
+            </Button>
+          </div>
         </div>
         <div className="flex gap-4 mt-4">
           <div className="relative flex-1">
@@ -454,6 +469,17 @@ const Comercial = () => {
           oportunidade={editingOportunidade}
           onClose={() => {
             setShowOportunidadeForm(false);
+            setEditingOportunidade(undefined);
+          }}
+          onSave={handleSaveOportunidade}
+        />
+      )}
+
+      {showOportunidadeAvancadaForm && (
+        <OportunidadeAvancadaForm
+          oportunidade={editingOportunidade}
+          onClose={() => {
+            setShowOportunidadeAvancadaForm(false);
             setEditingOportunidade(undefined);
           }}
           onSave={handleSaveOportunidade}
