@@ -23,48 +23,48 @@ interface OportunidadeAvancadaFormProps {
 const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: OportunidadeAvancadaFormProps) => {
   const [formData, setFormData] = useState({
     tipoOportunidade: oportunidade?.tipoOportunidade || '',
-    // Triagem
+    // Dados do Cliente
     cpfCnpj: oportunidade?.cpfCnpj || '',
     nome: oportunidade?.nome || '',
     nomeFantasia: oportunidade?.nomeFantasia || '',
     razaoSocial: oportunidade?.razaoSocial || '',
     endereco: oportunidade?.endereco || '',
     uf: oportunidade?.uf || '',
-    fonteLead: oportunidade?.fonteLead || '',
-    ativo: oportunidade?.ativo || true,
     email: oportunidade?.email || '',
     telefone: oportunidade?.telefone || '',
     website: oportunidade?.website || '',
+    ativo: oportunidade?.ativo || true,
+    // Dados do Lead/Negócio
+    fonteLead: oportunidade?.fonteLead || '',
+    segmentoLead: oportunidade?.segmentoLead || '',
+    metodoContato: oportunidade?.metodoContato || '',
+    colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || [],
     produtosServicos: oportunidade?.produtosServicos || [],
     valorNegocio: oportunidade?.valorNegocio || 0,
-    metodoContato: oportunidade?.metodoContato || '',
-    segmentoLead: oportunidade?.segmentoLead || '',
-    colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || [],
-    dataInicio: oportunidade?.dataInicio || '',
-    dataLimite: oportunidade?.dataLimite || '',
     procurandoPor: oportunidade?.procurandoPor || '',
     tags: oportunidade?.tags || '',
     caracteristicas: oportunidade?.caracteristicas || '',
+    // Dados do Processo
+    dataInicio: oportunidade?.dataInicio || '',
+    dataLimite: oportunidade?.dataLimite || '',
+    dataVisita: oportunidade?.dataVisita || '',
     fluxoTrabalho: oportunidade?.fluxoTrabalho || 'em_triagem',
     status: oportunidade?.status || 'em_triagem',
     descricao: oportunidade?.descricao || '',
-    dataVisita: oportunidade?.dataVisita || '',
+    chaveLicitacao: oportunidade?.chaveLicitacao || '',
+    // Dados Técnicos
+    analiseTecnica: oportunidade?.analiseTecnica || '',
     termometro: oportunidade?.termometro || 50,
+    resultadoOportunidade: oportunidade?.resultadoOportunidade || '',
     motivoGanho: oportunidade?.motivoGanho || '',
     motivoPerda: oportunidade?.motivoPerda || '',
-    chaveLicitacao: oportunidade?.chaveLicitacao || '',
-    // Análise Técnica
-    analiseTecnica: oportunidade?.analiseTecnica || '',
-    // Geral
-    cliente: oportunidade?.cliente || '',
-    representanteComercial: oportunidade?.representanteComercial || '',
-    familiaComercial: oportunidade?.familiaComercial || '',
-    fornecedor: oportunidade?.fornecedor || '',
-    tipoAplicacao: oportunidade?.tipoAplicacao || 'venda',
-    tipoOportunidadeGeral: oportunidade?.tipoOportunidadeGeral || 'pontual',
-    dataAbertura: oportunidade?.dataAbertura || '',
-    dataContato: oportunidade?.dataContato || '',
-    valorProposta: oportunidade?.valorProposta || 0
+    propostaNegociacao: oportunidade?.propostaNegociacao || false,
+    // Campos para Importação Direta
+    fornecedorInternacional: oportunidade?.fornecedorInternacional || '',
+    moeda: oportunidade?.moeda || 'USD',
+    numeroInvoice: oportunidade?.numeroInvoice || '',
+    numeroDI: oportunidade?.numeroDI || '',
+    dataChegadaEstimada: oportunidade?.dataChegadaEstimada || ''
   });
 
   const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
@@ -80,7 +80,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   };
 
   const handleClienteChange = (value: string) => {
-    setFormData({...formData, cliente: value});
+    setFormData({...formData, nome: value});
     if (value.toLowerCase().includes('sabesp')) {
       setClienteValidation('Cliente com pendência financeira');
     } else {
@@ -138,23 +138,45 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
             </div>
 
             <Tabs defaultValue="triagem" className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="triagem">Triagem</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="triagem">Dados Gerais e Triagem</TabsTrigger>
                 <TabsTrigger value="analise">Análise Técnica</TabsTrigger>
                 <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
-                <TabsTrigger value="geral">Geral</TabsTrigger>
                 <TabsTrigger value="documentos">Documentos</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="triagem" className="space-y-6 mt-6">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-4">
+              <TabsContent value="triagem" className="space-y-8 mt-6">
+                {/* Chave da Licitação */}
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <div>
+                    <Label htmlFor="chaveLicitacao" className="text-lg font-semibold">Chave da Licitação</Label>
+                    <Input
+                      id="chaveLicitacao"
+                      value={formData.chaveLicitacao}
+                      onChange={(e) => handleChaveLicitacaoChange(e.target.value)}
+                      placeholder="Digite a chave da licitação"
+                      className="mt-2"
+                    />
+                    {formData.chaveLicitacao && formData.chaveLicitacao !== '123' && (
+                      <p className="text-green-600 text-sm mt-1 flex items-center gap-1">
+                        <CheckCircle className="h-4 w-4" />
+                        Nenhuma licitação anterior
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Dados do Cliente */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Dados do Cliente</h3>
+                  <div className="grid grid-cols-2 gap-6">
                     <div>
                       <Label htmlFor="cpfCnpj">CPF/CNPJ</Label>
                       <Input
                         id="cpfCnpj"
                         value={formData.cpfCnpj}
                         onChange={(e) => setFormData({...formData, cpfCnpj: e.target.value})}
+                        placeholder="000.000.000-00 ou 00.000.000/0001-00"
                       />
                     </div>
 
@@ -164,6 +186,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         id="nome"
                         value={formData.nome}
                         onChange={(e) => handleClienteChange(e.target.value)}
+                        placeholder="Nome do cliente"
                       />
                       {clienteValidation && (
                         <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
@@ -179,6 +202,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         id="nomeFantasia"
                         value={formData.nomeFantasia}
                         onChange={(e) => setFormData({...formData, nomeFantasia: e.target.value})}
+                        placeholder="Nome fantasia"
                       />
                     </div>
 
@@ -188,15 +212,17 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         id="razaoSocial"
                         value={formData.razaoSocial}
                         onChange={(e) => setFormData({...formData, razaoSocial: e.target.value})}
+                        placeholder="Razão social"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="endereco">Endereço</Label>
+                      <Label htmlFor="endereco">Endereço Completo</Label>
                       <Input
                         id="endereco"
                         value={formData.endereco}
                         onChange={(e) => setFormData({...formData, endereco: e.target.value})}
+                        placeholder="Endereço completo"
                       />
                     </div>
 
@@ -204,57 +230,17 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                       <Label htmlFor="uf">UF</Label>
                       <Select value={formData.uf} onValueChange={(value) => setFormData({...formData, uf: value})}>
                         <SelectTrigger>
-                          <SelectValue />
+                          <SelectValue placeholder="Selecione a UF" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="SP">São Paulo</SelectItem>
                           <SelectItem value="RJ">Rio de Janeiro</SelectItem>
                           <SelectItem value="MG">Minas Gerais</SelectItem>
                           <SelectItem value="RS">Rio Grande do Sul</SelectItem>
+                          <SelectItem value="PR">Paraná</SelectItem>
+                          <SelectItem value="SC">Santa Catarina</SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="chaveLicitacao">Chave da Licitação</Label>
-                      <Input
-                        id="chaveLicitacao"
-                        value={formData.chaveLicitacao}
-                        onChange={(e) => handleChaveLicitacaoChange(e.target.value)}
-                        placeholder="Digite a chave da licitação"
-                      />
-                      {formData.chaveLicitacao && formData.chaveLicitacao !== '123' && (
-                        <p className="text-green-600 text-sm mt-1 flex items-center gap-1">
-                          <CheckCircle className="h-4 w-4" />
-                          Nenhuma licitação anterior
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="fonteLead">Fonte do Lead</Label>
-                      <Select value={formData.fonteLead} onValueChange={(value) => setFormData({...formData, fonteLead: value})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="site">Site</SelectItem>
-                          <SelectItem value="telefone">Telefone</SelectItem>
-                          <SelectItem value="parceiro">Parceiro</SelectItem>
-                          <SelectItem value="indicacao">Indicação</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="ativo" 
-                        checked={formData.ativo}
-                        onCheckedChange={(checked) => setFormData({...formData, ativo: checked as boolean})}
-                      />
-                      <Label htmlFor="ativo">Ativo</Label>
                     </div>
 
                     <div>
@@ -264,6 +250,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         type="email"
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        placeholder="email@exemplo.com"
                       />
                     </div>
 
@@ -273,6 +260,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         id="telefone"
                         value={formData.telefone}
                         onChange={(e) => setFormData({...formData, telefone: e.target.value})}
+                        placeholder="(11) 99999-9999"
                       />
                     </div>
 
@@ -282,7 +270,72 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         id="website"
                         value={formData.website}
                         onChange={(e) => setFormData({...formData, website: e.target.value})}
+                        placeholder="https://exemplo.com.br"
                       />
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="ativo" 
+                        checked={formData.ativo}
+                        onCheckedChange={(checked) => setFormData({...formData, ativo: checked as boolean})}
+                      />
+                      <Label htmlFor="ativo">Cliente Ativo</Label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dados do Lead/Negócio */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Dados do Lead/Negócio</h3>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <Label htmlFor="fonteLead">Fonte do Lead</Label>
+                      <Select value={formData.fonteLead} onValueChange={(value) => setFormData({...formData, fonteLead: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione a fonte" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="site">Site</SelectItem>
+                          <SelectItem value="telefone">Telefone</SelectItem>
+                          <SelectItem value="parceiro">Parceiro</SelectItem>
+                          <SelectItem value="indicacao">Indicação</SelectItem>
+                          <SelectItem value="linkedin">LinkedIn</SelectItem>
+                          <SelectItem value="feira">Feira/Evento</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="segmentoLead">Segmento do Lead</Label>
+                      <Select value={formData.segmentoLead} onValueChange={(value) => setFormData({...formData, segmentoLead: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o segmento" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="hospitalar">Hospitalar</SelectItem>
+                          <SelectItem value="laboratorio">Laboratório</SelectItem>
+                          <SelectItem value="veterinario">Veterinário</SelectItem>
+                          <SelectItem value="industria">Indústria</SelectItem>
+                          <SelectItem value="universidade">Universidade</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="metodoContato">Método de Contato</Label>
+                      <Select value={formData.metodoContato} onValueChange={(value) => setFormData({...formData, metodoContato: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o método" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="telefone">Telefone</SelectItem>
+                          <SelectItem value="email">E-mail</SelectItem>
+                          <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                          <SelectItem value="presencial">Presencial</SelectItem>
+                          <SelectItem value="teams">Teams/Zoom</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div>
@@ -292,7 +345,91 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         type="number"
                         value={formData.valorNegocio}
                         onChange={(e) => setFormData({...formData, valorNegocio: Number(e.target.value)})}
+                        placeholder="0,00"
                       />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="procurandoPor">Procurando por (Contatos vinculados)</Label>
+                      <Input
+                        id="procurandoPor"
+                        value={formData.procurandoPor}
+                        onChange={(e) => setFormData({...formData, procurandoPor: e.target.value})}
+                        placeholder="Equipamentos médicos, serviços..."
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="tags">Tags</Label>
+                      <Input
+                        id="tags"
+                        value={formData.tags}
+                        onChange={(e) => setFormData({...formData, tags: e.target.value})}
+                        placeholder="Tag1, Tag2, Tag3"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="caracteristicas">Características</Label>
+                    <Textarea
+                      id="caracteristicas"
+                      value={formData.caracteristicas}
+                      onChange={(e) => setFormData({...formData, caracteristicas: e.target.value})}
+                      placeholder="Descreva as características específicas..."
+                      rows={2}
+                    />
+                  </div>
+                </div>
+
+                {/* Dados do Processo */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Dados do Processo</h3>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <Label htmlFor="dataInicio">Data de Início</Label>
+                      <Input
+                        id="dataInicio"
+                        type="date"
+                        value={formData.dataInicio}
+                        onChange={(e) => setFormData({...formData, dataInicio: e.target.value})}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="dataLimite">Data Limite</Label>
+                      <Input
+                        id="dataLimite"
+                        type="date"
+                        value={formData.dataLimite}
+                        onChange={(e) => setFormData({...formData, dataLimite: e.target.value})}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="dataVisita">Data da Visita</Label>
+                      <Input
+                        id="dataVisita"
+                        type="date"
+                        value={formData.dataVisita}
+                        onChange={(e) => setFormData({...formData, dataVisita: e.target.value})}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="fluxoTrabalho">Fluxo de Trabalho</Label>
+                      <Select value={formData.fluxoTrabalho} onValueChange={(value) => setFormData({...formData, fluxoTrabalho: value})}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="em_triagem">Em Triagem</SelectItem>
+                          <SelectItem value="qualificacao">Qualificação</SelectItem>
+                          <SelectItem value="proposta">Proposta</SelectItem>
+                          <SelectItem value="negociacao">Negociação</SelectItem>
+                          <SelectItem value="fechamento">Fechamento</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div>
@@ -303,58 +440,234 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="em_triagem">Em Triagem</SelectItem>
-                          <SelectItem value="em_acompanhamento">Em Acompanhamento</SelectItem>
-                          <SelectItem value="encerrada">Encerrada</SelectItem>
+                          <SelectItem value="acompanhamento">Acompanhamento</SelectItem>
+                          <SelectItem value="ganha">Ganha</SelectItem>
+                          <SelectItem value="perdida">Perdida</SelectItem>
+                          <SelectItem value="finalizada">Finalizada</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-                  </div>
-                </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="dataInicio">Data de Início</Label>
-                    <Input
-                      id="dataInicio"
-                      type="date"
-                      value={formData.dataInicio}
-                      onChange={(e) => setFormData({...formData, dataInicio: e.target.value})}
-                    />
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="propostaNegociacao" 
+                        checked={formData.propostaNegociacao}
+                        onCheckedChange={(checked) => setFormData({...formData, propostaNegociacao: checked as boolean})}
+                      />
+                      <Label htmlFor="propostaNegociacao">Proposta em Negociação</Label>
+                    </div>
                   </div>
 
                   <div>
-                    <Label htmlFor="dataLimite">Data Limite</Label>
-                    <Input
-                      id="dataLimite"
-                      type="date"
-                      value={formData.dataLimite}
-                      onChange={(e) => setFormData({...formData, dataLimite: e.target.value})}
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="descricao">Descrição</Label>
+                    <Label htmlFor="descricao">Descrição da Oportunidade</Label>
                     <Textarea
                       id="descricao"
                       value={formData.descricao}
                       onChange={(e) => setFormData({...formData, descricao: e.target.value})}
+                      placeholder="Descreva detalhadamente a oportunidade..."
                       rows={3}
+                    />
+                  </div>
+                </div>
+
+                {/* Análise Técnica */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Análise Técnica</h3>
+                  <div>
+                    <Label htmlFor="analiseTecnica">Análise Técnica-Científica</Label>
+                    <Textarea
+                      id="analiseTecnica"
+                      value={formData.analiseTecnica}
+                      onChange={(e) => setFormData({...formData, analiseTecnica: e.target.value})}
+                      placeholder="Descreva a análise técnica da oportunidade..."
+                      rows={4}
                     />
                   </div>
 
                   <div>
-                    <Label className="block mb-2">Termômetro de Oportunidade: {formData.termometro}%</Label>
-                    <div className="flex items-center gap-4">
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={formData.termometro}
-                        onChange={(e) => setFormData({...formData, termometro: Number(e.target.value)})}
-                        className="flex-1"
-                      />
-                      <div className={`w-6 h-6 rounded-full ${getTermometroColor(formData.termometro)}`}></div>
+                    <div className="flex justify-between items-center mb-4">
+                      <Label className="text-base font-medium">Análise da Concorrência</Label>
+                      <Button 
+                        type="button"
+                        onClick={() => setShowConcorrenteModal(true)}
+                        className="bg-biodina-gold hover:bg-biodina-gold/90"
+                        size="sm"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Adicionar Concorrente
+                      </Button>
                     </div>
+
+                    {concorrentes.length > 0 && (
+                      <div className="space-y-3">
+                        {concorrentes.map((concorrente: any) => (
+                          <div key={concorrente.id} className="p-4 border rounded-lg bg-gray-50">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h4 className="font-medium">{concorrente.nome}</h4>
+                                <p className="text-sm text-gray-600">{concorrente.produto}</p>
+                                <p className="text-sm font-medium">
+                                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(concorrente.preco)}
+                                </p>
+                              </div>
+                              <Badge 
+                                className={concorrente.preco > formData.valorNegocio ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}
+                              >
+                                {concorrente.preco > formData.valorNegocio ? 'Acima' : 'Abaixo'} do nosso valor
+                              </Badge>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Campos específicos para Importação Direta */}
+                {formData.tipoOportunidade === 'importacao_direta' && (
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Dados de Importação</h3>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <Label htmlFor="fornecedorInternacional">Fornecedor Internacional</Label>
+                        <Input
+                          id="fornecedorInternacional"
+                          value={formData.fornecedorInternacional}
+                          onChange={(e) => setFormData({...formData, fornecedorInternacional: e.target.value})}
+                          placeholder="Nome do fornecedor internacional"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="moeda">Moeda</Label>
+                        <Select value={formData.moeda} onValueChange={(value) => setFormData({...formData, moeda: value})}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="USD">USD - Dólar Americano</SelectItem>
+                            <SelectItem value="EUR">EUR - Euro</SelectItem>
+                            <SelectItem value="GBP">GBP - Libra Esterlina</SelectItem>
+                            <SelectItem value="JPY">JPY - Iene Japonês</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="numeroInvoice">Número do Invoice</Label>
+                        <Input
+                          id="numeroInvoice"
+                          value={formData.numeroInvoice}
+                          onChange={(e) => setFormData({...formData, numeroInvoice: e.target.value})}
+                          placeholder="Número do invoice"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="numeroDI">Número da DI</Label>
+                        <Input
+                          id="numeroDI"
+                          value={formData.numeroDI}
+                          onChange={(e) => setFormData({...formData, numeroDI: e.target.value})}
+                          placeholder="Número da Declaração de Importação"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="dataChegadaEstimada">Data de Chegada Estimada</Label>
+                        <Input
+                          id="dataChegadaEstimada"
+                          type="date"
+                          value={formData.dataChegadaEstimada}
+                          onChange={(e) => setFormData({...formData, dataChegadaEstimada: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Termômetro e Resultado */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Avaliação da Oportunidade</h3>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <Label className="block mb-2">Termômetro de Oportunidade: {formData.termometro}%</Label>
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={formData.termometro}
+                          onChange={(e) => setFormData({...formData, termometro: Number(e.target.value)})}
+                          className="flex-1"
+                        />
+                        <div className={`w-6 h-6 rounded-full ${getTermometroColor(formData.termometro)}`}></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="resultadoOportunidade">Resultado da Oportunidade</Label>
+                      <Select value={formData.resultadoOportunidade} onValueChange={(value) => setFormData({...formData, resultadoOportunidade: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o resultado" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ganho">Ganho</SelectItem>
+                          <SelectItem value="perda">Perda</SelectItem>
+                          <SelectItem value="em_andamento">Em Andamento</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  {formData.resultadoOportunidade === 'ganho' && (
+                    <div>
+                      <Label htmlFor="motivoGanho">Motivo do Ganho</Label>
+                      <Select value={formData.motivoGanho} onValueChange={(value) => setFormData({...formData, motivoGanho: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o motivo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="melhor_preco">Melhor Preço</SelectItem>
+                          <SelectItem value="melhor_qualidade">Melhor Qualidade</SelectItem>
+                          <SelectItem value="prazo_entrega">Prazo de Entrega</SelectItem>
+                          <SelectItem value="relacionamento">Relacionamento</SelectItem>
+                          <SelectItem value="suporte_tecnico">Suporte Técnico</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  {formData.resultadoOportunidade === 'perda' && (
+                    <div>
+                      <Label htmlFor="motivoPerda">Motivo da Perda</Label>
+                      <Select value={formData.motivoPerda} onValueChange={(value) => setFormData({...formData, motivoPerda: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o motivo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="preco_alto">Preço Alto</SelectItem>
+                          <SelectItem value="prazo_entrega">Prazo de Entrega</SelectItem>
+                          <SelectItem value="especificacao">Especificação Técnica</SelectItem>
+                          <SelectItem value="concorrencia">Concorrência</SelectItem>
+                          <SelectItem value="orcamento_cancelado">Orçamento Cancelado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </div>
+
+                {/* Upload de Documentos */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Upload de Documentos</h3>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500">Arraste arquivos aqui ou clique para fazer upload</p>
+                    <p className="text-sm text-gray-400 mt-2">Edital, Proposta, Ata, Contrato, Termo</p>
+                    <Button variant="outline" className="mt-4">
+                      <Upload className="h-4 w-4 mr-2" />
+                      Selecionar Arquivos
+                    </Button>
                   </div>
                 </div>
               </TabsContent>
@@ -413,117 +726,10 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                 <ChatInterno oportunidadeId={oportunidade?.id || 'nova'} />
               </TabsContent>
 
-              <TabsContent value="geral" className="space-y-6 mt-6">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="cliente">Cliente</Label>
-                      <Input
-                        id="cliente"
-                        value={formData.cliente}
-                        onChange={(e) => setFormData({...formData, cliente: e.target.value})}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="representanteComercial">Representante Comercial</Label>
-                      <Input
-                        id="representanteComercial"
-                        value={formData.representanteComercial}
-                        onChange={(e) => setFormData({...formData, representanteComercial: e.target.value})}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="familiaComercial">Família Comercial</Label>
-                      <Input
-                        id="familiaComercial"
-                        value={formData.familiaComercial}
-                        onChange={(e) => setFormData({...formData, familiaComercial: e.target.value})}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="fornecedor">Fornecedor</Label>
-                      <Input
-                        id="fornecedor"
-                        value={formData.fornecedor}
-                        onChange={(e) => setFormData({...formData, fornecedor: e.target.value})}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="tipoAplicacao">Tipo da Aplicação</Label>
-                      <Select value={formData.tipoAplicacao} onValueChange={(value) => setFormData({...formData, tipoAplicacao: value})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="venda">Venda</SelectItem>
-                          <SelectItem value="locacao">Locação</SelectItem>
-                          <SelectItem value="servico">Serviço</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="tipoOportunidadeGeral">Tipo de Oportunidade</Label>
-                      <Select value={formData.tipoOportunidadeGeral} onValueChange={(value) => setFormData({...formData, tipoOportunidadeGeral: value})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pontual">Pontual</SelectItem>
-                          <SelectItem value="periodica">Periódica</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="dataAbertura">Data de Abertura</Label>
-                      <Input
-                        id="dataAbertura"
-                        type="date"
-                        value={formData.dataAbertura}
-                        onChange={(e) => setFormData({...formData, dataAbertura: e.target.value})}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="dataContato">Data de Contato</Label>
-                      <Input
-                        id="dataContato"
-                        type="date"
-                        value={formData.dataContato}
-                        onChange={(e) => setFormData({...formData, dataContato: e.target.value})}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="valorProposta">Valor da Proposta (R$)</Label>
-                  <Input
-                    id="valorProposta"
-                    type="number"
-                    value={formData.valorProposta}
-                    onChange={(e) => setFormData({...formData, valorProposta: Number(e.target.value)})}
-                  />
-                </div>
-              </TabsContent>
-
               <TabsContent value="documentos" className="mt-6">
                 <div className="space-y-6">
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">Arraste arquivos aqui ou clique para fazer upload</p>
-                    <p className="text-sm text-gray-400 mt-2">Edital, Proposta, Ata, Contrato, Termo</p>
-                    <Button variant="outline" className="mt-4">
-                      <Upload className="h-4 w-4 mr-2" />
-                      Selecionar Arquivos
-                    </Button>
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">Documentos enviados no chat interno aparecerão aqui</p>
                   </div>
                 </div>
               </TabsContent>
