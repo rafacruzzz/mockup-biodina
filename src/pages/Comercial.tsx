@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SidebarLayout from "@/components/SidebarLayout";
 import OportunidadeForm from "@/components/comercial/OportunidadeForm";
 import OportunidadeAvancadaForm from "@/components/comercial/OportunidadeAvancadaForm";
@@ -12,7 +13,7 @@ import PedidoModal from "@/components/comercial/PedidoModal";
 import PedidoForm from "@/components/comercial/PedidoForm";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
-  DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer
+  DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -22,6 +23,7 @@ import {
 const Comercial = () => {
   const [activeTab, setActiveTab] = useState('funil');
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('todos');
   const [showOportunidadeForm, setShowOportunidadeForm] = useState(false);
   const [showOportunidadeAvancadaForm, setShowOportunidadeAvancadaForm] = useState(false);
   const [editingOportunidade, setEditingOportunidade] = useState<any>();
@@ -29,7 +31,7 @@ const Comercial = () => {
   const [showPedidoForm, setShowPedidoForm] = useState(false);
   const [selectedOportunidade, setSelectedOportunidade] = useState<any>();
 
-  // Dados das oportunidades atualizados com novos campos
+  // Dados das oportunidades atualizados com novos status
   const oportunidades = [
     { 
       id: 1,
@@ -40,6 +42,7 @@ const Comercial = () => {
       origem: 'Vendas RJ',
       familiaComercial: 'Radiometer ABL',
       situacao: 'ganha',
+      status: 'Ganha',
       resultadoOportunidade: 'ganho',
       tipoAplicacao: 'venda',
       tipoOportunidade: 'pontual',
@@ -49,8 +52,9 @@ const Comercial = () => {
       termometro: 100,
       fonteLead: 'Site',
       segmento: 'Hospitalar',
-      status: 'Ganha',
-      descricao: 'DOS 3 EQUIPAMENTOS ADQUIRIDOS POR (ID) O DE Nº SERIE 754R2826N025 IRA SER INSTALADO NO SARAH-DF.'
+      descricao: 'DOS 3 EQUIPAMENTOS ADQUIRIDOS POR (ID) O DE Nº SERIE 754R2826N025 IRA SER INSTALADO NO SARAH-DF.',
+      produtos: ['ABL800 Flex', 'Sensor pH'],
+      servicos: ['Instalação', 'Treinamento']
     },
     { 
       id: 2,
@@ -60,7 +64,8 @@ const Comercial = () => {
       responsavel: 'Maria Santos',
       origem: 'Vendas RN',
       familiaComercial: 'Nova Biomedical',
-      situacao: 'em_analise',
+      situacao: 'em_triagem',
+      status: 'Em Triagem',
       resultadoOportunidade: 'em_andamento',
       tipoAplicacao: 'locacao',
       tipoOportunidade: 'periodica',
@@ -70,8 +75,9 @@ const Comercial = () => {
       termometro: 85,
       fonteLead: 'Indicação',
       segmento: 'Universitário',
-      status: 'Em Análise',
-      descricao: 'Equipamentos para laboratório de análises clínicas'
+      descricao: 'Equipamentos para laboratório de análises clínicas',
+      produtos: [],
+      servicos: []
     },
     { 
       id: 3,
@@ -81,8 +87,9 @@ const Comercial = () => {
       responsavel: 'João Silva',
       origem: 'Vendas CE',
       familiaComercial: 'WEBMED',
-      situacao: 'perdida',
-      resultadoOportunidade: 'perda',
+      situacao: 'em_acompanhamento',
+      status: 'Em Acompanhamento',
+      resultadoOportunidade: 'em_andamento',
       tipoAplicacao: 'servico',
       tipoOportunidade: 'pontual',
       valor: 280000,
@@ -91,8 +98,9 @@ const Comercial = () => {
       termometro: 45,
       fonteLead: 'Cold Call',
       segmento: 'Público',
-      status: 'Perdida',
-      descricao: 'Sistema de gestão hospitalar integrado'
+      descricao: 'Sistema de gestão hospitalar integrado',
+      produtos: ['Sistema WEBMED'],
+      servicos: ['Consultoria', 'Implementação']
     },
     { 
       id: 4,
@@ -102,8 +110,9 @@ const Comercial = () => {
       responsavel: 'Carlos Oliveira',
       origem: 'Vendas SP',
       familiaComercial: 'Stat Profile',
-      situacao: 'cancelada',
-      resultadoOportunidade: 'em_andamento',
+      situacao: 'perdida',
+      status: 'Perdida',
+      resultadoOportunidade: 'perda',
       tipoAplicacao: 'venda',
       tipoOportunidade: 'pontual',
       valor: 1250000,
@@ -112,8 +121,9 @@ const Comercial = () => {
       termometro: 75,
       fonteLead: 'Licitação',
       segmento: 'Municipal',
-      status: 'Cancelada',
-      descricao: 'Gasômetros para rede municipal de saúde'
+      descricao: 'Gasômetros para rede municipal de saúde',
+      produtos: ['Gasômetro Stat Profile'],
+      servicos: []
     },
     {
       id: 5,
@@ -123,7 +133,8 @@ const Comercial = () => {
       responsavel: 'Ana Costa',
       origem: 'Vendas SP',
       familiaComercial: 'Radiometer ABL',
-      situacao: 'em_andamento',
+      situacao: 'em_acompanhamento',
+      status: 'Em Acompanhamento',
       resultadoOportunidade: 'em_andamento',
       tipoAplicacao: 'venda',
       tipoOportunidade: 'pontual',
@@ -133,8 +144,9 @@ const Comercial = () => {
       termometro: 95,
       fonteLead: 'Referência',
       segmento: 'Privado',
-      status: 'Em Andamento',
-      descricao: 'Modernização do laboratório de análises'
+      descricao: 'Modernização do laboratório de análises',
+      produtos: ['ABL800 Basic'],
+      servicos: ['Manutenção']
     }
   ];
 
@@ -201,8 +213,8 @@ const Comercial = () => {
   const getSituacaoColor = (situacao: string) => {
     switch (situacao) {
       case 'ganha': return 'bg-green-500';
-      case 'em_analise': return 'bg-yellow-500';
-      case 'em_andamento': return 'bg-blue-500';
+      case 'em_triagem': return 'bg-blue-500';
+      case 'em_acompanhamento': return 'bg-orange-500';
       case 'perdida': return 'bg-red-500';
       case 'cancelada': return 'bg-gray-500';
       default: return 'bg-blue-500';
@@ -212,8 +224,8 @@ const Comercial = () => {
   const getSituacaoLabel = (situacao: string) => {
     switch (situacao) {
       case 'ganha': return 'Ganha';
-      case 'em_analise': return 'Em Análise';
-      case 'em_andamento': return 'Em Andamento';
+      case 'em_triagem': return 'Em Triagem';
+      case 'em_acompanhamento': return 'Em Acompanhamento';
       case 'perdida': return 'Perdida';
       case 'cancelada': return 'Cancelada';
       default: return situacao;
@@ -233,6 +245,20 @@ const Comercial = () => {
   };
 
   const handleSaveOportunidade = (formData: any) => {
+    // Verificar se o status mudou para "Ganha" e há produtos/serviços selecionados
+    if (formData.status === 'Ganha' && (formData.produtos?.length > 0 || formData.servicos?.length > 0)) {
+      // Criar pedido automaticamente
+      const novoPedido = {
+        oportunidadeId: formData.id || Date.now(),
+        cliente: formData.cliente,
+        produtos: formData.produtos || [],
+        servicos: formData.servicos || [],
+        valor: formData.valor,
+        status: 'em_analise'
+      };
+      console.log('Pedido criado automaticamente:', novoPedido);
+    }
+    
     console.log('Salvando oportunidade:', formData);
     setShowOportunidadeForm(false);
     setShowOportunidadeAvancadaForm(false);
@@ -240,6 +266,11 @@ const Comercial = () => {
   };
 
   const handleGerarPedido = (oportunidade: any) => {
+    // Só permitir gerar pedido se status for "Ganha"
+    if (oportunidade.status !== 'Ganha') {
+      alert('Pedidos só podem ser gerados para oportunidades com status "Ganha"');
+      return;
+    }
     setSelectedOportunidade(oportunidade);
     setShowPedidoModal(true);
   };
@@ -253,11 +284,15 @@ const Comercial = () => {
     setShowPedidoForm(false);
   };
 
-  const filteredOportunidades = oportunidades.filter(oportunidade =>
-    oportunidade.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    oportunidade.codigo.includes(searchTerm) ||
-    oportunidade.responsavel.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredOportunidades = oportunidades.filter(oportunidade => {
+    const matchesSearch = oportunidade.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      oportunidade.codigo.includes(searchTerm) ||
+      oportunidade.responsavel.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'todos' || oportunidade.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
 
   const renderFunil = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -347,19 +382,6 @@ const Comercial = () => {
             Oportunidades Comerciais
           </CardTitle>
           <div className="flex gap-2">
-            {/* Comentado: Nova Oportunidade Simples
-            <Button 
-              variant="outline"
-              className="border-biodina-gold text-biodina-gold hover:bg-biodina-gold/10"
-              onClick={() => {
-                setEditingOportunidade(undefined);
-                setShowOportunidadeForm(true);
-              }}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Oportunidade Simples
-            </Button>
-            */}
             <Button 
               className="bg-biodina-gold hover:bg-biodina-gold/90"
               onClick={() => {
@@ -368,7 +390,7 @@ const Comercial = () => {
               }}
             >
               <Plus className="h-4 w-4 mr-2" />
-              Nova Oportunidade Avançada
+              Nova Oportunidade
             </Button>
           </div>
         </div>
@@ -382,6 +404,21 @@ const Comercial = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-gray-400" />
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Filtrar por status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos os Status</SelectItem>
+                <SelectItem value="Em Triagem">Em Triagem</SelectItem>
+                <SelectItem value="Em Acompanhamento">Em Acompanhamento</SelectItem>
+                <SelectItem value="Ganha">Ganha</SelectItem>
+                <SelectItem value="Perdida">Perdida</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -392,10 +429,10 @@ const Comercial = () => {
                 <TableHead>Código</TableHead>
                 <TableHead>Cliente</TableHead>
                 <TableHead>Responsável</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Fonte</TableHead>
                 <TableHead>Segmento</TableHead>
                 <TableHead>Termômetro</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead>Valor</TableHead>
                 <TableHead>Data Abertura</TableHead>
                 <TableHead>Ações</TableHead>
@@ -407,6 +444,11 @@ const Comercial = () => {
                   <TableCell className="font-medium">{oportunidade.codigo}</TableCell>
                   <TableCell>{oportunidade.cliente}</TableCell>
                   <TableCell>{oportunidade.responsavel}</TableCell>
+                  <TableCell>
+                    <Badge className={`${getSituacaoColor(oportunidade.situacao)} text-white`}>
+                      {oportunidade.status}
+                    </Badge>
+                  </TableCell>
                   <TableCell>{oportunidade.fonteLead}</TableCell>
                   <TableCell>{oportunidade.segmento}</TableCell>
                   <TableCell>
@@ -421,11 +463,6 @@ const Comercial = () => {
                       />
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <Badge className={`${getSituacaoColor(oportunidade.situacao)} text-white`}>
-                      {getSituacaoLabel(oportunidade.situacao)}
-                    </Badge>
-                  </TableCell>
                   <TableCell>{formatCurrency(oportunidade.valor)}</TableCell>
                   <TableCell>{oportunidade.dataAbertura}</TableCell>
                   <TableCell>
@@ -433,7 +470,13 @@ const Comercial = () => {
                       <Button size="sm" variant="outline" onClick={() => handleEditOportunidade(oportunidade)}>
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => handleGerarPedido(oportunidade)}>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleGerarPedido(oportunidade)}
+                        disabled={oportunidade.status !== 'Ganha'}
+                        title={oportunidade.status !== 'Ganha' ? 'Pedidos só podem ser gerados para oportunidades ganhas' : 'Gerar pedido'}
+                      >
                         <FileText className="h-4 w-4" />
                       </Button>
                     </div>
@@ -509,9 +552,9 @@ const Comercial = () => {
               <Pie
                 data={[
                   { name: 'Ganha', value: 1, fill: '#22c55e' },
-                  { name: 'Em Análise', value: 1, fill: '#eab308' },
-                  { name: 'Perdida', value: 1, fill: '#ef4444' },
-                  { name: 'Cancelada', value: 1, fill: '#6b7280' }
+                  { name: 'Em Triagem', value: 1, fill: '#3b82f6' },
+                  { name: 'Em Acompanhamento', value: 1, fill: '#f97316' },
+                  { name: 'Perdida', value: 1, fill: '#ef4444' }
                 ]}
                 cx="50%"
                 cy="50%"
