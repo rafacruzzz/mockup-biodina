@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
-import ProductFormDetailed from "@/components/cadastro/ProductFormDetailed";
+import ProductForm from "@/components/ProductForm";
 import CadastroSidebar from "@/components/cadastro/CadastroSidebar";
 import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
@@ -17,7 +17,7 @@ const Cadastro = () => {
   const [activeSubModule, setActiveSubModule] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
-  const [showProductFormDetailed, setShowProductFormDetailed] = useState(false);
+  const [showProductForm, setShowProductForm] = useState(false);
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showGenericModal, setShowGenericModal] = useState(false);
@@ -143,7 +143,7 @@ const Cadastro = () => {
 
   const handleNewRecord = () => {
     if (activeModule === 'produtos' && activeSubModule === 'produtos') {
-      setShowProductFormDetailed(true);
+      setShowProductForm(true);
     } else if (activeModule === 'servicos' && activeSubModule === 'servicos') {
       setShowServiceModal(true);
     } else if (activeModule === 'usuarios' && activeSubModule === 'usuarios') {
@@ -204,8 +204,8 @@ const Cadastro = () => {
         </div>
       </div>
 
-      {showProductFormDetailed && (
-        <ProductFormDetailed onClose={() => setShowProductFormDetailed(false)} />
+      {showProductForm && (
+        <ProductForm onClose={() => setShowProductForm(false)} />
       )}
 
       {showServiceModal && (
