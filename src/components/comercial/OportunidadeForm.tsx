@@ -48,9 +48,14 @@ const pedidos = [
 ];
 
 const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormProps) => {
+  // Debug log to confirm component is rendering
+  console.log('OportunidadeForm rendering with oportunidade:', oportunidade);
+  
   // Inicializar o estado com valores explícitos
   const [activeMasterTab, setActiveMasterTab] = useState('triagem');
   const [activeToolTab, setActiveToolTab] = useState('geral');
+  
+  console.log('Current activeMasterTab:', activeMasterTab);
   
   const [formData, setFormData] = useState({
     codigo: oportunidade?.codigo || '',
@@ -458,38 +463,38 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
         </CardHeader>
 
         <CardContent>
-          {/* Abas Masters - Nível Superior */}
-          <div className="mb-6 bg-white">
-            <div className="flex border-b-2 border-gray-200">
+          {/* MASTER TABS - SIMPLIFIED FOR DEBUGGING */}
+          <div className="mb-6 bg-white border-2 border-red-500 p-4">
+            <h2 className="text-xl font-bold mb-4 text-red-600">DEBUG: Master Tabs Section</h2>
+            <div className="flex space-x-4">
               <button
-                onClick={() => isPhaseAccessible('triagem') && setActiveMasterTab('triagem')}
-                className={`px-6 py-4 font-bold text-lg border-b-4 transition-all duration-200 ${
+                onClick={() => {
+                  console.log('Clicking TRIAGEM tab');
+                  setActiveMasterTab('triagem');
+                }}
+                className={`px-8 py-4 text-lg font-bold border-2 rounded ${
                   activeMasterTab === 'triagem'
-                    ? 'border-b-blue-600 text-blue-600 bg-blue-50'
-                    : isPhaseAccessible('triagem')
-                    ? 'border-b-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-                    : 'border-b-transparent text-gray-400 cursor-not-allowed bg-gray-100'
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
                 }`}
-                disabled={!isPhaseAccessible('triagem')}
               >
-                {isPhaseCompleted('triagem') && <Lock className="h-4 w-4 inline mr-2" />}
                 TRIAGEM
               </button>
               <button
-                onClick={() => isPhaseAccessible('participacao') && setActiveMasterTab('participacao')}
-                className={`px-6 py-4 font-bold text-lg border-b-4 transition-all duration-200 ${
+                onClick={() => {
+                  console.log('Clicking PARTICIPAÇÃO tab');
+                  setActiveMasterTab('participacao');
+                }}
+                className={`px-8 py-4 text-lg font-bold border-2 rounded ${
                   activeMasterTab === 'participacao'
-                    ? 'border-b-blue-600 text-blue-600 bg-blue-50'
-                    : isPhaseAccessible('participacao')
-                    ? 'border-b-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50'
-                    : 'border-b-transparent text-gray-400 cursor-not-allowed bg-gray-100'
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
                 }`}
-                disabled={!isPhaseAccessible('participacao')}
               >
-                {isPhaseCompleted('participacao') && <Lock className="h-4 w-4 inline mr-2" />}
                 PARTICIPAÇÃO
               </button>
             </div>
+            <p className="mt-2 text-sm text-red-600">Active Tab: {activeMasterTab}</p>
           </div>
 
           {/* Abas de Ferramentas - Nível Inferior */}
