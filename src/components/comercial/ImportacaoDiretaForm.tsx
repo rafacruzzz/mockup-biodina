@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { X, FileText, MessageSquare, Upload, Package, Thermometer, Plus, Trash2 } from 'lucide-react';
+import { X, FileText, MessageSquare, Upload, Package, Thermometer, Plus, Trash2, Filter } from 'lucide-react';
 import ChatInterno from './ChatInterno';
 import jsPDF from 'jspdf';
 
@@ -145,6 +145,58 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     spiPrazo: '',
     spiDataConfirmacao: ''
   });
+
+  // Estados para as tabelas de empréstimos
+  const [emprestimos, setEmprestimos] = useState([
+    {
+      id: 1,
+      produto: 'Microscópio Eletrônico ME-2000',
+      dataEnvio: '2024-01-15',
+      status: 'Alocado',
+      responsavel: 'João Silva',
+      observacoes: 'Equipamento em perfeito estado'
+    },
+    {
+      id: 2,
+      produto: 'Centrifuga CF-500X',
+      dataEnvio: '2024-01-20',
+      status: 'Em trânsito',
+      responsavel: 'Maria Santos',
+      observacoes: 'Transporte especial necessário'
+    },
+    {
+      id: 3,
+      produto: 'Autoclave AC-100',
+      dataEnvio: '2024-01-10',
+      status: 'Preparação',
+      responsavel: 'Pedro Costa',
+      observacoes: 'Aguardando calibração final'
+    }
+  ]);
+
+  const [devolucoes, setDevolucoes] = useState([
+    {
+      id: 1,
+      produto: 'Balança Analítica BA-200',
+      dataEnvio: '2023-12-15',
+      dataDevolucao: '2024-01-05',
+      status: 'Devolvido',
+      responsavel: 'Ana Lima',
+      observacoes: 'Retorno dentro do prazo'
+    },
+    {
+      id: 2,
+      produto: 'pH Metro Digital PM-300',
+      dataEnvio: '2023-12-20',
+      dataDevolucao: '2024-01-08',
+      status: 'Aguardando conferência',
+      responsavel: 'Carlos Oliveira',
+      observacoes: 'Conferência técnica pendente'
+    }
+  ]);
+
+  const [filtroStatusEmprestimo, setFiltroStatusEmprestimo] = useState('');
+  const [filtroStatusDevolucao, setFiltroStatusDevolucao] = useState('');
 
   const masterTabs = [
     { id: 'comercial', label: 'COMERCIAL' },
@@ -370,6 +422,15 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     // Download do PDF
     pdf.save(fileName);
   };
+
+  // Funções para filtrar as tabelas
+  const emprestimosFiltrados = emprestimos.filter(item => 
+    filtroStatusEmprestimo === '' || item.status === filtroStatusEmprestimo
+  );
+
+  const devolucoesFiltradas = devolucoes.filter(item => 
+    filtroStatusDevolucao === '' || item.status === filtroStatusDevolucao
+  );
 
   const renderSPIForm = () => {
     return (
@@ -899,7 +960,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     if (activeMasterTab === 'comercial') {
       return (
         <Tabs value={activeToolTab} onValueChange={setActiveToolTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="dados-gerais" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Dados Gerais
@@ -915,6 +976,10 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
             <TabsTrigger value="documentos" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
               Documentos
+            </TabsTrigger>
+            <TabsTrigger value="emprestimos" className="flex items-center gap-2">
+              <Package className="h-4 w-4" />
+              Empréstimos
             </TabsTrigger>
           </TabsList>
 
@@ -1605,6 +1670,131 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   <Button variant="outline">
                     Selecionar Arquivos
                   </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="emprestimos" className="space-y-4 mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestão de Empréstimos e Devoluções</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Tabela de Empréstimos */}
+                  <div>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-semibold text-purple-600">🟣 Empréstimos</h3>
+                      <div className="flex items-center gap-2">
+                        <Filter className="h-4 w-4" />
+                        <Select value={filtroStatusEmprestimo} onValueChange={setFiltroStatusEmprestimo}>
+                          <SelectTrigger className="w-40">
+                            <SelectValue placeholder="Filtrar por status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">Todos</SelectItem>
+                            <SelectItem value="Preparação">Preparação</SelectItem>
+                            <SelectItem value="Alocado">Alocado</SelectItem>
+                            <SelectItem value="Em trânsito">Em trânsito</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    
+                    <div className="border rounded-lg overflow-hidden">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Produto</TableHead>
+                            <TableHead>Data de envio</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Responsável</TableHead>
+                            <TableHead>Observações</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {emprestimosFiltrados.map((item) => (
+                            <TableRow key={item.id}>
+                              <TableCell className="font-medium">{item.produto}</TableCell>
+                              <TableCell>{new Date(item.dataEnvio).toLocaleDateString('pt-BR')}</TableCell>
+                              <TableCell>
+                                <Badge 
+                                  className={
+                                    item.status === 'Preparação' ? 'bg-yellow-100 text-yellow-800' :
+                                    item.status === 'Alocado' ? 'bg-blue-100 text-blue-800' :
+                                    'bg-orange-100 text-orange-800'
+                                  }
+                                >
+                                  {item.status}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>{item.responsavel}</TableCell>
+                              <TableCell className="text-sm text-gray-600">{item.observacoes}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+
+                  {/* Tabela de Devoluções */}
+                  <div>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-semibold text-green-600">🟢 Devoluções</h3>
+                      <div className="flex items-center gap-2">
+                        <Filter className="h-4 w-4" />
+                        <Select value={filtroStatusDevolucao} onValueChange={setFiltroStatusDevolucao}>
+                          <SelectTrigger className="w-40">
+                            <SelectValue placeholder="Filtrar por status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">Todos</SelectItem>
+                            <SelectItem value="Devolvido">Devolvido</SelectItem>
+                            <SelectItem value="Parcial">Parcial</SelectItem>
+                            <SelectItem value="Aguardando conferência">Aguardando conferência</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    
+                    <div className="border rounded-lg overflow-hidden">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Produto</TableHead>
+                            <TableHead>Data de envio</TableHead>
+                            <TableHead>Data da devolução</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Responsável</TableHead>
+                            <TableHead>Observações</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {devolucoesFiltradas.map((item) => (
+                            <TableRow key={item.id}>
+                              <TableCell className="font-medium">{item.produto}</TableCell>
+                              <TableCell>{new Date(item.dataEnvio).toLocaleDateString('pt-BR')}</TableCell>
+                              <TableCell>{new Date(item.dataDevolucao).toLocaleDateString('pt-BR')}</TableCell>
+                              <TableCell>
+                                <Badge 
+                                  className={
+                                    item.status === 'Devolvido' ? 'bg-green-100 text-green-800' :
+                                    item.status === 'Parcial' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-gray-100 text-gray-800'
+                                  }
+                                >
+                                  {item.status}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>{item.responsavel}</TableCell>
+                              <TableCell className="text-sm text-gray-600">{item.observacoes}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
