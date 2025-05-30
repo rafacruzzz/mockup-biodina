@@ -30,7 +30,8 @@ import {
   Target,
   MessageSquare,
   Briefcase,
-  Upload
+  Upload,
+  Plus
 } from "lucide-react";
 import ApprovalModal from "./ApprovalModal";
 import ConcorrenteTable from "./ConcorrenteTable";
