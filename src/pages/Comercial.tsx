@@ -11,6 +11,8 @@ import OportunidadeForm from "@/components/comercial/OportunidadeForm";
 import OportunidadeAvancadaForm from "@/components/comercial/OportunidadeAvancadaForm";
 import PedidoModal from "@/components/comercial/PedidoModal";
 import PedidoForm from "@/components/comercial/PedidoForm";
+import TipoPropostaModal from "@/components/comercial/TipoPropostaModal";
+import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter
@@ -24,14 +26,17 @@ const Comercial = () => {
   const [activeTab, setActiveTab] = useState('funil');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
+  const [modalidadeFilter, setModalidadeFilter] = useState('todos');
   const [showOportunidadeForm, setShowOportunidadeForm] = useState(false);
   const [showOportunidadeAvancadaForm, setShowOportunidadeAvancadaForm] = useState(false);
   const [editingOportunidade, setEditingOportunidade] = useState<any>();
   const [showPedidoModal, setShowPedidoModal] = useState(false);
   const [showPedidoForm, setShowPedidoForm] = useState(false);
   const [selectedOportunidade, setSelectedOportunidade] = useState<any>();
+  const [showTipoPropostaModal, setShowTipoPropostaModal] = useState(false);
+  const [showContratacaoSimplesForm, setShowContratacaoSimplesForm] = useState(false);
 
-  // Dados das oportunidades atualizados com novos status
+  // Dados das oportunidades atualizados com modalidade
   const oportunidades = [
     { 
       id: 1,
@@ -52,6 +57,7 @@ const Comercial = () => {
       termometro: 100,
       fonteLead: 'Site',
       segmento: 'Hospitalar',
+      modalidade: 'licitacao',
       descricao: 'DOS 3 EQUIPAMENTOS ADQUIRIDOS POR (ID) O DE Nº SERIE 754R2826N025 IRA SER INSTALADO NO SARAH-DF.',
       produtos: ['ABL800 Flex', 'Sensor pH'],
       servicos: ['Instalação', 'Treinamento']
@@ -75,6 +81,7 @@ const Comercial = () => {
       termometro: 85,
       fonteLead: 'Indicação',
       segmento: 'Universitário',
+      modalidade: 'contratacao_simples',
       descricao: 'Equipamentos para laboratório de análises clínicas',
       produtos: [],
       servicos: []
@@ -98,6 +105,7 @@ const Comercial = () => {
       termometro: 45,
       fonteLead: 'Cold Call',
       segmento: 'Público',
+      modalidade: 'licitacao',
       descricao: 'Sistema de gestão hospitalar integrado',
       produtos: ['Sistema WEBMED'],
       servicos: ['Consultoria', 'Implementação']
@@ -121,6 +129,7 @@ const Comercial = () => {
       termometro: 75,
       fonteLead: 'Licitação',
       segmento: 'Municipal',
+      modalidade: 'licitacao',
       descricao: 'Gasômetros para rede municipal de saúde',
       produtos: ['Gasômetro Stat Profile'],
       servicos: []
@@ -144,6 +153,7 @@ const Comercial = () => {
       termometro: 95,
       fonteLead: 'Referência',
       segmento: 'Privado',
+      modalidade: 'contratacao_simples',
       descricao: 'Modernização do laboratório de análises',
       produtos: ['ABL800 Basic'],
       servicos: ['Manutenção']
@@ -239,34 +249,57 @@ const Comercial = () => {
     return 'bg-green-500';
   };
 
+  const getModalidadeLabel = (modalidade: string) => {
+    switch (modalidade) {
+      case 'licitacao': return 'Licitação';
+      case 'contratacao_simples': return 'Contratação Simples';
+      default: return modalidade;
+    }
+  };
+
+  const getModalidadeColor = (modalidade: string) => {
+    switch (modalidade) {
+      case 'licitacao': return 'bg-blue-500';
+      case 'contratacao_simples': return 'bg-green-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const handleNovaOportunidade = () => {
+    setShowTipoPropostaModal(true);
+  };
+
+  const handleTipoPropostaSelecionado = (tipo: 'licitacao' | 'contratacao_simples') => {
+    setShowTipoPropostaModal(false);
+    
+    if (tipo === 'licitacao') {
+      setEditingOportunidade(undefined);
+      setShowOportunidadeAvancadaForm(true);
+    } else if (tipo === 'contratacao_simples') {
+      setEditingOportunidade(undefined);
+      setShowContratacaoSimplesForm(true);
+    }
+  };
+
   const handleEditOportunidade = (oportunidade: any) => {
     setEditingOportunidade(oportunidade);
-    setShowOportunidadeAvancadaForm(true);
+    
+    if (oportunidade.modalidade === 'licitacao') {
+      setShowOportunidadeAvancadaForm(true);
+    } else {
+      setShowContratacaoSimplesForm(true);
+    }
   };
 
   const handleSaveOportunidade = (formData: any) => {
-    // Verificar se o status mudou para "Ganha" e há produtos/serviços selecionados
-    if (formData.status === 'Ganha' && (formData.produtos?.length > 0 || formData.servicos?.length > 0)) {
-      // Criar pedido automaticamente
-      const novoPedido = {
-        oportunidadeId: formData.id || Date.now(),
-        cliente: formData.cliente,
-        produtos: formData.produtos || [],
-        servicos: formData.servicos || [],
-        valor: formData.valor,
-        status: 'em_analise'
-      };
-      console.log('Pedido criado automaticamente:', novoPedido);
-    }
-    
     console.log('Salvando oportunidade:', formData);
     setShowOportunidadeForm(false);
     setShowOportunidadeAvancadaForm(false);
+    setShowContratacaoSimplesForm(false);
     setEditingOportunidade(undefined);
   };
 
   const handleGerarPedido = (oportunidade: any) => {
-    // Só permitir gerar pedido se status for "Ganha"
     if (oportunidade.status !== 'Ganha') {
       alert('Pedidos só podem ser gerados para oportunidades com status "Ganha"');
       return;
@@ -290,8 +323,9 @@ const Comercial = () => {
       oportunidade.responsavel.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'todos' || oportunidade.status === statusFilter;
+    const matchesModalidade = modalidadeFilter === 'todos' || oportunidade.modalidade === modalidadeFilter;
     
-    return matchesSearch && matchesStatus;
+    return matchesSearch && matchesStatus && matchesModalidade;
   });
 
   const renderFunil = () => (
@@ -384,13 +418,10 @@ const Comercial = () => {
           <div className="flex gap-2">
             <Button 
               className="bg-biodina-gold hover:bg-biodina-gold/90"
-              onClick={() => {
-                setEditingOportunidade(undefined);
-                setShowOportunidadeAvancadaForm(true);
-              }}
+              onClick={handleNovaOportunidade}
             >
               <Plus className="h-4 w-4 mr-2" />
-              Nova Oportunidade
+              Nova Proposta
             </Button>
           </div>
         </div>
@@ -418,6 +449,16 @@ const Comercial = () => {
                 <SelectItem value="Perdida">Perdida</SelectItem>
               </SelectContent>
             </Select>
+            <Select value={modalidadeFilter} onValueChange={setModalidadeFilter}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Filtrar por modalidade" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todas as Modalidades</SelectItem>
+                <SelectItem value="licitacao">Licitação</SelectItem>
+                <SelectItem value="contratacao_simples">Contratação Simples</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardHeader>
@@ -429,6 +470,7 @@ const Comercial = () => {
                 <TableHead>Código</TableHead>
                 <TableHead>Cliente</TableHead>
                 <TableHead>Responsável</TableHead>
+                <TableHead>Modalidade</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Fonte</TableHead>
                 <TableHead>Segmento</TableHead>
@@ -444,6 +486,11 @@ const Comercial = () => {
                   <TableCell className="font-medium">{oportunidade.codigo}</TableCell>
                   <TableCell>{oportunidade.cliente}</TableCell>
                   <TableCell>{oportunidade.responsavel}</TableCell>
+                  <TableCell>
+                    <Badge className={`${getModalidadeColor(oportunidade.modalidade)} text-white`}>
+                      {getModalidadeLabel(oportunidade.modalidade)}
+                    </Badge>
+                  </TableCell>
                   <TableCell>
                     <Badge className={`${getSituacaoColor(oportunidade.situacao)} text-white`}>
                       {oportunidade.status}
@@ -622,6 +669,13 @@ const Comercial = () => {
         </div>
       </div>
 
+      {/* Modais */}
+      <TipoPropostaModal
+        isOpen={showTipoPropostaModal}
+        onClose={() => setShowTipoPropostaModal(false)}
+        onContinue={handleTipoPropostaSelecionado}
+      />
+
       {showOportunidadeForm && (
         <OportunidadeForm
           oportunidade={editingOportunidade}
@@ -638,6 +692,18 @@ const Comercial = () => {
           oportunidade={editingOportunidade}
           onClose={() => {
             setShowOportunidadeAvancadaForm(false);
+            setEditingOportunidade(undefined);
+          }}
+          onSave={handleSaveOportunidade}
+        />
+      )}
+
+      {showContratacaoSimplesForm && (
+        <ContratacaoSimplesForm
+          isOpen={showContratacaoSimplesForm}
+          oportunidade={editingOportunidade}
+          onClose={() => {
+            setShowContratacaoSimplesForm(false);
             setEditingOportunidade(undefined);
           }}
           onSave={handleSaveOportunidade}
