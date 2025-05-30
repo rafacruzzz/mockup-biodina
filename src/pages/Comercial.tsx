@@ -14,6 +14,7 @@ import PedidoModal from "@/components/comercial/PedidoModal";
 import PedidoForm from "@/components/comercial/PedidoForm";
 import TipoPropostaModal from "@/components/comercial/TipoPropostaModal";
 import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
+import { truncateText } from "@/utils/text";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter
@@ -597,7 +598,7 @@ const Comercial = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="vendedor" />
               <YAxis />
-              <Tooltip formatter={(value) => [`${value}%`, 'Taxa de Conversão']} />
+              <RechartsTooltip formatter={(value) => [`${value}%`, 'Taxa de Conversão']} />
               <Bar dataKey="percentual" fill="#0A2342" />
             </BarChart>
           </ResponsiveContainer>
@@ -625,7 +626,7 @@ const Comercial = () => {
                 dataKey="value"
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
               />
-              <Tooltip />
+              <RechartsTooltip />
             </PieChart>
           </ResponsiveContainer>
         </CardContent>
