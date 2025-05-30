@@ -482,7 +482,7 @@ const ImportacaoDiretaForm = ({ isOpen, oportunidade, onClose, onSave }: Importa
             />
           </div>
           <div>
-            <Label htmlFor="tipoContrato">Detalhar Natureza da Operação > Tipo de Contrato</Label>
+            <Label htmlFor="tipoContrato">Detalhar Natureza da Operação {'->'} Tipo de Contrato</Label>
             <Input
               id="tipoContrato"
               value={formData.tipoContrato}
