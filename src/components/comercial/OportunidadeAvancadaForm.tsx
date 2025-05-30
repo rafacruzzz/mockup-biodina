@@ -9,12 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { X, Save, Plus, Trash2, Upload, Download, MessageSquare, Send, User, Eye, File, Lock } from "lucide-react";
+import { X, Save, Plus, Trash2, Upload, Download, MessageSquare, Send, User, Eye, File, Lock, CheckCircle, ChevronRight } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import LicitacaoValidationModal from "./LicitacaoValidationModal";
 import ConcorrenteModal from "./ConcorrenteModal";
 import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
+import ApprovalModal from "./ApprovalModal";
 
 interface OportunidadeAvancadaFormProps {
   oportunidade?: any;
@@ -23,17 +24,17 @@ interface OportunidadeAvancadaFormProps {
 }
 
 const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: OportunidadeAvancadaFormProps) => {
-  // Debug log to confirm component is rendering
-  console.log('OportunidadeAvancadaForm rendering with oportunidade:', oportunidade);
-  
-  // Estados para abas masters
+  // Estados para controle das fases
   const [activeMasterTab, setActiveMasterTab] = useState('triagem');
+  const [isParticipacaoApproved, setIsParticipacaoApproved] = useState(false);
+  const [showApprovalModal, setShowApprovalModal] = useState(false);
   
-  console.log('Current activeMasterTab:', activeMasterTab);
-  
+  // Estados para modais
   const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
   const [showConcorrenteModal, setShowConcorrenteModal] = useState(false);
   const [showPedidoForm, setShowPedidoForm] = useState(false);
+  
+  // Estados para dados
   const [concorrentes, setConcorrentes] = useState([
     { id: 1, nome: 'MedTech SA', produto: 'Kit diagnóstico rápido', preco: 4200 },
     { id: 2, nome: 'Global Diagnóstico', produto: 'Serviço de instalação', preco: 1200 }
@@ -91,6 +92,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     dataChegadaEstimada: oportunidade?.dataChegadaEstimada || ''
   });
 
+  // Funções auxiliares
   const handleChaveLicitacaoChange = (value: string) => {
     setFormData({ ...formData, chaveLicitacao: value });
     if (value === '123') {
@@ -138,24 +140,35 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     return 'Conquistado (100)';
   };
 
-  const isPhaseCompleted = (phase: string) => {
-    if (phase === 'triagem') {
-      return formData.nome && formData.cpfCnpj && formData.valorNegocio > 0;
-    }
-    if (phase === 'participacao') {
-      return isPhaseCompleted('triagem') && formData.termometro >= 70;
-    }
-    return false;
-  };
-
-  const isPhaseAccessible = (phase: string) => {
-    if (phase === 'triagem') return true;
-    if (phase === 'participacao') return isPhaseCompleted('triagem');
-    return false;
+  const isTriagemComplete = () => {
+    return formData.nome && formData.cpfCnpj && formData.valorNegocio > 0;
   };
 
   const canShowPedidosTab = () => {
     return formData.resultadoOportunidade === 'ganho' || formData.resultadoOportunidade === 'em_andamento';
+  };
+
+  const handleTabChange = (tabValue: string) => {
+    if (tabValue === 'participacao' && !isParticipacaoApproved) {
+      // Não permite navegar para participação sem aprovação
+      return;
+    }
+    setActiveMasterTab(tabValue);
+  };
+
+  const handleRequestApproval = () => {
+    if (!isTriagemComplete()) {
+      alert('Complete todos os campos obrigatórios da triagem antes de solicitar aprovação.');
+      return;
+    }
+    setShowApprovalModal(true);
+  };
+
+  const handleApprovalSuccess = () => {
+    setIsParticipacaoApproved(true);
+    setActiveMasterTab('participacao');
+    // Atualizar status automaticamente
+    setFormData({ ...formData, status: 'em_acompanhamento' });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -559,6 +572,21 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
               <Label htmlFor="propostaNegociacao">Proposta em Negociação</Label>
             </div>
           </div>
+
+          {/* Botão de Solicitação de Aprovação */}
+          {!isParticipacaoApproved && (
+            <div className="flex justify-center pt-4">
+              <Button 
+                type="button"
+                onClick={handleRequestApproval}
+                disabled={!isTriagemComplete()}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Solicitar Aprovação para Participação
+              </Button>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="pedidos" className="space-y-6 mt-6">
@@ -729,14 +757,17 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Fase de Participação</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            Fase de Participação - Aprovada
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <h3 className="font-semibold text-blue-800 mb-2">Status da Participação</h3>
-              <p className="text-blue-700">
-                Esta fase estará disponível após completar todos os campos obrigatórios da triagem.
+            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+              <h3 className="font-semibold text-green-800 mb-2">Triagem Aprovada</h3>
+              <p className="text-green-700">
+                A fase de triagem foi concluída e aprovada com sucesso. Agora você pode trabalhar na participação da oportunidade.
               </p>
             </div>
             
@@ -748,7 +779,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="em_triagem">Em Triagem</SelectItem>
                     <SelectItem value="em_acompanhamento">Em Acompanhamento</SelectItem>
                     <SelectItem value="ganha">Ganha</SelectItem>
                     <SelectItem value="perdida">Perdida</SelectItem>
@@ -776,6 +806,26 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                 </div>
               </div>
             </div>
+
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="estrategiaParticipacao">Estratégia de Participação</Label>
+                <Textarea
+                  id="estrategiaParticipacao"
+                  placeholder="Descreva a estratégia para participação nesta oportunidade..."
+                  rows={4}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="planejamentoComercial">Planejamento Comercial</Label>
+                <Textarea
+                  id="planejamentoComercial"
+                  placeholder="Detalhe o planejamento comercial para esta oportunidade..."
+                  rows={4}
+                />
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -796,47 +846,48 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
 
         <CardContent className="p-6">
           <form onSubmit={handleSubmit}>
-            {/* MASTER TABS - NÍVEL SUPERIOR */}
-            <div className="mb-6 bg-white border-2 border-red-500 p-4">
-              <h2 className="text-xl font-bold mb-4 text-red-600">DEBUG: Master Tabs Section</h2>
-              <div className="flex space-x-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    console.log('Clicking TRIAGEM tab');
-                    setActiveMasterTab('triagem');
-                  }}
-                  className={`px-8 py-4 text-lg font-bold border-2 rounded ${
-                    activeMasterTab === 'triagem'
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
-                  }`}
-                >
-                  TRIAGEM
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    console.log('Clicking PARTICIPAÇÃO tab');
-                    setActiveMasterTab('participacao');
-                  }}
-                  className={`px-8 py-4 text-lg font-bold border-2 rounded ${
-                    activeMasterTab === 'participacao'
-                      ? 'bg-blue-600 text-white border-blue-600'
-                      : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
-                  }`}
-                  disabled={!isPhaseAccessible('participacao')}
-                >
-                  {isPhaseCompleted('participacao') && <Lock className="h-4 w-4 inline mr-2" />}
-                  PARTICIPAÇÃO
-                </button>
+            {/* MASTER TABS usando shadcn/ui Tabs */}
+            <Tabs value={activeMasterTab} onValueChange={handleTabChange} className="w-full">
+              <div className="flex items-center justify-center mb-6">
+                <TabsList className="grid w-auto grid-cols-2 h-12">
+                  <TabsTrigger 
+                    value="triagem" 
+                    className={`px-8 py-3 text-base font-semibold ${
+                      isParticipacaoApproved ? 'bg-gray-100 text-gray-500' : ''
+                    }`}
+                    disabled={isParticipacaoApproved}
+                  >
+                    {isParticipacaoApproved && <Lock className="h-4 w-4 mr-2" />}
+                    TRIAGEM
+                  </TabsTrigger>
+                  
+                  {/* Indicador de progressão */}
+                  {isParticipacaoApproved && (
+                    <div className="flex items-center px-2">
+                      <ChevronRight className="h-5 w-5 text-green-600" />
+                    </div>
+                  )}
+                  
+                  <TabsTrigger 
+                    value="participacao" 
+                    className="px-8 py-3 text-base font-semibold"
+                    disabled={!isParticipacaoApproved}
+                  >
+                    {isParticipacaoApproved && <CheckCircle className="h-4 w-4 mr-2 text-green-600" />}
+                    PARTICIPAÇÃO
+                  </TabsTrigger>
+                </TabsList>
               </div>
-              <p className="mt-2 text-sm text-red-600">Active Tab: {activeMasterTab}</p>
-            </div>
 
-            {/* CONTEÚDO DAS ABAS MASTERS */}
-            {activeMasterTab === 'triagem' && renderTriagemContent()}
-            {activeMasterTab === 'participacao' && renderParticipacaoContent()}
+              {/* Conteúdo das abas */}
+              <TabsContent value="triagem" className="mt-6">
+                {renderTriagemContent()}
+              </TabsContent>
+
+              <TabsContent value="participacao" className="mt-6">
+                {renderParticipacaoContent()}
+              </TabsContent>
+            </Tabs>
 
             <div className="flex justify-end gap-2 pt-6 border-t mt-6">
               <Button type="button" variant="outline" onClick={onClose}>
@@ -851,6 +902,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </CardContent>
       </Card>
 
+      {/* Modais */}
       {showLicitacaoModal && (
         <LicitacaoValidationModal 
           chave={formData.chaveLicitacao}
@@ -873,6 +925,13 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
           oportunidade={formData}
         />
       )}
+
+      <ApprovalModal
+        isOpen={showApprovalModal}
+        onClose={() => setShowApprovalModal(false)}
+        onApprove={handleApprovalSuccess}
+        oportunidadeId={oportunidade?.id || formData.chaveLicitacao || 'nova'}
+      />
     </div>
   );
 };
