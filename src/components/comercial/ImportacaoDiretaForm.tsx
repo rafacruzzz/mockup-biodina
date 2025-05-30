@@ -1,1871 +1,663 @@
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { X, FileText, MessageSquare, Upload, Package, Thermometer, Plus, Trash2, Filter } from 'lucide-react';
-import ChatInterno from './ChatInterno';
-import jsPDF from 'jspdf';
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Download } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 interface ImportacaoDiretaFormProps {
-  isOpen: boolean;
   onClose: () => void;
-  onSave: (data: any) => void;
-  oportunidade?: any;
 }
 
-const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: ImportacaoDiretaFormProps) => {
-  const [activeMasterTab, setActiveMasterTab] = useState('comercial');
-  const [activeToolTab, setActiveToolTab] = useState('dados-gerais');
-
+const ImportacaoDiretaForm = ({ onClose }: ImportacaoDiretaFormProps) => {
+  const [activeTab, setActiveTab] = useState('comercial');
+  const [activeSubTab, setActiveSubTab] = useState('dados-gerais');
   const [formData, setFormData] = useState({
-    // Informações Básicas do Cliente
-    cpfCnpj: '',
-    nome: '',
-    nomeFantasia: '',
-    razaoSocial: '',
-    endereco: '',
-    uf: '',
-    fonteLead: '',
-    ativo: true,
-    email: '',
-    telefone: '',
-    website: '',
-    
-    // Informações do Negócio
-    valorNegocio: '',
-    metodoContato: '',
-    segmentoLead: '',
-    colaboradoresResponsaveis: [],
-    dataInicio: '',
-    dataLimite: '',
-    procurandoPor: '',
-    tags: [],
-    caracteristicas: '',
-    fluxoTrabalho: '',
-    status: '',
-    descricao: '',
-    dataVisita: '',
-    
-    // Campos Específicos de Importação
-    spi: '',
-    di: '',
-    invoice: '',
-    comissao: '',
-    numeroProjeto: '',
-    numeroPedido: '',
+    cliente: '',
+    produto: '',
+    quantidade: 0,
+    precoUnitario: 0,
+    validade: '',
+    observacoes: '',
+    condicaoPagamento: '',
+    incoterms: '',
+    numeroProforma: '',
+    dataProforma: '',
+    valorProforma: 0,
     numeroContrato: '',
-    publicoPrivado: '',
-    naturezaOperacao: '',
-    tipoContrato: '',
-    situacao: '',
-    previsaoFechamento: '',
-    gerarExpedicao: false,
-    nfConsumoFinal: false,
-    localEstoque: '',
-    
-    // Dados Financeiros
-    emailNotasFiscais: '',
-    formaPagamento: '',
-    dadosBancarios: '',
-    parcelas: '',
-    prazoPagamento: '',
-    documentacaoNF: '',
-    destacarIR: false,
-    saldoEmpenho: '',
-    saldoAta: '',
-    programacaoFaturamento: '',
-    
-    // Informações de Frete
-    fretePagar: '',
-    freteRetirar: '',
-    prazoEntrega: '',
-    entregarRetirar: '',
-    dadosRecebedor: '',
-    horariosPermitidos: '',
-    locaisEntrega: '',
-    informacoesEntrega: '',
-    
-    // Campos Adicionais
-    urgente: false,
-    justificativaUrgencia: '',
-    autorizadoPor: '',
-    dataAutorizacao: '',
-    termometro: 85, // Fixado como "CONQUISTADO/QUENTE"
-    motivoGanho: '',
-    
-    // Análise Técnica
-    analiseTecnica: '',
-    
-    // Análise da Concorrência
-    analiseComcorrencia: '',
-    propostaNegociacao: false,
-    
-    // Produtos e Serviços
-    produtos: [],
-    servicos: [],
-    itensNaoCadastrados: '',
-    kits: [],
-    informacoesComplementares: '',
-    
-    // Campos específicos do SPI
-    spiCliente: '',
-    spiDadosProforma: '',
-    spiEmNomeDe: '',
-    spiCnpj: '',
-    spiEndereco: '',
-    spiInscricaoEstadual: '',
-    spiNumero: '',
-    spiData: '',
-    spiProposta: '',
-    spiEquipamento: '',
-    spiModelo: '',
-    spiPacking: '',
-    spiFabricante: '',
-    spiFormaPagamento: 'CAD',
-    spiTemComissao: false,
-    spiPercentualComissao: '',
-    spiRepresentante: '',
-    spiMercadorias: [],
-    spiObservacoes: '',
-    spiFaturamentoConfirmado: false,
-    spiPagamentoForma: '',
-    spiPagamentoPrazo: '',
-    spiEntregaPrazo: '',
-    spiFormaVenda: 'licitacao',
-    spiFormaVendaOutros: '',
-    spiValor: '',
-    spiPrazo: '',
-    spiDataConfirmacao: ''
+    dataContrato: '',
+    valorContrato: 0,
+    numeroPedidoCliente: '',
+    dataPedidoCliente: '',
+    numeroInvoice: '',
+    dataInvoice: '',
+    valorInvoice: 0,
+    numeroAWB: '',
+    dataAWB: '',
+    valorAWB: 0,
+    numeroDI: '',
+    dataDI: '',
+    valorDI: 0,
+    numeroLicencaImportacao: '',
+    dataLicencaImportacao: '',
+    valorLicencaImportacao: 0,
+    numeroDeclaracaoImportacao: '',
+    dataDeclaracaoImportacao: '',
+    valorDeclaracaoImportacao: 0,
+    numeroComprovanteImportacao: '',
+    dataComprovanteImportacao: '',
+    valorComprovanteImportacao: 0,
+    numeroRegistroImportacao: '',
+    dataRegistroImportacao: '',
+    valorRegistroImportacao: 0,
+    numeroAdicao: '',
+    dataAdicao: '',
+    valorAdicao: 0,
+    numeroExtratoBancario: '',
+    dataExtratoBancario: '',
+    valorExtratoBancario: 0,
+    numeroComprovantePagamento: '',
+    dataComprovantePagamento: '',
+    valorComprovantePagamento: 0,
+    numeroSolicitacaoEmprestimo: '',
+    dataSolicitacaoEmprestimo: '',
+    valorSolicitacaoEmprestimo: 0,
+    numeroContratoCambio: '',
+    dataContratoCambio: '',
+    valorContratoCambio: 0,
+    numeroRegistroOperacaoCambio: '',
+    dataRegistroOperacaoCambio: '',
+    valorRegistroOperacaoCambio: 0,
+    numeroLiquidacaoCambio: '',
+    dataLiquidacaoCambio: '',
+    valorLiquidacaoCambio: 0,
   });
 
-  // Estados para as tabelas de empréstimos
-  const [emprestimos, setEmprestimos] = useState([
-    {
-      id: 1,
-      produto: 'Microscópio Eletrônico ME-2000',
-      dataEnvio: '2024-01-15',
-      status: 'Alocado',
-      responsavel: 'João Silva',
-      observacoes: 'Equipamento em perfeito estado'
-    },
-    {
-      id: 2,
-      produto: 'Centrifuga CF-500X',
-      dataEnvio: '2024-01-20',
-      status: 'Em trânsito',
-      responsavel: 'Maria Santos',
-      observacoes: 'Transporte especial necessário'
-    },
-    {
-      id: 3,
-      produto: 'Autoclave AC-100',
-      dataEnvio: '2024-01-10',
-      status: 'Preparação',
-      responsavel: 'Pedro Costa',
-      observacoes: 'Aguardando calibração final'
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (tab === 'comercial') {
+      setActiveSubTab('dados-gerais');
     }
-  ]);
+  };
 
-  const [devolucoes, setDevolucoes] = useState([
-    {
-      id: 1,
-      produto: 'Balança Analítica BA-200',
-      dataEnvio: '2023-12-15',
-      dataDevolucao: '2024-01-05',
-      status: 'Devolvido',
-      responsavel: 'Ana Lima',
-      observacoes: 'Retorno dentro do prazo'
-    },
-    {
-      id: 2,
-      produto: 'pH Metro Digital PM-300',
-      dataEnvio: '2023-12-20',
-      dataDevolucao: '2024-01-08',
-      status: 'Aguardando conferência',
-      responsavel: 'Carlos Oliveira',
-      observacoes: 'Conferência técnica pendente'
-    }
-  ]);
+  const handleSubTabChange = (subTab: string) => {
+    setActiveSubTab(subTab);
+  };
 
-  const [filtroStatusEmprestimo, setFiltroStatusEmprestimo] = useState('');
-  const [filtroStatusDevolucao, setFiltroStatusDevolucao] = useState('');
-
-  const masterTabs = [
-    { id: 'comercial', label: 'COMERCIAL' },
-    { id: 'spi', label: 'SPI' },
-    { id: 'ovc', label: 'OVC' },
-    { id: 'nod-so', label: 'NOD/SO' },
-    { id: 'ddr', label: 'DDR' }
-  ];
-
-  const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
   };
 
   const handleSave = () => {
-    const dataToSave = {
-      ...formData,
-      id: oportunidade?.id || Date.now(),
-    };
-    onSave(dataToSave);
+    console.log('Dados do formulário:', formData);
     onClose();
   };
 
-  const addMercadoria = () => {
-    const novaMercadoria = {
-      id: Date.now(),
-      mercadoria: '',
-      equip: '',
-      codigo: '',
-      unidade: '',
-      qtde: '',
-      qtdePendente: '',
-      totalOrdens: '',
-      plU: '',
-      plT: '',
-      precoUnitUsd: '',
-      precoTotalUsd: ''
+  const handleDownloadPDF = () => {
+    alert('Baixando PDF...');
+  };
+  
+  // New state for OVC results table
+  const [ovcResults, setOvcResults] = useState([
+    {
+      id: 1,
+      code: 'PRD001',
+      qty: 10,
+      priceListUnit: 100.00,
+      customerDiscountRmed: 5.0,
+      customerDiscountBiodina: 3.0,
+      commission: 25.0
+    },
+    {
+      id: 2,
+      code: 'PRD002',
+      qty: 5,
+      priceListUnit: 200.00,
+      customerDiscountRmed: 7.0,
+      customerDiscountBiodina: 4.0,
+      commission: 25.0
+    }
+  ]);
+
+  // Function to calculate OVC results
+  const calculateOvcRow = (row: any) => {
+    const priceListTotal = row.priceListUnit * row.qty;
+    const customerDiscountTotal = (row.customerDiscountRmed + row.customerDiscountBiodina) / 2;
+    const discountUnit = row.priceListUnit * (customerDiscountTotal / 100);
+    const discountTotal = priceListTotal * (customerDiscountTotal / 100);
+    const subTotalUnit = row.priceListUnit - discountUnit;
+    const subTotalTotal = priceListTotal - discountTotal;
+    const handlingCharge = subTotalTotal * 0.03;
+    const total = subTotalTotal + handlingCharge;
+    const commissionValue = total * (row.commission / 100);
+    const netRadiometer = total - commissionValue;
+
+    return {
+      ...row,
+      priceListTotal,
+      customerDiscountTotal,
+      discountUnit,
+      discountTotal,
+      subTotalUnit,
+      subTotalTotal,
+      handlingCharge,
+      total,
+      commissionValue,
+      netRadiometer
     };
-    handleInputChange('spiMercadorias', [...formData.spiMercadorias, novaMercadoria]);
   };
 
-  const removeMercadoria = (id: number) => {
-    const mercadoriasFiltradas = formData.spiMercadorias.filter((item: any) => item.id !== id);
-    handleInputChange('spiMercadorias', mercadoriasFiltradas);
+  // Function to update OVC results
+  const updateOvcResult = (id: number, field: string, value: number) => {
+    setOvcResults(prev => prev.map(row => 
+      row.id === id ? { ...row, [field]: value } : row
+    ));
   };
 
-  const updateMercadoria = (id: number, field: string, value: any) => {
-    const mercadoriasAtualizadas = formData.spiMercadorias.map((item: any) => {
-      if (item.id === id) {
-        const itemAtualizado = { ...item, [field]: value };
-        
-        // Calcular preço total automaticamente
-        if (field === 'qtde' || field === 'precoUnitUsd') {
-          const qtde = parseFloat(itemAtualizado.qtde) || 0;
-          const precoUnit = parseFloat(itemAtualizado.precoUnitUsd) || 0;
-          itemAtualizado.precoTotalUsd = (qtde * precoUnit).toFixed(2);
-        }
-        
-        return itemAtualizado;
-      }
-      return item;
+  // Calculate totals for OVC results
+  const calculateOvcTotals = () => {
+    const calculatedRows = ovcResults.map(calculateOvcRow);
+    return calculatedRows.reduce((totals, row) => ({
+      qty: totals.qty + row.qty,
+      priceListTotal: totals.priceListTotal + row.priceListTotal,
+      discountTotal: totals.discountTotal + row.discountTotal,
+      subTotalTotal: totals.subTotalTotal + row.subTotalTotal,
+      handlingCharge: totals.handlingCharge + row.handlingCharge,
+      total: totals.total + row.total,
+      commissionValue: totals.commissionValue + row.commissionValue,
+      netRadiometer: totals.netRadiometer + row.netRadiometer
+    }), {
+      qty: 0,
+      priceListTotal: 0,
+      discountTotal: 0,
+      subTotalTotal: 0,
+      handlingCharge: 0,
+      total: 0,
+      commissionValue: 0,
+      netRadiometer: 0
     });
-    handleInputChange('spiMercadorias', mercadoriasAtualizadas);
   };
 
-  const calcularSubtotal = () => {
-    return formData.spiMercadorias.reduce((total: number, item: any) => {
-      return total + (parseFloat(item.precoTotalUsd) || 0);
-    }, 0);
-  };
+  const renderTabContent = () => {
+    if (activeTab === 'comercial') {
+      switch (activeSubTab) {
+        case 'dados-gerais':
+          return (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="cliente">Cliente</Label>
+                  <Input id="cliente" placeholder="Nome do cliente" value={formData.cliente} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="produto">Produto</Label>
+                  <Input id="produto" placeholder="Código/Nome do produto" value={formData.produto} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="quantidade">Quantidade</Label>
+                  <Input id="quantidade" type="number" placeholder="Quantidade" value={formData.quantidade} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="precoUnitario">Preço Unitário</Label>
+                  <Input id="precoUnitario" type="number" step="0.01" placeholder="0.00" value={formData.precoUnitario} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="validade">Validade da Oferta</Label>
+                  <Input id="validade" type="date" value={formData.validade} onChange={handleInputChange} />
+                </div>
+              </div>
+              <div>
+                <Label htmlFor="observacoes">Observações</Label>
+                <Textarea id="observacoes" placeholder="Observações adicionais" value={formData.observacoes} onChange={handleInputChange} />
+              </div>
+            </div>
+          );
 
-  const calcularPacking = () => {
-    const subtotal = calcularSubtotal();
-    const percentualPacking = parseFloat(formData.spiPacking) || 0;
-    return (subtotal * percentualPacking / 100);
-  };
+        case 'analise-tecnica':
+          return (
+            <div className="space-y-6">
+              <div>
+                <Label htmlFor="condicaoPagamento">Condição de Pagamento</Label>
+                <Input id="condicaoPagamento" placeholder="Condição de pagamento" value={formData.condicaoPagamento} onChange={handleInputChange} />
+              </div>
+              <div>
+                <Label htmlFor="incoterms">Incoterms</Label>
+                <Input id="incoterms" placeholder="Incoterms" value={formData.incoterms} onChange={handleInputChange} />
+              </div>
+            </div>
+          );
 
-  const calcularTotal = () => {
-    return calcularSubtotal() + calcularPacking();
-  };
+        case 'historico':
+          return (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="numeroProforma">Número Proforma</Label>
+                  <Input id="numeroProforma" placeholder="Número da Proforma" value={formData.numeroProforma} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="dataProforma">Data Proforma</Label>
+                  <Input id="dataProforma" type="date" value={formData.dataProforma} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="valorProforma">Valor Proforma</Label>
+                  <Input id="valorProforma" type="number" step="0.01" placeholder="0.00" value={formData.valorProforma} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="numeroContrato">Número Contrato</Label>
+                  <Input id="numeroContrato" placeholder="Número do Contrato" value={formData.numeroContrato} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="dataContrato">Data Contrato</Label>
+                  <Input id="dataContrato" type="date" value={formData.dataContrato} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="valorContrato">Valor Contrato</Label>
+                  <Input id="valorContrato" type="number" step="0.01" placeholder="0.00" value={formData.valorContrato} onChange={handleInputChange} />
+                </div>
+              </div>
+            </div>
+          );
 
-  const generateSPIPDF = () => {
-    const pdf = new jsPDF();
-    const pageWidth = pdf.internal.pageSize.width;
-    let yPosition = 20;
+        case 'documentos':
+          return (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="numeroPedidoCliente">Número Pedido Cliente</Label>
+                  <Input id="numeroPedidoCliente" placeholder="Número do Pedido do Cliente" value={formData.numeroPedidoCliente} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="dataPedidoCliente">Data Pedido Cliente</Label>
+                  <Input id="dataPedidoCliente" type="date" value={formData.dataPedidoCliente} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="numeroInvoice">Número Invoice</Label>
+                  <Input id="numeroInvoice" placeholder="Número da Invoice" value={formData.numeroInvoice} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="dataInvoice">Data Invoice</Label>
+                  <Input id="dataInvoice" type="date" value={formData.dataInvoice} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="valorInvoice">Valor Invoice</Label>
+                  <Input id="valorInvoice" type="number" step="0.01" placeholder="0.00" value={formData.valorInvoice} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="numeroAWB">Número AWB</Label>
+                  <Input id="numeroAWB" placeholder="Número do AWB" value={formData.numeroAWB} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="dataAWB">Data AWB</Label>
+                  <Input id="dataAWB" type="date" value={formData.dataAWB} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="valorAWB">Valor AWB</Label>
+                  <Input id="valorAWB" type="number" step="0.01" placeholder="0.00" value={formData.valorAWB} onChange={handleInputChange} />
+                </div>
+              </div>
+            </div>
+          );
 
-    // Cabeçalho
-    pdf.setFontSize(16);
-    pdf.setFont(undefined, 'bold');
-    pdf.text('SPI – SOLICITAÇÃO DE PROFORMA INVOICE', pageWidth / 2, yPosition, { align: 'center' });
-    yPosition += 20;
+        case 'emprestimos':
+          return (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="numeroSolicitacaoEmprestimo">Número Solicitação Empréstimo</Label>
+                  <Input id="numeroSolicitacaoEmprestimo" placeholder="Número da Solicitação de Empréstimo" value={formData.numeroSolicitacaoEmprestimo} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="dataSolicitacaoEmprestimo">Data Solicitação Empréstimo</Label>
+                  <Input id="dataSolicitacaoEmprestimo" type="date" value={formData.dataSolicitacaoEmprestimo} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="valorSolicitacaoEmprestimo">Valor Solicitação Empréstimo</Label>
+                  <Input id="valorSolicitacaoEmprestimo" type="number" step="0.01" placeholder="0.00" value={formData.valorSolicitacaoEmprestimo} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="numeroContratoCambio">Número Contrato Câmbio</Label>
+                  <Input id="numeroContratoCambio" placeholder="Número do Contrato de Câmbio" value={formData.numeroContratoCambio} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="dataContratoCambio">Data Contrato Câmbio</Label>
+                  <Input id="dataContratoCambio" type="date" value={formData.dataContratoCambio} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="valorContratoCambio">Valor Contrato Câmbio</Label>
+                  <Input id="valorContratoCambio" type="number" step="0.01" placeholder="0.00" value={formData.valorContratoCambio} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="numeroRegistroOperacaoCambio">Número Registro Operação Câmbio</Label>
+                  <Input id="numeroRegistroOperacaoCambio" placeholder="Número do Registro da Operação de Câmbio" value={formData.numeroRegistroOperacaoCambio} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="dataRegistroOperacaoCambio">Data Registro Operação Câmbio</Label>
+                  <Input id="dataRegistroOperacaoCambio" type="date" value={formData.dataRegistroOperacaoCambio} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="valorRegistroOperacaoCambio">Valor Registro Operação Câmbio</Label>
+                  <Input id="valorRegistroOperacaoCambio" type="number" step="0.01" placeholder="0.00" value={formData.valorRegistroOperacaoCambio} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="numeroLiquidacaoCambio">Número Liquidação Câmbio</Label>
+                  <Input id="numeroLiquidacaoCambio" placeholder="Número da Liquidação de Câmbio" value={formData.numeroLiquidacaoCambio} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="dataLiquidacaoCambio">Data Liquidação Câmbio</Label>
+                  <Input id="dataLiquidacaoCambio" type="date" value={formData.dataLiquidacaoCambio} onChange={handleInputChange} />
+                </div>
+                <div>
+                  <Label htmlFor="valorLiquidacaoCambio">Valor Liquidação Câmbio</Label>
+                  <Input id="valorLiquidacaoCambio" type="number" step="0.01" placeholder="0.00" value={formData.valorLiquidacaoCambio} onChange={handleInputChange} />
+                </div>
+              </div>
+            </div>
+          );
 
-    // Dados do Cliente
-    pdf.setFontSize(12);
-    pdf.setFont(undefined, 'bold');
-    pdf.text('DADOS DO CLIENTE', 20, yPosition);
-    yPosition += 10;
-    
-    pdf.setFont(undefined, 'normal');
-    pdf.text(`Cliente: ${formData.spiCliente}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Dados da Proforma: ${formData.spiDadosProforma}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Em nome de: ${formData.spiEmNomeDe}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`CNPJ: ${formData.spiCnpj}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Endereço: ${formData.spiEndereco}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Inscrição Estadual: ${formData.spiInscricaoEstadual}`, 20, yPosition);
-    yPosition += 15;
-
-    // Informações da Proforma
-    pdf.setFont(undefined, 'bold');
-    pdf.text('INFORMAÇÕES DA PROFORMA', 20, yPosition);
-    yPosition += 10;
-    
-    pdf.setFont(undefined, 'normal');
-    pdf.text(`No SPI: ${formData.spiNumero}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Data: ${formData.spiData}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Proposta: ${formData.spiProposta}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Equipamento: ${formData.spiEquipamento}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Modelo: ${formData.spiModelo}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Packing (%): ${formData.spiPacking}`, 20, yPosition);
-    yPosition += 15;
-
-    // Informações Adicionais
-    pdf.setFont(undefined, 'bold');
-    pdf.text('INFORMAÇÕES ADICIONAIS', 20, yPosition);
-    yPosition += 10;
-    
-    pdf.setFont(undefined, 'normal');
-    pdf.text(`Fabricante: ${formData.spiFabricante}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Forma de pagamento: ${formData.spiFormaPagamento}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Tem comissão: ${formData.spiTemComissao ? 'Sim' : 'Não'}`, 20, yPosition);
-    yPosition += 7;
-    if (formData.spiTemComissao) {
-      pdf.text(`Percentual comissão: ${formData.spiPercentualComissao}%`, 20, yPosition);
-      yPosition += 7;
-      pdf.text(`Representante: ${formData.spiRepresentante}`, 20, yPosition);
-      yPosition += 7;
+        default:
+          return <div>Conteúdo da aba {activeSubTab}</div>;
+      }
     }
-    yPosition += 10;
 
-    // Produtos/Mercadorias
-    if (formData.spiMercadorias.length > 0) {
-      pdf.setFont(undefined, 'bold');
-      pdf.text('PRODUTOS/MERCADORIAS', 20, yPosition);
-      yPosition += 10;
-      
-      pdf.setFont(undefined, 'normal');
-      formData.spiMercadorias.forEach((item: any, index: number) => {
-        pdf.text(`${index + 1}. ${item.mercadoria} - Qtde: ${item.qtde} - Preço Unit.: USD ${item.precoUnitUsd} - Total: USD ${item.precoTotalUsd}`, 20, yPosition);
-        yPosition += 7;
-      });
-      yPosition += 10;
-    }
-
-    // Totais
-    pdf.setFont(undefined, 'bold');
-    pdf.text('TOTAIS', 20, yPosition);
-    yPosition += 10;
-    
-    pdf.setFont(undefined, 'normal');
-    pdf.text(`Subtotal: USD ${calcularSubtotal().toFixed(2)}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Packing: USD ${calcularPacking().toFixed(2)}`, 20, yPosition);
-    yPosition += 7;
-    pdf.setFont(undefined, 'bold');
-    pdf.text(`TOTAL: USD ${calcularTotal().toFixed(2)}`, 20, yPosition);
-    yPosition += 15;
-
-    // Observações
-    if (formData.spiObservacoes) {
-      pdf.setFont(undefined, 'bold');
-      pdf.text('OBSERVAÇÕES', 20, yPosition);
-      yPosition += 10;
-      
-      pdf.setFont(undefined, 'normal');
-      const lines = pdf.splitTextToSize(formData.spiObservacoes, pageWidth - 40);
-      pdf.text(lines, 20, yPosition);
-      yPosition += lines.length * 7 + 10;
-    }
-
-    // Detalhes de Venda
-    pdf.setFont(undefined, 'bold');
-    pdf.text('DETALHES DE VENDA', 20, yPosition);
-    yPosition += 10;
-    
-    pdf.setFont(undefined, 'normal');
-    pdf.text(`Faturamento confirmado: ${formData.spiFaturamentoConfirmado ? 'Sim' : 'Não'}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Forma de pagamento: ${formData.spiPagamentoForma}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Prazo de pagamento: ${formData.spiPagamentoPrazo}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Prazo de entrega: ${formData.spiEntregaPrazo}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Forma de venda: ${formData.spiFormaVenda}`, 20, yPosition);
-    if (formData.spiFormaVenda === 'outros' && formData.spiFormaVendaOutros) {
-      yPosition += 7;
-      pdf.text(`Especificação: ${formData.spiFormaVendaOutros}`, 20, yPosition);
-    }
-    yPosition += 7;
-    pdf.text(`Valor: ${formData.spiValor}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Prazo: ${formData.spiPrazo}`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Data de confirmação: ${formData.spiDataConfirmacao}`, 20, yPosition);
-
-    // Nome do arquivo
-    const fileName = `SPI_${formData.spiNumero || 'novo'}_${new Date().toISOString().split('T')[0]}.pdf`;
-    
-    // Download do PDF
-    pdf.save(fileName);
-  };
-
-  // Funções para filtrar as tabelas
-  const emprestimosFiltrados = emprestimos.filter(item => 
-    filtroStatusEmprestimo === '' || item.status === filtroStatusEmprestimo
-  );
-
-  const devolucoesFiltradas = devolucoes.filter(item => 
-    filtroStatusDevolucao === '' || item.status === filtroStatusDevolucao
-  );
-
-  const renderSPIForm = () => {
-    return (
-      <div className="space-y-6">
-        {/* Cabeçalho */}
-        <Card>
-          <CardHeader className="text-center border-b">
-            <CardTitle className="text-xl font-bold text-purple-600">
-              SPI – SOLICITAÇÃO DE PROFORMA INVOICE
-            </CardTitle>
-          </CardHeader>
-          
-          <CardContent className="p-6">
-            {/* Dados do Cliente */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 border p-4 rounded">
-              <div className="md:col-span-2">
-                <h3 className="font-semibold mb-4 border-b pb-2">DADOS DO CLIENTE</h3>
-              </div>
-              
-              <div>
-                <Label htmlFor="spiCliente">Cliente</Label>
-                <Input
-                  id="spiCliente"
-                  value={formData.spiCliente}
-                  onChange={(e) => handleInputChange('spiCliente', e.target.value)}
-                  placeholder="Nome do cliente"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="spiDadosProforma">Dados para preenchimento da Proforma Invoice</Label>
-                <Input
-                  id="spiDadosProforma"
-                  value={formData.spiDadosProforma}
-                  onChange={(e) => handleInputChange('spiDadosProforma', e.target.value)}
-                  placeholder="Dados da proforma"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="spiEmNomeDe">Em nome de</Label>
-                <Input
-                  id="spiEmNomeDe"
-                  value={formData.spiEmNomeDe}
-                  onChange={(e) => handleInputChange('spiEmNomeDe', e.target.value)}
-                  placeholder="Em nome de"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="spiCnpj">CNPJ</Label>
-                <Input
-                  id="spiCnpj"
-                  value={formData.spiCnpj}
-                  onChange={(e) => handleInputChange('spiCnpj', e.target.value)}
-                  placeholder="XX.XXX.XXX/XXXX-XX"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="spiEndereco">Endereço</Label>
-                <Input
-                  id="spiEndereco"
-                  value={formData.spiEndereco}
-                  onChange={(e) => handleInputChange('spiEndereco', e.target.value)}
-                  placeholder="Endereço completo"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="spiInscricaoEstadual">Inscrição Estadual</Label>
-                <Input
-                  id="spiInscricaoEstadual"
-                  value={formData.spiInscricaoEstadual}
-                  onChange={(e) => handleInputChange('spiInscricaoEstadual', e.target.value)}
-                  placeholder="Inscrição estadual"
-                />
-              </div>
-            </div>
-
-            {/* Informações da Proforma */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 border p-4 rounded">
-              <div className="md:col-span-3">
-                <h3 className="font-semibold mb-4 border-b pb-2">INFORMAÇÕES DA PROFORMA</h3>
-              </div>
-              
-              <div>
-                <Label htmlFor="spiNumero">No SPI</Label>
-                <Input
-                  id="spiNumero"
-                  value={formData.spiNumero}
-                  onChange={(e) => handleInputChange('spiNumero', e.target.value)}
-                  placeholder="Gerado automaticamente"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="spiData">DATA</Label>
-                <Input
-                  id="spiData"
-                  type="date"
-                  value={formData.spiData}
-                  onChange={(e) => handleInputChange('spiData', e.target.value)}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="spiProposta">Proposta</Label>
-                <Input
-                  id="spiProposta"
-                  value={formData.spiProposta}
-                  onChange={(e) => handleInputChange('spiProposta', e.target.value)}
-                  placeholder="Número da proposta"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="spiEquipamento">Equipamento</Label>
-                <Input
-                  id="spiEquipamento"
-                  value={formData.spiEquipamento}
-                  onChange={(e) => handleInputChange('spiEquipamento', e.target.value)}
-                  placeholder="Nome do equipamento"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="spiModelo">Modelo</Label>
-                <Input
-                  id="spiModelo"
-                  value={formData.spiModelo}
-                  onChange={(e) => handleInputChange('spiModelo', e.target.value)}
-                  placeholder="Modelo do equipamento"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="spiPacking">Packing (%)</Label>
-                <Input
-                  id="spiPacking"
-                  type="number"
-                  value={formData.spiPacking}
-                  onChange={(e) => handleInputChange('spiPacking', e.target.value)}
-                  placeholder="0"
-                />
-              </div>
-            </div>
-
-            {/* Informações Adicionais */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 border p-4 rounded">
-              <div className="md:col-span-2">
-                <h3 className="font-semibold mb-4 border-b pb-2">INFORMAÇÕES ADICIONAIS</h3>
-              </div>
-              
-              <div>
-                <Label htmlFor="spiFabricante">Fabricante</Label>
-                <Input
-                  id="spiFabricante"
-                  value={formData.spiFabricante}
-                  onChange={(e) => handleInputChange('spiFabricante', e.target.value)}
-                  placeholder="Nome do fabricante"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="spiFormaPagamento">Forma de pagamento</Label>
-                <Input
-                  id="spiFormaPagamento"
-                  value={formData.spiFormaPagamento}
-                  onChange={(e) => handleInputChange('spiFormaPagamento', e.target.value)}
-                  placeholder="CAD"
-                />
-              </div>
-              
-              <div className="md:col-span-2">
-                <div className="flex items-center space-x-2 mb-4">
-                  <Checkbox 
-                    id="spiTemComissao" 
-                    checked={formData.spiTemComissao}
-                    onCheckedChange={(checked) => handleInputChange('spiTemComissao', checked)}
-                  />
-                  <Label htmlFor="spiTemComissao">Há comissão para o Representante?</Label>
-                </div>
-                
-                {formData.spiTemComissao && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="spiPercentualComissao">Especifique o percentual (%)</Label>
-                      <Input
-                        id="spiPercentualComissao"
-                        type="number"
-                        value={formData.spiPercentualComissao}
-                        onChange={(e) => handleInputChange('spiPercentualComissao', e.target.value)}
-                        placeholder="0"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="spiRepresentante">Informe o representante</Label>
-                      <Input
-                        id="spiRepresentante"
-                        value={formData.spiRepresentante}
-                        onChange={(e) => handleInputChange('spiRepresentante', e.target.value)}
-                        placeholder="Nome do representante"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Tabela de Produtos/Mercadorias */}
-            <div className="mb-6 border p-4 rounded">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold border-b pb-2">PRODUTOS/MERCADORIAS</h3>
-                <Button onClick={addMercadoria} size="sm" className="bg-green-600 hover:bg-green-700">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Adicionar Item
-                </Button>
-              </div>
-              
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Item</TableHead>
-                      <TableHead>Mercadoria</TableHead>
-                      <TableHead>Equip</TableHead>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Unidade/QX</TableHead>
-                      <TableHead>Qtde</TableHead>
-                      <TableHead>Qtde Pendente</TableHead>
-                      <TableHead>Total das Ordens</TableHead>
-                      <TableHead>PL U</TableHead>
-                      <TableHead>PL T</TableHead>
-                      <TableHead>Preço Unit USD</TableHead>
-                      <TableHead>Preço Total USD</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {formData.spiMercadorias.map((item: any, index: number) => (
-                      <TableRow key={item.id}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>
-                          <Input
-                            value={item.mercadoria}
-                            onChange={(e) => updateMercadoria(item.id, 'mercadoria', e.target.value)}
-                            placeholder="Buscar produto..."
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            value={item.equip}
-                            onChange={(e) => updateMercadoria(item.id, 'equip', e.target.value)}
-                            placeholder="Equip"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            value={item.codigo}
-                            onChange={(e) => updateMercadoria(item.id, 'codigo', e.target.value)}
-                            placeholder="Código"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            value={item.unidade}
-                            onChange={(e) => updateMercadoria(item.id, 'unidade', e.target.value)}
-                            placeholder="UN"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            value={item.qtde}
-                            onChange={(e) => updateMercadoria(item.id, 'qtde', e.target.value)}
-                            placeholder="0"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            value={item.qtdePendente}
-                            onChange={(e) => updateMercadoria(item.id, 'qtdePendente', e.target.value)}
-                            placeholder="0"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            value={item.totalOrdens}
-                            onChange={(e) => updateMercadoria(item.id, 'totalOrdens', e.target.value)}
-                            placeholder="0"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            value={item.plU}
-                            onChange={(e) => updateMercadoria(item.id, 'plU', e.target.value)}
-                            placeholder="PL U"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            value={item.plT}
-                            onChange={(e) => updateMercadoria(item.id, 'plT', e.target.value)}
-                            placeholder="PL T"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            value={item.precoUnitUsd}
-                            onChange={(e) => updateMercadoria(item.id, 'precoUnitUsd', e.target.value)}
-                            placeholder="0.00"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            value={item.precoTotalUsd}
-                            readOnly
-                            className="bg-gray-100"
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            onClick={() => removeMercadoria(item.id)}
-                            size="sm"
-                            variant="destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-
-            {/* Seção de Totais */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 border p-4 rounded">
-              <div className="md:col-span-3">
-                <h3 className="font-semibold mb-4 border-b pb-2">TOTAIS</h3>
-              </div>
-              
-              <div>
-                <Label>Subtotal (USD)</Label>
-                <Input
-                  value={calcularSubtotal().toFixed(2)}
-                  readOnly
-                  className="bg-gray-100 font-semibold"
-                />
-              </div>
-              
-              <div>
-                <Label>Packing (USD)</Label>
-                <Input
-                  value={calcularPacking().toFixed(2)}
-                  readOnly
-                  className="bg-gray-100 font-semibold"
-                />
-              </div>
-              
-              <div>
-                <Label>TOTAL (USD)</Label>
-                <Input
-                  value={calcularTotal().toFixed(2)}
-                  readOnly
-                  className="bg-gray-100 font-bold text-green-600"
-                />
-              </div>
-            </div>
-
-            {/* Observações */}
-            <div className="mb-6 border p-4 rounded">
-              <h3 className="font-semibold mb-4 border-b pb-2">OBSERVAÇÕES</h3>
-              <Textarea
-                value={formData.spiObservacoes}
-                onChange={(e) => handleInputChange('spiObservacoes', e.target.value)}
-                placeholder="Proforma solicitada pelo cliente dia [data] as [hora], verificar o desconto de [%] na proforma geral e conforme e-mail [data] as [hora]."
-                rows={4}
-              />
-            </div>
-
-            {/* Detalhes de Venda */}
-            <div className="border p-4 rounded">
-              <h3 className="font-semibold mb-4 border-b pb-2">DETALHES DE VENDA - Atenção</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="spiFaturamentoConfirmado" 
-                    checked={formData.spiFaturamentoConfirmado}
-                    onCheckedChange={(checked) => handleInputChange('spiFaturamentoConfirmado', checked)}
-                  />
-                  <Label htmlFor="spiFaturamentoConfirmado">FATURAMENTO: Está confirmado?</Label>
-                </div>
-                
-                <div>
-                  <Label htmlFor="spiPagamentoForma">PAGAMENTO - Forma</Label>
-                  <Input
-                    id="spiPagamentoForma"
-                    value={formData.spiPagamentoForma}
-                    onChange={(e) => handleInputChange('spiPagamentoForma', e.target.value)}
-                    placeholder="Forma de pagamento"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="spiPagamentoPrazo">PAGAMENTO - Prazo</Label>
-                  <Input
-                    id="spiPagamentoPrazo"
-                    value={formData.spiPagamentoPrazo}
-                    onChange={(e) => handleInputChange('spiPagamentoPrazo', e.target.value)}
-                    placeholder="Prazo de pagamento"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="spiEntregaPrazo">ENTREGA - Prazo</Label>
-                  <Input
-                    id="spiEntregaPrazo"
-                    value={formData.spiEntregaPrazo}
-                    onChange={(e) => handleInputChange('spiEntregaPrazo', e.target.value)}
-                    placeholder="Prazo de entrega"
-                  />
-                </div>
-              </div>
-              
-              <div className="mb-4">
-                <Label className="font-semibold">Forma de venda:</Label>
-                <div className="flex space-x-4 mt-2">
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      id="licitacao"
-                      name="formaVenda"
-                      value="licitacao"
-                      checked={formData.spiFormaVenda === 'licitacao'}
-                      onChange={(e) => handleInputChange('spiFormaVenda', e.target.value)}
-                    />
-                    <Label htmlFor="licitacao">Licitação</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      id="vendaDireta"
-                      name="formaVenda"
-                      value="venda_direta"
-                      checked={formData.spiFormaVenda === 'venda_direta'}
-                      onChange={(e) => handleInputChange('spiFormaVenda', e.target.value)}
-                    />
-                    <Label htmlFor="vendaDireta">Venda Direta</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="radio"
-                      id="outros"
-                      name="formaVenda"
-                      value="outros"
-                      checked={formData.spiFormaVenda === 'outros'}
-                      onChange={(e) => handleInputChange('spiFormaVenda', e.target.value)}
-                    />
-                    <Label htmlFor="outros">Outros</Label>
-                  </div>
-                </div>
-                
-                {formData.spiFormaVenda === 'outros' && (
-                  <div className="mt-2">
-                    <Input
-                      value={formData.spiFormaVendaOutros}
-                      onChange={(e) => handleInputChange('spiFormaVendaOutros', e.target.value)}
-                      placeholder="Especifique outros"
-                    />
-                  </div>
-                )}
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="spiValor">Valor</Label>
-                  <Input
-                    id="spiValor"
-                    value={formData.spiValor}
-                    onChange={(e) => handleInputChange('spiValor', e.target.value)}
-                    placeholder="R$ 0,00"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="spiPrazo">Prazo</Label>
-                  <Input
-                    id="spiPrazo"
-                    type="date"
-                    value={formData.spiPrazo}
-                    onChange={(e) => handleInputChange('spiPrazo', e.target.value)}
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="spiDataConfirmacao">Data que o pedido foi confirmado</Label>
-                  <Input
-                    id="spiDataConfirmacao"
-                    type="date"
-                    value={formData.spiDataConfirmacao}
-                    onChange={(e) => handleInputChange('spiDataConfirmacao', e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  };
-
-  const renderMasterTabContent = () => {
-    if (activeMasterTab === 'spi') {
-      return renderSPIForm();
-    }
-    
-    // Para a aba COMERCIAL, mostrar as abas de ferramentas
-    if (activeMasterTab === 'comercial') {
+    if (activeTab === 'spi') {
       return (
-        <Tabs value={activeToolTab} onValueChange={setActiveToolTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="dados-gerais" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Dados Gerais
-            </TabsTrigger>
-            <TabsTrigger value="analise-tecnica" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Análise Técnica
-            </TabsTrigger>
-            <TabsTrigger value="historico-chat" className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              Histórico/Chat
-            </TabsTrigger>
-            <TabsTrigger value="documentos" className="flex items-center gap-2">
-              <Upload className="h-4 w-4" />
-              Documentos
-            </TabsTrigger>
-            <TabsTrigger value="emprestimos" className="flex items-center gap-2">
-              <Package className="h-4 w-4" />
-              Empréstimos
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="dados-gerais" className="space-y-6 mt-4">
-            {/* Informações Básicas do Cliente */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Informações Básicas do Cliente</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="cpfCnpj">CPF/CNPJ *</Label>
-                  <Input
-                    id="cpfCnpj"
-                    value={formData.cpfCnpj}
-                    onChange={(e) => handleInputChange('cpfCnpj', e.target.value)}
-                    placeholder="Digite o CPF ou CNPJ"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="nome">Nome / Nome Fantasia *</Label>
-                  <Input
-                    id="nome"
-                    value={formData.nome}
-                    onChange={(e) => handleInputChange('nome', e.target.value)}
-                    placeholder="Digite o nome"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="razaoSocial">Razão Social</Label>
-                  <Input
-                    id="razaoSocial"
-                    value={formData.razaoSocial}
-                    onChange={(e) => handleInputChange('razaoSocial', e.target.value)}
-                    placeholder="Digite a razão social"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="endereco">Endereço do Cliente</Label>
-                  <Input
-                    id="endereco"
-                    value={formData.endereco}
-                    onChange={(e) => handleInputChange('endereco', e.target.value)}
-                    placeholder="Digite o endereço"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="uf">UF</Label>
-                  <Select value={formData.uf} onValueChange={(value) => handleInputChange('uf', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o estado" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="AC">AC</SelectItem>
-                      <SelectItem value="AL">AL</SelectItem>
-                      <SelectItem value="AP">AP</SelectItem>
-                      <SelectItem value="AM">AM</SelectItem>
-                      <SelectItem value="BA">BA</SelectItem>
-                      <SelectItem value="CE">CE</SelectItem>
-                      <SelectItem value="DF">DF</SelectItem>
-                      <SelectItem value="ES">ES</SelectItem>
-                      <SelectItem value="GO">GO</SelectItem>
-                      <SelectItem value="MA">MA</SelectItem>
-                      <SelectItem value="MT">MT</SelectItem>
-                      <SelectItem value="MS">MS</SelectItem>
-                      <SelectItem value="MG">MG</SelectItem>
-                      <SelectItem value="PA">PA</SelectItem>
-                      <SelectItem value="PB">PB</SelectItem>
-                      <SelectItem value="PR">PR</SelectItem>
-                      <SelectItem value="PE">PE</SelectItem>
-                      <SelectItem value="PI">PI</SelectItem>
-                      <SelectItem value="RJ">RJ</SelectItem>
-                      <SelectItem value="RN">RN</SelectItem>
-                      <SelectItem value="RS">RS</SelectItem>
-                      <SelectItem value="RO">RO</SelectItem>
-                      <SelectItem value="RR">RR</SelectItem>
-                      <SelectItem value="SC">SC</SelectItem>
-                      <SelectItem value="SP">SP</SelectItem>
-                      <SelectItem value="SE">SE</SelectItem>
-                      <SelectItem value="TO">TO</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="fonteLead">Fonte do Lead</Label>
-                  <Select value={formData.fonteLead} onValueChange={(value) => handleInputChange('fonteLead', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione a fonte" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="site">Site</SelectItem>
-                      <SelectItem value="indicacao">Indicação</SelectItem>
-                      <SelectItem value="cold-call">Cold Call</SelectItem>
-                      <SelectItem value="licitacao">Licitação</SelectItem>
-                      <SelectItem value="referencia">Referência</SelectItem>
-                      <SelectItem value="evento">Evento</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="ativo" 
-                    checked={formData.ativo}
-                    onCheckedChange={(checked) => handleInputChange('ativo', checked)}
-                  />
-                  <Label htmlFor="ativo">Ativo</Label>
-                </div>
-                <div>
-                  <Label htmlFor="email">E-mail</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="Digite o e-mail"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="telefone">Telefone</Label>
-                  <Input
-                    id="telefone"
-                    value={formData.telefone}
-                    onChange={(e) => handleInputChange('telefone', e.target.value)}
-                    placeholder="Digite o telefone"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="website">Website</Label>
-                  <Input
-                    id="website"
-                    value={formData.website}
-                    onChange={(e) => handleInputChange('website', e.target.value)}
-                    placeholder="Digite o website"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Informações do Negócio */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Informações do Negócio</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="valorNegocio">Valor do Negócio *</Label>
-                  <Input
-                    id="valorNegocio"
-                    value={formData.valorNegocio}
-                    onChange={(e) => handleInputChange('valorNegocio', e.target.value)}
-                    placeholder="R$ 0,00"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="metodoContato">Método de Contato</Label>
-                  <Select value={formData.metodoContato} onValueChange={(value) => handleInputChange('metodoContato', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o método" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="telefone">Telefone</SelectItem>
-                      <SelectItem value="email">E-mail</SelectItem>
-                      <SelectItem value="presencial">Presencial</SelectItem>
-                      <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                      <SelectItem value="video-chamada">Vídeo Chamada</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="segmentoLead">Segmento do Lead</Label>
-                  <Select value={formData.segmentoLead} onValueChange={(value) => handleInputChange('segmentoLead', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o segmento" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="hospitalar">Hospitalar</SelectItem>
-                      <SelectItem value="universitario">Universitário</SelectItem>
-                      <SelectItem value="publico">Público</SelectItem>
-                      <SelectItem value="municipal">Municipal</SelectItem>
-                      <SelectItem value="privado">Privado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="dataInicio">Data de Início</Label>
-                  <Input
-                    id="dataInicio"
-                    type="date"
-                    value={formData.dataInicio}
-                    onChange={(e) => handleInputChange('dataInicio', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="dataLimite">Data Limite</Label>
-                  <Input
-                    id="dataLimite"
-                    type="date"
-                    value={formData.dataLimite}
-                    onChange={(e) => handleInputChange('dataLimite', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="dataVisita">Data da Visita</Label>
-                  <Input
-                    id="dataVisita"
-                    type="date"
-                    value={formData.dataVisita}
-                    onChange={(e) => handleInputChange('dataVisita', e.target.value)}
-                  />
-                </div>
-                <div className="md:col-span-2 lg:col-span-3">
-                  <Label htmlFor="procurandoPor">Procurando Por (Contatos Vinculados ao Cliente)</Label>
-                  <Input
-                    id="procurandoPor"
-                    value={formData.procurandoPor}
-                    onChange={(e) => handleInputChange('procurandoPor', e.target.value)}
-                    placeholder="Digite os contatos"
-                  />
-                </div>
-                <div className="md:col-span-2 lg:col-span-3">
-                  <Label htmlFor="descricao">Descrição</Label>
-                  <Textarea
-                    id="descricao"
-                    value={formData.descricao}
-                    onChange={(e) => handleInputChange('descricao', e.target.value)}
-                    placeholder="Digite a descrição"
-                    rows={3}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Campos Específicos de Importação */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Dados Específicos da Importação Direta</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="spi">SPI</Label>
-                  <Input
-                    id="spi"
-                    value={formData.spi}
-                    onChange={(e) => handleInputChange('spi', e.target.value)}
-                    placeholder="Digite o SPI"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="di">DI</Label>
-                  <Input
-                    id="di"
-                    value={formData.di}
-                    onChange={(e) => handleInputChange('di', e.target.value)}
-                    placeholder="Digite a DI"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="invoice">Invoice</Label>
-                  <Input
-                    id="invoice"
-                    value={formData.invoice}
-                    onChange={(e) => handleInputChange('invoice', e.target.value)}
-                    placeholder="Digite o invoice"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="comissao">Comissão</Label>
-                  <Input
-                    id="comissao"
-                    value={formData.comissao}
-                    onChange={(e) => handleInputChange('comissao', e.target.value)}
-                    placeholder="Digite a comissão"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="numeroProjeto">Número do Projeto (Automático)</Label>
-                  <Input
-                    id="numeroProjeto"
-                    value={formData.numeroProjeto}
-                    onChange={(e) => handleInputChange('numeroProjeto', e.target.value)}
-                    placeholder="Gerado automaticamente"
-                    disabled
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="numeroPedido">Número do Pedido (Automático)</Label>
-                  <Input
-                    id="numeroPedido"
-                    value={formData.numeroPedido}
-                    onChange={(e) => handleInputChange('numeroPedido', e.target.value)}
-                    placeholder="Gerado automaticamente"
-                    disabled
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="numeroContrato">Número do Contrato (Automático)</Label>
-                  <Input
-                    id="numeroContrato"
-                    value={formData.numeroContrato}
-                    onChange={(e) => handleInputChange('numeroContrato', e.target.value)}
-                    placeholder="Gerado automaticamente"
-                    disabled
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="publicoPrivado">Público ou Privado</Label>
-                  <Select value={formData.publicoPrivado} onValueChange={(value) => handleInputChange('publicoPrivado', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="publico">Público</SelectItem>
-                      <SelectItem value="privado">Privado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="naturezaOperacao">Qual Natureza da Operação (CFOP vinculado ao OMIE)</Label>
-                  <Input
-                    id="naturezaOperacao"
-                    value={formData.naturezaOperacao}
-                    onChange={(e) => handleInputChange('naturezaOperacao', e.target.value)}
-                    placeholder="Digite a natureza da operação"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="tipoContrato">Detalhar Natureza da Operação {'->'} Tipo de Contrato</Label>
-                  <Input
-                    id="tipoContrato"
-                    value={formData.tipoContrato}
-                    onChange={(e) => handleInputChange('tipoContrato', e.target.value)}
-                    placeholder="Digite o tipo de contrato"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="situacao">Situação (qual momento da Venda)</Label>
-                  <Select value={formData.situacao} onValueChange={(value) => handleInputChange('situacao', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione a situação" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="em_negociacao">Em Negociação</SelectItem>
-                      <SelectItem value="aprovado">Aprovado</SelectItem>
-                      <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                      <SelectItem value="finalizado">Finalizado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="previsaoFechamento">Previsão de Fechamento (Vigência da ATA)</Label>
-                  <Input
-                    id="previsaoFechamento"
-                    type="date"
-                    value={formData.previsaoFechamento}
-                    onChange={(e) => handleInputChange('previsaoFechamento', e.target.value)}
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="gerarExpedicao" 
-                    checked={formData.gerarExpedicao}
-                    onCheckedChange={(checked) => handleInputChange('gerarExpedicao', checked)}
-                  />
-                  <Label htmlFor="gerarExpedicao">Gerar Expedição</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="nfConsumoFinal" 
-                    checked={formData.nfConsumoFinal}
-                    onCheckedChange={(checked) => handleInputChange('nfConsumoFinal', checked)}
-                  />
-                  <Label htmlFor="nfConsumoFinal">NF para Consumo Final</Label>
-                </div>
-                <div>
-                  <Label htmlFor="localEstoque">Local de Estoque</Label>
-                  <Input
-                    id="localEstoque"
-                    value={formData.localEstoque}
-                    onChange={(e) => handleInputChange('localEstoque', e.target.value)}
-                    placeholder="Digite o local de estoque"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Dados Financeiros */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Dados Financeiros</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="emailNotasFiscais">E-mail para Envio das Notas Fiscais</Label>
-                  <Input
-                    id="emailNotasFiscais"
-                    type="email"
-                    value={formData.emailNotasFiscais}
-                    onChange={(e) => handleInputChange('emailNotasFiscais', e.target.value)}
-                    placeholder="Digite o e-mail"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="formaPagamento">Forma de Pagamento</Label>
-                  <Select value={formData.formaPagamento} onValueChange={(value) => handleInputChange('formaPagamento', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione a forma" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="boleto">Boleto</SelectItem>
-                      <SelectItem value="deposito_bancario">Depósito Bancário</SelectItem>
-                      <SelectItem value="pix">PIX</SelectItem>
-                      <SelectItem value="cartao_credito">Cartão de Crédito</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="dadosBancarios">Dados Bancários + PIX</Label>
-                  <Input
-                    id="dadosBancarios"
-                    value={formData.dadosBancarios}
-                    onChange={(e) => handleInputChange('dadosBancarios', e.target.value)}
-                    placeholder="Digite os dados bancários"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="parcelas">Parcelas</Label>
-                  <Input
-                    id="parcelas"
-                    value={formData.parcelas}
-                    onChange={(e) => handleInputChange('parcelas', e.target.value)}
-                    placeholder="Digite o número de parcelas"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="prazoPagamento">Prazo para Pagamento</Label>
-                  <Input
-                    id="prazoPagamento"
-                    value={formData.prazoPagamento}
-                    onChange={(e) => handleInputChange('prazoPagamento', e.target.value)}
-                    placeholder="Digite o prazo"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="documentacaoNF">Documentação para Envio junto à NF</Label>
-                  <Input
-                    id="documentacaoNF"
-                    value={formData.documentacaoNF}
-                    onChange={(e) => handleInputChange('documentacaoNF', e.target.value)}
-                    placeholder="Digite a documentação"
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="destacarIR" 
-                    checked={formData.destacarIR}
-                    onCheckedChange={(checked) => handleInputChange('destacarIR', checked)}
-                  />
-                  <Label htmlFor="destacarIR">Deve Destacar IR?</Label>
-                </div>
-                <div>
-                  <Label htmlFor="saldoEmpenho">Saldo do Empenho (Faturado x Enviado)</Label>
-                  <Input
-                    id="saldoEmpenho"
-                    value={formData.saldoEmpenho}
-                    onChange={(e) => handleInputChange('saldoEmpenho', e.target.value)}
-                    placeholder="Digite o saldo"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="saldoAta">Saldo da ATA/Contrato (ATA x Empenho Recebido)</Label>
-                  <Input
-                    id="saldoAta"
-                    value={formData.saldoAta}
-                    onChange={(e) => handleInputChange('saldoAta', e.target.value)}
-                    placeholder="Digite o saldo"
-                  />
-                </div>
-                <div className="md:col-span-2 lg:col-span-3">
-                  <Label htmlFor="programacaoFaturamento">Programação de Faturamento (Locação + Remessa + Faturamento Mensal)</Label>
-                  <Textarea
-                    id="programacaoFaturamento"
-                    value={formData.programacaoFaturamento}
-                    onChange={(e) => handleInputChange('programacaoFaturamento', e.target.value)}
-                    placeholder="Digite a programação de faturamento"
-                    rows={3}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Informações de Frete */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Informações de Frete</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="fretePagar">Frete a Pagar Por</Label>
-                  <Select value={formData.fretePagar} onValueChange={(value) => handleInputChange('fretePagar', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="cliente">Cliente</SelectItem>
-                      <SelectItem value="representante">Representante</SelectItem>
-                      <SelectItem value="empresa">Empresa</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="freteRetirar">Frete a Retirar Por</Label>
-                  <Select value={formData.freteRetirar} onValueChange={(value) => handleInputChange('freteRetirar', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="cliente">Cliente</SelectItem>
-                      <SelectItem value="representante">Representante</SelectItem>
-                      <SelectItem value="portador_interno">Portador Interno</SelectItem>
-                      <SelectItem value="destino_final">Destino Final</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="prazoEntrega">Prazo de Entrega</Label>
-                  <Input
-                    id="prazoEntrega"
-                    value={formData.prazoEntrega}
-                    onChange={(e) => handleInputChange('prazoEntrega', e.target.value)}
-                    placeholder="Digite o prazo"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="entregarRetirar">Entregar ou Retirar aos Cuidados de Quem?</Label>
-                  <Input
-                    id="entregarRetirar"
-                    value={formData.entregarRetirar}
-                    onChange={(e) => handleInputChange('entregarRetirar', e.target.value)}
-                    placeholder="Digite o responsável"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="dadosRecebedor">Dados do Recebedor (Nome, CPF, Telefone, Email)</Label>
-                  <Textarea
-                    id="dadosRecebedor"
-                    value={formData.dadosRecebedor}
-                    onChange={(e) => handleInputChange('dadosRecebedor', e.target.value)}
-                    placeholder="Digite os dados do recebedor"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="horariosPermitidos">Quais Horários Permitidos para Entrega</Label>
-                  <Input
-                    id="horariosPermitidos"
-                    value={formData.horariosPermitidos}
-                    onChange={(e) => handleInputChange('horariosPermitidos', e.target.value)}
-                    placeholder="Digite os horários"
-                  />
-                </div>
-                <div className="md:col-span-2 lg:col-span-3">
-                  <Label htmlFor="locaisEntrega">Locais de Entrega</Label>
-                  <Textarea
-                    id="locaisEntrega"
-                    value={formData.locaisEntrega}
-                    onChange={(e) => handleInputChange('locaisEntrega', e.target.value)}
-                    placeholder="Digite os locais de entrega"
-                    rows={3}
-                  />
-                </div>
-                <div className="md:col-span-2 lg:col-span-3">
-                  <Label htmlFor="informacoesEntrega">Mais Informações sobre a Entrega (Há alguma dificuldade?)</Label>
-                  <Textarea
-                    id="informacoesEntrega"
-                    value={formData.informacoesEntrega}
-                    onChange={(e) => handleInputChange('informacoesEntrega', e.target.value)}
-                    placeholder="Digite informações adicionais sobre a entrega"
-                    rows={3}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Campos Adicionais */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Informações Adicionais</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="urgente" 
-                    checked={formData.urgente}
-                    onCheckedChange={(checked) => handleInputChange('urgente', checked)}
-                  />
-                  <Label htmlFor="urgente">É Urgente?</Label>
-                </div>
-                {formData.urgente && (
-                  <div className="md:col-span-2 lg:col-span-3">
-                    <Label htmlFor="justificativaUrgencia">Justificar Urgência</Label>
-                    <Textarea
-                      id="justificativaUrgencia"
-                      value={formData.justificativaUrgencia}
-                      onChange={(e) => handleInputChange('justificativaUrgencia', e.target.value)}
-                      placeholder="Digite a justificativa da urgência"
-                      rows={3}
-                    />
-                  </div>
-                )}
-                <div>
-                  <Label htmlFor="autorizadoPor">Autorizado Por</Label>
-                  <Input
-                    id="autorizadoPor"
-                    value={formData.autorizadoPor}
-                    onChange={(e) => handleInputChange('autorizadoPor', e.target.value)}
-                    placeholder="Digite quem autorizou"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="dataAutorizacao">Data da Autorização</Label>
-                  <Input
-                    id="dataAutorizacao"
-                    type="date"
-                    value={formData.dataAutorizacao}
-                    onChange={(e) => handleInputChange('dataAutorizacao', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="termometro">Termômetro</Label>
-                  <div className="flex items-center space-x-2">
-                    <Badge className="bg-green-500 text-white">
-                      {formData.termometro}
-                    </Badge>
-                    <span className="text-sm text-gray-600">(Fixado para Importação Direta)</span>
-                  </div>
-                </div>
-                <div className="md:col-span-2 lg:col-span-3">
-                  <Label htmlFor="motivoGanho">Motivo do Ganho</Label>
-                  <Textarea
-                    id="motivoGanho"
-                    value={formData.motivoGanho}
-                    onChange={(e) => handleInputChange('motivoGanho', e.target.value)}
-                    placeholder="Digite o motivo do ganho"
-                    rows={3}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="analise-tecnica" className="space-y-4 mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Análise Técnica-Científica</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Textarea
-                  value={formData.analiseTecnica}
-                  onChange={(e) => handleInputChange('analiseTecnica', e.target.value)}
-                  placeholder="Digite a análise técnica-científica da oportunidade..."
-                  rows={15}
-                  className="w-full"
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="historico-chat" className="space-y-4 mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Histórico e Chat Interno</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ChatInterno oportunidadeId={oportunidade?.id || 'nova'} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="documentos" className="space-y-4 mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Documentos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                  <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-4">Arraste e solte arquivos aqui ou clique para selecionar</p>
-                  <Button variant="outline">
-                    Selecionar Arquivos
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="emprestimos" className="space-y-4 mt-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Gestão de Empréstimos e Devoluções</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {/* Tabela de Empréstimos */}
-                  <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-semibold text-purple-600">🟣 Empréstimos</h3>
-                      <div className="flex items-center gap-2">
-                        <Filter className="h-4 w-4" />
-                        <Select value={filtroStatusEmprestimo} onValueChange={setFiltroStatusEmprestimo}>
-                          <SelectTrigger className="w-40">
-                            <SelectValue placeholder="Filtrar por status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="">Todos</SelectItem>
-                            <SelectItem value="Preparação">Preparação</SelectItem>
-                            <SelectItem value="Alocado">Alocado</SelectItem>
-                            <SelectItem value="Em trânsito">Em trânsito</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    
-                    <div className="border rounded-lg overflow-hidden">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Produto</TableHead>
-                            <TableHead>Data de envio</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Responsável</TableHead>
-                            <TableHead>Observações</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {emprestimosFiltrados.map((item) => (
-                            <TableRow key={item.id}>
-                              <TableCell className="font-medium">{item.produto}</TableCell>
-                              <TableCell>{new Date(item.dataEnvio).toLocaleDateString('pt-BR')}</TableCell>
-                              <TableCell>
-                                <Badge 
-                                  className={
-                                    item.status === 'Preparação' ? 'bg-yellow-100 text-yellow-800' :
-                                    item.status === 'Alocado' ? 'bg-blue-100 text-blue-800' :
-                                    'bg-orange-100 text-orange-800'
-                                  }
-                                >
-                                  {item.status}
-                                </Badge>
-                              </TableCell>
-                              <TableCell>{item.responsavel}</TableCell>
-                              <TableCell className="text-sm text-gray-600">{item.observacoes}</TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </div>
-
-                  {/* Tabela de Devoluções */}
-                  <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-semibold text-green-600">🟢 Devoluções</h3>
-                      <div className="flex items-center gap-2">
-                        <Filter className="h-4 w-4" />
-                        <Select value={filtroStatusDevolucao} onValueChange={setFiltroStatusDevolucao}>
-                          <SelectTrigger className="w-40">
-                            <SelectValue placeholder="Filtrar por status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="">Todos</SelectItem>
-                            <SelectItem value="Devolvido">Devolvido</SelectItem>
-                            <SelectItem value="Parcial">Parcial</SelectItem>
-                            <SelectItem value="Aguardando conferência">Aguardando conferência</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    
-                    <div className="border rounded-lg overflow-hidden">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Produto</TableHead>
-                            <TableHead>Data de envio</TableHead>
-                            <TableHead>Data da devolução</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Responsável</TableHead>
-                            <TableHead>Observações</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {devolucoesFiltradas.map((item) => (
-                            <TableRow key={item.id}>
-                              <TableCell className="font-medium">{item.produto}</TableCell>
-                              <TableCell>{new Date(item.dataEnvio).toLocaleDateString('pt-BR')}</TableCell>
-                              <TableCell>{new Date(item.dataDevolucao).toLocaleDateString('pt-BR')}</TableCell>
-                              <TableCell>
-                                <Badge 
-                                  className={
-                                    item.status === 'Devolvido' ? 'bg-green-100 text-green-800' :
-                                    item.status === 'Parcial' ? 'bg-yellow-100 text-yellow-800' :
-                                    'bg-gray-100 text-gray-800'
-                                  }
-                                >
-                                  {item.status}
-                                </Badge>
-                              </TableCell>
-                              <TableCell>{item.responsavel}</TableCell>
-                              <TableCell className="text-sm text-gray-600">{item.observacoes}</TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-lg border">
+            <h3 className="text-lg font-semibold mb-4">SPI - Solicitação de Preços de Importação</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="spi-cliente">Cliente</Label>
+                <Input id="spi-cliente" placeholder="Nome do cliente" />
+              </div>
+              <div>
+                <Label htmlFor="spi-data">Data</Label>
+                <Input id="spi-data" type="date" />
+              </div>
+              <div>
+                <Label htmlFor="spi-produto">Produto</Label>
+                <Input id="spi-produto" placeholder="Código/Nome do produto" />
+              </div>
+              <div>
+                <Label htmlFor="spi-quantidade">Quantidade</Label>
+                <Input id="spi-quantidade" type="number" placeholder="Quantidade" />
+              </div>
+              <div>
+                <Label htmlFor="spi-preco-unitario">Preço Unitário</Label>
+                <Input id="spi-preco-unitario" type="number" step="0.01" placeholder="0.00" />
+              </div>
+              <div>
+                <Label htmlFor="spi-validade">Validade da Oferta</Label>
+                <Input id="spi-validade" type="date" />
+              </div>
+            </div>
+          </div>
+          <Button onClick={handleDownloadPDF} variant="outline">
+            <Download className="h-4 w-4 mr-2" />
+            Baixar PDF
+          </Button>
+        </div>
       );
     }
-    
-    // Para outras abas masters (OVC, NOD/SO, DDR), retornar conteúdo placeholder
-    return (
-      <div className="flex items-center justify-center h-64 text-gray-500">
-        <p>Conteúdo da aba {activeMasterTab.toUpperCase()} em desenvolvimento...</p>
-      </div>
-    );
-  };
 
-  if (!isOpen) return null;
-
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden">
-        <DialogHeader className="flex-shrink-0">
-          <DialogTitle className="text-2xl font-bold text-purple-600">
-            Nova Importação Direta
-          </DialogTitle>
-        </DialogHeader>
-
-        <div className="flex flex-col h-full min-h-0">
-          {/* Abas Masters */}
-          <div className="mb-6 flex-shrink-0">
-            <div className="flex space-x-4 bg-gray-50 p-2 rounded-lg">
-              {masterTabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveMasterTab(tab.id)}
-                  className={`px-6 py-3 rounded-md font-medium transition-colors ${
-                    activeMasterTab === tab.id
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-white text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+    if (activeTab === 'ovc') {
+      return (
+        <div className="space-y-6">
+          <div className="bg-white p-6 rounded-lg border">
+            <h3 className="text-lg font-semibold mb-4">OVC - Oferta de Venda Comercial</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="ovc-cliente">Cliente</Label>
+                <Input id="ovc-cliente" placeholder="Nome do cliente" />
+              </div>
+              <div>
+                <Label htmlFor="ovc-data">Data</Label>
+                <Input id="ovc-data" type="date" />
+              </div>
+              <div>
+                <Label htmlFor="ovc-produto">Produto</Label>
+                <Input id="ovc-produto" placeholder="Código/Nome do produto" />
+              </div>
+              <div>
+                <Label htmlFor="ovc-quantidade">Quantidade</Label>
+                <Input id="ovc-quantidade" type="number" placeholder="Quantidade" />
+              </div>
+              <div>
+                <Label htmlFor="ovc-preco-unitario">Preço Unitário</Label>
+                <Input id="ovc-preco-unitario" type="number" step="0.01" placeholder="0.00" />
+              </div>
+              <div>
+                <Label htmlFor="ovc-validade">Validade da Oferta</Label>
+                <Input id="ovc-validade" type="date" />
+              </div>
             </div>
           </div>
 
-          {/* Conteúdo da aba master ativa com scroll */}
-          <div className="flex-1 overflow-y-auto max-h-[60vh] pr-2">
-            {renderMasterTabContent()}
+          {/* OVC Results Table */}
+          <div className="bg-white p-6 rounded-lg border">
+            <h4 className="text-lg font-semibold mb-4">Tabela de Resultados/Cálculos</h4>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="bg-blue-100">CODE</TableHead>
+                    <TableHead className="bg-blue-100">Qty</TableHead>
+                    <TableHead className="bg-green-100" colSpan={2}>Price List</TableHead>
+                    <TableHead className="bg-yellow-100" colSpan={3}>Customer Discount %</TableHead>
+                    <TableHead className="bg-orange-100" colSpan={2}>Discount</TableHead>
+                    <TableHead className="bg-purple-100" colSpan={2}>Sub total</TableHead>
+                    <TableHead className="bg-red-100">Handling charge (3%)</TableHead>
+                    <TableHead className="bg-gray-100">Total</TableHead>
+                    <TableHead className="bg-pink-100">% Commission</TableHead>
+                    <TableHead className="bg-indigo-100">Commission value</TableHead>
+                    <TableHead className="bg-teal-100">Net Radiometer</TableHead>
+                  </TableRow>
+                  <TableRow className="text-sm">
+                    <TableHead></TableHead>
+                    <TableHead></TableHead>
+                    <TableHead className="bg-green-50">Unit</TableHead>
+                    <TableHead className="bg-green-50">Total</TableHead>
+                    <TableHead className="bg-yellow-50">Rmed</TableHead>
+                    <TableHead className="bg-yellow-50">Biodina</TableHead>
+                    <TableHead className="bg-yellow-50">Total</TableHead>
+                    <TableHead className="bg-orange-50">Unit</TableHead>
+                    <TableHead className="bg-orange-50">Total</TableHead>
+                    <TableHead className="bg-purple-50">Unit</TableHead>
+                    <TableHead className="bg-purple-50">Total</TableHead>
+                    <TableHead className="bg-red-50"></TableHead>
+                    <TableHead className="bg-gray-50"></TableHead>
+                    <TableHead className="bg-pink-50"></TableHead>
+                    <TableHead className="bg-indigo-50"></TableHead>
+                    <TableHead className="bg-teal-50"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {ovcResults.map((row) => {
+                    const calculated = calculateOvcRow(row);
+                    return (
+                      <TableRow key={row.id}>
+                        <TableCell className="font-medium">{calculated.code}</TableCell>
+                        <TableCell className="text-right">{calculated.qty}</TableCell>
+                        <TableCell className="text-right">${calculated.priceListUnit.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">${calculated.priceListTotal.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Input 
+                            type="number" 
+                            step="0.1"
+                            value={calculated.customerDiscountRmed}
+                            onChange={(e) => updateOvcResult(row.id, 'customerDiscountRmed', parseFloat(e.target.value) || 0)}
+                            className="w-16 text-right"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Input 
+                            type="number" 
+                            step="0.1"
+                            value={calculated.customerDiscountBiodina}
+                            onChange={(e) => updateOvcResult(row.id, 'customerDiscountBiodina', parseFloat(e.target.value) || 0)}
+                            className="w-16 text-right"
+                          />
+                        </TableCell>
+                        <TableCell className="text-right">{calculated.customerDiscountTotal.toFixed(1)}%</TableCell>
+                        <TableCell className="text-right">${calculated.discountUnit.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">${calculated.discountTotal.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">${calculated.subTotalUnit.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">${calculated.subTotalTotal.toFixed(2)}</TableCell>
+                        <TableCell className="text-right">${calculated.handlingCharge.toFixed(2)}</TableCell>
+                        <TableCell className="text-right font-semibold">${calculated.total.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <Input 
+                            type="number" 
+                            step="0.1"
+                            value={calculated.commission}
+                            onChange={(e) => updateOvcResult(row.id, 'commission', parseFloat(e.target.value) || 0)}
+                            className="w-16 text-right"
+                          />
+                        </TableCell>
+                        <TableCell className="text-right">${calculated.commissionValue.toFixed(2)}</TableCell>
+                        <TableCell className="text-right font-semibold">${calculated.netRadiometer.toFixed(2)}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+                  
+                  {/* Totals Row */}
+                  <TableRow className="bg-gray-50 font-semibold">
+                    <TableCell>TOTALS</TableCell>
+                    <TableCell className="text-right">{calculateOvcTotals().qty}</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell className="text-right">${calculateOvcTotals().priceListTotal.toFixed(2)}</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell className="text-right">${calculateOvcTotals().discountTotal.toFixed(2)}</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell className="text-right">${calculateOvcTotals().subTotalTotal.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">${calculateOvcTotals().handlingCharge.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">${calculateOvcTotals().total.toFixed(2)}</TableCell>
+                    <TableCell></TableCell>
+                    <TableCell className="text-right">${calculateOvcTotals().commissionValue.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">${calculateOvcTotals().netRadiometer.toFixed(2)}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
           </div>
+        </div>
+      );
+    }
 
-          {/* Rodapé com botões */}
-          <div className="flex justify-end space-x-4 pt-6 border-t flex-shrink-0 mt-4">
-            <Button variant="outline" onClick={onClose}>
-              Cancelar
+    return <div>Conteúdo da aba {activeTab}</div>;
+  };
+
+  return (
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-6xl h-[90vh] flex flex-col">
+        <DialogHeader>
+          <DialogTitle>Nova Importação Direta</DialogTitle>
+        </DialogHeader>
+
+        {/* Master Tabs */}
+        <div className="flex border-b mb-4">
+          <Button
+            variant="ghost"
+            className={activeTab === 'comercial' ? 'border-b-2 border-blue-500 rounded-none' : ''}
+            onClick={() => handleTabChange('comercial')}
+          >
+            Comercial
+          </Button>
+          <Button
+            variant="ghost"
+            className={activeTab === 'spi' ? 'border-b-2 border-blue-500 rounded-none' : ''}
+            onClick={() => handleTabChange('spi')}
+          >
+            SPI
+          </Button>
+          <Button
+            variant="ghost"
+            className={activeTab === 'ovc' ? 'border-b-2 border-blue-500 rounded-none' : ''}
+            onClick={() => handleTabChange('ovc')}
+          >
+            OVC
+          </Button>
+        </div>
+
+        {/* Sub Tabs - only show when comercial tab is active */}
+        {activeTab === 'comercial' && (
+          <div className="flex border-b mb-4 space-x-1">
+            <Button
+              variant="ghost"
+              className={activeSubTab === 'dados-gerais' ? 'border-b-2 border-blue-500 rounded-none' : ''}
+              onClick={() => handleSubTabChange('dados-gerais')}
+            >
+              Dados Gerais
             </Button>
-            {activeMasterTab === 'spi' && (
-              <Button 
-                onClick={generateSPIPDF} 
-                variant="outline"
-                className="bg-red-600 text-white hover:bg-red-700"
-              >
-                <FileText className="h-4 w-4 mr-2" />
-                Baixar PDF
-              </Button>
-            )}
-            <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
-              {oportunidade ? 'Atualizar' : 'Salvar'} Importação Direta
+            <Button
+              variant="ghost"
+              className={activeSubTab === 'analise-tecnica' ? 'border-b-2 border-blue-500 rounded-none' : ''}
+              onClick={() => handleSubTabChange('analise-tecnica')}
+            >
+              Análise Técnica
+            </Button>
+            <Button
+              variant="ghost"
+              className={activeSubTab === 'historico' ? 'border-b-2 border-blue-500 rounded-none' : ''}
+              onClick={() => handleSubTabChange('historico')}
+            >
+              Histórico
+            </Button>
+            <Button
+              variant="ghost"
+              className={activeSubTab === 'documentos' ? 'border-b-2 border-blue-500 rounded-none' : ''}
+              onClick={() => handleSubTabChange('documentos')}
+            >
+              Documentos
+            </Button>
+            <Button
+              variant="ghost"
+              className={activeSubTab === 'emprestimos' ? 'border-b-2 border-blue-500 rounded-none' : ''}
+              onClick={() => handleSubTabChange('emprestimos')}
+            >
+              Empréstimos
             </Button>
           </div>
+        )}
+
+        <div className="flex-1 overflow-auto">
+          {renderTabContent()}
+        </div>
+
+        <div className="flex justify-end space-x-2 pt-4 border-t">
+          <Button variant="outline" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSave}>
+            Salvar Importação Direta
+          </Button>
+          {activeTab === 'spi' && (
+            <Button onClick={handleDownloadPDF} variant="outline">
+              <Download className="h-4 w-4 mr-2" />
+              Baixar PDF
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
