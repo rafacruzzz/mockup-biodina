@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -548,36 +547,38 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </DialogHeader>
 
         <div className="flex-1 overflow-hidden flex flex-col">
-          {/* Abas Masters com layout flexbox */}
-          <div className="flex items-center space-x-2 mb-4 bg-gray-50 p-2 rounded-lg">
-            <button
-              className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all ${
-                activePhase === 'triagem'
-                  ? 'bg-blue-500 text-white shadow-sm'
-                  : 'bg-white text-gray-600 hover:bg-gray-50'
-              } ${phaseApproved ? 'opacity-60' : ''}`}
-              onClick={() => !phaseApproved && setActivePhase('triagem')}
-              disabled={phaseApproved}
-            >
-              {phaseApproved && <CheckCircle className="h-4 w-4" />}
-              TRIAGEM
-            </button>
+          {/* Abas Masters com layout centralizado fixo */}
+          <div className="flex items-center justify-center mb-4 bg-gray-50 p-3 rounded-lg">
+            <div className="flex items-center space-x-3">
+              <button
+                className={`flex items-center gap-2 px-6 py-2 rounded-md font-medium transition-all ${
+                  activePhase === 'triagem'
+                    ? 'bg-blue-500 text-white shadow-sm'
+                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                } ${phaseApproved ? 'opacity-60' : ''}`}
+                onClick={() => !phaseApproved && setActivePhase('triagem')}
+                disabled={phaseApproved}
+              >
+                {phaseApproved && <CheckCircle className="h-4 w-4" />}
+                TRIAGEM
+              </button>
 
-            {phaseApproved && (
-              <ChevronRight className="h-5 w-5 text-gray-400" />
-            )}
+              {phaseApproved && (
+                <ChevronRight className="h-5 w-5 text-gray-400" />
+              )}
 
-            <button
-              className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all ${
-                activePhase === 'participacao' && phaseApproved
-                  ? 'bg-green-500 text-white shadow-sm'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-              }`}
-              onClick={() => phaseApproved && setActivePhase('participacao')}
-              disabled={!phaseApproved}
-            >
-              PARTICIPAÇÃO
-            </button>
+              <button
+                className={`flex items-center gap-2 px-6 py-2 rounded-md font-medium transition-all ${
+                  activePhase === 'participacao' && phaseApproved
+                    ? 'bg-green-500 text-white shadow-sm'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                }`}
+                onClick={() => phaseApproved && setActivePhase('participacao')}
+                disabled={!phaseApproved}
+              >
+                PARTICIPAÇÃO
+              </button>
+            </div>
           </div>
 
           {phaseApproved && activePhase === 'participacao' && (
