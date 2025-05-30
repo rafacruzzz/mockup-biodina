@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Licitacao } from "@/types/licitacao";
-import { X, Save, FileText, Users, History, BarChart3 } from "lucide-react";
+import { X, Save, FileText, Users, History } from "lucide-react";
 
 interface LicitacaoFormProps {
   licitacao?: Licitacao;
@@ -74,14 +73,10 @@ const LicitacaoForm = ({ licitacao, onClose, onSave }: LicitacaoFormProps) => {
 
         <CardContent>
           <Tabs defaultValue="geral" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="geral" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Geral
-              </TabsTrigger>
-              <TabsTrigger value="analise" className="flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
-                Análise Técnica
               </TabsTrigger>
               <TabsTrigger value="pedidos" className="flex items-center gap-2">
                 <Users className="h-4 w-4" />
@@ -256,12 +251,6 @@ const LicitacaoForm = ({ licitacao, onClose, onSave }: LicitacaoFormProps) => {
                   </Button>
                 </div>
               </form>
-            </TabsContent>
-
-            <TabsContent value="analise" className="mt-4">
-              <div className="text-center py-8 text-gray-500">
-                Análise técnica e concorrência será implementada aqui
-              </div>
             </TabsContent>
 
             <TabsContent value="pedidos" className="mt-4">
