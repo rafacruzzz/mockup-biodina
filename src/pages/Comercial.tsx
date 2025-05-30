@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +13,7 @@ import PedidoModal from "@/components/comercial/PedidoModal";
 import PedidoForm from "@/components/comercial/PedidoForm";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
-  DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter, ExternalLink
+  DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -383,12 +382,16 @@ const Comercial = () => {
             Oportunidades Comerciais
           </CardTitle>
           <div className="flex gap-2">
-            <Link to="/comercial/oportunidade/nova">
-              <Button className="bg-biodina-gold hover:bg-biodina-gold/90">
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Oportunidade
-              </Button>
-            </Link>
+            <Button 
+              className="bg-biodina-gold hover:bg-biodina-gold/90"
+              onClick={() => {
+                setEditingOportunidade(undefined);
+                setShowOportunidadeAvancadaForm(true);
+              }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Oportunidade
+            </Button>
           </div>
         </div>
         <div className="flex gap-4 mt-4">
@@ -464,11 +467,9 @@ const Comercial = () => {
                   <TableCell>{oportunidade.dataAbertura}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Link to={`/comercial/oportunidade/${oportunidade.id}`}>
-                        <Button size="sm" variant="outline" title="Abrir oportunidade">
-                          <ExternalLink className="h-4 w-4" />
-                        </Button>
-                      </Link>
+                      <Button size="sm" variant="outline" onClick={() => handleEditOportunidade(oportunidade)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
                       <Button 
                         size="sm" 
                         variant="outline" 
