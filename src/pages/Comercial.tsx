@@ -7,9 +7,8 @@ import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SidebarLayout from "@/components/SidebarLayout";
-import TipoPropostaModal from "@/components/comercial/TipoPropostaModal";
-import LicitacaoForm from "@/components/comercial/LicitacaoForm";
-import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
+import OportunidadeForm from "@/components/comercial/OportunidadeForm";
+import OportunidadeAvancadaForm from "@/components/comercial/OportunidadeAvancadaForm";
 import PedidoModal from "@/components/comercial/PedidoModal";
 import PedidoForm from "@/components/comercial/PedidoForm";
 import { 
@@ -25,20 +24,14 @@ const Comercial = () => {
   const [activeTab, setActiveTab] = useState('funil');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
-  const [modalidadeFilter, setModalidadeFilter] = useState('todos');
-  
-  // Modais
-  const [showTipoPropostaModal, setShowTipoPropostaModal] = useState(false);
-  const [showLicitacaoForm, setShowLicitacaoForm] = useState(false);
-  const [showContratacaoSimplesForm, setShowContratacaoSimplesForm] = useState(false);
+  const [showOportunidadeForm, setShowOportunidadeForm] = useState(false);
+  const [showOportunidadeAvancadaForm, setShowOportunidadeAvancadaForm] = useState(false);
+  const [editingOportunidade, setEditingOportunidade] = useState<any>();
   const [showPedidoModal, setShowPedidoModal] = useState(false);
   const [showPedidoForm, setShowPedidoForm] = useState(false);
-  
-  // Estados de edição
-  const [editingOportunidade, setEditingOportunidade] = useState<any>();
   const [selectedOportunidade, setSelectedOportunidade] = useState<any>();
 
-  // Dados das oportunidades atualizados com modalidade
+  // Dados das oportunidades atualizados com novos status
   const oportunidades = [
     { 
       id: 1,
@@ -50,7 +43,6 @@ const Comercial = () => {
       familiaComercial: 'Radiometer ABL',
       situacao: 'ganha',
       status: 'Ganha',
-      modalidade: 'licitacao',
       resultadoOportunidade: 'ganho',
       tipoAplicacao: 'venda',
       tipoOportunidade: 'pontual',
@@ -74,7 +66,6 @@ const Comercial = () => {
       familiaComercial: 'Nova Biomedical',
       situacao: 'em_triagem',
       status: 'Em Triagem',
-      modalidade: 'contratacao_simples',
       resultadoOportunidade: 'em_andamento',
       tipoAplicacao: 'locacao',
       tipoOportunidade: 'periodica',
@@ -98,7 +89,6 @@ const Comercial = () => {
       familiaComercial: 'WEBMED',
       situacao: 'em_acompanhamento',
       status: 'Em Acompanhamento',
-      modalidade: 'licitacao',
       resultadoOportunidade: 'em_andamento',
       tipoAplicacao: 'servico',
       tipoOportunidade: 'pontual',
@@ -122,7 +112,6 @@ const Comercial = () => {
       familiaComercial: 'Stat Profile',
       situacao: 'perdida',
       status: 'Perdida',
-      modalidade: 'licitacao',
       resultadoOportunidade: 'perda',
       tipoAplicacao: 'venda',
       tipoOportunidade: 'pontual',
@@ -146,7 +135,6 @@ const Comercial = () => {
       familiaComercial: 'Radiometer ABL',
       situacao: 'em_acompanhamento',
       status: 'Em Acompanhamento',
-      modalidade: 'contratacao_simples',
       resultadoOportunidade: 'em_andamento',
       tipoAplicacao: 'venda',
       tipoOportunidade: 'pontual',
@@ -251,38 +239,15 @@ const Comercial = () => {
     return 'bg-green-500';
   };
 
-  const getModalidadeLabel = (modalidade: string) => {
-    switch (modalidade) {
-      case 'licitacao': return 'Licitação';
-      case 'contratacao_simples': return 'Contratação Simples';
-      default: return modalidade;
-    }
-  };
-
-  const handleNovaOportunidade = () => {
-    setShowTipoPropostaModal(true);
-  };
-
-  const handleTipoPropostaSelecionado = (tipo: 'licitacao' | 'contratacao_simples') => {
-    setEditingOportunidade(undefined);
-    if (tipo === 'licitacao') {
-      setShowLicitacaoForm(true);
-    } else {
-      setShowContratacaoSimplesForm(true);
-    }
-  };
-
   const handleEditOportunidade = (oportunidade: any) => {
     setEditingOportunidade(oportunidade);
-    if (oportunidade.modalidade === 'licitacao') {
-      setShowLicitacaoForm(true);
-    } else {
-      setShowContratacaoSimplesForm(true);
-    }
+    setShowOportunidadeAvancadaForm(true);
   };
 
   const handleSaveOportunidade = (formData: any) => {
+    // Verificar se o status mudou para "Ganha" e há produtos/serviços selecionados
     if (formData.status === 'Ganha' && (formData.produtos?.length > 0 || formData.servicos?.length > 0)) {
+      // Criar pedido automaticamente
       const novoPedido = {
         oportunidadeId: formData.id || Date.now(),
         cliente: formData.cliente,
@@ -295,12 +260,13 @@ const Comercial = () => {
     }
     
     console.log('Salvando oportunidade:', formData);
-    setShowLicitacaoForm(false);
-    setShowContratacaoSimplesForm(false);
+    setShowOportunidadeForm(false);
+    setShowOportunidadeAvancadaForm(false);
     setEditingOportunidade(undefined);
   };
 
   const handleGerarPedido = (oportunidade: any) => {
+    // Só permitir gerar pedido se status for "Ganha"
     if (oportunidade.status !== 'Ganha') {
       alert('Pedidos só podem ser gerados para oportunidades com status "Ganha"');
       return;
@@ -324,9 +290,8 @@ const Comercial = () => {
       oportunidade.responsavel.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'todos' || oportunidade.status === statusFilter;
-    const matchesModalidade = modalidadeFilter === 'todos' || oportunidade.modalidade === modalidadeFilter;
     
-    return matchesSearch && matchesStatus && matchesModalidade;
+    return matchesSearch && matchesStatus;
   });
 
   const renderFunil = () => (
@@ -419,10 +384,13 @@ const Comercial = () => {
           <div className="flex gap-2">
             <Button 
               className="bg-biodina-gold hover:bg-biodina-gold/90"
-              onClick={handleNovaOportunidade}
+              onClick={() => {
+                setEditingOportunidade(undefined);
+                setShowOportunidadeAvancadaForm(true);
+              }}
             >
               <Plus className="h-4 w-4 mr-2" />
-              Nova Proposta
+              Nova Oportunidade
             </Button>
           </div>
         </div>
@@ -450,16 +418,6 @@ const Comercial = () => {
                 <SelectItem value="Perdida">Perdida</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={modalidadeFilter} onValueChange={setModalidadeFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Filtrar por modalidade" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todas as Modalidades</SelectItem>
-                <SelectItem value="licitacao">Licitação</SelectItem>
-                <SelectItem value="contratacao_simples">Contratação Simples</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </div>
       </CardHeader>
@@ -472,7 +430,6 @@ const Comercial = () => {
                 <TableHead>Cliente</TableHead>
                 <TableHead>Responsável</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Modalidade</TableHead>
                 <TableHead>Fonte</TableHead>
                 <TableHead>Segmento</TableHead>
                 <TableHead>Termômetro</TableHead>
@@ -490,11 +447,6 @@ const Comercial = () => {
                   <TableCell>
                     <Badge className={`${getSituacaoColor(oportunidade.situacao)} text-white`}>
                       {oportunidade.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
-                      {getModalidadeLabel(oportunidade.modalidade)}
                     </Badge>
                   </TableCell>
                   <TableCell>{oportunidade.fonteLead}</TableCell>
@@ -670,32 +622,27 @@ const Comercial = () => {
         </div>
       </div>
 
-      {/* Modais */}
-      <TipoPropostaModal
-        isOpen={showTipoPropostaModal}
-        onClose={() => setShowTipoPropostaModal(false)}
-        onSelect={handleTipoPropostaSelecionado}
-      />
+      {showOportunidadeForm && (
+        <OportunidadeForm
+          oportunidade={editingOportunidade}
+          onClose={() => {
+            setShowOportunidadeForm(false);
+            setEditingOportunidade(undefined);
+          }}
+          onSave={handleSaveOportunidade}
+        />
+      )}
 
-      <LicitacaoForm
-        isOpen={showLicitacaoForm}
-        onClose={() => {
-          setShowLicitacaoForm(false);
-          setEditingOportunidade(undefined);
-        }}
-        onSave={handleSaveOportunidade}
-        oportunidade={editingOportunidade}
-      />
-
-      <ContratacaoSimplesForm
-        isOpen={showContratacaoSimplesForm}
-        onClose={() => {
-          setShowContratacaoSimplesForm(false);
-          setEditingOportunidade(undefined);
-        }}
-        onSave={handleSaveOportunidade}
-        oportunidade={editingOportunidade}
-      />
+      {showOportunidadeAvancadaForm && (
+        <OportunidadeAvancadaForm
+          oportunidade={editingOportunidade}
+          onClose={() => {
+            setShowOportunidadeAvancadaForm(false);
+            setEditingOportunidade(undefined);
+          }}
+          onSave={handleSaveOportunidade}
+        />
+      )}
 
       {showPedidoModal && selectedOportunidade && (
         <PedidoModal
