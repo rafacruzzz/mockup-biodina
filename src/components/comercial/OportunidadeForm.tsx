@@ -48,6 +48,7 @@ const pedidos = [
 ];
 
 const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormProps) => {
+  // Inicializar o estado com valores explícitos
   const [activeMasterTab, setActiveMasterTab] = useState('triagem');
   const [activeToolTab, setActiveToolTab] = useState('geral');
   
@@ -92,7 +93,7 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
   const [produtosSelecionados, setProdutosSelecionados] = useState<string[]>(formData.produtos);
   const [servicosSelecionados, setServicosSelecionados] = useState<string[]>(formData.servicos);
 
-  // Determinar a fase atual baseada no status
+  // Determinar a fase atual baseada no status - simplificado
   const getCurrentPhase = () => {
     const triagemStatuses = ['Em Triagem'];
     const participacaoStatuses = ['Aprovada para Participação', 'Em Acompanhamento'];
@@ -101,10 +102,11 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
     if (triagemStatuses.includes(formData.status)) return 'triagem';
     if (participacaoStatuses.includes(formData.status)) return 'participacao';
     if (finalizadoStatuses.includes(formData.status)) return 'finalizada';
-    return 'triagem';
+    return 'triagem'; // Default para triagem
   };
 
   const currentPhase = getCurrentPhase();
+  
   const isPhaseCompleted = (phase: string) => {
     if (phase === 'triagem') return ['Aprovada para Participação', 'Em Acompanhamento', 'Ganha', 'Perdida na Participação'].includes(formData.status);
     if (phase === 'participacao') return ['Ganha', 'Perdida na Participação'].includes(formData.status);
@@ -123,6 +125,8 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
   useEffect(() => {
     if (currentPhase === 'participacao' && activeMasterTab === 'triagem') {
       setActiveMasterTab('participacao');
+    } else if (currentPhase === 'triagem') {
+      setActiveMasterTab('triagem');
     }
   }, [currentPhase, activeMasterTab]);
 
@@ -454,74 +458,68 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
         </CardHeader>
 
         <CardContent>
-          {/* Abas Masters - Nível Superior (Como abas principais do navegador) */}
-          <div className="mb-6">
-            <div className="flex border-b-2 border-gray-100 bg-gray-50 rounded-t-lg">
+          {/* Abas Masters - Nível Superior */}
+          <div className="mb-6 bg-white">
+            <div className="flex border-b-2 border-gray-200">
               <button
                 onClick={() => isPhaseAccessible('triagem') && setActiveMasterTab('triagem')}
-                className={`relative px-8 py-4 font-bold text-lg flex items-center gap-2 transition-all duration-200 rounded-t-lg border-t-4 ${
+                className={`px-6 py-4 font-bold text-lg border-b-4 transition-all duration-200 ${
                   activeMasterTab === 'triagem'
-                    ? 'border-t-biodina-blue bg-white text-biodina-blue shadow-sm translate-y-0.5'
+                    ? 'border-b-blue-600 text-blue-600 bg-blue-50'
                     : isPhaseAccessible('triagem')
-                    ? 'border-t-transparent bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800'
-                    : 'border-t-transparent bg-gray-200 text-gray-400 cursor-not-allowed'
+                    ? 'border-b-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                    : 'border-b-transparent text-gray-400 cursor-not-allowed bg-gray-100'
                 }`}
                 disabled={!isPhaseAccessible('triagem')}
               >
-                {isPhaseCompleted('triagem') && <Lock className="h-4 w-4" />}
+                {isPhaseCompleted('triagem') && <Lock className="h-4 w-4 inline mr-2" />}
                 TRIAGEM
-                {activeMasterTab === 'triagem' && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-biodina-blue" />
-                )}
               </button>
               <button
                 onClick={() => isPhaseAccessible('participacao') && setActiveMasterTab('participacao')}
-                className={`relative px-8 py-4 font-bold text-lg flex items-center gap-2 transition-all duration-200 rounded-t-lg border-t-4 ${
+                className={`px-6 py-4 font-bold text-lg border-b-4 transition-all duration-200 ${
                   activeMasterTab === 'participacao'
-                    ? 'border-t-biodina-blue bg-white text-biodina-blue shadow-sm translate-y-0.5'
+                    ? 'border-b-blue-600 text-blue-600 bg-blue-50'
                     : isPhaseAccessible('participacao')
-                    ? 'border-t-transparent bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800'
-                    : 'border-t-transparent bg-gray-200 text-gray-400 cursor-not-allowed'
+                    ? 'border-b-transparent text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                    : 'border-b-transparent text-gray-400 cursor-not-allowed bg-gray-100'
                 }`}
                 disabled={!isPhaseAccessible('participacao')}
               >
-                {isPhaseCompleted('participacao') && <Lock className="h-4 w-4" />}
+                {isPhaseCompleted('participacao') && <Lock className="h-4 w-4 inline mr-2" />}
                 PARTICIPAÇÃO
-                {activeMasterTab === 'participacao' && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-biodina-blue" />
-                )}
               </button>
             </div>
           </div>
 
-          {/* Abas de Ferramentas - Nível Inferior (Como barra de favoritos/atalhos) */}
+          {/* Abas de Ferramentas - Nível Inferior */}
           <Tabs value={activeToolTab} onValueChange={setActiveToolTab} className="w-full">
             <div className="mb-4 p-2 bg-gray-50 rounded-lg border">
               <TabsList className="grid w-full grid-cols-5 bg-transparent gap-1">
                 <TabsTrigger 
                   value="geral" 
-                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-biodina-blue hover:bg-gray-100"
+                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 hover:bg-gray-100"
                 >
                   <FileText className="h-4 w-4" />
                   Dados Gerais
                 </TabsTrigger>
                 <TabsTrigger 
                   value="analise" 
-                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-biodina-blue hover:bg-gray-100"
+                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 hover:bg-gray-100"
                 >
                   <BarChart3 className="h-4 w-4" />
                   Análise Técnica
                 </TabsTrigger>
                 <TabsTrigger 
                   value="historico" 
-                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-biodina-blue hover:bg-gray-100"
+                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 hover:bg-gray-100"
                 >
                   <History className="h-4 w-4" />
                   Histórico/Chat
                 </TabsTrigger>
                 <TabsTrigger 
                   value="pedidos" 
-                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-biodina-blue hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={formData.status !== 'Ganha'}
                 >
                   <Users className="h-4 w-4" />
@@ -530,7 +528,7 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
                 </TabsTrigger>
                 <TabsTrigger 
                   value="documentos" 
-                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-biodina-blue hover:bg-gray-100"
+                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-blue-600 hover:bg-gray-100"
                 >
                   <FileText className="h-4 w-4" />
                   Documentos
