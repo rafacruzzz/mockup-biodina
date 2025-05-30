@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import SidebarLayout from "@/components/SidebarLayout";
 import OportunidadeForm from "@/components/comercial/OportunidadeForm";
 import OportunidadeAvancadaForm from "@/components/comercial/OportunidadeAvancadaForm";
@@ -18,7 +19,7 @@ import {
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter
 } from "lucide-react";
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, 
   PieChart, Pie, Cell, ResponsiveContainer 
 } from 'recharts';
 
@@ -464,74 +465,88 @@ const Comercial = () => {
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto max-h-96 overflow-y-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Código</TableHead>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Responsável</TableHead>
-                <TableHead>Modalidade</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Fonte</TableHead>
-                <TableHead>Segmento</TableHead>
-                <TableHead>Termômetro</TableHead>
-                <TableHead>Valor</TableHead>
-                <TableHead>Data Abertura</TableHead>
-                <TableHead>Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredOportunidades.map((oportunidade) => (
-                <TableRow key={oportunidade.id}>
-                  <TableCell className="font-medium">{oportunidade.codigo}</TableCell>
-                  <TableCell>{oportunidade.cliente}</TableCell>
-                  <TableCell>{oportunidade.responsavel}</TableCell>
-                  <TableCell>
-                    <Badge className={`${getModalidadeColor(oportunidade.modalidade)} text-white`}>
-                      {getModalidadeLabel(oportunidade.modalidade)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={`${getSituacaoColor(oportunidade.situacao)} text-white`}>
-                      {oportunidade.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{oportunidade.fonteLead}</TableCell>
-                  <TableCell>{oportunidade.segmento}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
-                        <Thermometer className="h-4 w-4" />
-                        <span className="text-sm font-medium">{oportunidade.termometro}°</span>
-                      </div>
-                      <div 
-                        className={`w-3 h-3 rounded-full ${getTermometroColor(oportunidade.termometro)}`}
-                        title={`Termômetro: ${oportunidade.termometro}°`}
-                      />
-                    </div>
-                  </TableCell>
-                  <TableCell>{formatCurrency(oportunidade.valor)}</TableCell>
-                  <TableCell>{oportunidade.dataAbertura}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => handleEditOportunidade(oportunidade)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        onClick={() => handleGerarPedido(oportunidade)}
-                        disabled={oportunidade.status !== 'Ganha'}
-                        title={oportunidade.status !== 'Ganha' ? 'Pedidos só podem ser gerados para oportunidades ganhas' : 'Gerar pedido'}
-                      >
-                        <FileText className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          <TooltipProvider>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[80px]">Código</TableHead>
+                  <TableHead className="min-w-[200px]">Cliente</TableHead>
+                  <TableHead className="min-w-[120px]">Responsável</TableHead>
+                  <TableHead className="min-w-[130px]">Modalidade</TableHead>
+                  <TableHead className="min-w-[100px]">Status</TableHead>
+                  <TableHead className="min-w-[100px]">Fonte</TableHead>
+                  <TableHead className="min-w-[100px]">Segmento</TableHead>
+                  <TableHead className="min-w-[120px]">Termômetro</TableHead>
+                  <TableHead className="min-w-[120px]">Valor</TableHead>
+                  <TableHead className="min-w-[120px]">Data Abertura</TableHead>
+                  <TableHead className="min-w-[100px]">Ações</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredOportunidades.map((oportunidade) => (
+                  <TableRow key={oportunidade.id}>
+                    <TableCell className="font-medium text-sm">{oportunidade.codigo}</TableCell>
+                    <TableCell className="max-w-[200px]">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="text-sm font-medium cursor-help">
+                            {truncateText(oportunidade.cliente, 25)}
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{oportunidade.cliente}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell className="text-sm">{truncateText(oportunidade.responsavel, 15)}</TableCell>
+                    <TableCell>
+                      <Badge className={`${getModalidadeColor(oportunidade.modalidade)} text-white text-xs`}>
+                        {getModalidadeLabel(oportunidade.modalidade)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={`${getSituacaoColor(oportunidade.situacao)} text-white text-xs`}>
+                        {oportunidade.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm">{truncateText(oportunidade.fonteLead, 12)}</TableCell>
+                    <TableCell className="text-sm">{truncateText(oportunidade.segmento, 12)}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <Thermometer className="h-3 w-3" />
+                          <span className="text-xs font-medium">{oportunidade.termometro}°</span>
+                        </div>
+                        <div 
+                          className={`w-2 h-2 rounded-full ${getTermometroColor(oportunidade.termometro)}`}
+                          title={`Termômetro: ${oportunidade.termometro}°`}
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm font-medium">{formatCurrency(oportunidade.valor)}</TableCell>
+                    <TableCell className="text-sm">{oportunidade.dataAbertura}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        <Button size="sm" variant="outline" onClick={() => handleEditOportunidade(oportunidade)} className="h-8 w-8 p-0">
+                          <Edit className="h-3 w-3" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleGerarPedido(oportunidade)}
+                          disabled={oportunidade.status !== 'Ganha'}
+                          title={oportunidade.status !== 'Ganha' ? 'Pedidos só podem ser gerados para oportunidades ganhas' : 'Gerar pedido'}
+                          className="h-8 w-8 p-0"
+                        >
+                          <FileText className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TooltipProvider>
         </div>
       </CardContent>
     </Card>
