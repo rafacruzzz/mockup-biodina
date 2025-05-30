@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -60,8 +59,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   ]);
 
   const [formData, setFormData] = useState({
-    // Campos básicos
-    tipoOportunidade: oportunidade?.tipoOportunidade || '',
+    // Campos básicos - removido tipoOportunidade
     cpfCnpj: oportunidade?.cpfCnpj || '',
     nome: oportunidade?.nome || '',
     nomeFantasia: oportunidade?.nomeFantasia || '',
@@ -142,8 +140,9 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     return 'Conquistado (100)';
   };
 
+  // Validação ajustada - removeu a dependência de tipoOportunidade
   const isTriagemComplete = () => {
-    return formData.nome && formData.cpfCnpj && formData.valorNegocio > 0 && formData.tipoOportunidade;
+    return formData.nome && formData.cpfCnpj && formData.valorNegocio > 0;
   };
 
   const isStatusGanha = () => {
@@ -191,29 +190,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   // Renderização dos conteúdos das ferramentas
   const renderDadosGerais = () => (
     <div className="space-y-6">
-      {/* Tipo de Oportunidade - Sempre no topo */}
-      <div className="border rounded-lg p-4 bg-blue-50">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Tipo de Oportunidade</h3>
-        <div>
-          <Label htmlFor="tipoOportunidade" className="text-base font-semibold">
-            Tipo de Oportunidade *
-          </Label>
-          <Select 
-            value={formData.tipoOportunidade} 
-            onValueChange={(value) => setFormData({...formData, tipoOportunidade: value})}
-            disabled={isReadOnlyMode()}
-          >
-            <SelectTrigger className="mt-2">
-              <SelectValue placeholder="Selecione o tipo de oportunidade" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="licitacao">Licitação</SelectItem>
-              <SelectItem value="importacao_direta">Importação Direta</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
       {/* Dados do Cliente */}
       <div className="border rounded-lg p-4 space-y-4">
         <h3 className="text-lg font-semibold text-gray-800">Dados do Cliente</h3>
@@ -491,375 +467,373 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </div>
       </div>
 
-      {/* Campos específicos para Licitação */}
-      {formData.tipoOportunidade === 'licitacao' && (
-        <div className="border rounded-lg p-4 space-y-4 bg-yellow-50">
-          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-yellow-600" />
-            Dados Específicos da Licitação
-          </h3>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="dataLicitacao">Data da Licitação</Label>
-              <Input
-                id="dataLicitacao"
-                type="date"
-                value={formData.dataLicitacao}
-                onChange={(e) => setFormData({...formData, dataLicitacao: e.target.value})}
-                disabled={isReadOnlyMode()}
-              />
-            </div>
-            <div>
-              <Label htmlFor="naturezaOperacao">Qual Natureza da Operação</Label>
-              <Select 
-                value={formData.naturezaOperacao} 
-                onValueChange={(value) => setFormData({...formData, naturezaOperacao: value})}
-                disabled={isReadOnlyMode()}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="compra">Compra</SelectItem>
-                  <SelectItem value="locacao">Locação</SelectItem>
-                  <SelectItem value="servico">Serviço</SelectItem>
-                  <SelectItem value="misto">Misto</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="numeroPregao">Nº Pregão / INEX / ATA / SRP</Label>
-              <Input
-                id="numeroPregao"
-                value={formData.numeroPregao}
-                onChange={(e) => setFormData({...formData, numeroPregao: e.target.value})}
-                placeholder="Ex: PE 001/2024"
-                disabled={isReadOnlyMode()}
-              />
-            </div>
-            <div>
-              <Label htmlFor="numeroProcesso">Nº Processo</Label>
-              <Input
-                id="numeroProcesso"
-                value={formData.numeroProcesso}
-                onChange={(e) => setFormData({...formData, numeroProcesso: e.target.value})}
-                placeholder="Ex: 23038.000001/2024-00"
-                disabled={isReadOnlyMode()}
-              />
-            </div>
-            <div>
-              <Label htmlFor="numeroUasg">Nº UASG</Label>
-              <Input
-                id="numeroUasg"
-                value={formData.numeroUasg}
-                onChange={(e) => setFormData({...formData, numeroUasg: e.target.value})}
-                placeholder="Ex: 123456"
-                disabled={isReadOnlyMode()}
-              />
-            </div>
-            <div>
-              <Label htmlFor="qualSite">Qual Site?</Label>
-              <Input
-                id="qualSite"
-                value={formData.qualSite}
-                onChange={(e) => setFormData({...formData, qualSite: e.target.value})}
-                placeholder="https://..."
-                disabled={isReadOnlyMode()}
-              />
-            </div>
-          </div>
-
+      {/* Dados Específicos da Licitação - agora sempre visíveis */}
+      <div className="border rounded-lg p-4 space-y-4 bg-yellow-50">
+        <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <AlertTriangle className="h-5 w-5 text-yellow-600" />
+          Dados Específicos da Licitação
+        </h3>
+        
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label>Permite Adesão?</Label>
-            <RadioGroup 
-              value={formData.permiteAdesao} 
-              onValueChange={(value) => setFormData({...formData, permiteAdesao: value})}
-              disabled={isReadOnlyMode()}
-              className="flex flex-row space-x-6 mt-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="sim" id="adesao-sim" />
-                <Label htmlFor="adesao-sim">Sim</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="nao" id="adesao-nao" />
-                <Label htmlFor="adesao-nao">Não</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          {formData.permiteAdesao === 'sim' && (
-            <div>
-              <Label htmlFor="observacoesAdesao">Observações (Adesão)</Label>
-              <Textarea
-                id="observacoesAdesao"
-                value={formData.observacoesAdesao}
-                onChange={(e) => setFormData({...formData, observacoesAdesao: e.target.value})}
-                placeholder="Observações sobre a adesão"
-                rows={3}
-                disabled={isReadOnlyMode()}
-              />
-            </div>
-          )}
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="produto">Produto</Label>
-              <Select 
-                value={formData.produto} 
-                onValueChange={(value) => setFormData({...formData, produto: value})}
-                disabled={isReadOnlyMode()}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione do cadastro" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="abl800">ABL800 Flex</SelectItem>
-                  <SelectItem value="gasometro">Gasômetro</SelectItem>
-                  <SelectItem value="sistema">Sistema WEBMED</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="valorEstimado">Valor Estimado</Label>
-              <Input
-                id="valorEstimado"
-                type="number"
-                step="0.01"
-                value={formData.valorEstimado}
-                onChange={(e) => setFormData({...formData, valorEstimado: Number(e.target.value)})}
-                placeholder="0,00"
-                disabled={isReadOnlyMode()}
-              />
-            </div>
-            <div>
-              <Label htmlFor="quantidadeEquipamentos">Quantidade Equipamentos / Total Estimado</Label>
-              <Input
-                id="quantidadeEquipamentos"
-                type="number"
-                value={formData.quantidadeEquipamentos}
-                onChange={(e) => setFormData({...formData, quantidadeEquipamentos: Number(e.target.value)})}
-                placeholder="0"
-                disabled={isReadOnlyMode()}
-              />
-            </div>
-            <div>
-              <Label htmlFor="quantidadeExames">Quantidade Exames / Total Estimado</Label>
-              <Input
-                id="quantidadeExames"
-                type="number"
-                value={formData.quantidadeExames}
-                onChange={(e) => setFormData({...formData, quantidadeExames: Number(e.target.value)})}
-                placeholder="0"
-                disabled={isReadOnlyMode()}
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label>Havia Contrato Anterior?</Label>
-            <RadioGroup 
-              value={formData.haviaContratoAnterior} 
-              onValueChange={(value) => setFormData({...formData, haviaContratoAnterior: value})}
-              disabled={isReadOnlyMode()}
-              className="flex flex-row space-x-6 mt-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="sim" id="contrato-sim" />
-                <Label htmlFor="contrato-sim">Sim</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="nao" id="contrato-nao" />
-                <Label htmlFor="contrato-nao">Não</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          {formData.haviaContratoAnterior === 'sim' && (
-            <div>
-              <Label htmlFor="marcaModeloAnterior">Qual Marca/Modelo do Contrato Anterior?</Label>
-              <Input
-                id="marcaModeloAnterior"
-                value={formData.marcaModeloAnterior}
-                onChange={(e) => setFormData({...formData, marcaModeloAnterior: e.target.value})}
-                placeholder="Ex: Siemens RAPIDPoint 500"
-                disabled={isReadOnlyMode()}
-              />
-            </div>
-          )}
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="situacaoPregao">Situação do Pregão</Label>
-              <Select 
-                value={formData.situacaoPregao} 
-                onValueChange={(value) => setFormData({...formData, situacaoPregao: value})}
-                disabled={isReadOnlyMode()}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="operacao">Em Operação</SelectItem>
-                  <SelectItem value="etapa_lances">Etapa de Lances</SelectItem>
-                  <SelectItem value="habilitacao">Habilitação</SelectItem>
-                  <SelectItem value="recurso">Recurso</SelectItem>
-                  <SelectItem value="homologado">Homologado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="statusLicitacao">Status da Licitação</Label>
-              <Select 
-                value={formData.statusLicitacao} 
-                onValueChange={(value) => setFormData({...formData, statusLicitacao: value})}
-                disabled={isReadOnlyMode()}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                  <SelectItem value="recursos">Recursos</SelectItem>
-                  <SelectItem value="fracassado">Fracassado</SelectItem>
-                  <SelectItem value="suspenso">Suspenso</SelectItem>
-                  <SelectItem value="cancelado">Cancelado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div>
-            <Label htmlFor="dataAssinaturaAta">Data da Assinatura e Envio da ATA</Label>
+            <Label htmlFor="dataLicitacao">Data da Licitação</Label>
             <Input
-              id="dataAssinaturaAta"
+              id="dataLicitacao"
               type="date"
-              value={formData.dataAssinaturaAta}
-              onChange={(e) => setFormData({...formData, dataAssinaturaAta: e.target.value})}
+              value={formData.dataLicitacao}
+              onChange={(e) => setFormData({...formData, dataLicitacao: e.target.value})}
               disabled={isReadOnlyMode()}
             />
           </div>
-
           <div>
-            <Label htmlFor="resumoEdital">Resumo do Edital</Label>
-            <Textarea
-              id="resumoEdital"
-              value={formData.resumoEdital}
-              onChange={(e) => setFormData({...formData, resumoEdital: e.target.value})}
-              placeholder="Resumo do edital da licitação"
-              rows={3}
+            <Label htmlFor="naturezaOperacao">Qual Natureza da Operação</Label>
+            <Select 
+              value={formData.naturezaOperacao} 
+              onValueChange={(value) => setFormData({...formData, naturezaOperacao: value})}
+              disabled={isReadOnlyMode()}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="compra">Compra</SelectItem>
+                <SelectItem value="locacao">Locação</SelectItem>
+                <SelectItem value="servico">Serviço</SelectItem>
+                <SelectItem value="misto">Misto</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="numeroPregao">Nº Pregão / INEX / ATA / SRP</Label>
+            <Input
+              id="numeroPregao"
+              value={formData.numeroPregao}
+              onChange={(e) => setFormData({...formData, numeroPregao: e.target.value})}
+              placeholder="Ex: PE 001/2024"
               disabled={isReadOnlyMode()}
             />
           </div>
-
           <div>
-            <Label htmlFor="impugnacaoEdital">Impugnação do Edital</Label>
-            <Textarea
-              id="impugnacaoEdital"
-              value={formData.impugnacaoEdital}
-              onChange={(e) => setFormData({...formData, impugnacaoEdital: e.target.value})}
-              placeholder="Detalhes sobre impugnação do edital"
-              rows={3}
+            <Label htmlFor="numeroProcesso">Nº Processo</Label>
+            <Input
+              id="numeroProcesso"
+              value={formData.numeroProcesso}
+              onChange={(e) => setFormData({...formData, numeroProcesso: e.target.value})}
+              placeholder="Ex: 23038.000001/2024-00"
               disabled={isReadOnlyMode()}
             />
           </div>
-
           <div>
-            <Label htmlFor="analiseEstrategia">Análise de Estratégia</Label>
-            <Textarea
-              id="analiseEstrategia"
-              value={formData.analiseEstrategia}
-              onChange={(e) => setFormData({...formData, analiseEstrategia: e.target.value})}
-              placeholder="Análise estratégica para a licitação"
-              rows={4}
+            <Label htmlFor="numeroUasg">Nº UASG</Label>
+            <Input
+              id="numeroUasg"
+              value={formData.numeroUasg}
+              onChange={(e) => setFormData({...formData, numeroUasg: e.target.value})}
+              placeholder="Ex: 123456"
               disabled={isReadOnlyMode()}
             />
           </div>
-
           <div>
-            <Label htmlFor="manifestacaoRecorrer">Manifestação de Interesse em Recorrer</Label>
-            <Textarea
-              id="manifestacaoRecorrer"
-              value={formData.manifestacaoRecorrer}
-              onChange={(e) => setFormData({...formData, manifestacaoRecorrer: e.target.value})}
-              placeholder="Manifestação sobre interesse em recorrer"
-              rows={3}
+            <Label htmlFor="qualSite">Qual Site?</Label>
+            <Input
+              id="qualSite"
+              value={formData.qualSite}
+              onChange={(e) => setFormData({...formData, qualSite: e.target.value})}
+              placeholder="https://..."
               disabled={isReadOnlyMode()}
             />
-          </div>
-
-          {formData.statusLicitacao === 'fracassado' && (
-            <div>
-              <Label htmlFor="motivosFracasso">Motivos do Fracasso do Pregão</Label>
-              <Textarea
-                id="motivosFracasso"
-                value={formData.motivosFracasso}
-                onChange={(e) => setFormData({...formData, motivosFracasso: e.target.value})}
-                placeholder="Detalhe os motivos do fracasso"
-                rows={3}
-                disabled={isReadOnlyMode()}
-              />
-            </div>
-          )}
-
-          <div>
-            <Label htmlFor="observacaoGeral">Observação (Geral Licitação)</Label>
-            <Textarea
-              id="observacaoGeral"
-              value={formData.observacaoGeral}
-              onChange={(e) => setFormData({...formData, observacaoGeral: e.target.value})}
-              placeholder="Observações gerais sobre a licitação"
-              rows={4}
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-
-          {/* Tabela de Licitantes */}
-          <div>
-            <h4 className="text-md font-semibold mb-3">Tabela de Licitantes</h4>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome Licitante</TableHead>
-                  <TableHead>Marca/Modelo</TableHead>
-                  <TableHead>Quantidade</TableHead>
-                  <TableHead>Preço</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {licitantes.map((licitante) => (
-                  <TableRow key={licitante.id}>
-                    <TableCell>{licitante.nome}</TableCell>
-                    <TableCell>{licitante.marca}</TableCell>
-                    <TableCell>{licitante.quantidade}</TableCell>
-                    <TableCell>{formatCurrency(licitante.preco)}</TableCell>
-                    <TableCell>
-                      <Button size="sm" variant="outline" disabled={isReadOnlyMode()}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {licitantes.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center text-gray-500 py-4">
-                      Nenhum licitante cadastrado
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-            {!isReadOnlyMode() && (
-              <Button type="button" className="mt-2" variant="outline">
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar Licitante
-              </Button>
-            )}
           </div>
         </div>
-      )}
+
+        <div>
+          <Label>Permite Adesão?</Label>
+          <RadioGroup 
+            value={formData.permiteAdesao} 
+            onValueChange={(value) => setFormData({...formData, permiteAdesao: value})}
+            disabled={isReadOnlyMode()}
+            className="flex flex-row space-x-6 mt-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="sim" id="adesao-sim" />
+              <Label htmlFor="adesao-sim">Sim</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="nao" id="adesao-nao" />
+              <Label htmlFor="adesao-nao">Não</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {formData.permiteAdesao === 'sim' && (
+          <div>
+            <Label htmlFor="observacoesAdesao">Observações (Adesão)</Label>
+            <Textarea
+              id="observacoesAdesao"
+              value={formData.observacoesAdesao}
+              onChange={(e) => setFormData({...formData, observacoesAdesao: e.target.value})}
+              placeholder="Observações sobre a adesão"
+              rows={3}
+              disabled={isReadOnlyMode()}
+            />
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="produto">Produto</Label>
+            <Select 
+              value={formData.produto} 
+              onValueChange={(value) => setFormData({...formData, produto: value})}
+              disabled={isReadOnlyMode()}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione do cadastro" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="abl800">ABL800 Flex</SelectItem>
+                <SelectItem value="gasometro">Gasômetro</SelectItem>
+                <SelectItem value="sistema">Sistema WEBMED</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="valorEstimado">Valor Estimado</Label>
+            <Input
+              id="valorEstimado"
+              type="number"
+              step="0.01"
+              value={formData.valorEstimado}
+              onChange={(e) => setFormData({...formData, valorEstimado: Number(e.target.value)})}
+              placeholder="0,00"
+              disabled={isReadOnlyMode()}
+            />
+          </div>
+          <div>
+            <Label htmlFor="quantidadeEquipamentos">Quantidade Equipamentos / Total Estimado</Label>
+            <Input
+              id="quantidadeEquipamentos"
+              type="number"
+              value={formData.quantidadeEquipamentos}
+              onChange={(e) => setFormData({...formData, quantidadeEquipamentos: Number(e.target.value)})}
+              placeholder="0"
+              disabled={isReadOnlyMode()}
+            />
+          </div>
+          <div>
+            <Label htmlFor="quantidadeExames">Quantidade Exames / Total Estimado</Label>
+            <Input
+              id="quantidadeExames"
+              type="number"
+              value={formData.quantidadeExames}
+              onChange={(e) => setFormData({...formData, quantidadeExames: Number(e.target.value)})}
+              placeholder="0"
+              disabled={isReadOnlyMode()}
+            />
+          </div>
+        </div>
+
+        <div>
+          <Label>Havia Contrato Anterior?</Label>
+          <RadioGroup 
+            value={formData.haviaContratoAnterior} 
+            onValueChange={(value) => setFormData({...formData, haviaContratoAnterior: value})}
+            disabled={isReadOnlyMode()}
+            className="flex flex-row space-x-6 mt-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="sim" id="contrato-sim" />
+              <Label htmlFor="contrato-sim">Sim</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="nao" id="contrato-nao" />
+              <Label htmlFor="contrato-nao">Não</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {formData.haviaContratoAnterior === 'sim' && (
+          <div>
+            <Label htmlFor="marcaModeloAnterior">Qual Marca/Modelo do Contrato Anterior?</Label>
+            <Input
+              id="marcaModeloAnterior"
+              value={formData.marcaModeloAnterior}
+              onChange={(e) => setFormData({...formData, marcaModeloAnterior: e.target.value})}
+              placeholder="Ex: Siemens RAPIDPoint 500"
+              disabled={isReadOnlyMode()}
+            />
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="situacaoPregao">Situação do Pregão</Label>
+            <Select 
+              value={formData.situacaoPregao} 
+              onValueChange={(value) => setFormData({...formData, situacaoPregao: value})}
+              disabled={isReadOnlyMode()}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="operacao">Em Operação</SelectItem>
+                <SelectItem value="etapa_lances">Etapa de Lances</SelectItem>
+                <SelectItem value="habilitacao">Habilitação</SelectItem>
+                <SelectItem value="recurso">Recurso</SelectItem>
+                <SelectItem value="homologado">Homologado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="statusLicitacao">Status da Licitação</Label>
+            <Select 
+              value={formData.statusLicitacao} 
+              onValueChange={(value) => setFormData({...formData, statusLicitacao: value})}
+              disabled={isReadOnlyMode()}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="em_andamento">Em Andamento</SelectItem>
+                <SelectItem value="recursos">Recursos</SelectItem>
+                <SelectItem value="fracassado">Fracassado</SelectItem>
+                <SelectItem value="suspenso">Suspenso</SelectItem>
+                <SelectItem value="cancelado">Cancelado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div>
+          <Label htmlFor="dataAssinaturaAta">Data da Assinatura e Envio da ATA</Label>
+          <Input
+            id="dataAssinaturaAta"
+            type="date"
+            value={formData.dataAssinaturaAta}
+            onChange={(e) => setFormData({...formData, dataAssinaturaAta: e.target.value})}
+            disabled={isReadOnlyMode()}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="resumoEdital">Resumo do Edital</Label>
+          <Textarea
+            id="resumoEdital"
+            value={formData.resumoEdital}
+            onChange={(e) => setFormData({...formData, resumoEdital: e.target.value})}
+            placeholder="Resumo do edital da licitação"
+            rows={3}
+            disabled={isReadOnlyMode()}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="impugnacaoEdital">Impugnação do Edital</Label>
+          <Textarea
+            id="impugnacaoEdital"
+            value={formData.impugnacaoEdital}
+            onChange={(e) => setFormData({...formData, impugnacaoEdital: e.target.value})}
+            placeholder="Detalhes sobre impugnação do edital"
+            rows={3}
+            disabled={isReadOnlyMode()}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="analiseEstrategia">Análise de Estratégia</Label>
+          <Textarea
+            id="analiseEstrategia"
+            value={formData.analiseEstrategia}
+            onChange={(e) => setFormData({...formData, analiseEstrategia: e.target.value})}
+            placeholder="Análise estratégica para a licitação"
+            rows={4}
+            disabled={isReadOnlyMode()}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="manifestacaoRecorrer">Manifestação de Interesse em Recorrer</Label>
+          <Textarea
+            id="manifestacaoRecorrer"
+            value={formData.manifestacaoRecorrer}
+            onChange={(e) => setFormData({...formData, manifestacaoRecorrer: e.target.value})}
+            placeholder="Manifestação sobre interesse em recorrer"
+            rows={3}
+            disabled={isReadOnlyMode()}
+          />
+        </div>
+
+        {formData.statusLicitacao === 'fracassado' && (
+          <div>
+            <Label htmlFor="motivosFracasso">Motivos do Fracasso do Pregão</Label>
+            <Textarea
+              id="motivosFracasso"
+              value={formData.motivosFracasso}
+              onChange={(e) => setFormData({...formData, motivosFracasso: e.target.value})}
+              placeholder="Detalhe os motivos do fracasso"
+              rows={3}
+              disabled={isReadOnlyMode()}
+            />
+          </div>
+        )}
+
+        <div>
+          <Label htmlFor="observacaoGeral">Observação (Geral Licitação)</Label>
+          <Textarea
+            id="observacaoGeral"
+            value={formData.observacaoGeral}
+            onChange={(e) => setFormData({...formData, observacaoGeral: e.target.value})}
+            placeholder="Observações gerais sobre a licitação"
+            rows={4}
+            disabled={isReadOnlyMode()}
+          />
+        </div>
+
+        {/* Tabela de Licitantes */}
+        <div>
+          <h4 className="text-md font-semibold mb-3">Tabela de Licitantes</h4>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nome Licitante</TableHead>
+                <TableHead>Marca/Modelo</TableHead>
+                <TableHead>Quantidade</TableHead>
+                <TableHead>Preço</TableHead>
+                <TableHead>Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {licitantes.map((licitante) => (
+                <TableRow key={licitante.id}>
+                  <TableCell>{licitante.nome}</TableCell>
+                  <TableCell>{licitante.marca}</TableCell>
+                  <TableCell>{licitante.quantidade}</TableCell>
+                  <TableCell>{formatCurrency(licitante.preco)}</TableCell>
+                  <TableCell>
+                    <Button size="sm" variant="outline" disabled={isReadOnlyMode()}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {licitantes.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-gray-500 py-4">
+                    Nenhum licitante cadastrado
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          {!isReadOnlyMode() && (
+            <Button type="button" className="mt-2" variant="outline">
+              <Plus className="h-4 w-4 mr-2" />
+              Adicionar Licitante
+            </Button>
+          )}
+        </div>
+      </div>
 
       {/* Dados Técnicos */}
       <div className="border rounded-lg p-4 space-y-4">
@@ -1158,27 +1132,23 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
               </Button>
             </div>
             
-            {formData.tipoOportunidade === 'licitacao' && (
-              <>
-                <div className="flex flex-col items-center p-4 border rounded-lg">
-                  <Calendar className="h-8 w-8 text-green-500 mb-2" />
-                  <span className="text-sm font-medium">ATA.pdf</span>
-                  <span className="text-xs text-gray-500">28/05/2025</span>
-                  <Button size="sm" variant="outline" className="mt-2">
-                    <Download className="h-4 w-4" />
-                  </Button>
-                </div>
-                
-                <div className="flex flex-col items-center p-4 border rounded-lg">
-                  <Calendar className="h-8 w-8 text-orange-500 mb-2" />
-                  <span className="text-sm font-medium">Recurso.pdf</span>
-                  <span className="text-xs text-gray-500">26/05/2025</span>
-                  <Button size="sm" variant="outline" className="mt-2">
-                    <Download className="h-4 w-4" />
-                  </Button>
-                </div>
-              </>
-            )}
+            <div className="flex flex-col items-center p-4 border rounded-lg">
+              <Calendar className="h-8 w-8 text-green-500 mb-2" />
+              <span className="text-sm font-medium">ATA.pdf</span>
+              <span className="text-xs text-gray-500">28/05/2025</span>
+              <Button size="sm" variant="outline" className="mt-2">
+                <Download className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="flex flex-col items-center p-4 border rounded-lg">
+              <Calendar className="h-8 w-8 text-orange-500 mb-2" />
+              <span className="text-sm font-medium">Recurso.pdf</span>
+              <span className="text-xs text-gray-500">26/05/2025</span>
+              <Button size="sm" variant="outline" className="mt-2">
+                <Download className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
