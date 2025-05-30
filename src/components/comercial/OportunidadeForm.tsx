@@ -454,263 +454,286 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
         </CardHeader>
 
         <CardContent>
-          {/* Abas Masters */}
+          {/* Abas Masters - Nível Superior (Como abas principais do navegador) */}
           <div className="mb-6">
-            <div className="flex border-b border-gray-200">
+            <div className="flex border-b-2 border-gray-100 bg-gray-50 rounded-t-lg">
               <button
                 onClick={() => isPhaseAccessible('triagem') && setActiveMasterTab('triagem')}
-                className={`px-6 py-3 font-semibold text-lg flex items-center gap-2 border-b-2 transition-colors ${
+                className={`relative px-8 py-4 font-bold text-lg flex items-center gap-2 transition-all duration-200 rounded-t-lg border-t-4 ${
                   activeMasterTab === 'triagem'
-                    ? 'border-biodina-blue text-biodina-blue'
+                    ? 'border-t-biodina-blue bg-white text-biodina-blue shadow-sm translate-y-0.5'
                     : isPhaseAccessible('triagem')
-                    ? 'border-transparent text-gray-600 hover:text-gray-800'
-                    : 'border-transparent text-gray-400 cursor-not-allowed'
+                    ? 'border-t-transparent bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800'
+                    : 'border-t-transparent bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
                 disabled={!isPhaseAccessible('triagem')}
               >
                 {isPhaseCompleted('triagem') && <Lock className="h-4 w-4" />}
                 TRIAGEM
+                {activeMasterTab === 'triagem' && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-biodina-blue" />
+                )}
               </button>
               <button
                 onClick={() => isPhaseAccessible('participacao') && setActiveMasterTab('participacao')}
-                className={`px-6 py-3 font-semibold text-lg flex items-center gap-2 border-b-2 transition-colors ${
+                className={`relative px-8 py-4 font-bold text-lg flex items-center gap-2 transition-all duration-200 rounded-t-lg border-t-4 ${
                   activeMasterTab === 'participacao'
-                    ? 'border-biodina-blue text-biodina-blue'
+                    ? 'border-t-biodina-blue bg-white text-biodina-blue shadow-sm translate-y-0.5'
                     : isPhaseAccessible('participacao')
-                    ? 'border-transparent text-gray-600 hover:text-gray-800'
-                    : 'border-transparent text-gray-400 cursor-not-allowed'
+                    ? 'border-t-transparent bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-800'
+                    : 'border-t-transparent bg-gray-200 text-gray-400 cursor-not-allowed'
                 }`}
                 disabled={!isPhaseAccessible('participacao')}
               >
                 {isPhaseCompleted('participacao') && <Lock className="h-4 w-4" />}
                 PARTICIPAÇÃO
+                {activeMasterTab === 'participacao' && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-biodina-blue" />
+                )}
               </button>
             </div>
           </div>
 
-          {/* Abas de Ferramentas */}
+          {/* Abas de Ferramentas - Nível Inferior (Como barra de favoritos/atalhos) */}
           <Tabs value={activeToolTab} onValueChange={setActiveToolTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="geral" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Dados Gerais
-              </TabsTrigger>
-              <TabsTrigger value="analise" className="flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
-                Análise Técnica
-              </TabsTrigger>
-              <TabsTrigger value="historico" className="flex items-center gap-2">
-                <History className="h-4 w-4" />
-                Histórico/Chat
-              </TabsTrigger>
-              <TabsTrigger 
-                value="pedidos" 
-                className="flex items-center gap-2"
-                disabled={formData.status !== 'Ganha'}
-              >
-                <Users className="h-4 w-4" />
-                {formData.status !== 'Ganha' && <Lock className="h-3 w-3" />}
-                Pedidos
-              </TabsTrigger>
-              <TabsTrigger value="documentos" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Documentos
-              </TabsTrigger>
-            </TabsList>
+            <div className="mb-4 p-2 bg-gray-50 rounded-lg border">
+              <TabsList className="grid w-full grid-cols-5 bg-transparent gap-1">
+                <TabsTrigger 
+                  value="geral" 
+                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-biodina-blue hover:bg-gray-100"
+                >
+                  <FileText className="h-4 w-4" />
+                  Dados Gerais
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="analise" 
+                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-biodina-blue hover:bg-gray-100"
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  Análise Técnica
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="historico" 
+                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-biodina-blue hover:bg-gray-100"
+                >
+                  <History className="h-4 w-4" />
+                  Histórico/Chat
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="pedidos" 
+                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-biodina-blue hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={formData.status !== 'Ganha'}
+                >
+                  <Users className="h-4 w-4" />
+                  {formData.status !== 'Ganha' && <Lock className="h-3 w-3" />}
+                  Pedidos
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="documentos" 
+                  className="flex items-center gap-2 text-sm px-3 py-2 rounded-md data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-biodina-blue hover:bg-gray-100"
+                >
+                  <FileText className="h-4 w-4" />
+                  Documentos
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-            <TabsContent value="geral" className="space-y-4 mt-4">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {activeMasterTab === 'triagem' ? renderCamposTriagem() : renderCamposParticipacao()}
+            {/* Conteúdo das Ferramentas */}
+            <div className="bg-white rounded-lg border p-6 min-h-[400px]">
+              <TabsContent value="geral" className="space-y-4 mt-0">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {activeMasterTab === 'triagem' ? renderCamposTriagem() : renderCamposParticipacao()}
 
-                <div className="col-span-2">
-                  <Label htmlFor="descricao">Descrição</Label>
-                  <Textarea
-                    id="descricao"
-                    value={formData.descricao}
-                    onChange={(e) => setFormData({...formData, descricao: e.target.value})}
-                    rows={3}
-                    disabled={isReadOnly}
-                  />
-                </div>
+                  <div className="col-span-2">
+                    <Label htmlFor="descricao">Descrição</Label>
+                    <Textarea
+                      id="descricao"
+                      value={formData.descricao}
+                      onChange={(e) => setFormData({...formData, descricao: e.target.value})}
+                      rows={3}
+                      disabled={isReadOnly}
+                    />
+                  </div>
 
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button type="button" variant="outline" onClick={onClose}>
-                    Cancelar
-                  </Button>
-                  <Button type="submit" className="bg-biodina-gold hover:bg-biodina-gold/90" disabled={isReadOnly}>
-                    <Save className="h-4 w-4 mr-2" />
-                    {isReadOnly ? 'Visualizar' : 'Salvar'}
-                  </Button>
-                </div>
-              </form>
-            </TabsContent>
-
-            <TabsContent value="analise" className="mt-4">
-              <div className="space-y-6">
-                <div>
-                  <Label htmlFor="analiseAssessoria">Análise da Assessoria Científica</Label>
-                  <Textarea
-                    id="analiseAssessoria"
-                    placeholder="Especificações técnicas atendem nossos produtos..."
-                    rows={4}
-                  />
-                </div>
-
-                <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold">Concorrentes</h3>
-                    <Button size="sm" className="bg-biodina-gold hover:bg-biodina-gold/90">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Adicionar Concorrente
+                  <div className="flex justify-end gap-2 pt-4">
+                    <Button type="button" variant="outline" onClick={onClose}>
+                      Cancelar
+                    </Button>
+                    <Button type="submit" className="bg-biodina-gold hover:bg-biodina-gold/90" disabled={isReadOnly}>
+                      <Save className="h-4 w-4 mr-2" />
+                      {isReadOnly ? 'Visualizar' : 'Salvar'}
                     </Button>
                   </div>
-                  <div className="overflow-x-auto max-h-60 overflow-y-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Nome do Concorrente</TableHead>
-                          <TableHead>Produto</TableHead>
-                          <TableHead>Preço</TableHead>
-                          <TableHead>Ações</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {concorrentes.map((concorrente) => (
-                          <TableRow key={concorrente.id}>
-                            <TableCell>{concorrente.nome}</TableCell>
-                            <TableCell>{concorrente.produto}</TableCell>
-                            <TableCell>{formatCurrency(concorrente.preco)}</TableCell>
-                            <TableCell>
-                              <div className="flex gap-2">
+                </form>
+              </TabsContent>
+
+              <TabsContent value="analise" className="mt-4">
+                <div className="space-y-6">
+                  <div>
+                    <Label htmlFor="analiseAssessoria">Análise da Assessoria Científica</Label>
+                    <Textarea
+                      id="analiseAssessoria"
+                      placeholder="Especificações técnicas atendem nossos produtos..."
+                      rows={4}
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-semibold">Concorrentes</h3>
+                      <Button size="sm" className="bg-biodina-gold hover:bg-biodina-gold/90">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Adicionar Concorrente
+                      </Button>
+                    </div>
+                    <div className="overflow-x-auto max-h-60 overflow-y-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Nome do Concorrente</TableHead>
+                            <TableHead>Produto</TableHead>
+                            <TableHead>Preço</TableHead>
+                            <TableHead>Ações</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {concorrentes.map((concorrente) => (
+                            <TableRow key={concorrente.id}>
+                              <TableCell>{concorrente.nome}</TableCell>
+                              <TableCell>{concorrente.produto}</TableCell>
+                              <TableCell>{formatCurrency(concorrente.preco)}</TableCell>
+                              <TableCell>
+                                <div className="flex gap-2">
+                                  <Button size="sm" variant="outline">
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                  <Button size="sm" variant="outline">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="avaliacaoTecnica">Avaliação Técnica do Edital</Label>
+                    <Textarea
+                      id="avaliacaoTecnica"
+                      placeholder="Análise técnica dos requisitos..."
+                      rows={4}
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="pedidos" className="mt-4">
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-semibold">Pedidos Vinculados</h3>
+                    <Button 
+                      className="bg-biodina-gold hover:bg-biodina-gold/90"
+                      disabled={formData.status !== 'Ganha'}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Gerar Novo Pedido
+                    </Button>
+                  </div>
+                  {formData.status !== 'Ganha' && (
+                    <div className="text-center text-gray-500 py-8">
+                      Pedidos só podem ser gerenciados para oportunidades com status "Ganha"
+                    </div>
+                  )}
+                  {formData.status === 'Ganha' && (
+                    <div className="overflow-x-auto max-h-80 overflow-y-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Nº do Pedido</TableHead>
+                            <TableHead>Tipo</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Valor</TableHead>
+                            <TableHead>Data Entrega</TableHead>
+                            <TableHead>Ações</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {pedidos.map((pedido) => (
+                            <TableRow key={pedido.id}>
+                              <TableCell className="font-medium">{pedido.numero}</TableCell>
+                              <TableCell>{pedido.tipo}</TableCell>
+                              <TableCell>
+                                <Badge className="bg-yellow-500 text-white">
+                                  {pedido.status}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>{formatCurrency(pedido.valor)}</TableCell>
+                              <TableCell>{pedido.dataEntrega}</TableCell>
+                              <TableCell>
                                 <Button size="sm" variant="outline">
                                   <Edit className="h-4 w-4" />
                                 </Button>
-                                <Button size="sm" variant="outline">
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="avaliacaoTecnica">Avaliação Técnica do Edital</Label>
-                  <Textarea
-                    id="avaliacaoTecnica"
-                    placeholder="Análise técnica dos requisitos..."
-                    rows={4}
-                  />
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="pedidos" className="mt-4">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Pedidos Vinculados</h3>
-                  <Button 
-                    className="bg-biodina-gold hover:bg-biodina-gold/90"
-                    disabled={formData.status !== 'Ganha'}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Gerar Novo Pedido
-                  </Button>
-                </div>
-                {formData.status !== 'Ganha' && (
-                  <div className="text-center text-gray-500 py-8">
-                    Pedidos só podem ser gerenciados para oportunidades com status "Ganha"
-                  </div>
-                )}
-                {formData.status === 'Ganha' && (
-                  <div className="overflow-x-auto max-h-80 overflow-y-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Nº do Pedido</TableHead>
-                          <TableHead>Tipo</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Valor</TableHead>
-                          <TableHead>Data Entrega</TableHead>
-                          <TableHead>Ações</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {pedidos.map((pedido) => (
-                          <TableRow key={pedido.id}>
-                            <TableCell className="font-medium">{pedido.numero}</TableCell>
-                            <TableCell>{pedido.tipo}</TableCell>
-                            <TableCell>
-                              <Badge className="bg-yellow-500 text-white">
-                                {pedido.status}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>{formatCurrency(pedido.valor)}</TableCell>
-                            <TableCell>{pedido.dataEntrega}</TableCell>
-                            <TableCell>
-                              <Button size="sm" variant="outline">
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="historico" className="mt-4">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Histórico e Documentos</h3>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">Arraste arquivos aqui ou clique para fazer upload</p>
-                  <p className="text-sm text-gray-400 mt-2">Edital, ata, proposta, contrato</p>
-                </div>
-                <div className="space-y-3">
-                  <h4 className="font-medium">Linha do Tempo</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-gray-600">15/03/2024 - Oportunidade criada</span>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
                     </div>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-gray-600">16/03/2024 - Primeiro contato realizado</span>
+                  )}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="historico" className="mt-4">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Histórico e Documentos</h3>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                    <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500">Arraste arquivos aqui ou clique para fazer upload</p>
+                    <p className="text-sm text-gray-400 mt-2">Edital, ata, proposta, contrato</p>
+                  </div>
+                  <div className="space-y-3">
+                    <h4 className="font-medium">Linha do Tempo</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span className="text-gray-600">15/03/2024 - Oportunidade criada</span>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-gray-600">16/03/2024 - Primeiro contato realizado</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </TabsContent>
+              </TabsContent>
 
-            <TabsContent value="documentos" className="mt-4">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Documentos</h3>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500">Arraste arquivos aqui ou clique para fazer upload</p>
-                  <p className="text-sm text-gray-400 mt-2">Edital, ata, proposta, contrato</p>
-                </div>
-                <div className="space-y-3">
-                  <h4 className="font-medium">Linha do Tempo</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span className="text-gray-600">15/03/2024 - Oportunidade criada</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-gray-600">16/03/2024 - Primeiro contato realizado</span>
+              <TabsContent value="documentos" className="mt-4">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Documentos</h3>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                    <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-500">Arraste arquivos aqui ou clique para fazer upload</p>
+                    <p className="text-sm text-gray-400 mt-2">Edital, ata, proposta, contrato</p>
+                  </div>
+                  <div className="space-y-3">
+                    <h4 className="font-medium">Linha do Tempo</h4>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span className="text-gray-600">15/03/2024 - Oportunidade criada</span>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-gray-600">16/03/2024 - Primeiro contato realizado</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </TabsContent>
+              </TabsContent>
+            </div>
           </Tabs>
         </CardContent>
       </Card>
