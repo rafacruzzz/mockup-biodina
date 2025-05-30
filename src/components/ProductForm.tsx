@@ -41,6 +41,10 @@ const ProductForm = ({ onClose }: { onClose: () => void }) => {
     ean: "",
     tipoCodigoNumeroSerie: "",
     controladoPorLote: false,
+    numeroLote: "",
+    numeroSerie: "",
+    dataValidade: "",
+    dataFabricacao: "",
     observacao: "",
 
     // Custos e Precificação

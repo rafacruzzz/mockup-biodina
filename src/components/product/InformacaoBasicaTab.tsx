@@ -337,6 +337,51 @@ const InformacaoBasicaTab = ({ formData, onInputChange }: InformacaoBasicaTabPro
               <Label htmlFor="controladoPorLote">Controlado por lote</Label>
             </div>
           </div>
+
+          {/* Campos condicionais para controle por lote */}
+          {formData.controladoPorLote && (
+            <div className="mt-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+              <h4 className="text-sm font-medium text-gray-800 mb-3">Informações de Lote</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="numeroLote">Número do Lote</Label>
+                  <Input
+                    id="numeroLote"
+                    value={formData.numeroLote || ""}
+                    onChange={(e) => onInputChange("numeroLote", e.target.value)}
+                    placeholder="Ex: LT2024001"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="numeroSerie">Número de Série</Label>
+                  <Input
+                    id="numeroSerie"
+                    value={formData.numeroSerie || ""}
+                    onChange={(e) => onInputChange("numeroSerie", e.target.value)}
+                    placeholder="Ex: SN123456789"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="dataValidade">Data de Validade</Label>
+                  <Input
+                    id="dataValidade"
+                    type="date"
+                    value={formData.dataValidade || ""}
+                    onChange={(e) => onInputChange("dataValidade", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="dataFabricacao">Data de Fabricação</Label>
+                  <Input
+                    id="dataFabricacao"
+                    type="date"
+                    value={formData.dataFabricacao || ""}
+                    onChange={(e) => onInputChange("dataFabricacao", e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
           
           <div>
             <Label htmlFor="informacao">Informação</Label>
