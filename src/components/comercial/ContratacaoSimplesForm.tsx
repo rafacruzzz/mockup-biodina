@@ -585,13 +585,12 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                   </CardContent>
                 </Card>
               </div>
-            </div>
-          </TabsContent>
+            </TabsContent>
 
-          <TabsContent value="analise-tecnica" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Análise Técnica-Científica</CardTitle>
+            <TabsContent value="analise-tecnica" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Análise Técnica-Científica</CardTitle>
               </CardHeader>
               <CardContent>
                 <Textarea
@@ -698,6 +697,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       />
     )}
   </>
-);
+  );
+};
 
 export default ContratacaoSimplesForm;
