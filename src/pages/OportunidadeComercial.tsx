@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +21,17 @@ import {
   AlertTriangle, CheckCircle, Clock, Target, Thermometer,
   Lock, Eye, Plus, Edit, Trash2
 } from "lucide-react";
+
+// Tipo Item para produtos e serviços
+interface Item {
+  id: string;
+  tipo: 'produto' | 'servico';
+  codigo: string;
+  descricao: string;
+  quantidade: number;
+  valorUnitario: number;
+  valorTotal: number;
+}
 
 const OportunidadeComercial = () => {
   const { id } = useParams();
@@ -80,10 +90,10 @@ const OportunidadeComercial = () => {
     aprovacaoRecebida: false
   });
 
-  const [produtos, setProdutos] = useState([
+  const [produtos, setProdutos] = useState<Item[]>([
     {
       id: '1',
-      tipo: 'produto' as const,
+      tipo: 'produto',
       codigo: 'ABL800',
       descricao: 'ABL800 Flex',
       quantidade: 3,
@@ -92,10 +102,10 @@ const OportunidadeComercial = () => {
     }
   ]);
 
-  const [servicos, setServicos] = useState([
+  const [servicos, setServicos] = useState<Item[]>([
     {
       id: '2',
-      tipo: 'servico' as const,
+      tipo: 'servico',
       codigo: 'INST001',
       descricao: 'Instalação e Treinamento',
       quantidade: 1,
