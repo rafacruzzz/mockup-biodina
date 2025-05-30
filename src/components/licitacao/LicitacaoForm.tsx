@@ -50,6 +50,11 @@ const LicitacaoForm = ({ licitacao, onClose, onSave }: LicitacaoFormProps) => {
     }
   };
 
+  // Validação simplificada - removendo a obrigatoriedade do tipo de oportunidade
+  const isFormValid = () => {
+    return formData.numeroPregao && formData.nomeInstituicao;
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -241,9 +246,13 @@ const LicitacaoForm = ({ licitacao, onClose, onSave }: LicitacaoFormProps) => {
                   <Button type="button" variant="outline" onClick={onClose}>
                     Cancelar
                   </Button>
-                  <Button type="submit" className="bg-biodina-gold hover:bg-biodina-gold/90">
+                  <Button 
+                    type="button" 
+                    className="bg-biodina-gold hover:bg-biodina-gold/90"
+                    disabled={!isFormValid()}
+                  >
                     <Save className="h-4 w-4 mr-2" />
-                    Salvar
+                    Solicitar Aprovação para Participação
                   </Button>
                 </div>
               </form>
