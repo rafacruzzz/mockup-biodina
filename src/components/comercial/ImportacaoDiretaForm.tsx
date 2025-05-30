@@ -1003,15 +1003,15 @@ const ImportacaoDiretaForm = ({ isOpen, oportunidade, onClose, onSave }: Importa
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden">
-        <DialogHeader>
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl font-bold text-purple-600">
             Nova Importação Direta
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full min-h-0">
           {/* Abas Masters */}
-          <div className="mb-6">
+          <div className="mb-6 flex-shrink-0">
             <div className="flex space-x-4 bg-gray-50 p-2 rounded-lg">
               {masterTabs.map((tab) => (
                 <button
@@ -1029,13 +1029,13 @@ const ImportacaoDiretaForm = ({ isOpen, oportunidade, onClose, onSave }: Importa
             </div>
           </div>
 
-          {/* Conteúdo da aba master ativa */}
-          <div className="flex-1 overflow-y-auto">
+          {/* Conteúdo da aba master ativa com scroll */}
+          <div className="flex-1 overflow-y-auto max-h-[60vh] pr-2">
             {renderMasterTabContent()}
           </div>
 
           {/* Rodapé com botões */}
-          <div className="flex justify-end space-x-4 pt-6 border-t">
+          <div className="flex justify-end space-x-4 pt-6 border-t flex-shrink-0 mt-4">
             <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
