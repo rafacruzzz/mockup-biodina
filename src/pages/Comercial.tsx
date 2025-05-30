@@ -13,6 +13,7 @@ import PedidoModal from "@/components/comercial/PedidoModal";
 import PedidoForm from "@/components/comercial/PedidoForm";
 import TipoPropostaModal from "@/components/comercial/TipoPropostaModal";
 import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
+import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter
@@ -35,6 +36,7 @@ const Comercial = () => {
   const [selectedOportunidade, setSelectedOportunidade] = useState<any>();
   const [showTipoPropostaModal, setShowTipoPropostaModal] = useState(false);
   const [showContratacaoSimplesForm, setShowContratacaoSimplesForm] = useState(false);
+  const [showImportacaoDiretaForm, setShowImportacaoDiretaForm] = useState(false);
 
   // Dados das oportunidades atualizados com modalidade
   const oportunidades = [
@@ -253,6 +255,7 @@ const Comercial = () => {
     switch (modalidade) {
       case 'licitacao': return 'Licitação';
       case 'contratacao_simples': return 'Contratação Simples';
+      case 'importacao_direta': return 'Importação Direta';
       default: return modalidade;
     }
   };
@@ -261,6 +264,7 @@ const Comercial = () => {
     switch (modalidade) {
       case 'licitacao': return 'bg-blue-500';
       case 'contratacao_simples': return 'bg-green-500';
+      case 'importacao_direta': return 'bg-purple-500';
       default: return 'bg-gray-500';
     }
   };
@@ -269,7 +273,7 @@ const Comercial = () => {
     setShowTipoPropostaModal(true);
   };
 
-  const handleTipoPropostaSelecionado = (tipo: 'licitacao' | 'contratacao_simples') => {
+  const handleTipoPropostaSelecionado = (tipo: 'licitacao' | 'contratacao_simples' | 'importacao_direta') => {
     setShowTipoPropostaModal(false);
     
     if (tipo === 'licitacao') {
@@ -278,6 +282,9 @@ const Comercial = () => {
     } else if (tipo === 'contratacao_simples') {
       setEditingOportunidade(undefined);
       setShowContratacaoSimplesForm(true);
+    } else if (tipo === 'importacao_direta') {
+      setEditingOportunidade(undefined);
+      setShowImportacaoDiretaForm(true);
     }
   };
 
@@ -286,8 +293,10 @@ const Comercial = () => {
     
     if (oportunidade.modalidade === 'licitacao') {
       setShowOportunidadeAvancadaForm(true);
-    } else {
+    } else if (oportunidade.modalidade === 'contratacao_simples') {
       setShowContratacaoSimplesForm(true);
+    } else if (oportunidade.modalidade === 'importacao_direta') {
+      setShowImportacaoDiretaForm(true);
     }
   };
 
@@ -296,6 +305,7 @@ const Comercial = () => {
     setShowOportunidadeForm(false);
     setShowOportunidadeAvancadaForm(false);
     setShowContratacaoSimplesForm(false);
+    setShowImportacaoDiretaForm(false);
     setEditingOportunidade(undefined);
   };
 
@@ -457,6 +467,7 @@ const Comercial = () => {
                 <SelectItem value="todos">Todas as Modalidades</SelectItem>
                 <SelectItem value="licitacao">Licitação</SelectItem>
                 <SelectItem value="contratacao_simples">Contratação Simples</SelectItem>
+                <SelectItem value="importacao_direta">Importação Direta</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -704,6 +715,18 @@ const Comercial = () => {
           oportunidade={editingOportunidade}
           onClose={() => {
             setShowContratacaoSimplesForm(false);
+            setEditingOportunidade(undefined);
+          }}
+          onSave={handleSaveOportunidade}
+        />
+      )}
+
+      {showImportacaoDiretaForm && (
+        <ImportacaoDiretaForm
+          isOpen={showImportacaoDiretaForm}
+          oportunidade={editingOportunidade}
+          onClose={() => {
+            setShowImportacaoDiretaForm(false);
             setEditingOportunidade(undefined);
           }}
           onSave={handleSaveOportunidade}
