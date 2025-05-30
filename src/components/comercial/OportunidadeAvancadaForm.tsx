@@ -88,6 +88,12 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     contratoAnterior: '',
     marcaModelo: '',
     
+    // Novos campos da triagem
+    vigenciaAta: '',
+    valorTeste: '',
+    permiteAdesaoAta: '',
+    qtdTestesAdesao: '',
+    
     // Campos da fase PARTICIPAÇÃO
     statusParticipacao: 'Em Acompanhamento',
     termometroChances: 50,
@@ -444,6 +450,64 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
               rows={3}
               disabled={phaseApproved}
             />
+          </div>
+
+          {/* Novos campos adicionados */}
+          <div className="space-y-4 border-t pt-4">
+            <h5 className="font-medium text-md">Informações da Ata</h5>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="vigencia-ata">Vigência da Ata</Label>
+                <Input
+                  id="vigencia-ata"
+                  type="date"
+                  value={formData.vigenciaAta}
+                  onChange={(e) => handleInputChange('vigenciaAta', e.target.value)}
+                  disabled={phaseApproved}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="valor-teste">Valor do Teste</Label>
+                <InputMask
+                  id="valor-teste"
+                  mask="currency"
+                  value={formData.valorTeste}
+                  onChange={(e) => handleInputChange('valorTeste', e.target.value)}
+                  placeholder="R$ 0,00"
+                  disabled={phaseApproved}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="permite-adesao-ata">Permite Adesão?</Label>
+                <Select 
+                  value={formData.permiteAdesaoAta} 
+                  onValueChange={(value) => handleInputChange('permiteAdesaoAta', value)}
+                  disabled={phaseApproved}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sim">Sim</SelectItem>
+                    <SelectItem value="nao">Não</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="qtd-testes-adesao">Quantidade de Testes Disponíveis para Adesão</Label>
+                <Input
+                  id="qtd-testes-adesao"
+                  type="number"
+                  value={formData.qtdTestesAdesao}
+                  onChange={(e) => handleInputChange('qtdTestesAdesao', e.target.value)}
+                  placeholder="Ex: 1000"
+                  disabled={phaseApproved}
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}
