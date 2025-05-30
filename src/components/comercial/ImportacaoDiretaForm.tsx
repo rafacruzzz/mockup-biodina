@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { X, FileText, MessageSquare, Upload, Package, Thermometer, Plus, Trash2 } from 'lucide-react';
 import ChatInterno from './ChatInterno';
+import jsPDF from 'jspdf';
 
 interface ImportacaoDiretaFormProps {
   isOpen: boolean;
@@ -225,6 +226,149 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
 
   const calcularTotal = () => {
     return calcularSubtotal() + calcularPacking();
+  };
+
+  const generateSPIPDF = () => {
+    const pdf = new jsPDF();
+    const pageWidth = pdf.internal.pageSize.width;
+    let yPosition = 20;
+
+    // Cabeçalho
+    pdf.setFontSize(16);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('SPI – SOLICITAÇÃO DE PROFORMA INVOICE', pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 20;
+
+    // Dados do Cliente
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, 'bold');
+    pdf.text('DADOS DO CLIENTE', 20, yPosition);
+    yPosition += 10;
+    
+    pdf.setFont(undefined, 'normal');
+    pdf.text(`Cliente: ${formData.spiCliente}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Dados da Proforma: ${formData.spiDadosProforma}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Em nome de: ${formData.spiEmNomeDe}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`CNPJ: ${formData.spiCnpj}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Endereço: ${formData.spiEndereco}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Inscrição Estadual: ${formData.spiInscricaoEstadual}`, 20, yPosition);
+    yPosition += 15;
+
+    // Informações da Proforma
+    pdf.setFont(undefined, 'bold');
+    pdf.text('INFORMAÇÕES DA PROFORMA', 20, yPosition);
+    yPosition += 10;
+    
+    pdf.setFont(undefined, 'normal');
+    pdf.text(`No SPI: ${formData.spiNumero}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Data: ${formData.spiData}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Proposta: ${formData.spiProposta}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Equipamento: ${formData.spiEquipamento}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Modelo: ${formData.spiModelo}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Packing (%): ${formData.spiPacking}`, 20, yPosition);
+    yPosition += 15;
+
+    // Informações Adicionais
+    pdf.setFont(undefined, 'bold');
+    pdf.text('INFORMAÇÕES ADICIONAIS', 20, yPosition);
+    yPosition += 10;
+    
+    pdf.setFont(undefined, 'normal');
+    pdf.text(`Fabricante: ${formData.spiFabricante}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Forma de pagamento: ${formData.spiFormaPagamento}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Tem comissão: ${formData.spiTemComissao ? 'Sim' : 'Não'}`, 20, yPosition);
+    yPosition += 7;
+    if (formData.spiTemComissao) {
+      pdf.text(`Percentual comissão: ${formData.spiPercentualComissao}%`, 20, yPosition);
+      yPosition += 7;
+      pdf.text(`Representante: ${formData.spiRepresentante}`, 20, yPosition);
+      yPosition += 7;
+    }
+    yPosition += 10;
+
+    // Produtos/Mercadorias
+    if (formData.spiMercadorias.length > 0) {
+      pdf.setFont(undefined, 'bold');
+      pdf.text('PRODUTOS/MERCADORIAS', 20, yPosition);
+      yPosition += 10;
+      
+      pdf.setFont(undefined, 'normal');
+      formData.spiMercadorias.forEach((item: any, index: number) => {
+        pdf.text(`${index + 1}. ${item.mercadoria} - Qtde: ${item.qtde} - Preço Unit.: USD ${item.precoUnitUsd} - Total: USD ${item.precoTotalUsd}`, 20, yPosition);
+        yPosition += 7;
+      });
+      yPosition += 10;
+    }
+
+    // Totais
+    pdf.setFont(undefined, 'bold');
+    pdf.text('TOTAIS', 20, yPosition);
+    yPosition += 10;
+    
+    pdf.setFont(undefined, 'normal');
+    pdf.text(`Subtotal: USD ${calcularSubtotal().toFixed(2)}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Packing: USD ${calcularPacking().toFixed(2)}`, 20, yPosition);
+    yPosition += 7;
+    pdf.setFont(undefined, 'bold');
+    pdf.text(`TOTAL: USD ${calcularTotal().toFixed(2)}`, 20, yPosition);
+    yPosition += 15;
+
+    // Observações
+    if (formData.spiObservacoes) {
+      pdf.setFont(undefined, 'bold');
+      pdf.text('OBSERVAÇÕES', 20, yPosition);
+      yPosition += 10;
+      
+      pdf.setFont(undefined, 'normal');
+      const lines = pdf.splitTextToSize(formData.spiObservacoes, pageWidth - 40);
+      pdf.text(lines, 20, yPosition);
+      yPosition += lines.length * 7 + 10;
+    }
+
+    // Detalhes de Venda
+    pdf.setFont(undefined, 'bold');
+    pdf.text('DETALHES DE VENDA', 20, yPosition);
+    yPosition += 10;
+    
+    pdf.setFont(undefined, 'normal');
+    pdf.text(`Faturamento confirmado: ${formData.spiFaturamentoConfirmado ? 'Sim' : 'Não'}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Forma de pagamento: ${formData.spiPagamentoForma}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Prazo de pagamento: ${formData.spiPagamentoPrazo}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Prazo de entrega: ${formData.spiEntregaPrazo}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Forma de venda: ${formData.spiFormaVenda}`, 20, yPosition);
+    if (formData.spiFormaVenda === 'outros' && formData.spiFormaVendaOutros) {
+      yPosition += 7;
+      pdf.text(`Especificação: ${formData.spiFormaVendaOutros}`, 20, yPosition);
+    }
+    yPosition += 7;
+    pdf.text(`Valor: ${formData.spiValor}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Prazo: ${formData.spiPrazo}`, 20, yPosition);
+    yPosition += 7;
+    pdf.text(`Data de confirmação: ${formData.spiDataConfirmacao}`, 20, yPosition);
+
+    // Nome do arquivo
+    const fileName = `SPI_${formData.spiNumero || 'novo'}_${new Date().toISOString().split('T')[0]}.pdf`;
+    
+    // Download do PDF
+    pdf.save(fileName);
   };
 
   const renderSPIForm = () => {
@@ -1518,6 +1662,16 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
             <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
+            {activeMasterTab === 'spi' && (
+              <Button 
+                onClick={generateSPIPDF} 
+                variant="outline"
+                className="bg-red-600 text-white hover:bg-red-700"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Baixar PDF
+              </Button>
+            )}
             <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
               {oportunidade ? 'Atualizar' : 'Salvar'} Importação Direta
             </Button>
