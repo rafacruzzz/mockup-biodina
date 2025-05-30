@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { X, Save, FileText, Users, History, BarChart3, Plus, Edit, Trash2 } from "lucide-react";
+import { X, Save, FileText, Users, History, BarChart3, Plus, Edit, Trash2, Lock } from "lucide-react";
 
 interface OportunidadeFormProps {
   oportunidade?: any;
@@ -35,6 +35,9 @@ const servicosCadastro = [
 ];
 
 const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormProps) => {
+  const [activeMasterTab, setActiveMasterTab] = useState('triagem');
+  const [activeToolTab, setActiveToolTab] = useState('geral');
+  
   const [formData, setFormData] = useState({
     codigo: oportunidade?.codigo || '',
     cliente: oportunidade?.cliente || '',
@@ -51,7 +54,7 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
     dataContato: oportunidade?.dataContato || '',
     descricao: oportunidade?.descricao || '',
     observacoes: oportunidade?.observacoes || '',
-    // Campos específicos para Em Triagem
+    // Campos de Triagem
     cpfCnpj: oportunidade?.cpfCnpj || '',
     nome: oportunidade?.nome || '',
     razaoSocial: oportunidade?.razaoSocial || '',
@@ -60,14 +63,15 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
     cidade: oportunidade?.cidade || '',
     estado: oportunidade?.estado || '',
     email: oportunidade?.email || '',
-    motivoPerda: oportunidade?.motivoPerda || '',
-    // Campos específicos para Em Acompanhamento
+    fonteLead: oportunidade?.fonteLead || '',
+    segmento: oportunidade?.segmento || '',
+    // Campos de Participação
     chaveLicitacao: oportunidade?.chaveLicitacao || '',
     dataLicitacao: oportunidade?.dataLicitacao || '',
     resumoEdital: oportunidade?.resumoEdital || '',
     analiseTecnica: oportunidade?.analiseTecnica || '',
     concorrencia: oportunidade?.concorrencia || '',
-    // Campos de produtos e serviços
+    // Produtos e serviços
     produtos: oportunidade?.produtos || [],
     servicos: oportunidade?.servicos || []
   });
@@ -75,23 +79,39 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
   const [produtosSelecionados, setProdutosSelecionados] = useState<string[]>(formData.produtos);
   const [servicosSelecionados, setServicosSelecionados] = useState<string[]>(formData.servicos);
 
-  // Dados de exemplo para análise técnica
-  const [concorrentes, setConcorrentes] = useState([
-    { id: 1, nome: 'DroneTech Ltda', produto: 'Phantom 4 Pro', preco: 42000 },
-    { id: 2, nome: 'AgroSky Solutions', produto: 'Mavic 3 Agriculture', preco: 38500 }
-  ]);
+  // Determinar a fase atual baseada no status
+  const getCurrentPhase = () => {
+    const triagemStatuses = ['Em Triagem'];
+    const participacaoStatuses = ['Aprovada para Participação', 'Em Acompanhamento'];
+    const finalizadoStatuses = ['Ganha', 'Perdida na Triagem', 'Perdida na Participação'];
+    
+    if (triagemStatuses.includes(formData.status)) return 'triagem';
+    if (participacaoStatuses.includes(formData.status)) return 'participacao';
+    if (finalizadoStatuses.includes(formData.status)) return 'finalizada';
+    return 'triagem';
+  };
 
-  // Dados de exemplo para pedidos
-  const [pedidos, setPedidos] = useState([
-    { 
-      id: 1, 
-      numero: 'PED-001/2024', 
-      tipo: 'Produto', 
-      status: 'Em Análise', 
-      valor: 125000,
-      dataEntrega: '2024-03-15'
+  const currentPhase = getCurrentPhase();
+  const isPhaseCompleted = (phase: string) => {
+    if (phase === 'triagem') return ['Aprovada para Participação', 'Em Acompanhamento', 'Ganha', 'Perdida na Participação'].includes(formData.status);
+    if (phase === 'participacao') return ['Ganha', 'Perdida na Participação'].includes(formData.status);
+    return false;
+  };
+
+  const isPhaseAccessible = (phase: string) => {
+    if (phase === 'triagem') return true;
+    if (phase === 'participacao') return isPhaseCompleted('triagem') || currentPhase === 'participacao';
+    return false;
+  };
+
+  const isReadOnly = currentPhase === 'finalizada';
+
+  // Atualizar aba master ativa baseado na fase
+  useEffect(() => {
+    if (currentPhase === 'participacao' && activeMasterTab === 'triagem') {
+      setActiveMasterTab('participacao');
     }
-  ]);
+  }, [currentPhase, activeMasterTab]);
 
   useEffect(() => {
     setFormData(prev => ({
@@ -110,9 +130,10 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
     switch (status) {
       case 'Ganha': return 'bg-green-500';
       case 'Em Triagem': return 'bg-blue-500';
+      case 'Aprovada para Participação': return 'bg-purple-500';
       case 'Em Acompanhamento': return 'bg-orange-500';
-      case 'Perdida': return 'bg-red-500';
-      case 'Cancelada': return 'bg-gray-500';
+      case 'Perdida na Triagem': 
+      case 'Perdida na Participação': return 'bg-red-500';
       default: return 'bg-blue-500';
     }
   };
@@ -125,6 +146,7 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
   };
 
   const handleProdutoToggle = (produtoNome: string) => {
+    if (isReadOnly) return;
     setProdutosSelecionados(prev => 
       prev.includes(produtoNome) 
         ? prev.filter(p => p !== produtoNome)
@@ -133,6 +155,7 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
   };
 
   const handleServicoToggle = (servicoNome: string) => {
+    if (isReadOnly) return;
     setServicosSelecionados(prev => 
       prev.includes(servicoNome) 
         ? prev.filter(s => s !== servicoNome)
@@ -143,59 +166,53 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
   const renderCamposTriagem = () => (
     <div className="grid grid-cols-2 gap-4">
       <div>
+        <Label htmlFor="codigo">Código da Oportunidade</Label>
+        <Input
+          id="codigo"
+          value={formData.codigo}
+          onChange={(e) => setFormData({...formData, codigo: e.target.value})}
+          required
+          disabled={isReadOnly}
+        />
+      </div>
+      <div>
+        <Label htmlFor="valor">Valor (R$)</Label>
+        <Input
+          id="valor"
+          type="number"
+          value={formData.valor}
+          onChange={(e) => setFormData({...formData, valor: Number(e.target.value)})}
+          disabled={isReadOnly}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="cliente">Cliente / Instituição</Label>
+        <Input
+          id="cliente"
+          value={formData.cliente}
+          onChange={(e) => setFormData({...formData, cliente: e.target.value})}
+          required
+          disabled={isReadOnly}
+        />
+      </div>
+      <div>
+        <Label htmlFor="contato">Contato</Label>
+        <Input
+          id="contato"
+          value={formData.contato}
+          onChange={(e) => setFormData({...formData, contato: e.target.value})}
+          disabled={isReadOnly}
+        />
+      </div>
+
+      <div>
         <Label htmlFor="cpfCnpj">CPF/CNPJ</Label>
         <Input
           id="cpfCnpj"
           value={formData.cpfCnpj}
           onChange={(e) => setFormData({...formData, cpfCnpj: e.target.value})}
-        />
-      </div>
-      <div>
-        <Label htmlFor="nome">Nome</Label>
-        <Input
-          id="nome"
-          value={formData.nome}
-          onChange={(e) => setFormData({...formData, nome: e.target.value})}
-        />
-      </div>
-      <div>
-        <Label htmlFor="razaoSocial">Razão Social</Label>
-        <Input
-          id="razaoSocial"
-          value={formData.razaoSocial}
-          onChange={(e) => setFormData({...formData, razaoSocial: e.target.value})}
-        />
-      </div>
-      <div>
-        <Label htmlFor="endereco">Endereço</Label>
-        <Input
-          id="endereco"
-          value={formData.endereco}
-          onChange={(e) => setFormData({...formData, endereco: e.target.value})}
-        />
-      </div>
-      <div>
-        <Label htmlFor="cep">CEP</Label>
-        <Input
-          id="cep"
-          value={formData.cep}
-          onChange={(e) => setFormData({...formData, cep: e.target.value})}
-        />
-      </div>
-      <div>
-        <Label htmlFor="cidade">Cidade</Label>
-        <Input
-          id="cidade"
-          value={formData.cidade}
-          onChange={(e) => setFormData({...formData, cidade: e.target.value})}
-        />
-      </div>
-      <div>
-        <Label htmlFor="estado">Estado</Label>
-        <Input
-          id="estado"
-          value={formData.estado}
-          onChange={(e) => setFormData({...formData, estado: e.target.value})}
+          disabled={isReadOnly}
         />
       </div>
       <div>
@@ -205,30 +222,139 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
           type="email"
           value={formData.email}
           onChange={(e) => setFormData({...formData, email: e.target.value})}
+          disabled={isReadOnly}
         />
       </div>
-      {(formData.status === 'Perdida' || formData.status === 'Cancelada') && (
-        <div className="col-span-2">
-          <Label htmlFor="motivoPerda">Motivo de Perda/Cancelamento</Label>
-          <Textarea
-            id="motivoPerda"
-            value={formData.motivoPerda}
-            onChange={(e) => setFormData({...formData, motivoPerda: e.target.value})}
-            rows={3}
-          />
+
+      <div>
+        <Label htmlFor="endereco">Endereço</Label>
+        <Input
+          id="endereco"
+          value={formData.endereco}
+          onChange={(e) => setFormData({...formData, endereco: e.target.value})}
+          disabled={isReadOnly}
+        />
+      </div>
+      <div>
+        <Label htmlFor="cidade">Cidade</Label>
+        <Input
+          id="cidade"
+          value={formData.cidade}
+          onChange={(e) => setFormData({...formData, cidade: e.target.value})}
+          disabled={isReadOnly}
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="fonteLead">Fonte do Lead</Label>
+        <Select value={formData.fonteLead} onValueChange={(value: any) => setFormData({...formData, fonteLead: value})} disabled={isReadOnly}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione a fonte" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Site">Site</SelectItem>
+            <SelectItem value="Indicação">Indicação</SelectItem>
+            <SelectItem value="Cold Call">Cold Call</SelectItem>
+            <SelectItem value="Licitação">Licitação</SelectItem>
+            <SelectItem value="Referência">Referência</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <Label htmlFor="segmento">Segmento</Label>
+        <Select value={formData.segmento} onValueChange={(value: any) => setFormData({...formData, segmento: value})} disabled={isReadOnly}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione o segmento" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Hospitalar">Hospitalar</SelectItem>
+            <SelectItem value="Universitário">Universitário</SelectItem>
+            <SelectItem value="Público">Público</SelectItem>
+            <SelectItem value="Municipal">Municipal</SelectItem>
+            <SelectItem value="Privado">Privado</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Seção de Produtos e Serviços */}
+      <div className="col-span-2 space-y-4 border-t pt-4">
+        <h3 className="text-lg font-semibold">Produtos e Serviços de Interesse</h3>
+        
+        <div>
+          <Label>Produto(s)</Label>
+          <div className="grid grid-cols-3 gap-2 mt-2">
+            {produtosCadastro.map((produto) => (
+              <div key={produto.id} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`produto-${produto.id}`}
+                  checked={produtosSelecionados.includes(produto.nome)}
+                  onCheckedChange={() => handleProdutoToggle(produto.nome)}
+                  disabled={isReadOnly}
+                />
+                <Label htmlFor={`produto-${produto.id}`} className="text-sm">
+                  {produto.nome}
+                </Label>
+              </div>
+            ))}
+          </div>
         </div>
-      )}
+
+        <div>
+          <Label>Serviço(s)</Label>
+          <div className="grid grid-cols-3 gap-2 mt-2">
+            {servicosCadastro.map((servico) => (
+              <div key={servico.id} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`servico-${servico.id}`}
+                  checked={servicosSelecionados.includes(servico.nome)}
+                  onCheckedChange={() => handleServicoToggle(servico.nome)}
+                  disabled={isReadOnly}
+                />
+                <Label htmlFor={`servico-${servico.id}`} className="text-sm">
+                  {servico.nome}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="col-span-2">
+        <Label htmlFor="status">Status da Triagem</Label>
+        <Select value={formData.status} onValueChange={(value: any) => setFormData({...formData, status: value})} disabled={isReadOnly}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Em Triagem">Em Triagem</SelectItem>
+            <SelectItem value="Aprovada para Participação">Aprovada para Participação</SelectItem>
+            <SelectItem value="Perdida na Triagem">Perdida na Triagem</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
     </div>
   );
 
-  const renderCamposAcompanhamento = () => (
+  const renderCamposParticipacao = () => (
     <div className="grid grid-cols-2 gap-4">
+      {/* Resumo da Triagem (Read-only) */}
+      <div className="col-span-2 p-4 bg-gray-50 rounded-lg border">
+        <h4 className="font-semibold mb-2">Resumo da Triagem</h4>
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <p><strong>Cliente:</strong> {formData.cliente}</p>
+          <p><strong>Contato:</strong> {formData.contato}</p>
+          <p><strong>Valor:</strong> {formatCurrency(formData.valor)}</p>
+          <p><strong>Fonte:</strong> {formData.fonteLead}</p>
+        </div>
+      </div>
+
       <div>
         <Label htmlFor="chaveLicitacao">Chave da Licitação</Label>
         <Input
           id="chaveLicitacao"
           value={formData.chaveLicitacao}
           onChange={(e) => setFormData({...formData, chaveLicitacao: e.target.value})}
+          disabled={isReadOnly}
         />
       </div>
       <div>
@@ -238,8 +364,10 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
           type="date"
           value={formData.dataLicitacao}
           onChange={(e) => setFormData({...formData, dataLicitacao: e.target.value})}
+          disabled={isReadOnly}
         />
       </div>
+
       <div className="col-span-2">
         <Label htmlFor="resumoEdital">Resumo do Edital</Label>
         <Textarea
@@ -247,66 +375,51 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
           value={formData.resumoEdital}
           onChange={(e) => setFormData({...formData, resumoEdital: e.target.value})}
           rows={3}
+          disabled={isReadOnly}
         />
       </div>
+
       <div className="col-span-2">
         <Label htmlFor="analiseTecnica" className={!formData.analiseTecnica ? 'text-red-500' : ''}>
-          Análise Técnica {!formData.analiseTecnica && '(Obrigatório)'}
+          Análise Técnica {!formData.analiseTecnica && !isReadOnly && '(Obrigatório)'}
         </Label>
         <Textarea
           id="analiseTecnica"
           value={formData.analiseTecnica}
           onChange={(e) => setFormData({...formData, analiseTecnica: e.target.value})}
           rows={3}
-          className={!formData.analiseTecnica ? 'border-red-500' : ''}
+          className={!formData.analiseTecnica && !isReadOnly ? 'border-red-500' : ''}
+          disabled={isReadOnly}
         />
       </div>
+
       <div className="col-span-2">
         <Label htmlFor="concorrencia" className={!formData.concorrencia ? 'text-red-500' : ''}>
-          Concorrência {!formData.concorrencia && '(Obrigatório)'}
+          Análise da Concorrência {!formData.concorrencia && !isReadOnly && '(Obrigatório)'}
         </Label>
         <Textarea
           id="concorrencia"
           value={formData.concorrencia}
           onChange={(e) => setFormData({...formData, concorrencia: e.target.value})}
           rows={3}
-          className={!formData.concorrencia ? 'border-red-500' : ''}
+          className={!formData.concorrencia && !isReadOnly ? 'border-red-500' : ''}
+          disabled={isReadOnly}
         />
       </div>
-    </div>
-  );
 
-  const renderCamposFinais = () => (
-    <div className="grid grid-cols-2 gap-4">
       <div className="col-span-2">
-        <Label>Resumo dos Dados Principais</Label>
-        <div className="p-4 bg-gray-50 rounded-lg">
-          <p><strong>Cliente:</strong> {formData.cliente}</p>
-          <p><strong>Contato:</strong> {formData.contato}</p>
-          <p><strong>Valor:</strong> {formatCurrency(formData.valor)}</p>
-        </div>
+        <Label htmlFor="status">Status da Participação</Label>
+        <Select value={formData.status} onValueChange={(value: any) => setFormData({...formData, status: value})} disabled={isReadOnly}>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Em Acompanhamento">Em Acompanhamento</SelectItem>
+            <SelectItem value="Ganha">Ganha</SelectItem>
+            <SelectItem value="Perdida na Participação">Perdida na Participação</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
-      {formData.status === 'Ganha' && (
-        <div className="col-span-2">
-          <Label htmlFor="motivoGanho">Motivo do Ganho</Label>
-          <Textarea
-            id="motivoGanho"
-            rows={3}
-            placeholder="Descreva os fatores que levaram ao sucesso..."
-          />
-        </div>
-      )}
-      {(formData.status === 'Perdida' || formData.status === 'Cancelada') && (
-        <div className="col-span-2">
-          <Label htmlFor="motivoPerda">Motivo de Perda/Cancelamento</Label>
-          <Textarea
-            id="motivoPerda"
-            value={formData.motivoPerda}
-            onChange={(e) => setFormData({...formData, motivoPerda: e.target.value})}
-            rows={3}
-          />
-        </div>
-      )}
     </div>
   );
 
@@ -328,8 +441,43 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
         </CardHeader>
 
         <CardContent>
-          <Tabs defaultValue="geral" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+          {/* Abas Masters */}
+          <div className="mb-6">
+            <div className="flex border-b border-gray-200">
+              <button
+                onClick={() => isPhaseAccessible('triagem') && setActiveMasterTab('triagem')}
+                className={`px-6 py-3 font-semibold text-lg flex items-center gap-2 border-b-2 transition-colors ${
+                  activeMasterTab === 'triagem'
+                    ? 'border-biodina-blue text-biodina-blue'
+                    : isPhaseAccessible('triagem')
+                    ? 'border-transparent text-gray-600 hover:text-gray-800'
+                    : 'border-transparent text-gray-400 cursor-not-allowed'
+                }`}
+                disabled={!isPhaseAccessible('triagem')}
+              >
+                {isPhaseCompleted('triagem') && <Lock className="h-4 w-4" />}
+                TRIAGEM
+              </button>
+              <button
+                onClick={() => isPhaseAccessible('participacao') && setActiveMasterTab('participacao')}
+                className={`px-6 py-3 font-semibold text-lg flex items-center gap-2 border-b-2 transition-colors ${
+                  activeMasterTab === 'participacao'
+                    ? 'border-biodina-blue text-biodina-blue'
+                    : isPhaseAccessible('participacao')
+                    ? 'border-transparent text-gray-600 hover:text-gray-800'
+                    : 'border-transparent text-gray-400 cursor-not-allowed'
+                }`}
+                disabled={!isPhaseAccessible('participacao')}
+              >
+                {isPhaseCompleted('participacao') && <Lock className="h-4 w-4" />}
+                PARTICIPAÇÃO
+              </button>
+            </div>
+          </div>
+
+          {/* Abas de Ferramentas */}
+          <Tabs value={activeToolTab} onValueChange={setActiveToolTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="geral" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Dados Gerais
@@ -338,150 +486,37 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
                 <BarChart3 className="h-4 w-4" />
                 Análise Técnica
               </TabsTrigger>
+              <TabsTrigger value="historico" className="flex items-center gap-2">
+                <History className="h-4 w-4" />
+                Histórico/Chat
+              </TabsTrigger>
               <TabsTrigger 
                 value="pedidos" 
                 className="flex items-center gap-2"
                 disabled={formData.status !== 'Ganha'}
               >
                 <Users className="h-4 w-4" />
+                {formData.status !== 'Ganha' && <Lock className="h-3 w-3" />}
                 Pedidos
               </TabsTrigger>
-              <TabsTrigger value="historico" className="flex items-center gap-2">
-                <History className="h-4 w-4" />
-                Histórico
+              <TabsTrigger value="documentos" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Documentos
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="geral" className="space-y-4 mt-4">
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Campos básicos sempre visíveis */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <Label htmlFor="codigo">Código da Oportunidade</Label>
-                    <Input
-                      id="codigo"
-                      value={formData.codigo}
-                      onChange={(e) => setFormData({...formData, codigo: e.target.value})}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="status">Status</Label>
-                    <Select value={formData.status} onValueChange={(value: any) => setFormData({...formData, status: value})}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Em Triagem">Em Triagem</SelectItem>
-                        <SelectItem value="Em Acompanhamento">Em Acompanhamento</SelectItem>
-                        <SelectItem value="Ganha">Ganha</SelectItem>
-                        <SelectItem value="Perdida">Perdida</SelectItem>
-                        <SelectItem value="Cancelada">Cancelada</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="valor">Valor (R$)</Label>
-                    <Input
-                      id="valor"
-                      type="number"
-                      value={formData.valor}
-                      onChange={(e) => setFormData({...formData, valor: Number(e.target.value)})}
-                    />
-                  </div>
-                </div>
+                {activeMasterTab === 'triagem' ? renderCamposTriagem() : renderCamposParticipacao()}
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="cliente">Cliente / Instituição</Label>
-                    <Input
-                      id="cliente"
-                      value={formData.cliente}
-                      onChange={(e) => setFormData({...formData, cliente: e.target.value})}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="contato">Contato</Label>
-                    <Input
-                      id="contato"
-                      value={formData.contato}
-                      onChange={(e) => setFormData({...formData, contato: e.target.value})}
-                    />
-                  </div>
-                </div>
-
-                {/* Seção de Produtos e Serviços */}
-                <div className="space-y-4 border-t pt-4">
-                  <h3 className="text-lg font-semibold">Dados do Lead/Negócio</h3>
-                  
-                  <div>
-                    <Label>Produto(s)</Label>
-                    <div className="grid grid-cols-3 gap-2 mt-2">
-                      {produtosCadastro.map((produto) => (
-                        <div key={produto.id} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`produto-${produto.id}`}
-                            checked={produtosSelecionados.includes(produto.nome)}
-                            onCheckedChange={() => handleProdutoToggle(produto.nome)}
-                          />
-                          <Label htmlFor={`produto-${produto.id}`} className="text-sm">
-                            {produto.nome}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label>Serviço(s)</Label>
-                    <div className="grid grid-cols-3 gap-2 mt-2">
-                      {servicosCadastro.map((servico) => (
-                        <div key={servico.id} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`servico-${servico.id}`}
-                            checked={servicosSelecionados.includes(servico.nome)}
-                            onCheckedChange={() => handleServicoToggle(servico.nome)}
-                          />
-                          <Label htmlFor={`servico-${servico.id}`} className="text-sm">
-                            {servico.nome}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Campos condicionais baseados no status */}
-                <div className="space-y-4 border-t pt-4">
-                  <h3 className="text-lg font-semibold">
-                    {formData.status === 'Em Triagem' && 'Informações de Triagem'}
-                    {formData.status === 'Em Acompanhamento' && 'Informações de Acompanhamento'}
-                    {(formData.status === 'Ganha' || formData.status === 'Perdida' || formData.status === 'Cancelada') && 'Informações Finais'}
-                  </h3>
-                  
-                  {formData.status === 'Em Triagem' && renderCamposTriagem()}
-                  {formData.status === 'Em Acompanhamento' && renderCamposAcompanhamento()}
-                  {(formData.status === 'Ganha' || formData.status === 'Perdida' || formData.status === 'Cancelada') && renderCamposFinais()}
-                </div>
-
-                <div>
+                <div className="col-span-2">
                   <Label htmlFor="descricao">Descrição</Label>
                   <Textarea
                     id="descricao"
                     value={formData.descricao}
                     onChange={(e) => setFormData({...formData, descricao: e.target.value})}
                     rows={3}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="observacoes">Observações</Label>
-                  <Textarea
-                    id="observacoes"
-                    value={formData.observacoes}
-                    onChange={(e) => setFormData({...formData, observacoes: e.target.value})}
-                    rows={3}
+                    disabled={isReadOnly}
                   />
                 </div>
 
@@ -489,9 +524,9 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
                   <Button type="button" variant="outline" onClick={onClose}>
                     Cancelar
                   </Button>
-                  <Button type="submit" className="bg-biodina-gold hover:bg-biodina-gold/90">
+                  <Button type="submit" className="bg-biodina-gold hover:bg-biodina-gold/90" disabled={isReadOnly}>
                     <Save className="h-4 w-4 mr-2" />
-                    Salvar
+                    {isReadOnly ? 'Visualizar' : 'Salvar'}
                   </Button>
                 </div>
               </form>
@@ -619,6 +654,30 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
             <TabsContent value="historico" className="mt-4">
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Histórico e Documentos</h3>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500">Arraste arquivos aqui ou clique para fazer upload</p>
+                  <p className="text-sm text-gray-400 mt-2">Edital, ata, proposta, contrato</p>
+                </div>
+                <div className="space-y-3">
+                  <h4 className="font-medium">Linha do Tempo</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span className="text-gray-600">15/03/2024 - Oportunidade criada</span>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span className="text-gray-600">16/03/2024 - Primeiro contato realizado</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="documentos" className="mt-4">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Documentos</h3>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                   <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-500">Arraste arquivos aqui ou clique para fazer upload</p>
