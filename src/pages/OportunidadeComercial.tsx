@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -1146,7 +1145,7 @@ const OportunidadeComercial = () => {
           )}
 
           {/* Abas de Ferramentas */}
-          <Tabs value={ferramentaAtiva} onValueChange={setFerramentaAtiva} className="space-y-6">
+          <Tabs value={ferramentaAtiva} onValueChange={(value: string) => setFerramentaAtiva(value as FerramentaTab)} className="space-y-6">
             <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger 
                 value="dados-gerais"
