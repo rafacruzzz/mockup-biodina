@@ -21,10 +21,6 @@ const ImportacaoDiretaForm = ({ isOpen, oportunidade, onClose, onSave }: Importa
   const [abaSuperior, setAbaSuperior] = useState("COMERCIAL");
   const [abaInferior, setAbaInferior] = useState("Dados Gerais");
 
-  // Add safety check for oportunidade object
-  const cliente = oportunidade?.cliente || {};
-  const oportunidadeData = oportunidade || {};
-
   // Estados para dados SPI
   const [dadosSPI, setDadosSPI] = useState({
     numeroSPI: '',
@@ -931,7 +927,7 @@ const ImportacaoDiretaForm = ({ isOpen, oportunidade, onClose, onSave }: Importa
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-7xl max-h-[95vh] overflow-y-auto">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Nova Importação Direta - {cliente?.nome || oportunidadeData?.cliente || 'Cliente'}</CardTitle>
+          <CardTitle>Nova Importação Direta - {oportunidade.cliente}</CardTitle>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
