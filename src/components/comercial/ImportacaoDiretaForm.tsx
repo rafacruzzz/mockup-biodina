@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,12 +11,13 @@ import { X, Save, Download, Filter, Plus, Trash2 } from "lucide-react";
 import jsPDF from 'jspdf';
 
 interface ImportacaoDiretaFormProps {
+  isOpen: boolean;
   oportunidade: any;
   onClose: () => void;
   onSave: (formData: any) => void;
 }
 
-const ImportacaoDiretaForm = ({ oportunidade, onClose, onSave }: ImportacaoDiretaFormProps) => {
+const ImportacaoDiretaForm = ({ isOpen, oportunidade, onClose, onSave }: ImportacaoDiretaFormProps) => {
   const [abaSuperior, setAbaSuperior] = useState("COMERCIAL");
   const [abaInferior, setAbaInferior] = useState("Dados Gerais");
 
