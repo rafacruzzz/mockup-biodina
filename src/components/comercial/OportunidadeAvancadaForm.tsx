@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -136,6 +137,8 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   });
 
   useEffect(() => {
+    console.log('OportunidadeAvancadaForm - useEffect executado');
+    console.log('oportunidade:', oportunidade);
     if (oportunidade) {
       setFormData({ ...formData, ...oportunidade });
       if (oportunidade.phaseApproved) {
@@ -180,352 +183,358 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     onSave(dataToSave);
   };
 
-  const renderDadosGeraisTriagem = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="tipo-oportunidade">Tipo de Oportunidade *</Label>
-          <Select 
-            value={formData.tipoOportunidade} 
-            onValueChange={(value) => handleInputChange('tipoOportunidade', value)}
-            disabled={phaseApproved}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione o tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="licitacao">Licitação</SelectItem>
-              <SelectItem value="importacao-direta">Importação Direta</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="cpf-cnpj">CPF/CNPJ *</Label>
-          <InputMask
-            id="cpf-cnpj"
-            mask="cpf-cnpj"
-            value={formData.cpfCnpj}
-            onChange={(e) => handleInputChange('cpfCnpj', e.target.value)}
-            placeholder="000.000.000-00 ou 00.000.000/0000-00"
-            disabled={phaseApproved}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="nome">Nome/Nome Fantasia *</Label>
-          <Input
-            id="nome"
-            value={formData.nome}
-            onChange={(e) => handleInputChange('nome', e.target.value)}
-            disabled={phaseApproved}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="razao-social">Razão Social</Label>
-          <Input
-            id="razao-social"
-            value={formData.razaoSocial}
-            onChange={(e) => handleInputChange('razaoSocial', e.target.value)}
-            disabled={phaseApproved}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="endereco">Endereço</Label>
-          <Input
-            id="endereco"
-            value={formData.endereco}
-            onChange={(e) => handleInputChange('endereco', e.target.value)}
-            disabled={phaseApproved}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="uf">UF</Label>
-          <Input
-            id="uf"
-            value={formData.uf}
-            onChange={(e) => handleInputChange('uf', e.target.value)}
-            maxLength={2}
-            disabled={phaseApproved}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="email">E-mail</Label>
-          <Input
-            id="email"
-            type="email"
-            value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            disabled={phaseApproved}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="telefone">Telefone</Label>
-          <InputMask
-            id="telefone"
-            mask="phone"
-            value={formData.telefone}
-            onChange={(e) => handleInputChange('telefone', e.target.value)}
-            placeholder="(00) 00000-0000"
-            disabled={phaseApproved}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="valor-negocio">Valor do Negócio *</Label>
-          <InputMask
-            id="valor-negocio"
-            mask="currency"
-            value={formData.valorNegocio}
-            onChange={(e) => handleInputChange('valorNegocio', e.target.value)}
-            placeholder="R$ 0,00"
-            disabled={phaseApproved}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="fonte-lead">Fonte do Lead</Label>
-          <Select 
-            value={formData.fonteLead} 
-            onValueChange={(value) => handleInputChange('fonteLead', value)}
-            disabled={phaseApproved}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione a fonte" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="site">Site</SelectItem>
-              <SelectItem value="indicacao">Indicação</SelectItem>
-              <SelectItem value="cold-call">Cold Call</SelectItem>
-              <SelectItem value="licitacao">Licitação</SelectItem>
-              <SelectItem value="referencia">Referência</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="segmento-lead">Segmento do Lead</Label>
-          <Select 
-            value={formData.segmentoLead} 
-            onValueChange={(value) => handleInputChange('segmentoLead', value)}
-            disabled={phaseApproved}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione o segmento" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="hospitalar">Hospitalar</SelectItem>
-              <SelectItem value="universitario">Universitário</SelectItem>
-              <SelectItem value="publico">Público</SelectItem>
-              <SelectItem value="municipal">Municipal</SelectItem>
-              <SelectItem value="privado">Privado</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="colaborador-responsavel">Colaborador Responsável</Label>
-          <Input
-            id="colaborador-responsavel"
-            value={formData.colaboradorResponsavel}
-            onChange={(e) => handleInputChange('colaboradorResponsavel', e.target.value)}
-            disabled={phaseApproved}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="data-inicio">Data de Início</Label>
-          <Input
-            id="data-inicio"
-            type="date"
-            value={formData.dataInicio}
-            onChange={(e) => handleInputChange('dataInicio', e.target.value)}
-            disabled={phaseApproved}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="data-limite">Data Limite</Label>
-          <Input
-            id="data-limite"
-            type="date"
-            value={formData.dataLimite}
-            onChange={(e) => handleInputChange('dataLimite', e.target.value)}
-            disabled={phaseApproved}
-          />
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="descricao">Descrição</Label>
-        <Textarea
-          id="descricao"
-          value={formData.descricao}
-          onChange={(e) => handleInputChange('descricao', e.target.value)}
-          rows={3}
-          disabled={phaseApproved}
-        />
-      </div>
-
-      {formData.tipoOportunidade === 'licitacao' && (
-        <div className="space-y-4 border-t pt-4">
-          <h4 className="font-semibold text-lg">Dados Específicos - Licitação</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="data-licitacao">Data da Licitação</Label>
-              <Input
-                id="data-licitacao"
-                type="date"
-                value={formData.dataLicitacao}
-                onChange={(e) => handleInputChange('dataLicitacao', e.target.value)}
-                disabled={phaseApproved}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="numero-pregao">Nº Pregão/INEX/ATA/SRP</Label>
-              <Input
-                id="numero-pregao"
-                value={formData.numeroPregao}
-                onChange={(e) => handleInputChange('numeroPregao', e.target.value)}
-                disabled={phaseApproved}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="numero-processo">Nº Processo</Label>
-              <Input
-                id="numero-processo"
-                value={formData.numeroProcesso}
-                onChange={(e) => handleInputChange('numeroProcesso', e.target.value)}
-                disabled={phaseApproved}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="numero-uasg">Nº UASG</Label>
-              <Input
-                id="numero-uasg"
-                value={formData.numeroUasg}
-                onChange={(e) => handleInputChange('numeroUasg', e.target.value)}
-                disabled={phaseApproved}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="valor-estimado">Valor Estimado</Label>
-              <InputMask
-                id="valor-estimado"
-                mask="currency"
-                value={formData.valorEstimado}
-                onChange={(e) => handleInputChange('valorEstimado', e.target.value)}
-                placeholder="R$ 0,00"
-                disabled={phaseApproved}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="qtd-equipamentos">Qtd Equipamentos</Label>
-              <Input
-                id="qtd-equipamentos"
-                type="number"
-                value={formData.qtdEquipamentos}
-                onChange={(e) => handleInputChange('qtdEquipamentos', e.target.value)}
-                disabled={phaseApproved}
-              />
-            </div>
+  const renderDadosGeraisTriagem = () => {
+    console.log('Renderizando Dados Gerais Triagem');
+    console.log('formData.tipoOportunidade:', formData.tipoOportunidade);
+    console.log('phaseApproved:', phaseApproved);
+    
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="tipo-oportunidade">Tipo de Oportunidade *</Label>
+            <Select 
+              value={formData.tipoOportunidade} 
+              onValueChange={(value) => handleInputChange('tipoOportunidade', value)}
+              disabled={phaseApproved}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="licitacao">Licitação</SelectItem>
+                <SelectItem value="importacao-direta">Importação Direta</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="resumo-edital">Resumo do Edital</Label>
-            <Textarea
-              id="resumo-edital"
-              value={formData.resumoEdital}
-              onChange={(e) => handleInputChange('resumoEdital', e.target.value)}
-              rows={3}
+            <Label htmlFor="cpf-cnpj">CPF/CNPJ *</Label>
+            <InputMask
+              id="cpf-cnpj"
+              mask="cpf-cnpj"
+              value={formData.cpfCnpj}
+              onChange={(e) => handleInputChange('cpfCnpj', e.target.value)}
+              placeholder="000.000.000-00 ou 00.000.000/0000-00"
               disabled={phaseApproved}
             />
           </div>
 
-          {/* Novos campos adicionados */}
+          <div className="space-y-2">
+            <Label htmlFor="nome">Nome/Nome Fantasia *</Label>
+            <Input
+              id="nome"
+              value={formData.nome}
+              onChange={(e) => handleInputChange('nome', e.target.value)}
+              disabled={phaseApproved}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="razao-social">Razão Social</Label>
+            <Input
+              id="razao-social"
+              value={formData.razaoSocial}
+              onChange={(e) => handleInputChange('razaoSocial', e.target.value)}
+              disabled={phaseApproved}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="endereco">Endereço</Label>
+            <Input
+              id="endereco"
+              value={formData.endereco}
+              onChange={(e) => handleInputChange('endereco', e.target.value)}
+              disabled={phaseApproved}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="uf">UF</Label>
+            <Input
+              id="uf"
+              value={formData.uf}
+              onChange={(e) => handleInputChange('uf', e.target.value)}
+              maxLength={2}
+              disabled={phaseApproved}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email">E-mail</Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              disabled={phaseApproved}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="telefone">Telefone</Label>
+            <InputMask
+              id="telefone"
+              mask="phone"
+              value={formData.telefone}
+              onChange={(e) => handleInputChange('telefone', e.target.value)}
+              placeholder="(00) 00000-0000"
+              disabled={phaseApproved}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="valor-negocio">Valor do Negócio *</Label>
+            <InputMask
+              id="valor-negocio"
+              mask="currency"
+              value={formData.valorNegocio}
+              onChange={(e) => handleInputChange('valorNegocio', e.target.value)}
+              placeholder="R$ 0,00"
+              disabled={phaseApproved}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="fonte-lead">Fonte do Lead</Label>
+            <Select 
+              value={formData.fonteLead} 
+              onValueChange={(value) => handleInputChange('fonteLead', value)}
+              disabled={phaseApproved}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione a fonte" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="site">Site</SelectItem>
+                <SelectItem value="indicacao">Indicação</SelectItem>
+                <SelectItem value="cold-call">Cold Call</SelectItem>
+                <SelectItem value="licitacao">Licitação</SelectItem>
+                <SelectItem value="referencia">Referência</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="segmento-lead">Segmento do Lead</Label>
+            <Select 
+              value={formData.segmentoLead} 
+              onValueChange={(value) => handleInputChange('segmentoLead', value)}
+              disabled={phaseApproved}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o segmento" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="hospitalar">Hospitalar</SelectItem>
+                <SelectItem value="universitario">Universitário</SelectItem>
+                <SelectItem value="publico">Público</SelectItem>
+                <SelectItem value="municipal">Municipal</SelectItem>
+                <SelectItem value="privado">Privado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="colaborador-responsavel">Colaborador Responsável</Label>
+            <Input
+              id="colaborador-responsavel"
+              value={formData.colaboradorResponsavel}
+              onChange={(e) => handleInputChange('colaboradorResponsavel', e.target.value)}
+              disabled={phaseApproved}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="data-inicio">Data de Início</Label>
+            <Input
+              id="data-inicio"
+              type="date"
+              value={formData.dataInicio}
+              onChange={(e) => handleInputChange('dataInicio', e.target.value)}
+              disabled={phaseApproved}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="data-limite">Data Limite</Label>
+            <Input
+              id="data-limite"
+              type="date"
+              value={formData.dataLimite}
+              onChange={(e) => handleInputChange('dataLimite', e.target.value)}
+              disabled={phaseApproved}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="descricao">Descrição</Label>
+          <Textarea
+            id="descricao"
+            value={formData.descricao}
+            onChange={(e) => handleInputChange('descricao', e.target.value)}
+            rows={3}
+            disabled={phaseApproved}
+          />
+        </div>
+
+        {formData.tipoOportunidade === 'licitacao' && (
           <div className="space-y-4 border-t pt-4">
-            <h5 className="font-medium text-md">Informações da Ata</h5>
+            <h4 className="font-semibold text-lg">Dados Específicos - Licitação</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="vigencia-ata">Vigência da Ata</Label>
+                <Label htmlFor="data-licitacao">Data da Licitação</Label>
                 <Input
-                  id="vigencia-ata"
+                  id="data-licitacao"
                   type="date"
-                  value={formData.vigenciaAta}
-                  onChange={(e) => handleInputChange('vigenciaAta', e.target.value)}
+                  value={formData.dataLicitacao}
+                  onChange={(e) => handleInputChange('dataLicitacao', e.target.value)}
                   disabled={phaseApproved}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="valor-teste">Valor do Teste</Label>
+                <Label htmlFor="numero-pregao">Nº Pregão/INEX/ATA/SRP</Label>
+                <Input
+                  id="numero-pregao"
+                  value={formData.numeroPregao}
+                  onChange={(e) => handleInputChange('numeroPregao', e.target.value)}
+                  disabled={phaseApproved}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="numero-processo">Nº Processo</Label>
+                <Input
+                  id="numero-processo"
+                  value={formData.numeroProcesso}
+                  onChange={(e) => handleInputChange('numeroProcesso', e.target.value)}
+                  disabled={phaseApproved}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="numero-uasg">Nº UASG</Label>
+                <Input
+                  id="numero-uasg"
+                  value={formData.numeroUasg}
+                  onChange={(e) => handleInputChange('numeroUasg', e.target.value)}
+                  disabled={phaseApproved}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="valor-estimado">Valor Estimado</Label>
                 <InputMask
-                  id="valor-teste"
+                  id="valor-estimado"
                   mask="currency"
-                  value={formData.valorTeste}
-                  onChange={(e) => handleInputChange('valorTeste', e.target.value)}
+                  value={formData.valorEstimado}
+                  onChange={(e) => handleInputChange('valorEstimado', e.target.value)}
                   placeholder="R$ 0,00"
                   disabled={phaseApproved}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="permite-adesao-ata">Permite Adesão?</Label>
-                <Select 
-                  value={formData.permiteAdesaoAta} 
-                  onValueChange={(value) => handleInputChange('permiteAdesaoAta', value)}
-                  disabled={phaseApproved}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="sim">Sim</SelectItem>
-                    <SelectItem value="nao">Não</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="qtd-testes-adesao">Quantidade de Testes Disponíveis para Adesão</Label>
+                <Label htmlFor="qtd-equipamentos">Qtd Equipamentos</Label>
                 <Input
-                  id="qtd-testes-adesao"
+                  id="qtd-equipamentos"
                   type="number"
-                  value={formData.qtdTestesAdesao}
-                  onChange={(e) => handleInputChange('qtdTestesAdesao', e.target.value)}
-                  placeholder="Ex: 1000"
+                  value={formData.qtdEquipamentos}
+                  onChange={(e) => handleInputChange('qtdEquipamentos', e.target.value)}
                   disabled={phaseApproved}
                 />
               </div>
             </div>
-          </div>
-        </div>
-      )}
 
-      {!phaseApproved && (
-        <div className="flex justify-end pt-4 border-t">
-          <Button 
-            onClick={handleSolicitarAprovacao}
-            disabled={!isFormValid()}
-            className="bg-green-600 hover:bg-green-700"
-          >
-            <Lock className="h-4 w-4 mr-2" />
-            Solicitar Aprovação para Participação
-          </Button>
-        </div>
-      )}
-    </div>
-  );
+            <div className="space-y-2">
+              <Label htmlFor="resumo-edital">Resumo do Edital</Label>
+              <Textarea
+                id="resumo-edital"
+                value={formData.resumoEdital}
+                onChange={(e) => handleInputChange('resumoEdital', e.target.value)}
+                rows={3}
+                disabled={phaseApproved}
+              />
+            </div>
+
+            {/* Novos campos adicionados */}
+            <div className="space-y-4 border-t pt-4">
+              <h5 className="font-medium text-md">Informações da Ata</h5>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="vigencia-ata">Vigência da Ata</Label>
+                  <Input
+                    id="vigencia-ata"
+                    type="date"
+                    value={formData.vigenciaAta}
+                    onChange={(e) => handleInputChange('vigenciaAta', e.target.value)}
+                    disabled={phaseApproved}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="valor-teste">Valor do Teste</Label>
+                  <InputMask
+                    id="valor-teste"
+                    mask="currency"
+                    value={formData.valorTeste}
+                    onChange={(e) => handleInputChange('valorTeste', e.target.value)}
+                    placeholder="R$ 0,00"
+                    disabled={phaseApproved}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="permite-adesao-ata">Permite Adesão?</Label>
+                  <Select 
+                    value={formData.permiteAdesaoAta} 
+                    onValueChange={(value) => handleInputChange('permiteAdesaoAta', value)}
+                    disabled={phaseApproved}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sim">Sim</SelectItem>
+                      <SelectItem value="nao">Não</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="qtd-testes-adesao">Quantidade de Testes Disponíveis para Adesão</Label>
+                  <Input
+                    id="qtd-testes-adesao"
+                    type="number"
+                    value={formData.qtdTestesAdesao}
+                    onChange={(e) => handleInputChange('qtdTestesAdesao', e.target.value)}
+                    placeholder="Ex: 1000"
+                    disabled={phaseApproved}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {!phaseApproved && (
+          <div className="flex justify-end pt-4 border-t">
+            <Button 
+              onClick={handleSolicitarAprovacao}
+              disabled={!isFormValid()}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <Lock className="h-4 w-4 mr-2" />
+              Solicitar Aprovação para Participação
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderDadosGeraisParticipacao = () => (
     <div className="space-y-6">
@@ -600,6 +609,11 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
       </div>
     </div>
   );
+
+  console.log('Renderizando OportunidadeAvancadaForm');
+  console.log('activePhase:', activePhase);
+  console.log('activeTab:', activeTab);
+  console.log('phaseApproved:', phaseApproved);
 
   return (
     <Dialog open onOpenChange={onClose}>
