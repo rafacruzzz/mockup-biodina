@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -466,13 +467,13 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
           {/* MASTER TABS - SIMPLIFIED FOR DEBUGGING */}
           <div className="mb-6 bg-white border-2 border-red-500 p-4">
             <h2 className="text-xl font-bold mb-4 text-red-600">DEBUG: Master Tabs Section</h2>
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 flex-nowrap">
               <button
                 onClick={() => {
                   console.log('Clicking TRIAGEM tab');
                   setActiveMasterTab('triagem');
                 }}
-                className={`px-8 py-4 text-lg font-bold border-2 rounded ${
+                className={`px-8 py-4 text-lg font-bold border-2 rounded whitespace-nowrap ${
                   activeMasterTab === 'triagem'
                     ? 'bg-blue-600 text-white border-blue-600'
                     : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
@@ -485,7 +486,7 @@ const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormPro
                   console.log('Clicking PARTICIPAÇÃO tab');
                   setActiveMasterTab('participacao');
                 }}
-                className={`px-8 py-4 text-lg font-bold border-2 rounded ${
+                className={`px-8 py-4 text-lg font-bold border-2 rounded whitespace-nowrap ${
                   activeMasterTab === 'participacao'
                     ? 'bg-blue-600 text-white border-blue-600'
                     : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
