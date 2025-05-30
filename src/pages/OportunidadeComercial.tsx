@@ -40,7 +40,7 @@ const OportunidadeComercial = () => {
     origem: 'Vendas RJ',
     familiaComercial: 'Radiometer ABL',
     situacao: 'ganha',
-    status: 'Ganha', // Campo restaurado
+    status: 'Ganha',
     resultadoOportunidade: 'ganho',
     tipoAplicacao: 'venda',
     tipoOportunidade: 'pontual',
@@ -52,7 +52,7 @@ const OportunidadeComercial = () => {
     segmento: 'Hospitalar',
     descricao: 'DOS 3 EQUIPAMENTOS ADQUIRIDOS POR (ID) O DE Nº SERIE 754R2826N025 IRA SER INSTALADO NO SARAH-DF.',
     
-    // Campos da Triagem - RESTAURADOS
+    // Campos da Triagem
     nome: 'João Silva Santos',
     cpfCnpj: '123.456.789-00',
     valorNegocio: 782530,
@@ -80,32 +80,12 @@ const OportunidadeComercial = () => {
     aprovacaoRecebida: false
   });
 
-  const [concorrentes, setConcorrentes] = useState([
-    {
-      id: 1,
-      nome: 'Abbott Point of Care',
-      produto: 'i-STAT System',
-      preco: 850000,
-      vantagens: 'Portabilidade, Resultados rápidos',
-      desvantagens: 'Custo por teste elevado',
-      probabilidadeGanho: 30
-    },
-    {
-      id: 2,
-      nome: 'Roche Diagnostics',
-      produto: 'cobas b 123',
-      preco: 920000,
-      vantagens: 'Marca reconhecida, Suporte técnico',
-      desvantagens: 'Preço alto, Manutenção complexa',
-      probabilidadeGanho: 25
-    }
-  ]);
-
   const [produtos, setProdutos] = useState([
     {
-      id: 1,
-      tipo: 'produto',
-      nome: 'ABL800 Flex',
+      id: '1',
+      tipo: 'produto' as const,
+      codigo: 'ABL800',
+      descricao: 'ABL800 Flex',
       quantidade: 3,
       valorUnitario: 250000,
       valorTotal: 750000
@@ -114,9 +94,10 @@ const OportunidadeComercial = () => {
 
   const [servicos, setServicos] = useState([
     {
-      id: 1,
-      tipo: 'servico',
-      nome: 'Instalação e Treinamento',
+      id: '2',
+      tipo: 'servico' as const,
+      codigo: 'INST001',
+      descricao: 'Instalação e Treinamento',
       quantidade: 1,
       valorUnitario: 32530,
       valorTotal: 32530
@@ -137,7 +118,7 @@ const OportunidadeComercial = () => {
     }).format(value);
   };
 
-  // Verificar se pode solicitar aprovação - LÓGICA RESTAURADA
+  // Verificar se pode solicitar aprovação
   const canRequestApproval = () => {
     return formData.nome && 
            formData.cpfCnpj && 
@@ -214,7 +195,7 @@ const OportunidadeComercial = () => {
         </CardContent>
       </Card>
 
-      {/* Dados do Prospect - CAMPOS RESTAURADOS */}
+      {/* Dados do Prospect */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -458,33 +439,22 @@ const OportunidadeComercial = () => {
         </AlertDescription>
       </Alert>
 
-      {/* Produtos e Serviços */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Produtos e Serviços</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ProdutoServicoTable 
-            produtos={produtos}
-            servicos={servicos}
-            onProdutosChange={setProdutos}
-            onServicosChange={setServicos}
-          />
-        </CardContent>
-      </Card>
+      {/* Produtos */}
+      <ProdutoServicoTable 
+        tipo="produto"
+        items={produtos}
+        onItemsChange={setProdutos}
+      />
+
+      {/* Serviços */}
+      <ProdutoServicoTable 
+        tipo="servico"
+        items={servicos}
+        onItemsChange={setServicos}
+      />
 
       {/* Análise de Concorrentes */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Análise de Concorrentes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ConcorrenteTable 
-            concorrentes={concorrentes}
-            onConcorrentesChange={setConcorrentes}
-          />
-        </CardContent>
-      </Card>
+      <ConcorrenteTable />
 
       {/* Observações */}
       <Card>
