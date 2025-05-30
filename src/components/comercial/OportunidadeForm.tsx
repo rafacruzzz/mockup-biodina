@@ -34,6 +34,19 @@ const servicosCadastro = [
   { id: 5, nome: 'Implementação', codigo: 'SRV-IMPL' }
 ];
 
+// Dados mock para concorrentes
+const concorrentes = [
+  { id: 1, nome: 'Concorrente A', produto: 'ABL900 Plus', preco: 85000 },
+  { id: 2, nome: 'Concorrente B', produto: 'GasAnalyzer Pro', preco: 92000 },
+  { id: 3, nome: 'Concorrente C', produto: 'LabSystem X1', preco: 78000 }
+];
+
+// Dados mock para pedidos
+const pedidos = [
+  { id: 1, numero: 'PED-2024-001', tipo: 'Venda', status: 'Em Andamento', valor: 125000, dataEntrega: '2024-04-15' },
+  { id: 2, numero: 'PED-2024-002', tipo: 'Serviço', status: 'Pendente', valor: 15000, dataEntrega: '2024-04-20' }
+];
+
 const OportunidadeForm = ({ oportunidade, onClose, onSave }: OportunidadeFormProps) => {
   const [activeMasterTab, setActiveMasterTab] = useState('triagem');
   const [activeToolTab, setActiveToolTab] = useState('geral');
