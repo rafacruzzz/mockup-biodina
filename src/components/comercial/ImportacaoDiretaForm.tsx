@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -148,8 +149,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
 
   const masterTabs = [
     { id: 'comercial', label: 'COMERCIAL' },
-    { id: 'spi', label: 'SPI' },
-    { id: 'ovc', label: 'OVC' }
+    { id: 'spi', label: 'SPI' }
   ];
 
   // Função para formatar valores em dólar
@@ -1664,7 +1664,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
       );
     }
     
-    // Para outras abas masters (OVC), retornar conteúdo placeholder
+    // Fallback para outras abas (se houver)
     return (
       <div className="flex items-center justify-center h-64 text-gray-500">
         <p>Conteúdo da aba {activeMasterTab.toUpperCase()} em desenvolvimento...</p>
