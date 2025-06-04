@@ -154,6 +154,19 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     { id: 'ddr', label: 'DDR' }
   ];
 
+  // Função para formatar valores em dólar
+  const formatUSD = (value: number): string => {
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+  };
+
+  // Função para converter string formatada para número
+  const parseUSD = (value: string): number => {
+    return parseFloat(value.replace(/,/g, '')) || 0;
+  };
+
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
       ...prev,
@@ -198,11 +211,18 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
       if (item.id === id) {
         const itemAtualizado = { ...item, [field]: value };
         
+        // Calcular "Total das Qtdes" automaticamente
+        if (field === 'qtde' || field === 'qtdePendente') {
+          const qtde = parseFloat(itemAtualizado.qtde) || 0;
+          const qtdePendente = parseFloat(itemAtualizado.qtdePendente) || 0;
+          itemAtualizado.totalOrdens = (qtde + qtdePendente).toString();
+        }
+        
         // Calcular preço total automaticamente
         if (field === 'qtde' || field === 'precoUnitUsd') {
           const qtde = parseFloat(itemAtualizado.qtde) || 0;
-          const precoUnit = parseFloat(itemAtualizado.precoUnitUsd) || 0;
-          itemAtualizado.precoTotalUsd = (qtde * precoUnit).toFixed(2);
+          const precoUnit = parseUSD(itemAtualizado.precoUnitUsd) || 0;
+          itemAtualizado.precoTotalUsd = formatUSD(qtde * precoUnit);
         }
         
         return itemAtualizado;
@@ -214,7 +234,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
 
   const calcularSubtotal = () => {
     return formData.spiMercadorias.reduce((total: number, item: any) => {
-      return total + (parseFloat(item.precoTotalUsd) || 0);
+      return total + (parseUSD(item.precoTotalUsd) || 0);
     }, 0);
   };
 
@@ -306,7 +326,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
       
       pdf.setFont(undefined, 'normal');
       formData.spiMercadorias.forEach((item: any, index: number) => {
-        pdf.text(`${index + 1}. ${item.mercadoria} - Qtde: ${item.qtde} - Preço Unit.: USD ${item.precoUnitUsd} - Total: USD ${item.precoTotalUsd}`, 20, yPosition);
+        pdf.text(`${index + 1}. ${item.mercadoria} - Qtde: ${item.qtde} - Preço Unit.: USD ${formatUSD(parseUSD(item.precoUnitUsd))} - Total: USD ${item.precoTotalUsd}`, 20, yPosition);
         yPosition += 7;
       });
       yPosition += 10;
@@ -318,12 +338,12 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     yPosition += 10;
     
     pdf.setFont(undefined, 'normal');
-    pdf.text(`Subtotal: USD ${calcularSubtotal().toFixed(2)}`, 20, yPosition);
+    pdf.text(`Subtotal: USD ${formatUSD(calcularSubtotal())}`, 20, yPosition);
     yPosition += 7;
-    pdf.text(`Packing: USD ${calcularPacking().toFixed(2)}`, 20, yPosition);
+    pdf.text(`Packing: USD ${formatUSD(calcularPacking())}`, 20, yPosition);
     yPosition += 7;
     pdf.setFont(undefined, 'bold');
-    pdf.text(`TOTAL: USD ${calcularTotal().toFixed(2)}`, 20, yPosition);
+    pdf.text(`TOTAL: USD ${formatUSD(calcularTotal())}`, 20, yPosition);
     yPosition += 15;
 
     // Observações
@@ -396,6 +416,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiCliente}
                   onChange={(e) => handleInputChange('spiCliente', e.target.value)}
                   placeholder="Nome do cliente"
+                  className="w-full"
                 />
               </div>
               
@@ -406,6 +427,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiDadosProforma}
                   onChange={(e) => handleInputChange('spiDadosProforma', e.target.value)}
                   placeholder="Dados da proforma"
+                  className="w-full"
                 />
               </div>
               
@@ -416,6 +438,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiEmNomeDe}
                   onChange={(e) => handleInputChange('spiEmNomeDe', e.target.value)}
                   placeholder="Em nome de"
+                  className="w-full"
                 />
               </div>
               
@@ -426,6 +449,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiCnpj}
                   onChange={(e) => handleInputChange('spiCnpj', e.target.value)}
                   placeholder="XX.XXX.XXX/XXXX-XX"
+                  className="w-full"
                 />
               </div>
               
@@ -436,6 +460,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiEndereco}
                   onChange={(e) => handleInputChange('spiEndereco', e.target.value)}
                   placeholder="Endereço completo"
+                  className="w-full"
                 />
               </div>
               
@@ -446,6 +471,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiInscricaoEstadual}
                   onChange={(e) => handleInputChange('spiInscricaoEstadual', e.target.value)}
                   placeholder="Inscrição estadual"
+                  className="w-full"
                 />
               </div>
             </div>
@@ -463,6 +489,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiNumero}
                   onChange={(e) => handleInputChange('spiNumero', e.target.value)}
                   placeholder="Gerado automaticamente"
+                  className="w-full"
                 />
               </div>
               
@@ -473,6 +500,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   type="date"
                   value={formData.spiData}
                   onChange={(e) => handleInputChange('spiData', e.target.value)}
+                  className="w-full"
                 />
               </div>
               
@@ -483,6 +511,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiProposta}
                   onChange={(e) => handleInputChange('spiProposta', e.target.value)}
                   placeholder="Número da proposta"
+                  className="w-full"
                 />
               </div>
               
@@ -493,6 +522,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiEquipamento}
                   onChange={(e) => handleInputChange('spiEquipamento', e.target.value)}
                   placeholder="Nome do equipamento"
+                  className="w-full"
                 />
               </div>
               
@@ -503,6 +533,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiModelo}
                   onChange={(e) => handleInputChange('spiModelo', e.target.value)}
                   placeholder="Modelo do equipamento"
+                  className="w-full"
                 />
               </div>
               
@@ -514,6 +545,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiPacking}
                   onChange={(e) => handleInputChange('spiPacking', e.target.value)}
                   placeholder="0"
+                  className="w-full"
                 />
               </div>
             </div>
@@ -531,6 +563,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiFabricante}
                   onChange={(e) => handleInputChange('spiFabricante', e.target.value)}
                   placeholder="Nome do fabricante"
+                  className="w-full"
                 />
               </div>
               
@@ -541,6 +574,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                   value={formData.spiFormaPagamento}
                   onChange={(e) => handleInputChange('spiFormaPagamento', e.target.value)}
                   placeholder="CAD"
+                  className="w-full"
                 />
               </div>
               
@@ -564,6 +598,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                         value={formData.spiPercentualComissao}
                         onChange={(e) => handleInputChange('spiPercentualComissao', e.target.value)}
                         placeholder="0"
+                        className="w-full"
                       />
                     </div>
                     <div>
@@ -573,6 +608,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                         value={formData.spiRepresentante}
                         onChange={(e) => handleInputChange('spiRepresentante', e.target.value)}
                         placeholder="Nome do representante"
+                        className="w-full"
                       />
                     </div>
                   </div>
@@ -594,19 +630,19 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Item</TableHead>
-                      <TableHead>Mercadoria</TableHead>
-                      <TableHead>Equip</TableHead>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Unidade/QX</TableHead>
-                      <TableHead>Qtde</TableHead>
-                      <TableHead>Qtde Pendente</TableHead>
-                      <TableHead>Total das Ordens</TableHead>
-                      <TableHead>PL U</TableHead>
-                      <TableHead>PL T</TableHead>
-                      <TableHead>Preço Unit USD</TableHead>
-                      <TableHead>Preço Total USD</TableHead>
-                      <TableHead>Ações</TableHead>
+                      <TableHead className="min-w-[50px]">Item</TableHead>
+                      <TableHead className="min-w-[150px]">Mercadoria</TableHead>
+                      <TableHead className="min-w-[80px]">Equip</TableHead>
+                      <TableHead className="min-w-[80px]">Código</TableHead>
+                      <TableHead className="min-w-[100px]">Unidade/QX</TableHead>
+                      <TableHead className="min-w-[80px]">Qtde</TableHead>
+                      <TableHead className="min-w-[100px]">Qtde Pendente</TableHead>
+                      <TableHead className="min-w-[120px]">Total das Qtdes</TableHead>
+                      <TableHead className="min-w-[80px]">PL U</TableHead>
+                      <TableHead className="min-w-[80px]">PL T</TableHead>
+                      <TableHead className="min-w-[120px]">Preço Unit USD</TableHead>
+                      <TableHead className="min-w-[120px]">Preço Total USD</TableHead>
+                      <TableHead className="min-w-[80px]">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -618,6 +654,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                             value={item.mercadoria}
                             onChange={(e) => updateMercadoria(item.id, 'mercadoria', e.target.value)}
                             placeholder="Buscar produto..."
+                            className="min-w-[150px]"
                           />
                         </TableCell>
                         <TableCell>
@@ -625,6 +662,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                             value={item.equip}
                             onChange={(e) => updateMercadoria(item.id, 'equip', e.target.value)}
                             placeholder="Equip"
+                            className="min-w-[80px]"
                           />
                         </TableCell>
                         <TableCell>
@@ -632,6 +670,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                             value={item.codigo}
                             onChange={(e) => updateMercadoria(item.id, 'codigo', e.target.value)}
                             placeholder="Código"
+                            className="min-w-[80px]"
                           />
                         </TableCell>
                         <TableCell>
@@ -639,6 +678,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                             value={item.unidade}
                             onChange={(e) => updateMercadoria(item.id, 'unidade', e.target.value)}
                             placeholder="UN"
+                            className="min-w-[100px]"
                           />
                         </TableCell>
                         <TableCell>
@@ -647,6 +687,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                             value={item.qtde}
                             onChange={(e) => updateMercadoria(item.id, 'qtde', e.target.value)}
                             placeholder="0"
+                            className="min-w-[80px]"
                           />
                         </TableCell>
                         <TableCell>
@@ -655,14 +696,14 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                             value={item.qtdePendente}
                             onChange={(e) => updateMercadoria(item.id, 'qtdePendente', e.target.value)}
                             placeholder="0"
+                            className="min-w-[100px]"
                           />
                         </TableCell>
                         <TableCell>
                           <Input
-                            type="number"
                             value={item.totalOrdens}
-                            onChange={(e) => updateMercadoria(item.id, 'totalOrdens', e.target.value)}
-                            placeholder="0"
+                            readOnly
+                            className="bg-gray-100 min-w-[120px]"
                           />
                         </TableCell>
                         <TableCell>
@@ -670,6 +711,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                             value={item.plU}
                             onChange={(e) => updateMercadoria(item.id, 'plU', e.target.value)}
                             placeholder="PL U"
+                            className="min-w-[80px]"
                           />
                         </TableCell>
                         <TableCell>
@@ -677,24 +719,26 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                             value={item.plT}
                             onChange={(e) => updateMercadoria(item.id, 'plT', e.target.value)}
                             placeholder="PL T"
+                            className="min-w-[80px]"
                           />
                         </TableCell>
                         <TableCell>
                           <Input
-                            type="number"
-                            step="0.01"
                             value={item.precoUnitUsd}
-                            onChange={(e) => updateMercadoria(item.id, 'precoUnitUsd', e.target.value)}
+                            onChange={(e) => {
+                              const numValue = parseUSD(e.target.value);
+                              const formattedValue = formatUSD(numValue);
+                              updateMercadoria(item.id, 'precoUnitUsd', formattedValue);
+                            }}
                             placeholder="0.00"
+                            className="min-w-[120px]"
                           />
                         </TableCell>
                         <TableCell>
                           <Input
-                            type="number"
-                            step="0.01"
                             value={item.precoTotalUsd}
                             readOnly
-                            className="bg-gray-100"
+                            className="bg-gray-100 min-w-[120px]"
                           />
                         </TableCell>
                         <TableCell>
@@ -702,6 +746,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                             onClick={() => removeMercadoria(item.id)}
                             size="sm"
                             variant="destructive"
+                            className="min-w-[80px]"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -722,7 +767,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
               <div>
                 <Label>Subtotal (USD)</Label>
                 <Input
-                  value={calcularSubtotal().toFixed(2)}
+                  value={formatUSD(calcularSubtotal())}
                   readOnly
                   className="bg-gray-100 font-semibold"
                 />
@@ -731,7 +776,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
               <div>
                 <Label>Packing (USD)</Label>
                 <Input
-                  value={calcularPacking().toFixed(2)}
+                  value={formatUSD(calcularPacking())}
                   readOnly
                   className="bg-gray-100 font-semibold"
                 />
@@ -740,7 +785,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
               <div>
                 <Label>TOTAL (USD)</Label>
                 <Input
-                  value={calcularTotal().toFixed(2)}
+                  value={formatUSD(calcularTotal())}
                   readOnly
                   className="bg-gray-100 font-bold text-green-600"
                 />
@@ -755,6 +800,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                 onChange={(e) => handleInputChange('spiObservacoes', e.target.value)}
                 placeholder="Proforma solicitada pelo cliente dia [data] as [hora], verificar o desconto de [%] na proforma geral e conforme e-mail [data] as [hora]."
                 rows={4}
+                className="w-full"
               />
             </div>
 
@@ -779,6 +825,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                     value={formData.spiPagamentoForma}
                     onChange={(e) => handleInputChange('spiPagamentoForma', e.target.value)}
                     placeholder="Forma de pagamento"
+                    className="w-full"
                   />
                 </div>
                 
@@ -789,6 +836,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                     value={formData.spiPagamentoPrazo}
                     onChange={(e) => handleInputChange('spiPagamentoPrazo', e.target.value)}
                     placeholder="Prazo de pagamento"
+                    className="w-full"
                   />
                 </div>
                 
@@ -799,6 +847,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                     value={formData.spiEntregaPrazo}
                     onChange={(e) => handleInputChange('spiEntregaPrazo', e.target.value)}
                     placeholder="Prazo de entrega"
+                    className="w-full"
                   />
                 </div>
               </div>
@@ -847,6 +896,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                       value={formData.spiFormaVendaOutros}
                       onChange={(e) => handleInputChange('spiFormaVendaOutros', e.target.value)}
                       placeholder="Especifique outros"
+                      className="w-full"
                     />
                   </div>
                 )}
@@ -860,6 +910,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                     value={formData.spiValor}
                     onChange={(e) => handleInputChange('spiValor', e.target.value)}
                     placeholder="R$ 0,00"
+                    className="w-full"
                   />
                 </div>
                 
@@ -870,6 +921,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                     type="date"
                     value={formData.spiPrazo}
                     onChange={(e) => handleInputChange('spiPrazo', e.target.value)}
+                    className="w-full"
                   />
                 </div>
                 
@@ -880,6 +932,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                     type="date"
                     value={formData.spiDataConfirmacao}
                     onChange={(e) => handleInputChange('spiDataConfirmacao', e.target.value)}
+                    className="w-full"
                   />
                 </div>
               </div>
@@ -1669,7 +1722,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                 className="bg-red-600 text-white hover:bg-red-700"
               >
                 <FileText className="h-4 w-4 mr-2" />
-                Baixar PDF
+                Baixar SPI
               </Button>
             )}
             <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
