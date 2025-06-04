@@ -22,8 +22,10 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
   PieChart, Pie, Cell, ResponsiveContainer 
 } from 'recharts';
+import { useNavigate } from 'react-router-dom';
 
 const Comercial = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('funil');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
@@ -283,8 +285,7 @@ const Comercial = () => {
       setEditingOportunidade(undefined);
       setShowContratacaoSimplesForm(true);
     } else if (tipo === 'importacao_direta') {
-      setEditingOportunidade(undefined);
-      setShowImportacaoDiretaForm(true);
+      navigate('/importacao-direta');
     }
   };
 
