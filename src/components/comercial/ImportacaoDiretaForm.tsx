@@ -12,9 +12,11 @@ import { Upload } from "lucide-react";
 interface ImportacaoDiretaFormProps {
   isOpen: boolean;
   onClose: () => void;
+  onSave?: (data: any) => void;
+  oportunidade?: any;
 }
 
-const ImportacaoDiretaForm: React.FC<ImportacaoDiretaFormProps> = ({ isOpen, onClose }) => {
+const ImportacaoDiretaForm: React.FC<ImportacaoDiretaFormProps> = ({ isOpen, onClose, onSave, oportunidade }) => {
   const [showOvcTable, setShowOvcTable] = useState(false);
 
   // Dados de exemplo para a tabela OVC
