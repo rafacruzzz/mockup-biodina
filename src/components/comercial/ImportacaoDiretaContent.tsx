@@ -83,6 +83,27 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
     statusDDR: 'pendente'
   });
 
+  // Estados para produtos OVC
+  const [produtosOVC, setProdutosOVC] = useState([
+    {
+      id: 1,
+      code: '',
+      qty: 0,
+      priceListUnit: 0,
+      priceListTotal: 0,
+      customerDiscountPercent: 0,
+      customerDiscountUnit: 0,
+      customerDiscountTotal: 0,
+      subTotalUnit: 0,
+      subTotalTotal: 0,
+      handlingCharge: 0,
+      total: 0,
+      comissionPercent: 25,
+      comissionValue: 0,
+      netRadiometer: 0
+    }
+  ]);
+
   // Estados para produtos
   const [produtos, setProdutos] = useState([
     {
@@ -125,6 +146,8 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(value);
@@ -145,6 +168,78 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
       ...prev,
       [field]: value
     }));
+  };
+
+  // Função para calcular automaticamente os valores da OVC
+  const calcularValoresOVC = (produto: any) => {
+    const priceListTotal = produto.qty * produto.priceListUnit;
+    const customerDiscountUnit = produto.priceListUnit * (produto.customerDiscountPercent / 100);
+    const customerDiscountTotal = priceListTotal * (produto.customerDiscountPercent / 100);
+    const subTotalUnit = produto.priceListUnit - customerDiscountUnit;
+    const subTotalTotal = priceListTotal - customerDiscountTotal;
+    const handlingCharge = subTotalTotal * 0.03; // 3%
+    const total = subTotalTotal + handlingCharge;
+    const comissionValue = total * (produto.comissionPercent / 100);
+    const netRadiometer = total - comissionValue;
+
+    return {
+      ...produto,
+      priceListTotal,
+      customerDiscountUnit,
+      customerDiscountTotal,
+      subTotalUnit,
+      subTotalTotal,
+      handlingCharge,
+      total,
+      comissionValue,
+      netRadiometer
+    };
+  };
+
+  const handleProdutoOVCChange = (index: number, field: string, value: any) => {
+    setProdutosOVC(prev => {
+      const newProdutos = [...prev];
+      newProdutos[index] = {
+        ...newProdutos[index],
+        [field]: value
+      };
+      
+      // Recalcular todos os valores automaticamente
+      newProdutos[index] = calcularValoresOVC(newProdutos[index]);
+      
+      return newProdutos;
+    });
+  };
+
+  const adicionarProdutoOVC = () => {
+    setProdutosOVC(prev => [...prev, {
+      id: Date.now(),
+      code: '',
+      qty: 0,
+      priceListUnit: 0,
+      priceListTotal: 0,
+      customerDiscountPercent: 0,
+      customerDiscountUnit: 0,
+      customerDiscountTotal: 0,
+      subTotalUnit: 0,
+      subTotalTotal: 0,
+      handlingCharge: 0,
+      total: 0,
+      comissionPercent: 25,
+      comissionValue: 0,
+      netRadiometer: 0
+    }]);
+  };
+
+  const removerProdutoOVC = (index: number) => {
+    if (produtosOVC.length > 1) {
+      setProdutosOVC(prev => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  // Cálculos de totais para OVC
+  const calcularTotalOVC = (campo: string) => {
+    return produtosOVC.reduce((sum, produto) => sum + (produto[campo] || 0), 0);
   };
 
   const handleProdutoChange = (index: number, field: string, value: any) => {
@@ -269,8 +364,8 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
         produto.quantidade.toString(),
         produto.quantidadePendente.toString(),
         produto.totalQuantidades.toString(),
-        formatCurrency(produto.precoUnitUSD),
-        formatCurrency(produto.precoTotalUSD)
+        formatCurrency(produto.precoUnitUSD).replace('$', ''),
+        formatCurrency(produto.precoTotalUSD).replace('$', '')
       ];
       
       values.forEach((value) => {
@@ -285,9 +380,9 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
     doc.setFontSize(12);
     const subtotal = calcularSubtotal();
     const total = calcularTotal();
-    doc.text(`Subtotal (USD): ${formatCurrency(subtotal)}`, 20, yPosition);
-    doc.text(`Packing (USD): ${formatCurrency(formData.packing)}`, 20, yPosition + 10);
-    doc.text(`TOTAL (USD): ${formatCurrency(total)}`, 20, yPosition + 20);
+    doc.text(`Subtotal (USD): ${formatCurrency(subtotal).replace('$', '')}`, 20, yPosition);
+    doc.text(`Packing (USD): ${formatCurrency(formData.packing).replace('$', '')}`, 20, yPosition + 10);
+    doc.text(`TOTAL (USD): ${formatCurrency(total).replace('$', '')}`, 20, yPosition + 20);
     
     // Informações adicionais
     yPosition += 40;
@@ -311,6 +406,7 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
     const dadosCompletos = {
       ...formData,
       produtos,
+      produtosOVC,
       concorrentes,
       anexos,
       negociacoes,
@@ -881,18 +977,96 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
                       <TableBody>
                         {produtos.map((produto, index) => (
                           <TableRow key={produto.id}>
-                            <TableCell className="p-1 text-center text-xs">{produto.codigo}</TableCell>
-                            <TableCell className="p-1 text-center text-xs">{produto.descricao}</TableCell>
-                            <TableCell className="p-1 text-center text-xs">{produto.modelo}</TableCell>
-                            <TableCell className="p-1 text-center text-xs">{produto.fabricante}</TableCell>
-                            <TableCell className="p-1 text-center text-xs">{produto.quantidade}</TableCell>
-                            <TableCell className="p-1 text-center text-xs">{produto.quantidadePendente}</TableCell>
-                            <TableCell className="p-1 text-center text-xs bg-blue-50">{produto.totalQuantidades}</TableCell>
-                            <TableCell className="p-1 text-center text-xs">{formatCurrencyInput(produto.precoUnitUSD.toString())}</TableCell>
+                            <TableCell className="p-1">
+                              <Input
+                                value={produto.codigo}
+                                onChange={(e) => handleProdutoChange(index, 'codigo', e.target.value)}
+                                placeholder="Código"
+                                className="h-8 text-xs text-center border-0"
+                              />
+                            </TableCell>
+                            <TableCell className="p-1">
+                              <Input
+                                value={produto.descricao}
+                                onChange={(e) => handleProdutoChange(index, 'descricao', e.target.value)}
+                                placeholder="Descrição"
+                                className="h-8 text-xs"
+                              />
+                            </TableCell>
+                            <TableCell className="p-1">
+                              <Input
+                                value={produto.modelo}
+                                onChange={(e) => handleProdutoChange(index, 'modelo', e.target.value)}
+                                placeholder="Modelo"
+                                className="h-8 text-xs"
+                              />
+                            </TableCell>
+                            <TableCell className="p-1">
+                              <Input
+                                value={produto.fabricante}
+                                onChange={(e) => handleProdutoChange(index, 'fabricante', e.target.value)}
+                                placeholder="Fabricante"
+                                className="h-8 text-xs"
+                              />
+                            </TableCell>
+                            <TableCell className="p-1">
+                              <Input
+                                type="number"
+                                value={produto.quantidade}
+                                onChange={(e) => handleProdutoChange(index, 'quantidade', parseInt(e.target.value) || 0)}
+                                placeholder="0"
+                                className="h-8 text-xs text-center border-0"
+                              />
+                            </TableCell>
+                            <TableCell className="p-1">
+                              <Input
+                                type="number"
+                                value={produto.quantidadePendente}
+                                onChange={(e) => handleProdutoChange(index, 'quantidadePendente', parseInt(e.target.value) || 0)}
+                                placeholder="0"
+                                className="h-8 text-xs text-center border-0"
+                              />
+                            </TableCell>
+                            <TableCell className="p-1 text-center text-xs bg-blue-50 font-medium">{produto.totalQuantidades}</TableCell>
+                            <TableCell className="p-1">
+                              <Input
+                                type="text"
+                                value={formatCurrencyInput(produto.precoUnitUSD.toString())}
+                                onChange={(e) => handleProdutoChange(index, 'precoUnitUSD', parseFloat(e.target.value.replace(/[^0-9.-]/g, '')) || 0)}
+                                onBlur={(e) => {
+                                  const value = parseFloat(e.target.value.replace(/[^0-9.-]/g, '')) || 0;
+                                  handleProdutoChange(index, 'precoUnitUSD', value);
+                                }}
+                                placeholder="0.00"
+                                className="h-8 text-xs text-right border-0"
+                              />
+                            </TableCell>
                             <TableCell className="p-1 text-center text-xs bg-green-50 font-medium">{formatCurrency(produto.precoTotalUSD)}</TableCell>
-                            <TableCell className="p-1 text-center text-xs">{produto.peso}</TableCell>
-                            <TableCell className="p-1 text-center text-xs">{produto.dimensoes}</TableCell>
-                            <TableCell className="p-1 text-center text-xs">{produto.observacoes}</TableCell>
+                            <TableCell className="p-1">
+                              <Input
+                                type="number"
+                                value={produto.peso}
+                                onChange={(e) => handleProdutoChange(index, 'peso', parseFloat(e.target.value) || 0)}
+                                placeholder="0"
+                                className="h-8 text-xs text-center border-0"
+                              />
+                            </TableCell>
+                            <TableCell className="p-1">
+                              <Input
+                                value={produto.dimensoes}
+                                onChange={(e) => handleProdutoChange(index, 'dimensoes', e.target.value)}
+                                placeholder="Dimensões"
+                                className="h-8 text-xs"
+                              />
+                            </TableCell>
+                            <TableCell className="p-1">
+                              <Input
+                                value={produto.observacoes}
+                                onChange={(e) => handleProdutoChange(index, 'observacoes', e.target.value)}
+                                placeholder="Observações"
+                                className="h-8 text-xs"
+                              />
+                            </TableCell>
                             <TableCell className="p-1">
                               <Button
                                 variant="outline"
@@ -1060,7 +1234,7 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
                                 <TableCell className="p-1 text-right text-xs bg-green-50 font-medium">{formatCurrency(produto.subTotal)}</TableCell>
                                 <TableCell className="p-1 text-right text-xs">{formatCurrency(produto.handlingCharge)}</TableCell>
                                 <TableCell className="p-1 text-right text-xs bg-yellow-50 font-medium">{formatCurrency(produto.total)}</TableCell>
-                                <TableCell className="p-1 text-right text-xs">{formatCurrency(produto.comission)}</TableCell>
+                                <TableCell className="p-1 text-right text-xs">25%</TableCell>
                                 <TableCell className="p-1 text-right text-xs bg-gray-100 font-medium">{formatCurrency(produto.netRadiometer)}</TableCell>
                               </TableRow>
                             ))}
@@ -1091,17 +1265,6 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
                           <div className="text-lg font-bold text-gray-900">{formatCurrency(produtos.reduce((sum, p) => sum + p.netRadiometer, 0))}</div>
                         </div>
                       </div>
-
-                      {/* Observações OVC */}
-                      <div>
-                        <Label htmlFor="observacoesOVC" className="text-sm">Observações OVC</Label>
-                        <Textarea
-                          id="observacoesOVC"
-                          placeholder="Observações específicas para a OVC..."
-                          rows={3}
-                          className="text-sm"
-                        />
-                      </div>
                     </CardContent>
                   </Card>
                 )}
@@ -1110,14 +1273,16 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
           </div>
         </TabsContent>
 
-        {/* Outras abas */}
+        {/* Aba OVC - NOVA IMPLEMENTAÇÃO COM LAYOUT EXATO DO EXCEL */}
         <TabsContent value="ovc" className="space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>OVC</CardTitle>
+            <CardHeader className="bg-orange-50 border-b border-orange-200">
+              <CardTitle className="text-xl text-orange-800">OVC - HSVP-R1 (2ºB - OVC Importação)</CardTitle>
+              <div className="text-sm text-orange-600 font-medium">ESTIMATED DELIVERY: 45-60 days ARO</div>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CardContent className="p-6">
+              {/* Dados básicos da OVC */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <div>
                   <Label htmlFor="numeroOVC">Número OVC</Label>
                   <Input
@@ -1158,33 +1323,191 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <Label htmlFor="seguro">Seguro</Label>
-                  <Select value={formData.seguro ? 'sim' : 'nao'} onValueChange={(value) => handleInputChange('seguro', value === 'sim')}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="sim">Sim</SelectItem>
-                      <SelectItem value="nao">Não</SelectItem>
-                    </SelectContent>
-                  </Select>
+              </div>
+
+              {/* Botão para adicionar produto */}
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Produtos OVC</h3>
+                <Button onClick={adicionarProdutoOVC} variant="outline" size="sm">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar Produto
+                </Button>
+              </div>
+
+              {/* Tabela OVC com layout exato do Excel */}
+              <div className="overflow-x-auto border rounded-lg mb-6">
+                <Table>
+                  <TableHeader>
+                    {/* Primeira linha do cabeçalho com colunas principais */}
+                    <TableRow className="bg-gray-100">
+                      <TableHead rowSpan={2} className="text-center border-r border-gray-300 p-2 min-w-[100px]">CODE</TableHead>
+                      <TableHead rowSpan={2} className="text-center border-r border-gray-300 p-2 min-w-[60px]">Qty</TableHead>
+                      <TableHead colSpan={2} className="text-center border-r border-gray-300 p-2 bg-green-100">Price List</TableHead>
+                      <TableHead colSpan={3} className="text-center border-r border-gray-300 p-2 bg-green-100">Customer Discount</TableHead>
+                      <TableHead colSpan={2} className="text-center border-r border-gray-300 p-2 bg-green-100">Sub total</TableHead>
+                      <TableHead rowSpan={2} className="text-center border-r border-gray-300 p-2 bg-yellow-100 min-w-[100px]">Handling charge* (3%)</TableHead>
+                      <TableHead rowSpan={2} className="text-center border-r border-gray-300 p-2 bg-green-200 min-w-[80px]">Total</TableHead>
+                      <TableHead rowSpan={2} className="text-center border-r border-gray-300 p-2 bg-pink-100 min-w-[80px]">Comission %</TableHead>
+                      <TableHead rowSpan={2} className="text-center border-r border-gray-300 p-2 bg-pink-100 min-w-[100px]">Comission value</TableHead>
+                      <TableHead rowSpan={2} className="text-center border-r border-gray-300 p-2 bg-yellow-100 min-w-[100px]">Net Radiometer</TableHead>
+                      <TableHead rowSpan={2} className="text-center p-2 w-[50px]">Ações</TableHead>
+                    </TableRow>
+                    {/* Segunda linha do cabeçalho com subcolunas */}
+                    <TableRow className="bg-gray-50">
+                      <TableHead className="text-center border-r border-gray-300 p-1 text-xs bg-green-100">Unit</TableHead>
+                      <TableHead className="text-center border-r border-gray-300 p-1 text-xs bg-green-100">Total</TableHead>
+                      <TableHead className="text-center border-r border-gray-300 p-1 text-xs bg-green-100">%</TableHead>
+                      <TableHead className="text-center border-r border-gray-300 p-1 text-xs bg-green-100">Unit</TableHead>
+                      <TableHead className="text-center border-r border-gray-300 p-1 text-xs bg-green-100">Total</TableHead>
+                      <TableHead className="text-center border-r border-gray-300 p-1 text-xs bg-green-100">Unit</TableHead>
+                      <TableHead className="text-center border-r border-gray-300 p-1 text-xs bg-green-100">Total</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {produtosOVC.map((produto, index) => (
+                      <TableRow key={produto.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                        <TableCell className="p-1 border-r border-gray-300">
+                          <Input
+                            value={produto.code}
+                            onChange={(e) => handleProdutoOVCChange(index, 'code', e.target.value)}
+                            placeholder="946-005"
+                            className="h-8 text-xs text-center border-0"
+                          />
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300">
+                          <Input
+                            type="number"
+                            value={produto.qty}
+                            onChange={(e) => handleProdutoOVCChange(index, 'qty', parseInt(e.target.value) || 0)}
+                            placeholder="0"
+                            className="h-8 text-xs text-center border-0"
+                          />
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300 bg-blue-50">
+                          <Input
+                            type="text"
+                            value={formatCurrencyInput(produto.priceListUnit.toString())}
+                            onChange={(e) => handleProdutoOVCChange(index, 'priceListUnit', parseFloat(e.target.value.replace(/[^0-9.-]/g, '')) || 0)}
+                            placeholder="0.00"
+                            className="h-8 text-xs text-right border-0 bg-transparent"
+                          />
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300 bg-blue-50 text-right text-xs font-medium">
+                          {formatCurrency(produto.priceListTotal)}
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300">
+                          <Input
+                            type="number"
+                            value={produto.customerDiscountPercent}
+                            onChange={(e) => handleProdutoOVCChange(index, 'customerDiscountPercent', parseFloat(e.target.value) || 0)}
+                            placeholder="0"
+                            className="h-8 text-xs text-center border-0"
+                          />
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300 text-right text-xs">
+                          {formatCurrency(produto.customerDiscountUnit)}
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300 text-right text-xs">
+                          {formatCurrency(produto.customerDiscountTotal)}
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300 bg-green-50 text-right text-xs">
+                          {formatCurrency(produto.subTotalUnit)}
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300 bg-green-50 text-right text-xs font-medium">
+                          {formatCurrency(produto.subTotalTotal)}
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300 text-right text-xs">
+                          {formatCurrency(produto.handlingCharge)}
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300 bg-yellow-50 text-right text-xs font-medium">
+                          {formatCurrency(produto.total)}
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300 text-center text-xs">
+                          25%
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300 text-right text-xs">
+                          {formatCurrency(produto.comissionValue)}
+                        </TableCell>
+                        <TableCell className="p-1 border-r border-gray-300 bg-gray-100 text-right text-xs font-medium">
+                          {formatCurrency(produto.netRadiometer)}
+                        </TableCell>
+                        <TableCell className="p-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => removerProdutoOVC(index)}
+                            disabled={produtosOVC.length === 1}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {/* Linha de totais */}
+                    <TableRow className="bg-green-100 font-bold">
+                      <TableCell className="p-2 text-center border-r border-gray-300">TOTAL:</TableCell>
+                      <TableCell className="p-2 border-r border-gray-300"></TableCell>
+                      <TableCell className="p-2 border-r border-gray-300"></TableCell>
+                      <TableCell className="p-2 text-right border-r border-gray-300">
+                        {formatCurrency(calcularTotalOVC('priceListTotal'))}
+                      </TableCell>
+                      <TableCell className="p-2 border-r border-gray-300"></TableCell>
+                      <TableCell className="p-2 text-right border-r border-gray-300">
+                        {formatCurrency(calcularTotalOVC('customerDiscountTotal'))}
+                      </TableCell>
+                      <TableCell className="p-2 border-r border-gray-300"></TableCell>
+                      <TableCell className="p-2 border-r border-gray-300"></TableCell>
+                      <TableCell className="p-2 text-right border-r border-gray-300">
+                        {formatCurrency(calcularTotalOVC('subTotalTotal'))}
+                      </TableCell>
+                      <TableCell className="p-2 text-right border-r border-gray-300">
+                        {formatCurrency(calcularTotalOVC('handlingCharge'))}
+                      </TableCell>
+                      <TableCell className="p-2 text-right border-r border-gray-300">
+                        {formatCurrency(calcularTotalOVC('total'))}
+                      </TableCell>
+                      <TableCell className="p-2 border-r border-gray-300"></TableCell>
+                      <TableCell className="p-2 text-right border-r border-gray-300">
+                        {formatCurrency(calcularTotalOVC('comissionValue'))}
+                      </TableCell>
+                      <TableCell className="p-2 text-right border-r border-gray-300">
+                        {formatCurrency(calcularTotalOVC('netRadiometer'))}
+                      </TableCell>
+                      <TableCell className="p-2"></TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Resumo de totais com cores do Excel */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <div className="text-sm font-medium text-blue-800 mb-1">Price List Total</div>
+                  <div className="text-xl font-bold text-blue-900">{formatCurrency(calcularTotalOVC('priceListTotal'))}</div>
                 </div>
-                <div>
-                  <Label htmlFor="valorSeguro">Valor do Seguro</Label>
-                  <Input
-                    id="valorSeguro"
-                    type="number"
-                    value={formData.valorSeguro}
-                    onChange={(e) => handleInputChange('valorSeguro', parseFloat(e.target.value) || 0)}
-                    placeholder="0.00"
-                  />
+                <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                  <div className="text-sm font-medium text-green-800 mb-1">Sub Total (after discount)</div>
+                  <div className="text-xl font-bold text-green-900">{formatCurrency(calcularTotalOVC('subTotalTotal'))}</div>
+                </div>
+                <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                  <div className="text-sm font-medium text-yellow-800 mb-1">Total (with handling)</div>
+                  <div className="text-xl font-bold text-yellow-900">{formatCurrency(calcularTotalOVC('total'))}</div>
+                </div>
+                <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                  <div className="text-sm font-medium text-red-800 mb-1">Total Comission</div>
+                  <div className="text-xl font-bold text-red-900">{formatCurrency(calcularTotalOVC('comissionValue'))}</div>
+                </div>
+                <div className="bg-gray-100 p-4 rounded-lg border border-gray-300">
+                  <div className="text-sm font-medium text-gray-800 mb-1">Net Radiometer</div>
+                  <div className="text-xl font-bold text-gray-900">{formatCurrency(calcularTotalOVC('netRadiometer'))}</div>
                 </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
+        {/* Outras abas */}
         <TabsContent value="nod-so" className="space-y-4">
           <Card>
             <CardHeader>
