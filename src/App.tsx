@@ -11,7 +11,6 @@ import BIGeral from "./pages/BIGeral";
 import Cadastro from "./pages/Cadastro";
 import Comercial from "./pages/Comercial";
 import Financeiro from "./pages/Financeiro";
-import ImportacaoDireta from "./pages/ImportacaoDireta";
 import NotFound from "./pages/NotFound";
 
 // Create QueryClient instance outside of component to avoid recreation
@@ -39,7 +38,6 @@ const App: React.FC = () => {
             <Route path="/cadastro" element={<Cadastro />} />
             <Route path="/comercial" element={<Comercial />} />
             <Route path="/financeiro" element={<Financeiro />} />
-            <Route path="/importacao-direta" element={<ImportacaoDireta />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
