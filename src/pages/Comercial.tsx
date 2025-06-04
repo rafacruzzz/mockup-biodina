@@ -723,7 +723,7 @@ const Comercial = () => {
 
       {showImportacaoDiretaForm && (
         <ImportacaoDiretaForm
-          open={showImportacaoDiretaForm}
+          isOpen={showImportacaoDiretaForm}
           oportunidade={editingOportunidade}
           onClose={() => {
             setShowImportacaoDiretaForm(false);
