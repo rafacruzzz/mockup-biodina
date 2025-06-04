@@ -62,6 +62,7 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
     prazoEntrega: '',
     localEntrega: '',
     incoterms: 'FOB',
+    packing: 0,
     
     // Dados OVC
     numeroOVC: '',
@@ -112,6 +113,10 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
   // Estados para negociações
   const [negociacoes, setNegociacoes] = useState([]);
 
+  // Estado para upload PI
+  const [arquivoPI, setArquivoPI] = useState(null);
+  const [mostrarModeloPI, setMostrarModeloPI] = useState(false);
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 2,
@@ -144,10 +149,13 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
           (newProdutos[index].quantidade || 0) + (newProdutos[index].quantidadePendente || 0);
       }
       
-      // Calcular preço total automaticamente
-      if (field === 'quantidade' || field === 'precoUnitUSD') {
+      // Calcular preço total automaticamente: Total das Qtdes × Preço Unit USD
+      if (field === 'totalQuantidades' || field === 'precoUnitUSD' || field === 'quantidade' || field === 'quantidadePendente') {
+        const totalQtdes = field === 'quantidade' || field === 'quantidadePendente' 
+          ? newProdutos[index].totalQuantidades 
+          : newProdutos[index].totalQuantidades;
         newProdutos[index].precoTotalUSD = 
-          (newProdutos[index].quantidade || 0) * (newProdutos[index].precoUnitUSD || 0);
+          totalQtdes * (newProdutos[index].precoUnitUSD || 0);
       }
       
       return newProdutos;
@@ -180,6 +188,18 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
 
   const calcularSubtotal = () => {
     return produtos.reduce((sum, produto) => sum + (produto.precoTotalUSD || 0), 0);
+  };
+
+  const calcularTotal = () => {
+    return calcularSubtotal() + (formData.packing || 0);
+  };
+
+  const handleUploadPI = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setArquivoPI(file);
+      setMostrarModeloPI(true);
+    }
   };
 
   const gerarPDF = () => {
@@ -235,9 +255,10 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
     yPosition += 20;
     doc.setFontSize(12);
     const subtotal = calcularSubtotal();
+    const total = calcularTotal();
     doc.text(`Subtotal (USD): ${formatCurrency(subtotal)}`, 20, yPosition);
-    doc.text(`Packing (USD): ${formatCurrency(0)}`, 20, yPosition + 10);
-    doc.text(`TOTAL (USD): ${formatCurrency(subtotal)}`, 20, yPosition + 20);
+    doc.text(`Packing (USD): ${formatCurrency(formData.packing)}`, 20, yPosition + 10);
+    doc.text(`TOTAL (USD): ${formatCurrency(total)}`, 20, yPosition + 20);
     
     // Informações adicionais
     yPosition += 40;
@@ -263,13 +284,14 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
       produtos,
       concorrentes,
       anexos,
-      negociacoes
+      negociacoes,
+      arquivoPI
     };
     onSave(dadosCompletos);
   };
 
   return (
-    <div className="w-full max-w-full">
+    <div className="w-full max-w-none mx-auto px-2">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="comercial" className="flex items-center gap-2">
@@ -734,278 +756,509 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
           </Tabs>
         </TabsContent>
 
-        {/* Aba SPI */}
-        <TabsContent value="spi" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  Solicitação de Preço de Importação (SPI)
-                </CardTitle>
-                <Button onClick={gerarPDF} className="bg-biodina-gold hover:bg-biodina-gold/90">
-                  <Download className="h-4 w-4 mr-2" />
-                  Baixar SPI
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Dados básicos da SPI */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                  <Label htmlFor="numeroSPI">Número SPI</Label>
-                  <Input
-                    id="numeroSPI"
-                    value={formData.numeroSPI}
-                    onChange={(e) => handleInputChange('numeroSPI', e.target.value)}
-                    placeholder="SPI-2025-001"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="dataEmissao">Data de Emissão</Label>
-                  <Input
-                    id="dataEmissao"
-                    type="date"
-                    value={formData.dataEmissao}
-                    onChange={(e) => handleInputChange('dataEmissao', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="fornecedor">Fornecedor</Label>
-                  <Input
-                    id="fornecedor"
-                    value={formData.fornecedor}
-                    onChange={(e) => handleInputChange('fornecedor', e.target.value)}
-                    placeholder="Nome do fornecedor"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="moeda">Moeda</Label>
-                  <Select value={formData.moeda} onValueChange={(value) => handleInputChange('moeda', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USD">USD - Dólar Americano</SelectItem>
-                      <SelectItem value="EUR">EUR - Euro</SelectItem>
-                      <SelectItem value="BRL">BRL - Real Brasileiro</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Tabela de produtos */}
-              <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold">Produtos/Mercadorias</h3>
-                  <Button onClick={adicionarProduto} variant="outline" size="sm">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Adicionar Produto
+        {/* Aba SPI - MELHORADA */}
+        <TabsContent value="spi" className="space-y-6">
+          <div className="w-full max-w-none">
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Solicitação de Preço de Importação (SPI)
+                  </CardTitle>
+                  <Button onClick={gerarPDF} className="bg-biodina-gold hover:bg-biodina-gold/90">
+                    <Download className="h-4 w-4 mr-2" />
+                    Baixar SPI
                   </Button>
                 </div>
-                
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="min-w-[120px]">Código</TableHead>
-                        <TableHead className="min-w-[200px]">Descrição</TableHead>
-                        <TableHead className="min-w-[120px]">Modelo</TableHead>
-                        <TableHead className="min-w-[120px]">Fabricante</TableHead>
-                        <TableHead className="min-w-[100px]">Qtde</TableHead>
-                        <TableHead className="min-w-[120px]">Qtde Pendente</TableHead>
-                        <TableHead className="min-w-[120px]">Total das Qtdes</TableHead>
-                        <TableHead className="min-w-[140px]">Preço Unit USD</TableHead>
-                        <TableHead className="min-w-[140px]">Preço Total USD</TableHead>
-                        <TableHead className="min-w-[100px]">Peso (kg)</TableHead>
-                        <TableHead className="min-w-[120px]">Dimensões</TableHead>
-                        <TableHead className="min-w-[150px]">Observações</TableHead>
-                        <TableHead className="w-[50px]">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {produtos.map((produto, index) => (
-                        <TableRow key={produto.id}>
-                          <TableCell>
-                            <Input
-                              value={produto.codigo}
-                              onChange={(e) => handleProdutoChange(index, 'codigo', e.target.value)}
-                              placeholder="Código"
-                              className="min-w-[100px]"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              value={produto.descricao}
-                              onChange={(e) => handleProdutoChange(index, 'descricao', e.target.value)}
-                              placeholder="Descrição do produto"
-                              className="min-w-[180px]"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              value={produto.modelo}
-                              onChange={(e) => handleProdutoChange(index, 'modelo', e.target.value)}
-                              placeholder="Modelo"
-                              className="min-w-[100px]"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              value={produto.fabricante}
-                              onChange={(e) => handleProdutoChange(index, 'fabricante', e.target.value)}
-                              placeholder="Fabricante"
-                              className="min-w-[100px]"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              value={produto.quantidade}
-                              onChange={(e) => handleProdutoChange(index, 'quantidade', parseInt(e.target.value) || 0)}
-                              placeholder="0"
-                              className="min-w-[80px]"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              value={produto.quantidadePendente}
-                              onChange={(e) => handleProdutoChange(index, 'quantidadePendente', parseInt(e.target.value) || 0)}
-                              placeholder="0"
-                              className="min-w-[100px]"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              value={produto.totalQuantidades}
-                              readOnly
-                              className="bg-gray-100 min-w-[100px]"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              value={formatCurrency(produto.precoUnitUSD)}
-                              onChange={(e) => handleProdutoChange(index, 'precoUnitUSD', parseCurrency(e.target.value))}
-                              placeholder="0.00"
-                              className="min-w-[120px]"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              value={formatCurrency(produto.precoTotalUSD)}
-                              readOnly
-                              className="bg-gray-100 min-w-[120px]"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              type="number"
-                              step="0.01"
-                              value={produto.peso}
-                              onChange={(e) => handleProdutoChange(index, 'peso', parseFloat(e.target.value) || 0)}
-                              placeholder="0.00"
-                              className="min-w-[80px]"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              value={produto.dimensoes}
-                              onChange={(e) => handleProdutoChange(index, 'dimensoes', e.target.value)}
-                              placeholder="L x A x P"
-                              className="min-w-[100px]"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              value={produto.observacoes}
-                              onChange={(e) => handleProdutoChange(index, 'observacoes', e.target.value)}
-                              placeholder="Observações"
-                              className="min-w-[130px]"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => removerProduto(index)}
-                              disabled={produtos.length === 1}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Dados básicos da SPI */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div>
+                    <Label htmlFor="numeroSPI">Número SPI</Label>
+                    <Input
+                      id="numeroSPI"
+                      value={formData.numeroSPI}
+                      onChange={(e) => handleInputChange('numeroSPI', e.target.value)}
+                      placeholder="SPI-2025-001"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="dataEmissao">Data de Emissão</Label>
+                    <Input
+                      id="dataEmissao"
+                      type="date"
+                      value={formData.dataEmissao}
+                      onChange={(e) => handleInputChange('dataEmissao', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="fornecedor">Fornecedor</Label>
+                    <Input
+                      id="fornecedor"
+                      value={formData.fornecedor}
+                      onChange={(e) => handleInputChange('fornecedor', e.target.value)}
+                      placeholder="Nome do fornecedor"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="moeda">Moeda</Label>
+                    <Select value={formData.moeda} onValueChange={(value) => handleInputChange('moeda', value)}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="USD">USD - Dólar Americano</SelectItem>
+                        <SelectItem value="EUR">EUR - Euro</SelectItem>
+                        <SelectItem value="BRL">BRL - Real Brasileiro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Tabela de produtos - MELHORADA */}
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold">Produtos/Mercadorias</h3>
+                    <Button onClick={adicionarProduto} variant="outline" size="sm">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar Produto
+                    </Button>
+                  </div>
+                  
+                  <div className="overflow-x-auto border rounded-lg">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-gray-50">
+                          <TableHead className="min-w-[120px] text-center font-medium">Código</TableHead>
+                          <TableHead className="min-w-[200px] text-center font-medium">Descrição</TableHead>
+                          <TableHead className="min-w-[120px] text-center font-medium">Modelo</TableHead>
+                          <TableHead className="min-w-[120px] text-center font-medium">Fabricante</TableHead>
+                          <TableHead className="min-w-[100px] text-center font-medium">Qtde</TableHead>
+                          <TableHead className="min-w-[120px] text-center font-medium">Qtde Pendente</TableHead>
+                          <TableHead className="min-w-[120px] text-center font-medium bg-blue-50">Total das Qtdes</TableHead>
+                          <TableHead className="min-w-[140px] text-center font-medium">Preço Unit USD</TableHead>
+                          <TableHead className="min-w-[140px] text-center font-medium bg-green-50">Preço Total USD</TableHead>
+                          <TableHead className="min-w-[100px] text-center font-medium">Peso (kg)</TableHead>
+                          <TableHead className="min-w-[120px] text-center font-medium">Dimensões</TableHead>
+                          <TableHead className="min-w-[150px] text-center font-medium">Observações</TableHead>
+                          <TableHead className="w-[50px] text-center font-medium">Ações</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {produtos.map((produto, index) => (
+                          <TableRow key={produto.id}>
+                            <TableCell className="p-2">
+                              <Input
+                                value={produto.codigo}
+                                onChange={(e) => handleProdutoChange(index, 'codigo', e.target.value)}
+                                placeholder="Código"
+                                className="min-w-[100px] text-center"
+                              />
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <Input
+                                value={produto.descricao}
+                                onChange={(e) => handleProdutoChange(index, 'descricao', e.target.value)}
+                                placeholder="Descrição do produto"
+                                className="min-w-[180px]"
+                              />
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <Input
+                                value={produto.modelo}
+                                onChange={(e) => handleProdutoChange(index, 'modelo', e.target.value)}
+                                placeholder="Modelo"
+                                className="min-w-[100px]"
+                              />
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <Input
+                                value={produto.fabricante}
+                                onChange={(e) => handleProdutoChange(index, 'fabricante', e.target.value)}
+                                placeholder="Fabricante"
+                                className="min-w-[100px]"
+                              />
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <Input
+                                type="number"
+                                value={produto.quantidade}
+                                onChange={(e) => handleProdutoChange(index, 'quantidade', parseInt(e.target.value) || 0)}
+                                placeholder="0"
+                                className="min-w-[80px] text-center"
+                              />
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <Input
+                                type="number"
+                                value={produto.quantidadePendente}
+                                onChange={(e) => handleProdutoChange(index, 'quantidadePendente', parseInt(e.target.value) || 0)}
+                                placeholder="0"
+                                className="min-w-[100px] text-center"
+                              />
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <Input
+                                type="number"
+                                value={produto.totalQuantidades}
+                                readOnly
+                                className="bg-blue-50 min-w-[100px] text-center font-medium"
+                              />
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <Input
+                                type="number"
+                                step="0.01"
+                                value={produto.precoUnitUSD}
+                                onChange={(e) => handleProdutoChange(index, 'precoUnitUSD', parseFloat(e.target.value) || 0)}
+                                placeholder="0.00"
+                                className="min-w-[120px] text-right"
+                              />
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <div className="bg-green-50 px-2 py-1 rounded text-right font-medium min-w-[120px]">
+                                {formatCurrency(produto.precoTotalUSD)}
+                              </div>
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <Input
+                                type="number"
+                                step="0.01"
+                                value={produto.peso}
+                                onChange={(e) => handleProdutoChange(index, 'peso', parseFloat(e.target.value) || 0)}
+                                placeholder="0.00"
+                                className="min-w-[80px] text-center"
+                              />
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <Input
+                                value={produto.dimensoes}
+                                onChange={(e) => handleProdutoChange(index, 'dimensoes', e.target.value)}
+                                placeholder="L x A x P"
+                                className="min-w-[100px]"
+                              />
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <Input
+                                value={produto.observacoes}
+                                onChange={(e) => handleProdutoChange(index, 'observacoes', e.target.value)}
+                                placeholder="Observações"
+                                className="min-w-[130px]"
+                              />
+                            </TableCell>
+                            <TableCell className="p-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => removerProduto(index)}
+                                disabled={produtos.length === 1}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </div>
-              </div>
 
-              {/* Totais */}
-              <div className="flex justify-end">
-                <div className="w-80 space-y-2">
-                  <div className="flex justify-between">
-                    <span>Subtotal (USD):</span>
-                    <span className="font-mono">{formatCurrency(calcularSubtotal())}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Packing (USD):</span>
-                    <span className="font-mono">{formatCurrency(0)}</span>
-                  </div>
-                  <div className="flex justify-between border-t pt-2 font-bold">
-                    <span>TOTAL (USD):</span>
-                    <span className="font-mono">{formatCurrency(calcularSubtotal())}</span>
+                {/* Totais - MELHORADOS */}
+                <div className="flex justify-end">
+                  <div className="w-80 space-y-3 bg-gray-50 p-4 rounded-lg border">
+                    <div className="flex justify-between text-sm">
+                      <span>Subtotal (USD):</span>
+                      <span className="font-mono text-base font-medium">{formatCurrency(calcularSubtotal())}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span>Packing (USD):</span>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={formData.packing}
+                        onChange={(e) => handleInputChange('packing', parseFloat(e.target.value) || 0)}
+                        placeholder="0.00"
+                        className="w-24 h-8 text-right text-sm"
+                      />
+                    </div>
+                    <div className="flex justify-between border-t pt-3 text-base font-bold">
+                      <span>TOTAL (USD):</span>
+                      <span className="font-mono text-lg text-green-600">{formatCurrency(calcularTotal())}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Condições comerciais */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="condicoesPagamento">Condições de Pagamento</Label>
-                  <Input
-                    id="condicoesPagamento"
-                    value={formData.condicoesPagamento}
-                    onChange={(e) => handleInputChange('condicoesPagamento', e.target.value)}
-                    placeholder="Ex: 30% antecipado, 70% contra entrega"
-                  />
+                {/* Condições comerciais - MELHORADAS */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="condicoesPagamento">Condições de Pagamento</Label>
+                    <Input
+                      id="condicoesPagamento"
+                      value={formData.condicoesPagamento}
+                      onChange={(e) => handleInputChange('condicoesPagamento', e.target.value)}
+                      placeholder="Ex: 30% antecipado, 70% contra entrega"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="prazoEntrega">Prazo de Entrega</Label>
+                    <Input
+                      id="prazoEntrega"
+                      value={formData.prazoEntrega}
+                      onChange={(e) => handleInputChange('prazoEntrega', e.target.value)}
+                      placeholder="Ex: 30 dias úteis"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="localEntrega">Local de Entrega</Label>
+                    <Input
+                      id="localEntrega"
+                      value={formData.localEntrega}
+                      onChange={(e) => handleInputChange('localEntrega', e.target.value)}
+                      placeholder="Endereço completo de entrega"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <Label htmlFor="incoterms">Incoterms</Label>
+                      <Select value={formData.incoterms} onValueChange={(value) => handleInputChange('incoterms', value)}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="FOB">FOB - Free On Board</SelectItem>
+                          <SelectItem value="CIF">CIF - Cost, Insurance and Freight</SelectItem>
+                          <SelectItem value="EXW">EXW - Ex Works</SelectItem>
+                          <SelectItem value="DDP">DDP - Delivered Duty Paid</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex flex-col justify-end">
+                      <Button 
+                        onClick={() => document.getElementById('upload-pi').click()}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Upload PI
+                      </Button>
+                      <input
+                        id="upload-pi"
+                        type="file"
+                        accept=".pdf,.xlsx,.xls,.docx,.doc,.jpg,.jpeg,.png"
+                        style={{ display: 'none' }}
+                        onChange={handleUploadPI}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="prazoEntrega">Prazo de Entrega</Label>
-                  <Input
-                    id="prazoEntrega"
-                    value={formData.prazoEntrega}
-                    onChange={(e) => handleInputChange('prazoEntrega', e.target.value)}
-                    placeholder="Ex: 30 dias úteis"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="localEntrega">Local de Entrega</Label>
-                  <Input
-                    id="localEntrega"
-                    value={formData.localEntrega}
-                    onChange={(e) => handleInputChange('localEntrega', e.target.value)}
-                    placeholder="Endereço completo de entrega"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="incoterms">Incoterms</Label>
-                  <Select value={formData.incoterms} onValueChange={(value) => handleInputChange('incoterms', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="FOB">FOB - Free On Board</SelectItem>
-                      <SelectItem value="CIF">CIF - Cost, Insurance and Freight</SelectItem>
-                      <SelectItem value="EXW">EXW - Ex Works</SelectItem>
-                      <SelectItem value="DDP">DDP - Delivered Duty Paid</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+
+                {/* Exibir nome do arquivo PI */}
+                {arquivoPI && (
+                  <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm text-blue-800">Arquivo PI: {arquivoPI.name}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Modelo PI - NOVO */}
+                {mostrarModeloPI && (
+                  <Card className="mt-6 border-2 border-blue-200">
+                    <CardHeader className="bg-blue-50">
+                      <CardTitle className="text-lg text-blue-800">SPI – SOLICITAÇÃO DE PROFORMA INVOICE</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6 p-6">
+                      {/* Dados do Cliente */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-4">
+                          <h4 className="font-semibold text-gray-700 border-b pb-2">Dados do Cliente</h4>
+                          <div>
+                            <Label htmlFor="nomeClientePI">Nome da Empresa</Label>
+                            <Input
+                              id="nomeClientePI"
+                              value={formData.cliente}
+                              onChange={(e) => handleInputChange('cliente', e.target.value)}
+                              placeholder="Nome da empresa cliente"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="cnpjPI">CNPJ</Label>
+                            <Input
+                              id="cnpjPI"
+                              placeholder="00.000.000/0000-00"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="enderecoPI">Endereço Completo</Label>
+                            <Textarea
+                              id="enderecoPI"
+                              value={formData.endereco}
+                              onChange={(e) => handleInputChange('endereco', e.target.value)}
+                              placeholder="Endereço completo do cliente"
+                              rows={2}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="inscricaoEstadualPI">Inscrição Estadual</Label>
+                            <Input
+                              id="inscricaoEstadualPI"
+                              placeholder="Inscrição estadual"
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-4">
+                          <h4 className="font-semibold text-gray-700 border-b pb-2">Detalhes da Venda</h4>
+                          <div>
+                            <Label htmlFor="formaVendaPI">Forma de Venda</Label>
+                            <Select>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione a forma de venda" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="licitacao">Licitação</SelectItem>
+                                <SelectItem value="venda-direta">Venda Direta</SelectItem>
+                                <SelectItem value="outros">Outros</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="numeroLicitacaoPI">Número da Licitação/Processo</Label>
+                            <Input
+                              id="numeroLicitacaoPI"
+                              placeholder="Número do processo"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="dataAberturaPI">Data de Abertura</Label>
+                            <Input
+                              id="dataAberturaPI"
+                              type="date"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="contatoResponsavelPI">Contato Responsável</Label>
+                            <Input
+                              id="contatoResponsavelPI"
+                              value={formData.contato}
+                              onChange={(e) => handleInputChange('contato', e.target.value)}
+                              placeholder="Nome do contato responsável"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Condições de Faturamento, Pagamento e Entrega */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                          <h4 className="font-semibold text-gray-700 border-b pb-2 mb-4">Faturamento</h4>
+                          <div className="space-y-3">
+                            <div>
+                              <Label htmlFor="tipoFaturamentoPI">Tipo de Faturamento</Label>
+                              <Select>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Selecione" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="direto">Faturamento Direto</SelectItem>
+                                  <SelectItem value="triangular">Faturamento Triangular</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div>
+                              <Label htmlFor="moedaFaturamentoPI">Moeda</Label>
+                              <Select value={formData.moeda} onValueChange={(value) => handleInputChange('moeda', value)}>
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="USD">USD</SelectItem>
+                                  <SelectItem value="EUR">EUR</SelectItem>
+                                  <SelectItem value="BRL">BRL</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-semibold text-gray-700 border-b pb-2 mb-4">Pagamento</h4>
+                          <div className="space-y-3">
+                            <div>
+                              <Label htmlFor="condicoesPagamentoPI">Condições de Pagamento</Label>
+                              <Input
+                                id="condicoesPagamentoPI"
+                                value={formData.condicoesPagamento}
+                                onChange={(e) => handleInputChange('condicoesPagamento', e.target.value)}
+                                placeholder="Condições de pagamento"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="validadeProposta">Validade da Proposta</Label>
+                              <Input
+                                id="validadeProposta"
+                                placeholder="Ex: 30 dias"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-semibold text-gray-700 border-b pb-2 mb-4">Entrega</h4>
+                          <div className="space-y-3">
+                            <div>
+                              <Label htmlFor="prazoEntregaPI">Prazo de Entrega</Label>
+                              <Input
+                                id="prazoEntregaPI"
+                                value={formData.prazoEntrega}
+                                onChange={(e) => handleInputChange('prazoEntrega', e.target.value)}
+                                placeholder="Prazo de entrega"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="localEntregaPI">Local de Entrega</Label>
+                              <Input
+                                id="localEntregaPI"
+                                value={formData.localEntrega}
+                                onChange={(e) => handleInputChange('localEntrega', e.target.value)}
+                                placeholder="Local de entrega"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="incotermsPI">Incoterms</Label>
+                              <Select value={formData.incoterms} onValueChange={(value) => handleInputChange('incoterms', value)}>
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="FOB">FOB</SelectItem>
+                                  <SelectItem value="CIF">CIF</SelectItem>
+                                  <SelectItem value="EXW">EXW</SelectItem>
+                                  <SelectItem value="DDP">DDP</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Observações PI */}
+                      <div>
+                        <Label htmlFor="observacoesPI">Observações Específicas para PI</Label>
+                        <Textarea
+                          id="observacoesPI"
+                          placeholder="Observações específicas para a proforma invoice..."
+                          rows={4}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         {/* Aba OVC */}
