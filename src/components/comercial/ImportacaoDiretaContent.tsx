@@ -96,6 +96,12 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
       totalQuantidades: 0,
       precoUnitUSD: 0,
       precoTotalUSD: 0,
+      customerDiscount: 0,
+      subTotal: 0,
+      handlingCharge: 0,
+      total: 0,
+      comission: 0,
+      netRadiometer: 0,
       peso: 0,
       dimensoes: '',
       observacoes: ''
@@ -115,7 +121,7 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
 
   // Estado para upload PI
   const [arquivoPI, setArquivoPI] = useState(null);
-  const [mostrarModeloPI, setMostrarModeloPI] = useState(false);
+  const [mostrarModeloOVC, setMostrarModeloOVC] = useState(false);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -126,6 +132,12 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
 
   const parseCurrency = (value: string) => {
     return parseFloat(value.replace(/[^0-9.-]+/g, '')) || 0;
+  };
+
+  const formatCurrencyInput = (value: string) => {
+    // Remove tudo que não é número, ponto ou vírgula
+    const cleaned = value.replace(/[^\d.,]/g, '');
+    return cleaned;
   };
 
   const handleInputChange = (field: string, value: any) => {
@@ -149,13 +161,24 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
           (newProdutos[index].quantidade || 0) + (newProdutos[index].quantidadePendente || 0);
       }
       
-      // Calcular preço total automaticamente: Total das Qtdes × Preço Unit USD
+      // CORREÇÃO CRÍTICA: Preço Total USD = Total das Qtdes × Preço Unit USD
       if (field === 'totalQuantidades' || field === 'precoUnitUSD' || field === 'quantidade' || field === 'quantidadePendente') {
         const totalQtdes = field === 'quantidade' || field === 'quantidadePendente' 
           ? newProdutos[index].totalQuantidades 
           : newProdutos[index].totalQuantidades;
         newProdutos[index].precoTotalUSD = 
           totalQtdes * (newProdutos[index].precoUnitUSD || 0);
+      }
+
+      // Calcular campos do modelo OVC
+      if (field === 'precoTotalUSD' || field === 'customerDiscount') {
+        const precoTotal = newProdutos[index].precoTotalUSD || 0;
+        const discount = newProdutos[index].customerDiscount || 0;
+        newProdutos[index].subTotal = precoTotal * (1 - discount / 100);
+        newProdutos[index].handlingCharge = newProdutos[index].subTotal * 0.03; // 3%
+        newProdutos[index].total = newProdutos[index].subTotal + newProdutos[index].handlingCharge;
+        newProdutos[index].comission = newProdutos[index].total * 0.25; // 25%
+        newProdutos[index].netRadiometer = newProdutos[index].total - newProdutos[index].comission;
       }
       
       return newProdutos;
@@ -174,6 +197,12 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
       totalQuantidades: 0,
       precoUnitUSD: 0,
       precoTotalUSD: 0,
+      customerDiscount: 0,
+      subTotal: 0,
+      handlingCharge: 0,
+      total: 0,
+      comission: 0,
+      netRadiometer: 0,
       peso: 0,
       dimensoes: '',
       observacoes: ''
@@ -198,7 +227,7 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
     const file = event.target.files[0];
     if (file) {
       setArquivoPI(file);
-      setMostrarModeloPI(true);
+      setMostrarModeloOVC(true);
     }
   };
 
@@ -291,7 +320,7 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
   };
 
   return (
-    <div className="w-full max-w-none mx-auto px-2">
+    <div className="w-full max-w-none mx-auto px-1">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="comercial" className="flex items-center gap-2">
@@ -756,9 +785,9 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
           </Tabs>
         </TabsContent>
 
-        {/* Aba SPI - MELHORADA */}
-        <TabsContent value="spi" className="space-y-6">
-          <div className="w-full max-w-none">
+        {/* Aba SPI - MELHORADA COM LAYOUT EXPANDIDO */}
+        <TabsContent value="spi" className="space-y-4">
+          <div className="w-full">
             <Card>
               <CardHeader>
                 <div className="flex justify-between items-center">
@@ -772,40 +801,43 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Dados básicos da SPI */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <CardContent className="space-y-4">
+                {/* Dados básicos da SPI - Layout compacto */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                   <div>
-                    <Label htmlFor="numeroSPI">Número SPI</Label>
+                    <Label htmlFor="numeroSPI" className="text-sm">Número SPI</Label>
                     <Input
                       id="numeroSPI"
                       value={formData.numeroSPI}
                       onChange={(e) => handleInputChange('numeroSPI', e.target.value)}
                       placeholder="SPI-2025-001"
+                      className="h-9"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="dataEmissao">Data de Emissão</Label>
+                    <Label htmlFor="dataEmissao" className="text-sm">Data de Emissão</Label>
                     <Input
                       id="dataEmissao"
                       type="date"
                       value={formData.dataEmissao}
                       onChange={(e) => handleInputChange('dataEmissao', e.target.value)}
+                      className="h-9"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="fornecedor">Fornecedor</Label>
+                    <Label htmlFor="fornecedor" className="text-sm">Fornecedor</Label>
                     <Input
                       id="fornecedor"
                       value={formData.fornecedor}
                       onChange={(e) => handleInputChange('fornecedor', e.target.value)}
                       placeholder="Nome do fornecedor"
+                      className="h-9"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="moeda">Moeda</Label>
+                    <Label htmlFor="moeda" className="text-sm">Moeda</Label>
                     <Select value={formData.moeda} onValueChange={(value) => handleInputChange('moeda', value)}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-9">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -817,10 +849,10 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
                   </div>
                 </div>
 
-                {/* Tabela de produtos - MELHORADA */}
+                {/* Tabela de produtos - LAYOUT EXPANDIDO E MELHORADO */}
                 <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold">Produtos/Mercadorias</h3>
+                  <div className="flex justify-between items-center mb-3">
+                    <h3 className="text-base font-semibold">Produtos/Mercadorias</h3>
                     <Button onClick={adicionarProduto} variant="outline" size="sm">
                       <Plus className="h-4 w-4 mr-2" />
                       Adicionar Produto
@@ -831,131 +863,45 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
                     <Table>
                       <TableHeader>
                         <TableRow className="bg-gray-50">
-                          <TableHead className="min-w-[120px] text-center font-medium">Código</TableHead>
-                          <TableHead className="min-w-[200px] text-center font-medium">Descrição</TableHead>
-                          <TableHead className="min-w-[120px] text-center font-medium">Modelo</TableHead>
-                          <TableHead className="min-w-[120px] text-center font-medium">Fabricante</TableHead>
-                          <TableHead className="min-w-[100px] text-center font-medium">Qtde</TableHead>
-                          <TableHead className="min-w-[120px] text-center font-medium">Qtde Pendente</TableHead>
-                          <TableHead className="min-w-[120px] text-center font-medium bg-blue-50">Total das Qtdes</TableHead>
-                          <TableHead className="min-w-[140px] text-center font-medium">Preço Unit USD</TableHead>
-                          <TableHead className="min-w-[140px] text-center font-medium bg-green-50">Preço Total USD</TableHead>
-                          <TableHead className="min-w-[100px] text-center font-medium">Peso (kg)</TableHead>
-                          <TableHead className="min-w-[120px] text-center font-medium">Dimensões</TableHead>
-                          <TableHead className="min-w-[150px] text-center font-medium">Observações</TableHead>
-                          <TableHead className="w-[50px] text-center font-medium">Ações</TableHead>
+                          <TableHead className="min-w-[100px] text-center font-medium text-xs p-2">Código</TableHead>
+                          <TableHead className="min-w-[180px] text-center font-medium text-xs p-2">Descrição</TableHead>
+                          <TableHead className="min-w-[100px] text-center font-medium text-xs p-2">Modelo</TableHead>
+                          <TableHead className="min-w-[100px] text-center font-medium text-xs p-2">Fabricante</TableHead>
+                          <TableHead className="min-w-[80px] text-center font-medium text-xs p-2">Qtde</TableHead>
+                          <TableHead className="min-w-[100px] text-center font-medium text-xs p-2">Qtde Pend.</TableHead>
+                          <TableHead className="min-w-[100px] text-center font-medium text-xs p-2 bg-blue-50">Total Qtdes</TableHead>
+                          <TableHead className="min-w-[120px] text-center font-medium text-xs p-2">Preço Unit USD</TableHead>
+                          <TableHead className="min-w-[120px] text-center font-medium text-xs p-2 bg-green-50">Preço Total USD</TableHead>
+                          <TableHead className="min-w-[80px] text-center font-medium text-xs p-2">Peso (kg)</TableHead>
+                          <TableHead className="min-w-[100px] text-center font-medium text-xs p-2">Dimensões</TableHead>
+                          <TableHead className="min-w-[120px] text-center font-medium text-xs p-2">Observações</TableHead>
+                          <TableHead className="w-[50px] text-center font-medium text-xs p-2">Ações</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {produtos.map((produto, index) => (
                           <TableRow key={produto.id}>
-                            <TableCell className="p-2">
-                              <Input
-                                value={produto.codigo}
-                                onChange={(e) => handleProdutoChange(index, 'codigo', e.target.value)}
-                                placeholder="Código"
-                                className="min-w-[100px] text-center"
-                              />
-                            </TableCell>
-                            <TableCell className="p-2">
-                              <Input
-                                value={produto.descricao}
-                                onChange={(e) => handleProdutoChange(index, 'descricao', e.target.value)}
-                                placeholder="Descrição do produto"
-                                className="min-w-[180px]"
-                              />
-                            </TableCell>
-                            <TableCell className="p-2">
-                              <Input
-                                value={produto.modelo}
-                                onChange={(e) => handleProdutoChange(index, 'modelo', e.target.value)}
-                                placeholder="Modelo"
-                                className="min-w-[100px]"
-                              />
-                            </TableCell>
-                            <TableCell className="p-2">
-                              <Input
-                                value={produto.fabricante}
-                                onChange={(e) => handleProdutoChange(index, 'fabricante', e.target.value)}
-                                placeholder="Fabricante"
-                                className="min-w-[100px]"
-                              />
-                            </TableCell>
-                            <TableCell className="p-2">
-                              <Input
-                                type="number"
-                                value={produto.quantidade}
-                                onChange={(e) => handleProdutoChange(index, 'quantidade', parseInt(e.target.value) || 0)}
-                                placeholder="0"
-                                className="min-w-[80px] text-center"
-                              />
-                            </TableCell>
-                            <TableCell className="p-2">
-                              <Input
-                                type="number"
-                                value={produto.quantidadePendente}
-                                onChange={(e) => handleProdutoChange(index, 'quantidadePendente', parseInt(e.target.value) || 0)}
-                                placeholder="0"
-                                className="min-w-[100px] text-center"
-                              />
-                            </TableCell>
-                            <TableCell className="p-2">
-                              <Input
-                                type="number"
-                                value={produto.totalQuantidades}
-                                readOnly
-                                className="bg-blue-50 min-w-[100px] text-center font-medium"
-                              />
-                            </TableCell>
-                            <TableCell className="p-2">
-                              <Input
-                                type="number"
-                                step="0.01"
-                                value={produto.precoUnitUSD}
-                                onChange={(e) => handleProdutoChange(index, 'precoUnitUSD', parseFloat(e.target.value) || 0)}
-                                placeholder="0.00"
-                                className="min-w-[120px] text-right"
-                              />
-                            </TableCell>
-                            <TableCell className="p-2">
-                              <div className="bg-green-50 px-2 py-1 rounded text-right font-medium min-w-[120px]">
-                                {formatCurrency(produto.precoTotalUSD)}
-                              </div>
-                            </TableCell>
-                            <TableCell className="p-2">
-                              <Input
-                                type="number"
-                                step="0.01"
-                                value={produto.peso}
-                                onChange={(e) => handleProdutoChange(index, 'peso', parseFloat(e.target.value) || 0)}
-                                placeholder="0.00"
-                                className="min-w-[80px] text-center"
-                              />
-                            </TableCell>
-                            <TableCell className="p-2">
-                              <Input
-                                value={produto.dimensoes}
-                                onChange={(e) => handleProdutoChange(index, 'dimensoes', e.target.value)}
-                                placeholder="L x A x P"
-                                className="min-w-[100px]"
-                              />
-                            </TableCell>
-                            <TableCell className="p-2">
-                              <Input
-                                value={produto.observacoes}
-                                onChange={(e) => handleProdutoChange(index, 'observacoes', e.target.value)}
-                                placeholder="Observações"
-                                className="min-w-[130px]"
-                              />
-                            </TableCell>
-                            <TableCell className="p-2">
+                            <TableCell className="p-1 text-center text-xs">{produto.codigo}</TableCell>
+                            <TableCell className="p-1 text-center text-xs">{produto.descricao}</TableCell>
+                            <TableCell className="p-1 text-center text-xs">{produto.modelo}</TableCell>
+                            <TableCell className="p-1 text-center text-xs">{produto.fabricante}</TableCell>
+                            <TableCell className="p-1 text-center text-xs">{produto.quantidade}</TableCell>
+                            <TableCell className="p-1 text-center text-xs">{produto.quantidadePendente}</TableCell>
+                            <TableCell className="p-1 text-center text-xs bg-blue-50">{produto.totalQuantidades}</TableCell>
+                            <TableCell className="p-1 text-center text-xs">{formatCurrencyInput(produto.precoUnitUSD.toString())}</TableCell>
+                            <TableCell className="p-1 text-center text-xs bg-green-50 font-medium">{formatCurrency(produto.precoTotalUSD)}</TableCell>
+                            <TableCell className="p-1 text-center text-xs">{produto.peso}</TableCell>
+                            <TableCell className="p-1 text-center text-xs">{produto.dimensoes}</TableCell>
+                            <TableCell className="p-1 text-center text-xs">{produto.observacoes}</TableCell>
+                            <TableCell className="p-1">
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => removerProduto(index)}
                                 disabled={produtos.length === 1}
+                                className="h-8 w-8 p-0"
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <Trash2 className="h-3 w-3" />
                               </Button>
                             </TableCell>
                           </TableRow>
@@ -967,7 +913,7 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
 
                 {/* Totais - MELHORADOS */}
                 <div className="flex justify-end">
-                  <div className="w-80 space-y-3 bg-gray-50 p-4 rounded-lg border">
+                  <div className="w-80 space-y-2 bg-gray-50 p-4 rounded-lg border">
                     <div className="flex justify-between text-sm">
                       <span>Subtotal (USD):</span>
                       <span className="font-mono text-base font-medium">{formatCurrency(calcularSubtotal())}</span>
@@ -975,55 +921,61 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
                     <div className="flex justify-between items-center text-sm">
                       <span>Packing (USD):</span>
                       <Input
-                        type="number"
-                        step="0.01"
-                        value={formData.packing}
-                        onChange={(e) => handleInputChange('packing', parseFloat(e.target.value) || 0)}
+                        type="text"
+                        value={formatCurrencyInput(formData.packing.toString())}
+                        onChange={(e) => handleInputChange('packing', parseFloat(e.target.value.replace(/[^0-9.-]/g, '')) || 0)}
+                        onBlur={(e) => {
+                          const value = parseFloat(e.target.value.replace(/[^0-9.-]/g, '')) || 0;
+                          handleInputChange('packing', value);
+                        }}
                         placeholder="0.00"
                         className="w-24 h-8 text-right text-sm"
                       />
                     </div>
-                    <div className="flex justify-between border-t pt-3 text-base font-bold">
+                    <div className="flex justify-between border-t pt-2 text-base font-bold">
                       <span>TOTAL (USD):</span>
                       <span className="font-mono text-lg text-green-600">{formatCurrency(calcularTotal())}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Condições comerciais - MELHORADAS */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Condições comerciais - LAYOUT COMPACTO */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                   <div>
-                    <Label htmlFor="condicoesPagamento">Condições de Pagamento</Label>
+                    <Label htmlFor="condicoesPagamento" className="text-sm">Condições de Pagamento</Label>
                     <Input
                       id="condicoesPagamento"
                       value={formData.condicoesPagamento}
                       onChange={(e) => handleInputChange('condicoesPagamento', e.target.value)}
                       placeholder="Ex: 30% antecipado, 70% contra entrega"
+                      className="h-9"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="prazoEntrega">Prazo de Entrega</Label>
+                    <Label htmlFor="prazoEntrega" className="text-sm">Prazo de Entrega</Label>
                     <Input
                       id="prazoEntrega"
                       value={formData.prazoEntrega}
                       onChange={(e) => handleInputChange('prazoEntrega', e.target.value)}
                       placeholder="Ex: 30 dias úteis"
+                      className="h-9"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="localEntrega">Local de Entrega</Label>
+                    <Label htmlFor="localEntrega" className="text-sm">Local de Entrega</Label>
                     <Input
                       id="localEntrega"
                       value={formData.localEntrega}
                       onChange={(e) => handleInputChange('localEntrega', e.target.value)}
                       placeholder="Endereço completo de entrega"
+                      className="h-9"
                     />
                   </div>
                   <div className="flex gap-2">
                     <div className="flex-1">
-                      <Label htmlFor="incoterms">Incoterms</Label>
+                      <Label htmlFor="incoterms" className="text-sm">Incoterms</Label>
                       <Select value={formData.incoterms} onValueChange={(value) => handleInputChange('incoterms', value)}>
-                        <SelectTrigger>
+                        <SelectTrigger className="h-9">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -1037,7 +989,8 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
                     <div className="flex flex-col justify-end">
                       <Button 
                         onClick={() => document.getElementById('upload-pi').click()}
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                        className="bg-blue-600 hover:bg-blue-700 text-white h-9"
+                        size="sm"
                       >
                         <Upload className="h-4 w-4 mr-2" />
                         Upload PI
@@ -1063,194 +1016,90 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
                   </div>
                 )}
 
-                {/* Modelo PI - NOVO */}
-                {mostrarModeloPI && (
-                  <Card className="mt-6 border-2 border-blue-200">
-                    <CardHeader className="bg-blue-50">
-                      <CardTitle className="text-lg text-blue-800">SPI – SOLICITAÇÃO DE PROFORMA INVOICE</CardTitle>
+                {/* Modelo OVC - SUBSTITUINDO O MODELO PI */}
+                {mostrarModeloOVC && (
+                  <Card className="mt-4 border-2 border-orange-200">
+                    <CardHeader className="bg-orange-50 py-3">
+                      <CardTitle className="text-lg text-orange-800">OVC - HSVP-R1 (2ºB - OVC Importação)</CardTitle>
+                      <div className="text-sm text-orange-600">ESTIMATED DELIVERY: 45-60 days ARO</div>
                     </CardHeader>
-                    <CardContent className="space-y-6 p-6">
-                      {/* Dados do Cliente */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-4">
-                          <h4 className="font-semibold text-gray-700 border-b pb-2">Dados do Cliente</h4>
-                          <div>
-                            <Label htmlFor="nomeClientePI">Nome da Empresa</Label>
-                            <Input
-                              id="nomeClientePI"
-                              value={formData.cliente}
-                              onChange={(e) => handleInputChange('cliente', e.target.value)}
-                              placeholder="Nome da empresa cliente"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="cnpjPI">CNPJ</Label>
-                            <Input
-                              id="cnpjPI"
-                              placeholder="00.000.000/0000-00"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="enderecoPI">Endereço Completo</Label>
-                            <Textarea
-                              id="enderecoPI"
-                              value={formData.endereco}
-                              onChange={(e) => handleInputChange('endereco', e.target.value)}
-                              placeholder="Endereço completo do cliente"
-                              rows={2}
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="inscricaoEstadualPI">Inscrição Estadual</Label>
-                            <Input
-                              id="inscricaoEstadualPI"
-                              placeholder="Inscrição estadual"
-                            />
-                          </div>
+                    <CardContent className="space-y-4 p-4">
+                      {/* Tabela OVC */}
+                      <div className="overflow-x-auto border rounded-lg">
+                        <Table>
+                          <TableHeader>
+                            <TableRow className="bg-orange-50">
+                              <TableHead className="text-center font-medium text-xs p-2">CODE</TableHead>
+                              <TableHead className="text-center font-medium text-xs p-2">Qty</TableHead>
+                              <TableHead className="text-center font-medium text-xs p-2 bg-blue-50">Price List Unit</TableHead>
+                              <TableHead className="text-center font-medium text-xs p-2 bg-blue-50">Price List Total</TableHead>
+                              <TableHead className="text-center font-medium text-xs p-2">Customer Discount (%)</TableHead>
+                              <TableHead className="text-center font-medium text-xs p-2 bg-green-50">Sub total</TableHead>
+                              <TableHead className="text-center font-medium text-xs p-2">Handling charge (3%)</TableHead>
+                              <TableHead className="text-center font-medium text-xs p-2 bg-yellow-50">Total</TableHead>
+                              <TableHead className="text-center font-medium text-xs p-2">Comission (25%)</TableHead>
+                              <TableHead className="text-center font-medium text-xs p-2 bg-gray-100">Net Radiometer</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {produtos.map((produto, index) => (
+                              <TableRow key={produto.id}>
+                                <TableCell className="p-1 text-center text-xs">{produto.codigo}</TableCell>
+                                <TableCell className="p-1 text-center text-xs">{produto.totalQuantidades}</TableCell>
+                                <TableCell className="p-1 text-right text-xs bg-blue-50">{formatCurrency(produto.precoUnitUSD)}</TableCell>
+                                <TableCell className="p-1 text-right text-xs bg-blue-50 font-medium">{formatCurrency(produto.precoTotalUSD)}</TableCell>
+                                <TableCell className="p-1">
+                                  <Input
+                                    type="number"
+                                    value={produto.customerDiscount}
+                                    onChange={(e) => handleProdutoChange(index, 'customerDiscount', parseFloat(e.target.value) || 0)}
+                                    placeholder="0"
+                                    className="h-8 text-xs text-center"
+                                  />
+                                </TableCell>
+                                <TableCell className="p-1 text-right text-xs bg-green-50 font-medium">{formatCurrency(produto.subTotal)}</TableCell>
+                                <TableCell className="p-1 text-right text-xs">{formatCurrency(produto.handlingCharge)}</TableCell>
+                                <TableCell className="p-1 text-right text-xs bg-yellow-50 font-medium">{formatCurrency(produto.total)}</TableCell>
+                                <TableCell className="p-1 text-right text-xs">{formatCurrency(produto.comission)}</TableCell>
+                                <TableCell className="p-1 text-right text-xs bg-gray-100 font-medium">{formatCurrency(produto.netRadiometer)}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+
+                      {/* Totais OVC */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-blue-50 p-3 rounded-lg">
+                          <div className="text-sm font-medium text-blue-800">Price List Total</div>
+                          <div className="text-lg font-bold text-blue-900">{formatCurrency(produtos.reduce((sum, p) => sum + p.precoTotalUSD, 0))}</div>
                         </div>
-                        
-                        <div className="space-y-4">
-                          <h4 className="font-semibold text-gray-700 border-b pb-2">Detalhes da Venda</h4>
-                          <div>
-                            <Label htmlFor="formaVendaPI">Forma de Venda</Label>
-                            <Select>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione a forma de venda" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="licitacao">Licitação</SelectItem>
-                                <SelectItem value="venda-direta">Venda Direta</SelectItem>
-                                <SelectItem value="outros">Outros</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label htmlFor="numeroLicitacaoPI">Número da Licitação/Processo</Label>
-                            <Input
-                              id="numeroLicitacaoPI"
-                              placeholder="Número do processo"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="dataAberturaPI">Data de Abertura</Label>
-                            <Input
-                              id="dataAberturaPI"
-                              type="date"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="contatoResponsavelPI">Contato Responsável</Label>
-                            <Input
-                              id="contatoResponsavelPI"
-                              value={formData.contato}
-                              onChange={(e) => handleInputChange('contato', e.target.value)}
-                              placeholder="Nome do contato responsável"
-                            />
-                          </div>
+                        <div className="bg-green-50 p-3 rounded-lg">
+                          <div className="text-sm font-medium text-green-800">Sub Total (after discount)</div>
+                          <div className="text-lg font-bold text-green-900">{formatCurrency(produtos.reduce((sum, p) => sum + p.subTotal, 0))}</div>
+                        </div>
+                        <div className="bg-yellow-50 p-3 rounded-lg">
+                          <div className="text-sm font-medium text-yellow-800">Total (with handling)</div>
+                          <div className="text-lg font-bold text-yellow-900">{formatCurrency(produtos.reduce((sum, p) => sum + p.total, 0))}</div>
+                        </div>
+                        <div className="bg-red-50 p-3 rounded-lg">
+                          <div className="text-sm font-medium text-red-800">Total Comission</div>
+                          <div className="text-lg font-bold text-red-900">{formatCurrency(produtos.reduce((sum, p) => sum + p.comission, 0))}</div>
+                        </div>
+                        <div className="bg-gray-100 p-3 rounded-lg">
+                          <div className="text-sm font-medium text-gray-800">Net Radiometer</div>
+                          <div className="text-lg font-bold text-gray-900">{formatCurrency(produtos.reduce((sum, p) => sum + p.netRadiometer, 0))}</div>
                         </div>
                       </div>
 
-                      {/* Condições de Faturamento, Pagamento e Entrega */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                          <h4 className="font-semibold text-gray-700 border-b pb-2 mb-4">Faturamento</h4>
-                          <div className="space-y-3">
-                            <div>
-                              <Label htmlFor="tipoFaturamentoPI">Tipo de Faturamento</Label>
-                              <Select>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Selecione" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="direto">Faturamento Direto</SelectItem>
-                                  <SelectItem value="triangular">Faturamento Triangular</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div>
-                              <Label htmlFor="moedaFaturamentoPI">Moeda</Label>
-                              <Select value={formData.moeda} onValueChange={(value) => handleInputChange('moeda', value)}>
-                                <SelectTrigger>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="USD">USD</SelectItem>
-                                  <SelectItem value="EUR">EUR</SelectItem>
-                                  <SelectItem value="BRL">BRL</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-semibold text-gray-700 border-b pb-2 mb-4">Pagamento</h4>
-                          <div className="space-y-3">
-                            <div>
-                              <Label htmlFor="condicoesPagamentoPI">Condições de Pagamento</Label>
-                              <Input
-                                id="condicoesPagamentoPI"
-                                value={formData.condicoesPagamento}
-                                onChange={(e) => handleInputChange('condicoesPagamento', e.target.value)}
-                                placeholder="Condições de pagamento"
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="validadeProposta">Validade da Proposta</Label>
-                              <Input
-                                id="validadeProposta"
-                                placeholder="Ex: 30 dias"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-semibold text-gray-700 border-b pb-2 mb-4">Entrega</h4>
-                          <div className="space-y-3">
-                            <div>
-                              <Label htmlFor="prazoEntregaPI">Prazo de Entrega</Label>
-                              <Input
-                                id="prazoEntregaPI"
-                                value={formData.prazoEntrega}
-                                onChange={(e) => handleInputChange('prazoEntrega', e.target.value)}
-                                placeholder="Prazo de entrega"
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="localEntregaPI">Local de Entrega</Label>
-                              <Input
-                                id="localEntregaPI"
-                                value={formData.localEntrega}
-                                onChange={(e) => handleInputChange('localEntrega', e.target.value)}
-                                placeholder="Local de entrega"
-                              />
-                            </div>
-                            <div>
-                              <Label htmlFor="incotermsPI">Incoterms</Label>
-                              <Select value={formData.incoterms} onValueChange={(value) => handleInputChange('incoterms', value)}>
-                                <SelectTrigger>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="FOB">FOB</SelectItem>
-                                  <SelectItem value="CIF">CIF</SelectItem>
-                                  <SelectItem value="EXW">EXW</SelectItem>
-                                  <SelectItem value="DDP">DDP</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Observações PI */}
+                      {/* Observações OVC */}
                       <div>
-                        <Label htmlFor="observacoesPI">Observações Específicas para PI</Label>
+                        <Label htmlFor="observacoesOVC" className="text-sm">Observações OVC</Label>
                         <Textarea
-                          id="observacoesPI"
-                          placeholder="Observações específicas para a proforma invoice..."
-                          rows={4}
+                          id="observacoesOVC"
+                          placeholder="Observações específicas para a OVC..."
+                          rows={3}
+                          className="text-sm"
                         />
                       </div>
                     </CardContent>
@@ -1261,7 +1110,7 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
           </div>
         </TabsContent>
 
-        {/* Aba OVC */}
+        {/* Outras abas */}
         <TabsContent value="ovc" className="space-y-4">
           <Card>
             <CardHeader>
@@ -1336,7 +1185,6 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
           </Card>
         </TabsContent>
 
-        {/* Aba NOD/SO */}
         <TabsContent value="nod-so" className="space-y-4">
           <Card>
             <CardHeader>
@@ -1380,7 +1228,6 @@ const ImportacaoDiretaContent = ({ onClose, onSave, oportunidade }: ImportacaoDi
           </Card>
         </TabsContent>
 
-        {/* Aba DDR */}
         <TabsContent value="ddr" className="space-y-4">
           <Card>
             <CardHeader>
