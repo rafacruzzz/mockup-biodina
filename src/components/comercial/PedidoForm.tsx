@@ -22,7 +22,7 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
     cliente: oportunidade?.nome || '',
     assunto: '',
     ativo: true,
-    situacao: 'em_aberto',
+    situacao: 'em_analise',
     gerarExpedicao: false,
     localEstoque: '',
     projeto: '',
@@ -245,10 +245,11 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="em_aberto">Em Aberto</SelectItem>
-                        <SelectItem value="aguardando_importacao">Aguardando Importação</SelectItem>
-                        <SelectItem value="faturado">Faturado</SelectItem>
-                        <SelectItem value="cancelado">Cancelado</SelectItem>
+                        <SelectItem value="em_analise">Em Análise</SelectItem>
+                        <SelectItem value="aprovado">Aprovado</SelectItem>
+                        <SelectItem value="em_separacao">Em Separação</SelectItem>
+                        <SelectItem value="aprovado_pela_expedicao">Aprovado pela Expedição</SelectItem>
+                        <SelectItem value="finalizado">Finalizado</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
