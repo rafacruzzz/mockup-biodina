@@ -672,7 +672,7 @@ Documento gerado em: ${new Date().toLocaleString()}
                   <p>NORDEA BANK DENMARK A/S</p>
                   <p>P.O. BOX 850</p>
                   <p>0900 COPENHAGEN C DENMARK</p>
-                  <p>S.W.I.F.T NDEADKKK</p>
+                  <p>S.W.I.F.T NDEEDKKK</p>
                   <p>ACCOUNT NO.: 2149 5005508776</p>
                 </div>
               </div>
@@ -1001,7 +1001,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                       <tr className="bg-gray-100">
                         <th className="border border-gray-300 p-2 text-left">Campo</th>
                         <th className="border border-gray-300 p-2 text-left">Valor</th>
-                        <th className="border border-gray-300 p-2 text-left">Fonte</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1014,7 +1013,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                             className="w-full"
                           />
                         </td>
-                        <td className="border border-gray-300 p-2 text-sm text-gray-600">Manual</td>
                       </tr>
                       <tr>
                         <td className="border border-gray-300 p-2">Número da regularização na ANVISA</td>
@@ -1025,7 +1023,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                             className="w-full"
                           />
                         </td>
-                        <td className="border border-gray-300 p-2 text-sm text-gray-600">Importado ou manual</td>
                       </tr>
                       <tr>
                         <td className="border border-gray-300 p-2">Licenciamento de Importação nº</td>
@@ -1036,7 +1033,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                             className="w-full"
                           />
                         </td>
-                        <td className="border border-gray-300 p-2 text-sm text-gray-600">Manual</td>
                       </tr>
                       <tr>
                         <td className="border border-gray-300 p-2">Resolução da Diretoria Colegiada (RDC nº)</td>
@@ -1047,7 +1043,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                             className="w-full"
                           />
                         </td>
-                        <td className="border border-gray-300 p-2 text-sm text-gray-600">Fixo (pode estar pré-cadastrado)</td>
                       </tr>
                       <tr>
                         <td className="border border-gray-300 p-2">Data da RDC</td>
@@ -1058,7 +1053,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                             className="w-full"
                           />
                         </td>
-                        <td className="border border-gray-300 p-2 text-sm text-gray-600">Fixo</td>
                       </tr>
                       <tr>
                         <td className="border border-gray-300 p-2">Unidade de saúde autorizada</td>
@@ -1069,7 +1063,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                             className="w-full"
                           />
                         </td>
-                        <td className="border border-gray-300 p-2 text-sm text-gray-600">Buscar no cadastro</td>
                       </tr>
                       <tr>
                         <td className="border border-gray-300 p-2">CNPJ da unidade de saúde</td>
@@ -1080,7 +1073,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                             className="w-full"
                           />
                         </td>
-                        <td className="border border-gray-300 p-2 text-sm text-gray-600">Buscar no cadastro</td>
                       </tr>
                       <tr>
                         <td className="border border-gray-300 p-2">Finalidade da importação</td>
@@ -1101,7 +1093,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                             </SelectContent>
                           </Select>
                         </td>
-                        <td className="border border-gray-300 p-2 text-sm text-gray-600">Seleção no sistema</td>
                       </tr>
                     </tbody>
                   </table>
