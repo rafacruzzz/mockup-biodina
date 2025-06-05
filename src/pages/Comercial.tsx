@@ -1,5 +1,3 @@
-
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -391,226 +389,6 @@ const Comercial = () => {
   // Sub-módulos principais
   const renderMainModules = () => (
     <div className="space-y-6">
-      {/* Indicadores da Tela Inicial */}
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-        <h3 className="text-lg font-bold text-red-600 mb-4">
-          NA TELA INICIAL, PRECISAMOS DOS SEGUINTES INDICADORES:
-        </h3>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-          {/* Posição de Estoque */}
-          <Card className="shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm">
-                <Package className="h-4 w-4" />
-                POSIÇÃO DE ESTOQUE (O QUE TEM)
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                {indicadores.posicaoEstoque.map((item, index) => (
-                  <div key={index} className="flex justify-between text-xs">
-                    <span className="font-medium">{item.produto}</span>
-                    <span className="text-green-600">{item.quantidade} un.</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Importação - Previsão */}
-          <Card className="shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm">
-                <Truck className="h-4 w-4" />
-                IMPORTAÇÃO - PREVISÃO DE CHEGADA
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                {indicadores.importacaoPrevisao.map((item, index) => (
-                  <div key={index} className="text-xs">
-                    <div className="flex justify-between">
-                      <span className="font-medium">{item.item}</span>
-                      <span className="text-blue-600">{item.previsao}</span>
-                    </div>
-                    <div className="text-gray-500">{item.quantidade} un.</div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Agenda de Pedidos Programados */}
-          <Card className="shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm">
-                <Calendar className="h-4 w-4" />
-                AGENDA DE PEDIDOS PROGRAMADOS
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                {indicadores.pedidosProgramados.map((item, index) => (
-                  <div key={index} className="text-xs">
-                    <div className="flex justify-between">
-                      <span className="font-medium">{item.cliente}</span>
-                      <span className="text-purple-600">{item.data}</span>
-                    </div>
-                    <div className="text-gray-500">{formatCurrency(item.valor)}</div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Faturamento por Projeto */}
-          <Card className="shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm">
-                <DollarSign className="h-4 w-4" />
-                FATURAMENTO POR PROJETO
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                {indicadores.faturamentoProjeto.map((item, index) => (
-                  <div key={index} className="text-xs">
-                    <div className="font-medium truncate">{item.projeto}</div>
-                    <div className="flex justify-between">
-                      <span className="text-green-600">{formatCurrency(item.valor)}</span>
-                      <span className="text-gray-500">{item.status}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Restrição Financeira */}
-          <Card className="shadow-sm border-red-200">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm text-red-600">
-                <AlertTriangle className="h-4 w-4" />
-                RESTRIÇÃO FINANCEIRA
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                {indicadores.restricaoFinanceira.map((item, index) => (
-                  <div key={index} className="text-xs">
-                    <div className="font-medium text-red-600">{item.cliente}</div>
-                    <div className="flex justify-between">
-                      <span>{formatCurrency(item.valor)}</span>
-                      <span className="text-red-500">{item.dias} dias</span>
-                    </div>
-                    <Button size="sm" variant="outline" className="w-full mt-1 h-6 text-xs">
-                      Solicitar Desbloqueio
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Pedidos em Separação */}
-          <Card className="shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm">
-                <ClipboardList className="h-4 w-4" />
-                PEDIDOS EM SEPARAÇÃO
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                {indicadores.pedidosSeparacao.map((item, index) => (
-                  <div key={index} className="text-xs">
-                    <div className="flex justify-between">
-                      <span className="font-medium">{item.pedido}</span>
-                      <span className="text-orange-600">{item.itens} itens</span>
-                    </div>
-                    <div className="text-gray-500">{item.cliente}</div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Pedidos com Desmembramento */}
-          <Card className="shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm">
-                <FileText className="h-4 w-4" />
-                PEDIDOS COM DESMEMBRAMENTO
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                {indicadores.pedidosDesmembramento.map((item, index) => (
-                  <div key={index} className="text-xs">
-                    <div className="font-medium">{item.pedido}</div>
-                    <div className="flex justify-between">
-                      <span>{formatCurrency(item.desmembrado)}</span>
-                      <span className="text-gray-500">de {formatCurrency(item.original)}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Posição dos Pedidos até Entrega */}
-          <Card className="shadow-sm">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm">
-                <Truck className="h-4 w-4" />
-                POSIÇÃO DOS PEDIDOS ATÉ ENTREGA
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                {indicadores.posicaoPedidos.map((item, index) => (
-                  <div key={index} className="text-xs">
-                    <div className="flex justify-between">
-                      <span className="font-medium">{item.pedido}</span>
-                      <span className="text-blue-600">{item.previsao}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">{item.cliente}</span>
-                      <Badge className="text-xs bg-blue-100 text-blue-600">{item.status}</Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Aguardando Autorização do Gestor */}
-          <Card className="shadow-sm border-yellow-200">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm text-yellow-600">
-                <UserCheck className="h-4 w-4" />
-                AGUARDANDO AUTORIZAÇÃO DO GESTOR
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2">
-                {indicadores.aguardandoAutorizacao.map((item, index) => (
-                  <div key={index} className="text-xs">
-                    <div className="font-medium text-yellow-600">{item.item}</div>
-                    <div className="flex justify-between">
-                      <span>{formatCurrency(item.valor)}</span>
-                      <span className="text-yellow-500">{item.dias} dias</span>
-                    </div>
-                    <div className="text-gray-500">Gestor: {item.gestor}</div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
       {/* Módulos Principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card 
@@ -830,38 +608,122 @@ const Comercial = () => {
 
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Saúde do Pipeline</CardTitle>
+          <CardTitle className="text-sm">Indicadores da Tela Inicial</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-4 bg-gray-50 rounded">
-                <div className="text-2xl font-bold text-blue-600">
-                  {formatCurrency(funnelData[4].valor / 1000)}K
+          <div className="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
+            {/* Posição de Estoque */}
+            <Card className="shadow-sm border">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-xs">
+                  <Package className="h-3 w-3" />
+                  POSIÇÃO DE ESTOQUE
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-1">
+                  {indicadores.posicaoEstoque.slice(0, 2).map((item, index) => (
+                    <div key={index} className="flex justify-between text-xs">
+                      <span className="font-medium truncate">{item.produto}</span>
+                      <span className="text-green-600">{item.quantidade} un.</span>
+                    </div>
+                  ))}
                 </div>
-                <div className="text-sm text-gray-600">Conquistado</div>
-              </div>
-              <div className="text-center p-4 bg-gray-50 rounded">
-                <div className="text-2xl font-bold text-green-600">
-                  {funnelData.reduce((sum, stage) => sum + stage.count, 0)}
+              </CardContent>
+            </Card>
+
+            {/* Importação - Previsão */}
+            <Card className="shadow-sm border">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-xs">
+                  <Truck className="h-3 w-3" />
+                  IMPORTAÇÃO - PREVISÃO
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-1">
+                  {indicadores.importacaoPrevisao.slice(0, 2).map((item, index) => (
+                    <div key={index} className="text-xs">
+                      <div className="flex justify-between">
+                        <span className="font-medium truncate">{item.item}</span>
+                        <span className="text-blue-600">{item.previsao}</span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div className="text-sm text-gray-600">Total Oportunidades</div>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-sm">Pipeline Total</span>
-                <span className="text-sm font-medium">
-                  {formatCurrency(funnelData.reduce((sum, stage) => sum + stage.valor, 0))}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-sm">Taxa de Conversão</span>
-                <span className="text-sm font-medium">
-                  {((funnelData[4].count / Math.max(funnelData.reduce((sum, stage) => sum + stage.count, 0), 1)) * 100).toFixed(1)}%
-                </span>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
+
+            {/* Pedidos Programados */}
+            <Card className="shadow-sm border">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-xs">
+                  <Calendar className="h-3 w-3" />
+                  PEDIDOS PROGRAMADOS
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-1">
+                  {indicadores.pedidosProgramados.slice(0, 2).map((item, index) => (
+                    <div key={index} className="text-xs">
+                      <div className="flex justify-between">
+                        <span className="font-medium truncate">{item.cliente}</span>
+                        <span className="text-purple-600">{item.data}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Restrição Financeira */}
+            <Card className="shadow-sm border border-red-200">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-xs text-red-600">
+                  <AlertTriangle className="h-3 w-3" />
+                  RESTRIÇÃO FINANCEIRA
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-1">
+                  {indicadores.restricaoFinanceira.slice(0, 1).map((item, index) => (
+                    <div key={index} className="text-xs">
+                      <div className="font-medium text-red-600 truncate">{item.cliente}</div>
+                      <div className="flex justify-between">
+                        <span>{formatCurrency(item.valor)}</span>
+                        <span className="text-red-500">{item.dias} dias</span>
+                      </div>
+                      <Button size="sm" variant="outline" className="w-full mt-1 h-5 text-xs py-0">
+                        Solicitar Desbloqueio
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Aguardando Autorização */}
+            <Card className="shadow-sm border border-yellow-200">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-xs text-yellow-600">
+                  <UserCheck className="h-3 w-3" />
+                  AGUARDANDO AUTORIZAÇÃO
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="space-y-1">
+                  {indicadores.aguardandoAutorizacao.slice(0, 1).map((item, index) => (
+                    <div key={index} className="text-xs">
+                      <div className="font-medium text-yellow-600 truncate">{item.item}</div>
+                      <div className="flex justify-between">
+                        <span>{formatCurrency(item.valor)}</span>
+                        <span className="text-yellow-500">{item.dias} dias</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </CardContent>
       </Card>
@@ -1141,4 +1003,3 @@ const Comercial = () => {
 };
 
 export default Comercial;
-
