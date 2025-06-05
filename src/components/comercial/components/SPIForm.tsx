@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -6,7 +5,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload } from 'lucide-react';
+import { useState } from 'react';
 import SPIProductsTable from './SPIProductsTable';
+import OVCTable from './OVCTable';
 import { formatUSD, calcularSubtotal, calcularPacking, calcularTotal, handleUploadPI } from '../utils/spiUtils';
 
 interface SPIFormProps {
@@ -15,6 +16,62 @@ interface SPIFormProps {
 }
 
 const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
+  const [showOVCTable, setShowOVCTable] = useState(false);
+  const [ovcItems, setOvcItems] = useState([
+    {
+      id: 1,
+      code: 'ABL800 FLEX',
+      qty: '1',
+      priceListUnit: '65000.00',
+      priceListTotal: '65000.00',
+      customerDiscountPercent: '15',
+      customerDiscountUnit: '9750.00',
+      customerDiscountTotal: '9750.00',
+      subTotalUnit: '55250.00',
+      subTotalTotal: '55250.00',
+      handlingCharge: '1657.50',
+      total: '56907.50',
+      comissionPercent: '5',
+      comissionValue: '2845.38',
+      netRadiometer: '54062.12'
+    },
+    {
+      id: 2,
+      code: 'Installation',
+      qty: '1',
+      priceListUnit: '3000.00',
+      priceListTotal: '3000.00',
+      customerDiscountPercent: '0',
+      customerDiscountUnit: '0.00',
+      customerDiscountTotal: '0.00',
+      subTotalUnit: '3000.00',
+      subTotalTotal: '3000.00',
+      handlingCharge: '90.00',
+      total: '3090.00',
+      comissionPercent: '5',
+      comissionValue: '154.50',
+      netRadiometer: '2935.50'
+    }
+  ]);
+
+  const handleUploadPIClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.doc,.docx,.jpg,.jpeg,.png';
+    input.multiple = true;
+    
+    input.onchange = (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (files) {
+        console.log('Arquivos selecionados para upload PI:', files);
+        // Mostrar a tabela OVC após o upload
+        setShowOVCTable(true);
+      }
+    };
+    
+    input.click();
+  };
+
   return (
     <div className="space-y-6">
       {/* Cabeçalho */}
@@ -427,7 +484,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
             {/* Botão Upload PI */}
             <div className="mt-4">
               <Button 
-                onClick={handleUploadPI}
+                onClick={handleUploadPIClick}
                 variant="outline"
                 className="w-full sm:w-auto"
               >
@@ -435,6 +492,17 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 Upload PI
               </Button>
             </div>
+
+            {/* Tabela OVC - aparece após upload da PI */}
+            {showOVCTable && (
+              <div className="mt-6">
+                <h3 className="font-semibold mb-4 border-b pb-2">OVC - Order Value Calculator</h3>
+                <OVCTable
+                  items={ovcItems}
+                  onUpdateItems={setOvcItems}
+                />
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
