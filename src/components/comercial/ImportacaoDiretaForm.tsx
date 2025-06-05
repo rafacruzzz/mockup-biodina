@@ -1,9 +1,9 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
 import SPIForm from './components/SPIForm';
+import NOForm from './components/NOForm';
 import ComercialTabs from './components/ComercialTabs';
 import { generateSPIPDF } from './utils/spiUtils';
 
@@ -141,7 +141,8 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
 
   const masterTabs = [
     { id: 'comercial', label: 'COMERCIAL' },
-    { id: 'spi', label: 'SPI' }
+    { id: 'spi', label: 'SPI' },
+    { id: 'no', label: 'NO' }
   ];
 
   const handleInputChange = (field: string, value: any) => {
@@ -168,6 +169,15 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     if (activeMasterTab === 'spi') {
       return (
         <SPIForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
+    
+    if (activeMasterTab === 'no') {
+      return (
+        <NOForm
           formData={formData}
           onInputChange={handleInputChange}
         />

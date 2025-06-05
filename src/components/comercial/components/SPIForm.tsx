@@ -72,6 +72,24 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
     input.click();
   };
 
+  const handleUploadAOClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.doc,.docx,.jpg,.jpeg,.png';
+    input.multiple = true;
+    
+    input.onchange = (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (files) {
+        console.log('Arquivos selecionados para upload AO:', files);
+        // Mostrar a tabela OVC após o upload
+        setShowOVCTable(true);
+      }
+    };
+    
+    input.click();
+  };
+
   return (
     <div className="space-y-6">
       {/* Cabeçalho */}
@@ -481,8 +499,8 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
               </div>
             </div>
             
-            {/* Botão Upload PI */}
-            <div className="mt-4">
+            {/* Botões Upload PI e AO */}
+            <div className="mt-4 flex gap-4">
               <Button 
                 onClick={handleUploadPIClick}
                 variant="outline"
@@ -491,9 +509,17 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 <Upload className="h-4 w-4 mr-2" />
                 Upload PI
               </Button>
+              <Button 
+                onClick={handleUploadAOClick}
+                variant="outline"
+                className="w-full sm:w-auto"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Upload AO
+              </Button>
             </div>
 
-            {/* Tabela OVC - aparece após upload da PI */}
+            {/* Tabela OVC - aparece após upload da PI ou AO */}
             {showOVCTable && (
               <div className="mt-6">
                 <h3 className="font-semibold mb-4 border-b pb-2">OVC - Order Value Calculator</h3>
