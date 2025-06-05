@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -16,7 +15,8 @@ import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesFor
 import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
-  DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter
+  DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
+  ShoppingCart, Headphones, ArrowLeft
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -24,6 +24,8 @@ import {
 } from 'recharts';
 
 const Comercial = () => {
+  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'pos-venda'>('main');
+  const [activeSubModule, setActiveSubModule] = useState<'assessoria' | 'departamento-tecnico' | null>(null);
   const [activeTab, setActiveTab] = useState('funil');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
@@ -207,12 +209,12 @@ const Comercial = () => {
 
   const funnelData = calculateFunnelData();
 
-  // Dados das metas comerciais
-  const metasData = [
-    { vendedor: 'João Silva', meta: 200000, realizado: 165000, percentual: 82.5 },
-    { vendedor: 'Maria Santos', meta: 180000, realizado: 195000, percentual: 108.3 },
-    { vendedor: 'Carlos Oliveira', meta: 250000, realizado: 187000, percentual: 74.8 },
-    { vendedor: 'Faber Oliveira', meta: 300000, realizado: 282000, percentual: 94.0 },
+  // Dados de conversão por UF (alterado de vendedores)
+  const conversaoUFData = [
+    { uf: 'SP', conversao: 108.3 },
+    { uf: 'RJ', conversao: 94.0 },
+    { uf: 'CE', conversao: 82.5 },
+    { uf: 'RN', conversao: 74.8 },
   ];
 
   const formatCurrency = (value: number) => {
@@ -338,6 +340,186 @@ const Comercial = () => {
     return matchesSearch && matchesStatus && matchesModalidade;
   });
 
+  // Sub-módulos principais
+  const renderMainModules = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card 
+          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+          onClick={() => setActiveModule('vendas')}
+        >
+          <CardContent className="p-8 text-center">
+            <ShoppingCart className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Vendas</h3>
+            <p className="text-gray-600">Gestão do processo comercial e oportunidades</p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+          onClick={() => setActiveModule('pos-venda')}
+        >
+          <CardContent className="p-8 text-center">
+            <Headphones className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Pós-Venda</h3>
+            <p className="text-gray-600">Suporte científico e técnico pós-venda</p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
+  // Sub-módulos do Pós-Venda
+  const renderPosVendaModules = () => (
+    <div className="space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Button 
+          variant="outline" 
+          onClick={() => setActiveModule('main')}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Voltar
+        </Button>
+        <h2 className="text-2xl font-bold text-biodina-blue">Pós-Venda</h2>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card 
+          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+          onClick={() => setActiveSubModule('assessoria')}
+        >
+          <CardContent className="p-8 text-center">
+            <Target className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Assessoria Científica</h3>
+            <p className="text-gray-600">Suporte científico especializado</p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+          onClick={() => setActiveSubModule('departamento-tecnico')}
+        >
+          <CardContent className="p-8 text-center">
+            <FileText className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Departamento Técnico</h3>
+            <p className="text-gray-600">Suporte técnico e manutenção</p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
+  // Placeholder para sub-módulos específicos
+  const renderSubModule = () => {
+    if (activeSubModule === 'assessoria') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center gap-4 mb-6">
+            <Button 
+              variant="outline" 
+              onClick={() => setActiveSubModule(null)}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar
+            </Button>
+            <h2 className="text-2xl font-bold text-biodina-blue">Assessoria Científica</h2>
+          </div>
+          <Card>
+            <CardContent className="p-8 text-center">
+              <p className="text-gray-600">Módulo de Assessoria Científica em desenvolvimento</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    if (activeSubModule === 'departamento-tecnico') {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center gap-4 mb-6">
+            <Button 
+              variant="outline" 
+              onClick={() => setActiveSubModule(null)}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar
+            </Button>
+            <h2 className="text-2xl font-bold text-biodina-blue">Departamento Técnico</h2>
+          </div>
+          <Card>
+            <CardContent className="p-8 text-center">
+              <p className="text-gray-600">Módulo de Departamento Técnico em desenvolvimento</p>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  // Módulo de Vendas (conteúdo original do comercial)
+  const renderVendasModule = () => {
+    const tabs = [
+      { id: 'funil', label: 'Funil de Oportunidades', icon: TrendingUp },
+      { id: 'oportunidades', label: 'Oportunidades', icon: Briefcase },
+      { id: 'analise', label: 'Análise de Conversão', icon: BarChart3 },
+    ];
+
+    const renderContent = () => {
+      switch (activeTab) {
+        case 'funil': return renderFunil();
+        case 'oportunidades': return renderOportunidades();
+        case 'analise': return renderAnaliseConversao();
+        default: return renderFunil();
+      }
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4 mb-6">
+          <Button 
+            variant="outline" 
+            onClick={() => setActiveModule('main')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar
+          </Button>
+          <h2 className="text-2xl font-bold text-biodina-blue">Vendas</h2>
+        </div>
+
+        {/* Navegação por abas */}
+        <div className="border-b border-gray-200">
+          <nav className="flex space-x-8">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === tab.id
+                    ? 'border-biodina-blue text-biodina-blue'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <tab.icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        {/* Conteúdo da aba ativa */}
+        <div className="space-y-6">
+          {renderContent()}
+        </div>
+      </div>
+    );
+  };
+
   const renderFunil = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card className="shadow-lg">
@@ -431,7 +613,7 @@ const Comercial = () => {
               onClick={handleNovaOportunidade}
             >
               <Plus className="h-4 w-4 mr-2" />
-              Nova Proposta
+              Novo Projeto
             </Button>
           </div>
         </div>
@@ -548,53 +730,20 @@ const Comercial = () => {
     </Card>
   );
 
-  const renderMetas = () => (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Target className="h-5 w-5" />
-          Metas Comerciais - Janeiro 2025
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          {metasData.map((meta, index) => (
-            <div key={index} className="p-4 border rounded-lg">
-              <div className="flex justify-between items-center mb-3">
-                <div>
-                  <h4 className="font-semibold">{meta.vendedor}</h4>
-                  <p className="text-sm text-gray-600">
-                    {formatCurrency(meta.realizado)} de {formatCurrency(meta.meta)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <span className={`text-lg font-bold ${meta.percentual >= 100 ? 'text-green-600' : meta.percentual >= 80 ? 'text-yellow-600' : 'text-red-600'}`}>
-                    {meta.percentual.toFixed(1)}%
-                  </span>
-                </div>
-              </div>
-              <Progress value={Math.min(meta.percentual, 100)} className="h-3" />
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-
   const renderAnaliseConversao = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Conversão por Vendedor</CardTitle>
+          <CardTitle>Conversão por UF</CardTitle>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={metasData}>
+            <BarChart data={conversaoUFData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="vendedor" />
+              <XAxis dataKey="uf" />
               <YAxis />
               <Tooltip formatter={(value) => [`${value}%`, 'Taxa de Conversão']} />
-              <Bar dataKey="percentual" fill="#0A2342" />
+              <Bar dataKey="conversao" fill="#0A2342" />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -629,23 +778,6 @@ const Comercial = () => {
     </div>
   );
 
-  const tabs = [
-    { id: 'funil', label: 'Funil de Oportunidades', icon: TrendingUp },
-    { id: 'oportunidades', label: 'Oportunidades', icon: Briefcase },
-    { id: 'metas', label: 'Metas Comerciais', icon: Target },
-    { id: 'analise', label: 'Análise de Conversão', icon: BarChart3 },
-  ];
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'funil': return renderFunil();
-      case 'oportunidades': return renderOportunidades();
-      case 'metas': return renderMetas();
-      case 'analise': return renderAnaliseConversao();
-      default: return renderFunil();
-    }
-  };
-
   return (
     <SidebarLayout>
       <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
@@ -654,33 +786,14 @@ const Comercial = () => {
           <p className="text-gray-600">Gestão completa do processo comercial</p>
         </header>
 
-        {/* Navegação por abas */}
-        <div className="border-b border-gray-200">
-          <nav className="flex space-x-8">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === tab.id
-                    ? 'border-biodina-blue text-biodina-blue'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <tab.icon className="h-4 w-4" />
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        {/* Conteúdo da aba ativa */}
-        <div className="space-y-6">
-          {renderContent()}
-        </div>
+        {/* Renderização condicional baseada no módulo ativo */}
+        {activeModule === 'main' && renderMainModules()}
+        {activeModule === 'vendas' && renderVendasModule()}
+        {activeModule === 'pos-venda' && !activeSubModule && renderPosVendaModules()}
+        {activeModule === 'pos-venda' && activeSubModule && renderSubModule()}
       </div>
 
-      {/* Modais */}
+      {/* Modais (mantidos iguais) */}
       <TipoPropostaModal
         isOpen={showTipoPropostaModal}
         onClose={() => setShowTipoPropostaModal(false)}
