@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,6 @@ interface PedidoFormProps {
 
 const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
   const [formData, setFormData] = useState({
-    // Campos Gerais
     relacionado: '',
     cliente: oportunidade?.nome || '',
     assunto: '',
