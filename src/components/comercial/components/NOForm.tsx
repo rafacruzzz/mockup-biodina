@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { FileText, Paperclip, Send } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { FileText, Paperclip, Send, Upload, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 
 interface NOFormProps {
@@ -17,6 +18,27 @@ const NOForm = ({ formData, onInputChange }: NOFormProps) => {
   const [activeSubTab, setActiveSubTab] = useState('pedido');
   const [aoAnexada, setAoAnexada] = useState(false);
   const [pagamentoPago, setPagamentoPago] = useState(false);
+  
+  // Estados para Packing List
+  const [packingListRecebido, setPackingListRecebido] = useState('');
+  const [packingListFile, setPackingListFile] = useState<File | null>(null);
+  const [usuarioResponsavel, setUsuarioResponsavel] = useState('');
+  const [clienteAprovou, setClienteAprovou] = useState('');
+  const [motivoNaoAprovacao, setMotivoNaoAprovacao] = useState('');
+  const [documentacaoFinalRecebida, setDocumentacaoFinalRecebida] = useState('');
+  const [documentacaoFile, setDocumentacaoFile] = useState<File | null>(null);
+  const [motivoSemDocumentacao, setMotivoSemDocumentacao] = useState('');
+  const [clienteRecebeuDocumentacao, setClienteRecebeuDocumentacao] = useState('');
+  const [motivoClienteNaoRecebeu, setMotivoClienteNaoRecebeu] = useState('');
+
+  // Lista de usuários do sistema (mock)
+  const usuarios = [
+    'João Silva',
+    'Maria Santos', 
+    'Carlos Oliveira',
+    'Ana Costa',
+    'Faber Oliveira'
+  ];
 
   const handleGenerateNOPDF = () => {
     // Simular geração do PDF NO baseado na estrutura correta
@@ -62,7 +84,6 @@ Code: ${formData.noEaa || 'EAA - XXX'}
 Documento gerado em: ${new Date().toLocaleString()}
 `;
 
-    // Criar e baixar arquivo NO
     const noBlob = new Blob([noContent], { type: 'text/plain' });
     const noUrl = URL.createObjectURL(noBlob);
     const noLink = document.createElement('a');
@@ -88,7 +109,31 @@ Documento gerado em: ${new Date().toLocaleString()}
   };
 
   const handleEnviarInstrucoes = () => {
-    console.log('Enviando instruções de embarque...');
+    setActiveSubTab('packing-list');
+    console.log('Enviando instruções de embarque e direcionando para Packing List...');
+  };
+
+  const handlePackingListFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setPackingListFile(file);
+      console.log('Packing List anexado:', file.name);
+    }
+  };
+
+  const handleDocumentacaoFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setDocumentacaoFile(file);
+      console.log('Documentação final anexada:', file.name);
+    }
+  };
+
+  const handleClienteNaoAprovou = () => {
+    if (motivoNaoAprovacao.trim()) {
+      alert('Atenção: Você precisa voltar na aba SPI para revisar os itens do pedido.');
+      console.log('Cliente não aprovou. Motivo:', motivoNaoAprovacao);
+    }
   };
 
   return (
@@ -102,10 +147,13 @@ Documento gerado em: ${new Date().toLocaleString()}
         
         <CardContent className="p-6">
           <Tabs value={activeSubTab} onValueChange={setActiveSubTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="pedido">Pedido</TabsTrigger>
               <TabsTrigger value="instrucao-embarque" disabled={!aoAnexada}>
                 Instrução de Embarque
+              </TabsTrigger>
+              <TabsTrigger value="packing-list" disabled={!pagamentoPago}>
+                Packing List ou Validades
               </TabsTrigger>
             </TabsList>
 
@@ -180,7 +228,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                 <p className="text-sm italic">"We would like to place our new order, according to your P.I. a.m. consigned to the following customer:"</p>
               </div>
 
-              {/* Customer Information */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 border p-4 rounded">
                 <div className="lg:col-span-2">
                   <h3 className="font-semibold mb-4 border-b pb-2">CUSTOMER INFORMATION</h3>
@@ -231,7 +278,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                 </div>
               </div>
 
-              {/* Payment and Shipping Details */}
               <div className="grid grid-cols-1 gap-4 border p-4 rounded">
                 <div>
                   <h3 className="font-semibold mb-4 border-b pb-2">PAYMENT AND SHIPPING DETAILS</h3>
@@ -261,12 +307,10 @@ Documento gerado em: ${new Date().toLocaleString()}
                 </div>
               </div>
 
-              {/* Closing Text - Fixo */}
               <div className="border p-4 rounded bg-gray-50">
                 <p className="text-sm italic">"We thank you in advance and look forward to receiving your AO."</p>
               </div>
 
-              {/* Signature */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 border p-4 rounded">
                 <div className="lg:col-span-3">
                   <h3 className="font-semibold mb-4 border-b pb-2">SIGNATURE</h3>
@@ -306,7 +350,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                 </div>
               </div>
 
-              {/* Botões de Download e Anexar AO */}
               <div className="flex justify-center gap-4">
                 <Button 
                   onClick={handleGenerateNOPDF}
@@ -340,7 +383,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                 </div>
               </div>
 
-              {/* Campos do Documento */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 border p-4 rounded">
                 <div className="lg:col-span-2">
                   <h3 className="font-semibold mb-4 border-b pb-2">DOCUMENT FIELDS</h3>
@@ -413,13 +455,11 @@ Documento gerado em: ${new Date().toLocaleString()}
                 </div>
               </div>
 
-              {/* Instruções de Embarque - Texto fixo */}
               <div className="border p-4 rounded bg-gray-50">
                 <h3 className="font-semibold mb-4 border-b pb-2">SHIPPING INSTRUCTIONS</h3>
                 <p className="text-sm italic">Please pack the goods of our order a.m. as soon as possible in accordance with the following instructions:</p>
               </div>
 
-              {/* Campos Específicos */}
               <div className="grid grid-cols-1 gap-4 border p-4 rounded">
                 <div>
                   <h3 className="font-semibold mb-4 border-b pb-2">SPECIFIC FIELDS</h3>
@@ -531,7 +571,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                 </div>
               </div>
 
-              {/* Endereço de Entrega */}
               <div className="border p-4 rounded bg-gray-50">
                 <h3 className="font-semibold mb-4 border-b pb-2">DELIVERY ADDRESS</h3>
                 <div className="space-y-2 text-sm">
@@ -541,7 +580,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                 </div>
               </div>
 
-              {/* Informações Adicionais */}
               <div className="grid grid-cols-1 gap-4 border p-4 rounded">
                 <div>
                   <h3 className="font-semibold mb-4 border-b pb-2">ADDITIONAL INFORMATION</h3>
@@ -559,7 +597,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                 </div>
               </div>
 
-              {/* Informações Bancárias - Fixo */}
               <div className="border p-4 rounded bg-gray-50">
                 <h3 className="font-semibold mb-4 border-b pb-2">BANKING INFORMATION</h3>
                 <div className="space-y-2 text-sm">
@@ -572,7 +609,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                 </div>
               </div>
 
-              {/* Informações do Exportador - Fixo */}
               <div className="border p-4 rounded bg-gray-50">
                 <h3 className="font-semibold mb-4 border-b pb-2">EXPORTER INFORMATION</h3>
                 <div className="space-y-2 text-sm">
@@ -583,7 +619,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                 </div>
               </div>
 
-              {/* Observação Final - Fixo */}
               <div className="border p-4 rounded bg-gray-50">
                 <h3 className="font-semibold mb-4 border-b pb-2">FINAL OBSERVATION</h3>
                 <div className="space-y-2 text-sm">
@@ -596,7 +631,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                 </div>
               </div>
 
-              {/* Status de Pagamento e Botão de Enviar Instruções */}
               <div className="border-2 border-red-400 p-4 rounded bg-red-50">
                 <div className="flex items-center justify-between">
                   <div>
@@ -630,6 +664,234 @@ Documento gerado em: ${new Date().toLocaleString()}
                   )}
                 </div>
               </div>
+            </TabsContent>
+
+            <TabsContent value="packing-list" className="space-y-6 mt-6">
+              <div className="border p-4 rounded bg-purple-50">
+                <h3 className="font-bold mb-4 text-lg text-purple-700">Packing List ou Validades (Fábrica)</h3>
+              </div>
+
+              {/* Packing List Recebido */}
+              <div className="border p-4 rounded">
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-base font-semibold">Packing list recebido:</Label>
+                    <Select value={packingListRecebido} onValueChange={setPackingListRecebido}>
+                      <SelectTrigger className="w-48 mt-2">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="sim">Sim</SelectItem>
+                        <SelectItem value="nao">Não</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {packingListRecebido === 'sim' && (
+                    <div className="border-2 border-dashed border-gray-300 p-4 rounded">
+                      <Label className="block mb-2 font-medium">Upload do Packing List</Label>
+                      <div className="flex items-center gap-4">
+                        <input
+                          type="file"
+                          id="packingListFile"
+                          onChange={handlePackingListFileUpload}
+                          className="hidden"
+                          accept=".pdf,.doc,.docx,.jpg,.png"
+                        />
+                        <Button
+                          onClick={() => document.getElementById('packingListFile')?.click()}
+                          className="bg-blue-600 text-white hover:bg-blue-700"
+                        >
+                          <Upload className="h-4 w-4 mr-2" />
+                          Anexar Packing List
+                        </Button>
+                        {packingListFile && (
+                          <span className="text-sm text-green-600">
+                            ✓ {packingListFile.name}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Campos que só aparecem após upload do packing list */}
+              {packingListRecebido === 'sim' && packingListFile && (
+                <>
+                  {/* Usuário Responsável */}
+                  <div className="border p-4 rounded">
+                    <div className="space-y-4">
+                      <div>
+                        <Label className="text-base font-semibold">Selecionar usuário responsável para verificar itens do Packing list:</Label>
+                        <Select value={usuarioResponsavel} onValueChange={setUsuarioResponsavel}>
+                          <SelectTrigger className="w-full mt-2">
+                            <SelectValue placeholder="Selecione o usuário responsável" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {usuarios.map((usuario) => (
+                              <SelectItem key={usuario} value={usuario}>
+                                {usuario}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-sm text-blue-600 mt-2 italic">
+                          ℹ️ Este processo está gerando histórico na sub-aba Histórico/Chat na aba principal COMERCIAL
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Cliente Aprovou */}
+                  <div className="border p-4 rounded">
+                    <div className="space-y-4">
+                      <div>
+                        <Label className="text-base font-semibold">Cliente aprovou?</Label>
+                        <Select value={clienteAprovou} onValueChange={setClienteAprovou}>
+                          <SelectTrigger className="w-48 mt-2">
+                            <SelectValue placeholder="Selecione" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="sim">Sim</SelectItem>
+                            <SelectItem value="nao">Não</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {clienteAprovou === 'nao' && (
+                        <div className="space-y-4">
+                          <div>
+                            <Label className="block mb-2 font-medium">Motivo da não aprovação:</Label>
+                            <Textarea
+                              value={motivoNaoAprovacao}
+                              onChange={(e) => setMotivoNaoAprovacao(e.target.value)}
+                              placeholder="Digite o motivo da não aprovação..."
+                              rows={3}
+                              className="w-full"
+                            />
+                          </div>
+                          <Button
+                            onClick={handleClienteNaoAprovou}
+                            className="bg-red-600 text-white hover:bg-red-700"
+                            disabled={!motivoNaoAprovacao.trim()}
+                          >
+                            <AlertTriangle className="h-4 w-4 mr-2" />
+                            Salvar Motivo
+                          </Button>
+                        </div>
+                      )}
+
+                      {clienteAprovou === 'sim' && (
+                        <p className="text-sm text-blue-600 italic">
+                          ℹ️ Este processo está gerando histórico na sub-aba Histórico/Chat na aba principal COMERCIAL
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Documentação Final de Embarque */}
+                  {clienteAprovou === 'sim' && (
+                    <div className="border p-4 rounded">
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-base font-semibold">Recebeu da fábrica a documentação final de embarque:</Label>
+                          <Select value={documentacaoFinalRecebida} onValueChange={setDocumentacaoFinalRecebida}>
+                            <SelectTrigger className="w-48 mt-2">
+                              <SelectValue placeholder="Selecione" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="sim">Sim</SelectItem>
+                              <SelectItem value="nao">Não</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {documentacaoFinalRecebida === 'sim' && (
+                          <div className="border-2 border-dashed border-gray-300 p-4 rounded">
+                            <Label className="block mb-2 font-medium">Upload da Documentação Final</Label>
+                            <div className="flex items-center gap-4">
+                              <input
+                                type="file"
+                                id="documentacaoFile"
+                                onChange={handleDocumentacaoFileUpload}
+                                className="hidden"
+                                accept=".pdf,.doc,.docx,.jpg,.png"
+                              />
+                              <Button
+                                onClick={() => document.getElementById('documentacaoFile')?.click()}
+                                className="bg-green-600 text-white hover:bg-green-700"
+                              >
+                                <Upload className="h-4 w-4 mr-2" />
+                                Anexar Documentação
+                              </Button>
+                              {documentacaoFile && (
+                                <span className="text-sm text-green-600">
+                                  ✓ {documentacaoFile.name}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+
+                        {documentacaoFinalRecebida === 'nao' && (
+                          <div>
+                            <Label className="block mb-2 font-medium">Motivo:</Label>
+                            <Textarea
+                              value={motivoSemDocumentacao}
+                              onChange={(e) => setMotivoSemDocumentacao(e.target.value)}
+                              placeholder="Digite o motivo de não ter recebido a documentação..."
+                              rows={3}
+                              className="w-full"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Cliente Recebeu Documentação */}
+                  {documentacaoFinalRecebida === 'sim' && documentacaoFile && (
+                    <div className="border p-4 rounded">
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-base font-semibold">Cliente recebeu a documentação?</Label>
+                          <Select value={clienteRecebeuDocumentacao} onValueChange={setClienteRecebeuDocumentacao}>
+                            <SelectTrigger className="w-48 mt-2">
+                              <SelectValue placeholder="Selecione" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="sim">Sim</SelectItem>
+                              <SelectItem value="nao">Não</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {clienteRecebeuDocumentacao === 'nao' && (
+                          <div>
+                            <Label className="block mb-2 font-medium">Motivo:</Label>
+                            <Textarea
+                              value={motivoClienteNaoRecebeu}
+                              onChange={(e) => setMotivoClienteNaoRecebeu(e.target.value)}
+                              placeholder="Digite o motivo do cliente não ter recebido a documentação..."
+                              rows={3}
+                              className="w-full"
+                            />
+                          </div>
+                        )}
+
+                        {clienteRecebeuDocumentacao === 'sim' && (
+                          <div className="bg-green-50 border border-green-200 p-4 rounded">
+                            <p className="text-green-700 font-medium">
+                              ✓ Processo de Packing List concluído com sucesso!
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </TabsContent>
           </Tabs>
         </CardContent>
