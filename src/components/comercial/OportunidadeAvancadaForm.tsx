@@ -59,7 +59,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   ]);
 
   const [formData, setFormData] = useState({
-    // Campos básicos - removido tipoOportunidade
+    // Campos básicos - removido tipoOportunidade e procurandoPor
     cpfCnpj: oportunidade?.cpfCnpj || '',
     nome: oportunidade?.nome || '',
     nomeFantasia: oportunidade?.nomeFantasia || '',
@@ -75,13 +75,11 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     metodoContato: oportunidade?.metodoContato || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || [],
     valorNegocio: oportunidade?.valorNegocio || 0,
-    procurandoPor: oportunidade?.procurandoPor || '',
     tags: oportunidade?.tags || '',
     caracteristicas: oportunidade?.caracteristicas || '',
     dataInicio: oportunidade?.dataInicio || '',
     dataLimite: oportunidade?.dataLimite || '',
     fluxoTrabalho: oportunidade?.fluxoTrabalho || '',
-    status: oportunidade?.status || 'em_triagem',
     descricao: oportunidade?.descricao || '',
     analiseTecnica: oportunidade?.analiseTecnica || '',
     termometro: oportunidade?.termometro || 50,
@@ -146,11 +144,11 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   };
 
   const isStatusGanha = () => {
-    return formData.status === 'ganha' || formData.resultadoOportunidade === 'ganho';
+    return formData.resultadoOportunidade === 'ganho';
   };
 
   const isStatusPerdida = () => {
-    return formData.status === 'perdida' || formData.resultadoOportunidade === 'perda';
+    return formData.resultadoOportunidade === 'perda';
   };
 
   const canShowPedidos = () => {
@@ -179,7 +177,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   const handleApprovalSuccess = () => {
     setIsParticipacaoApproved(true);
     setActiveMasterTab('participacao');
-    setFormData({ ...formData, status: 'em_acompanhamento' });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -294,7 +291,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </div>
       </div>
 
-      {/* Dados do Lead/Negócio */}
+      {/* Dados do Lead/Negócio - removidos campos: procurandoPor e status */}
       <div className="border rounded-lg p-4 space-y-4">
         <h3 className="text-lg font-semibold text-gray-800">Dados do Lead/Negócio</h3>
         <div className="grid grid-cols-2 gap-4">
@@ -328,11 +325,34 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                 <SelectValue placeholder="Selecione" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="hospitalar">Hospitalar</SelectItem>
-                <SelectItem value="universitario">Universitário</SelectItem>
-                <SelectItem value="publico">Público</SelectItem>
-                <SelectItem value="municipal">Municipal</SelectItem>
-                <SelectItem value="privado">Privado</SelectItem>
+                <SelectItem value="filantropico">FILANTRÓPICO</SelectItem>
+                <SelectItem value="privado_estetica">PRIVADO - ESTÉTICA</SelectItem>
+                <SelectItem value="privado_hospital">PRIVADO - HOSPITAL</SelectItem>
+                <SelectItem value="privado_laboratorio">PRIVADO - LABORATÓRIO</SelectItem>
+                <SelectItem value="privado_universidade">PRIVADO - UNIVERSIDADE</SelectItem>
+                <SelectItem value="privado_veterinario">PRIVADO - VETERINÁRIO</SelectItem>
+                <SelectItem value="publico_hospital_aeronautica">PÚBLICO - HOSPITAL - AERONÁUTICA</SelectItem>
+                <SelectItem value="publico_hospital_estadual">PÚBLICO - HOSPITAL - ESTADUAL</SelectItem>
+                <SelectItem value="publico_hospital_exercito">PÚBLICO - HOSPITAL - EXÉRCITO</SelectItem>
+                <SelectItem value="publico_hospital_federal">PÚBLICO - HOSPITAL - FEDERAL</SelectItem>
+                <SelectItem value="publico_hospital_marinha">PÚBLICO - HOSPITAL - MARINHA</SelectItem>
+                <SelectItem value="publico_hospital_municipal">PÚBLICO - HOSPITAL - MUNICIPAL</SelectItem>
+                <SelectItem value="publico_hospital_os">PÚBLICO - HOSPITAL - OS</SelectItem>
+                <SelectItem value="publico_hospital_secretaria_saude">PÚBLICO - HOSPITAL - SECRETARIA DA SAÚDE</SelectItem>
+                <SelectItem value="publico_hospital_universidade">PÚBLICO - HOSPITAL - UNIVERSIDADE</SelectItem>
+                <SelectItem value="publico_hospital_upa">PÚBLICO - HOSPITAL - UPA</SelectItem>
+                <SelectItem value="publico_hospital_veterinario">PÚBLICO - HOSPITAL - VETERINÁRIO</SelectItem>
+                <SelectItem value="publico_laboratorio_aeronautica">PÚBLICO - LABORATÓRIO - AERONÁUTICA</SelectItem>
+                <SelectItem value="publico_laboratorio_estadual">PÚBLICO - LABORATÓRIO - ESTADUAL</SelectItem>
+                <SelectItem value="publico_laboratorio_exercito">PÚBLICO - LABORATÓRIO - EXÉRCITO</SelectItem>
+                <SelectItem value="publico_laboratorio_federal">PÚBLICO - LABORATÓRIO - FEDERAL</SelectItem>
+                <SelectItem value="publico_laboratorio_marinha">PÚBLICO - LABORATÓRIO - MARINHA</SelectItem>
+                <SelectItem value="publico_laboratorio_municipal">PÚBLICO - LABORATÓRIO - MUNICIPAL</SelectItem>
+                <SelectItem value="publico_laboratorio_os">PÚBLICO - LABORATÓRIO - OS</SelectItem>
+                <SelectItem value="publico_laboratorio_secretaria_saude">PÚBLICO - LABORATÓRIO - SECRETARIA DA SAÚDE</SelectItem>
+                <SelectItem value="publico_laboratorio_universidade">PÚBLICO - LABORATÓRIO - UNIVERSIDADE</SelectItem>
+                <SelectItem value="publico_laboratorio_upa">PÚBLICO - LABORATÓRIO - UPA</SelectItem>
+                <SelectItem value="publico_laboratorio_veterinario">PÚBLICO - LABORATÓRIO - VETERINÁRIO</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -389,17 +409,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </div>
         
         <div>
-          <Label htmlFor="procurandoPor">Procurando por (Contatos vinculados)</Label>
-          <Input
-            id="procurandoPor"
-            value={formData.procurandoPor}
-            onChange={(e) => setFormData({...formData, procurandoPor: e.target.value})}
-            placeholder="Descrição dos contatos"
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-        
-        <div>
           <Label htmlFor="tags">Tags</Label>
           <Input
             id="tags"
@@ -423,35 +432,29 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </div>
         
         <div>
-          <Label htmlFor="fluxoTrabalho">Fluxo de Trabalho</Label>
-          <Textarea
-            id="fluxoTrabalho"
-            value={formData.fluxoTrabalho}
-            onChange={(e) => setFormData({...formData, fluxoTrabalho: e.target.value})}
-            placeholder="Descreva o fluxo de trabalho"
-            rows={3}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="status">Status</Label>
+          <Label htmlFor="fluxoTrabalho">Fluxo de Trabalho (Status controlado pelo RH/Gestor)</Label>
           <Select 
-            value={formData.status} 
-            onValueChange={(value) => setFormData({...formData, status: value})}
+            value={formData.fluxoTrabalho} 
+            onValueChange={(value) => setFormData({...formData, fluxoTrabalho: value})}
             disabled={isReadOnlyMode()}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Selecione" />
+              <SelectValue placeholder="Selecione o status do trabalho" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="em_triagem">Em Triagem</SelectItem>
-              <SelectItem value="em_acompanhamento">Em Acompanhamento</SelectItem>
-              <SelectItem value="ganha">Ganha</SelectItem>
-              <SelectItem value="perdida">Perdida</SelectItem>
-              <SelectItem value="finalizada">Finalizada</SelectItem>
+              <SelectItem value="aguardando_inicio">Aguardando Início</SelectItem>
+              <SelectItem value="em_andamento">Em Andamento</SelectItem>
+              <SelectItem value="em_revisao">Em Revisão</SelectItem>
+              <SelectItem value="aguardando_aprovacao">Aguardando Aprovação</SelectItem>
+              <SelectItem value="aprovado">Aprovado</SelectItem>
+              <SelectItem value="suspenso">Suspenso</SelectItem>
+              <SelectItem value="cancelado">Cancelado</SelectItem>
+              <SelectItem value="finalizado">Finalizado</SelectItem>
             </SelectContent>
           </Select>
+          <p className="text-sm text-gray-500 mt-1">
+            Este campo será incluído no Kanban para acompanhamento do funcionário
+          </p>
         </div>
         
         <div>
@@ -467,7 +470,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </div>
       </div>
 
-      {/* Dados Específicos da Licitação - agora sempre visíveis */}
+      {/* Dados Específicos da Licitação */}
       <div className="border rounded-lg p-4 space-y-4 bg-yellow-50">
         <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
           <AlertTriangle className="h-5 w-5 text-yellow-600" />
@@ -496,10 +499,24 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                 <SelectValue placeholder="Selecione" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="compra">Compra</SelectItem>
-                <SelectItem value="locacao">Locação</SelectItem>
-                <SelectItem value="servico">Serviço</SelectItem>
-                <SelectItem value="misto">Misto</SelectItem>
+                <SelectItem value="amostra">AMOSTRA</SelectItem>
+                <SelectItem value="comodato">COMODATO</SelectItem>
+                <SelectItem value="conserto">CONSERTO</SelectItem>
+                <SelectItem value="consignacao">CONSIGNAÇÃO</SelectItem>
+                <SelectItem value="demonstracao">DEMONSTRAÇÃO</SelectItem>
+                <SelectItem value="doacao">DOAÇÃO</SelectItem>
+                <SelectItem value="emprestimo">EMPRÉSTIMO</SelectItem>
+                <SelectItem value="exposicao">EXPOSIÇÃO</SelectItem>
+                <SelectItem value="importacao">IMPORTAÇÃO</SelectItem>
+                <SelectItem value="locacao">LOCAÇÃO</SelectItem>
+                <SelectItem value="logistica">LOGÍSTICA</SelectItem>
+                <SelectItem value="mostruario">MOSTRUÁRIO</SelectItem>
+                <SelectItem value="simples_remessa">SIMPLES REMESSA</SelectItem>
+                <SelectItem value="treinamento">TREINAMENTO</SelectItem>
+                <SelectItem value="vendas">VENDAS</SelectItem>
+                <SelectItem value="outras">OUTRAS</SelectItem>
+                <SelectItem value="troca">TROCA</SelectItem>
+                <SelectItem value="perda">PERDA</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -1205,15 +1222,14 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="statusParticipacao">Status da Participação</Label>
-                <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
+                <Select value={formData.resultadoOportunidade} onValueChange={(value) => setFormData({...formData, resultadoOportunidade: value})}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="em_acompanhamento">Em Acompanhamento</SelectItem>
-                    <SelectItem value="ganha">Ganha</SelectItem>
-                    <SelectItem value="perdida">Perdida</SelectItem>
-                    <SelectItem value="finalizada">Finalizada</SelectItem>
+                    <SelectItem value="em_andamento">Em Andamento</SelectItem>
+                    <SelectItem value="ganho">Ganho</SelectItem>
+                    <SelectItem value="perda">Perda</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
