@@ -13,43 +13,45 @@ interface NOFormProps {
 
 const NOForm = ({ formData, onInputChange }: NOFormProps) => {
   const handleGenerateNOPDF = () => {
-    // Simular geração do PDF NO baseado na imagem
+    // Simular geração do PDF NO baseado na estrutura correta
     const noContent = `BIODINA
 
-BIODINA INSTRUMENTOS CIENTÍFICOS LTDA.
-RUA SÃO PEDRO 154 - SALA 409 CENTRO
-24.024-056 - NITERÓI - RJ, BRASIL.
-TEL.: 55 21 2435-9872 - FAX: 55 21 2435-9870
-biosi@biodina.com.br
+Company Information
+Company Name: BIODINA INSTRUMENTOS CIENTÍFICOS LTDA.
+Address: RUA SÃO PEDRO 154 - SALA 408 CENTRO
+ZIP/City/State/Country: 24.024-058 - NITERÓI - RJ, BRASIL
+Phone: 55 21 2435-9872
+Fax: 55 21 2435-9870
+Email: bios@biodina.com.br
 
-If you do not receive all pages, please call: + 55 21 2435-9872
-
+Recipient
 To: ${formData.noDestinatario || 'RADIOMETER MEDICAL ApS, International Sales Division'}
 Attn.: ${formData.noAtencao || 'Ms. Lene Orbansen'}
-Date: ${new Date().toLocaleDateString('pt-BR')} Total Pages: 01
-Subject: ${formData.noAssunto || 'OUR NEW ORDER DD-XXXX/RD-XXXX, YOUR P.I. XXXXXX - USD - XXXX'}
-Customer: ${formData.noCliente || 'XXXXXXXXXXXXXXXXX'}
+Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+Total Pages: 01
+Subject: ${formData.noAssunto || 'OUR NEW ORDER OD-XXXX/RD-XXXX, YOUR P.I XXXXXX - USD - XXXX'}
+Customer: ${formData.noCliente || 'XXXXXXXXXXXXXXXX'}
 
-Dear ${formData.noDestinatario || 'Ms. Orbansen'},
+Order Content
+"We would like to place our new order, according to your P.I. a.m. consigned to the following customer:"
 
-We would like to place our new order, according to your P.I. a.m. consigned to the following customer.
+Customer Information
+Customer: ${formData.noConsignadoPara || 'XXXXXXXXXXXXXXXX'}
+Address: ${formData.noEnderecoConsignado || 'XXXXXXXXXXXXXXXX'}
+CEP: ${formData.noCepConsignado || 'XXXXXXXXXXXXXXXX'}
+CNPJ: ${formData.noCnpjConsignado || 'XXXXXXXXXXXXXXXX'}
 
-Consigned to: COSTUMER: ${formData.noConsignadoPara || 'XXXXXXXXXXXXXXXXX'}
-             ADDRESS: ${formData.noEnderecoConsignado || 'XXXXXXXXXXXXXXXXX'}
-             CEP: ${formData.noCepConsignado || 'XXXXXXXXXXXXXXX'}
-             CNPJ: ${formData.noCnpjConsignado || 'XXXXXXXXXXXX'}
-
-Payment Term: ${formData.noTermoPagamento || 'XXXXXXXXXXXXXXX'}
-
+Payment and Shipping Details
+Payment Term: ${formData.noTermoPagamento || 'XXXXXXXXXXXXXXXX'}
 Shipment Instruction: ${formData.noInstrucaoEnvio || 'Will be sent as soon as possible.'}
 
-We thank you in advance and look forward to receiving your AO.
+"We thank you in advance and look forward to receiving your AO."
 
-Best regards,
-
-${formData.noAssinante || 'Evandro Amorim'}
-${formData.noCargo || 'International Division'}
-${formData.noEaa || 'EAA - XXX.'}
+Signature
+Closing: Best regards,
+Name: ${formData.noAssinante || 'Evandro Amorim'}
+Department: ${formData.noCargo || 'International Division'}
+Code: ${formData.noEaa || 'EAA - XXX'}
 
 Documento gerado em: ${new Date().toLocaleString()}
 `;
@@ -73,19 +75,32 @@ Documento gerado em: ${new Date().toLocaleString()}
       <Card>
         <CardHeader className="text-center border-b">
           <CardTitle className="text-xl font-bold text-purple-600">
-            NO - NOTA DE OPORTUNIDADE
+            NO - NEW ORDER
           </CardTitle>
         </CardHeader>
         
         <CardContent className="p-6">
-          {/* Informações do Destinatário */}
+          {/* Company Information - Cabeçalho Fixo */}
+          <div className="mb-6 border p-4 rounded bg-gray-50">
+            <h3 className="font-bold mb-4 text-lg">Company Information</h3>
+            <div className="space-y-2 text-sm">
+              <p><strong>Company Name:</strong> BIODINA INSTRUMENTOS CIENTÍFICOS LTDA.</p>
+              <p><strong>Address:</strong> RUA SÃO PEDRO 154 - SALA 408 CENTRO</p>
+              <p><strong>ZIP/City/State/Country:</strong> 24.024-058 - NITERÓI - RJ, BRASIL</p>
+              <p><strong>Phone:</strong> 55 21 2435-9872</p>
+              <p><strong>Fax:</strong> 55 21 2435-9870</p>
+              <p><strong>Email:</strong> bios@biodina.com.br</p>
+            </div>
+          </div>
+
+          {/* Recipient */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6 border p-4 rounded">
             <div className="lg:col-span-2">
-              <h3 className="font-semibold mb-4 border-b pb-2">INFORMAÇÕES DO DESTINATÁRIO</h3>
+              <h3 className="font-semibold mb-4 border-b pb-2">RECIPIENT</h3>
             </div>
             
             <div>
-              <Label htmlFor="noDestinatario">Para (To)</Label>
+              <Label htmlFor="noDestinatario">To</Label>
               <Input
                 id="noDestinatario"
                 value={formData.noDestinatario || ''}
@@ -96,7 +111,7 @@ Documento gerado em: ${new Date().toLocaleString()}
             </div>
             
             <div>
-              <Label htmlFor="noAtencao">Atenção (Attn.)</Label>
+              <Label htmlFor="noAtencao">Attn.</Label>
               <Input
                 id="noAtencao"
                 value={formData.noAtencao || ''}
@@ -107,52 +122,58 @@ Documento gerado em: ${new Date().toLocaleString()}
             </div>
             
             <div>
-              <Label htmlFor="noAssunto">Assunto (Subject)</Label>
+              <Label htmlFor="noAssunto">Subject</Label>
               <Input
                 id="noAssunto"
                 value={formData.noAssunto || ''}
                 onChange={(e) => onInputChange('noAssunto', e.target.value)}
-                placeholder="OUR NEW ORDER DD-XXXX/RD-XXXX, YOUR P.I. XXXXXX - USD - XXXX"
+                placeholder="OUR NEW ORDER OD-XXXX/RD-XXXX, YOUR P.I XXXXXX - USD - XXXX"
                 className="w-full"
               />
             </div>
             
             <div>
-              <Label htmlFor="noCliente">Cliente (Customer)</Label>
+              <Label htmlFor="noCliente">Customer</Label>
               <Input
                 id="noCliente"
                 value={formData.noCliente || ''}
                 onChange={(e) => onInputChange('noCliente', e.target.value)}
-                placeholder="XXXXXXXXXXXXXXXXX"
+                placeholder="XXXXXXXXXXXXXXXX"
                 className="w-full"
               />
             </div>
           </div>
 
-          {/* Informações de Consignação */}
+          {/* Order Content - Texto fixo */}
+          <div className="mb-6 border p-4 rounded bg-gray-50">
+            <h3 className="font-semibold mb-4 border-b pb-2">ORDER CONTENT</h3>
+            <p className="text-sm italic">"We would like to place our new order, according to your P.I. a.m. consigned to the following customer:"</p>
+          </div>
+
+          {/* Customer Information */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6 border p-4 rounded">
             <div className="lg:col-span-2">
-              <h3 className="font-semibold mb-4 border-b pb-2">CONSIGNADO PARA (CONSIGNED TO)</h3>
+              <h3 className="font-semibold mb-4 border-b pb-2">CUSTOMER INFORMATION</h3>
             </div>
             
             <div>
-              <Label htmlFor="noConsignadoPara">Cliente (Customer)</Label>
+              <Label htmlFor="noConsignadoPara">Customer</Label>
               <Input
                 id="noConsignadoPara"
                 value={formData.noConsignadoPara || ''}
                 onChange={(e) => onInputChange('noConsignadoPara', e.target.value)}
-                placeholder="XXXXXXXXXXXXXXXXX"
+                placeholder="XXXXXXXXXXXXXXXX"
                 className="w-full"
               />
             </div>
             
             <div>
-              <Label htmlFor="noEnderecoConsignado">Endereço (Address)</Label>
+              <Label htmlFor="noEnderecoConsignado">Address</Label>
               <Input
                 id="noEnderecoConsignado"
                 value={formData.noEnderecoConsignado || ''}
                 onChange={(e) => onInputChange('noEnderecoConsignado', e.target.value)}
-                placeholder="XXXXXXXXXXXXXXXXX"
+                placeholder="XXXXXXXXXXXXXXXX"
                 className="w-full"
               />
             </div>
@@ -163,7 +184,7 @@ Documento gerado em: ${new Date().toLocaleString()}
                 id="noCepConsignado"
                 value={formData.noCepConsignado || ''}
                 onChange={(e) => onInputChange('noCepConsignado', e.target.value)}
-                placeholder="XXXXXXXXXXXXXXX"
+                placeholder="XXXXXXXXXXXXXXXX"
                 className="w-full"
               />
             </div>
@@ -174,31 +195,31 @@ Documento gerado em: ${new Date().toLocaleString()}
                 id="noCnpjConsignado"
                 value={formData.noCnpjConsignado || ''}
                 onChange={(e) => onInputChange('noCnpjConsignado', e.target.value)}
-                placeholder="XXXXXXXXXXXX"
+                placeholder="XXXXXXXXXXXXXXXX"
                 className="w-full"
               />
             </div>
           </div>
 
-          {/* Termos e Instruções */}
+          {/* Payment and Shipping Details */}
           <div className="grid grid-cols-1 gap-4 mb-6 border p-4 rounded">
             <div>
-              <h3 className="font-semibold mb-4 border-b pb-2">TERMOS E INSTRUÇÕES</h3>
+              <h3 className="font-semibold mb-4 border-b pb-2">PAYMENT AND SHIPPING DETAILS</h3>
             </div>
             
             <div>
-              <Label htmlFor="noTermoPagamento">Termo de Pagamento (Payment Term)</Label>
+              <Label htmlFor="noTermoPagamento">Payment Term</Label>
               <Input
                 id="noTermoPagamento"
                 value={formData.noTermoPagamento || ''}
                 onChange={(e) => onInputChange('noTermoPagamento', e.target.value)}
-                placeholder="XXXXXXXXXXXXXXX"
+                placeholder="XXXXXXXXXXXXXXXX"
                 className="w-full"
               />
             </div>
             
             <div>
-              <Label htmlFor="noInstrucaoEnvio">Instrução de Envio (Shipment Instruction)</Label>
+              <Label htmlFor="noInstrucaoEnvio">Shipment Instruction</Label>
               <Textarea
                 id="noInstrucaoEnvio"
                 value={formData.noInstrucaoEnvio || ''}
@@ -210,14 +231,19 @@ Documento gerado em: ${new Date().toLocaleString()}
             </div>
           </div>
 
-          {/* Assinatura */}
+          {/* Closing Text - Fixo */}
+          <div className="mb-6 border p-4 rounded bg-gray-50">
+            <p className="text-sm italic">"We thank you in advance and look forward to receiving your AO."</p>
+          </div>
+
+          {/* Signature */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6 border p-4 rounded">
             <div className="lg:col-span-3">
-              <h3 className="font-semibold mb-4 border-b pb-2">ASSINATURA</h3>
+              <h3 className="font-semibold mb-4 border-b pb-2">SIGNATURE</h3>
             </div>
             
             <div>
-              <Label htmlFor="noAssinante">Nome</Label>
+              <Label htmlFor="noAssinante">Name</Label>
               <Input
                 id="noAssinante"
                 value={formData.noAssinante || ''}
@@ -228,7 +254,7 @@ Documento gerado em: ${new Date().toLocaleString()}
             </div>
             
             <div>
-              <Label htmlFor="noCargo">Cargo</Label>
+              <Label htmlFor="noCargo">Department</Label>
               <Input
                 id="noCargo"
                 value={formData.noCargo || ''}
@@ -239,12 +265,12 @@ Documento gerado em: ${new Date().toLocaleString()}
             </div>
             
             <div>
-              <Label htmlFor="noEaa">EAA</Label>
+              <Label htmlFor="noEaa">Code</Label>
               <Input
                 id="noEaa"
                 value={formData.noEaa || ''}
                 onChange={(e) => onInputChange('noEaa', e.target.value)}
-                placeholder="EAA - XXX."
+                placeholder="EAA - XXX"
                 className="w-full"
               />
             </div>
