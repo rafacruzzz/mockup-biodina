@@ -17,6 +17,7 @@ import ConcorrenteModal from "./ConcorrenteModal";
 import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
 import ApprovalModal from "./ApprovalModal";
+import CustomAlertModal from "./components/CustomAlertModal";
 
 interface OportunidadeAvancadaFormProps {
   oportunidade?: any;
@@ -30,6 +31,8 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   const [activeToolTab, setActiveToolTab] = useState('dados-gerais');
   const [isParticipacaoApproved, setIsParticipacaoApproved] = useState(false);
   const [showApprovalModal, setShowApprovalModal] = useState(false);
+  const [showEmprestimoApprovalModal, setShowEmprestimoApprovalModal] = useState(false);
+  const [showEmprestimoAlert, setShowEmprestimoAlert] = useState(false);
   
   // Estados para modais
   const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
@@ -177,6 +180,19 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   const handleApprovalSuccess = () => {
     setIsParticipacaoApproved(true);
     setActiveMasterTab('participacao');
+  };
+
+  const handleNaturezaOperacaoChange = (value: string) => {
+    if (value === 'emprestimo') {
+      setShowEmprestimoApprovalModal(true);
+    } else {
+      setFormData({...formData, naturezaOperacao: value});
+    }
+  };
+
+  const handleEmprestimoApprovalSuccess = () => {
+    setFormData({...formData, naturezaOperacao: 'emprestimo'});
+    setShowEmprestimoAlert(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -492,7 +508,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
             <Label htmlFor="naturezaOperacao">Qual Natureza da Operação</Label>
             <Select 
               value={formData.naturezaOperacao} 
-              onValueChange={(value) => setFormData({...formData, naturezaOperacao: value})}
+              onValueChange={handleNaturezaOperacaoChange}
               disabled={isReadOnlyMode()}
             >
               <SelectTrigger>
@@ -1422,6 +1438,20 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         onClose={() => setShowApprovalModal(false)}
         onApprove={handleApprovalSuccess}
         oportunidadeId={oportunidade?.id || formData.cpfCnpj || 'nova'}
+      />
+
+      <ApprovalModal
+        isOpen={showEmprestimoApprovalModal}
+        onClose={() => setShowEmprestimoApprovalModal(false)}
+        onApprove={handleEmprestimoApprovalSuccess}
+        oportunidadeId={oportunidade?.id || formData.cpfCnpj || 'emprestimo'}
+      />
+
+      <CustomAlertModal
+        isOpen={showEmprestimoAlert}
+        title="Operação EMPRÉSTIMO Aprovada"
+        message="A natureza da operação foi alterada para EMPRÉSTIMO com sucesso. Esta operação requer aprovação especial e foi autorizada pelo gestor."
+        onConfirm={() => setShowEmprestimoAlert(false)}
       />
     </div>
   );
