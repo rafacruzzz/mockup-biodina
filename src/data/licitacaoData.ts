@@ -14,9 +14,14 @@ export const licitacoes: Licitacao[] = [
     empresaConcorrente: "DroneTech Ltda",
     palavraChave: "drone, agricultura, sensoriamento",
     status: "triagem",
+    motivoDecisao: "",
     observacoes: "Edital com especificações técnicas detalhadas. Cliente interessado em soluções Biodina.",
     dataAbertura: "2025-01-15",
-    createdAt: "2025-01-10"
+    dataContato: "2025-01-10",
+    naturezaOperacao: "VENDAS",
+    segmentoLead: "PÚBLICO - UNIVERSIDADE",
+    fluxoTrabalho: "EM ANÁLISE",
+    permiteAdesao: false
   },
   {
     id: 2,
@@ -24,14 +29,20 @@ export const licitacoes: Licitacao[] = [
     nomeInstituicao: "Instituto de Pesquisas Agronômicas do RS",
     uf: "RS",
     municipio: "Porto Alegre",
+    linkEdital: "",
     objetoLicitacao: "Sistema RTK para levantamento topográfico de precisão",
     numeroItem: "02",
+    empresaConcorrente: "",
     palavraChave: "RTK, topografia, GPS",
     status: "acompanhamento",
+    motivoDecisao: "",
     observacoes: "Cliente já conhece nossos produtos. Boa chance de conversão.",
     dataAbertura: "2025-02-01",
     dataContato: "2025-02-05",
-    createdAt: "2025-01-28"
+    naturezaOperacao: "VENDAS",
+    segmentoLead: "PÚBLICO - LABORATÓRIO - ESTADUAL",
+    fluxoTrabalho: "EM EXECUÇÃO",
+    permiteAdesao: true
   },
   {
     id: 3,
@@ -39,14 +50,20 @@ export const licitacoes: Licitacao[] = [
     nomeInstituicao: "Empresa de Mineração Vale Verde",
     uf: "MG",
     municipio: "Belo Horizonte",
+    linkEdital: "",
     objetoLicitacao: "Sensores IoT para monitoramento ambiental em minas",
     numeroItem: "01-05",
-    status: "convertida",
+    empresaConcorrente: "",
     palavraChave: "IoT, sensores, monitoramento",
+    status: "convertida",
+    motivoDecisao: "Convertido com sucesso",
     observacoes: "Convertido em oportunidade comercial com sucesso",
     dataAbertura: "2025-01-20",
     dataContato: "2025-01-25",
-    createdAt: "2025-01-18"
+    naturezaOperacao: "VENDAS",
+    segmentoLead: "PRIVADO - UNIVERSIDADE",
+    fluxoTrabalho: "FINALIZADO",
+    permiteAdesao: false
   },
   {
     id: 4,
@@ -54,13 +71,19 @@ export const licitacoes: Licitacao[] = [
     nomeInstituicao: "Secretaria de Agricultura - MT",
     uf: "MT",
     municipio: "Cuiabá",
+    linkEdital: "",
     objetoLicitacao: "Software de mapeamento e análise de dados agrícolas",
     numeroItem: "03",
-    status: "finalizada",
+    empresaConcorrente: "Concorrente Nacional Ltda",
     palavraChave: "software, mapeamento, análise",
+    status: "finalizada",
     motivoDecisao: "Não atendemos todos os requisitos técnicos do edital",
     observacoes: "Edital muito específico para concorrente nacional",
     dataAbertura: "2025-01-05",
-    createdAt: "2025-01-02"
+    dataContato: "2025-01-02",
+    naturezaOperacao: "VENDAS",
+    segmentoLead: "PÚBLICO - SECRETARIA DA SAÚDE",
+    fluxoTrabalho: "CANCELADO",
+    permiteAdesao: false
   }
 ];
