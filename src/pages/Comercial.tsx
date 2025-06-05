@@ -1,4 +1,5 @@
 
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,8 @@ import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
-  ShoppingCart, Headphones, ArrowLeft
+  ShoppingCart, Headphones, ArrowLeft, Package, Truck, ClipboardList,
+  AlertTriangle, UserCheck, Clock, CreditCard
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -219,6 +221,50 @@ const Comercial = () => {
     { uf: 'RN', conversao: 74.8 },
   ];
 
+  // Dados dos indicadores para a tela inicial
+  const indicadores = {
+    posicaoEstoque: [
+      { produto: 'ABL800 Flex', quantidade: 12, localizacao: 'Galpão A' },
+      { produto: 'Sensor pH', quantidade: 45, localizacao: 'Galpão B' },
+      { produto: 'Gasômetro Stat Profile', quantidade: 3, localizacao: 'Galpão A' },
+      { produto: 'Sistema WEBMED', quantidade: 8, localizacao: 'Digital' }
+    ],
+    importacaoPrevisao: [
+      { item: 'ABL800 Basic', previsao: '15/02/2025', quantidade: 5, fornecedor: 'Radiometer' },
+      { item: 'Nova Biomedical Kit', previsao: '28/02/2025', quantidade: 10, fornecedor: 'Nova Biomedical' },
+      { item: 'Sensores Diversos', previsao: '10/03/2025', quantidade: 25, fornecedor: 'Multiple' }
+    ],
+    pedidosProgramados: [
+      { cliente: 'Hospital Albert Einstein', data: '20/01/2025', valor: 890000, status: 'Confirmado' },
+      { cliente: 'HUOL', data: '05/02/2025', valor: 450000, status: 'Pendente' },
+      { cliente: 'CEMA', data: '15/02/2025', valor: 280000, status: 'Confirmado' }
+    ],
+    faturamentoProjeto: [
+      { projeto: 'Radiometer ABL - Associação Pioneiras', valor: 782530, status: 'Faturado' },
+      { projeto: 'Nova Biomedical - HUOL', valor: 450000, status: 'Em Processamento' },
+      { projeto: 'WEBMED - CEMA', valor: 280000, status: 'Aguardando' }
+    ],
+    restricaoFinanceira: [
+      { cliente: 'Prefeitura São Paulo', valor: 125000, motivo: 'Inadimplência', dias: 45 },
+      { cliente: 'Hospital Regional CE', valor: 89000, motivo: 'Documentação Pendente', dias: 12 }
+    ],
+    pedidosSeparacao: [
+      { pedido: 'PED-2025-001', cliente: 'Hospital Einstein', itens: 3, status: 'Em Separação' },
+      { pedido: 'PED-2025-002', cliente: 'HUOL', itens: 5, status: 'Aguardando Peças' }
+    ],
+    pedidosDesmembramento: [
+      { pedido: 'PED-2024-078', cliente: 'CEMA', original: 280000, desmembrado: 140000, motivo: 'Entrega Parcial' }
+    ],
+    posicaoPedidos: [
+      { pedido: 'PED-2025-001', cliente: 'Hospital Einstein', status: 'Em Trânsito', previsao: '25/01/2025' },
+      { pedido: 'PED-2024-089', cliente: 'Hospital Regional', status: 'Separado', previsao: '22/01/2025' }
+    ],
+    aguardandoAutorizacao: [
+      { item: 'Desconto Especial - HUOL', valor: 50000, gestor: 'Carlos Oliveira', dias: 3 },
+      { item: 'Prazo Estendido - Einstein', valor: 890000, gestor: 'Ana Costa', dias: 1 }
+    ]
+  };
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -345,6 +391,227 @@ const Comercial = () => {
   // Sub-módulos principais
   const renderMainModules = () => (
     <div className="space-y-6">
+      {/* Indicadores da Tela Inicial */}
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <h3 className="text-lg font-bold text-red-600 mb-4">
+          NA TELA INICIAL, PRECISAMOS DOS SEGUINTES INDICADORES:
+        </h3>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          {/* Posição de Estoque */}
+          <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm">
+                <Package className="h-4 w-4" />
+                POSIÇÃO DE ESTOQUE (O QUE TEM)
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                {indicadores.posicaoEstoque.map((item, index) => (
+                  <div key={index} className="flex justify-between text-xs">
+                    <span className="font-medium">{item.produto}</span>
+                    <span className="text-green-600">{item.quantidade} un.</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Importação - Previsão */}
+          <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm">
+                <Truck className="h-4 w-4" />
+                IMPORTAÇÃO - PREVISÃO DE CHEGADA
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                {indicadores.importacaoPrevisao.map((item, index) => (
+                  <div key={index} className="text-xs">
+                    <div className="flex justify-between">
+                      <span className="font-medium">{item.item}</span>
+                      <span className="text-blue-600">{item.previsao}</span>
+                    </div>
+                    <div className="text-gray-500">{item.quantidade} un.</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Agenda de Pedidos Programados */}
+          <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm">
+                <Calendar className="h-4 w-4" />
+                AGENDA DE PEDIDOS PROGRAMADOS
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                {indicadores.pedidosProgramados.map((item, index) => (
+                  <div key={index} className="text-xs">
+                    <div className="flex justify-between">
+                      <span className="font-medium">{item.cliente}</span>
+                      <span className="text-purple-600">{item.data}</span>
+                    </div>
+                    <div className="text-gray-500">{formatCurrency(item.valor)}</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Faturamento por Projeto */}
+          <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm">
+                <DollarSign className="h-4 w-4" />
+                FATURAMENTO POR PROJETO
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                {indicadores.faturamentoProjeto.map((item, index) => (
+                  <div key={index} className="text-xs">
+                    <div className="font-medium truncate">{item.projeto}</div>
+                    <div className="flex justify-between">
+                      <span className="text-green-600">{formatCurrency(item.valor)}</span>
+                      <span className="text-gray-500">{item.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Restrição Financeira */}
+          <Card className="shadow-sm border-red-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm text-red-600">
+                <AlertTriangle className="h-4 w-4" />
+                RESTRIÇÃO FINANCEIRA
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                {indicadores.restricaoFinanceira.map((item, index) => (
+                  <div key={index} className="text-xs">
+                    <div className="font-medium text-red-600">{item.cliente}</div>
+                    <div className="flex justify-between">
+                      <span>{formatCurrency(item.valor)}</span>
+                      <span className="text-red-500">{item.dias} dias</span>
+                    </div>
+                    <Button size="sm" variant="outline" className="w-full mt-1 h-6 text-xs">
+                      Solicitar Desbloqueio
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Pedidos em Separação */}
+          <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm">
+                <ClipboardList className="h-4 w-4" />
+                PEDIDOS EM SEPARAÇÃO
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                {indicadores.pedidosSeparacao.map((item, index) => (
+                  <div key={index} className="text-xs">
+                    <div className="flex justify-between">
+                      <span className="font-medium">{item.pedido}</span>
+                      <span className="text-orange-600">{item.itens} itens</span>
+                    </div>
+                    <div className="text-gray-500">{item.cliente}</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Pedidos com Desmembramento */}
+          <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm">
+                <FileText className="h-4 w-4" />
+                PEDIDOS COM DESMEMBRAMENTO
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                {indicadores.pedidosDesmembramento.map((item, index) => (
+                  <div key={index} className="text-xs">
+                    <div className="font-medium">{item.pedido}</div>
+                    <div className="flex justify-between">
+                      <span>{formatCurrency(item.desmembrado)}</span>
+                      <span className="text-gray-500">de {formatCurrency(item.original)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Posição dos Pedidos até Entrega */}
+          <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm">
+                <Truck className="h-4 w-4" />
+                POSIÇÃO DOS PEDIDOS ATÉ ENTREGA
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                {indicadores.posicaoPedidos.map((item, index) => (
+                  <div key={index} className="text-xs">
+                    <div className="flex justify-between">
+                      <span className="font-medium">{item.pedido}</span>
+                      <span className="text-blue-600">{item.previsao}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">{item.cliente}</span>
+                      <Badge className="text-xs bg-blue-100 text-blue-600">{item.status}</Badge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Aguardando Autorização do Gestor */}
+          <Card className="shadow-sm border-yellow-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm text-yellow-600">
+                <UserCheck className="h-4 w-4" />
+                AGUARDANDO AUTORIZAÇÃO DO GESTOR
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+                {indicadores.aguardandoAutorizacao.map((item, index) => (
+                  <div key={index} className="text-xs">
+                    <div className="font-medium text-yellow-600">{item.item}</div>
+                    <div className="flex justify-between">
+                      <span>{formatCurrency(item.valor)}</span>
+                      <span className="text-yellow-500">{item.dias} dias</span>
+                    </div>
+                    <div className="text-gray-500">Gestor: {item.gestor}</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Módulos Principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card 
           className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
@@ -874,3 +1141,4 @@ const Comercial = () => {
 };
 
 export default Comercial;
+
