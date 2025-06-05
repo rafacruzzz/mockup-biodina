@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -100,7 +99,6 @@ const PedidoModal = ({ oportunidade, onClose, onSave }: PedidoModalProps) => {
       case 'aprovado': return 'bg-green-500';
       case 'em_separacao': return 'bg-blue-500';
       case 'aprovado_expedicao': return 'bg-indigo-500';
-      case 'aguardando_financeiro': return 'bg-orange-500';
       case 'finalizado': return 'bg-gray-500';
       default: return 'bg-gray-500';
     }
@@ -227,7 +225,6 @@ const PedidoModal = ({ oportunidade, onClose, onSave }: PedidoModalProps) => {
                     <SelectItem value="aprovado">Aprovado</SelectItem>
                     <SelectItem value="em_separacao">Em Separação</SelectItem>
                     <SelectItem value="aprovado_expedicao">Aprovado pela Expedição</SelectItem>
-                    <SelectItem value="aguardando_financeiro">Aguardando Financeiro</SelectItem>
                     <SelectItem value="finalizado">Finalizado</SelectItem>
                   </SelectContent>
                 </Select>
