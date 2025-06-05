@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -402,8 +401,8 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
           
           <CardContent className="p-6">
             {/* Dados do Cliente */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 border p-4 rounded">
-              <div className="md:col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6 border p-4 rounded">
+              <div className="lg:col-span-2">
                 <h3 className="font-semibold mb-4 border-b pb-2">DADOS DO CLIENTE</h3>
               </div>
               
@@ -475,8 +474,8 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
             </div>
 
             {/* Informações da Proforma */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 border p-4 rounded">
-              <div className="md:col-span-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 border p-4 rounded">
+              <div className="md:col-span-2 lg:col-span-3">
                 <h3 className="font-semibold mb-4 border-b pb-2">INFORMAÇÕES DA PROFORMA</h3>
               </div>
               
@@ -549,8 +548,8 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
             </div>
 
             {/* Informações Adicionais */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 border p-4 rounded">
-              <div className="md:col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6 border p-4 rounded">
+              <div className="lg:col-span-2">
                 <h3 className="font-semibold mb-4 border-b pb-2">INFORMAÇÕES ADICIONAIS</h3>
               </div>
               
@@ -576,7 +575,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                 />
               </div>
               
-              <div className="md:col-span-2">
+              <div className="lg:col-span-2">
                 <div className="flex items-center space-x-2 mb-4">
                   <Checkbox 
                     id="spiTemComissao" 
@@ -587,7 +586,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
                 </div>
                 
                 {formData.spiTemComissao && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="spiPercentualComissao">Especifique o percentual (%)</Label>
                       <Input
@@ -806,7 +805,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
             <div className="border p-4 rounded">
               <h3 className="font-semibold mb-4 border-b pb-2">DETALHES DE VENDA - Atenção</h3>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 <div className="flex items-center space-x-2">
                   <Checkbox 
                     id="spiFaturamentoConfirmado" 
@@ -1676,7 +1675,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl max-h-[90vh] overflow-hidden">
+      <DialogContent className="max-w-[95vw] max-h-[90vh] overflow-hidden">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl font-bold text-purple-600">
             Nova Importação Direta
