@@ -1,10 +1,11 @@
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload } from 'lucide-react';
+import { Upload, Download } from 'lucide-react';
 import { useState } from 'react';
 import SPIProductsTable from './SPIProductsTable';
 import OVCTable from './OVCTable';
@@ -88,6 +89,66 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
     };
     
     input.click();
+  };
+
+  const handleEnviarParaFabrica = () => {
+    // Simular download do documento PI
+    const piContent = `
+PI - PROFORMA INVOICE
+=====================
+
+Cliente: ${formData.spiCliente}
+CNPJ: ${formData.spiCnpj}
+Endereço: ${formData.spiEndereco}
+Equipamento: ${formData.spiEquipamento}
+Modelo: ${formData.spiModelo}
+Fabricante: ${formData.spiFabricante}
+
+Total: USD ${formatUSD(calcularTotal(formData.spiMercadorias, formData.spiPacking))}
+
+Documento gerado em: ${new Date().toLocaleString()}
+`;
+
+    // Simular download do documento OVC
+    const ovcContent = `
+OVC - ORDER VALUE CALCULATOR
+============================
+
+${ovcItems.map(item => `
+Código: ${item.code}
+Quantidade: ${item.qty}
+Preço Unitário: ${item.priceListUnit}
+Total: ${item.total}
+Comissão: ${item.comissionPercent}%
+Net Radiometer: ${item.netRadiometer}
+`).join('\n')}
+
+Documento gerado em: ${new Date().toLocaleString()}
+`;
+
+    // Criar e baixar arquivo PI
+    const piBlob = new Blob([piContent], { type: 'text/plain' });
+    const piUrl = URL.createObjectURL(piBlob);
+    const piLink = document.createElement('a');
+    piLink.href = piUrl;
+    piLink.download = `PI_${formData.spiNumero || 'novo'}_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(piLink);
+    piLink.click();
+    document.body.removeChild(piLink);
+    URL.revokeObjectURL(piUrl);
+
+    // Criar e baixar arquivo OVC
+    const ovcBlob = new Blob([ovcContent], { type: 'text/plain' });
+    const ovcUrl = URL.createObjectURL(ovcBlob);
+    const ovcLink = document.createElement('a');
+    ovcLink.href = ovcUrl;
+    ovcLink.download = `OVC_${formData.spiNumero || 'novo'}_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(ovcLink);
+    ovcLink.click();
+    document.body.removeChild(ovcLink);
+    URL.revokeObjectURL(ovcUrl);
+
+    console.log('Documentos PI e OVC enviados para download');
   };
 
   return (
@@ -527,6 +588,17 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                   items={ovcItems}
                   onUpdateItems={setOvcItems}
                 />
+                
+                {/* Botão Enviar para Fábrica */}
+                <div className="mt-6 flex justify-center">
+                  <Button 
+                    onClick={handleEnviarParaFabrica}
+                    className="bg-green-600 text-white hover:bg-green-700 px-8 py-3"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Enviar para Fábrica
+                  </Button>
+                </div>
               </div>
             )}
           </div>
