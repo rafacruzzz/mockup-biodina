@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { FileText, Paperclip } from 'lucide-react';
+import { FileText, Paperclip, Send } from 'lucide-react';
 import { useState } from 'react';
 
 interface NOFormProps {
@@ -13,6 +13,7 @@ interface NOFormProps {
 
 const NOForm = ({ formData, onInputChange }: NOFormProps) => {
   const [aoAnexada, setAoAnexada] = useState(false);
+  const [pagamentoPago, setPagamentoPago] = useState(false);
 
   const handleGenerateNOPDF = () => {
     // Simular geração do PDF NO baseado na estrutura correta
@@ -75,6 +76,15 @@ Documento gerado em: ${new Date().toLocaleString()}
   const handleAnexarAO = () => {
     setAoAnexada(true);
     console.log('AO anexada - mostrando campos de instrução de embarque');
+  };
+
+  const handleTogglePagamento = () => {
+    setPagamentoPago(!pagamentoPago);
+    console.log(`Status de pagamento alterado para: ${!pagamentoPago ? 'Pago' : 'Não Pago'}`);
+  };
+
+  const handleEnviarInstrucoes = () => {
+    console.log('Enviando instruções de embarque...');
   };
 
   return (
@@ -310,7 +320,7 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Card className="mb-6">
                 <CardHeader>
                   <CardTitle className="text-lg font-bold text-purple-600">
-                    SHIPMENT INSTRUCTIONS
+                    Instrução de Embarque (Importação)
                   </CardTitle>
                 </CardHeader>
                 
@@ -580,6 +590,41 @@ Documento gerado em: ${new Date().toLocaleString()}
                         <li>Fragile medical equipment, handle with care</li>
                         <li>Keep in temperature controlled environment (15-25°C)</li>
                       </ul>
+                    </div>
+                  </div>
+
+                  {/* Status de Pagamento e Botão de Enviar Instruções */}
+                  <div className="mb-6 border-2 border-red-400 p-4 rounded bg-red-50">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold mb-2">Status do Pagamento</h3>
+                        <button
+                          onClick={handleTogglePagamento}
+                          className={`px-4 py-2 rounded font-medium transition-colors ${
+                            pagamentoPago
+                              ? 'bg-green-600 text-white hover:bg-green-700'
+                              : 'bg-red-600 text-white hover:bg-red-700'
+                          }`}
+                        >
+                          {pagamentoPago ? 'Pago' : 'Não Pago'}
+                        </button>
+                        <p className="text-sm text-gray-600 mt-2">
+                          {pagamentoPago 
+                            ? 'Pagamento confirmado. Você pode enviar as instruções de embarque.'
+                            : 'Aguardando confirmação de pagamento para liberar o envio das instruções.'
+                          }
+                        </p>
+                      </div>
+                      
+                      {pagamentoPago && (
+                        <Button
+                          onClick={handleEnviarInstrucoes}
+                          className="bg-green-600 text-white hover:bg-green-700 px-6 py-3"
+                        >
+                          <Send className="h-4 w-4 mr-2" />
+                          Enviar Instruções de Embarque
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </CardContent>
