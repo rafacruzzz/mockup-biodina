@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -48,6 +47,30 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
     'Ana Costa',
     'Faber Oliveira'
   ];
+
+  // Função para resetar todo o formulário
+  const resetForm = () => {
+    setPackingListRecebido('');
+    setPackingListFile(null);
+    setUsuarioResponsavel('');
+    setClienteAprovou('');
+    setMotivoNaoAprovacao('');
+    setDocumentacaoFinalRecebida('');
+    setDocumentacaoFile(null);
+    setMotivoSemDocumentacao('');
+    setClienteRecebeuDocumentacao('');
+    setMotivoClienteNaoRecebeu('');
+    setLiImportada(false);
+    setIsNotifying(false);
+    setNotificationSent(false);
+    setPackingListAprovado('');
+    // Resetar produtos para o estado inicial
+    setProdutos([
+      { id: 1, codigo: 'PROD001', nome: 'Equipamento A', quantidade: 5, valor: 'R$ 15.000,00', validade: '2025-12-31', aprovado: true },
+      { id: 2, codigo: 'PROD002', nome: 'Componente B', quantidade: 10, valor: 'R$ 2.500,00', validade: '2025-10-15', aprovado: true },
+      { id: 3, codigo: 'PROD003', nome: 'Acessório C', quantidade: 3, valor: 'R$ 800,00', validade: '2025-11-20', aprovado: true },
+    ]);
+  };
 
   const handlePackingListFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -112,6 +135,8 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
   const handleReenvioAlertConfirm = () => {
     setShowReenvioAlert(false);
     console.log('Histórico da operação de reenvio gerado');
+    // Resetar o formulário após confirmar o reenvio
+    resetForm();
   };
 
   return (
