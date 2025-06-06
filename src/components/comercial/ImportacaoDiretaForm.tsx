@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,6 @@ import SPIForm from './components/SPIForm';
 import NOForm from './components/NOForm';
 import OVCForm from './components/OVCForm';
 import ComercialTabs from './components/ComercialTabs';
-import PedidoConfirmationModal from './components/PedidoConfirmationModal';
 import { generateSPIPDF } from './utils/spiUtils';
 
 interface ImportacaoDiretaFormProps {
@@ -20,8 +18,6 @@ interface ImportacaoDiretaFormProps {
 const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: ImportacaoDiretaFormProps) => {
   const [activeMasterTab, setActiveMasterTab] = useState('comercial');
   const [activeToolTab, setActiveToolTab] = useState('dados-gerais');
-  const [showPedidoConfirmation, setShowPedidoConfirmation] = useState(false);
-  const [pendingTabChange, setPendingTabChange] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     // Informações Básicas do Cliente
@@ -142,6 +138,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     spiValor: '',
     spiPrazo: '',
     spiDataConfirmacao: '',
+    spiClienteAprovacao: '', // Novo campo para aprovação do cliente
     
     // Campos específicos do NO
     noDestinatario: '',
@@ -187,26 +184,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
   };
 
   const handleMasterTabChange = (tabId: string) => {
-    if (tabId === 'no') {
-      setShowPedidoConfirmation(true);
-      setPendingTabChange(tabId);
-    } else {
-      setActiveMasterTab(tabId);
-    }
-  };
-
-  const handlePedidoConfirmado = () => {
-    setShowPedidoConfirmation(false);
-    if (pendingTabChange) {
-      setActiveMasterTab(pendingTabChange);
-      setPendingTabChange(null);
-    }
-  };
-
-  const handlePedidoCancelado = () => {
-    setShowPedidoConfirmation(false);
-    setPendingTabChange(null);
-    // Permanece na aba SPI
+    setActiveMasterTab(tabId);
   };
 
   const renderMasterTabContent = () => {
@@ -259,70 +237,61 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
   if (!isOpen) return null;
 
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-[95vw] max-h-[90vh] overflow-hidden">
-          <DialogHeader className="flex-shrink-0">
-            <DialogTitle className="text-2xl font-bold text-purple-600">
-              Nova Importação Direta
-            </DialogTitle>
-          </DialogHeader>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-[95vw] max-h-[90vh] overflow-hidden">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle className="text-2xl font-bold text-purple-600">
+            Nova Importação Direta
+          </DialogTitle>
+        </DialogHeader>
 
-          <div className="flex flex-col h-full min-h-0">
-            {/* Abas Masters */}
-            <div className="mb-6 flex-shrink-0">
-              <div className="flex space-x-4 bg-gray-50 p-2 rounded-lg">
-                {masterTabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => handleMasterTabChange(tab.id)}
-                    className={`px-6 py-3 rounded-md font-medium transition-colors ${
-                      activeMasterTab === tab.id
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-white text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Conteúdo da aba master ativa com scroll */}
-            <div className="flex-1 overflow-y-auto max-h-[60vh] pr-2">
-              {renderMasterTabContent()}
-            </div>
-
-            {/* Rodapé com botões */}
-            <div className="flex justify-end space-x-4 pt-6 border-t flex-shrink-0 mt-4">
-              <Button variant="outline" onClick={onClose}>
-                Cancelar
-              </Button>
-              {activeMasterTab === 'spi' && (
-                <Button 
-                  onClick={handleGenerateSPIPDF} 
-                  variant="outline"
-                  className="bg-red-600 text-white hover:bg-red-700"
+        <div className="flex flex-col h-full min-h-0">
+          {/* Abas Masters */}
+          <div className="mb-6 flex-shrink-0">
+            <div className="flex space-x-4 bg-gray-50 p-2 rounded-lg">
+              {masterTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => handleMasterTabChange(tab.id)}
+                  className={`px-6 py-3 rounded-md font-medium transition-colors ${
+                    activeMasterTab === tab.id
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-white text-gray-700 hover:bg-gray-100'
+                  }`}
                 >
-                  <FileText className="h-4 w-4 mr-2" />
-                  Baixar SPI
-                </Button>
-              )}
-              <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
-                {oportunidade ? 'Atualizar' : 'Salvar'} Importação Direta
-              </Button>
+                  {tab.label}
+                </button>
+              ))}
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* Modal de Confirmação de Pedido */}
-      <PedidoConfirmationModal
-        isOpen={showPedidoConfirmation}
-        onConfirm={handlePedidoConfirmado}
-        onCancel={handlePedidoCancelado}
-      />
-    </>
+          {/* Conteúdo da aba master ativa com scroll */}
+          <div className="flex-1 overflow-y-auto max-h-[60vh] pr-2">
+            {renderMasterTabContent()}
+          </div>
+
+          {/* Rodapé com botões */}
+          <div className="flex justify-end space-x-4 pt-6 border-t flex-shrink-0 mt-4">
+            <Button variant="outline" onClick={onClose}>
+              Cancelar
+            </Button>
+            {activeMasterTab === 'spi' && (
+              <Button 
+                onClick={handleGenerateSPIPDF} 
+                variant="outline"
+                className="bg-red-600 text-white hover:bg-red-700"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Baixar SPI
+              </Button>
+            )}
+            <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
+              {oportunidade ? 'Atualizar' : 'Salvar'} Importação Direta
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

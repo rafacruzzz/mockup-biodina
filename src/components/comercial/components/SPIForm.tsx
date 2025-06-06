@@ -1,10 +1,10 @@
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import SPIProductsTable from './SPIProductsTable';
 import { formatUSD, calcularSubtotal, calcularPacking, calcularTotal } from '../utils/spiUtils';
 
@@ -420,6 +420,30 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                   onChange={(e) => onInputChange('spiDataConfirmacao', e.target.value)}
                   className="w-full"
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* Aprovação do Cliente */}
+          <div className="border p-4 rounded mt-6">
+            <h3 className="font-semibold mb-4 border-b pb-2">APROVAÇÃO DO CLIENTE</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="spiClienteAprovacao">O cliente aprovou?</Label>
+                <Select
+                  value={formData.spiClienteAprovacao}
+                  onValueChange={(value) => onInputChange('spiClienteAprovacao', value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecione uma opção" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pendente">Pendente</SelectItem>
+                    <SelectItem value="aprovado">Aprovado</SelectItem>
+                    <SelectItem value="rejeitado">Rejeitado</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
