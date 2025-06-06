@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -580,16 +581,17 @@ const Comercial = () => {
 
   const renderFunil = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <Card className="shadow-lg">
-        <CardHeader className="text-center pb-3">
+      {/* Card Funil - altura fixa */}
+      <Card className="shadow-lg h-[600px] flex flex-col">
+        <CardHeader className="text-center pb-3 flex-shrink-0">
           <CardTitle className="flex items-center justify-center gap-3 text-xl font-bold text-biodina-blue mb-1">
             <TrendingUp className="h-6 w-6 text-biodina-blue" />
             Funil de Oportunidades
           </CardTitle>
           <p className="text-gray-600 text-sm">Pipeline de Vendas por Temperatura</p>
         </CardHeader>
-        <CardContent className="px-4 pb-4">
-          <div className="space-y-3">
+        <CardContent className="px-4 pb-4 flex-1 flex flex-col">
+          <div className="space-y-3 flex-1 overflow-y-auto">
             {funnelData.map((item, index) => (
               <div 
                 key={index} 
@@ -638,21 +640,21 @@ const Comercial = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               </div>
             ))}
-            
-            {/* Resumo total - mais compacto */}
-            <div className="mt-4 p-3 bg-gradient-to-r from-biodina-blue to-biodina-darkblue rounded-xl text-white">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Trophy className="h-4 w-4" />
-                  <span className="font-semibold text-sm">Total do Pipeline</span>
+          </div>
+          
+          {/* Resumo total - fixo no final */}
+          <div className="mt-4 p-3 bg-gradient-to-r from-biodina-blue to-biodina-darkblue rounded-xl text-white flex-shrink-0">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Trophy className="h-4 w-4" />
+                <span className="font-semibold text-sm">Total do Pipeline</span>
+              </div>
+              <div className="text-right">
+                <div className="font-bold text-base">
+                  {funnelData.reduce((total, item) => total + item.count, 0)} oportunidades
                 </div>
-                <div className="text-right">
-                  <div className="font-bold text-base">
-                    {funnelData.reduce((total, item) => total + item.count, 0)} oportunidades
-                  </div>
-                  <div className="text-xs opacity-90">
-                    {formatCurrency(funnelData.reduce((total, item) => total + item.valor, 0))}
-                  </div>
+                <div className="text-xs opacity-90">
+                  {formatCurrency(funnelData.reduce((total, item) => total + item.valor, 0))}
                 </div>
               </div>
             </div>
@@ -660,18 +662,18 @@ const Comercial = () => {
         </CardContent>
       </Card>
 
-      {/* Card de Indicadores Comerciais com design mais profissional */}
-      <Card className="shadow-lg">
-        <CardHeader className="pb-4">
+      {/* Card Indicadores - mesma altura */}
+      <Card className="shadow-lg h-[600px] flex flex-col">
+        <CardHeader className="pb-4 flex-shrink-0">
           <CardTitle className="flex items-center gap-2 text-biodina-blue text-lg">
             <BarChart3 className="h-5 w-5" />
             Indicadores Comerciais
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6 px-4">
+        <CardContent className="space-y-4 px-4 flex-1 overflow-y-auto">
           {/* Posição de Estoque */}
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg">
-            <h4 className="font-semibold text-sm text-blue-700 mb-3 flex items-center gap-2">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-3 rounded-lg">
+            <h4 className="font-semibold text-sm text-blue-700 mb-2 flex items-center gap-2">
               <Package className="h-4 w-4" />
               POSIÇÃO DE ESTOQUE
             </h4>
@@ -688,8 +690,8 @@ const Comercial = () => {
           </div>
 
           {/* Importação Previsão */}
-          <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-lg">
-            <h4 className="font-semibold text-sm text-orange-700 mb-3 flex items-center gap-2">
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-3 rounded-lg">
+            <h4 className="font-semibold text-sm text-orange-700 mb-2 flex items-center gap-2">
               <Truck className="h-4 w-4" />
               IMPORTAÇÃO PREVISÃO
             </h4>
@@ -704,8 +706,8 @@ const Comercial = () => {
           </div>
 
           {/* Pedidos Programados */}
-          <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
-            <h4 className="font-semibold text-sm text-green-700 mb-3 flex items-center gap-2">
+          <div className="bg-gradient-to-r from-green-50 to-green-100 p-3 rounded-lg">
+            <h4 className="font-semibold text-sm text-green-700 mb-2 flex items-center gap-2">
               <Calendar className="h-4 w-4" />
               PEDIDOS PROGRAMADOS
             </h4>
@@ -725,8 +727,8 @@ const Comercial = () => {
           </div>
 
           {/* Restrição Financeira */}
-          <div className="bg-gradient-to-r from-red-50 to-red-100 p-4 rounded-lg">
-            <h4 className="font-semibold text-sm text-red-700 mb-3 flex items-center gap-2">
+          <div className="bg-gradient-to-r from-red-50 to-red-100 p-3 rounded-lg">
+            <h4 className="font-semibold text-sm text-red-700 mb-2 flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
               RESTRIÇÃO FINANCEIRA
             </h4>
@@ -743,8 +745,8 @@ const Comercial = () => {
           </div>
 
           {/* Aguardando Autorização */}
-          <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-4 rounded-lg">
-            <h4 className="font-semibold text-sm text-yellow-700 mb-3 flex items-center gap-2">
+          <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-3 rounded-lg">
+            <h4 className="font-semibold text-sm text-yellow-700 mb-2 flex items-center gap-2">
               <Clock className="h-4 w-4" />
               AGUARDANDO AUTORIZAÇÃO
             </h4>
