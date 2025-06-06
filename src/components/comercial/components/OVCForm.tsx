@@ -2,52 +2,16 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Download } from 'lucide-react';
-import { useState } from 'react';
 import OVCTable from './OVCTable';
 
 interface OVCFormProps {
   formData: any;
   onInputChange: (field: string, value: any) => void;
+  ovcItems: any[];
+  onUpdateItems: (items: any[]) => void;
 }
 
-const OVCForm = ({ formData, onInputChange }: OVCFormProps) => {
-  const [ovcItems, setOvcItems] = useState([
-    {
-      id: 1,
-      code: 'ABL800 FLEX',
-      qty: '1',
-      priceListUnit: '65000.00',
-      priceListTotal: '65000.00',
-      customerDiscountPercent: '15',
-      customerDiscountUnit: '9750.00',
-      customerDiscountTotal: '9750.00',
-      subTotalUnit: '55250.00',
-      subTotalTotal: '55250.00',
-      handlingCharge: '1657.50',
-      total: '56907.50',
-      comissionPercent: '5',
-      comissionValue: '2845.38',
-      netRadiometer: '54062.12'
-    },
-    {
-      id: 2,
-      code: 'Installation',
-      qty: '1',
-      priceListUnit: '3000.00',
-      priceListTotal: '3000.00',
-      customerDiscountPercent: '0',
-      customerDiscountUnit: '0.00',
-      customerDiscountTotal: '0.00',
-      subTotalUnit: '3000.00',
-      subTotalTotal: '3000.00',
-      handlingCharge: '90.00',
-      total: '3090.00',
-      comissionPercent: '5',
-      comissionValue: '154.50',
-      netRadiometer: '2935.50'
-    }
-  ]);
-
+const OVCForm = ({ formData, onInputChange, ovcItems, onUpdateItems }: OVCFormProps) => {
   const handleEnviarParaFabrica = () => {
     // Simular download do documento OVC
     const ovcContent = `
@@ -95,7 +59,7 @@ Documento gerado em: ${new Date().toLocaleString()}
             
             <OVCTable
               items={ovcItems}
-              onUpdateItems={setOvcItems}
+              onUpdateItems={onUpdateItems}
             />
             
             {/* Botão Enviar para Fábrica */}

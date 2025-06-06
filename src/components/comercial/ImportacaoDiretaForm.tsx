@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
@@ -156,6 +156,79 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     noEaa: ''
   });
 
+  // Estado específico para OVC items
+  const [ovcItems, setOvcItems] = useState([
+    {
+      id: 1,
+      code: 'ABL800 FLEX',
+      qty: '1',
+      priceListUnit: '65000.00',
+      priceListTotal: '65000.00',
+      customerDiscountPercent: '15',
+      customerDiscountUnit: '9750.00',
+      customerDiscountTotal: '9750.00',
+      subTotalUnit: '55250.00',
+      subTotalTotal: '55250.00',
+      handlingCharge: '1657.50',
+      total: '56907.50',
+      comissionPercent: '5',
+      comissionValue: '2845.38',
+      netRadiometer: '54062.12'
+    },
+    {
+      id: 2,
+      code: 'Installation',
+      qty: '1',
+      priceListUnit: '3000.00',
+      priceListTotal: '3000.00',
+      customerDiscountPercent: '0',
+      customerDiscountUnit: '0.00',
+      customerDiscountTotal: '0.00',
+      subTotalUnit: '3000.00',
+      subTotalTotal: '3000.00',
+      handlingCharge: '90.00',
+      total: '3090.00',
+      comissionPercent: '5',
+      comissionValue: '154.50',
+      netRadiometer: '2935.50'
+    }
+  ]);
+
+  // Sincronizar produtos SPI com OVC
+  useEffect(() => {
+    if (formData.spiMercadorias && formData.spiMercadorias.length > 0) {
+      const syncedOvcItems = formData.spiMercadorias.map((mercadoria: any, index: number) => {
+        // Procurar item existente no OVC pelo ID da mercadoria
+        const existingOvcItem = ovcItems.find(item => item.id === mercadoria.id);
+        
+        return {
+          id: mercadoria.id || Date.now() + index,
+          code: mercadoria.codigo || '',
+          qty: mercadoria.totalOrdens || '0',
+          priceListUnit: existingOvcItem?.priceListUnit || '0.00',
+          priceListTotal: existingOvcItem?.priceListTotal || '0.00',
+          customerDiscountPercent: existingOvcItem?.customerDiscountPercent || '0',
+          customerDiscountUnit: existingOvcItem?.customerDiscountUnit || '0.00',
+          customerDiscountTotal: existingOvcItem?.customerDiscountTotal || '0.00',
+          subTotalUnit: existingOvcItem?.subTotalUnit || '0.00',
+          subTotalTotal: existingOvcItem?.subTotalTotal || '0.00',
+          handlingCharge: existingOvcItem?.handlingCharge || '0.00',
+          total: existingOvcItem?.total || '0.00',
+          comissionPercent: existingOvcItem?.comissionPercent || '5',
+          comissionValue: existingOvcItem?.comissionValue || '0.00',
+          netRadiometer: existingOvcItem?.netRadiometer || '0.00'
+        };
+      });
+      
+      // Manter items OVC que não vieram do SPI (se houver)
+      const ovcOnlyItems = ovcItems.filter(ovcItem => 
+        !formData.spiMercadorias.some((mercadoria: any) => mercadoria.id === ovcItem.id)
+      );
+      
+      setOvcItems([...syncedOvcItems, ...ovcOnlyItems]);
+    }
+  }, [formData.spiMercadorias]);
+
   const masterTabs = [
     { id: 'comercial', label: 'COMERCIAL' },
     { id: 'spi', label: 'SPI' },
@@ -202,6 +275,8 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
         <OVCForm
           formData={formData}
           onInputChange={handleInputChange}
+          ovcItems={ovcItems}
+          onUpdateItems={setOvcItems}
         />
       );
     }
