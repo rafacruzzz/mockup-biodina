@@ -1,10 +1,11 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import { Download } from 'lucide-react';
 import { useState } from 'react';
 
 interface DDRFormProps {
@@ -61,6 +62,11 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleDownloadDDR = () => {
+    console.log('Baixando DDR...');
+    // Aqui seria implementada a lógica de download do DDR
   };
 
   return (
@@ -401,6 +407,14 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Download Button */}
+      <div className="flex justify-end">
+        <Button onClick={handleDownloadDDR} className="flex items-center gap-2">
+          <Download size={16} />
+          Baixar DDR
+        </Button>
+      </div>
     </div>
   );
 };
