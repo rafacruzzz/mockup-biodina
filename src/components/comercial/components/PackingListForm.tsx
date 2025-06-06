@@ -1,10 +1,9 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, AlertTriangle, FileUp } from 'lucide-react';
+import { Upload, AlertTriangle, FileUp, Bell } from 'lucide-react';
 import { useState } from 'react';
 import CustomAlertModal from './CustomAlertModal';
 
@@ -26,6 +25,8 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
   const [motivoClienteNaoRecebeu, setMotivoClienteNaoRecebeu] = useState('');
   const [liImportada, setLiImportada] = useState(false);
   const [showCustomAlert, setShowCustomAlert] = useState(false);
+  const [isNotifying, setIsNotifying] = useState(false);
+  const [notificationSent, setNotificationSent] = useState(false);
 
   // Lista de usuários do sistema (mock)
   const usuarios = [
@@ -67,6 +68,20 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
   const handleImportarLI = () => {
     setLiImportada(true);
     console.log('LI importada - ativando aba DDR');
+  };
+
+  const handleNotifyUser = async () => {
+    if (!usuarioResponsavel) return;
+    
+    setIsNotifying(true);
+    setNotificationSent(false);
+    
+    // Simular delay de envio
+    setTimeout(() => {
+      setIsNotifying(false);
+      setNotificationSent(true);
+      console.log(`Notificação enviada para ${usuarioResponsavel}`);
+    }, 2000);
   };
 
   return (
@@ -136,18 +151,44 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
                 <div className="space-y-4">
                   <div>
                     <Label className="text-base font-semibold">Selecionar usuário responsável para verificar itens do Packing list:</Label>
-                    <Select value={usuarioResponsavel} onValueChange={setUsuarioResponsavel}>
-                      <SelectTrigger className="w-full mt-2">
-                        <SelectValue placeholder="Selecione o usuário responsável" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {usuarios.map((usuario) => (
-                          <SelectItem key={usuario} value={usuario}>
-                            {usuario}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex items-center gap-4 mt-2">
+                      <Select value={usuarioResponsavel} onValueChange={setUsuarioResponsavel}>
+                        <SelectTrigger className="flex-1">
+                          <SelectValue placeholder="Selecione o usuário responsável" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {usuarios.map((usuario) => (
+                            <SelectItem key={usuario} value={usuario}>
+                              {usuario}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      
+                      <Button
+                        onClick={handleNotifyUser}
+                        disabled={!usuarioResponsavel || isNotifying}
+                        className="bg-orange-600 text-white hover:bg-orange-700 disabled:opacity-50"
+                      >
+                        {isNotifying ? (
+                          <div className="flex items-center gap-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            Notificando...
+                          </div>
+                        ) : (
+                          <>
+                            <Bell className="h-4 w-4 mr-2" />
+                            Notificar
+                          </>
+                        )}
+                      </Button>
+                      
+                      {notificationSent && (
+                        <span className="text-green-600 font-medium text-sm">
+                          ✓ Alerta enviado
+                        </span>
+                      )}
+                    </div>
                     <p className="text-sm text-blue-600 mt-2 italic">
                       ℹ️ Este processo está gerando histórico na sub-aba Histórico/Chat na aba principal COMERCIAL
                     </p>
