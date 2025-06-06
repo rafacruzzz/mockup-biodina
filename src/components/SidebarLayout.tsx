@@ -5,7 +5,9 @@ import {
   Menu, X, Home, Users, Settings, 
   BarChart2, FileText, Database, 
   ShoppingCart, DollarSign, Briefcase, 
-  Package, Calculator, UserCheck, Cpu
+  Package, Calculator, UserCheck, Cpu,
+  ChevronDown, ChevronRight, TrendingUp,
+  HeadphonesIcon, Wrench
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +17,18 @@ interface SidebarLayoutProps {
 
 const SidebarLayout = ({ children }: SidebarLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const location = useLocation();
+
+  const toggleMenu = (menuName: string) => {
+    setExpandedMenus(prev => 
+      prev.includes(menuName) 
+        ? prev.filter(name => name !== menuName)
+        : [...prev, menuName]
+    );
+  };
+
+  const isMenuExpanded = (menuName: string) => expandedMenus.includes(menuName);
 
   const menuItems = [
     { name: "Aplicativos", path: "/aplicativos", icon: <Home size={20} /> },
@@ -23,7 +36,23 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
     { name: "BI", path: "/bi-geral", icon: <BarChart2 size={20} /> },
     { name: "Cadastro", path: "/cadastro", icon: <FileText size={20} /> },
     { name: "Controladoria", path: "/controladoria", icon: <Database size={20} /> },
-    { name: "Comercial", path: "/comercial", icon: <Briefcase size={20} /> },
+    { 
+      name: "Comercial", 
+      icon: <Briefcase size={20} />,
+      isExpandable: true,
+      subItems: [
+        { name: "Vendas", path: "/comercial/vendas", icon: <TrendingUp size={18} /> },
+        { 
+          name: "Pós-Vendas", 
+          icon: <HeadphonesIcon size={18} />,
+          isExpandable: true,
+          subItems: [
+            { name: "Assessoria Científica", path: "/comercial/pos-vendas/assessoria-cientifica", icon: <Users size={16} /> },
+            { name: "Departamento Técnico", path: "/comercial/pos-vendas/departamento-tecnico", icon: <Wrench size={16} /> }
+          ]
+        }
+      ]
+    },
     { name: "Estoque", path: "/estoque", icon: <Package size={20} /> },
     { name: "Compras", path: "/compras", icon: <ShoppingCart size={20} /> },
     { name: "Financeiro", path: "/financeiro", icon: <DollarSign size={20} /> },
@@ -31,6 +60,83 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
     { name: "RH", path: "/rh", icon: <UserCheck size={20} /> },
     { name: "TI", path: "/ti", icon: <Cpu size={20} /> },
   ];
+
+  const renderMenuItem = (item: any, level = 0) => {
+    const isExpanded = isMenuExpanded(item.name);
+    const hasPath = item.path;
+    const isActive = hasPath && location.pathname === item.path;
+    const hasActiveChild = item.subItems?.some((subItem: any) => 
+      subItem.path && location.pathname === subItem.path ||
+      subItem.subItems?.some((subSubItem: any) => subSubItem.path && location.pathname === subSubItem.path)
+    );
+
+    const paddingLeft = level === 0 ? "pl-3" : level === 1 ? "pl-6" : "pl-9";
+
+    return (
+      <li key={item.name}>
+        {hasPath ? (
+          <Link
+            to={item.path}
+            className={cn(
+              "flex items-center p-3 text-sm font-medium rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 transition-all duration-200",
+              paddingLeft,
+              isActive && "bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md",
+              !isSidebarOpen && "justify-center"
+            )}
+          >
+            <span className={cn(
+              "text-gray-500", 
+              isActive && "text-white"
+            )}>
+              {item.icon}
+            </span>
+            <span className={cn("ml-3 whitespace-nowrap", !isSidebarOpen && "hidden")}>
+              {item.name}
+            </span>
+          </Link>
+        ) : (
+          <button
+            onClick={() => item.isExpandable && toggleMenu(item.name)}
+            className={cn(
+              "w-full flex items-center p-3 text-sm font-medium rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 transition-all duration-200",
+              paddingLeft,
+              (hasActiveChild || isActive) && "bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md",
+              !isSidebarOpen && "justify-center"
+            )}
+          >
+            <span className={cn(
+              "text-gray-500", 
+              (hasActiveChild || isActive) && "text-white"
+            )}>
+              {item.icon}
+            </span>
+            <span className={cn("ml-3 whitespace-nowrap flex-1 text-left", !isSidebarOpen && "hidden")}>
+              {item.name}
+            </span>
+            {item.isExpandable && !isSidebarOpen && (
+              <span className="hidden">
+                {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+              </span>
+            )}
+            {item.isExpandable && isSidebarOpen && (
+              <span className={cn(
+                "text-gray-400",
+                (hasActiveChild || isActive) && "text-white"
+              )}>
+                {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+              </span>
+            )}
+          </button>
+        )}
+        
+        {item.isExpandable && item.subItems && isExpanded && isSidebarOpen && (
+          <ul className="mt-1 space-y-1">
+            {item.subItems.map((subItem: any) => renderMenuItem(subItem, level + 1))}
+          </ul>
+        )}
+      </li>
+    );
+  };
 
   return (
     <div className="flex h-screen bg-gray-50/50">
@@ -60,28 +166,7 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
         
         <div className="py-4 px-3">
           <ul className="space-y-1">
-            {menuItems.map((item) => (
-              <li key={item.name}>
-                <Link
-                  to={item.path}
-                  className={cn(
-                    "flex items-center p-3 text-sm font-medium rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 transition-all duration-200",
-                    location.pathname === item.path && "bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md",
-                    !isSidebarOpen && "justify-center"
-                  )}
-                >
-                  <span className={cn(
-                    "text-gray-500", 
-                    location.pathname === item.path && "text-white"
-                  )}>
-                    {item.icon}
-                  </span>
-                  <span className={cn("ml-3 whitespace-nowrap", !isSidebarOpen && "hidden")}>
-                    {item.name}
-                  </span>
-                </Link>
-              </li>
-            ))}
+            {menuItems.map((item) => renderMenuItem(item))}
           </ul>
         </div>
       </aside>
@@ -101,7 +186,6 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
           <div className="flex items-center justify-between w-full">
             <h2 className="text-xl font-semibold text-biodina-blue ml-4">Biodina Sistemas</h2>
             
-            {/* Botão X para fechar submenu inteiro */}
             <div className="ml-auto flex items-center gap-4">
               <button 
                 onClick={() => setIsSidebarOpen(false)}

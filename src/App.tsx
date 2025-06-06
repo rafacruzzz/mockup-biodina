@@ -10,6 +10,9 @@ import Login from "./pages/Login";
 import BIGeral from "./pages/BIGeral";
 import Cadastro from "./pages/Cadastro";
 import Comercial from "./pages/Comercial";
+import ComercialVendas from "./pages/ComercialVendas";
+import AssessoriaCientifica from "./pages/AssessoriaCientifica";
+import DepartamentoTecnico from "./pages/DepartamentoTecnico";
 import Financeiro from "./pages/Financeiro";
 import NotFound from "./pages/NotFound";
 
@@ -37,6 +40,9 @@ const App: React.FC = () => {
             <Route path="/bi-geral" element={<BIGeral />} />
             <Route path="/cadastro" element={<Cadastro />} />
             <Route path="/comercial" element={<Comercial />} />
+            <Route path="/comercial/vendas" element={<ComercialVendas />} />
+            <Route path="/comercial/pos-vendas/assessoria-cientifica" element={<AssessoriaCientifica />} />
+            <Route path="/comercial/pos-vendas/departamento-tecnico" element={<DepartamentoTecnico />} />
             <Route path="/financeiro" element={<Financeiro />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
