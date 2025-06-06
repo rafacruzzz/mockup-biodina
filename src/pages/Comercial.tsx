@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,8 @@ import {
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
   ShoppingCart, Headphones, ArrowLeft, Package, Truck, ClipboardList,
-  AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal
+  AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal,
+  ChevronRight
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -313,7 +313,7 @@ const Comercial = () => {
   const getModalidadeLabel = (modalidade: string) => {
     switch (modalidade) {
       case 'licitacao': return 'Licitação';
-      case 'contratacao_simples': return 'Contratação Simples';
+      case 'contratacao_simples': return 'Contratação';
       case 'importacao_direta': return 'Importação Direta';
       default: return modalidade;
     }
@@ -427,9 +427,9 @@ const Comercial = () => {
     </div>
   );
 
-  // Sub-módulos do Pós-Venda
+  // Sub-módulos do Pós-Venda seguindo padrão do Cadastro
   const renderPosVendaModules = () => (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full">
       <div className="flex items-center gap-4 mb-6">
         <Button 
           variant="outline" 
@@ -439,80 +439,97 @@ const Comercial = () => {
           <ArrowLeft className="h-4 w-4" />
           Voltar
         </Button>
-        <h2 className="text-2xl font-bold text-biodina-blue">Pós-Venda</h2>
+        <div>
+          <h2 className="text-2xl font-bold text-biodina-blue">Pós-Venda</h2>
+          <p className="text-gray-600 text-sm">Suporte científico e técnico pós-venda</p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card 
-          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-          onClick={() => setActiveSubModule('assessoria')}
-        >
-          <CardContent className="p-8 text-center">
-            <Target className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Assessoria Científica</h3>
-            <p className="text-gray-600">Suporte científico especializado</p>
-          </CardContent>
-        </Card>
+      <div className="flex-1 flex">
+        {/* Sidebar dos módulos */}
+        <div className="w-80 bg-white rounded-lg shadow-sm border border-gray-200 p-4 mr-6">
+          <nav className="space-y-2">
+            <button
+              onClick={() => setActiveSubModule('assessoria')}
+              className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors ${
+                activeSubModule === 'assessoria' 
+                  ? 'bg-biodina-blue text-white' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <Target className="h-5 w-5" />
+                <span className="font-medium">Assessoria Científica</span>
+              </div>
+              <ChevronRight className="h-4 w-4" />
+            </button>
 
-        <Card 
-          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-          onClick={() => setActiveSubModule('departamento-tecnico')}
-        >
-          <CardContent className="p-8 text-center">
-            <FileText className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Departamento Técnico</h3>
-            <p className="text-gray-600">Suporte técnico e manutenção</p>
-          </CardContent>
-        </Card>
+            <button
+              onClick={() => setActiveSubModule('departamento-tecnico')}
+              className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors ${
+                activeSubModule === 'departamento-tecnico' 
+                  ? 'bg-biodina-blue text-white' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <FileText className="h-5 w-5" />
+                <span className="font-medium">Departamento Técnico</span>
+              </div>
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </nav>
+        </div>
+
+        {/* Conteúdo principal */}
+        <div className="flex-1">
+          {!activeSubModule ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">Selecione um módulo</h3>
+                <p className="text-gray-500">Escolha um módulo no menu lateral para começar a gerenciar</p>
+              </div>
+            </div>
+          ) : (
+            renderSubModule()
+          )}
+        </div>
       </div>
     </div>
   );
 
-  // Placeholder para sub-módulos específicos
+  // Conteúdo específico dos sub-módulos
   const renderSubModule = () => {
     if (activeSubModule === 'assessoria') {
       return (
-        <div className="space-y-6">
-          <div className="flex items-center gap-4 mb-6">
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSubModule(null)}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <h2 className="text-2xl font-bold text-biodina-blue">Assessoria Científica</h2>
-          </div>
-          <Card>
-            <CardContent className="p-8 text-center">
-              <p className="text-gray-600">Módulo de Assessoria Científica em desenvolvimento</p>
-            </CardContent>
-          </Card>
-        </div>
+        <Card className="h-full">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5" />
+              Assessoria Científica
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600">Módulo de Assessoria Científica em desenvolvimento</p>
+          </CardContent>
+        </Card>
       );
     }
 
     if (activeSubModule === 'departamento-tecnico') {
       return (
-        <div className="space-y-6">
-          <div className="flex items-center gap-4 mb-6">
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSubModule(null)}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <h2 className="text-2xl font-bold text-biodina-blue">Departamento Técnico</h2>
-          </div>
-          <Card>
-            <CardContent className="p-8 text-center">
-              <p className="text-gray-600">Módulo de Departamento Técnico em desenvolvimento</p>
-            </CardContent>
-          </Card>
-        </div>
+        <Card className="h-full">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Departamento Técnico
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600">Módulo de Departamento Técnico em desenvolvimento</p>
+          </CardContent>
+        </Card>
       );
     }
 
@@ -581,8 +598,8 @@ const Comercial = () => {
 
   const renderFunil = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {/* Card Funil - altura fixa */}
-      <Card className="shadow-lg h-[600px] flex flex-col">
+      {/* Card Funil - altura fixa e responsivo */}
+      <Card className="shadow-lg flex flex-col">
         <CardHeader className="text-center pb-3 flex-shrink-0">
           <CardTitle className="flex items-center justify-center gap-3 text-xl font-bold text-biodina-blue mb-1">
             <TrendingUp className="h-6 w-6 text-biodina-blue" />
@@ -590,7 +607,7 @@ const Comercial = () => {
           </CardTitle>
           <p className="text-gray-600 text-sm">Pipeline de Vendas por Temperatura</p>
         </CardHeader>
-        <CardContent className="px-4 pb-4 flex-1 flex flex-col">
+        <CardContent className="px-4 pb-4 flex-1 flex flex-col min-h-0">
           <div className="space-y-3 flex-1 overflow-y-auto">
             {funnelData.map((item, index) => (
               <div 
@@ -662,15 +679,15 @@ const Comercial = () => {
         </CardContent>
       </Card>
 
-      {/* Card Indicadores - mesma altura */}
-      <Card className="shadow-lg h-[600px] flex flex-col">
+      {/* Card Indicadores - mesma altura e responsivo */}
+      <Card className="shadow-lg flex flex-col">
         <CardHeader className="pb-4 flex-shrink-0">
           <CardTitle className="flex items-center gap-2 text-biodina-blue text-lg">
             <BarChart3 className="h-5 w-5" />
             Indicadores Comerciais
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 px-4 flex-1 overflow-y-auto">
+        <CardContent className="space-y-4 px-4 flex-1 overflow-y-auto min-h-0">
           {/* Posição de Estoque */}
           <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-3 rounded-lg">
             <h4 className="font-semibold text-sm text-blue-700 mb-2 flex items-center gap-2">
@@ -815,7 +832,7 @@ const Comercial = () => {
               <SelectContent>
                 <SelectItem value="todos">Todas as Modalidades</SelectItem>
                 <SelectItem value="licitacao">Licitação</SelectItem>
-                <SelectItem value="contratacao_simples">Contratação Simples</SelectItem>
+                <SelectItem value="contratacao_simples">Contratação</SelectItem>
                 <SelectItem value="importacao_direta">Importação Direta</SelectItem>
               </SelectContent>
             </Select>
@@ -959,8 +976,7 @@ const Comercial = () => {
         {/* Renderização condicional baseada no módulo ativo */}
         {activeModule === 'main' && renderMainModules()}
         {activeModule === 'vendas' && renderVendasModule()}
-        {activeModule === 'pos-venda' && !activeSubModule && renderPosVendaModules()}
-        {activeModule === 'pos-venda' && activeSubModule && renderSubModule()}
+        {activeModule === 'pos-venda' && renderPosVendaModules()}
       </div>
 
       {/* Modais (mantidos iguais) */}
