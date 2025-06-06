@@ -6,8 +6,7 @@ import {
   BarChart2, FileText, Database, 
   ShoppingCart, DollarSign, Briefcase, 
   Package, Calculator, UserCheck, Cpu,
-  ChevronDown, ChevronRight, TrendingUp,
-  HeadphonesIcon, Wrench
+  ChevronDown, ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -36,23 +35,7 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
     { name: "BI", path: "/bi-geral", icon: <BarChart2 size={20} /> },
     { name: "Cadastro", path: "/cadastro", icon: <FileText size={20} /> },
     { name: "Controladoria", path: "/controladoria", icon: <Database size={20} /> },
-    { 
-      name: "Comercial", 
-      icon: <Briefcase size={20} />,
-      isExpandable: true,
-      subItems: [
-        { name: "Vendas", path: "/comercial/vendas", icon: <TrendingUp size={18} /> },
-        { 
-          name: "Pós-Vendas", 
-          icon: <HeadphonesIcon size={18} />,
-          isExpandable: true,
-          subItems: [
-            { name: "Assessoria Científica", path: "/comercial/pos-vendas/assessoria-cientifica", icon: <Users size={16} /> },
-            { name: "Departamento Técnico", path: "/comercial/pos-vendas/departamento-tecnico", icon: <Wrench size={16} /> }
-          ]
-        }
-      ]
-    },
+    { name: "Comercial", path: "/comercial", icon: <Briefcase size={20} /> },
     { name: "Estoque", path: "/estoque", icon: <Package size={20} /> },
     { name: "Compras", path: "/compras", icon: <ShoppingCart size={20} /> },
     { name: "Financeiro", path: "/financeiro", icon: <DollarSign size={20} /> },
