@@ -1,10 +1,9 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { FileText } from 'lucide-react';
+import { FileText, Upload } from 'lucide-react';
 
 interface NOMainFormProps {
   formData: any;
@@ -67,6 +66,21 @@ Documento gerado em: ${new Date().toLocaleString()}
     URL.revokeObjectURL(noUrl);
 
     console.log('Documento NO gerado para download');
+  };
+
+  const handleAnexarAO = () => {
+    // Simular anexação de AO
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.doc,.docx';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        console.log('AO anexado:', file.name);
+        // Aqui você pode adicionar a lógica para salvar o arquivo
+      }
+    };
+    input.click();
   };
 
   return (
@@ -271,13 +285,21 @@ Documento gerado em: ${new Date().toLocaleString()}
             </div>
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex justify-center space-x-4">
             <Button 
               onClick={handleGenerateNOPDF}
               className="bg-red-600 text-white hover:bg-red-700 px-8 py-3"
             >
               <FileText className="h-4 w-4 mr-2" />
               Baixar NO
+            </Button>
+            
+            <Button 
+              onClick={handleAnexarAO}
+              className="bg-blue-600 text-white hover:bg-blue-700 px-8 py-3"
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Anexar AO
             </Button>
           </div>
         </CardContent>
