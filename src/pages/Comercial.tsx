@@ -660,26 +660,26 @@ const Comercial = () => {
         </CardContent>
       </Card>
 
-      {/* Segundo card com indicadores - mais compacto */}
+      {/* Card de Indicadores Comerciais com design mais profissional */}
       <Card className="shadow-lg">
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-biodina-blue text-lg">
             <BarChart3 className="h-5 w-5" />
             Indicadores Comerciais
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 px-4">
+        <CardContent className="space-y-6 px-4">
           {/* Posição de Estoque */}
-          <div>
-            <h4 className="font-semibold text-xs text-gray-600 mb-2 flex items-center gap-2">
-              <Package className="h-3 w-3" />
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg">
+            <h4 className="font-semibold text-sm text-blue-700 mb-3 flex items-center gap-2">
+              <Package className="h-4 w-4" />
               POSIÇÃO DE ESTOQUE
             </h4>
-            <div className="space-y-1">
+            <div className="space-y-2">
               {indicadores.posicaoEstoque.slice(0, 3).map((item, index) => (
-                <div key={index} className="flex justify-between items-center text-xs">
-                  <span className="text-gray-700">{item.produto}</span>
-                  <Badge variant="outline" className="text-xs px-1 py-0">
+                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
+                  <span className="text-sm font-medium text-gray-700">{item.produto}</span>
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
                     {item.quantidade} un.
                   </Badge>
                 </div>
@@ -688,34 +688,36 @@ const Comercial = () => {
           </div>
 
           {/* Importação Previsão */}
-          <div>
-            <h4 className="font-semibold text-xs text-gray-600 mb-2 flex items-center gap-2">
-              <Truck className="h-3 w-3" />
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-lg">
+            <h4 className="font-semibold text-sm text-orange-700 mb-3 flex items-center gap-2">
+              <Truck className="h-4 w-4" />
               IMPORTAÇÃO PREVISÃO
             </h4>
-            <div className="space-y-1">
+            <div className="space-y-2">
               {indicadores.importacaoPrevisao.slice(0, 2).map((item, index) => (
-                <div key={index} className="flex justify-between items-center text-xs">
-                  <span className="text-gray-700">{item.item}</span>
-                  <span className="text-xs text-gray-500">{item.previsao}</span>
+                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
+                  <span className="text-sm font-medium text-gray-700">{item.item}</span>
+                  <span className="text-xs text-orange-600 font-medium">{item.previsao}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Pedidos Programados */}
-          <div>
-            <h4 className="font-semibold text-xs text-gray-600 mb-2 flex items-center gap-2">
-              <Calendar className="h-3 w-3" />
+          <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
+            <h4 className="font-semibold text-sm text-green-700 mb-3 flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
               PEDIDOS PROGRAMADOS
             </h4>
-            <div className="space-y-1">
+            <div className="space-y-2">
               {indicadores.pedidosProgramados.slice(0, 2).map((item, index) => (
-                <div key={index} className="flex justify-between items-center text-xs">
-                  <span className="text-gray-700">{item.cliente}</span>
-                  <div className="text-right">
-                    <div className="text-xs font-medium">{formatCurrency(item.valor)}</div>
-                    <div className="text-xs text-gray-500">{item.data}</div>
+                <div key={index} className="bg-white p-2 rounded-md shadow-sm">
+                  <div className="flex justify-between items-start">
+                    <span className="text-sm font-medium text-gray-700">{item.cliente}</span>
+                    <div className="text-right">
+                      <div className="text-sm font-bold text-green-600">{formatCurrency(item.valor)}</div>
+                      <div className="text-xs text-gray-500">{item.data}</div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -723,16 +725,16 @@ const Comercial = () => {
           </div>
 
           {/* Restrição Financeira */}
-          <div>
-            <h4 className="font-semibold text-xs text-gray-600 mb-2 flex items-center gap-2">
-              <AlertTriangle className="h-3 w-3 text-red-500" />
+          <div className="bg-gradient-to-r from-red-50 to-red-100 p-4 rounded-lg">
+            <h4 className="font-semibold text-sm text-red-700 mb-3 flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" />
               RESTRIÇÃO FINANCEIRA
             </h4>
-            <div className="space-y-1">
+            <div className="space-y-2">
               {indicadores.restricaoFinanceira.map((item, index) => (
-                <div key={index} className="flex justify-between items-center text-xs">
-                  <span className="text-gray-700">{item.cliente}</span>
-                  <Badge variant="destructive" className="text-xs px-1 py-0">
+                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
+                  <span className="text-sm font-medium text-gray-700">{item.cliente}</span>
+                  <Badge variant="destructive" className="bg-red-100 text-red-700 border-red-200">
                     {item.dias} dias
                   </Badge>
                 </div>
@@ -741,16 +743,16 @@ const Comercial = () => {
           </div>
 
           {/* Aguardando Autorização */}
-          <div>
-            <h4 className="font-semibold text-xs text-gray-600 mb-2 flex items-center gap-2">
-              <Clock className="h-3 w-3 text-orange-500" />
+          <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-4 rounded-lg">
+            <h4 className="font-semibold text-sm text-yellow-700 mb-3 flex items-center gap-2">
+              <Clock className="h-4 w-4" />
               AGUARDANDO AUTORIZAÇÃO
             </h4>
-            <div className="space-y-1">
+            <div className="space-y-2">
               {indicadores.aguardandoAutorizacao.map((item, index) => (
-                <div key={index} className="flex justify-between items-center text-xs">
-                  <span className="text-gray-700">{item.item}</span>
-                  <Badge variant="outline" className="text-xs px-1 py-0">
+                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
+                  <span className="text-sm font-medium text-gray-700">{item.item}</span>
+                  <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
                     {item.dias} dias
                   </Badge>
                 </div>
