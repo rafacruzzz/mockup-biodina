@@ -1,9 +1,12 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, AlertTriangle, FileUp, Bell } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Upload, AlertTriangle, FileUp, Bell, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 import CustomAlertModal from './CustomAlertModal';
 
@@ -27,6 +30,15 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
   const [showCustomAlert, setShowCustomAlert] = useState(false);
   const [isNotifying, setIsNotifying] = useState(false);
   const [notificationSent, setNotificationSent] = useState(false);
+  const [packingListAprovado, setPackingListAprovado] = useState('');
+  const [showReenvioAlert, setShowReenvioAlert] = useState(false);
+
+  // Lista de produtos/mercadorias (mock)
+  const [produtos, setProdutos] = useState([
+    { id: 1, codigo: 'PROD001', nome: 'Equipamento A', quantidade: 5, valor: 'R$ 15.000,00', validade: '2025-12-31', aprovado: true },
+    { id: 2, codigo: 'PROD002', nome: 'Componente B', quantidade: 10, valor: 'R$ 2.500,00', validade: '2025-10-15', aprovado: true },
+    { id: 3, codigo: 'PROD003', nome: 'Acessório C', quantidade: 3, valor: 'R$ 800,00', validade: '2025-11-20', aprovado: true },
+  ]);
 
   // Lista de usuários do sistema (mock)
   const usuarios = [
@@ -82,6 +94,24 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
       setNotificationSent(true);
       console.log(`Notificação enviada para ${usuarioResponsavel}`);
     }, 2000);
+  };
+
+  const handleProdutoAprovadoChange = (produtoId: number, aprovado: boolean) => {
+    setProdutos(prevProdutos =>
+      prevProdutos.map(produto =>
+        produto.id === produtoId ? { ...produto, aprovado } : produto
+      )
+    );
+  };
+
+  const handleReenviarPackingList = () => {
+    setShowReenvioAlert(true);
+    console.log('Reenviando Packing List ou Validades (Fábrica)');
+  };
+
+  const handleReenvioAlertConfirm = () => {
+    setShowReenvioAlert(false);
+    console.log('Histórico da operação de reenvio gerado');
   };
 
   return (
@@ -213,25 +243,71 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
                   </div>
 
                   {clienteAprovou === 'nao' && (
-                    <div className="space-y-4">
-                      <div>
-                        <Label className="block mb-2 font-medium">Motivo da não aprovação:</Label>
-                        <Textarea
-                          value={motivoNaoAprovacao}
-                          onChange={(e) => setMotivoNaoAprovacao(e.target.value)}
-                          placeholder="Digite o motivo da não aprovação..."
-                          rows={3}
-                          className="w-full"
-                        />
+                    <div className="space-y-6">
+                      {/* Tabela de Produtos/Mercadorias */}
+                      <div className="border rounded-lg p-4">
+                        <Label className="block mb-4 font-semibold text-lg">Lista de Produtos/Mercadorias</Label>
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Código</TableHead>
+                              <TableHead>Nome</TableHead>
+                              <TableHead>Quantidade</TableHead>
+                              <TableHead>Valor</TableHead>
+                              <TableHead>Validade</TableHead>
+                              <TableHead>Aprovado</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {produtos.map((produto) => (
+                              <TableRow key={produto.id}>
+                                <TableCell className="font-medium">{produto.codigo}</TableCell>
+                                <TableCell>{produto.nome}</TableCell>
+                                <TableCell>{produto.quantidade}</TableCell>
+                                <TableCell>{produto.valor}</TableCell>
+                                <TableCell>{produto.validade}</TableCell>
+                                <TableCell>
+                                  <Checkbox
+                                    checked={produto.aprovado}
+                                    onCheckedChange={(checked) => 
+                                      handleProdutoAprovadoChange(produto.id, checked as boolean)
+                                    }
+                                  />
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
                       </div>
-                      <Button
-                        onClick={handleClienteNaoAprovou}
-                        className="bg-red-600 text-white hover:bg-red-700"
-                        disabled={!motivoNaoAprovacao.trim()}
-                      >
-                        <AlertTriangle className="h-4 w-4 mr-2" />
-                        Salvar Motivo
-                      </Button>
+
+                      {/* Packing List Aprovado */}
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-base font-semibold">Packing List aprovado?</Label>
+                          <Select value={packingListAprovado} onValueChange={setPackingListAprovado}>
+                            <SelectTrigger className="w-48 mt-2">
+                              <SelectValue placeholder="Selecione" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="sim">Sim</SelectItem>
+                              <SelectItem value="nao">Não</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Botão Reenviar - aparece quando packingListAprovado for "nao" */}
+                        {packingListAprovado === 'nao' && (
+                          <div className="pt-4">
+                            <Button
+                              onClick={handleReenviarPackingList}
+                              className="bg-blue-600 text-white hover:bg-blue-700"
+                            >
+                              <RefreshCw className="h-4 w-4 mr-2" />
+                              Reenviar Packing List ou Validades (Fábrica)
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
 
@@ -243,8 +319,8 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
                 </div>
               </div>
 
-              {/* Documentação Final de Embarque */}
-              {clienteAprovou === 'sim' && (
+              {/* Documentação Final de Embarque - só aparece se clienteAprovou = "sim" OU packingListAprovado = "sim" */}
+              {(clienteAprovou === 'sim' || packingListAprovado === 'sim') && (
                 <div className="border p-4 rounded">
                   <div className="space-y-4">
                     <div>
@@ -366,6 +442,14 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
         title="Atenção"
         message="Você precisa voltar na aba SPI para revisar os itens do pedido."
         onConfirm={handleAlertConfirm}
+      />
+
+      {/* Modal de Alerta para Reenvio */}
+      <CustomAlertModal
+        isOpen={showReenvioAlert}
+        title="Reenvio Confirmado"
+        message="Foi gerado um histórico da operação de reenvio do Packing List ou Validades (Fábrica)."
+        onConfirm={handleReenvioAlertConfirm}
       />
     </div>
   );
