@@ -3,7 +3,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
 import SPIForm from './components/SPIForm';
-import NOForm from './components/NOForm';
+import NOMainForm from './components/NOMainForm';
+import InstrucaoEmbarqueForm from './components/InstrucaoEmbarqueForm';
+import PackingListForm from './components/PackingListForm';
+import DDRForm from './components/DDRForm';
 import OVCForm from './components/OVCForm';
 import ComercialTabs from './components/ComercialTabs';
 import SPIDownloadModal from './components/SPIDownloadModal';
@@ -155,7 +158,50 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     noInstrucaoEnvio: '',
     noAssinante: '',
     noCargo: '',
-    noEaa: ''
+    noEaa: '',
+
+    // Novos campos para as novas abas
+    embarquePortoOrigem: '',
+    embarquePortoDestino: '',
+    embarqueDataPrevista: '',
+    embarqueModalTransporte: '',
+    embarqueTransportadora: '',
+    embarqueIncoterm: '',
+    embarqueSeguro: '',
+    embarqueObservacoes: '',
+    embarqueContato: '',
+    embarqueDocumentacao: '',
+
+    packingNumero: '',
+    packingData: '',
+    packingPesoTotal: '',
+    packingVolumes: '',
+    packingItems: [],
+    packingValidacaoConferencia: false,
+    packingValidacaoPeso: false,
+    packingValidacaoRotulagem: false,
+    packingValidacaoDocumentacao: false,
+    packingObservacoesGerais: '',
+
+    ddrNumero: '',
+    ddrData: '',
+    ddrImportador: '',
+    ddrCnpjImportador: '',
+    ddrProduto: '',
+    ddrNcm: '',
+    ddrQuantidade: '',
+    ddrUnidadeMedida: '',
+    ddrValorUnitario: '',
+    ddrUsoDestinacao: '',
+    ddrJustificativa: '',
+    ddrResponsavelTecnico: '',
+    ddrCreaResponsavel: '',
+    ddrDeclaracaoVeracidade: false,
+    ddrDeclaracaoRegulamentacao: false,
+    ddrDeclaracaoResponsabilidade: false,
+    ddrObservacoes: '',
+    ddrLocalData: '',
+    ddrAssinatura: ''
   });
 
   // Estado específico para OVC items - começando vazio
@@ -203,7 +249,10 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     { id: 'comercial', label: 'COMERCIAL' },
     { id: 'spi', label: 'SPI' },
     { id: 'ovc', label: 'OVC' },
-    { id: 'no', label: 'NO' }
+    { id: 'no', label: 'NO' },
+    { id: 'instrucao-embarque', label: 'INSTRUÇÃO DE EMBARQUE' },
+    { id: 'packing-list', label: 'PACKING LIST' },
+    { id: 'ddr', label: 'DDR' }
   ];
 
   const handleInputChange = (field: string, value: any) => {
@@ -257,7 +306,34 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     
     if (activeMasterTab === 'no') {
       return (
-        <NOForm
+        <NOMainForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
+    
+    if (activeMasterTab === 'instrucao-embarque') {
+      return (
+        <InstrucaoEmbarqueForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
+    
+    if (activeMasterTab === 'packing-list') {
+      return (
+        <PackingListForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
+    
+    if (activeMasterTab === 'ddr') {
+      return (
+        <DDRForm
           formData={formData}
           onInputChange={handleInputChange}
         />
@@ -298,12 +374,12 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
           <div className="flex flex-col h-full min-h-0">
             {/* Abas Masters */}
             <div className="mb-6 flex-shrink-0">
-              <div className="flex space-x-4 bg-gray-50 p-2 rounded-lg">
+              <div className="flex space-x-4 bg-gray-50 p-2 rounded-lg overflow-x-auto">
                 {masterTabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => handleMasterTabChange(tab.id)}
-                    className={`px-6 py-3 rounded-md font-medium transition-colors ${
+                    className={`px-6 py-3 rounded-md font-medium transition-colors whitespace-nowrap ${
                       activeMasterTab === tab.id
                         ? 'bg-purple-600 text-white'
                         : 'bg-white text-gray-700 hover:bg-gray-100'
