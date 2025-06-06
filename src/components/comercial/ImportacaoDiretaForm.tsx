@@ -156,43 +156,8 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     noEaa: ''
   });
 
-  // Estado específico para OVC items
-  const [ovcItems, setOvcItems] = useState([
-    {
-      id: 1,
-      code: 'ABL800 FLEX',
-      qty: '1',
-      priceListUnit: '65000.00',
-      priceListTotal: '65000.00',
-      customerDiscountPercent: '15',
-      customerDiscountUnit: '9750.00',
-      customerDiscountTotal: '9750.00',
-      subTotalUnit: '55250.00',
-      subTotalTotal: '55250.00',
-      handlingCharge: '1657.50',
-      total: '56907.50',
-      comissionPercent: '5',
-      comissionValue: '2845.38',
-      netRadiometer: '54062.12'
-    },
-    {
-      id: 2,
-      code: 'Installation',
-      qty: '1',
-      priceListUnit: '3000.00',
-      priceListTotal: '3000.00',
-      customerDiscountPercent: '0',
-      customerDiscountUnit: '0.00',
-      customerDiscountTotal: '0.00',
-      subTotalUnit: '3000.00',
-      subTotalTotal: '3000.00',
-      handlingCharge: '90.00',
-      total: '3090.00',
-      comissionPercent: '5',
-      comissionValue: '154.50',
-      netRadiometer: '2935.50'
-    }
-  ]);
+  // Estado específico para OVC items - começando vazio
+  const [ovcItems, setOvcItems] = useState([]);
 
   // Sincronizar produtos SPI com OVC
   useEffect(() => {
@@ -226,6 +191,9 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
       );
       
       setOvcItems([...syncedOvcItems, ...ovcOnlyItems]);
+    } else {
+      // Se não há mercadorias no SPI, limpar OVC também
+      setOvcItems([]);
     }
   }, [formData.spiMercadorias]);
 
