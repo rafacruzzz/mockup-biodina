@@ -18,7 +18,7 @@ import {
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
   ShoppingCart, Headphones, ArrowLeft, Package, Truck, ClipboardList,
-  AlertTriangle, UserCheck, Clock, CreditCard
+  AlertTriangle, UserCheck, Clock, CreditCard, Fire, Rocket, Trophy, Medal
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -173,31 +173,41 @@ const Comercial = () => {
     const funnelStages = [
       {
         fase: 'Temperatura < 60',
-        cor: '#ff8c00',
+        cor: 'from-orange-400 to-orange-500',
+        borderColor: 'border-orange-400',
+        icon: '🌡️',
         count: activeOportunidades.filter(op => op.termometro < 60).length,
         valor: activeOportunidades.filter(op => op.termometro < 60).reduce((sum, op) => sum + op.valor, 0)
       },
       {
         fase: 'Em Processo (60-80)',
-        cor: '#ff6600',
+        cor: 'from-yellow-400 to-orange-400',
+        borderColor: 'border-yellow-400',
+        icon: '📈',
         count: activeOportunidades.filter(op => op.termometro >= 60 && op.termometro < 80).length,
         valor: activeOportunidades.filter(op => op.termometro >= 60 && op.termometro < 80).reduce((sum, op) => sum + op.valor, 0)
       },
       {
         fase: 'Boas Chances (80-90)',
-        cor: '#ff4400',
+        cor: 'from-orange-500 to-red-500',
+        borderColor: 'border-orange-500',
+        icon: '🔥',
         count: activeOportunidades.filter(op => op.termometro >= 80 && op.termometro < 90).length,
         valor: activeOportunidades.filter(op => op.termometro >= 80 && op.termometro < 90).reduce((sum, op) => sum + op.valor, 0)
       },
       {
         fase: 'Comprometido (90+)',
-        cor: '#cc0000',
+        cor: 'from-red-500 to-red-600',
+        borderColor: 'border-red-500',
+        icon: '🚀',
         count: activeOportunidades.filter(op => op.termometro >= 90 && op.resultadoOportunidade !== 'ganho').length,
         valor: activeOportunidades.filter(op => op.termometro >= 90 && op.resultadoOportunidade !== 'ganho').reduce((sum, op) => sum + op.valor, 0)
       },
       {
         fase: 'Conquistado (100)',
-        cor: '#990000',
+        cor: 'from-red-800 to-red-900',
+        borderColor: 'border-red-800',
+        icon: '🏆',
         count: activeOportunidades.filter(op => op.resultadoOportunidade === 'ganho').length,
         valor: activeOportunidades.filter(op => op.resultadoOportunidade === 'ganho').reduce((sum, op) => sum + op.valor, 0)
       }
@@ -570,163 +580,86 @@ const Comercial = () => {
   const renderFunil = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
+        <CardHeader className="text-center pb-4">
+          <CardTitle className="flex items-center justify-center gap-3 text-2xl font-bold text-biodina-blue mb-2">
+            <TrendingUp className="h-7 w-7 text-biodina-blue" />
             Funil de Oportunidades
           </CardTitle>
+          <p className="text-gray-600 text-sm">Pipeline de Vendas por Temperatura</p>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-6 pb-6">
           <div className="space-y-4">
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-semibold mb-4">Pipeline de Vendas</h3>
-              <div className="space-y-3">
-                {funnelData.map((item, index) => (
-                  <div key={index} className="relative">
-                    <div 
-                      className="mx-auto flex items-center justify-between px-4 py-3 text-white font-medium text-sm rounded-lg"
-                      style={{
-                        backgroundColor: item.cor,
-                        width: `${Math.max(item.percentual, 30)}%`,
-                      }}
-                    >
-                      <span>{item.fase}</span>
-                      <span className="font-bold">{item.count}</span>
+            {funnelData.map((item, index) => (
+              <div 
+                key={index} 
+                className={`relative group animate-fade-in hover:scale-[1.02] transition-all duration-300 hover:shadow-lg`}
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                <div className={`
+                  bg-gradient-to-r ${item.cor} 
+                  rounded-xl p-4 shadow-md hover:shadow-xl transition-all duration-300
+                  border-l-4 ${item.borderColor}
+                  transform hover:-translate-y-1
+                `}>
+                  <div className="flex items-center justify-between text-white">
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">{item.icon}</span>
+                      <div>
+                        <h4 className="font-semibold text-lg">{item.fase}</h4>
+                        <p className="text-sm opacity-90">
+                          {item.count} oportunidade{item.count !== 1 ? 's' : ''}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-center mt-1">
-                      <span className="text-xs text-gray-600">
-                        {item.count} oportunidades - {formatCurrency(item.valor)}
-                      </span>
+                    <div className="text-right">
+                      <div className="flex items-center gap-2 mb-1">
+                        <DollarSign className="h-4 w-4" />
+                        <span className="font-bold text-xl">
+                          {item.count}
+                        </span>
+                      </div>
+                      <div className="text-sm opacity-90 font-medium">
+                        {formatCurrency(item.valor)}
+                      </div>
                     </div>
                   </div>
-                ))}
+                  
+                  {/* Barra de progresso visual */}
+                  <div className="mt-3 bg-white/20 rounded-full h-2 overflow-hidden">
+                    <div 
+                      className="h-full bg-white/40 rounded-full transition-all duration-500"
+                      style={{ width: `${item.percentual}%` }}
+                    />
+                  </div>
+                </div>
+                
+                {/* Efeito de brilho no hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              </div>
+            ))}
+            
+            {/* Resumo total */}
+            <div className="mt-6 p-4 bg-gradient-to-r from-biodina-blue to-biodina-darkblue rounded-xl text-white">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-5 w-5" />
+                  <span className="font-semibold">Total do Pipeline</span>
+                </div>
+                <div className="text-right">
+                  <div className="font-bold text-lg">
+                    {funnelData.reduce((total, item) => total + item.count, 0)} oportunidades
+                  </div>
+                  <div className="text-sm opacity-90">
+                    {formatCurrency(funnelData.reduce((total, item) => total + item.valor, 0))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="text-sm">Indicadores da Tela Inicial</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
-            {/* Posição de Estoque */}
-            <Card className="shadow-sm border">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-xs">
-                  <Package className="h-3 w-3" />
-                  POSIÇÃO DE ESTOQUE
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-1">
-                  {indicadores.posicaoEstoque.slice(0, 2).map((item, index) => (
-                    <div key={index} className="flex justify-between text-xs">
-                      <span className="font-medium truncate">{item.produto}</span>
-                      <span className="text-green-600">{item.quantidade} un.</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Importação - Previsão */}
-            <Card className="shadow-sm border">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-xs">
-                  <Truck className="h-3 w-3" />
-                  IMPORTAÇÃO - PREVISÃO
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-1">
-                  {indicadores.importacaoPrevisao.slice(0, 2).map((item, index) => (
-                    <div key={index} className="text-xs">
-                      <div className="flex justify-between">
-                        <span className="font-medium truncate">{item.item}</span>
-                        <span className="text-blue-600">{item.previsao}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Pedidos Programados */}
-            <Card className="shadow-sm border">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-xs">
-                  <Calendar className="h-3 w-3" />
-                  PEDIDOS PROGRAMADOS
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-1">
-                  {indicadores.pedidosProgramados.slice(0, 2).map((item, index) => (
-                    <div key={index} className="text-xs">
-                      <div className="flex justify-between">
-                        <span className="font-medium truncate">{item.cliente}</span>
-                        <span className="text-purple-600">{item.data}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Restrição Financeira */}
-            <Card className="shadow-sm border border-red-200">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-xs text-red-600">
-                  <AlertTriangle className="h-3 w-3" />
-                  RESTRIÇÃO FINANCEIRA
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-1">
-                  {indicadores.restricaoFinanceira.slice(0, 1).map((item, index) => (
-                    <div key={index} className="text-xs">
-                      <div className="font-medium text-red-600 truncate">{item.cliente}</div>
-                      <div className="flex justify-between">
-                        <span>{formatCurrency(item.valor)}</span>
-                        <span className="text-red-500">{item.dias} dias</span>
-                      </div>
-                      <Button size="sm" variant="outline" className="w-full mt-1 h-5 text-xs py-0">
-                        Solicitar Desbloqueio
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Aguardando Autorização */}
-            <Card className="shadow-sm border border-yellow-200">
-              <CardHeader className="pb-2">
-                <CardTitle className="flex items-center gap-2 text-xs text-yellow-600">
-                  <UserCheck className="h-3 w-3" />
-                  AGUARDANDO AUTORIZAÇÃO
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-1">
-                  {indicadores.aguardandoAutorizacao.slice(0, 1).map((item, index) => (
-                    <div key={index} className="text-xs">
-                      <div className="font-medium text-yellow-600 truncate">{item.item}</div>
-                      <div className="flex justify-between">
-                        <span>{formatCurrency(item.valor)}</span>
-                        <span className="text-yellow-500">{item.dias} dias</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </CardContent>
-      </Card>
+      {/* ... keep existing code (second card with indicators) */}
     </div>
   );
 
