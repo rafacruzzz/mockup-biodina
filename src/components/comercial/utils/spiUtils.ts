@@ -28,144 +28,127 @@ export const calcularTotal = (mercadorias: any[], packingPercentual: string): nu
   return calcularSubtotal(mercadorias) + calcularPacking(mercadorias, packingPercentual);
 };
 
-export const generateSPIPDF = (formData: any) => {
+export const generateSPIPDF = (formData: any, selectedCnpj?: string) => {
   const pdf = new jsPDF();
   const pageWidth = pdf.internal.pageSize.width;
   let yPosition = 20;
 
-  // Cabeçalho
-  pdf.setFontSize(16);
+  // Cabeçalho - RADIOMETER MEDICAL ApS
+  pdf.setFontSize(14);
   pdf.setFont(undefined, 'bold');
-  pdf.text('SPI – SOLICITAÇÃO DE PROFORMA INVOICE', pageWidth / 2, yPosition, { align: 'center' });
-  yPosition += 20;
-
-  // Dados do Cliente
-  pdf.setFontSize(12);
-  pdf.setFont(undefined, 'bold');
-  pdf.text('DADOS DO CLIENTE', 20, yPosition);
-  yPosition += 10;
+  pdf.text('RADIOMETER MEDICAL ApS', 20, yPosition);
+  yPosition += 8;
   
+  pdf.setFontSize(10);
   pdf.setFont(undefined, 'normal');
-  pdf.text(`Cliente: ${formData.spiCliente}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Dados da Proforma: ${formData.spiDadosProforma}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Em nome de: ${formData.spiEmNomeDe}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`CNPJ: ${formData.spiCnpj}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Endereço: ${formData.spiEndereco}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Inscrição Estadual: ${formData.spiInscricaoEstadual}`, 20, yPosition);
+  pdf.text('INTERNATIONAL TRADING COMPANY', 20, yPosition);
+  yPosition += 5;
+  pdf.text('Åkandevej 21, DK-2700 Brønshøj, Denmark', 20, yPosition);
+  yPosition += 5;
+  pdf.text('Telephone +45', 20, yPosition);
   yPosition += 15;
 
-  // Informações da Proforma
-  pdf.setFont(undefined, 'bold');
-  pdf.text('INFORMAÇÕES DA PROFORMA', 20, yPosition);
-  yPosition += 10;
+  // Informações do cliente à direita
+  pdf.text('Delivered to:', pageWidth - 60, 35);
+  yPosition = 45;
   
-  pdf.setFont(undefined, 'normal');
-  pdf.text(`No SPI: ${formData.spiNumero}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Data: ${formData.spiData}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Proposta: ${formData.spiProposta}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Equipamento: ${formData.spiEquipamento}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Modelo: ${formData.spiModelo}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Packing (%): ${formData.spiPacking}`, 20, yPosition);
-  yPosition += 15;
-
-  // Informações Adicionais
-  pdf.setFont(undefined, 'bold');
-  pdf.text('INFORMAÇÕES ADICIONAIS', 20, yPosition);
-  yPosition += 10;
-  
-  pdf.setFont(undefined, 'normal');
-  pdf.text(`Fabricante: ${formData.spiFabricante}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Forma de pagamento: ${formData.spiFormaPagamento}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Tem comissão: ${formData.spiTemComissao ? 'Sim' : 'Não'}`, 20, yPosition);
-  yPosition += 7;
-  if (formData.spiTemComissao) {
-    pdf.text(`Percentual comissão: ${formData.spiPercentualComissao}%`, 20, yPosition);
-    yPosition += 7;
-    pdf.text(`Representante: ${formData.spiRepresentante}`, 20, yPosition);
+  // CNPJ selecionado no modal
+  if (selectedCnpj) {
+    pdf.text(selectedCnpj, pageWidth - 60, yPosition);
     yPosition += 7;
   }
+  
+  // Dados básicos do documento
+  pdf.text('PROFORMA INVOICE', pageWidth - 60, yPosition + 15);
+  pdf.text('PAGE 1', pageWidth - 30, yPosition + 25);
+
+  yPosition = 80;
+
+  // Informações do pedido
+  pdf.setFont(undefined, 'bold');
+  pdf.text('Your reference', 20, yPosition);
+  pdf.text('Your order no.', 120, yPosition);
+  pdf.text('Our reference', 180, yPosition);
+  pdf.text('Date', pageWidth - 40, yPosition);
+  yPosition += 10;
+
+  pdf.setFont(undefined, 'normal');
+  pdf.text('PAYMENT', 20, yPosition);
+  yPosition += 15;
+
+  // Cabeçalho da tabela
+  pdf.setFont(undefined, 'bold');
+  pdf.text('Item No', 20, yPosition);
+  pdf.text('Type and Description', 60, yPosition);
+  pdf.text('Qty', pageWidth - 80, yPosition);
+  pdf.text('Unit price', pageWidth - 60, yPosition);
+  pdf.text('Total price', pageWidth - 30, yPosition);
+  yPosition += 5;
+
+  // Linha divisória
+  pdf.line(20, yPosition, pageWidth - 20, yPosition);
   yPosition += 10;
 
   // Produtos/Mercadorias
-  if (formData.spiMercadorias.length > 0) {
-    pdf.setFont(undefined, 'bold');
-    pdf.text('PRODUTOS/MERCADORIAS', 20, yPosition);
-    yPosition += 10;
-    
+  if (formData.spiMercadorias && formData.spiMercadorias.length > 0) {
     pdf.setFont(undefined, 'normal');
     formData.spiMercadorias.forEach((item: any, index: number) => {
-      pdf.text(`${index + 1}. ${item.mercadoria} - Qtde: ${item.qtde} - Preço Unit.: USD ${formatUSD(parseUSD(item.precoUnitUsd))} - Total: USD ${item.precoTotalUsd}`, 20, yPosition);
+      const itemNo = `SN${(index + 1).toString().padStart(2, '0')}`;
+      pdf.text(itemNo, 20, yPosition);
+      pdf.text(item.mercadoria || '', 60, yPosition);
+      pdf.text(item.qtde || '1', pageWidth - 80, yPosition);
+      pdf.text(`USD ${formatUSD(parseUSD(item.precoUnitUsd))}`, pageWidth - 60, yPosition);
+      pdf.text(`USD ${item.precoTotalUsd || '0.00'}`, pageWidth - 30, yPosition);
       yPosition += 7;
     });
-    yPosition += 10;
   }
+
+  yPosition += 10;
 
   // Totais
-  pdf.setFont(undefined, 'bold');
-  pdf.text('TOTAIS', 20, yPosition);
-  yPosition += 10;
-  
-  pdf.setFont(undefined, 'normal');
-  pdf.text(`Subtotal: USD ${formatUSD(calcularSubtotal(formData.spiMercadorias))}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Packing: USD ${formatUSD(calcularPacking(formData.spiMercadorias, formData.spiPacking))}`, 20, yPosition);
-  yPosition += 7;
-  pdf.setFont(undefined, 'bold');
-  pdf.text(`TOTAL: USD ${formatUSD(calcularTotal(formData.spiMercadorias, formData.spiPacking))}`, 20, yPosition);
-  yPosition += 15;
+  const subtotal = calcularSubtotal(formData.spiMercadorias || []);
+  const packing = calcularPacking(formData.spiMercadorias || [], formData.spiPacking || '0');
+  const total = calcularTotal(formData.spiMercadorias || [], formData.spiPacking || '0');
 
-  // Observações
-  if (formData.spiObservacoes) {
-    pdf.setFont(undefined, 'bold');
-    pdf.text('OBSERVAÇÕES', 20, yPosition);
-    yPosition += 10;
-    
-    pdf.setFont(undefined, 'normal');
-    const lines = pdf.splitTextToSize(formData.spiObservacoes, pageWidth - 40);
-    pdf.text(lines, 20, yPosition);
-    yPosition += lines.length * 7 + 10;
-  }
-
-  // Detalhes de Venda
   pdf.setFont(undefined, 'bold');
-  pdf.text('DETALHES DE VENDA', 20, yPosition);
-  yPosition += 10;
-  
-  pdf.setFont(undefined, 'normal');
-  pdf.text(`Faturamento confirmado: ${formData.spiFaturamentoConfirmado ? 'Sim' : 'Não'}`, 20, yPosition);
+  pdf.text('Goods total:', pageWidth - 80, yPosition);
+  pdf.text(`USD ${formatUSD(subtotal)}`, pageWidth - 30, yPosition);
   yPosition += 7;
-  pdf.text(`Forma de pagamento: ${formData.spiPagamentoForma}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Prazo de pagamento: ${formData.spiPagamentoPrazo}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Prazo de entrega: ${formData.spiEntregaPrazo}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Forma de venda: ${formData.spiFormaVenda}`, 20, yPosition);
-  if (formData.spiFormaVenda === 'outros' && formData.spiFormaVendaOutros) {
+
+  if (packing > 0) {
+    pdf.text('Packing:', pageWidth - 80, yPosition);
+    pdf.text(`USD ${formatUSD(packing)}`, pageWidth - 30, yPosition);
     yPosition += 7;
-    pdf.text(`Especificação: ${formData.spiFormaVendaOutros}`, 20, yPosition);
   }
-  yPosition += 7;
-  pdf.text(`Valor: ${formData.spiValor}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Prazo: ${formData.spiPrazo}`, 20, yPosition);
-  yPosition += 7;
-  pdf.text(`Data de confirmação: ${formData.spiDataConfirmacao}`, 20, yPosition);
+
+  pdf.text('Invoice total:', pageWidth - 80, yPosition);
+  pdf.text(`USD ${formatUSD(total)}`, pageWidth - 30, yPosition);
+  yPosition += 20;
+
+  // Termos e condições na parte inferior
+  pdf.setFontSize(8);
+  pdf.setFont(undefined, 'normal');
+  
+  const termsText = [
+    'BANKERS: NORDEA BANK DANMARK A/S, ACCOUNT NO.: SWIFT/BIC CODE: NDEADKKK, IBAN BRANCH XXXXXXXXXXXXXXX (FOR INTERNATIONAL)',
+    'DANSKE BANK A/S, ACCOUNT NO.: XXXXXXXXXX, SWIFT CODE DABADKKK, FOR INTERNAL TRANSFERS IN DKK PLEASE USE BANK ACCOUNT NO:',
+    'REG. NO: XXXX, ACCOUNT NO: XXXX, CVR: XXXXXXXXX',
+    '',
+    'RADIOMETER MEDICAL ApS',
+    'GENERAL TERMS OF DELIVERY',
+    '',
+    'DK-2700 Brønshøj',
+    '',
+    'RADIOMETER\'S COMMON TERMS OF SALE'
+  ];
+
+  termsText.forEach((line) => {
+    pdf.text(line, 20, yPosition);
+    yPosition += 4;
+  });
 
   // Nome do arquivo
-  const fileName = `SPI_${formData.spiNumero || 'novo'}_${new Date().toISOString().split('T')[0]}.pdf`;
+  const fileName = `PI_${formData.spiNumero || 'novo'}_${selectedCnpj?.replace(/[^\d]/g, '') || 'cliente'}_${new Date().toISOString().split('T')[0]}.pdf`;
   
   // Download do PDF
   pdf.save(fileName);
