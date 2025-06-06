@@ -599,7 +599,7 @@ const Comercial = () => {
   const renderFunil = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Card Funil - altura fixa e responsivo */}
-      <Card className="shadow-lg flex flex-col">
+      <Card className="shadow-lg flex flex-col h-[600px]">
         <CardHeader className="text-center pb-3 flex-shrink-0">
           <CardTitle className="flex items-center justify-center gap-3 text-xl font-bold text-biodina-blue mb-1">
             <TrendingUp className="h-6 w-6 text-biodina-blue" />
@@ -608,7 +608,7 @@ const Comercial = () => {
           <p className="text-gray-600 text-sm">Pipeline de Vendas por Temperatura</p>
         </CardHeader>
         <CardContent className="px-4 pb-4 flex-1 flex flex-col min-h-0">
-          <div className="space-y-3 flex-1 overflow-y-auto">
+          <div className="space-y-3 flex-1">
             {funnelData.map((item, index) => (
               <div 
                 key={index} 
@@ -680,7 +680,7 @@ const Comercial = () => {
       </Card>
 
       {/* Card Indicadores - mesma altura e responsivo */}
-      <Card className="shadow-lg flex flex-col">
+      <Card className="shadow-lg flex flex-col h-[600px]">
         <CardHeader className="pb-4 flex-shrink-0">
           <CardTitle className="flex items-center gap-2 text-biodina-blue text-lg">
             <BarChart3 className="h-5 w-5" />
