@@ -536,8 +536,9 @@ const Comercial = () => {
     };
 
     return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4 mb-6">
+      <div className="space-y-4">
+        {/* Header compacto com título combinado e botão voltar */}
+        <div className="flex items-center gap-4">
           <Button 
             variant="outline" 
             onClick={() => setActiveModule('main')}
@@ -546,10 +547,10 @@ const Comercial = () => {
             <ArrowLeft className="h-4 w-4" />
             Voltar
           </Button>
-          <h2 className="text-2xl font-bold text-biodina-blue">Vendas</h2>
+          <h1 className="text-2xl font-bold text-biodina-blue">Comercial / Vendas</h1>
         </div>
 
-        {/* Navegação por abas */}
+        {/* Navegação por abas - mais compacta */}
         <div className="border-b border-gray-200">
           <nav className="flex space-x-8">
             {tabs.map((tab) => (
@@ -570,7 +571,7 @@ const Comercial = () => {
         </div>
 
         {/* Conteúdo da aba ativa */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {renderContent()}
         </div>
       </div>
@@ -578,17 +579,17 @@ const Comercial = () => {
   };
 
   const renderFunil = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       <Card className="shadow-lg">
-        <CardHeader className="text-center pb-4">
-          <CardTitle className="flex items-center justify-center gap-3 text-2xl font-bold text-biodina-blue mb-2">
-            <TrendingUp className="h-7 w-7 text-biodina-blue" />
+        <CardHeader className="text-center pb-3">
+          <CardTitle className="flex items-center justify-center gap-3 text-xl font-bold text-biodina-blue mb-1">
+            <TrendingUp className="h-6 w-6 text-biodina-blue" />
             Funil de Oportunidades
           </CardTitle>
           <p className="text-gray-600 text-sm">Pipeline de Vendas por Temperatura</p>
         </CardHeader>
-        <CardContent className="px-6 pb-6">
-          <div className="space-y-4">
+        <CardContent className="px-4 pb-4">
+          <div className="space-y-3">
             {funnelData.map((item, index) => (
               <div 
                 key={index} 
@@ -597,16 +598,16 @@ const Comercial = () => {
               >
                 <div className={`
                   bg-gradient-to-r ${item.cor} 
-                  rounded-xl p-4 shadow-md hover:shadow-xl transition-all duration-300
+                  rounded-xl p-3 shadow-md hover:shadow-xl transition-all duration-300
                   border-l-4 ${item.borderColor}
                   transform hover:-translate-y-1
                 `}>
                   <div className="flex items-center justify-between text-white">
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl">{item.icon}</span>
+                      <span className="text-xl">{item.icon}</span>
                       <div>
-                        <h4 className="font-semibold text-lg">{item.fase}</h4>
-                        <p className="text-sm opacity-90">
+                        <h4 className="font-semibold text-base">{item.fase}</h4>
+                        <p className="text-xs opacity-90">
                           {item.count} oportunidade{item.count !== 1 ? 's' : ''}
                         </p>
                       </div>
@@ -614,18 +615,18 @@ const Comercial = () => {
                     <div className="text-right">
                       <div className="flex items-center gap-2 mb-1">
                         <DollarSign className="h-4 w-4" />
-                        <span className="font-bold text-xl">
+                        <span className="font-bold text-lg">
                           {item.count}
                         </span>
                       </div>
-                      <div className="text-sm opacity-90 font-medium">
+                      <div className="text-xs opacity-90 font-medium">
                         {formatCurrency(item.valor)}
                       </div>
                     </div>
                   </div>
                   
                   {/* Barra de progresso visual */}
-                  <div className="mt-3 bg-white/20 rounded-full h-2 overflow-hidden">
+                  <div className="mt-2 bg-white/20 rounded-full h-1.5 overflow-hidden">
                     <div 
                       className="h-full bg-white/40 rounded-full transition-all duration-500"
                       style={{ width: `${item.percentual}%` }}
@@ -638,18 +639,18 @@ const Comercial = () => {
               </div>
             ))}
             
-            {/* Resumo total */}
-            <div className="mt-6 p-4 bg-gradient-to-r from-biodina-blue to-biodina-darkblue rounded-xl text-white">
+            {/* Resumo total - mais compacto */}
+            <div className="mt-4 p-3 bg-gradient-to-r from-biodina-blue to-biodina-darkblue rounded-xl text-white">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Trophy className="h-5 w-5" />
-                  <span className="font-semibold">Total do Pipeline</span>
+                  <Trophy className="h-4 w-4" />
+                  <span className="font-semibold text-sm">Total do Pipeline</span>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-lg">
+                  <div className="font-bold text-base">
                     {funnelData.reduce((total, item) => total + item.count, 0)} oportunidades
                   </div>
-                  <div className="text-sm opacity-90">
+                  <div className="text-xs opacity-90">
                     {formatCurrency(funnelData.reduce((total, item) => total + item.valor, 0))}
                   </div>
                 </div>
@@ -659,26 +660,26 @@ const Comercial = () => {
         </CardContent>
       </Card>
 
-      {/* Segundo card com indicadores restaurado */}
+      {/* Segundo card com indicadores - mais compacto */}
       <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-biodina-blue">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-biodina-blue text-lg">
             <BarChart3 className="h-5 w-5" />
             Indicadores Comerciais
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 px-4">
           {/* Posição de Estoque */}
           <div>
-            <h4 className="font-semibold text-sm text-gray-600 mb-3 flex items-center gap-2">
-              <Package className="h-4 w-4" />
+            <h4 className="font-semibold text-xs text-gray-600 mb-2 flex items-center gap-2">
+              <Package className="h-3 w-3" />
               POSIÇÃO DE ESTOQUE
             </h4>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {indicadores.posicaoEstoque.slice(0, 3).map((item, index) => (
-                <div key={index} className="flex justify-between items-center text-sm">
+                <div key={index} className="flex justify-between items-center text-xs">
                   <span className="text-gray-700">{item.produto}</span>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs px-1 py-0">
                     {item.quantidade} un.
                   </Badge>
                 </div>
@@ -688,13 +689,13 @@ const Comercial = () => {
 
           {/* Importação Previsão */}
           <div>
-            <h4 className="font-semibold text-sm text-gray-600 mb-3 flex items-center gap-2">
-              <Truck className="h-4 w-4" />
+            <h4 className="font-semibold text-xs text-gray-600 mb-2 flex items-center gap-2">
+              <Truck className="h-3 w-3" />
               IMPORTAÇÃO PREVISÃO
             </h4>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {indicadores.importacaoPrevisao.slice(0, 2).map((item, index) => (
-                <div key={index} className="flex justify-between items-center text-sm">
+                <div key={index} className="flex justify-between items-center text-xs">
                   <span className="text-gray-700">{item.item}</span>
                   <span className="text-xs text-gray-500">{item.previsao}</span>
                 </div>
@@ -704,13 +705,13 @@ const Comercial = () => {
 
           {/* Pedidos Programados */}
           <div>
-            <h4 className="font-semibold text-sm text-gray-600 mb-3 flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
+            <h4 className="font-semibold text-xs text-gray-600 mb-2 flex items-center gap-2">
+              <Calendar className="h-3 w-3" />
               PEDIDOS PROGRAMADOS
             </h4>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {indicadores.pedidosProgramados.slice(0, 2).map((item, index) => (
-                <div key={index} className="flex justify-between items-center text-sm">
+                <div key={index} className="flex justify-between items-center text-xs">
                   <span className="text-gray-700">{item.cliente}</span>
                   <div className="text-right">
                     <div className="text-xs font-medium">{formatCurrency(item.valor)}</div>
@@ -723,15 +724,15 @@ const Comercial = () => {
 
           {/* Restrição Financeira */}
           <div>
-            <h4 className="font-semibold text-sm text-gray-600 mb-3 flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-red-500" />
+            <h4 className="font-semibold text-xs text-gray-600 mb-2 flex items-center gap-2">
+              <AlertTriangle className="h-3 w-3 text-red-500" />
               RESTRIÇÃO FINANCEIRA
             </h4>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {indicadores.restricaoFinanceira.map((item, index) => (
-                <div key={index} className="flex justify-between items-center text-sm">
+                <div key={index} className="flex justify-between items-center text-xs">
                   <span className="text-gray-700">{item.cliente}</span>
-                  <Badge variant="destructive" className="text-xs">
+                  <Badge variant="destructive" className="text-xs px-1 py-0">
                     {item.dias} dias
                   </Badge>
                 </div>
@@ -741,15 +742,15 @@ const Comercial = () => {
 
           {/* Aguardando Autorização */}
           <div>
-            <h4 className="font-semibold text-sm text-gray-600 mb-3 flex items-center gap-2">
-              <Clock className="h-4 w-4 text-orange-500" />
+            <h4 className="font-semibold text-xs text-gray-600 mb-2 flex items-center gap-2">
+              <Clock className="h-3 w-3 text-orange-500" />
               AGUARDANDO AUTORIZAÇÃO
             </h4>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {indicadores.aguardandoAutorizacao.map((item, index) => (
-                <div key={index} className="flex justify-between items-center text-sm">
+                <div key={index} className="flex justify-between items-center text-xs">
                   <span className="text-gray-700">{item.item}</span>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-xs px-1 py-0">
                     {item.dias} dias
                   </Badge>
                 </div>
@@ -942,11 +943,14 @@ const Comercial = () => {
 
   return (
     <SidebarLayout>
-      <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-biodina-blue mb-2">Comercial</h1>
-          <p className="text-gray-600">Gestão completa do processo comercial</p>
-        </header>
+      <div className="p-4 space-y-4 bg-gray-50 min-h-screen">
+        {/* Header principal mais compacto */}
+        {activeModule === 'main' && (
+          <header className="mb-4">
+            <h1 className="text-2xl font-bold text-biodina-blue mb-1">Comercial</h1>
+            <p className="text-gray-600 text-sm">Gestão completa do processo comercial</p>
+          </header>
+        )}
 
         {/* Renderização condicional baseada no módulo ativo */}
         {activeModule === 'main' && renderMainModules()}
