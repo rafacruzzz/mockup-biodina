@@ -5,11 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, Download } from 'lucide-react';
-import { useState } from 'react';
 import SPIProductsTable from './SPIProductsTable';
-import OVCTable from './OVCTable';
-import { formatUSD, calcularSubtotal, calcularPacking, calcularTotal, handleUploadPI } from '../utils/spiUtils';
+import { formatUSD, calcularSubtotal, calcularPacking, calcularTotal } from '../utils/spiUtils';
 
 interface SPIFormProps {
   formData: any;
@@ -17,140 +14,6 @@ interface SPIFormProps {
 }
 
 const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
-  const [showOVCTable, setShowOVCTable] = useState(false);
-  const [ovcItems, setOvcItems] = useState([
-    {
-      id: 1,
-      code: 'ABL800 FLEX',
-      qty: '1',
-      priceListUnit: '65000.00',
-      priceListTotal: '65000.00',
-      customerDiscountPercent: '15',
-      customerDiscountUnit: '9750.00',
-      customerDiscountTotal: '9750.00',
-      subTotalUnit: '55250.00',
-      subTotalTotal: '55250.00',
-      handlingCharge: '1657.50',
-      total: '56907.50',
-      comissionPercent: '5',
-      comissionValue: '2845.38',
-      netRadiometer: '54062.12'
-    },
-    {
-      id: 2,
-      code: 'Installation',
-      qty: '1',
-      priceListUnit: '3000.00',
-      priceListTotal: '3000.00',
-      customerDiscountPercent: '0',
-      customerDiscountUnit: '0.00',
-      customerDiscountTotal: '0.00',
-      subTotalUnit: '3000.00',
-      subTotalTotal: '3000.00',
-      handlingCharge: '90.00',
-      total: '3090.00',
-      comissionPercent: '5',
-      comissionValue: '154.50',
-      netRadiometer: '2935.50'
-    }
-  ]);
-
-  const handleUploadPIClick = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.pdf,.doc,.docx,.jpg,.jpeg,.png';
-    input.multiple = true;
-    
-    input.onchange = (e) => {
-      const files = (e.target as HTMLInputElement).files;
-      if (files) {
-        console.log('Arquivos selecionados para upload PI:', files);
-        // Mostrar a tabela OVC após o upload
-        setShowOVCTable(true);
-      }
-    };
-    
-    input.click();
-  };
-
-  const handleUploadAOClick = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.pdf,.doc,.docx,.jpg,.jpeg,.png';
-    input.multiple = true;
-    
-    input.onchange = (e) => {
-      const files = (e.target as HTMLInputElement).files;
-      if (files) {
-        console.log('Arquivos selecionados para upload AO:', files);
-        // Mostrar a tabela OVC após o upload
-        setShowOVCTable(true);
-      }
-    };
-    
-    input.click();
-  };
-
-  const handleEnviarParaFabrica = () => {
-    // Simular download do documento PI
-    const piContent = `
-PI - PROFORMA INVOICE
-=====================
-
-Cliente: ${formData.spiCliente}
-CNPJ: ${formData.spiCnpj}
-Endereço: ${formData.spiEndereco}
-Equipamento: ${formData.spiEquipamento}
-Modelo: ${formData.spiModelo}
-Fabricante: ${formData.spiFabricante}
-
-Total: USD ${formatUSD(calcularTotal(formData.spiMercadorias, formData.spiPacking))}
-
-Documento gerado em: ${new Date().toLocaleString()}
-`;
-
-    // Simular download do documento OVC
-    const ovcContent = `
-OVC - ORDER VALUE CALCULATOR
-============================
-
-${ovcItems.map(item => `
-Código: ${item.code}
-Quantidade: ${item.qty}
-Preço Unitário: ${item.priceListUnit}
-Total: ${item.total}
-Comissão: ${item.comissionPercent}%
-Net Radiometer: ${item.netRadiometer}
-`).join('\n')}
-
-Documento gerado em: ${new Date().toLocaleString()}
-`;
-
-    // Criar e baixar arquivo PI
-    const piBlob = new Blob([piContent], { type: 'text/plain' });
-    const piUrl = URL.createObjectURL(piBlob);
-    const piLink = document.createElement('a');
-    piLink.href = piUrl;
-    piLink.download = `PI_${formData.spiNumero || 'novo'}_${new Date().toISOString().split('T')[0]}.txt`;
-    document.body.appendChild(piLink);
-    piLink.click();
-    document.body.removeChild(piLink);
-    URL.revokeObjectURL(piUrl);
-
-    // Criar e baixar arquivo OVC
-    const ovcBlob = new Blob([ovcContent], { type: 'text/plain' });
-    const ovcUrl = URL.createObjectURL(ovcBlob);
-    const ovcLink = document.createElement('a');
-    ovcLink.href = ovcUrl;
-    ovcLink.download = `OVC_${formData.spiNumero || 'novo'}_${new Date().toISOString().split('T')[0]}.txt`;
-    document.body.appendChild(ovcLink);
-    ovcLink.click();
-    document.body.removeChild(ovcLink);
-    URL.revokeObjectURL(ovcUrl);
-
-    console.log('Documentos PI e OVC enviados para download');
-  };
-
   return (
     <div className="space-y-6">
       {/* Cabeçalho */}
@@ -525,7 +388,7 @@ Documento gerado em: ${new Date().toLocaleString()}
               )}
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="spiValor">Valor</Label>
                 <Input
@@ -559,48 +422,6 @@ Documento gerado em: ${new Date().toLocaleString()}
                 />
               </div>
             </div>
-            
-            {/* Botões Upload PI e AO */}
-            <div className="mt-4 flex gap-4">
-              <Button 
-                onClick={handleUploadPIClick}
-                variant="outline"
-                className="w-full sm:w-auto"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Upload PI
-              </Button>
-              <Button 
-                onClick={handleUploadAOClick}
-                variant="outline"
-                className="w-full sm:w-auto"
-              >
-                <Upload className="h-4 w-4 mr-2" />
-                Upload AO
-              </Button>
-            </div>
-
-            {/* Tabela OVC - aparece após upload da PI ou AO */}
-            {showOVCTable && (
-              <div className="mt-6">
-                <h3 className="font-semibold mb-4 border-b pb-2">OVC - Order Value Calculator</h3>
-                <OVCTable
-                  items={ovcItems}
-                  onUpdateItems={setOvcItems}
-                />
-                
-                {/* Botão Enviar para Fábrica */}
-                <div className="mt-6 flex justify-center">
-                  <Button 
-                    onClick={handleEnviarParaFabrica}
-                    className="bg-green-600 text-white hover:bg-green-700 px-8 py-3"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Enviar para Fábrica
-                  </Button>
-                </div>
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>

@@ -1,9 +1,11 @@
+
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
 import SPIForm from './components/SPIForm';
 import NOForm from './components/NOForm';
+import OVCForm from './components/OVCForm';
 import ComercialTabs from './components/ComercialTabs';
 import PedidoConfirmationModal from './components/PedidoConfirmationModal';
 import { generateSPIPDF } from './utils/spiUtils';
@@ -160,6 +162,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
   const masterTabs = [
     { id: 'comercial', label: 'COMERCIAL' },
     { id: 'spi', label: 'SPI' },
+    { id: 'ovc', label: 'OVC' },
     { id: 'no', label: 'NO' }
   ];
 
@@ -210,6 +213,15 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     if (activeMasterTab === 'spi') {
       return (
         <SPIForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
+    
+    if (activeMasterTab === 'ovc') {
+      return (
+        <OVCForm
           formData={formData}
           onInputChange={handleInputChange}
         />
