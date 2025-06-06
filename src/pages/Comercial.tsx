@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -660,7 +659,105 @@ const Comercial = () => {
         </CardContent>
       </Card>
 
-      {/* ... keep existing code (second card with indicators) */}
+      {/* Segundo card com indicadores restaurado */}
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-biodina-blue">
+            <BarChart3 className="h-5 w-5" />
+            Indicadores Comerciais
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Posição de Estoque */}
+          <div>
+            <h4 className="font-semibold text-sm text-gray-600 mb-3 flex items-center gap-2">
+              <Package className="h-4 w-4" />
+              POSIÇÃO DE ESTOQUE
+            </h4>
+            <div className="space-y-2">
+              {indicadores.posicaoEstoque.slice(0, 3).map((item, index) => (
+                <div key={index} className="flex justify-between items-center text-sm">
+                  <span className="text-gray-700">{item.produto}</span>
+                  <Badge variant="outline" className="text-xs">
+                    {item.quantidade} un.
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Importação Previsão */}
+          <div>
+            <h4 className="font-semibold text-sm text-gray-600 mb-3 flex items-center gap-2">
+              <Truck className="h-4 w-4" />
+              IMPORTAÇÃO PREVISÃO
+            </h4>
+            <div className="space-y-2">
+              {indicadores.importacaoPrevisao.slice(0, 2).map((item, index) => (
+                <div key={index} className="flex justify-between items-center text-sm">
+                  <span className="text-gray-700">{item.item}</span>
+                  <span className="text-xs text-gray-500">{item.previsao}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Pedidos Programados */}
+          <div>
+            <h4 className="font-semibold text-sm text-gray-600 mb-3 flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              PEDIDOS PROGRAMADOS
+            </h4>
+            <div className="space-y-2">
+              {indicadores.pedidosProgramados.slice(0, 2).map((item, index) => (
+                <div key={index} className="flex justify-between items-center text-sm">
+                  <span className="text-gray-700">{item.cliente}</span>
+                  <div className="text-right">
+                    <div className="text-xs font-medium">{formatCurrency(item.valor)}</div>
+                    <div className="text-xs text-gray-500">{item.data}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Restrição Financeira */}
+          <div>
+            <h4 className="font-semibold text-sm text-gray-600 mb-3 flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-red-500" />
+              RESTRIÇÃO FINANCEIRA
+            </h4>
+            <div className="space-y-2">
+              {indicadores.restricaoFinanceira.map((item, index) => (
+                <div key={index} className="flex justify-between items-center text-sm">
+                  <span className="text-gray-700">{item.cliente}</span>
+                  <Badge variant="destructive" className="text-xs">
+                    {item.dias} dias
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Aguardando Autorização */}
+          <div>
+            <h4 className="font-semibold text-sm text-gray-600 mb-3 flex items-center gap-2">
+              <Clock className="h-4 w-4 text-orange-500" />
+              AGUARDANDO AUTORIZAÇÃO
+            </h4>
+            <div className="space-y-2">
+              {indicadores.aguardandoAutorizacao.map((item, index) => (
+                <div key={index} className="flex justify-between items-center text-sm">
+                  <span className="text-gray-700">{item.item}</span>
+                  <Badge variant="outline" className="text-xs">
+                    {item.dias} dias
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 
