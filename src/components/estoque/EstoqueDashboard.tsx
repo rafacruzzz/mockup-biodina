@@ -1,96 +1,286 @@
 
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Package, TrendingDown, AlertTriangle, ArrowUpDown } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Package, AlertTriangle, Clock, ShoppingCart, DollarSign, BarChart3, TrendingUp, Search, Filter, Eye } from "lucide-react";
+import { estoqueModules } from "@/data/estoqueModules";
 
 const EstoqueDashboard = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTipoEstoque, setSelectedTipoEstoque] = useState("todos");
+
+  const posicaoEstoque = estoqueModules.posicao_estoque.subModules.visao_geral.data;
+
+  // Calcular métricas do dashboard
+  const produtosComEstoque = posicaoEstoque.length;
+  const produtosVencendo = posicaoEstoque.filter(item => 
+    item.data_validade && new Date(item.data_validade) <= new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
+  ).length;
+  const produtosVencidos = posicaoEstoque.filter(item => 
+    item.data_validade && new Date(item.data_validade) <= new Date()
+  ).length;
+  const produtosMultilote = new Set(posicaoEstoque.map(p => p.produto_codigo)).size;
+  const produtosMultiCNPJ = new Set(
+    posicaoEstoque.filter(item => 
+      posicaoEstoque.filter(p => p.produto_codigo === item.produto_codigo && p.cnpj !== item.cnpj).length > 0
+    ).map(p => p.produto_codigo)
+  ).size;
+  const produtosComReserva = posicaoEstoque.filter(p => p.quantidade_reservada > 0).length;
+  const valorTotalEstoque = posicaoEstoque.reduce((acc, item) => acc + item.cmc_total, 0);
+
   const stats = [
     {
-      title: "Total de Produtos",
-      value: "1,234",
-      description: "Produtos em estoque",
+      title: "Produtos com Estoque",
+      value: produtosComEstoque.toString(),
+      description: "Total de itens",
       icon: Package,
       color: "text-blue-600"
     },
     {
-      title: "Produtos Abaixo do Mínimo",
-      value: "23",
-      description: "Necessitam reposição",
-      icon: TrendingDown,
+      title: "Validade < 60 dias",
+      value: produtosVencendo.toString(),
+      description: "Produtos vencendo",
+      icon: Clock,
+      color: "text-orange-600"
+    },
+    {
+      title: "Produtos Vencidos",
+      value: produtosVencidos.toString(),
+      description: "Necessitam ação",
+      icon: AlertTriangle,
       color: "text-red-600"
     },
     {
-      title: "Produtos Vencendo",
-      value: "8",
-      description: "Próximos 30 dias",
-      icon: AlertTriangle,
-      color: "text-yellow-600"
+      title: "Multi-lotes",
+      value: produtosMultilote.toString(),
+      description: "Produtos únicos",
+      icon: BarChart3,
+      color: "text-blue-400"
     },
     {
-      title: "Movimentações Hoje",
-      value: "156",
-      description: "Entradas e saídas",
-      icon: ArrowUpDown,
+      title: "Multi-CNPJ",
+      value: produtosMultiCNPJ.toString(),
+      description: "Em várias empresas",
+      icon: TrendingUp,
+      color: "text-purple-600"
+    },
+    {
+      title: "Com Reserva",
+      value: produtosComReserva.toString(),
+      description: "Pedidos abertos",
+      icon: ShoppingCart,
       color: "text-green-600"
+    },
+    {
+      title: "Valor Total",
+      value: `R$ ${valorTotalEstoque.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+      description: "Em estoque",
+      icon: DollarSign,
+      color: "text-gray-600"
     }
   ];
 
+  // Filtrar dados da tabela
+  const filteredData = posicaoEstoque.filter(item => {
+    const matchesSearch = !searchTerm || 
+      item.produto_descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.produto_codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.lote.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesTipo = selectedTipoEstoque === "todos" || item.tipo_estoque === selectedTipoEstoque;
+    
+    return matchesSearch && matchesTipo;
+  });
+
+  const getRowColor = (item: any) => {
+    if (item.data_validade && new Date(item.data_validade) <= new Date()) {
+      return "bg-red-50 border-l-4 border-l-red-500";
+    }
+    if (item.data_validade && new Date(item.data_validade) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)) {
+      return "bg-yellow-50 border-l-4 border-l-yellow-500";
+    }
+    if (item.quantidade_reservada > 0) {
+      return "bg-green-50 border-l-4 border-l-green-500";
+    }
+    return "";
+  };
+
+  const getTipoEstoqueBadge = (tipo: string) => {
+    const colors = {
+      "Nacional": "bg-blue-100 text-blue-800",
+      "Importação Direta": "bg-purple-100 text-purple-800",
+      "Consignado": "bg-orange-100 text-orange-800"
+    };
+    return colors[tipo as keyof typeof colors] || "bg-gray-100 text-gray-800";
+  };
+
   return (
-    <div className="flex-1 p-6 bg-gray-50/50">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestão de Estoque</h1>
-        <p className="text-gray-600">
-          Controle completo do seu estoque com informações em tempo real
-        </p>
+    <div className="flex-1 p-6 bg-gray-50/50 space-y-6">
+      {/* 1. PAINEL RESUMO - Cards Visuais */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-biodina-blue mb-2">Gestão de Estoque</h1>
+            <p className="text-gray-600">Controle completo com visão gerencial integrada</p>
+          </div>
+          
+          {/* Busca Global */}
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Buscar produto, lote, código..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-80"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-7 gap-4">
+          {stats.map((stat, index) => {
+            const Icon = stat.icon;
+            return (
+              <Card key={index} className="hover:shadow-md transition-shadow">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-gray-600">
+                    {stat.title}
+                  </CardTitle>
+                  <Icon className={`h-4 w-4 ${stat.color}`} />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {stat.description}
+                  </p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat, index) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={index}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600">
-                  {stat.title}
-                </CardTitle>
-                <Icon className={`h-4 w-4 ${stat.color}`} />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-                <p className="text-xs text-gray-500 mt-1">
-                  {stat.description}
-                </p>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+      {/* 2. TABELA DINÂMICA - Visão Consolidada */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Posição Consolidada de Estoque</CardTitle>
+              <CardDescription>
+                Visão agrupada por produto, lote e CNPJ com alertas visuais
+              </CardDescription>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <select
+                value={selectedTipoEstoque}
+                onChange={(e) => setSelectedTipoEstoque(e.target.value)}
+                className="border border-gray-300 rounded-md px-3 py-1 text-sm"
+              >
+                <option value="todos">Todos os tipos</option>
+                <option value="Nacional">Nacional</option>
+                <option value="Importação Direta">Importação Direta</option>
+                <option value="Consignado">Consignado</option>
+              </select>
+              
+              <Button variant="outline" size="sm">
+                <Filter className="h-4 w-4 mr-2" />
+                Mais Filtros
+              </Button>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-semibold">Produto</TableHead>
+                  <TableHead className="font-semibold">CNPJ</TableHead>
+                  <TableHead className="font-semibold">Lote</TableHead>
+                  <TableHead className="font-semibold text-right">Qtde Atual</TableHead>
+                  <TableHead className="font-semibold text-right">Reservada</TableHead>
+                  <TableHead className="font-semibold">Validade</TableHead>
+                  <TableHead className="font-semibold">Fornecedor</TableHead>
+                  <TableHead className="font-semibold">Tipo</TableHead>
+                  <TableHead className="font-semibold">Local</TableHead>
+                  <TableHead className="font-semibold text-right">Valor</TableHead>
+                  <TableHead className="font-semibold">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredData.map((item) => (
+                  <TableRow key={item.id} className={`${getRowColor(item)} hover:bg-gray-50`}>
+                    <TableCell className="font-medium">
+                      <div>
+                        <div className="font-semibold text-gray-900">{item.produto_descricao}</div>
+                        <div className="text-sm text-gray-500">{item.produto_codigo}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm">{item.cnpj}</TableCell>
+                    <TableCell className="font-mono text-sm">{item.lote}</TableCell>
+                    <TableCell className="text-right font-semibold">{item.quantidade_disponivel}</TableCell>
+                    <TableCell className="text-right text-orange-600 font-medium">
+                      {item.quantidade_reservada > 0 ? item.quantidade_reservada : '-'}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {item.data_validade ? 
+                        new Date(item.data_validade).toLocaleDateString('pt-BR') : 
+                        <span className="text-gray-400">Sem validade</span>
+                      }
+                    </TableCell>
+                    <TableCell className="text-sm">{item.fornecedor}</TableCell>
+                    <TableCell>
+                      <Badge className={getTipoEstoqueBadge(item.tipo_estoque)}>
+                        {item.tipo_estoque}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm">{item.deposito}</TableCell>
+                    <TableCell className="text-right font-semibold">
+                      R$ {item.cmc_total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* 3. PAINEL RELATÓRIOS GERENCIAIS */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Últimas Movimentações</CardTitle>
-            <CardDescription>
-              Movimentações mais recentes do estoque
-            </CardDescription>
+            <CardTitle className="text-lg">Consumo vs Estoque</CardTitle>
+            <CardDescription>Últimos 6 meses</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {[
-                { tipo: "Entrada", produto: "Produto A", quantidade: "+50", tempo: "2 min atrás" },
-                { tipo: "Saída", produto: "Produto B", quantidade: "-25", tempo: "15 min atrás" },
-                { tipo: "Ajuste", produto: "Produto C", quantidade: "-2", tempo: "1 hora atrás" }
-              ].map((mov, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">{mov.tipo}</p>
-                    <p className="text-sm text-gray-600">{mov.produto}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className={`font-medium ${mov.quantidade.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
-                      {mov.quantidade}
-                    </p>
-                    <p className="text-xs text-gray-500">{mov.tempo}</p>
-                  </div>
+            <div className="h-32 bg-gray-50 rounded-lg flex items-center justify-center">
+              <span className="text-gray-500">Gráfico de consumo</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Projeção de Ruptura</CardTitle>
+            <CardDescription>Top 10 produtos em risco</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {posicaoEstoque.slice(0, 3).map((item, index) => (
+                <div key={index} className="flex items-center justify-between p-2 bg-red-50 rounded">
+                  <span className="text-sm font-medium">{item.produto_codigo}</span>
+                  <span className="text-xs text-red-600">15 dias</span>
                 </div>
               ))}
             </div>
@@ -99,30 +289,23 @@ const EstoqueDashboard = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Alertas de Estoque</CardTitle>
-            <CardDescription>
-              Produtos que precisam de atenção
-            </CardDescription>
+            <CardTitle className="text-lg">Mapa de Vencimentos</CardTitle>
+            <CardDescription>Próximos 3 meses</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {[
-                { tipo: "Estoque Baixo", produto: "Produto D", nivel: "5 unidades", cor: "text-red-600" },
-                { tipo: "Vencimento Próximo", produto: "Produto E", nivel: "15 dias", cor: "text-yellow-600" },
-                { tipo: "Sem Movimento", produto: "Produto F", nivel: "30 dias", cor: "text-gray-600" }
-              ].map((alert, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">{alert.tipo}</p>
-                    <p className="text-sm text-gray-600">{alert.produto}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className={`text-sm font-medium ${alert.cor}`}>
-                      {alert.nivel}
-                    </p>
-                  </div>
-                </div>
-              ))}
+            <div className="space-y-2">
+              <div className="flex justify-between items-center p-2 bg-yellow-50 rounded">
+                <span className="text-sm">Janeiro 2024</span>
+                <Badge variant="secondary">2 lotes</Badge>
+              </div>
+              <div className="flex justify-between items-center p-2 bg-orange-50 rounded">
+                <span className="text-sm">Fevereiro 2024</span>
+                <Badge variant="secondary">5 lotes</Badge>
+              </div>
+              <div className="flex justify-between items-center p-2 bg-red-50 rounded">
+                <span className="text-sm">Março 2024</span>
+                <Badge variant="secondary">1 lote</Badge>
+              </div>
             </div>
           </CardContent>
         </Card>

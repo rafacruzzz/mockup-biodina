@@ -23,14 +23,14 @@ const EstoqueSidebar = ({
   onClose
 }: EstoqueSidebarProps) => {
   return (
-    <div className="w-80 bg-white border-r border-gray-200 flex flex-col h-full">
-      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">Módulos de Estoque</h2>
+    <div className="w-80 bg-white border-r border-gray-200 flex flex-col h-full shadow-sm">
+      <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-biodina-blue to-biodina-blue/90">
+        <h2 className="text-lg font-semibold text-white">Módulos de Estoque</h2>
         <Button
           variant="ghost"
           size="sm"
           onClick={onClose}
-          className="p-1 h-auto"
+          className="p-1 h-auto text-white hover:bg-white/20"
         >
           <X className="h-4 w-4" />
         </Button>
@@ -48,13 +48,18 @@ const EstoqueSidebar = ({
                 <Button
                   variant="ghost"
                   className={cn(
-                    "w-full justify-start px-3 py-2 h-auto text-left",
-                    isActive && !activeSubModule ? "bg-blue-50 text-blue-700" : "text-gray-700 hover:bg-gray-50"
+                    "w-full justify-start px-4 py-3 h-auto text-left rounded-xl transition-all duration-200",
+                    isActive && !activeSubModule 
+                      ? "bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md" 
+                      : "text-gray-700 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100"
                   )}
                   onClick={() => onModuleToggle(moduleKey)}
                 >
-                  <div className="flex items-center gap-2 flex-1">
-                    <Icon className="h-4 w-4 flex-shrink-0" />
+                  <div className="flex items-center gap-3 flex-1">
+                    <Icon className={cn(
+                      "h-4 w-4 flex-shrink-0",
+                      isActive && !activeSubModule ? "text-white" : "text-gray-500"
+                    )} />
                     <span className="flex-1 text-sm font-medium">{module.name}</span>
                     {isExpanded ? (
                       <ChevronDown className="h-4 w-4 flex-shrink-0" />
@@ -74,10 +79,10 @@ const EstoqueSidebar = ({
                           key={subModuleKey}
                           variant="ghost"
                           className={cn(
-                            "w-full justify-start px-3 py-1.5 h-auto text-left text-sm",
+                            "w-full justify-start px-4 py-2.5 h-auto text-left text-sm rounded-lg transition-all duration-200",
                             isSubModuleActive 
-                              ? "bg-blue-50 text-blue-700 font-medium" 
-                              : "text-gray-600 hover:bg-gray-50"
+                              ? "bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md font-medium" 
+                              : "text-gray-600 hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100"
                           )}
                           onClick={() => onModuleSelect(moduleKey, subModuleKey)}
                         >

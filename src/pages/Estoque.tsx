@@ -13,7 +13,6 @@ const Estoque = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
 
-  // Reset state when no module is selected
   useEffect(() => {
     if (!activeModule) {
       setActiveSubModule('');
@@ -24,7 +23,6 @@ const Estoque = () => {
   const toggleModule = (module: string) => {
     if (expandedModules.includes(module)) {
       setExpandedModules(expandedModules.filter(m => m !== module));
-      // Only reset selection if we're collapsing the currently active module
       if (activeModule === module && !activeSubModule) {
         setActiveModule('');
         setActiveSubModule('');
@@ -37,7 +35,7 @@ const Estoque = () => {
   const handleModuleSelect = (module: string, subModule: string) => {
     setActiveModule(module);
     setActiveSubModule(subModule);
-    setSearchTerm(''); // Reset search when changing modules
+    setSearchTerm('');
   };
 
   const handleCloseSidebar = () => {
@@ -49,20 +47,18 @@ const Estoque = () => {
 
   const handleNewRecord = () => {
     console.log('Novo registro para:', activeModule, activeSubModule);
-    // Implementar lógica específica para cada tipo de registro
   };
 
   const handleRowClick = (item: any) => {
     console.log('Item clicado:', item);
-    // Implementar lógica específica para cada tipo de item
   };
 
   const getButtonText = () => {
-    if (activeModule === 'ajustes' && activeSubModule === 'ajustes_pendentes') {
-      return 'Novo Ajuste';
+    if (activeModule === 'movimentacoes') {
+      return 'Nova Movimentação';
     }
-    if (activeModule === 'transferencias' && activeSubModule === 'transferencias_pendentes') {
-      return 'Nova Transferência';
+    if (activeModule === 'ajustes') {
+      return 'Novo Ajuste';
     }
     return 'Novo Registro';
   };
