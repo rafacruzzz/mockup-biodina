@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import EstoqueSidebar from "@/components/estoque/EstoqueSidebar";
 import EstoqueDashboard from "@/components/estoque/EstoqueDashboard";
+import MovimentacaoEstoqueForm from "@/components/estoque/MovimentacaoEstoqueForm";
 import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
 import { estoqueModules } from "@/data/estoqueModules";
@@ -54,7 +55,7 @@ const Estoque = () => {
   };
 
   const getButtonText = () => {
-    if (activeModule === 'movimentacoes') {
+    if (activeModule === 'movimentacao_estoque') {
       return 'Nova Movimentação';
     }
     if (activeModule === 'ajustes') {
@@ -79,7 +80,9 @@ const Estoque = () => {
         />
 
         <div className="flex-1 flex flex-col min-h-0">
-          {activeSubModule && currentSubModule ? (
+          {activeModule === 'movimentacao_estoque' && activeSubModule === 'formulario' ? (
+            <MovimentacaoEstoqueForm />
+          ) : activeSubModule && currentSubModule ? (
             <>
               <ContentHeader
                 title={currentSubModule.name}

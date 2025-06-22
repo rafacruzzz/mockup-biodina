@@ -31,6 +31,47 @@ export interface MovimentacaoEstoque {
   usuario: string;
 }
 
+export interface CNPJ {
+  id: number;
+  codigo: string;
+  nome: string;
+}
+
+export interface Deposito {
+  id: number;
+  nome: string;
+  cnpj_id: number;
+}
+
+export interface ItemMovimentacao {
+  produto_codigo: string;
+  produto_descricao: string;
+  lote: string;
+  data_validade: string | null;
+  quantidade_disponivel: number;
+  quantidade_movimentar: number;
+  motivo_item?: string;
+}
+
+export interface FormMovimentacao {
+  data_movimentacao: string;
+  tipo_movimentacao: TipoMovimentacao;
+  cnpj_origem: string;
+  deposito_origem: string;
+  cnpj_destino: string;
+  deposito_destino: string;
+  motivo_movimentacao: string;
+  nf_vinculada?: string;
+  pedido_vinculado?: string;
+  responsavel: string;
+  itens: ItemMovimentacao[];
+}
+
+export enum TipoMovimentacao {
+  ENTRE_DEPOSITOS = 'entre_depositos',
+  ENTRE_CNPJS = 'entre_cnpjs'
+}
+
 export interface SubModuleEstoque {
   name: string;
   data: any[];

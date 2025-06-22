@@ -100,6 +100,24 @@ const mockMovimentacoes = [
   }
 ];
 
+const mockCNPJs = [
+  { id: 1, codigo: "12.345.678/0001-90", nome: "WebMED RJ" },
+  { id: 2, codigo: "98.765.432/0001-10", nome: "WebMED JF" },
+  { id: 3, codigo: "11.222.333/0001-44", nome: "Distrib. SP" },
+  { id: 4, codigo: "55.666.777/0001-88", nome: "WebMED Matriz" }
+];
+
+const mockDepositos = [
+  { id: 1, nome: "Prateleira A1", cnpj_id: 1 },
+  { id: 2, nome: "Prateleira A2", cnpj_id: 1 },
+  { id: 3, nome: "Câmara Fria 1", cnpj_id: 1 },
+  { id: 4, nome: "Refrigerado A1", cnpj_id: 1 },
+  { id: 5, nome: "Câmara 3", cnpj_id: 2 },
+  { id: 6, nome: "Galpão", cnpj_id: 2 },
+  { id: 7, nome: "Estoque Central", cnpj_id: 3 },
+  { id: 8, nome: "Almoxarifado", cnpj_id: 4 }
+];
+
 export const estoqueModules: EstoqueModulesConfig = {
   posicao_estoque: {
     name: "Posição de Estoque",
@@ -123,13 +141,13 @@ export const estoqueModules: EstoqueModulesConfig = {
       }
     }
   },
-  movimentacoes: {
-    name: "Movimentações",
+  movimentacao_estoque: {
+    name: "Movimentação de Estoque",
     icon: ArrowUpDown,
     subModules: {
-      historico: {
-        name: "Histórico",
-        data: mockMovimentacoes
+      formulario: {
+        name: "Nova Movimentação",
+        data: []
       }
     }
   },
@@ -154,3 +172,5 @@ export const estoqueModules: EstoqueModulesConfig = {
     }
   }
 };
+
+export { mockMovimentacoes, mockCNPJs, mockDepositos };
