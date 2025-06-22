@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Package, AlertTriangle, Clock, ShoppingCart, DollarSign, BarChart3, TrendingUp, Search, Filter, Eye, Download, ArrowUpDown, FileSpreadsheet } from "lucide-react";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Package, AlertTriangle, Clock, ShoppingCart, DollarSign, BarChart3, TrendingUp, Search, Filter, Eye, Download, ArrowUpDown, FileSpreadsheet, FileText } from "lucide-react";
 import { estoqueModules } from "@/data/estoqueModules";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from "recharts";
@@ -17,6 +17,8 @@ const EstoqueDashboard = () => {
   const [sortField, setSortField] = useState("");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
   const [quickFilter, setQuickFilter] = useState("todos");
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [isProductSheetOpen, setIsProductSheetOpen] = useState(false);
 
   const posicaoEstoque = estoqueModules.posicao_estoque.subModules.visao_geral.data;
 
@@ -270,6 +272,18 @@ const EstoqueDashboard = () => {
     </button>
   );
 
+  // Função para abrir detalhes do produto
+  const handleOpenProductDetails = (item: any) => {
+    setSelectedProduct(item);
+    setIsProductSheetOpen(true);
+  };
+
+  // Obter todos os lotes do produto selecionado
+  const getProductLots = () => {
+    if (!selectedProduct) return [];
+    return posicaoEstoque.filter(item => item.produto_codigo === selectedProduct.produto_codigo);
+  };
+
   return (
     <TooltipProvider>
       <div className="flex-1 p-6 bg-gray-50/50 space-y-6">
@@ -478,9 +492,25 @@ const EstoqueDashboard = () => {
                           R$ {item.cmc_total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                         </TableCell>
                         <TableCell>
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
-                          </Button>
+                          <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="sm">
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm"
+                                  onClick={() => handleOpenProductDetails(item)}
+                                >
+                                  <FileText className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                Ver todos os lotes deste produto
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -581,6 +611,103 @@ const EstoqueDashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Sheet para detalhes do produto */}
+        <Sheet open={isProductSheetOpen} onOpenChange={setIsProductSheetOpen}>
+          <SheetContent className="w-[600px] sm:max-w-[600px]">
+            <SheetHeader>
+              <SheetTitle className="text-xl">
+                {selectedProduct?.produto_descricao}
+              </SheetTitle>
+              <SheetDescription>
+                Código: {selectedProduct?.produto_codigo} | Todos os lotes e informações detalhadas
+              </SheetDescription>
+            </SheetHeader>
+            
+            <div className="mt-6 space-y-6">
+              {/* Resumo do produto */}
+              <div className="grid grid-cols-2 gap-4">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">Total de Lotes</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{getProductLots().length}</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">Qtde Total</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">
+                      {getProductLots().reduce((acc, item) => acc + item.quantidade_disponivel, 0)}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Todos os lotes */}
+              <div>
+                <h3 className="text-lg font-semibold mb-3">Todos os Lotes</h3>
+                <div className="border rounded-lg">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>CNPJ</TableHead>
+                        <TableHead>Lote</TableHead>
+                        <TableHead>Qtde</TableHead>
+                        <TableHead>Validade</TableHead>
+                        <TableHead>Local</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {getProductLots().map((lot) => (
+                        <TableRow key={lot.id} className={getRowColor(lot)}>
+                          <TableCell className="text-sm">{lot.cnpj}</TableCell>
+                          <TableCell className="font-mono text-sm">{lot.lote}</TableCell>
+                          <TableCell className="font-semibold">{lot.quantidade_disponivel}</TableCell>
+                          <TableCell className="text-sm">
+                            {lot.data_validade ? 
+                              new Date(lot.data_validade).toLocaleDateString('pt-BR') : 
+                              <span className="text-gray-400">Sem validade</span>
+                            }
+                          </TableCell>
+                          <TableCell className="text-sm">{lot.deposito}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              {/* Seções placeholder para futuras implementações */}
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">Histórico de Movimentações</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-500">
+                      Últimas entradas, saídas e transferências deste produto serão exibidas aqui.
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">Pedidos e Notas Vinculadas</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-gray-500">
+                      Pedidos em aberto e notas fiscais relacionadas a este produto.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </TooltipProvider>
   );
