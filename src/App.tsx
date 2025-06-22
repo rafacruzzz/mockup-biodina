@@ -11,6 +11,7 @@ import BIGeral from "./pages/BIGeral";
 import Cadastro from "./pages/Cadastro";
 import Comercial from "./pages/Comercial";
 import Compras from "./pages/Compras";
+import Estoque from "./pages/Estoque";
 import Financeiro from "./pages/Financeiro";
 import NotFound from "./pages/NotFound";
 
@@ -39,6 +40,7 @@ const App: React.FC = () => {
             <Route path="/cadastro" element={<Cadastro />} />
             <Route path="/comercial" element={<Comercial />} />
             <Route path="/compras" element={<Compras />} />
+            <Route path="/estoque" element={<Estoque />} />
             <Route path="/financeiro" element={<Financeiro />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
