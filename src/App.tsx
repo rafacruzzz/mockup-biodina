@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import BIGeral from "./pages/BIGeral";
 import Cadastro from "./pages/Cadastro";
 import Comercial from "./pages/Comercial";
+import Compras from "./pages/Compras";
 import Financeiro from "./pages/Financeiro";
 import NotFound from "./pages/NotFound";
 
