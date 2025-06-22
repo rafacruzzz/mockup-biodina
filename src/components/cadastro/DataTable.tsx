@@ -24,6 +24,61 @@ const DataTable = ({ data, moduleName, onRowClick }: DataTableProps) => {
 
   const headers = Object.keys(data[0]).filter(key => key !== 'id');
 
+  const renderCellContent = (value: any, header: string) => {
+    // Handle null/undefined values
+    if (value === null || value === undefined) {
+      return <span className="text-gray-400">-</span>;
+    }
+
+    // Handle boolean values
+    if (typeof value === 'boolean') {
+      return (
+        <Badge className={`${value ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200'} px-2 py-1`}>
+          {value ? 'Sim' : 'Não'}
+        </Badge>
+      );
+    }
+
+    // Handle numeric values for currency fields
+    if (typeof value === 'number' && (header.includes('valor') || header.includes('preco') || header.includes('custo'))) {
+      return (
+        <span className="font-medium text-biodina-blue">
+          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)}
+        </span>
+      );
+    }
+
+    // Handle status/category/type fields with badges
+    if (header === 'status' || header === 'categoria' || header === 'tipo') {
+      return (
+        <Badge variant="outline" className="border-biodina-gold/30 text-biodina-blue">
+          {String(value)}
+        </Badge>
+      );
+    }
+
+    // Handle arrays (like itens in pedidos)
+    if (Array.isArray(value)) {
+      return (
+        <span className="text-gray-600 text-sm">
+          {value.length} {value.length === 1 ? 'item' : 'itens'}
+        </span>
+      );
+    }
+
+    // Handle objects
+    if (typeof value === 'object') {
+      return (
+        <span className="text-gray-600 text-sm">
+          Objeto
+        </span>
+      );
+    }
+
+    // Handle all other values (strings, numbers)
+    return <span className="text-gray-700">{String(value)}</span>;
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="overflow-x-auto">
@@ -48,21 +103,7 @@ const DataTable = ({ data, moduleName, onRowClick }: DataTableProps) => {
                 >
                   {headers.map(header => (
                     <TableCell key={header} className="py-4 px-6 min-w-[150px] whitespace-nowrap">
-                      {typeof item[header] === 'boolean' ? (
-                        <Badge className={`${item[header] ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200'} px-2 py-1`}>
-                          {item[header] ? 'Sim' : 'Não'}
-                        </Badge>
-                      ) : typeof item[header] === 'number' && (header.includes('valor') || header.includes('preco') || header.includes('custo')) ? (
-                        <span className="font-medium text-biodina-blue">
-                          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item[header])}
-                        </span>
-                      ) : header === 'status' || header === 'categoria' || header === 'tipo' ? (
-                        <Badge variant="outline" className="border-biodina-gold/30 text-biodina-blue">
-                          {item[header]}
-                        </Badge>
-                      ) : (
-                        <span className="text-gray-700">{item[header]}</span>
-                      )}
+                      {renderCellContent(item[header], header)}
                     </TableCell>
                   ))}
                   <TableCell className="text-center sticky right-0 bg-white border-l border-gray-100">
