@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -572,7 +573,13 @@ const NovoPedidoModal = ({ onClose }: NovoPedidoModalProps) => {
             {/* Aba Recebimento */}
             <TabsContent value="recebimento" className="space-y-6">
               <div className="space-y-2">
-                <h4 className="text-sm font-bold">Itens de Recebimento</h4>
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-bold">Itens de Recebimento</h4>
+                  <Button type="button" variant="outline" size="sm" onClick={addItemRecebimento}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Adicionar Item
+                  </Button>
+                </div>
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
@@ -586,6 +593,7 @@ const NovoPedidoModal = ({ onClose }: NovoPedidoModalProps) => {
                         <TableHead>Destino</TableHead>
                         <TableHead>CNPJ Destino</TableHead>
                         <TableHead>Localização</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -610,13 +618,28 @@ const NovoPedidoModal = ({ onClose }: NovoPedidoModalProps) => {
                             <Input type="date" value={item.dataVencimento} onChange={(e) => updateItemRecebimento(item.id, "dataVencimento", e.target.value)} />
                           </TableCell>
                           <TableCell>
-                            <Input type="text" value={item.destino} onChange={(e) => updateItemRecebimento(item.id, "destino", e.target.value)} />
+                            <Select value={item.destino} onValueChange={(value) => updateItemRecebimento(item.id, "destino", value)}>
+                              <SelectTrigger className="w-32">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="estoque">Estoque</SelectItem>
+                                <SelectItem value="deposito">Depósito</SelectItem>
+                                <SelectItem value="filial">Filial</SelectItem>
+                                <SelectItem value="transportadora">Transportadora</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </TableCell>
                           <TableCell>
-                            <Input type="text" value={item.cnpjDestino} onChange={(e) => updateItemRecebimento(item.id, "cnpjDestino", e.target.value)} />
+                            <Input type="text" value={item.cnpjDestino} onChange={(e) => updateItemRecebimento(item.id, "cnpjDestino", e.target.value)} placeholder="XX.XXX.XXX/XXXX-XX" />
                           </TableCell>
                           <TableCell>
-                            <Input type="text" value={item.localizacao} onChange={(e) => updateItemRecebimento(item.id, "localizacao", e.target.value)} />
+                            <Input type="text" value={item.localizacao} onChange={(e) => updateItemRecebimento(item.id, "localizacao", e.target.value)} placeholder="A-01-001" />
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="sm" onClick={() => removeItemRecebimento(item.id)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
