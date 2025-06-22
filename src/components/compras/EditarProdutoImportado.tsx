@@ -119,7 +119,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 <Label htmlFor="codigoBarras">Código de Barras</Label>
                 <Input
                   id="codigoBarras"
-                  value={produtoEditado.co digoBarras}
+                  value={produtoEditado.codigoBarras}
                   onChange={(e) => updateField('codigoBarras', e.target.value)}
                 />
               </div>
