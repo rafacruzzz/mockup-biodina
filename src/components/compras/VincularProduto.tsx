@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -19,7 +18,7 @@ const VincularProduto = ({ produto, onClose, onVincular }: VincularProdutoProps)
     nome: '',
     codigoBarras: '',
     codeProduct: '',
-    tipoProduto: ''
+    tipoProduto: 'todos'
   });
   const [resultados, setResultados] = useState<any[]>([]);
   const [buscando, setBuscando] = useState(false);
@@ -71,7 +70,7 @@ const VincularProduto = ({ produto, onClose, onVincular }: VincularProdutoProps)
         const matchNome = !busca.nome || p.nome.toLowerCase().includes(busca.nome.toLowerCase());
         const matchCodigo = !busca.codigoBarras || p.codigoBarras.includes(busca.codigoBarras);
         const matchProduct = !busca.codeProduct || p.codeProduct.toLowerCase().includes(busca.codeProduct.toLowerCase());
-        const matchTipo = !busca.tipoProduto || p.tipoProduto === busca.tipoProduto;
+        const matchTipo = !busca.tipoProduto || busca.tipoProduto === 'todos' || p.tipoProduto === busca.tipoProduto;
         
         return matchNome && matchCodigo && matchProduct && matchTipo;
       });
@@ -167,7 +166,7 @@ const VincularProduto = ({ produto, onClose, onVincular }: VincularProdutoProps)
                     <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Todos os tipos</SelectItem>
+                    <SelectItem value="todos">Todos os tipos</SelectItem>
                     <SelectItem value="Medicamento">Medicamento</SelectItem>
                     <SelectItem value="Equipamento">Equipamento</SelectItem>
                     <SelectItem value="Material">Material</SelectItem>
