@@ -2,9 +2,9 @@
 import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import ComprasSidebar from "@/components/compras/ComprasSidebar";
+import ComprasDashboard from "@/components/compras/ComprasDashboard";
 import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
-import EmptyState from "@/components/cadastro/EmptyState";
 import PedidoDetalhesModal from "@/components/compras/PedidoDetalhesModal";
 import { comprasModules } from "@/data/comprasModules";
 import { Pedido } from "@/types/compras";
@@ -58,12 +58,6 @@ const Compras = () => {
     }
   };
 
-  const handleGetStarted = () => {
-    setActiveModule('pedidos');
-    setActiveSubModule('pedidos');
-    setExpandedModules(['pedidos']);
-  };
-
   const handleRowClick = (item: any) => {
     // Só abre detalhes para pedidos
     if (activeModule === 'pedidos' && activeSubModule === 'pedidos') {
@@ -107,7 +101,7 @@ const Compras = () => {
               </div>
             </>
           ) : (
-            <EmptyState onGetStarted={handleGetStarted} />
+            <ComprasDashboard />
           )}
         </div>
       </div>

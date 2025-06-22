@@ -1,6 +1,6 @@
 
-import { X, ChevronDown, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronRight, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { comprasModules } from "@/data/comprasModules";
 
 interface ComprasSidebarProps {
@@ -20,62 +20,99 @@ const ComprasSidebar = ({
   onModuleSelect,
   onClose
 }: ComprasSidebarProps) => {
+  const handleCollapseModule = (moduleKey: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    onModuleToggle(moduleKey);
+  };
+
+  const handleSubModuleSelect = (module: string, subModule: string) => {
+    onModuleSelect(module, subModule);
+  };
+
   return (
-    <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900">Módulo de Compras</h2>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClose}
-          className="hover:bg-gray-100"
-        >
-          <X className="h-4 w-4" />
-        </Button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-4">
-        <div className="space-y-2">
-          {Object.entries(comprasModules).map(([moduleKey, module]) => {
-            const isExpanded = expandedModules.includes(moduleKey);
-            const Icon = module.icon;
-            
-            return (
-              <div key={moduleKey} className="space-y-1">
-                <button
-                  onClick={() => onModuleToggle(moduleKey)}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-                >
-                  {isExpanded ? (
-                    <ChevronDown className="h-4 w-4 text-gray-500" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4 text-gray-500" />
-                  )}
-                  <Icon className="h-4 w-4 text-gray-500" />
-                  <span className="font-medium">{module.name}</span>
-                </button>
-
-                {isExpanded && (
-                  <div className="ml-6 space-y-1">
-                    {Object.entries(module.subModules).map(([subModuleKey, subModule]) => (
-                      <button
-                        key={subModuleKey}
-                        onClick={() => onModuleSelect(moduleKey, subModuleKey)}
-                        className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
-                          activeModule === moduleKey && activeSubModule === subModuleKey
-                            ? 'bg-blue-50 text-blue-700 font-medium'
-                            : 'text-gray-600 hover:bg-gray-50'
-                        }`}
-                      >
-                        {subModule.name}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+    <div className="w-80 bg-white border-r border-gray-200/80 overflow-y-auto shadow-sm">
+      <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-biodina-blue mb-2">Módulo de Compras</h2>
+          <p className="text-gray-600 text-sm">Gerencie pedidos, compras fiscais e importações</p>
         </div>
+        <button
+          onClick={onClose}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          title="Fechar compras"
+        >
+          <X className="h-5 w-5 text-gray-500" />
+        </button>
+      </div>
+      
+      <div className="p-4 space-y-2">
+        {Object.entries(comprasModules).map(([key, module]) => (
+          <div key={key} className="space-y-1">
+            <button
+              onClick={() => onModuleToggle(key)}
+              className={cn(
+                "w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200",
+                activeModule === key 
+                  ? 'bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md' 
+                  : 'hover:bg-gray-50 text-gray-700 hover:shadow-sm'
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <div className={cn(
+                  "p-2 rounded-lg",
+                  activeModule === key ? 'bg-white/20' : 'bg-biodina-gold/10'
+                )}>
+                  <module.icon className={cn(
+                    "h-5 w-5",
+                    activeModule === key ? 'text-white' : 'text-biodina-gold'
+                  )} />
+                </div>
+                <span className="font-medium">{module.name}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                {expandedModules.includes(key) && (
+                  <button
+                    onClick={(e) => handleCollapseModule(key, e)}
+                    className="p-1 rounded-md hover:bg-white/20 transition-colors"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+                {expandedModules.includes(key) ? 
+                  <ChevronDown className="h-4 w-4" /> : 
+                  <ChevronRight className="h-4 w-4" />
+                }
+              </div>
+            </button>
+            
+            {expandedModules.includes(key) && (
+              <div className="ml-4 space-y-1 animate-fade-in">
+                {Object.entries(module.subModules).map(([subKey, subModule]) => (
+                  <button
+                    key={subKey}
+                    onClick={() => handleSubModuleSelect(key, subKey)}
+                    className={cn(
+                      "w-full text-left p-3 rounded-lg text-sm transition-all duration-200",
+                      activeModule === key && activeSubModule === subKey
+                        ? 'bg-biodina-gold text-white shadow-sm'
+                        : 'hover:bg-gray-50 text-gray-600'
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className={cn(
+                        "w-2 h-2 rounded-full",
+                        activeModule === key && activeSubModule === subKey
+                          ? 'bg-white'
+                          : 'bg-biodina-gold/60'
+                      )} />
+                      {subModule.name}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
