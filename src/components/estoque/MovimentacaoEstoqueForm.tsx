@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,6 +34,11 @@ const MovimentacaoEstoqueForm = () => {
   });
 
   const posicaoEstoque = estoqueModules.posicao_estoque.subModules.visao_geral.data;
+
+  // Filter products to ensure no empty codes
+  const validProducts = posicaoEstoque.filter(produto => 
+    produto.produto_codigo && produto.produto_codigo.trim() !== ''
+  );
 
   // Filtrar depósitos baseado no CNPJ selecionado
   const getDepositosByCNPJ = (cnpjNome: string) => {
@@ -94,7 +98,7 @@ const MovimentacaoEstoqueForm = () => {
     const novosItens = [...formData.itens];
     novosItens[index] = { ...novosItens[index], [campo]: valor };
     
-    // Se mudou o produto, buscar dados do estoque
+    // If the product changes, fetch data from the stock
     if (campo === 'produto_codigo') {
       const produtoEstoque = posicaoEstoque.find(p => p.produto_codigo === valor);
       if (produtoEstoque) {
@@ -111,7 +115,7 @@ const MovimentacaoEstoqueForm = () => {
   const validarEstoque = async () => {
     setIsValidating(true);
     
-    // Simular validação
+    // Simulate validation
     setTimeout(() => {
       const itensInvalidos = formData.itens.filter(item => 
         item.quantidade_movimentar > item.quantidade_disponivel
@@ -221,7 +225,7 @@ const MovimentacaoEstoqueForm = () => {
                   <SelectValue placeholder="Selecione o CNPJ origem" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockCNPJs.map(cnpj => (
+                  {mockCNPJs.filter(cnpj => cnpj.nome && cnpj.nome.trim() !== '').map(cnpj => (
                     <SelectItem key={cnpj.id} value={cnpj.nome}>{cnpj.nome}</SelectItem>
                   ))}
                 </SelectContent>
@@ -239,7 +243,9 @@ const MovimentacaoEstoqueForm = () => {
                   <SelectValue placeholder="Selecione o depósito origem" />
                 </SelectTrigger>
                 <SelectContent>
-                  {getDepositosByCNPJ(formData.cnpj_origem).map(deposito => (
+                  {getDepositosByCNPJ(formData.cnpj_origem)
+                    .filter(deposito => deposito.nome && deposito.nome.trim() !== '')
+                    .map(deposito => (
                     <SelectItem key={deposito.id} value={deposito.nome}>{deposito.nome}</SelectItem>
                   ))}
                 </SelectContent>
@@ -265,7 +271,7 @@ const MovimentacaoEstoqueForm = () => {
                   <SelectValue placeholder="Selecione o CNPJ destino" />
                 </SelectTrigger>
                 <SelectContent>
-                  {mockCNPJs.map(cnpj => (
+                  {mockCNPJs.filter(cnpj => cnpj.nome && cnpj.nome.trim() !== '').map(cnpj => (
                     <SelectItem key={cnpj.id} value={cnpj.nome}>{cnpj.nome}</SelectItem>
                   ))}
                 </SelectContent>
@@ -283,7 +289,9 @@ const MovimentacaoEstoqueForm = () => {
                   <SelectValue placeholder="Selecione o depósito destino" />
                 </SelectTrigger>
                 <SelectContent>
-                  {getDepositosByCNPJ(formData.cnpj_destino).map(deposito => (
+                  {getDepositosByCNPJ(formData.cnpj_destino)
+                    .filter(deposito => deposito.nome && deposito.nome.trim() !== '')
+                    .map(deposito => (
                     <SelectItem key={deposito.id} value={deposito.nome}>{deposito.nome}</SelectItem>
                   ))}
                 </SelectContent>
@@ -377,7 +385,7 @@ const MovimentacaoEstoqueForm = () => {
                             <SelectValue placeholder="Selecione o produto" />
                           </SelectTrigger>
                           <SelectContent>
-                            {posicaoEstoque.map(produto => (
+                            {validProducts.map(produto => (
                               <SelectItem key={produto.id} value={produto.produto_codigo}>
                                 {produto.produto_codigo} - {produto.produto_descricao}
                               </SelectItem>
