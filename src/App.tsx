@@ -38,6 +38,7 @@ const App: React.FC = () => {
             <Route path="/bi-geral" element={<BIGeral />} />
             <Route path="/cadastro" element={<Cadastro />} />
             <Route path="/comercial" element={<Comercial />} />
+            <Route path="/compras" element={<Compras />} />
             <Route path="/financeiro" element={<Financeiro />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
