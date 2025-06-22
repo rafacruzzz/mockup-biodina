@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import ComprasSidebar from "@/components/compras/ComprasSidebar";
@@ -6,6 +5,7 @@ import ComprasDashboard from "@/components/compras/ComprasDashboard";
 import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
 import PedidoDetalhesModal from "@/components/compras/PedidoDetalhesModal";
+import NovoPedidoModal from "@/components/compras/NovoPedidoModal";
 import { comprasModules } from "@/data/comprasModules";
 import { Pedido } from "@/types/compras";
 
@@ -16,6 +16,7 @@ const Compras = () => {
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
   const [showPedidoDetalhes, setShowPedidoDetalhes] = useState(false);
   const [selectedPedido, setSelectedPedido] = useState<Pedido | null>(null);
+  const [showNovoPedido, setShowNovoPedido] = useState(false);
 
   // Reset state when no module is selected
   useEffect(() => {
@@ -52,10 +53,16 @@ const Compras = () => {
   };
 
   const handleNewRecord = () => {
-    // Por enquanto, apenas para pedidos que temos funcionalidade
+    // Para pedidos, abre o modal de novo pedido
     if (activeModule === 'pedidos' && activeSubModule === 'pedidos') {
-      console.log('Criar novo pedido');
+      setShowNovoPedido(true);
     }
+  };
+
+  const handleNovoPedido = (pedido: any) => {
+    console.log('Novo pedido criado:', pedido);
+    setShowNovoPedido(false);
+    // Aqui você pode adicionar a lógica para salvar o pedido
   };
 
   const handleRowClick = (item: any) => {
@@ -90,6 +97,7 @@ const Compras = () => {
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
                 onNewRecord={handleNewRecord}
+                buttonText={activeModule === 'pedidos' && activeSubModule === 'pedidos' ? 'Novo Pedido' : 'Novo Registro'}
               />
 
               <div className="flex-1 p-6 min-h-0">
@@ -113,6 +121,13 @@ const Compras = () => {
             setShowPedidoDetalhes(false);
             setSelectedPedido(null);
           }}
+        />
+      )}
+
+      {showNovoPedido && (
+        <NovoPedidoModal 
+          onClose={() => setShowNovoPedido(false)}
+          onSave={handleNovoPedido}
         />
       )}
     </SidebarLayout>
