@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Plus, History, Trash2, AlertTriangle, CheckCircle, FileSpreadsheet, Printer, RefreshCw } from "lucide-react";
+import { Plus, History, Trash2, AlertTriangle, CheckCircle, FileSpreadsheet, Printer, RefreshCw, Package } from "lucide-react";
 import { FormMovimentacao, TipoMovimentacao, ItemMovimentacao } from "@/types/estoque";
 import { mockCNPJs, mockDepositos } from "@/data/estoqueModules";
 import { estoqueModules } from "@/data/estoqueModules";
