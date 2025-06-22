@@ -9,6 +9,7 @@ interface ContentHeaderProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   onNewRecord: () => void;
+  buttonText?: string;
 }
 
 const ContentHeader = ({ 
@@ -16,7 +17,8 @@ const ContentHeader = ({
   description, 
   searchTerm, 
   onSearchChange, 
-  onNewRecord 
+  onNewRecord,
+  buttonText = "Novo Registro"
 }: ContentHeaderProps) => {
   return (
     <div className="bg-white border-b border-gray-200/80 p-6">
@@ -30,7 +32,7 @@ const ContentHeader = ({
           className="bg-gradient-to-r from-biodina-gold to-biodina-gold/90 hover:from-biodina-gold/90 hover:to-biodina-gold text-white shadow-lg hover:shadow-xl transition-all duration-200"
         >
           <Plus className="h-4 w-4 mr-2" />
-          Novo Registro
+          {buttonText}
         </Button>
       </div>
 
