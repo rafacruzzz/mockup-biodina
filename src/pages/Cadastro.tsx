@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import ProductForm from "@/components/ProductForm";
@@ -136,7 +135,7 @@ const Cadastro = () => {
           { key: 'valor_total', label: 'Valor Total', type: 'number' }
         ]
       },
-      'produtos-estoque': {
+      'estoque-estoque': {
         title: 'Cadastro de Local de Estoque',
         fields: [
           { key: 'empresa_id', label: 'CNPJ da Empresa', type: 'text', required: true },

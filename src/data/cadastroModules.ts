@@ -1,4 +1,3 @@
-
 import { Package, Users, Settings, Wrench, Building, CreditCard, Tag, Clock, Warehouse } from "lucide-react";
 import { ModulesConfig } from "@/types/cadastro";
 
@@ -42,7 +41,13 @@ export const modules: ModulesConfig = {
           { id: 1, nome: "Kit Antibiótico Completo", codigo: "KIT-ANTI-001", produtos_inclusos: 5, valor_total: 285.50 },
           { id: 2, nome: "Kit Analgésicos Básico", codigo: "KIT-ANAL-002", produtos_inclusos: 3, valor_total: 125.90 }
         ]
-      },
+      }
+    }
+  },
+  estoque: {
+    name: "Estoque",
+    icon: Warehouse,
+    subModules: {
       estoque: {
         name: "Estoque",
         data: [
