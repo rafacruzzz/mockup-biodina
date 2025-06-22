@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -121,6 +122,21 @@ const EstoqueDashboard = () => {
       color: "text-gray-600"
     }
   ];
+
+  // Função para determinar cor da linha baseada na validade
+  const getRowColor = (item: any) => {
+    if (!item.data_validade) return "";
+    
+    const today = new Date();
+    const expiryDate = new Date(item.data_validade);
+    const diffTime = expiryDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays <= 0) return "bg-red-50 border-l-4 border-l-red-500";
+    if (diffDays <= 30) return "bg-yellow-50 border-l-4 border-l-yellow-500";
+    if (diffDays <= 60) return "bg-orange-50 border-l-4 border-l-orange-500";
+    return "";
+  };
 
   // Função de ordenação
   const handleSort = (field: string) => {
