@@ -1,10 +1,14 @@
-
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, Package, DollarSign, ShoppingCart, FileText, AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { TrendingUp, TrendingDown, Package, DollarSign, ShoppingCart, FileText, AlertTriangle, Plus } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import NovoPedidoModal from "./NovoPedidoModal";
 
 const ComprasDashboard = () => {
+  const [showNovoPedido, setShowNovoPedido] = useState(false);
+
   // Dados simulados baseados nas suas planilhas
   const sugestoesPedidos = [
     {
@@ -56,11 +60,26 @@ const ComprasDashboard = () => {
   const totalItens = sugestoesPedidos.reduce((acc, item) => acc + item.sugestao_pedido, 0);
   const itensCriticos = sugestoesPedidos.filter(item => item.status === "Crítico").length;
 
+  const handleNovoPedido = (pedido: any) => {
+    console.log('Novo pedido criado:', pedido);
+    setShowNovoPedido(false);
+    // Aqui você pode adicionar a lógica para salvar o pedido
+  };
+
   return (
     <div className="p-6 space-y-6 bg-gray-50/50 min-h-full">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-biodina-blue mb-2">Dashboard de Compras</h1>
-        <p className="text-gray-600">Visão geral das previsões, estoque e análises de compras</p>
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-biodina-blue mb-2">Dashboard de Compras</h1>
+          <p className="text-gray-600">Visão geral das previsões, estoque e análises de compras</p>
+        </div>
+        <Button 
+          onClick={() => setShowNovoPedido(true)}
+          className="bg-biodina-gold hover:bg-biodina-gold/90"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Novo Pedido
+        </Button>
       </div>
 
       {/* Cards de Resumo */}
@@ -228,6 +247,13 @@ const ComprasDashboard = () => {
           </CardContent>
         </Card>
       </div>
+
+      {showNovoPedido && (
+        <NovoPedidoModal 
+          onClose={() => setShowNovoPedido(false)}
+          onSave={handleNovoPedido}
+        />
+      )}
     </div>
   );
 };
