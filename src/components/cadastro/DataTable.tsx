@@ -8,9 +8,10 @@ import { ModuleData } from "@/types/cadastro";
 interface DataTableProps {
   data: ModuleData[];
   moduleName: string;
+  onRowClick?: (item: any) => void;
 }
 
-const DataTable = ({ data, moduleName }: DataTableProps) => {
+const DataTable = ({ data, moduleName, onRowClick }: DataTableProps) => {
   if (data.length === 0) {
     return (
       <div className="text-center py-12">
@@ -40,7 +41,11 @@ const DataTable = ({ data, moduleName }: DataTableProps) => {
             </TableHeader>
             <TableBody>
               {data.map((item: ModuleData) => (
-                <TableRow key={item.id} className="hover:bg-gray-50/50 transition-colors border-b border-gray-100">
+                <TableRow 
+                  key={item.id} 
+                  className={`hover:bg-gray-50/50 transition-colors border-b border-gray-100 ${onRowClick ? 'cursor-pointer' : ''}`}
+                  onClick={() => onRowClick && onRowClick(item)}
+                >
                   {headers.map(header => (
                     <TableCell key={header} className="py-4 px-6 min-w-[150px] whitespace-nowrap">
                       {typeof item[header] === 'boolean' ? (
