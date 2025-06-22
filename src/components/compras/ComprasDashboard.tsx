@@ -241,7 +241,6 @@ const ComprasDashboard = () => {
       {showNovoPedido && (
         <NovoPedidoModal 
           onClose={() => setShowNovoPedido(false)}
-          onSave={handleNovoPedido}
         />
       )}
     </div>

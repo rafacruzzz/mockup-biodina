@@ -67,11 +67,6 @@ const Compras = () => {
     }
   };
 
-  const handleNovoPedido = (pedido: any) => {
-    console.log('Novo pedido criado:', pedido);
-    setShowNovoPedido(false);
-  };
-
   const handleImportarXML = (dadosXML: any) => {
     console.log('XML importado:', dadosXML);
     setXmlData(dadosXML);
@@ -182,7 +177,6 @@ const Compras = () => {
       {showNovoPedido && (
         <NovoPedidoModal 
           onClose={() => setShowNovoPedido(false)}
-          onSave={handleNovoPedido}
         />
       )}
 
