@@ -1,5 +1,5 @@
 
-import { Package, Users, Settings, Wrench, Building, CreditCard, Tag, Clock } from "lucide-react";
+import { Package, Users, Settings, Wrench, Building, CreditCard, Tag, Clock, Warehouse } from "lucide-react";
 import { ModulesConfig } from "@/types/cadastro";
 
 export const modules: ModulesConfig = {
@@ -41,6 +41,14 @@ export const modules: ModulesConfig = {
         data: [
           { id: 1, nome: "Kit Antibiótico Completo", codigo: "KIT-ANTI-001", produtos_inclusos: 5, valor_total: 285.50 },
           { id: 2, nome: "Kit Analgésicos Básico", codigo: "KIT-ANAL-002", produtos_inclusos: 3, valor_total: 125.90 }
+        ]
+      },
+      estoque: {
+        name: "Estoque",
+        data: [
+          { id: 1, empresa_id: "11.222.333/0001-44", nome_fantasia: "WebMED Rio", deposito_id: "DEP001", local_fisico: "Prateleira A1" },
+          { id: 2, empresa_id: "12.345.678/0001-90", nome_fantasia: "Distribuidora SP", deposito_id: "DEP002", local_fisico: "Câmara Fria B" },
+          { id: 3, empresa_id: "11.222.333/0001-44", nome_fantasia: "WebMED Rio", deposito_id: "DEP003", local_fisico: "Galpão Externo C" }
         ]
       }
     }

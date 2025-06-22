@@ -135,6 +135,15 @@ const Cadastro = () => {
           { key: 'produtos_inclusos', label: 'Produtos Inclusos', type: 'number' },
           { key: 'valor_total', label: 'Valor Total', type: 'number' }
         ]
+      },
+      'produtos-estoque': {
+        title: 'Cadastro de Local de Estoque',
+        fields: [
+          { key: 'empresa_id', label: 'CNPJ da Empresa', type: 'text', required: true },
+          { key: 'nome_fantasia', label: 'Nome da Unidade', type: 'text', required: true },
+          { key: 'deposito_id', label: 'ID do Depósito', type: 'text', required: true },
+          { key: 'local_fisico', label: 'Local Físico', type: 'text', required: true }
+        ]
       }
     };
 
