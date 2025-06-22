@@ -7,12 +7,50 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Package, AlertTriangle, Clock, ShoppingCart, DollarSign, BarChart3, TrendingUp, Search, Filter, Eye } from "lucide-react";
 import { estoqueModules } from "@/data/estoqueModules";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line } from "recharts";
 
 const EstoqueDashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTipoEstoque, setSelectedTipoEstoque] = useState("todos");
 
   const posicaoEstoque = estoqueModules.posicao_estoque.subModules.visao_geral.data;
+
+  // Gerar dados para o gráfico de consumo vs estoque
+  const consumoData = [
+    { mes: "Jul", consumo: 850, estoque: 1200, entrada: 500 },
+    { mes: "Ago", consumo: 920, estoque: 1100, entrada: 650 },
+    { mes: "Set", consumo: 780, estoque: 1300, entrada: 800 },
+    { mes: "Out", consumo: 1050, estoque: 900, entrada: 400 },
+    { mes: "Nov", consumo: 880, estoque: 1150, entrada: 700 },
+    { mes: "Dez", consumo: 950, estoque: 1000, entrada: 600 }
+  ];
+
+  // Gerar dados para projeção de ruptura baseado nos produtos reais
+  const produtosRuptura = posicaoEstoque
+    .filter(item => item.quantidade_disponivel < 200)
+    .slice(0, 5)
+    .map(item => ({
+      codigo: item.produto_codigo,
+      descricao: item.produto_descricao.substring(0, 20) + "...",
+      diasRestantes: Math.floor(Math.random() * 30) + 5
+    }));
+
+  // Chart config
+  const chartConfig = {
+    consumo: {
+      label: "Consumo",
+      color: "#ef4444"
+    },
+    estoque: {
+      label: "Estoque",
+      color: "#3b82f6"
+    },
+    entrada: {
+      label: "Entrada",
+      color: "#22c55e"
+    }
+  };
 
   // Calcular métricas do dashboard
   const produtosComEstoque = posicaoEstoque.length;
@@ -264,25 +302,61 @@ const EstoqueDashboard = () => {
             <CardDescription>Últimos 6 meses</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-32 bg-gray-50 rounded-lg flex items-center justify-center">
-              <span className="text-gray-500">Gráfico de consumo</span>
-            </div>
+            <ChartContainer config={chartConfig} className="h-[200px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={consumoData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="mes" />
+                  <YAxis />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Line 
+                    type="monotone" 
+                    dataKey="consumo" 
+                    stroke="var(--color-consumo)" 
+                    strokeWidth={2}
+                    dot={{ fill: "var(--color-consumo)" }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="estoque" 
+                    stroke="var(--color-estoque)" 
+                    strokeWidth={2}
+                    dot={{ fill: "var(--color-estoque)" }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="entrada" 
+                    stroke="var(--color-entrada)" 
+                    strokeWidth={2}
+                    dot={{ fill: "var(--color-entrada)" }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartContainer>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Projeção de Ruptura</CardTitle>
-            <CardDescription>Top 10 produtos em risco</CardDescription>
+            <CardDescription>Top {produtosRuptura.length} produtos em risco</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {posicaoEstoque.slice(0, 3).map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-2 bg-red-50 rounded">
-                  <span className="text-sm font-medium">{item.produto_codigo}</span>
-                  <span className="text-xs text-red-600">15 dias</span>
+              {produtosRuptura.length > 0 ? produtosRuptura.map((item, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-red-50 rounded-lg border-l-4 border-l-red-500">
+                  <div>
+                    <span className="text-sm font-semibold text-gray-900">{item.codigo}</span>
+                    <p className="text-xs text-gray-600">{item.descricao}</p>
+                  </div>
+                  <span className="text-xs font-medium text-red-600">{item.diasRestantes} dias</span>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center py-4 text-gray-500">
+                  <Package className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">Nenhum produto em risco</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -295,15 +369,15 @@ const EstoqueDashboard = () => {
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between items-center p-2 bg-yellow-50 rounded">
-                <span className="text-sm">Janeiro 2024</span>
+                <span className="text-sm">Janeiro 2025</span>
                 <Badge variant="secondary">2 lotes</Badge>
               </div>
               <div className="flex justify-between items-center p-2 bg-orange-50 rounded">
-                <span className="text-sm">Fevereiro 2024</span>
+                <span className="text-sm">Fevereiro 2025</span>
                 <Badge variant="secondary">5 lotes</Badge>
               </div>
               <div className="flex justify-between items-center p-2 bg-red-50 rounded">
-                <span className="text-sm">Março 2024</span>
+                <span className="text-sm">Março 2025</span>
                 <Badge variant="secondary">1 lote</Badge>
               </div>
             </div>
