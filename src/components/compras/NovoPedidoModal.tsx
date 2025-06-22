@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,7 +47,21 @@ const NovoPedidoModal = ({ onClose }: NovoPedidoModalProps) => {
     modalidadeFrete: "cif",
     transportadora: "",
     placa: "",
-    informacoesAdicionais: ""
+    informacoesAdicionais: "",
+    // Campos de Recebimento
+    cnpjDestino: "",
+    filialUnidade: "",
+    cfop: "",
+    conta: "",
+    subConta: "",
+    codTribIcms: "",
+    centroCusto: "",
+    numeroLote: "",
+    qualidade: "",
+    numeroEmbalagens: 0,
+    qtdPorEmbalagem: 0,
+    pesoBruto: 0,
+    observacoesRecebimento: ""
   });
 
   const [produtos, setProdutos] = useState([
@@ -572,81 +585,285 @@ const NovoPedidoModal = ({ onClose }: NovoPedidoModalProps) => {
 
             {/* Aba Recebimento */}
             <TabsContent value="recebimento" className="space-y-6">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-bold">Itens de Recebimento</h4>
-                  <Button type="button" variant="outline" size="sm" onClick={addItemRecebimento}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Adicionar Item
-                  </Button>
-                </div>
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Produto</TableHead>
-                        <TableHead>Qtd. Pedido</TableHead>
-                        <TableHead>Qtd. Recebida</TableHead>
-                        <TableHead>Lote</TableHead>
-                        <TableHead>Número de Série</TableHead>
-                        <TableHead>Data de Vencimento</TableHead>
-                        <TableHead>Destino</TableHead>
-                        <TableHead>CNPJ Destino</TableHead>
-                        <TableHead>Localização</TableHead>
-                        <TableHead className="text-right">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {itensRecebimento.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell>
-                            <Input type="text" value={item.produto} onChange={(e) => updateItemRecebimento(item.id, "produto", e.target.value)} />
-                          </TableCell>
-                          <TableCell>
-                            <Input type="number" value={item.qtdPedido} onChange={(e) => updateItemRecebimento(item.id, "qtdPedido", parseFloat(e.target.value))} />
-                          </TableCell>
-                          <TableCell>
-                            <Input type="number" value={item.qtdRecebida} onChange={(e) => updateItemRecebimento(item.id, "qtdRecebida", parseFloat(e.target.value))} />
-                          </TableCell>
-                          <TableCell>
-                            <Input type="text" value={item.lote} onChange={(e) => updateItemRecebimento(item.id, "lote", e.target.value)} />
-                          </TableCell>
-                          <TableCell>
-                            <Input type="text" value={item.numeroSerie} onChange={(e) => updateItemRecebimento(item.id, "numeroSerie", e.target.value)} />
-                          </TableCell>
-                          <TableCell>
-                            <Input type="date" value={item.dataVencimento} onChange={(e) => updateItemRecebimento(item.id, "dataVencimento", e.target.value)} />
-                          </TableCell>
-                          <TableCell>
-                            <Select value={item.destino} onValueChange={(value) => updateItemRecebimento(item.id, "destino", value)}>
-                              <SelectTrigger className="w-32">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="estoque">Estoque</SelectItem>
-                                <SelectItem value="deposito">Depósito</SelectItem>
-                                <SelectItem value="filial">Filial</SelectItem>
-                                <SelectItem value="transportadora">Transportadora</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </TableCell>
-                          <TableCell>
-                            <Input type="text" value={item.cnpjDestino} onChange={(e) => updateItemRecebimento(item.id, "cnpjDestino", e.target.value)} placeholder="XX.XXX.XXX/XXXX-XX" />
-                          </TableCell>
-                          <TableCell>
-                            <Input type="text" value={item.localizacao} onChange={(e) => updateItemRecebimento(item.id, "localizacao", e.target.value)} placeholder="A-01-001" />
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button variant="ghost" size="sm" onClick={() => removeItemRecebimento(item.id)}>
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
+              {/* Informações de Destino */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Informações de Destino</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="cnpjDestino">CNPJ de Destino</Label>
+                      <Select value={formData.cnpjDestino} onValueChange={(value) => setFormData({ ...formData, cnpjDestino: value })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o CNPJ" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="98.765.432/0001-10">98.765.432/0001-10 - MATRIZ</SelectItem>
+                          <SelectItem value="98.765.432/0001-21">98.765.432/0001-21 - FILIAL SP</SelectItem>
+                          <SelectItem value="98.765.432/0001-32">98.765.432/0001-32 - FILIAL RJ</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="filialUnidade">Filial/Unidade</Label>
+                      <Select value={formData.filialUnidade} onValueChange={(value) => setFormData({ ...formData, filialUnidade: value })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione a unidade" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="matriz">Matriz</SelectItem>
+                          <SelectItem value="filial-sp">Filial São Paulo</SelectItem>
+                          <SelectItem value="filial-rj">Filial Rio de Janeiro</SelectItem>
+                          <SelectItem value="deposito">Depósito Central</SelectItem>
+                        </SelectContent>
+                      </Select>        
+                    </div>
+                    <div>
+                      <Label htmlFor="cfop">CFOP</Label>
+                      <Input 
+                        type="text" 
+                        id="cfop" 
+                        value={formData.cfop} 
+                        onChange={(e) => setFormData({ ...formData, cfop: e.target.value })}
+                        placeholder="1102"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Campos de Conta e Tributação */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label htmlFor="conta">Conta</Label>
+                        <Input 
+                          type="text" 
+                          id="conta" 
+                          value={formData.conta} 
+                          onChange={(e) => setFormData({ ...formData, conta: e.target.value })}
+                          placeholder="123"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="subConta">Sub Conta</Label>
+                        <Input 
+                          type="text" 
+                          id="subConta" 
+                          value={formData.subConta} 
+                          onChange={(e) => setFormData({ ...formData, subConta: e.target.value })}
+                          placeholder="001"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="codTribIcms">Cod Trib ICMS</Label>
+                      <Select value={formData.codTribIcms} onValueChange={(value) => setFormData({ ...formData, codTribIcms: value })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="importacao">Importação</SelectItem>
+                          <SelectItem value="51">51 - Diferimento</SelectItem>
+                          <SelectItem value="00">00 - Tributado</SelectItem>
+                          <SelectItem value="20">20 - Red. Base Cálculo</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Centro de Custo, Lote e Qualidade */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="centroCusto">C.Custo</Label>
+                      <Input 
+                        type="text" 
+                        id="centroCusto" 
+                        value={formData.centroCusto} 
+                        onChange={(e) => setFormData({ ...formData, centroCusto: e.target.value })}
+                        placeholder="ESTOQUE FORNECEDORES"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="numeroLote">Nr Lote</Label>
+                      <Input 
+                        type="text" 
+                        id="numeroLote" 
+                        value={formData.numeroLote} 
+                        onChange={(e) => setFormData({ ...formData, numeroLote: e.target.value })}
+                        placeholder="000001"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="qualidade">Qualidade</Label>
+                      <Select value={formData.qualidade} onValueChange={(value) => setFormData({ ...formData, qualidade: value })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="aprovado">Aprovado</SelectItem>
+                          <SelectItem value="reprovado">Reprovado</SelectItem>
+                          <SelectItem value="quarentena">Quarentena</SelectItem>
+                          <SelectItem value="pendente">Pendente</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Embalagem e Peso */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <Label htmlFor="numeroEmbalagens">Nr Embalagens</Label>
+                        <Input 
+                          type="number" 
+                          id="numeroEmbalagens" 
+                          value={formData.numeroEmbalagens} 
+                          onChange={(e) => setFormData({ ...formData, numeroEmbalagens: parseFloat(e.target.value) })}
+                          placeholder="1"
+                        />
+                      </div>
+                      <div className="flex items-end">
+                        <Badge variant="secondary" className="h-10 flex items-center">Múltiplo</Badge>
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="qtdPorEmbalagem">Qtd por Embalagem</Label>
+                      <Input 
+                        type="number" 
+                        id="qtdPorEmbalagem" 
+                        value={formData.qtdPorEmbalagem} 
+                        onChange={(e) => setFormData({ ...formData, qtdPorEmbalagem: parseFloat(e.target.value) })}
+                        placeholder="10"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <Label htmlFor="pesoBruto">Peso Bruto</Label>
+                        <Input 
+                          type="number" 
+                          step="0.01"
+                          id="pesoBruto" 
+                          value={formData.pesoBruto} 
+                          onChange={(e) => setFormData({ ...formData, pesoBruto: parseFloat(e.target.value) })}
+                          placeholder="25.50"
+                        />
+                      </div>
+                      <div className="flex items-end">
+                        <Badge variant="secondary" className="h-10 flex items-center">Kg</Badge>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Itens para Recebimento */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm">Itens para Recebimento</CardTitle>
+                    <Button type="button" variant="outline" size="sm" onClick={addItemRecebimento}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar Item
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Produto</TableHead>
+                          <TableHead>Qtd. Pedido</TableHead>
+                          <TableHead>Qtd. Recebida</TableHead>
+                          <TableHead>Lote</TableHead>
+                          <TableHead>Número de Série</TableHead>
+                          <TableHead>Data de Vencimento</TableHead>
+                          <TableHead>Destino</TableHead>
+                          <TableHead>CNPJ Destino</TableHead>
+                          <TableHead>Localização</TableHead>
+                          <TableHead className="text-right">Ações</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </div>
+                      </TableHeader>
+                      <TableBody>
+                        {itensRecebimento.map((item) => (
+                          <TableRow key={item.id}>
+                            <TableCell>
+                              <Input type="text" value={item.produto} onChange={(e) => updateItemRecebimento(item.id, "produto", e.target.value)} />
+                            </TableCell>
+                            <TableCell>
+                              <Input type="number" value={item.qtdPedido} onChange={(e) => updateItemRecebimento(item.id, "qtdPedido", parseFloat(e.target.value))} />
+                            </TableCell>
+                            <TableCell>
+                              <Input type="number" value={item.qtdRecebida} onChange={(e) => updateItemRecebimento(item.id, "qtdRecebida", parseFloat(e.target.value))} />
+                            </TableCell>
+                            <TableCell>
+                              <Input type="text" value={item.lote} onChange={(e) => updateItemRecebimento(item.id, "lote", e.target.value)} />
+                            </TableCell>
+                            <TableCell>
+                              <Input type="text" value={item.numeroSerie} onChange={(e) => updateItemRecebimento(item.id, "numeroSerie", e.target.value)} />
+                            </TableCell>
+                            <TableCell>
+                              <Input type="date" value={item.dataVencimento} onChange={(e) => updateItemRecebimento(item.id, "dataVencimento", e.target.value)} />
+                            </TableCell>
+                            <TableCell>
+                              <Select value={item.destino} onValueChange={(value) => updateItemRecebimento(item.id, "destino", value)}>
+                                <SelectTrigger className="w-32">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="estoque">Estoque</SelectItem>
+                                  <SelectItem value="deposito">Depósito</SelectItem>
+                                  <SelectItem value="filial">Filial</SelectItem>
+                                  <SelectItem value="transportadora">Transportadora</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </TableCell>
+                            <TableCell>
+                              <Input type="text" value={item.cnpjDestino} onChange={(e) => updateItemRecebimento(item.id, "cnpjDestino", e.target.value)} placeholder="XX.XXX.XXX/XXXX-XX" />
+                            </TableCell>
+                            <TableCell>
+                              <Input type="text" value={item.localizacao} onChange={(e) => updateItemRecebimento(item.id, "localizacao", e.target.value)} placeholder="A-01-001" />
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button variant="ghost" size="sm" onClick={() => removeItemRecebimento(item.id)}>
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Observações */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div>
+                    <Label htmlFor="observacoesRecebimento">Observações</Label>
+                    <Textarea 
+                      id="observacoesRecebimento" 
+                      value={formData.observacoesRecebimento} 
+                      onChange={(e) => setFormData({ ...formData, observacoesRecebimento: e.target.value })}
+                      placeholder="Digite observações sobre o recebimento..."
+                      rows={3}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </CardContent>
