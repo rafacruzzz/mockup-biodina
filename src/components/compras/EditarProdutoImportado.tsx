@@ -16,7 +16,11 @@ interface EditarProdutoImportadoProps {
 }
 
 const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImportadoProps) => {
-  const [produtoEditado, setProdutoEditado] = useState({ ...produto });
+  const [produtoEditado, setProdutoEditado] = useState({ 
+    ...produto,
+    // Ensure tipoProduto has a default value if undefined
+    tipoProduto: produto.tipoProduto || "Medicamento"
+  });
 
   const handleSave = () => {
     onSave(produtoEditado);
@@ -62,7 +66,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 <Label htmlFor="codigoFornecedor">Código do Fornecedor</Label>
                 <Input
                   id="codigoFornecedor"
-                  value={produtoEditado.codigoFornecedor}
+                  value={produtoEditado.codigoFornecedor || ''}
                   onChange={(e) => updateField('codigoFornecedor', e.target.value)}
                 />
               </div>
@@ -71,7 +75,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 <Label htmlFor="codigo">Código do Produto</Label>
                 <Input
                   id="codigo"
-                  value={produtoEditado.codigo}
+                  value={produtoEditado.codigo || ''}
                   onChange={(e) => updateField('codigo', e.target.value)}
                 />
               </div>
@@ -80,7 +84,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 <Label htmlFor="descricao">Nome do Produto</Label>
                 <Input
                   id="descricao"
-                  value={produtoEditado.descricao}
+                  value={produtoEditado.descricao || ''}
                   onChange={(e) => updateField('descricao', e.target.value)}
                 />
               </div>
@@ -91,7 +95,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                   id="valorUnitario"
                   type="number"
                   step="0.01"
-                  value={produtoEditado.valorUnitario}
+                  value={produtoEditado.valorUnitario || ''}
                   onChange={(e) => updateField('valorUnitario', parseFloat(e.target.value))}
                 />
               </div>
@@ -101,7 +105,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 <Input
                   id="quantidade"
                   type="number"
-                  value={produtoEditado.quantidade}
+                  value={produtoEditado.quantidade || ''}
                   onChange={(e) => updateField('quantidade', parseInt(e.target.value))}
                 />
               </div>
@@ -110,7 +114,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 <Label htmlFor="ncm">NCM</Label>
                 <Input
                   id="ncm"
-                  value={produtoEditado.ncm}
+                  value={produtoEditado.ncm || ''}
                   onChange={(e) => updateField('ncm', e.target.value)}
                 />
               </div>
@@ -119,7 +123,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 <Label htmlFor="codigoBarras">Código de Barras</Label>
                 <Input
                   id="codigoBarras"
-                  value={produtoEditado.codigoBarras}
+                  value={produtoEditado.codigoBarras || ''}
                   onChange={(e) => updateField('codigoBarras', e.target.value)}
                 />
               </div>
@@ -131,7 +135,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                   onValueChange={(value) => updateField('tipoProduto', value)}
                 >
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder="Selecione o tipo" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Medicamento">Medicamento</SelectItem>
@@ -146,7 +150,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="controladoPorLote"
-                    checked={produtoEditado.controladoPorLote}
+                    checked={produtoEditado.controladoPorLote || false}
                     onCheckedChange={(checked) => updateField('controladoPorLote', checked)}
                   />
                   <Label htmlFor="controladoPorLote">Controlado por lote</Label>
@@ -155,7 +159,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="requerNumeroSerie"
-                    checked={produtoEditado.requerNumeroSerie}
+                    checked={produtoEditado.requerNumeroSerie || false}
                     onCheckedChange={(checked) => updateField('requerNumeroSerie', checked)}
                   />
                   <Label htmlFor="requerNumeroSerie">Requer número de série</Label>
@@ -186,7 +190,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 </Label>
                 <Input
                   id="lote"
-                  value={produtoEditado.lote}
+                  value={produtoEditado.lote || ''}
                   onChange={(e) => updateField('lote', e.target.value)}
                   className="bg-yellow-50 border-yellow-200"
                   required={produtoEditado.controladoPorLote}
@@ -203,7 +207,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 </Label>
                 <Input
                   id="numeroSerie"
-                  value={produtoEditado.numeroSerie}
+                  value={produtoEditado.numeroSerie || ''}
                   onChange={(e) => updateField('numeroSerie', e.target.value)}
                   className="bg-blue-50 border-blue-200"
                   required={produtoEditado.requerNumeroSerie}
@@ -218,7 +222,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 <Input
                   id="dataValidade"
                   type="date"
-                  value={produtoEditado.dataValidade}
+                  value={produtoEditado.dataValidade || ''}
                   onChange={(e) => updateField('dataValidade', e.target.value)}
                 />
               </div>
@@ -231,7 +235,7 @@ const EditarProdutoImportado = ({ produto, onClose, onSave }: EditarProdutoImpor
                 <Input
                   id="dataFabricacao"
                   type="date"
-                  value={produtoEditado.dataFabricacao}
+                  value={produtoEditado.dataFabricacao || ''}
                   onChange={(e) => updateField('dataFabricacao', e.target.value)}
                 />
               </div>
