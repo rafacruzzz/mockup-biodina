@@ -3,16 +3,19 @@ import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import EstoqueSidebar from "@/components/estoque/EstoqueSidebar";
 import EstoqueDashboard from "@/components/estoque/EstoqueDashboard";
-import MovimentacaoEstoqueForm from "@/components/estoque/MovimentacaoEstoqueForm";
+import NovaMovimentacaoModal from "@/components/estoque/NovaMovimentacaoModal";
+import MovimentacoesDataTable from "@/components/estoque/MovimentacoesDataTable";
 import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
 import { estoqueModules } from "@/data/estoqueModules";
+import { MovimentacaoEstoque } from "@/types/estoque";
 
 const Estoque = () => {
   const [activeModule, setActiveModule] = useState('');
   const [activeSubModule, setActiveSubModule] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
+  const [isNovaMovimentacaoOpen, setIsNovaMovimentacaoOpen] = useState(false);
 
   useEffect(() => {
     if (!activeModule) {
@@ -47,15 +50,24 @@ const Estoque = () => {
   };
 
   const handleNewRecord = () => {
-    console.log('Novo registro para:', activeModule, activeSubModule);
+    if (activeModule === 'movimentacoes') {
+      setIsNovaMovimentacaoOpen(true);
+    } else {
+      console.log('Novo registro para:', activeModule, activeSubModule);
+    }
   };
 
   const handleRowClick = (item: any) => {
     console.log('Item clicado:', item);
   };
 
+  const handleMovimentacaoDetails = (item: MovimentacaoEstoque) => {
+    console.log('Detalhes da movimentação:', item);
+    // Aqui você pode abrir um modal de detalhes
+  };
+
   const getButtonText = () => {
-    if (activeModule === 'movimentacao_estoque') {
+    if (activeModule === 'movimentacoes') {
       return 'Nova Movimentação';
     }
     if (activeModule === 'ajustes') {
@@ -80,9 +92,7 @@ const Estoque = () => {
         />
 
         <div className="flex-1 flex flex-col min-h-0">
-          {activeModule === 'movimentacao_estoque' && activeSubModule === 'formulario' ? (
-            <MovimentacaoEstoqueForm />
-          ) : activeSubModule && currentSubModule ? (
+          {activeSubModule && currentSubModule ? (
             <>
               <ContentHeader
                 title={currentSubModule.name}
@@ -94,11 +104,18 @@ const Estoque = () => {
               />
 
               <div className="flex-1 p-6 min-h-0">
-                <DataTable 
-                  data={currentSubModule?.data || []} 
-                  moduleName={currentSubModule?.name || ''}
-                  onRowClick={handleRowClick}
-                />
+                {activeModule === 'movimentacoes' && activeSubModule === 'historico' ? (
+                  <MovimentacoesDataTable 
+                    data={currentSubModule?.data || []} 
+                    onRowDetails={handleMovimentacaoDetails}
+                  />
+                ) : (
+                  <DataTable 
+                    data={currentSubModule?.data || []} 
+                    moduleName={currentSubModule?.name || ''}
+                    onRowClick={handleRowClick}
+                  />
+                )}
               </div>
             </>
           ) : (
@@ -106,6 +123,11 @@ const Estoque = () => {
           )}
         </div>
       </div>
+
+      <NovaMovimentacaoModal 
+        isOpen={isNovaMovimentacaoOpen}
+        onOpenChange={setIsNovaMovimentacaoOpen}
+      />
     </SidebarLayout>
   );
 };

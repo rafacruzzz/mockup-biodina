@@ -15,7 +15,11 @@ import { estoqueModules } from "@/data/estoqueModules";
 import HistoricoMovimentacoesModal from "./HistoricoMovimentacoesModal";
 import { useToast } from "@/hooks/use-toast";
 
-const MovimentacaoEstoqueForm = () => {
+interface MovimentacaoEstoqueFormProps {
+  onClose?: () => void;
+}
+
+const MovimentacaoEstoqueForm = ({ onClose }: MovimentacaoEstoqueFormProps) => {
   const { toast } = useToast();
   const [isHistoricoOpen, setIsHistoricoOpen] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
@@ -143,6 +147,9 @@ const MovimentacaoEstoqueForm = () => {
       title: "Movimentação confirmada",
       description: "A movimentação foi processada com sucesso",
     });
+    if (onClose) {
+      onClose();
+    }
   };
 
   const gerarNF = () => {
@@ -189,7 +196,7 @@ const MovimentacaoEstoqueForm = () => {
   };
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       {/* Card 1: Cabeçalho */}
       <Card className={`${getCorTipoMovimentacao()} border-l-4`}>
         <CardHeader className="flex flex-row items-center justify-between">

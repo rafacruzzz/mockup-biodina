@@ -1,6 +1,5 @@
-
 import { Package, ArrowUpDown, Settings, FileText } from "lucide-react";
-import { EstoqueModulesConfig } from "@/types/estoque";
+import { EstoqueModulesConfig, StatusMovimentacao, TipoMovimentacaoHistorico } from "@/types/estoque";
 
 const mockPosicaoEstoque = [
   {
@@ -76,27 +75,75 @@ const mockPosicaoEstoque = [
 const mockMovimentacoes = [
   {
     id: 1,
-    tipo: "entrada",
+    tipo: "transferencia",
+    tipo_interno: TipoMovimentacaoHistorico.ENTRE_CNPJS,
     produto_codigo: "SER001",
     produto_descricao: "Seringa 3ml BD",
     lote: "L2305",
-    quantidade: 500,
-    data_movimentacao: "2024-01-15",
-    documento: "DI-4928",
-    cnpj_destino: "WebMED RJ",
-    usuario: "João Silva"
+    quantidade: 1200,
+    data_movimentacao: "2025-06-21",
+    documento: "MOV-001478",
+    cnpj_origem: "WebMED RJ",
+    cnpj_destino: "Distrib. SP",
+    deposito_origem: "Prateleira A2",
+    deposito_destino: "Estoque Central",
+    usuario: "Thaís Silva",
+    status: StatusMovimentacao.CONCLUIDA,
+    nf_vinculada: "NF 001478",
+    pedido_vinculado: "PED-12345"
   },
   {
     id: 2,
-    tipo: "saida",
+    tipo: "transferencia",
+    tipo_interno: TipoMovimentacaoHistorico.INTERNA,
     produto_codigo: "NOB200",
     produto_descricao: "Nobreak 600VA PowerTech",
     lote: "S349001",
-    quantidade: 2,
-    data_movimentacao: "2024-01-14",
-    documento: "PED-67890",
+    quantidade: 1,
+    data_movimentacao: "2025-06-20",
+    documento: "MOV-001479",
     cnpj_origem: "WebMED JF",
-    usuario: "Maria Santos"
+    cnpj_destino: "WebMED JF",
+    deposito_origem: "Galpão",
+    deposito_destino: "Câmara 1",
+    usuario: "Janaína Santos",
+    status: StatusMovimentacao.PENDENTE
+  },
+  {
+    id: 3,
+    tipo: "transferencia",
+    tipo_interno: TipoMovimentacaoHistorico.ENTRE_CNPJS,
+    produto_codigo: "CAT024",
+    produto_descricao: "Cateter Venoso 24G",
+    lote: "CT2401",
+    quantidade: 150,
+    data_movimentacao: "2025-06-19",
+    documento: "MOV-001480",
+    cnpj_origem: "WebMED RJ",
+    cnpj_destino: "WebMED Matriz",
+    deposito_origem: "Refrigerado A1",
+    deposito_destino: "Almoxarifado",
+    usuario: "Carlos Mendes",
+    status: StatusMovimentacao.CONCLUIDA,
+    nf_vinculada: "NF 001480",
+    produtos_adicionais: 2
+  },
+  {
+    id: 4,
+    tipo: "transferencia",
+    tipo_interno: TipoMovimentacaoHistorico.INTERNA,
+    produto_codigo: "SER001",
+    produto_descricao: "Seringa 3ml BD",
+    lote: "L2308",
+    quantidade: 500,
+    data_movimentacao: "2025-06-18",
+    documento: "MOV-001481",
+    cnpj_origem: "Distrib. SP",
+    cnpj_destino: "Distrib. SP",
+    deposito_origem: "Câmara 3",
+    deposito_destino: "Estoque Central",
+    usuario: "Ana Costa",
+    status: StatusMovimentacao.CANCELADA
   }
 ];
 
@@ -141,13 +188,13 @@ export const estoqueModules: EstoqueModulesConfig = {
       }
     }
   },
-  movimentacao_estoque: {
-    name: "Movimentação de Estoque",
+  movimentacoes: {
+    name: "Movimentações",
     icon: ArrowUpDown,
     subModules: {
-      formulario: {
-        name: "Nova Movimentação",
-        data: []
+      historico: {
+        name: "Histórico",
+        data: mockMovimentacoes
       }
     }
   },

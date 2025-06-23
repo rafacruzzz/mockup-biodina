@@ -20,6 +20,7 @@ export interface PosicaoEstoque {
 export interface MovimentacaoEstoque {
   id: number;
   tipo: 'entrada' | 'saida' | 'transferencia' | 'ajuste';
+  tipo_interno: TipoMovimentacaoHistorico;
   produto_codigo: string;
   produto_descricao: string;
   lote: string;
@@ -28,7 +29,24 @@ export interface MovimentacaoEstoque {
   documento: string;
   cnpj_origem?: string;
   cnpj_destino?: string;
+  deposito_origem?: string;
+  deposito_destino?: string;
   usuario: string;
+  status: StatusMovimentacao;
+  nf_vinculada?: string;
+  pedido_vinculado?: string;
+  produtos_adicionais?: number;
+}
+
+export enum StatusMovimentacao {
+  PENDENTE = 'pendente',
+  CONCLUIDA = 'concluida',
+  CANCELADA = 'cancelada'
+}
+
+export enum TipoMovimentacaoHistorico {
+  INTERNA = 'interna',
+  ENTRE_CNPJS = 'entre_cnpjs'
 }
 
 export interface CNPJ {
