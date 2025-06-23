@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,6 +13,7 @@ import { FormMovimentacao, TipoMovimentacao, ItemMovimentacao } from "@/types/es
 import { mockCNPJs, mockDepositos } from "@/data/estoqueModules";
 import { estoqueModules } from "@/data/estoqueModules";
 import HistoricoMovimentacoesModal from "./HistoricoMovimentacoesModal";
+import ConfirmacaoNFModal from "./ConfirmacaoNFModal";
 import { useToast } from "@/hooks/use-toast";
 
 interface MovimentacaoEstoqueFormProps {
@@ -23,7 +23,9 @@ interface MovimentacaoEstoqueFormProps {
 const MovimentacaoEstoqueForm = ({ onClose }: MovimentacaoEstoqueFormProps) => {
   const { toast } = useToast();
   const [isHistoricoOpen, setIsHistoricoOpen] = useState(false);
+  const [isConfirmacaoNFOpen, setIsConfirmacaoNFOpen] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
+  const [nfGeradaMatriz, setNfGeradaMatriz] = useState(false);
   const [formData, setFormData] = useState<FormMovimentacao>({
     data_movimentacao: new Date().toISOString().split('T')[0],
     tipo_movimentacao: TipoMovimentacao.ENTRE_DEPOSITOS,
@@ -58,6 +60,12 @@ const MovimentacaoEstoqueForm = ({ onClose }: MovimentacaoEstoqueFormProps) => {
       return cnpjOrigemNome === cnpjDestinoNome ? TipoMovimentacao.ENTRE_DEPOSITOS : TipoMovimentacao.ENTRE_CNPJS;
     }
     return TipoMovimentacao.ENTRE_DEPOSITOS;
+  };
+
+  // Verificar se pode confirmar movimentação
+  const podeConfirmarMovimentacao = () => {
+    const nfVinculadaPreenchida = formData.nf_vinculada.trim() !== '';
+    return (nfVinculadaPreenchida || nfGeradaMatriz) && formData.itens.length > 0;
   };
 
   const handleCNPJChange = (field: 'cnpj_origem' | 'cnpj_destino', value: string) => {
@@ -162,9 +170,14 @@ const MovimentacaoEstoqueForm = ({ onClose }: MovimentacaoEstoqueFormProps) => {
   };
 
   const darEntradaComNF = () => {
+    setIsConfirmacaoNFOpen(true);
+  };
+
+  const handleConfirmarGeracaoNF = () => {
+    setNfGeradaMatriz(true);
     toast({
-      title: "Entrada processada",
-      description: "Entrada com NF da matriz processada",
+      title: "NF da Matriz gerada",
+      description: "Nota fiscal da matriz foi gerada e anexada ao movimento",
     });
   };
 
@@ -318,6 +331,11 @@ const MovimentacaoEstoqueForm = ({ onClose }: MovimentacaoEstoqueFormProps) => {
                     <p>Obrigatória para movimentações entre CNPJs</p>
                   </TooltipContent>
                 </Tooltip>
+                {nfGeradaMatriz && (
+                  <Badge variant="secondary" className="text-xs bg-green-100 text-green-800">
+                    NF Gerada
+                  </Badge>
+                )}
               </Label>
               <Input
                 id="nf-vinculada"
@@ -478,7 +496,7 @@ const MovimentacaoEstoqueForm = ({ onClose }: MovimentacaoEstoqueFormProps) => {
             <Button 
               onClick={confirmarMovimentacao} 
               className="bg-green-600 hover:bg-green-700"
-              disabled={formData.itens.length === 0}
+              disabled={!podeConfirmarMovimentacao()}
             >
               <CheckCircle className="h-4 w-4 mr-2" />
               Confirmar Movimentação
@@ -507,6 +525,12 @@ const MovimentacaoEstoqueForm = ({ onClose }: MovimentacaoEstoqueFormProps) => {
       <HistoricoMovimentacoesModal 
         isOpen={isHistoricoOpen}
         onOpenChange={setIsHistoricoOpen}
+      />
+
+      <ConfirmacaoNFModal 
+        isOpen={isConfirmacaoNFOpen}
+        onOpenChange={setIsConfirmacaoNFOpen}
+        onConfirm={handleConfirmarGeracaoNF}
       />
     </div>
   );
