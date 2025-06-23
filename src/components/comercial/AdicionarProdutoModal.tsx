@@ -1,9 +1,9 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Package, Eye, Building } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Search, Package, Eye, Building, Plus, ShoppingCart } from "lucide-react";
 import { ProdutoPedido, UnidadeVenda } from "@/types/comercial";
 import { mockProdutosCatalogo, mockProdutosEstoque } from "@/data/comercialEstoque";
 import DetalhesEstoqueProduto from "./DetalhesEstoqueProduto";
@@ -18,6 +18,7 @@ interface AdicionarProdutoModalProps {
 const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: AdicionarProdutoModalProps) => {
   const [busca, setBusca] = useState('');
   const [produtoSelecionado, setProdutoSelecionado] = useState<string | null>(null);
+  const [quantidades, setQuantidades] = useState<Record<string, number>>({});
   const [filtros, setFiltros] = useState<FiltrosState>({
     cnpjs: [],
     tipoEstoque: [],
@@ -103,6 +104,42 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
     setProdutoSelecionado(null);
   };
 
+  const handleAdicionarDireto = (codigo: string) => {
+    const quantidade = quantidades[codigo] || 1;
+    const produtoCatalogo = mockProdutosCatalogo.find(p => p.codigo === codigo);
+    const estoqueInfo = mockProdutosEstoque[codigo];
+    
+    if (!produtoCatalogo || !estoqueInfo || quantidade > estoqueInfo.totalDisponivel) return;
+
+    const produto: ProdutoPedido = {
+      id: Date.now(),
+      codigo: produtoCatalogo.codigo,
+      descricao: produtoCatalogo.descricao,
+      quantidade,
+      unidade: UnidadeVenda.UNIDADE,
+      precoUnitario: estoqueInfo.precoSugerido,
+      desconto: 0,
+      precoFinal: estoqueInfo.precoSugerido * quantidade,
+      observacoes: '',
+      estoqueDisponivel: estoqueInfo
+    };
+
+    onAdicionarProduto(produto);
+    
+    // Limpar a quantidade após adicionar
+    setQuantidades(prev => ({ ...prev, [codigo]: 1 }));
+  };
+
+  const handleQuantidadeChange = (codigo: string, novaQuantidade: number) => {
+    const estoque = mockProdutosEstoque[codigo];
+    const quantidadeValida = Math.max(1, Math.min(novaQuantidade, estoque?.totalDisponivel || 1));
+    setQuantidades(prev => ({ ...prev, [codigo]: quantidadeValida }));
+  };
+
+  const getQuantidadeProduto = (codigo: string) => {
+    return quantidades[codigo] || 1;
+  };
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -161,6 +198,7 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
               {produtosFiltrados.map((produto) => {
                 const estoque = mockProdutosEstoque[produto.codigo];
                 const statusEstoque = getEstoqueStatus(estoque.totalDisponivel);
+                const quantidadeAtual = getQuantidadeProduto(produto.codigo);
                 
                 return (
                   <div key={produto.codigo} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
@@ -262,16 +300,59 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
                         )}
                       </div>
                       
-                      {/* Botão de Ação */}
-                      <div className="ml-4">
-                        <button
-                          onClick={() => setProdutoSelecionado(produto.codigo)}
-                          disabled={estoque.totalDisponivel === 0}
-                          className="bg-biodina-gold hover:bg-biodina-gold/90 disabled:bg-gray-300 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-                        >
-                          <Eye className="h-4 w-4" />
-                          Ver Detalhes
-                        </button>
+                      {/* Área de Ação - Quantidade e Botões */}
+                      <div className="ml-4 flex flex-col gap-3 min-w-[200px]">
+                        {/* Campo de Quantidade */}
+                        <div className="flex items-center gap-2">
+                          <label className="text-sm font-medium text-gray-700 min-w-[60px]">
+                            Qtd:
+                          </label>
+                          <Input
+                            type="number"
+                            min="1"
+                            max={estoque.totalDisponivel}
+                            value={quantidadeAtual}
+                            onChange={(e) => handleQuantidadeChange(produto.codigo, parseInt(e.target.value) || 1)}
+                            className="w-20 h-8 text-center"
+                            disabled={estoque.totalDisponivel === 0}
+                          />
+                        </div>
+
+                        {/* Total Calculado */}
+                        <div className="text-sm">
+                          <span className="text-gray-600">Total: </span>
+                          <span className="font-bold text-green-600">
+                            {formatCurrency(estoque.precoSugerido * quantidadeAtual)}
+                          </span>
+                        </div>
+
+                        {/* Botões de Ação */}
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => handleAdicionarDireto(produto.codigo)}
+                            disabled={estoque.totalDisponivel === 0 || quantidadeAtual > estoque.totalDisponivel}
+                            className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 text-sm flex items-center gap-1 flex-1"
+                          >
+                            <Plus className="h-3 w-3" />
+                            Adicionar
+                          </Button>
+                          
+                          <Button
+                            onClick={() => setProdutoSelecionado(produto.codigo)}
+                            variant="outline"
+                            className="px-3 py-2 text-sm flex items-center gap-1"
+                          >
+                            <Eye className="h-3 w-3" />
+                            Detalhes
+                          </Button>
+                        </div>
+
+                        {/* Validação de Quantidade */}
+                        {quantidadeAtual > estoque.totalDisponivel && (
+                          <div className="text-xs text-red-600 bg-red-50 p-2 rounded border border-red-200">
+                            ⚠️ Quantidade maior que disponível
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
