@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import EstoqueSidebar from "@/components/estoque/EstoqueSidebar";
 import EstoqueDashboard from "@/components/estoque/EstoqueDashboard";
 import NovaMovimentacaoModal from "@/components/estoque/NovaMovimentacaoModal";
+import MovExcelModal from "@/components/estoque/MovExcelModal";
 import MovimentacoesDataTable from "@/components/estoque/MovimentacoesDataTable";
 import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
@@ -16,6 +16,7 @@ const Estoque = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
   const [isNovaMovimentacaoOpen, setIsNovaMovimentacaoOpen] = useState(false);
+  const [isMovExcelOpen, setIsMovExcelOpen] = useState(false);
 
   useEffect(() => {
     if (!activeModule) {
@@ -76,6 +77,10 @@ const Estoque = () => {
     return 'Novo Registro';
   };
 
+  const handleExcelClick = () => {
+    setIsMovExcelOpen(true);
+  };
+
   const currentSubModule = activeModule && activeSubModule ? 
     estoqueModules[activeModule as keyof typeof estoqueModules]?.subModules[activeSubModule] : null;
 
@@ -101,10 +106,12 @@ const Estoque = () => {
                 onSearchChange={setSearchTerm}
                 onNewRecord={handleNewRecord}
                 buttonText={getButtonText()}
+                showExcelButton={activeModule === 'movimentacoes'}
+                onExcelClick={handleExcelClick}
               />
 
               <div className="flex-1 p-6 min-h-0">
-                {activeModule === 'movimentacoes' && activeSubModule === 'historico' ? (
+                {activeModule === 'movimentacoes' && activeSubModule === 'movimentacao_estoque' ? (
                   <MovimentacoesDataTable 
                     data={currentSubModule?.data || []} 
                     onRowDetails={handleMovimentacaoDetails}
@@ -127,6 +134,11 @@ const Estoque = () => {
       <NovaMovimentacaoModal 
         isOpen={isNovaMovimentacaoOpen}
         onOpenChange={setIsNovaMovimentacaoOpen}
+      />
+
+      <MovExcelModal 
+        isOpen={isMovExcelOpen}
+        onOpenChange={setIsMovExcelOpen}
       />
     </SidebarLayout>
   );

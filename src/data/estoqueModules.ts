@@ -192,8 +192,8 @@ export const estoqueModules: EstoqueModulesConfig = {
     name: "Movimentações",
     icon: ArrowUpDown,
     subModules: {
-      historico: {
-        name: "Histórico",
+      movimentacao_estoque: {
+        name: "Movimentação de Estoque",
         data: mockMovimentacoes
       }
     }

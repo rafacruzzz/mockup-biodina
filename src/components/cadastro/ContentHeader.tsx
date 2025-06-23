@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Filter, Download, Upload } from "lucide-react";
+import { Plus, Search, Filter, Download, Upload, FileSpreadsheet } from "lucide-react";
 
 interface ContentHeaderProps {
   title: string;
@@ -10,6 +10,8 @@ interface ContentHeaderProps {
   onSearchChange: (value: string) => void;
   onNewRecord: () => void;
   buttonText?: string;
+  showExcelButton?: boolean;
+  onExcelClick?: () => void;
 }
 
 const ContentHeader = ({ 
@@ -18,7 +20,9 @@ const ContentHeader = ({
   searchTerm, 
   onSearchChange, 
   onNewRecord,
-  buttonText = "Novo Registro"
+  buttonText = "Novo Registro",
+  showExcelButton = false,
+  onExcelClick
 }: ContentHeaderProps) => {
   return (
     <div className="bg-white border-b border-gray-200/80 p-6">
@@ -27,13 +31,25 @@ const ContentHeader = ({
           <h1 className="text-3xl font-bold text-biodina-blue mb-2">{title}</h1>
           <p className="text-gray-600">{description}</p>
         </div>
-        <Button 
-          onClick={onNewRecord}
-          className="bg-gradient-to-r from-biodina-gold to-biodina-gold/90 hover:from-biodina-gold/90 hover:to-biodina-gold text-white shadow-lg hover:shadow-xl transition-all duration-200"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          {buttonText}
-        </Button>
+        <div className="flex gap-3">
+          {showExcelButton && (
+            <Button 
+              onClick={onExcelClick}
+              variant="outline"
+              className="border-biodina-gold text-biodina-gold hover:bg-biodina-gold hover:text-white"
+            >
+              <FileSpreadsheet className="h-4 w-4 mr-2" />
+              Mov. por Excel
+            </Button>
+          )}
+          <Button 
+            onClick={onNewRecord}
+            className="bg-gradient-to-r from-biodina-gold to-biodina-gold/90 hover:from-biodina-gold/90 hover:to-biodina-gold text-white shadow-lg hover:shadow-xl transition-all duration-200"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            {buttonText}
+          </Button>
+        </div>
       </div>
 
       <div className="flex gap-4 items-center">
