@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -5,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, Package, Eye, Building } from "lucide-react";
 import { ProdutoPedido, UnidadeVenda } from "@/types/comercial";
 import { mockProdutosCatalogo, mockProdutosEstoque } from "@/data/comercialEstoque";
-import AdicionarProdutoRapidoModal from "./AdicionarProdutoRapidoModal";
+import DetalhesEstoqueProduto from "./DetalhesEstoqueProduto";
 import FiltrosAvancados, { FiltrosState } from "./FiltrosAvancados";
 
 interface AdicionarProdutoModalProps {
@@ -290,7 +291,7 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
       </Dialog>
 
       {produtoSelecionado && (
-        <AdicionarProdutoRapidoModal
+        <DetalhesEstoqueProduto
           isOpen={!!produtoSelecionado}
           onClose={() => setProdutoSelecionado(null)}
           produto={mockProdutosCatalogo.find(p => p.codigo === produtoSelecionado)!}
