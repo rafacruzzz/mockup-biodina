@@ -157,11 +157,12 @@ export interface SolicitacaoReposicao {
 }
 
 export enum StatusSeparacao {
-  DISPONIVEL = 'disponivel',
+  SEPARADO = 'separado',
   SEPARADO_PARCIAL = 'separado_parcial',
   INDISPONIVEL = 'indisponivel',
   PLANEJADO = 'planejado',
-  FINALIZADO = 'finalizado'
+  FINALIZADO = 'finalizado',
+  SOLICITADO = 'solicitado'
 }
 
 export enum StatusItemSeparacao {

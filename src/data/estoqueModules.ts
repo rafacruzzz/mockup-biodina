@@ -217,7 +217,7 @@ const mockPedidosSeparacao: PedidoSeparacao[] = [
     cliente: "IDEAS",
     endereco_cliente: "Av. Presidente Vargas, 456 - Centro, Rio de Janeiro - RJ",
     data_entrega: "2025-05-20",
-    status: StatusSeparacao.DISPONIVEL,
+    status: StatusSeparacao.SOLICITADO,
     regiao: "RJ",
     transportadora: "",
     quantidade_volumes: 2,
@@ -238,6 +238,109 @@ const mockPedidosSeparacao: PedidoSeparacao[] = [
         codigo_produto: "NOB200",
         descricao_produto: "Nobreak 600VA PowerTech",
         quantidade_solicitada: 1,
+        quantidade_separada: 0,
+        status: StatusItemSeparacao.PENDENTE
+      }
+    ]
+  },
+  {
+    id: 3,
+    numero_pedido: "85821",
+    nop: "6.234 SP",
+    vendedor: "carlos.santos",
+    cliente: "Hospital Santa Maria",
+    endereco_cliente: "Rua das Flores, 789 - Vila Madalena, São Paulo - SP",
+    data_entrega: "2025-05-21",
+    status: StatusSeparacao.SEPARADO,
+    regiao: "SP",
+    transportadora: "Transportes Express",
+    quantidade_volumes: 5,
+    peso_bruto: 22.8,
+    peso_liquido: 18.5,
+    progresso: { separados: 4, total: 4 },
+    itens: [
+      {
+        id: 6,
+        codigo_produto: "MED150",
+        descricao_produto: "Kit Diagnóstico Rápido",
+        quantidade_solicitada: 20,
+        quantidade_separada: 20,
+        status: StatusItemSeparacao.SEPARADO
+      },
+      {
+        id: 7,
+        codigo_produto: "LAB300",
+        descricao_produto: "Reagente para Análise",
+        quantidade_solicitada: 5,
+        quantidade_separada: 5,
+        status: StatusItemSeparacao.SEPARADO
+      }
+    ]
+  },
+  {
+    id: 4,
+    numero_pedido: "85934",
+    nop: "6.445 RJ",
+    vendedor: "ana.costa",
+    cliente: "Clínica Renovar",
+    endereco_cliente: "Av. Atlântica, 1200 - Copacabana, Rio de Janeiro - RJ",
+    data_entrega: "2025-05-18",
+    status: StatusSeparacao.FINALIZADO,
+    regiao: "RJ",
+    transportadora: "LogFast",
+    observacoes: "Entrega urgente - cliente preferencial",
+    quantidade_volumes: 2,
+    peso_bruto: 12.3,
+    peso_liquido: 9.8,
+    progresso: { separados: 3, total: 3 },
+    itens: [
+      {
+        id: 8,
+        codigo_produto: "EQP400",
+        descricao_produto: "Monitor Multiparâmetro",
+        quantidade_solicitada: 1,
+        quantidade_separada: 1,
+        status: StatusItemSeparacao.SEPARADO
+      },
+      {
+        id: 9,
+        codigo_produto: "ACC200",
+        descricao_produto: "Cabo de ECG 12 derivações",
+        quantidade_solicitada: 3,
+        quantidade_separada: 3,
+        status: StatusItemSeparacao.SEPARADO
+      }
+    ]
+  },
+  {
+    id: 5,
+    numero_pedido: "86102",
+    nop: "6.678 SP",
+    vendedor: "rafael.oliveira",
+    cliente: "Lab Excelência",
+    endereco_cliente: "Rua Augusta, 2500 - Cerqueira César, São Paulo - SP",
+    data_entrega: "2025-05-22",
+    status: StatusSeparacao.PLANEJADO,
+    regiao: "SP",
+    transportadora: "",
+    quantidade_volumes: 1,
+    peso_bruto: 5.2,
+    peso_liquido: 4.1,
+    progresso: { separados: 0, total: 2 },
+    itens: [
+      {
+        id: 10,
+        codigo_produto: "BIO500",
+        descricao_produto: "Kit Bioquímica Completo",
+        quantidade_solicitada: 1,
+        quantidade_separada: 0,
+        status: StatusItemSeparacao.PENDENTE
+      },
+      {
+        id: 11,
+        codigo_produto: "CTR100",
+        descricao_produto: "Controle de Qualidade",
+        quantidade_solicitada: 2,
         quantidade_separada: 0,
         status: StatusItemSeparacao.PENDENTE
       }
@@ -280,7 +383,7 @@ export const estoqueModules: EstoqueModulesConfig = {
         data: mockPosicaoEstoque
       },
       separacao_estoque: {
-        name: "Separação de Estoque",
+        name: "Separação",
         data: mockPedidosSeparacao
       }
     }

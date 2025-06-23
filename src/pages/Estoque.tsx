@@ -90,6 +90,10 @@ const Estoque = () => {
     setIsMovExcelOpen(true);
   };
 
+  const shouldShowNewButton = () => {
+    return activeModule !== 'posicao_estoque' || activeSubModule !== 'separacao_estoque';
+  };
+
   const currentSubModule = activeModule && activeSubModule ? 
     estoqueModules[activeModule as keyof typeof estoqueModules]?.subModules[activeSubModule] : null;
 
@@ -115,7 +119,7 @@ const Estoque = () => {
                 description={`Gerencie os registros de ${currentSubModule.name.toLowerCase()}`}
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
-                onNewRecord={handleNewRecord}
+                onNewRecord={shouldShowNewButton() ? handleNewRecord : undefined}
                 buttonText={getButtonText()}
                 showExcelButton={activeModule === 'movimentacoes'}
                 onExcelClick={handleExcelClick}

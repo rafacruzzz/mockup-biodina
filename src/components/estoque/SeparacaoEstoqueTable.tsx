@@ -23,11 +23,12 @@ const SeparacaoEstoqueTable = ({ data }: SeparacaoEstoqueTableProps) => {
 
   const getStatusBadge = (status: StatusSeparacao) => {
     const statusConfig = {
-      [StatusSeparacao.DISPONIVEL]: { label: "Disponível", className: "bg-green-100 text-green-800 hover:bg-green-100" },
+      [StatusSeparacao.SEPARADO]: { label: "Separado", className: "bg-green-100 text-green-800 hover:bg-green-100" },
       [StatusSeparacao.SEPARADO_PARCIAL]: { label: "Separado Parcial", className: "bg-blue-100 text-blue-800 hover:bg-blue-100" },
       [StatusSeparacao.PLANEJADO]: { label: "Planejado", className: "bg-orange-100 text-orange-800 hover:bg-orange-100" },
       [StatusSeparacao.INDISPONIVEL]: { label: "Indisponível", className: "bg-red-100 text-red-800 hover:bg-red-100" },
-      [StatusSeparacao.FINALIZADO]: { label: "Finalizado", className: "bg-gray-100 text-gray-800 hover:bg-gray-100" }
+      [StatusSeparacao.FINALIZADO]: { label: "Finalizado", className: "bg-gray-100 text-gray-800 hover:bg-gray-100" },
+      [StatusSeparacao.SOLICITADO]: { label: "Solicitado", className: "bg-purple-100 text-purple-800 hover:bg-purple-100" }
     };
 
     const config = statusConfig[status];
@@ -78,10 +79,12 @@ const SeparacaoEstoqueTable = ({ data }: SeparacaoEstoqueTableProps) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos os Status</SelectItem>
-                <SelectItem value={StatusSeparacao.DISPONIVEL}>Disponível</SelectItem>
+                <SelectItem value={StatusSeparacao.SEPARADO}>Separado</SelectItem>
                 <SelectItem value={StatusSeparacao.SEPARADO_PARCIAL}>Separado Parcial</SelectItem>
                 <SelectItem value={StatusSeparacao.PLANEJADO}>Planejado</SelectItem>
                 <SelectItem value={StatusSeparacao.INDISPONIVEL}>Indisponível</SelectItem>
+                <SelectItem value={StatusSeparacao.FINALIZADO}>Finalizado</SelectItem>
+                <SelectItem value={StatusSeparacao.SOLICITADO}>Solicitado</SelectItem>
               </SelectContent>
             </Select>
 
