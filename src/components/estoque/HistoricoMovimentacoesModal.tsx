@@ -146,7 +146,6 @@ const HistoricoMovimentacoesModal = ({ isOpen, onOpenChange }: HistoricoMoviment
                   <SelectValue placeholder="Todos os tipos" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos os tipos</SelectItem>
                   <SelectItem value="entrada">Entrada</SelectItem>
                   <SelectItem value="saida">Saída</SelectItem>
                   <SelectItem value="transferencia">Transferência</SelectItem>
@@ -161,7 +160,6 @@ const HistoricoMovimentacoesModal = ({ isOpen, onOpenChange }: HistoricoMoviment
                   <SelectValue placeholder="Todos os CNPJs" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todos os CNPJs</SelectItem>
                   {mockCNPJs.map(cnpj => (
                     <SelectItem key={cnpj.id} value={cnpj.nome}>{cnpj.nome}</SelectItem>
                   ))}
