@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { Package, AlertCircle, CheckCircle, Clock, Printer, Eye } from "lucide-react";
+import { Package, AlertCircle, CheckCircle, Clock, Printer, Eye, Calendar } from "lucide-react";
 import { PedidoSeparacao, ItemPedidoSeparacao, StatusItemSeparacao } from "@/types/estoque";
 import EstoqueDisponivelModal from "./EstoqueDisponivelModal";
 import SolicitacaoReposicaoModal from "./SolicitacaoReposicaoModal";
@@ -65,12 +65,17 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
     setShowHistoricoModal(true);
   };
 
+  const formatarDataValidade = (dataValidade: string | null) => {
+    if (!dataValidade) return 'N/A';
+    return new Date(dataValidade).toLocaleDateString('pt-BR');
+  };
+
   const progressPercentage = (pedido.progresso.separados / pedido.progresso.total) * 100;
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-biodina-blue">
               Separação do Pedido {pedido.numero_pedido}
@@ -146,63 +151,84 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
                 <CardTitle>Itens do Pedido</CardTitle>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Código</TableHead>
-                      <TableHead>Descrição</TableHead>
-                      <TableHead>Qtde Solicitada</TableHead>
-                      <TableHead>Qtde Separada</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {pedido.itens.map((item) => (
-                      <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.codigo_produto}</TableCell>
-                        <TableCell>{item.descricao_produto}</TableCell>
-                        <TableCell>{item.quantidade_solicitada}</TableCell>
-                        <TableCell>{item.quantidade_separada}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            {getStatusIcon(item.status)}
-                            {getStatusBadge(item.status)}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            {item.status !== StatusItemSeparacao.SEPARADO && (
-                              <>
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleSeparar(item)}
-                                  className="bg-biodina-gold hover:bg-biodina-gold/90"
-                                >
-                                  Separar
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => handleSolicitarReposicao(item)}
-                                >
-                                  Solicitar Reposição
-                                </Button>
-                              </>
-                            )}
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => handleVerHistorico(item)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Código</TableHead>
+                        <TableHead>Descrição</TableHead>
+                        <TableHead>Qtde Solicitada</TableHead>
+                        <TableHead>Qtde Separada</TableHead>
+                        <TableHead>Lote</TableHead>
+                        <TableHead>Série</TableHead>
+                        <TableHead>Validade</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Ações</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {pedido.itens.map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell className="font-medium">{item.codigo_produto}</TableCell>
+                          <TableCell>{item.descricao_produto}</TableCell>
+                          <TableCell>{item.quantidade_solicitada}</TableCell>
+                          <TableCell>{item.quantidade_separada}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {item.lote || '-'}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {item.numero_serie || '-'}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Calendar className="h-4 w-4 text-gray-400" />
+                              {formatarDataValidade(item.data_validade)}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              {getStatusIcon(item.status)}
+                              {getStatusBadge(item.status)}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              {item.status !== StatusItemSeparacao.SEPARADO && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleSeparar(item)}
+                                    className="bg-biodina-gold hover:bg-biodina-gold/90"
+                                  >
+                                    Separar
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleSolicitarReposicao(item)}
+                                  >
+                                    Solicitar Reposição
+                                  </Button>
+                                </>
+                              )}
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => handleVerHistorico(item)}
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
 

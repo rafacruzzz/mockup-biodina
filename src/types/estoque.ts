@@ -1,3 +1,4 @@
+
 export interface PosicaoEstoque {
   id: number;
   produto_codigo: string;
@@ -133,6 +134,9 @@ export interface ItemPedidoSeparacao {
   status: StatusItemSeparacao;
   observacoes_item?: string;
   estoques_disponiveis?: EstoqueDisponivel[];
+  lote?: string;
+  numero_serie?: string;
+  data_validade?: string | null;
 }
 
 export interface EstoqueDisponivel {
