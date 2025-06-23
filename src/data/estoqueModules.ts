@@ -1,4 +1,4 @@
-import { Package, BarChart3, ArrowLeftRight, Clipboard, TrendingUp, Building2 } from "lucide-react";
+import { Package, ArrowLeftRight } from "lucide-react";
 import { EstoqueModulesConfig, StatusSeparacao, StatusItemSeparacao, StatusQualidade } from "@/types/estoque";
 
 export const mockPosicaoEstoque = [
@@ -645,70 +645,6 @@ export const estoqueModules: EstoqueModulesConfig = {
       movimentacao_estoque: {
         name: "Movimentação de Estoque",
         data: mockMovimentacaoEstoque
-      }
-    }
-  },
-  relatorios: {
-    name: "Relatórios",
-    icon: BarChart3,
-    subModules: {
-      giro_estoque: {
-        name: "Giro de Estoque",
-        data: []
-      },
-      validade_produtos: {
-        name: "Validade de Produtos",
-        data: []
-      },
-      ruptura_estoque: {
-        name: "Ruptura de Estoque",
-        data: []
-      }
-    }
-  },
-  auditoria: {
-    name: "Auditoria",
-    icon: Clipboard,
-    subModules: {
-      inventario_fisico: {
-        name: "Inventário Físico",
-        data: []
-      },
-      divergencias: {
-        name: "Divergências",
-        data: []
-      }
-    }
-  },
-  analises: {
-    name: "Análises",
-    icon: TrendingUp,
-    subModules: {
-      abc_xyz: {
-        name: "Análise ABC/XYZ",
-        data: []
-      },
-      sazonalidade: {
-        name: "Sazonalidade",
-        data: []
-      }
-    }
-  },
-  configuracoes: {
-    name: "Configurações",
-    icon: Building2,
-    subModules: {
-      cnpjs: {
-        name: "CNPJs",
-        data: []
-      },
-      depositos: {
-        name: "Depósitos",
-        data: []
-      },
-      localizacoes: {
-        name: "Localizações",
-        data: []
       }
     }
   }
