@@ -1,4 +1,3 @@
-
 import { Package, BarChart3, ArrowLeftRight, Clipboard, TrendingUp, Building2 } from "lucide-react";
 import { EstoqueModulesConfig, StatusSeparacao, StatusItemSeparacao } from "@/types/estoque";
 
@@ -68,17 +67,32 @@ export const mockCNPJs = [
   {
     id: 1,
     codigo: "12.345.678/0001-90",
-    nome: "Biodina Matriz"
+    nome: "Biodina Matriz",
+    estado: "SP"
   },
   {
     id: 2,
     codigo: "98.765.432/0001-01", 
-    nome: "Biodina Filial SP"
+    nome: "Biodina Filial SP",
+    estado: "SP"
   },
   {
     id: 3,
     codigo: "11.222.333/0001-44",
-    nome: "Biodina Filial RJ"
+    nome: "Biodina Filial RJ",
+    estado: "RJ"
+  },
+  {
+    id: 4,
+    codigo: "22.333.444/0001-55",
+    nome: "Biodina Filial MG",
+    estado: "MG"
+  },
+  {
+    id: 5,
+    codigo: "33.444.555/0001-66",
+    nome: "Biodina Filial PR",
+    estado: "PR"
   }
 ];
 
@@ -118,6 +132,7 @@ export const mockSeparacaoEstoque = [
     vendedor: "gustavo.brito",
     cliente: "Bronstein Filial",
     endereco_cliente: "Rua das Palmeiras, 123 - Centro, Rio de Janeiro - RJ",
+    cliente_estado: "RJ",
     data_entrega: "2025-05-18",
     status: StatusSeparacao.SEPARADO_PARCIAL,
     regiao: "RJ",
@@ -173,6 +188,7 @@ export const mockSeparacaoEstoque = [
     vendedor: "maria.silva",
     cliente: "Hospital São Paulo",
     endereco_cliente: "Av. Paulista, 500 - Bela Vista, São Paulo - SP",
+    cliente_estado: "SP",
     data_entrega: "2025-05-20",
     status: StatusSeparacao.PLANEJADO,
     regiao: "SP",
@@ -217,6 +233,7 @@ export const mockSeparacaoEstoque = [
     vendedor: "carlos.ferreira",
     cliente: "Laboratório Minas",
     endereco_cliente: "Rua dos Inconfidentes, 200 - Centro, Belo Horizonte - MG",
+    cliente_estado: "MG",
     data_entrega: "2025-05-22",
     status: StatusSeparacao.SEPARADO,
     regiao: "MG",
@@ -261,6 +278,7 @@ export const mockSeparacaoEstoque = [
     vendedor: "ana.costa",
     cliente: "Clínica Paraná",
     endereco_cliente: "Av. Brasil, 150 - Centro, Curitiba - PR",
+    cliente_estado: "PR",
     data_entrega: "2025-05-25",
     status: StatusSeparacao.INDISPONIVEL,
     regiao: "PR",
@@ -294,6 +312,7 @@ export const mockSeparacaoEstoque = [
     vendedor: "roberto.santos",
     cliente: "Hospital Salvador",
     endereco_cliente: "Rua da Bahia, 80 - Pelourinho, Salvador - BA",
+    cliente_estado: "BA",
     data_entrega: "2025-05-28",
     status: StatusSeparacao.FINALIZADO,
     regiao: "BA",
@@ -348,6 +367,7 @@ export const mockEstoquesDisponiveis = [
   {
     id: 1,
     cnpj: "12.345.678/0001-90",
+    cnpj_estado: "SP",
     deposito: "Depósito Central",
     lote: "LOT001-2024",
     data_validade: "2025-12-31",
@@ -359,13 +379,14 @@ export const mockEstoquesDisponiveis = [
   },
   {
     id: 2,
-    cnpj: "12.345.678/0001-90",
-    deposito: "Depósito Filial",
+    cnpj: "11.222.333/0001-44",
+    cnpj_estado: "RJ",
+    deposito: "Depósito Filial RJ",
     lote: "LOT002-2024",
     data_validade: "2025-06-30",
     localizacao_fisica: "B1-A2-D1",
     quantidade_disponivel: 25,
-    tipo_estoque: "Consignado",
+    tipo_estoque: "Normal",
     numero_serie: "SER789012",
     dias_para_vencimento: 180
   }

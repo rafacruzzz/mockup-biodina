@@ -53,6 +53,7 @@ export interface CNPJ {
   id: number;
   codigo: string;
   nome: string;
+  estado: string;
 }
 
 export interface Deposito {
@@ -110,6 +111,7 @@ export interface PedidoSeparacao {
   vendedor: string;
   cliente: string;
   endereco_cliente: string;
+  cliente_estado: string;
   data_entrega: string;
   status: StatusSeparacao;
   regiao: string;
@@ -142,6 +144,7 @@ export interface ItemPedidoSeparacao {
 export interface EstoqueDisponivel {
   id: number;
   cnpj: string;
+  cnpj_estado: string;
   deposito: string;
   lote: string;
   data_validade: string | null;

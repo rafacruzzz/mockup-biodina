@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { Package, AlertCircle, CheckCircle, Clock, Printer, Eye, Calendar } from "lucide-react";
+import { Package, AlertCircle, CheckCircle, Clock, Printer, Eye, Calendar, MapPin } from "lucide-react";
 import { PedidoSeparacao, ItemPedidoSeparacao, StatusItemSeparacao } from "@/types/estoque";
 import EstoqueDisponivelModal from "./EstoqueDisponivelModal";
 import SolicitacaoReposicaoModal from "./SolicitacaoReposicaoModal";
@@ -101,6 +101,12 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
                     <p className="text-sm font-medium text-gray-500">Cliente</p>
                     <p className="font-medium">{pedido.cliente}</p>
                     <p className="text-sm text-gray-600">{pedido.endereco_cliente}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <MapPin className="h-4 w-4 text-gray-400" />
+                      <Badge variant="outline" className="text-xs">
+                        Estado: {pedido.cliente_estado}
+                      </Badge>
+                    </div>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">Vendedor</p>
@@ -119,6 +125,9 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
                     <p className="font-medium">{pedido.regiao}</p>
                   </div>
                 </div>
+                
+                {/* Campo oculto para estado do cliente */}
+                <input type="hidden" value={pedido.cliente_estado} data-testid="cliente-estado" />
                 
                 {pedido.observacoes && (
                   <>
@@ -265,6 +274,7 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
         <>
           <EstoqueDisponivelModal
             item={selectedItem}
+            pedido={pedido}
             isOpen={showEstoqueModal}
             onOpenChange={setShowEstoqueModal}
           />
