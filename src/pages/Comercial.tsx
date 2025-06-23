@@ -1018,6 +1018,7 @@ const Comercial = () => {
 
       {showPedidoModal && selectedOportunidade && (
         <PedidoModal
+          isOpen={showPedidoModal}
           oportunidade={selectedOportunidade}
           onClose={() => {
             setShowPedidoModal(false);
