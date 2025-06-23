@@ -10,7 +10,6 @@ import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
 import { estoqueModules } from "@/data/estoqueModules";
 import { MovimentacaoEstoque } from "@/types/estoque";
-import { SidebarProvider } from "@/components/ui/sidebar";
 
 const Estoque = () => {
   const [activeModule, setActiveModule] = useState('');
@@ -19,6 +18,10 @@ const Estoque = () => {
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
   const [isNovaMovimentacaoOpen, setIsNovaMovimentacaoOpen] = useState(false);
   const [isMovExcelOpen, setIsMovExcelOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    const saved = localStorage.getItem('estoque-sidebar-collapsed');
+    return saved ? JSON.parse(saved) : false;
+  });
 
   useEffect(() => {
     if (!activeModule) {
@@ -26,6 +29,10 @@ const Estoque = () => {
       setSearchTerm('');
     }
   }, [activeModule]);
+
+  useEffect(() => {
+    localStorage.setItem('estoque-sidebar-collapsed', JSON.stringify(isSidebarCollapsed));
+  }, [isSidebarCollapsed]);
 
   const toggleModule = (module: string) => {
     if (expandedModules.includes(module)) {
@@ -52,6 +59,10 @@ const Estoque = () => {
     setSearchTerm('');
   };
 
+  const handleToggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
   const handleNewRecord = () => {
     if (activeModule === 'movimentacoes') {
       setIsNovaMovimentacaoOpen(true);
@@ -66,7 +77,6 @@ const Estoque = () => {
 
   const handleMovimentacaoDetails = (item: MovimentacaoEstoque) => {
     console.log('Detalhes da movimentação:', item);
-    // Aqui você pode abrir um modal de detalhes
   };
 
   const getButtonText = () => {
@@ -88,62 +98,62 @@ const Estoque = () => {
 
   return (
     <SidebarLayout>
-      <SidebarProvider defaultOpen={true}>
-        <div className="flex h-full bg-gray-50/50 w-full">
-          <EstoqueSidebar
-            activeModule={activeModule}
-            activeSubModule={activeSubModule}
-            expandedModules={expandedModules}
-            onModuleToggle={toggleModule}
-            onModuleSelect={handleModuleSelect}
-            onClose={handleCloseSidebar}
-          />
+      <div className="flex h-full bg-gray-50/50 w-full">
+        <EstoqueSidebar
+          activeModule={activeModule}
+          activeSubModule={activeSubModule}
+          expandedModules={expandedModules}
+          isCollapsed={isSidebarCollapsed}
+          onModuleToggle={toggleModule}
+          onModuleSelect={handleModuleSelect}
+          onClose={handleCloseSidebar}
+          onToggleCollapse={handleToggleSidebar}
+        />
 
-          <div className="flex-1 flex flex-col min-h-0">
-            {activeSubModule && currentSubModule ? (
-              <>
-                <ContentHeader
-                  title={currentSubModule.name}
-                  description={`Gerencie os registros de ${currentSubModule.name.toLowerCase()}`}
-                  searchTerm={searchTerm}
-                  onSearchChange={setSearchTerm}
-                  onNewRecord={handleNewRecord}
-                  buttonText={getButtonText()}
-                  showExcelButton={activeModule === 'movimentacoes'}
-                  onExcelClick={handleExcelClick}
-                />
+        <div className="flex-1 flex flex-col min-h-0">
+          {activeSubModule && currentSubModule ? (
+            <>
+              <ContentHeader
+                title={currentSubModule.name}
+                description={`Gerencie os registros de ${currentSubModule.name.toLowerCase()}`}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                onNewRecord={handleNewRecord}
+                buttonText={getButtonText()}
+                showExcelButton={activeModule === 'movimentacoes'}
+                onExcelClick={handleExcelClick}
+              />
 
-                <div className="flex-1 p-6 min-h-0">
-                  {activeModule === 'movimentacoes' && activeSubModule === 'movimentacao_estoque' ? (
-                    <MovimentacoesDataTable 
-                      data={currentSubModule?.data || []} 
-                      onRowDetails={handleMovimentacaoDetails}
-                    />
-                  ) : (
-                    <DataTable 
-                      data={currentSubModule?.data || []} 
-                      moduleName={currentSubModule?.name || ''}
-                      onRowClick={handleRowClick}
-                    />
-                  )}
-                </div>
-              </>
-            ) : (
-              <EstoqueDashboard />
-            )}
-          </div>
+              <div className="flex-1 p-6 min-h-0">
+                {activeModule === 'movimentacoes' && activeSubModule === 'movimentacao_estoque' ? (
+                  <MovimentacoesDataTable 
+                    data={currentSubModule?.data || []} 
+                    onRowDetails={handleMovimentacaoDetails}
+                  />
+                ) : (
+                  <DataTable 
+                    data={currentSubModule?.data || []} 
+                    moduleName={currentSubModule?.name || ''}
+                    onRowClick={handleRowClick}
+                  />
+                )}
+              </div>
+            </>
+          ) : (
+            <EstoqueDashboard />
+          )}
         </div>
+      </div>
 
-        <NovaMovimentacaoModal 
-          isOpen={isNovaMovimentacaoOpen}
-          onOpenChange={setIsNovaMovimentacaoOpen}
-        />
+      <NovaMovimentacaoModal 
+        isOpen={isNovaMovimentacaoOpen}
+        onOpenChange={setIsNovaMovimentacaoOpen}
+      />
 
-        <MovExcelModal 
-          isOpen={isMovExcelOpen}
-          onOpenChange={setIsMovExcelOpen}
-        />
-      </SidebarProvider>
+      <MovExcelModal 
+        isOpen={isMovExcelOpen}
+        onOpenChange={setIsMovExcelOpen}
+      />
     </SidebarLayout>
   );
 };
