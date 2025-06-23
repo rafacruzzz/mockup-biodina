@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import EstoqueSidebar from "@/components/estoque/EstoqueSidebar";
@@ -10,13 +11,12 @@ import DataTable from "@/components/cadastro/DataTable";
 import { estoqueModules } from "@/data/estoqueModules";
 import { MovimentacaoEstoque } from "@/types/estoque";
 import SeparacaoEstoqueTable from "@/components/estoque/SeparacaoEstoqueTable";
-import PosicaoAtualTable from "@/components/estoque/dashboard/PosicaoAtualTable";
 
 const Estoque = () => {
-  const [activeModule, setActiveModule] = useState('');
-  const [activeSubModule, setActiveSubModule] = useState('');
+  const [activeModule, setActiveModule] = useState('posicao_estoque');
+  const [activeSubModule, setActiveSubModule] = useState('posicao_atual');
   const [searchTerm, setSearchTerm] = useState('');
-  const [expandedModules, setExpandedModules] = useState<string[]>([]);
+  const [expandedModules, setExpandedModules] = useState<string[]>(['posicao_estoque']);
   const [isNovaMovimentacaoOpen, setIsNovaMovimentacaoOpen] = useState(false);
   const [isMovExcelOpen, setIsMovExcelOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
@@ -26,7 +26,6 @@ const Estoque = () => {
 
   useEffect(() => {
     if (!activeModule) {
-      setActiveSubModule('');
       setSearchTerm('');
     }
   }, [activeModule]);
@@ -54,9 +53,10 @@ const Estoque = () => {
   };
 
   const handleCloseSidebar = () => {
-    setActiveModule('');
-    setActiveSubModule('');
-    setExpandedModules([]);
+    // Volta para a gestão de estoque quando fechar
+    setActiveModule('posicao_estoque');
+    setActiveSubModule('posicao_atual');
+    setExpandedModules(['posicao_estoque']);
     setSearchTerm('');
   };
 
@@ -92,7 +92,7 @@ const Estoque = () => {
   };
 
   const shouldShowNewButton = () => {
-    // Não mostrar botão "Novo Registro" para posição atual e separação
+    // Não mostrar botão "Novo Registro" para posição atual
     return activeModule !== 'posicao_estoque';
   };
 
@@ -114,7 +114,7 @@ const Estoque = () => {
         />
 
         <div className="flex-1 flex flex-col min-h-0">
-          {activeSubModule && currentSubModule ? (
+          {activeSubModule && currentSubModule && activeModule !== 'posicao_estoque' ? (
             <>
               <ContentHeader
                 title={currentSubModule.name}
@@ -135,10 +135,6 @@ const Estoque = () => {
                   />
                 ) : activeModule === 'posicao_estoque' && activeSubModule === 'separacao_estoque' ? (
                   <SeparacaoEstoqueTable 
-                    data={currentSubModule?.data || []} 
-                  />
-                ) : activeModule === 'posicao_estoque' && activeSubModule === 'posicao_atual' ? (
-                  <PosicaoAtualTable 
                     data={currentSubModule?.data || []} 
                   />
                 ) : (
