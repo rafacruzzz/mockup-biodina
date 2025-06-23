@@ -129,6 +129,200 @@ export const mockProdutosEstoque: Record<string, EstoqueVendivel> = {
     unidadesDisponiveis: [
       { unidade: UnidadeVenda.UNIDADE, quantidade: 5, fatorConversao: 1 }
     ]
+  },
+  'MED150': {
+    totalDisponivel: 89,
+    totalReservado: 30,
+    estoquesPorCnpj: [
+      { cnpj: '12.345.678/0001-90', nomeEmpresa: 'WebMED RJ', quantidade: 89 }
+    ],
+    lotes: [
+      { 
+        lote: 'MD15001', 
+        quantidade: 89, 
+        dataValidade: '2024-09-30', 
+        diasParaVencimento: 99,
+        alertaValidade: true 
+      }
+    ],
+    tiposEstoque: [
+      { tipo: 'Nacional', quantidade: 89 }
+    ],
+    reservasAtivas: [
+      { pedidoId: 'PED-005', quantidade: 30, dataReserva: '2025-06-21' }
+    ],
+    historicoVendas: [
+      { data: '2025-06-05', cliente: 'Lab Central', quantidade: 15, precoVenda: 45.50 },
+      { data: '2025-05-22', cliente: 'Hospital Municipal', quantidade: 25, precoVenda: 44.80 }
+    ],
+    precoSugerido: 45.00,
+    alertas: [
+      { tipo: 'validade_proxima', mensagem: 'Lote MD15001 vence em 99 dias', severidade: 'media' }
+    ],
+    localizacaoFisica: 'Refrigerado B2 - Gaveta 1',
+    exigeNumeroSerie: false,
+    unidadesDisponiveis: [
+      { unidade: UnidadeVenda.KIT, quantidade: 89, fatorConversao: 1 }
+    ]
+  },
+  'LAB300': {
+    totalDisponivel: 0,
+    totalReservado: 0,
+    estoquesPorCnpj: [
+      { cnpj: '12.345.678/0001-90', nomeEmpresa: 'WebMED RJ', quantidade: 0 },
+      { cnpj: '98.765.432/0001-10', nomeEmpresa: 'Distrib. SP', quantidade: 0 }
+    ],
+    lotes: [],
+    tiposEstoque: [
+      { tipo: 'Nacional', quantidade: 0 }
+    ],
+    reservasAtivas: [],
+    historicoVendas: [
+      { data: '2025-05-30', cliente: 'Lab Análises', quantidade: 50, precoVenda: 25.80 },
+      { data: '2025-05-10', cliente: 'Hospital Regional', quantidade: 100, precoVenda: 24.90 }
+    ],
+    precoSugerido: 25.50,
+    alertas: [
+      { tipo: 'estoque_baixo', mensagem: 'Produto em falta - estoque zerado', severidade: 'alta' },
+      { tipo: 'transferencia_disponivel', mensagem: 'Transferência disponível de outras filiais', severidade: 'baixa' }
+    ],
+    localizacaoFisica: 'Prateleira C1 - Vazio',
+    exigeNumeroSerie: false,
+    unidadesDisponiveis: [
+      { unidade: UnidadeVenda.FRASCO, quantidade: 0, fatorConversao: 1 }
+    ]
+  },
+  'EQU500': {
+    totalDisponivel: 12,
+    totalReservado: 5,
+    estoquesPorCnpj: [
+      { cnpj: '11.222.333/0001-44', nomeEmpresa: 'WebMED JF', quantidade: 12 }
+    ],
+    lotes: [
+      { 
+        lote: 'EQ500A', 
+        quantidade: 7, 
+        dataValidade: null, 
+        diasParaVencimento: undefined,
+        alertaValidade: false 
+      },
+      { 
+        lote: 'EQ500B', 
+        quantidade: 5, 
+        dataValidade: null, 
+        diasParaVencimento: undefined,
+        alertaValidade: false 
+      }
+    ],
+    tiposEstoque: [
+      { tipo: 'Importação Direta', quantidade: 12 }
+    ],
+    reservasAtivas: [
+      { pedidoId: 'PED-006', quantidade: 5, dataReserva: '2025-06-20' }
+    ],
+    historicoVendas: [
+      { data: '2025-04-25', cliente: 'Clínica Premium', quantidade: 2, precoVenda: 1250.00 },
+      { data: '2025-03-15', cliente: 'Hospital Privado', quantidade: 1, precoVenda: 1280.00 }
+    ],
+    precoSugerido: 1250.00,
+    alertas: [
+      { tipo: 'numero_serie', mensagem: 'Equipamento com número de série obrigatório', severidade: 'media' },
+      { tipo: 'multiplos_lotes', mensagem: 'Disponível em 2 lotes diferentes', severidade: 'baixa' }
+    ],
+    localizacaoFisica: 'Galpão - Área Especial E1',
+    exigeNumeroSerie: true,
+    unidadesDisponiveis: [
+      { unidade: UnidadeVenda.UNIDADE, quantidade: 12, fatorConversao: 1 }
+    ]
+  },
+  'DES400': {
+    totalDisponivel: 2400,
+    totalReservado: 800,
+    estoquesPorCnpj: [
+      { cnpj: '12.345.678/0001-90', nomeEmpresa: 'WebMED RJ', quantidade: 1500 },
+      { cnpj: '98.765.432/0001-10', nomeEmpresa: 'Distrib. SP', quantidade: 900 }
+    ],
+    lotes: [
+      { 
+        lote: 'DS400L1', 
+        quantidade: 1500, 
+        dataValidade: '2026-08-15', 
+        diasParaVencimento: 418,
+        alertaValidade: false 
+      },
+      { 
+        lote: 'DS400L2', 
+        quantidade: 900, 
+        dataValidade: '2026-11-20', 
+        diasParaVencimento: 515,
+        alertaValidade: false 
+      }
+    ],
+    tiposEstoque: [
+      { tipo: 'Nacional', quantidade: 1500 },
+      { tipo: 'Consignado', quantidade: 900 }
+    ],
+    reservasAtivas: [
+      { pedidoId: 'PED-007', quantidade: 500, dataReserva: '2025-06-22' },
+      { pedidoId: 'PED-008', quantidade: 300, dataReserva: '2025-06-23' }
+    ],
+    historicoVendas: [
+      { data: '2025-06-15', cliente: 'Rede Hospitalar', quantidade: 1000, precoVenda: 2.15 },
+      { data: '2025-06-01', cliente: 'Clínica Geral', quantidade: 500, precoVenda: 2.20 },
+      { data: '2025-05-20', cliente: 'Lab Diagnóstico', quantidade: 800, precoVenda: 2.10 }
+    ],
+    precoSugerido: 2.15,
+    alertas: [],
+    localizacaoFisica: 'Prateleira D1-D3 - Alto Giro',
+    exigeNumeroSerie: false,
+    unidadesDisponiveis: [
+      { unidade: UnidadeVenda.UNIDADE, quantidade: 2400, fatorConversao: 1 },
+      { unidade: UnidadeVenda.CAIXA, quantidade: 120, fatorConversao: 20 }
+    ]
+  },
+  'REA100': {
+    totalDisponivel: 45,
+    totalReservado: 15,
+    estoquesPorCnpj: [
+      { cnpj: '12.345.678/0001-90', nomeEmpresa: 'WebMED RJ', quantidade: 25 },
+      { cnpj: '11.222.333/0001-44', nomeEmpresa: 'WebMED JF', quantidade: 20 }
+    ],
+    lotes: [
+      { 
+        lote: 'RE100A', 
+        quantidade: 25, 
+        dataValidade: '2024-12-31', 
+        diasParaVencimento: 191,
+        alertaValidade: false 
+      },
+      { 
+        lote: 'RE100B', 
+        quantidade: 20, 
+        dataValidade: '2025-02-28', 
+        diasParaVencimento: 250,
+        alertaValidade: false 
+      }
+    ],
+    tiposEstoque: [
+      { tipo: 'Importação Direta', quantidade: 45 }
+    ],
+    reservasAtivas: [
+      { pedidoId: 'PED-009', quantidade: 15, dataReserva: '2025-06-23' }
+    ],
+    historicoVendas: [
+      { data: '2025-06-10', cliente: 'Lab Especializado', quantidade: 10, precoVenda: 85.50 },
+      { data: '2025-05-25', cliente: 'Hospital Referência', quantidade: 20, precoVenda: 84.80 }
+    ],
+    precoSugerido: 85.00,
+    alertas: [
+      { tipo: 'estoque_baixo', mensagem: 'Estoque baixo - considere reposição', severidade: 'media' },
+      { tipo: 'multiplos_lotes', mensagem: 'Reagente em 2 lotes com validades diferentes', severidade: 'baixa' }
+    ],
+    localizacaoFisica: 'Refrigerado C1 - Controlado',
+    exigeNumeroSerie: false,
+    unidadesDisponiveis: [
+      { unidade: UnidadeVenda.FRASCO, quantidade: 45, fatorConversao: 1 }
+    ]
   }
 };
 
@@ -162,5 +356,23 @@ export const mockProdutosCatalogo = [
     descricao: 'Reagente para Análise',
     categoria: 'Reagentes',
     fabricante: 'LabCorp'
+  },
+  {
+    codigo: 'EQU500',
+    descricao: 'Monitor Multiparâmetros',
+    categoria: 'Equipamentos',
+    fabricante: 'MedEquip'
+  },
+  {
+    codigo: 'DES400',
+    descricao: 'Luva Procedimento Nitrílica',
+    categoria: 'Descartáveis',
+    fabricante: 'SafeHands'
+  },
+  {
+    codigo: 'REA100',
+    descricao: 'Reagente Bioquímico Premium',
+    categoria: 'Reagentes',
+    fabricante: 'BioLab'
   }
 ];
