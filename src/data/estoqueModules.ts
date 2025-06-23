@@ -209,6 +209,138 @@ export const mockSeparacaoEstoque = [
         data_validade: null
       }
     ]
+  },
+  {
+    id: 3,
+    numero_pedido: "85698",
+    nop: "6.110 MG",
+    vendedor: "carlos.ferreira",
+    cliente: "Laboratório Minas",
+    endereco_cliente: "Rua dos Inconfidentes, 200 - Centro, Belo Horizonte - MG",
+    data_entrega: "2025-05-22",
+    status: StatusSeparacao.SEPARADO,
+    regiao: "MG",
+    transportadora: "Transportadora Sul",
+    observacoes: "Produtos frágeis - cuidado no manuseio",
+    quantidade_volumes: 2,
+    peso_bruto: 8.5,
+    peso_liquido: 7.8,
+    progresso: {
+      separados: 2,
+      total: 2
+    },
+    itens: [
+      {
+        id: 6,
+        codigo_produto: "944-200",
+        descricao_produto: "Reagente Especial",
+        quantidade_solicitada: 3,
+        quantidade_separada: 3,
+        status: StatusItemSeparacao.SEPARADO,
+        lote: "LOT003-2024",
+        numero_serie: "SER789012",
+        data_validade: "2025-10-15"
+      },
+      {
+        id: 7,
+        codigo_produto: "944-150",
+        descricao_produto: "Controle de Qualidade",
+        quantidade_solicitada: 1,
+        quantidade_separada: 1,
+        status: StatusItemSeparacao.SEPARADO,
+        lote: "LOT004-2024",
+        numero_serie: "SER345678",
+        data_validade: "2025-08-30"
+      }
+    ]
+  },
+  {
+    id: 4,
+    numero_pedido: "85699",
+    nop: "6.111 PR",
+    vendedor: "ana.costa",
+    cliente: "Clínica Paraná",
+    endereco_cliente: "Av. Brasil, 150 - Centro, Curitiba - PR",
+    data_entrega: "2025-05-25",
+    status: StatusSeparacao.INDISPONIVEL,
+    regiao: "PR",
+    transportadora: "Transportadora Norte",
+    observacoes: "Aguardando reposição de estoque",
+    quantidade_volumes: 1,
+    peso_bruto: 3.2,
+    peso_liquido: 2.9,
+    progresso: {
+      separados: 0,
+      total: 1
+    },
+    itens: [
+      {
+        id: 8,
+        codigo_produto: "944-300",
+        descricao_produto: "Kit Diagnóstico Rápido",
+        quantidade_solicitada: 10,
+        quantidade_separada: 0,
+        status: StatusItemSeparacao.INDISPONIVEL,
+        lote: null,
+        numero_serie: null,
+        data_validade: null
+      }
+    ]
+  },
+  {
+    id: 5,
+    numero_pedido: "85700",
+    nop: "6.112 BA",
+    vendedor: "roberto.santos",
+    cliente: "Hospital Salvador",
+    endereco_cliente: "Rua da Bahia, 80 - Pelourinho, Salvador - BA",
+    data_entrega: "2025-05-28",
+    status: StatusSeparacao.FINALIZADO,
+    regiao: "BA",
+    transportadora: "Transportadora Nordeste",
+    observacoes: "Pedido completo e expedido",
+    quantidade_volumes: 4,
+    peso_bruto: 18.7,
+    peso_liquido: 17.2,
+    progresso: {
+      separados: 3,
+      total: 3
+    },
+    itens: [
+      {
+        id: 9,
+        codigo_produto: "944-021-U",
+        descricao_produto: "Solução de Calibração S7770",
+        quantidade_solicitada: 4,
+        quantidade_separada: 4,
+        status: StatusItemSeparacao.SEPARADO,
+        lote: "LOT005-2024",
+        numero_serie: "SER901234",
+        data_validade: "2025-11-20"
+      },
+      {
+        id: 10,
+        codigo_produto: "944-132",
+        descricao_produto: "Solução de Lavagem",
+        quantidade_solicitada: 2,
+        quantidade_separada: 2,
+        status: StatusItemSeparacao.SEPARADO,
+        lote: "LOT006-2024",
+        numero_serie: "SER567890",
+        data_validade: "2025-09-10"
+      },
+      {
+        id: 11,
+        codigo_produto: "LAB-600",
+        descricao_produto: "Material Descartável Kit",
+        quantidade_solicitada: 50,
+        quantidade_separada: 50,
+        status: StatusItemSeparacao.SEPARADO,
+        lote: "LOT007-2024",
+        numero_serie: "SER123890",
+        data_validade: "2026-01-15"
+      }
+    ]
   }
 ];
 
@@ -249,12 +381,8 @@ export const estoqueModules: EstoqueModulesConfig = {
         data: mockPosicaoEstoque
       },
       separacao_estoque: {
-        name: "Separação de Estoque",
+        name: "Separação",
         data: mockSeparacaoEstoque
-      },
-      visao_geral: {
-        name: "Visão Geral",
-        data: mockPosicaoEstoque
       }
     }
   },
