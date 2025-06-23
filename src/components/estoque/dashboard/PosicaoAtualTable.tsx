@@ -30,7 +30,7 @@ interface SortConfig {
 
 const PosicaoAtualTable = ({ data }: PosicaoAtualTableProps) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('todos');
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -107,7 +107,7 @@ const PosicaoAtualTable = ({ data }: PosicaoAtualTableProps) => {
       item.localizacao_fisica.toLowerCase().includes(searchTermLower) ||
       item.fornecedor.toLowerCase().includes(searchTermLower);
 
-    const matchesStatus = statusFilter ? item.status_qualidade === statusFilter : true;
+    const matchesStatus = statusFilter === 'todos' ? true : item.status_qualidade === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
@@ -176,7 +176,7 @@ const PosicaoAtualTable = ({ data }: PosicaoAtualTableProps) => {
               <SelectValue placeholder="Todos os Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todos os Status</SelectItem>
+              <SelectItem value="todos">Todos os Status</SelectItem>
               <SelectItem value={StatusQualidade.APROVADO}>Aprovado</SelectItem>
               <SelectItem value={StatusQualidade.QUARENTENA}>Quarentena</SelectItem>
               <SelectItem value={StatusQualidade.REJEITADO}>Rejeitado</SelectItem>
