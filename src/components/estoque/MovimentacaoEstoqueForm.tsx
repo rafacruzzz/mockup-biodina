@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,8 @@ const MovimentacaoEstoqueForm = ({ onClose }: MovimentacaoEstoqueFormProps) => {
     itens: []
   });
 
-  const posicaoEstoque = estoqueModules.posicao_estoque.subModules.visao_geral.data;
+  // Fix the data access to use posicao_atual instead of visao_geral
+  const posicaoEstoque = estoqueModules.posicao_estoque?.subModules?.posicao_atual?.data || [];
 
   // Filter products to ensure no empty codes
   const validProducts = posicaoEstoque.filter(produto => 
