@@ -8,10 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { PosicaoEstoque, StatusQualidade, StatusEmprestimo } from "@/types/estoque";
 import { mockEmprestimos, mockLogsAuditoria, mockKitsDesmembrados } from "@/data/estoqueModules";
 import { Package, MapPin, Calendar, AlertTriangle, TrendingUp, FileText, X, History, Shield, Package2, HandCoins, Clock, User } from "lucide-react";
 import { useState } from "react";
+import ConfirmacaoSenhaModal from "../ConfirmacaoSenhaModal";
+import UnidadeMedidaSelect from "../UnidadeMedidaSelect";
 
 interface PosicaoEstoqueModalEnriquecidoProps {
   isOpen: boolean;
@@ -31,7 +34,22 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
   const [ajusteManual, setAjusteManual] = useState({
     campo: '',
     valor_novo: '',
+    unidade_medida: '',
     justificativa: ''
+  });
+
+  const [desmembramento, setDesmembramento] = useState({
+    caixas_selecionadas: [] as number[],
+    unidade_destino: '',
+    fator_conversao: 1,
+    observacoes: ''
+  });
+
+  const [confirmacaoModal, setConfirmacaoModal] = useState({
+    isOpen: false,
+    tipo: '' as 'ajuste' | 'desmembramento',
+    titulo: '',
+    descricao: ''
   });
 
   if (!produto) return null;
@@ -106,6 +124,112 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
       'baixa': "bg-blue-100 text-blue-800"
     };
     return colors[prioridade as keyof typeof colors] || "bg-gray-100 text-gray-800";
+  };
+
+  // Caixas disponíveis para desmembramento
+  const caixasDisponiveis = posicoesLotes.filter(p => p.quantidade_disponivel > 0);
+
+  // Simulação do desmembramento
+  const simulacaoDesmembramento = () => {
+    const caixasSelecionadas = caixasDisponiveis.filter(c => 
+      desmembramento.caixas_selecionadas.includes(c.id)
+    );
+    
+    const totalCaixas = caixasSelecionadas.reduce((acc, c) => acc + c.quantidade_disponivel, 0);
+    const totalUnidades = totalCaixas * desmembramento.fator_conversao;
+    
+    return {
+      caixasSelecionadas,
+      totalCaixas,
+      totalUnidades,
+      valorTotal: totalUnidades * produto.cmc_unitario
+    };
+  };
+
+  const handleConfirmacaoAjuste = () => {
+    // Gerar log de auditoria
+    const novoLog = {
+      id: logsAuditoria.length + 1,
+      produto_codigo: produto.produto_codigo,
+      lote: produto.lote,
+      campo_alterado: ajusteManual.campo,
+      valor_anterior: produto[ajusteManual.campo as keyof PosicaoEstoque]?.toString() || '',
+      valor_novo: ajusteManual.valor_novo,
+      data_alteracao: new Date().toISOString(),
+      usuario: "admin",
+      justificativa: ajusteManual.justificativa,
+      tipo_operacao: 'manual' as const,
+      unidade_medida: ajusteManual.unidade_medida
+    };
+    
+    console.log('Ajuste registrado:', novoLog);
+    
+    // Resetar formulário
+    setAjusteManual({
+      campo: '',
+      valor_novo: '',
+      unidade_medida: '',
+      justificativa: ''
+    });
+  };
+
+  const handleConfirmacaoDesmembramento = () => {
+    const simulacao = simulacaoDesmembramento();
+    
+    // Gerar log de desmembramento
+    const novoDesmembramento = {
+      id: kitsDesmembrados.length + 1,
+      kit_codigo: produto.produto_codigo,
+      kit_descricao: produto.produto_descricao,
+      quantidade_kit: simulacao.totalCaixas,
+      data_desmembramento: new Date().toISOString(),
+      usuario: "admin",
+      itens_resultantes: [{
+        codigo: produto.produto_codigo,
+        descricao: produto.produto_descricao,
+        quantidade: simulacao.totalUnidades,
+        lote_gerado: `DESM-${Date.now()}-2024`,
+        unidade_medida: desmembramento.unidade_destino
+      }],
+      observacoes: desmembramento.observacoes
+    };
+    
+    console.log('Desmembramento registrado:', novoDesmembramento);
+    
+    // Resetar formulário
+    setDesmembramento({
+      caixas_selecionadas: [],
+      unidade_destino: '',
+      fator_conversao: 1,
+      observacoes: ''
+    });
+  };
+
+  const abrirConfirmacao = (tipo: 'ajuste' | 'desmembramento') => {
+    if (tipo === 'ajuste') {
+      setConfirmacaoModal({
+        isOpen: true,
+        tipo: 'ajuste',
+        titulo: 'Confirmar Ajuste Manual',
+        descricao: `Esta operação irá alterar o campo "${ajusteManual.campo}" do produto ${produto.produto_descricao}. Esta ação será registrada nos logs de auditoria.`
+      });
+    } else {
+      const simulacao = simulacaoDesmembramento();
+      setConfirmacaoModal({
+        isOpen: true,
+        tipo: 'desmembramento',
+        titulo: 'Confirmar Desmembramento',
+        descricao: `Esta operação irá desmembrar ${simulacao.totalCaixas} caixa(s) em ${simulacao.totalUnidades} unidade(s). Esta ação é irreversível.`
+      });
+    }
+  };
+
+  const confirmarOperacao = () => {
+    if (confirmacaoModal.tipo === 'ajuste') {
+      handleConfirmacaoAjuste();
+    } else {
+      handleConfirmacaoDesmembramento();
+    }
   };
 
   return (
@@ -319,7 +443,6 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
                   </CardContent>
                 </Card>
 
-                {/* Nova seção de Empréstimos */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-sm flex items-center gap-2">
@@ -382,7 +505,6 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
 
             <TabsContent value="historico">
               <div className="space-y-4">
-                {/* Movimentações Físicas */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-sm flex items-center gap-2">
@@ -424,7 +546,6 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
                   </CardContent>
                 </Card>
 
-                {/* Logs de Auditoria */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-sm flex items-center gap-2">
@@ -472,7 +593,6 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
                   </CardContent>
                 </Card>
 
-                {/* Desmembramento de Kits */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-sm flex items-center gap-2">
@@ -644,7 +764,7 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
                   </CardContent>
                 </Card>
 
-                {/* Ajustes Manuais */}
+                {/* Ajustes Manuais Melhorado */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-sm flex items-center gap-2">
@@ -653,7 +773,7 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label>Campo</Label>
                         <Select value={ajusteManual.campo} onValueChange={(value) => setAjusteManual({...ajusteManual, campo: value})}>
@@ -668,6 +788,10 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
                           </SelectContent>
                         </Select>
                       </div>
+                      <UnidadeMedidaSelect
+                        value={ajusteManual.unidade_medida}
+                        onValueChange={(value) => setAjusteManual({...ajusteManual, unidade_medida: value})}
+                      />
                       <div>
                         <Label>Novo Valor</Label>
                         <Input 
@@ -676,7 +800,7 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
                           placeholder="Novo valor"
                         />
                       </div>
-                      <div className="md:col-span-1">
+                      <div>
                         <Label>Justificativa (Obrigatória)</Label>
                         <Textarea 
                           value={ajusteManual.justificativa}
@@ -688,15 +812,15 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
                     </div>
                     <Button 
                       className="mt-4" 
-                      onClick={() => console.log('Ajuste registrado:', ajusteManual)}
-                      disabled={!ajusteManual.campo || !ajusteManual.valor_novo || !ajusteManual.justificativa}
+                      onClick={() => abrirConfirmacao('ajuste')}
+                      disabled={!ajusteManual.campo || !ajusteManual.valor_novo || !ajusteManual.unidade_medida || !ajusteManual.justificativa}
                     >
                       Registrar Ajuste
                     </Button>
                   </CardContent>
                 </Card>
 
-                {/* Desmembramento de Kit */}
+                {/* Desmembramento de Kit Melhorado */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-sm flex items-center gap-2">
@@ -705,24 +829,90 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
-                      <div className="p-4 bg-blue-50 rounded-lg">
-                        <h4 className="font-semibold text-blue-800">Informações do Kit</h4>
-                        <p className="text-sm text-blue-700">
-                          Converta este produto em itens unitários. Esta ação removerá o kit do estoque e criará novos itens.
-                        </p>
+                    <div className="space-y-6">
+                      {/* Seleção de Caixas */}
+                      <div>
+                        <Label className="text-base font-semibold">1. Selecionar Caixas Disponíveis</Label>
+                        <div className="mt-2 space-y-2 max-h-48 overflow-y-auto border rounded-lg p-3">
+                          {caixasDisponiveis.map((caixa) => (
+                            <div key={caixa.id} className="flex items-center space-x-3 p-2 border rounded">
+                              <Checkbox
+                                checked={desmembramento.caixas_selecionadas.includes(caixa.id)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setDesmembramento({
+                                      ...desmembramento,
+                                      caixas_selecionadas: [...desmembramento.caixas_selecionadas, caixa.id]
+                                    });
+                                  } else {
+                                    setDesmembramento({
+                                      ...desmembramento,
+                                      caixas_selecionadas: desmembramento.caixas_selecionadas.filter(id => id !== caixa.id)
+                                    });
+                                  }
+                                }}
+                              />
+                              <div className="flex-1">
+                                <div className="font-medium">Lote: {caixa.lote}</div>
+                                <div className="text-sm text-gray-500">
+                                  {caixa.cnpj_estado} - {caixa.deposito} - Qtd: {caixa.quantidade_disponivel}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
+
+                      {/* Configuração da Conversão */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <UnidadeMedidaSelect
+                          value={desmembramento.unidade_destino}
+                          onValueChange={(value) => setDesmembramento({...desmembramento, unidade_destino: value})}
+                          label="2. Unidade de Destino"
+                          placeholder="Selecione a unidade de destino"
+                        />
                         <div>
-                          <Label>Quantidade de Kits</Label>
-                          <Input type="number" placeholder="Qtd de kits a desmembrar" />
-                        </div>
-                        <div>
-                          <Label>Observações</Label>
-                          <Input placeholder="Motivo do desmembramento" />
+                          <Label>Fator de Conversão</Label>
+                          <Input
+                            type="number"
+                            value={desmembramento.fator_conversao}
+                            onChange={(e) => setDesmembramento({...desmembramento, fator_conversao: Number(e.target.value)})}
+                            placeholder="Ex: 1 caixa = 12 unidades"
+                          />
                         </div>
                       </div>
-                      <Button variant="outline" onClick={() => console.log('Desmembramento iniciado')}>
+
+                      {/* Simulação */}
+                      {desmembramento.caixas_selecionadas.length > 0 && desmembramento.unidade_destino && desmembramento.fator_conversao > 0 && (
+                        <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                          <h4 className="font-semibold text-blue-800 mb-2">3. Simulação do Desmembramento</h4>
+                          <div className="space-y-1 text-sm">
+                            <div><strong>Caixas selecionadas:</strong> {simulacaoDesmembramento().totalCaixas}</div>
+                            <div><strong>Unidades resultantes:</strong> {simulacaoDesmembramento().totalUnidades}</div>
+                            <div><strong>Valor total:</strong> R$ {simulacaoDesmembramento().valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Observações */}
+                      <div>
+                        <Label>Observações</Label>
+                        <Textarea
+                          value={desmembramento.observacoes}
+                          onChange={(e) => setDesmembramento({...desmembramento, observacoes: e.target.value})}
+                          placeholder="Motivo do desmembramento e outras observações"
+                        />
+                      </div>
+
+                      <Button 
+                        variant="outline" 
+                        onClick={() => abrirConfirmacao('desmembramento')}
+                        disabled={
+                          desmembramento.caixas_selecionadas.length === 0 ||
+                          !desmembramento.unidade_destino ||
+                          desmembramento.fator_conversao <= 0
+                        }
+                      >
                         Iniciar Desmembramento
                       </Button>
                     </div>
@@ -733,6 +923,15 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
           </Tabs>
         </div>
       </DialogContent>
+
+      {/* Modal de Confirmação com Senha */}
+      <ConfirmacaoSenhaModal
+        isOpen={confirmacaoModal.isOpen}
+        onOpenChange={(open) => setConfirmacaoModal({...confirmacaoModal, isOpen: open})}
+        onConfirm={confirmarOperacao}
+        title={confirmacaoModal.titulo}
+        description={confirmacaoModal.descricao}
+      />
     </Dialog>
   );
 };
