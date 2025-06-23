@@ -502,16 +502,9 @@ const MovimentacaoEstoqueForm = ({ onClose }: MovimentacaoEstoqueFormProps) => {
               Confirmar Movimentação
             </Button>
             
-            {formData.tipo_movimentacao === TipoMovimentacao.ENTRE_CNPJS && (
-              <Button variant="outline" onClick={gerarNF}>
-                <FileSpreadsheet className="h-4 w-4 mr-2" />
-                Gerar NF de Transferência
-              </Button>
-            )}
-            
             <Button variant="outline" onClick={darEntradaComNF}>
-              <Plus className="h-4 w-4 mr-2" />
-              Dar Entrada com NF da Matriz
+              <FileSpreadsheet className="h-4 w-4 mr-2" />
+              Gerar NF de Transferência
             </Button>
             
             <Button variant="outline" onClick={imprimirComprovante}>
