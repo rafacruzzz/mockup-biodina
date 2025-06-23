@@ -1,4 +1,4 @@
-import { Package, ArrowUpDown, Settings, FileText } from "lucide-react";
+import { Package, ArrowUpDown, FileText } from "lucide-react";
 import { EstoqueModulesConfig, StatusMovimentacao, TipoMovimentacaoHistorico } from "@/types/estoque";
 
 const mockPosicaoEstoque = [
@@ -32,7 +32,7 @@ const mockPosicaoEstoque = [
     quantidade_total: 500,
     cmc_unitario: 0.82,
     cmc_total: 410.00,
-    fornecedor: "ImportMed",
+    fornecedor: "ImportM ed",
     tipo_estoque: "Consignado",
     origem_entrada: "Nota 789"
   },
@@ -173,18 +173,6 @@ export const estoqueModules: EstoqueModulesConfig = {
       visao_geral: {
         name: "Visão Geral",
         data: mockPosicaoEstoque
-      },
-      multilotes: {
-        name: "Multi-lotes",
-        data: mockPosicaoEstoque.filter(item => 
-          mockPosicaoEstoque.filter(p => p.produto_codigo === item.produto_codigo).length > 1
-        )
-      },
-      alertas: {
-        name: "Alertas",
-        data: mockPosicaoEstoque.filter(item => 
-          item.data_validade && new Date(item.data_validade) <= new Date(Date.now() + 60 * 24 * 60 * 60 * 1000)
-        )
       }
     }
   },
@@ -195,16 +183,6 @@ export const estoqueModules: EstoqueModulesConfig = {
       movimentacao_estoque: {
         name: "Movimentação de Estoque",
         data: mockMovimentacoes
-      }
-    }
-  },
-  ajustes: {
-    name: "Ajustes",
-    icon: Settings,
-    subModules: {
-      pendentes: {
-        name: "Pendentes",
-        data: []
       }
     }
   },

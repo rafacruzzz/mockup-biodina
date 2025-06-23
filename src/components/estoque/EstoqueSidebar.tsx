@@ -1,5 +1,5 @@
 
-import { ChevronDown, ChevronRight, X, Menu } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { estoqueModules } from "@/data/estoqueModules";
 
@@ -57,15 +57,6 @@ const EstoqueSidebar = ({
           >
             <Menu className="h-5 w-5 text-gray-500" />
           </button>
-          {!isCollapsed && (
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              title="Fechar estoque"
-            >
-              <X className="h-5 w-5 text-gray-500" />
-            </button>
-          )}
         </div>
       </div>
 
@@ -102,14 +93,6 @@ const EstoqueSidebar = ({
                 </div>
                 {!isCollapsed && (
                   <div className="flex items-center gap-1">
-                    {expandedModules.includes(key) && (
-                      <button
-                        onClick={(e) => handleCollapseModule(key, e)}
-                        className="p-1 rounded-md hover:bg-white/20 transition-colors"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    )}
                     {expandedModules.includes(key) ? 
                       <ChevronDown className="h-4 w-4" /> : 
                       <ChevronRight className="h-4 w-4" />

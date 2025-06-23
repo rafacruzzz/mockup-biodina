@@ -83,9 +83,6 @@ const Estoque = () => {
     if (activeModule === 'movimentacoes') {
       return 'Nova Movimentação';
     }
-    if (activeModule === 'ajustes') {
-      return 'Novo Ajuste';
-    }
     return 'Novo Registro';
   };
 
