@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import EstoqueSidebar from "@/components/estoque/EstoqueSidebar";
@@ -64,8 +63,26 @@ const Estoque = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
-  const handleNewRecord = () => {
+  const shouldShowNewButton = () => {
+    // Mostrar botão "Nova Movimentação" quando estiver no módulo de movimentações
     if (activeModule === 'movimentacoes') {
+      return true;
+    }
+    // Não mostrar botão "Novo Registro" para posição atual (Est. Adm.)
+    return !(activeModule === 'posicao_estoque' && activeSubModule === 'posicao_atual');
+  };
+
+  const getButtonText = () => {
+    if (activeModule === 'movimentacoes') {
+      return 'Nova Movimentação';
+    }
+    return 'Novo Registro';
+  };
+
+  const handleNewRecord = () => {
+    console.log('handleNewRecord called with:', { activeModule, activeSubModule });
+    if (activeModule === 'movimentacoes') {
+      console.log('Opening NovaMovimentacaoModal');
       setIsNovaMovimentacaoOpen(true);
     } else {
       console.log('Novo registro para:', activeModule, activeSubModule);
@@ -80,20 +97,8 @@ const Estoque = () => {
     console.log('Detalhes da movimentação:', item);
   };
 
-  const getButtonText = () => {
-    if (activeModule === 'movimentacoes') {
-      return 'Nova Movimentação';
-    }
-    return 'Novo Registro';
-  };
-
   const handleExcelClick = () => {
     setIsMovExcelOpen(true);
-  };
-
-  const shouldShowNewButton = () => {
-    // Não mostrar botão "Novo Registro" para posição atual (Est. Adm.)
-    return !(activeModule === 'posicao_estoque' && activeSubModule === 'posicao_atual');
   };
 
   const currentSubModule = activeModule && activeSubModule ? 
