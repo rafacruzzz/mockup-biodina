@@ -44,9 +44,17 @@ const EstoqueDisponivelModal = ({ item, isOpen, onOpenChange }: EstoqueDisponive
     
     const diasParaVencimento = estoque.dias_para_vencimento || 0;
     if (diasParaVencimento <= 30) {
-      return <AlertTriangle className="h-4 w-4 text-red-500" title={`Vence em ${diasParaVencimento} dias`} />;
+      return (
+        <div className="flex items-center" title={`Vence em ${diasParaVencimento} dias`}>
+          <AlertTriangle className="h-4 w-4 text-red-500" />
+        </div>
+      );
     } else if (diasParaVencimento <= 90) {
-      return <AlertTriangle className="h-4 w-4 text-orange-500" title={`Vence em ${diasParaVencimento} dias`} />;
+      return (
+        <div className="flex items-center" title={`Vence em ${diasParaVencimento} dias`}>
+          <AlertTriangle className="h-4 w-4 text-orange-500" />
+        </div>
+      );
     }
     return null;
   };
