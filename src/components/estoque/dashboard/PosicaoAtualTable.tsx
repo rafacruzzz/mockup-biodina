@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import {
   Table,
@@ -14,20 +15,6 @@ import { Eye, AlertTriangle, Calendar, ChevronUp, ChevronDown } from "lucide-rea
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import {
-  Table as TanStackTable,
-  TableHeader as TanStackTableHeader,
-  TableBody as TanStackTableBody,
-  TableHead as TanStackTableHead,
-  TableRow as TanStackTableRow,
-  TableCell as TanStackTableCell,
-} from "@/components/ui/table";
 import { useDebounce } from "@/hooks/useDebounce";
 import { ExportTable } from "@/components/shared/ExportTable";
 import PosicaoEstoqueModalEnriquecido from "./PosicaoEstoqueModalEnriquecido";
@@ -275,7 +262,12 @@ const PosicaoAtualTable = ({ data }: PosicaoAtualTableProps) => {
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-green-600">{item.quantidade_disponivel}</span>
                     {item.quantidade_disponivel < 50 && (
-                      <AlertTriangle className="h-4 w-4 text-orange-500" title="Estoque baixo" />
+                      <div className="relative group">
+                        <AlertTriangle className="h-4 w-4 text-orange-500" />
+                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                          Estoque baixo
+                        </div>
+                      </div>
                     )}
                   </div>
                 </TableCell>
@@ -291,7 +283,12 @@ const PosicaoAtualTable = ({ data }: PosicaoAtualTableProps) => {
                         {item.dias_para_vencimento}
                       </span>
                       {item.dias_para_vencimento <= 90 && (
-                        <Calendar className="h-4 w-4 text-orange-500" title="Vencimento próximo" />
+                        <div className="relative group">
+                          <Calendar className="h-4 w-4 text-orange-500" />
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                            Vencimento próximo
+                          </div>
+                        </div>
                       )}
                     </div>
                   ) : (

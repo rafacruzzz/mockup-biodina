@@ -1,4 +1,3 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,7 +25,7 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
     quantidade: 0,
     cliente_fornecedor: '',
     motivo: '',
-    tipo_vinculo: 'cliente' as const
+    tipo_vinculo: 'cliente' as 'cliente' | 'fornecedor'
   });
 
   const [ajusteManual, setAjusteManual] = useState({
@@ -361,7 +360,7 @@ const PosicaoEstoqueModalEnriquecido = ({ isOpen, onOpenChange, produto, todosPr
                                 }
                               </TableCell>
                               <TableCell>
-                                <Badge className={getStatusEmprestimoBadge(emprestimo.status)}>
+                                <Badge className={getStatusEmprestimoBadge(emprestimo.status as StatusEmprestimo)}>
                                   {emprestimo.status.replace('_', ' ')}
                                 </Badge>
                               </TableCell>
