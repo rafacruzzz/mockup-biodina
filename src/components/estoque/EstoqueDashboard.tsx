@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { estoqueModules } from "@/data/estoqueModules";
@@ -18,7 +17,7 @@ const EstoqueDashboard = () => {
   const [selectedProduct, setSelectedProduct] = useState<PosicaoEstoque | null>(null);
   const [isProductSheetOpen, setIsProductSheetOpen] = useState(false);
 
-  const posicaoEstoque = estoqueModules.posicao_estoque.subModules.visao_geral.data;
+  const posicaoEstoque = estoqueModules.posicao_estoque.subModules.posicao_atual.data;
 
   // Calcular métricas básicas para os filtros
   const produtosVencidos = posicaoEstoque.filter(item => 
