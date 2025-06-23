@@ -1,3 +1,4 @@
+
 import { Package, BarChart3, ArrowLeftRight, Clipboard, TrendingUp, Building2 } from "lucide-react";
 import { EstoqueModulesConfig, StatusSeparacao, StatusItemSeparacao, StatusQualidade } from "@/types/estoque";
 
@@ -625,11 +626,11 @@ export const mockEstoquesDisponiveis = [
 
 export const estoqueModules: EstoqueModulesConfig = {
   posicao_estoque: {
-    name: "Posição de Estoque",
+    name: "Estoque",
     icon: Package,
     subModules: {
       posicao_atual: {
-        name: "Posição Atual",
+        name: "Est. Adm.",
         data: mockPosicaoEstoque
       },
       separacao_estoque: {
