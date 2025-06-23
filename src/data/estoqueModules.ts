@@ -61,6 +61,55 @@ export const mockMovimentacaoEstoque = [
   }
 ];
 
+// Export alias for compatibility with existing imports
+export const mockMovimentacoes = mockMovimentacaoEstoque;
+
+export const mockCNPJs = [
+  {
+    id: 1,
+    codigo: "12.345.678/0001-90",
+    nome: "Biodina Matriz"
+  },
+  {
+    id: 2,
+    codigo: "98.765.432/0001-01", 
+    nome: "Biodina Filial SP"
+  },
+  {
+    id: 3,
+    codigo: "11.222.333/0001-44",
+    nome: "Biodina Filial RJ"
+  }
+];
+
+export const mockDepositos = [
+  {
+    id: 1,
+    nome: "Depósito Central",
+    cnpj_id: 1
+  },
+  {
+    id: 2,
+    nome: "Depósito Filial",
+    cnpj_id: 1
+  },
+  {
+    id: 3,
+    nome: "Depósito SP - Principal",
+    cnpj_id: 2
+  },
+  {
+    id: 4,
+    nome: "Depósito SP - Secundário",
+    cnpj_id: 2
+  },
+  {
+    id: 5,
+    nome: "Depósito RJ - Centro",
+    cnpj_id: 3
+  }
+];
+
 export const mockSeparacaoEstoque = [
   {
     id: 1,
@@ -202,6 +251,10 @@ export const estoqueModules: EstoqueModulesConfig = {
       separacao_estoque: {
         name: "Separação de Estoque",
         data: mockSeparacaoEstoque
+      },
+      visao_geral: {
+        name: "Visão Geral",
+        data: mockPosicaoEstoque
       }
     }
   },
