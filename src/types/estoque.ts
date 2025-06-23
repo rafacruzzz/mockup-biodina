@@ -214,3 +214,62 @@ export enum StatusItemSeparacao {
   INDISPONIVEL = 'indisponivel',
   PARCIAL = 'parcial'
 }
+
+export interface ProdutoEmprestimo {
+  id: number;
+  produto_codigo: string;
+  lote: string;
+  quantidade: number;
+  cliente_fornecedor: string;
+  tipo_vinculo: 'cliente' | 'fornecedor';
+  data_emprestimo: string;
+  data_devolucao?: string;
+  status: StatusEmprestimo;
+  motivo: string;
+  responsavel: string;
+  observacoes?: string;
+}
+
+export interface LogAuditoria {
+  id: number;
+  produto_codigo: string;
+  lote: string;
+  campo_alterado: string;
+  valor_anterior: string;
+  valor_novo: string;
+  data_alteracao: string;
+  usuario: string;
+  justificativa: string;
+  tipo_operacao: 'manual' | 'automatica' | 'correcao';
+}
+
+export interface KitDesmembrado {
+  id: number;
+  kit_codigo: string;
+  kit_descricao: string;
+  quantidade_kit: number;
+  data_desmembramento: string;
+  usuario: string;
+  itens_resultantes: ItemDesmembrado[];
+  observacoes?: string;
+}
+
+export interface ItemDesmembrado {
+  codigo: string;
+  descricao: string;
+  quantidade: number;
+  lote_gerado: string;
+}
+
+export enum StatusEmprestimo {
+  EM_DEBITO = 'em_debito',
+  QUITADO = 'quitado',
+  PARCIAL = 'parcial',
+  VENCIDO = 'vencido'
+}
+
+export enum TipoOperacaoAuditoria {
+  AJUSTE_MANUAL = 'ajuste_manual',
+  CORRECAO_INVENTARIO = 'correcao_inventario',
+  TRANSFERENCIA_EMERGENCIAL = 'transferencia_emergencial'
+}

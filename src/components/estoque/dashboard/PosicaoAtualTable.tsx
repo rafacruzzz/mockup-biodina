@@ -1,344 +1,379 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { ArrowUpDown, Eye, Download, Search, Filter } from "lucide-react";
+import { useState, useEffect } from "react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "@/components/ui/table";
 import { PosicaoEstoque, StatusQualidade } from "@/types/estoque";
-import PosicaoEstoqueModal from "./PosicaoEstoqueModal";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Eye, AlertTriangle, Calendar, ChevronUp, ChevronDown } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import {
+  Table as TanStackTable,
+  TableHeader as TanStackTableHeader,
+  TableBody as TanStackTableBody,
+  TableHead as TanStackTableHead,
+  TableRow as TanStackTableRow,
+  TableCell as TanStackTableCell,
+} from "@/components/ui/table";
+import { useDebounce } from "@/hooks/useDebounce";
+import { ExportTable } from "@/components/shared/ExportTable";
+import PosicaoEstoqueModalEnriquecido from "./PosicaoEstoqueModalEnriquecido";
 
 interface PosicaoAtualTableProps {
   data: PosicaoEstoque[];
 }
 
+interface SortConfig {
+  key: string;
+  direction: 'asc' | 'desc';
+}
+
 const PosicaoAtualTable = ({ data }: PosicaoAtualTableProps) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCnpj, setSelectedCnpj] = useState("todos");
-  const [selectedTipoEstoque, setSelectedTipoEstoque] = useState("todos");
-  const [selectedFornecedor, setSelectedFornecedor] = useState("todos");
-  const [selectedEstado, setSelectedEstado] = useState("todos");
-  const [sortField, setSortField] = useState("");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [selectedProduct, setSelectedProduct] = useState<PosicaoEstoque | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduto, setSelectedProduto] = useState<PosicaoEstoque | null>(null);
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  // Obter valores únicos para filtros
-  const cnpjsUnicos = [...new Set(data.map(item => item.cnpj))];
-  const tiposEstoque = [...new Set(data.map(item => item.tipo_estoque))];
-  const fornecedores = [...new Set(data.map(item => item.fornecedor))];
-  const estados = [...new Set(data.map(item => item.cnpj_estado))];
-
-  // Função de ordenação
-  const handleSort = (field: string) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortDirection("asc");
-    }
-  };
-
-  // Aplicar filtros e ordenação
-  const getFilteredAndSortedData = () => {
-    let filtered = data.filter(item => {
-      const matchesSearch = !searchTerm || 
-        item.produto_descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.produto_codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.lote.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.numero_serie?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.fornecedor.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesCnpj = selectedCnpj === "todos" || item.cnpj === selectedCnpj;
-      const matchesTipo = selectedTipoEstoque === "todos" || item.tipo_estoque === selectedTipoEstoque;
-      const matchesFornecedor = selectedFornecedor === "todos" || item.fornecedor === selectedFornecedor;
-      const matchesEstado = selectedEstado === "todos" || item.cnpj_estado === selectedEstado;
-      
-      return matchesSearch && matchesCnpj && matchesTipo && matchesFornecedor && matchesEstado;
-    });
-
-    // Aplicar ordenação
-    if (sortField) {
-      filtered.sort((a, b) => {
-        let aValue = a[sortField as keyof typeof a];
-        let bValue = b[sortField as keyof typeof b];
-        
-        if (sortField === "data_validade") {
-          aValue = aValue ? new Date(aValue as string).getTime() : 0;
-          bValue = bValue ? new Date(bValue as string).getTime() : 0;
-        }
-        
-        if (typeof aValue === "string") aValue = aValue.toLowerCase();
-        if (typeof bValue === "string") bValue = bValue.toLowerCase();
-        
-        if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
-        if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
-        return 0;
-      });
-    }
-
-    return filtered;
-  };
-
-  const filteredData = getFilteredAndSortedData();
-
-  // Função para exportar
-  const exportToExcel = () => {
-    const csvContent = [
-      ["Código", "Produto", "CNPJ", "Estado", "Lote", "Série", "Qtde Disp.", "Qtde Res.", "Validade", "Dias Venc.", "Status", "Fornecedor", "Tipo", "Localização", "Valor Total"],
-      ...filteredData.map(item => [
-        item.produto_codigo,
-        item.produto_descricao,
-        item.cnpj,
-        item.cnpj_estado,
-        item.lote,
-        item.numero_serie || "",
-        item.quantidade_disponivel,
-        item.quantidade_reservada,
-        item.data_validade ? new Date(item.data_validade).toLocaleDateString('pt-BR') : "Sem validade",
-        item.dias_para_vencimento || "",
-        item.status_qualidade,
-        item.fornecedor,
-        item.tipo_estoque,
-        `${item.deposito} - ${item.localizacao_fisica}`,
-        `R$ ${item.cmc_total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-      ])
-    ].map(row => row.join(",")).join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `posicao_estoque_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-  };
-
-  // Função para determinar cor da linha baseada na validade
-  const getRowColor = (item: PosicaoEstoque) => {
-    if (!item.data_validade) return "";
-    
-    const dias = item.dias_para_vencimento;
-    if (dias === null) return "";
-    
-    if (dias <= 0) return "bg-red-50 border-l-4 border-l-red-500";
-    if (dias <= 30) return "bg-yellow-50 border-l-4 border-l-yellow-500";
-    if (dias <= 90) return "bg-orange-50 border-l-4 border-l-orange-500";
-    return "";
-  };
-
-  const getStatusQualidadeBadge = (status: StatusQualidade) => {
-    const colors = {
-      [StatusQualidade.APROVADO]: "bg-green-100 text-green-800",
-      [StatusQualidade.LIBERADO]: "bg-blue-100 text-blue-800", 
-      [StatusQualidade.QUARENTENA]: "bg-yellow-100 text-yellow-800",
-      [StatusQualidade.REJEITADO]: "bg-red-100 text-red-800"
-    };
-    return colors[status];
-  };
-
-  const SortableHeader = ({ field, children }: { field: string; children: React.ReactNode }) => (
-    <button
-      onClick={() => handleSort(field)}
-      className="flex items-center gap-1 hover:text-gray-900 font-semibold"
-    >
-      {children}
-      <ArrowUpDown className="h-3 w-3" />
-    </button>
-  );
-
-  const handleViewDetails = (item: PosicaoEstoque) => {
-    setSelectedProduct(item);
+  const handleDetailsClick = (item: PosicaoEstoque) => {
+    setSelectedProduto(item);
     setIsModalOpen(true);
   };
 
+  const getStatusBadgeColor = (status: StatusQualidade) => {
+    switch (status) {
+      case StatusQualidade.APROVADO:
+        return "bg-green-100 text-green-800";
+      case StatusQualidade.QUARENTENA:
+        return "bg-yellow-100 text-yellow-800";
+      case StatusQualidade.REJEITADO:
+        return "bg-red-100 text-red-800";
+      case StatusQualidade.LIBERADO:
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const handleSort = (key: string) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig?.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedData = () => {
+    if (!sortConfig) return [...data];
+
+    return [...data].sort((a, b) => {
+      const key = sortConfig.key as keyof PosicaoEstoque;
+      const direction = sortConfig.direction;
+
+      if (a[key] === null && b[key] === null) return 0;
+      if (a[key] === null) return direction === 'asc' ? -1 : 1;
+      if (b[key] === null) return direction === 'asc' ? 1 : -1;
+
+      if (typeof a[key] === 'number' && typeof b[key] === 'number') {
+        return direction === 'asc' ? a[key] as number - (b[key] as number) : (b[key] as number) - (a[key] as number);
+      }
+
+      const aValue = String(a[key]).toUpperCase();
+      const bValue = String(b[key]).toUpperCase();
+
+      if (aValue < bValue) {
+        return direction === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  const filteredData = sortedData().filter(item => {
+    const searchTermLower = debouncedSearchTerm.toLowerCase();
+    const matchesSearch =
+      item.produto_codigo.toLowerCase().includes(searchTermLower) ||
+      item.produto_descricao.toLowerCase().includes(searchTermLower) ||
+      item.lote.toLowerCase().includes(searchTermLower) ||
+      (item.numero_serie?.toLowerCase().includes(searchTermLower) ?? false) ||
+      item.cnpj.toLowerCase().includes(searchTermLower) ||
+      item.cnpj_estado.toLowerCase().includes(searchTermLower) ||
+      item.deposito.toLowerCase().includes(searchTermLower) ||
+      item.localizacao_fisica.toLowerCase().includes(searchTermLower) ||
+      item.fornecedor.toLowerCase().includes(searchTermLower);
+
+    const matchesStatus = statusFilter ? item.status_qualidade === statusFilter : true;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const totalItems = filteredData.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = filteredData.slice(startIndex, endIndex);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const getPaginationRange = () => {
+    const delta = 2;
+    let range = [];
+    let pages = [];
+  
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+  
+    const l = currentPage - delta;
+    const r = currentPage + delta + 1;
+  
+    const shouldShowLeftDots = l > 2;
+    const shouldShowRightDots = r < totalPages - 1;
+  
+    const leftmost = shouldShowLeftDots ? 1 : currentPage - delta;
+    const rightmost = shouldShowRightDots ? totalPages : currentPage + delta;
+  
+    range.push(1);
+  
+    if (shouldShowLeftDots) {
+      range.push('...');
+    }
+  
+    for (let i = leftmost > 1 ? leftmost : 2; i <= (rightmost < totalPages ? rightmost : totalPages - 1); i++) {
+      range.push(i);
+    }
+  
+    if (shouldShowRightDots) {
+      range.push('...');
+    }
+  
+    range.push(totalPages);
+  
+    return range;
+  };
+
   return (
-    <>
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Posição Atual de Estoque</CardTitle>
-              <CardDescription>
-                {filteredData.length} registros encontrados • Informações detalhadas por lote
-              </CardDescription>
-            </div>
-            <Button onClick={exportToExcel} className="flex items-center gap-2">
-              <Download className="h-4 w-4" />
-              Exportar Excel
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Filtros Avançados */}
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-4 bg-gray-50 p-4 rounded-lg">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Buscar produto, código, lote..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={selectedEstado} onValueChange={setSelectedEstado}>
-              <SelectTrigger>
-                <SelectValue placeholder="Estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos os Estados</SelectItem>
-                {estados.map(estado => (
-                  <SelectItem key={estado} value={estado}>{estado}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedCnpj} onValueChange={setSelectedCnpj}>
-              <SelectTrigger>
-                <SelectValue placeholder="CNPJ" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos os CNPJs</SelectItem>
-                {cnpjsUnicos.map(cnpj => (
-                  <SelectItem key={cnpj} value={cnpj}>{cnpj}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedTipoEstoque} onValueChange={setSelectedTipoEstoque}>
-              <SelectTrigger>
-                <SelectValue placeholder="Tipo Estoque" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos os Tipos</SelectItem>
-                {tiposEstoque.map(tipo => (
-                  <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={selectedFornecedor} onValueChange={setSelectedFornecedor}>
-              <SelectTrigger>
-                <SelectValue placeholder="Fornecedor" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos Fornecedores</SelectItem>
-                {fornecedores.map(fornecedor => (
-                  <SelectItem key={fornecedor} value={fornecedor}>{fornecedor}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button variant="outline" className="flex items-center gap-2">
-              <Filter className="h-4 w-4" />
-              Limpar Filtros
-            </Button>
-          </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <Input
+          type="search"
+          placeholder="Buscar por código, descrição, lote..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
 
-          {/* Tabela */}
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead><SortableHeader field="produto_descricao">Produto</SortableHeader></TableHead>
-                  <TableHead><SortableHeader field="cnpj_estado">Estado</SortableHeader></TableHead>
-                  <TableHead><SortableHeader field="lote">Lote</SortableHeader></TableHead>
-                  <TableHead>Série</TableHead>
-                  <TableHead className="text-right"><SortableHeader field="quantidade_disponivel">Disponível</SortableHeader></TableHead>
-                  <TableHead className="text-right"><SortableHeader field="quantidade_reservada">Reservada</SortableHeader></TableHead>
-                  <TableHead><SortableHeader field="data_validade">Validade</SortableHeader></TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead><SortableHeader field="fornecedor">Fornecedor</SortableHeader></TableHead>
-                  <TableHead>Localização</TableHead>
-                  <TableHead className="text-right"><SortableHeader field="cmc_total">Valor</SortableHeader></TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredData.map((item) => (
-                  <TableRow key={item.id} className={`${getRowColor(item)} hover:bg-gray-50`}>
-                    <TableCell className="font-medium">
-                      <div>
-                        <div className="font-semibold text-gray-900">{item.produto_descricao}</div>
-                        <div className="text-sm text-gray-500">{item.produto_codigo}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{item.cnpj_estado}</div>
-                        <div className="text-xs text-gray-500">{item.cnpj}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-mono text-sm">{item.lote}</TableCell>
-                    <TableCell className="font-mono text-xs">{item.numero_serie || '-'}</TableCell>
-                    <TableCell className="text-right font-semibold">{item.quantidade_disponivel}</TableCell>
-                    <TableCell className="text-right text-orange-600 font-medium">
-                      {item.quantidade_reservada > 0 ? item.quantidade_reservada : '-'}
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="text-sm">
-                          {item.data_validade ? 
-                            new Date(item.data_validade).toLocaleDateString('pt-BR') : 
-                            <span className="text-gray-400">Sem validade</span>
-                          }
-                        </div>
-                        {item.dias_para_vencimento !== null && (
-                          <div className="text-xs text-gray-500">
-                            {item.dias_para_vencimento <= 0 ? 'Vencido' : `${item.dias_para_vencimento} dias`}
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusQualidadeBadge(item.status_qualidade)}>
-                        {item.status_qualidade}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <span className="text-sm hover:text-blue-600 cursor-help">{item.fornecedor}</span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <div className="space-y-1">
-                            <p><strong>Tipo:</strong> {item.tipo_estoque}</p>
-                            <p><strong>Origem:</strong> {item.origem_entrada}</p>
-                          </div>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="text-sm">{item.deposito}</div>
-                        <div className="text-xs text-gray-500">{item.localizacao_fisica}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right font-semibold">
-                      R$ {item.cmc_total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                    </TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => handleViewDetails(item)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="flex items-center space-x-2">
+          <Label htmlFor="status">Filtrar por Status:</Label>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Todos os Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">Todos os Status</SelectItem>
+              <SelectItem value={StatusQualidade.APROVADO}>Aprovado</SelectItem>
+              <SelectItem value={StatusQualidade.QUARENTENA}>Quarentena</SelectItem>
+              <SelectItem value={StatusQualidade.REJEITADO}>Rejeitado</SelectItem>
+              <SelectItem value={StatusQualidade.LIBERADO}>Liberado</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-      <PosicaoEstoqueModal
+        <ExportTable data={filteredData} filename="posicao_estoque.csv" />
+      </div>
+
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead 
+                className="cursor-pointer hover:bg-gray-50" 
+                onClick={() => handleSort('produto_codigo')}
+              >
+                <div className="flex items-center gap-2">
+                  Código
+                  {sortConfig?.key === 'produto_codigo' && (
+                    sortConfig.direction === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                  )}
+                </div>
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-gray-50" 
+                onClick={() => handleSort('produto_descricao')}
+              >
+                <div className="flex items-center gap-2">
+                  Descrição
+                  {sortConfig?.key === 'produto_descricao' && (
+                    sortConfig.direction === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                  )}
+                </div>
+              </TableHead>
+              <TableHead>Lote</TableHead>
+              <TableHead>Número de Série</TableHead>
+              <TableHead>CNPJ</TableHead>
+              <TableHead>Estado</TableHead>
+              <TableHead>Depósito</TableHead>
+              <TableHead>Localização</TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-gray-50" 
+                onClick={() => handleSort('quantidade_disponivel')}
+              >
+                <div className="flex items-center gap-2">
+                  Disponível
+                  {sortConfig?.key === 'quantidade_disponivel' && (
+                    sortConfig.direction === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                  )}
+                </div>
+              </TableHead>
+              <TableHead>Reservada</TableHead>
+              <TableHead>Dias p/ Venc.</TableHead>
+              <TableHead>Status Qualidade</TableHead>
+              <TableHead>Fornecedor</TableHead>
+              <TableHead>Valor Total</TableHead>
+              <TableHead>Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {currentItems.map((item) => (
+              <TableRow key={item.id} className="hover:bg-gray-50">
+                <TableCell className="font-mono text-sm">{item.produto_codigo}</TableCell>
+                <TableCell className="max-w-64">
+                  <div className="truncate" title={item.produto_descricao}>
+                    {item.produto_descricao}
+                  </div>
+                </TableCell>
+                <TableCell className="font-mono text-sm">{item.lote}</TableCell>
+                <TableCell className="font-mono text-xs">{item.numero_serie || '-'}</TableCell>
+                <TableCell className="text-xs">{item.cnpj}</TableCell>
+                <TableCell>
+                  <Badge variant="outline" className="text-xs">
+                    {item.cnpj_estado}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-sm">{item.deposito}</TableCell>
+                <TableCell className="font-mono text-xs">{item.localizacao_fisica}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-green-600">{item.quantidade_disponivel}</span>
+                    {item.quantidade_disponivel < 50 && (
+                      <AlertTriangle className="h-4 w-4 text-orange-500" title="Estoque baixo" />
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="text-orange-600 font-semibold">{item.quantidade_reservada}</TableCell>
+                <TableCell>
+                  {item.dias_para_vencimento !== null ? (
+                    <div className="flex items-center gap-2">
+                      <span className={`font-semibold ${
+                        item.dias_para_vencimento <= 30 ? 'text-red-600' :
+                        item.dias_para_vencimento <= 90 ? 'text-orange-600' :
+                        'text-green-600'
+                      }`}>
+                        {item.dias_para_vencimento}
+                      </span>
+                      {item.dias_para_vencimento <= 90 && (
+                        <Calendar className="h-4 w-4 text-orange-500" title="Vencimento próximo" />
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-gray-400">-</span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <Badge className={getStatusBadgeColor(item.status_qualidade)}>
+                    {item.status_qualidade}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-sm max-w-32 truncate" title={item.fornecedor}>
+                  {item.fornecedor}
+                </TableCell>
+                <TableCell className="font-semibold text-blue-600">
+                  R$ {item.cmc_total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleDetailsClick(item)}
+                    className="hover:bg-blue-50"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-gray-500">
+          Mostrando {startIndex + 1} - {Math.min(endIndex, totalItems)} de {totalItems}
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            Anterior
+          </Button>
+
+          {getPaginationRange().map((page, index) => (
+            page === '...' ? (
+              <span key={index} className="px-2 text-gray-500">
+                {page}
+              </span>
+            ) : (
+              <Button
+                key={index}
+                variant={currentPage === page ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => handlePageChange(page as number)}
+              >
+                {page}
+              </Button>
+            )
+          ))}
+
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={currentPage === totalPages || totalPages === 0}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            Próximo
+          </Button>
+        </div>
+      </div>
+
+      <PosicaoEstoqueModalEnriquecido
         isOpen={isModalOpen}
         onOpenChange={setIsModalOpen}
-        produto={selectedProduct}
-        todosProdutos={data}
+        produto={selectedProduto}
+        todosProdutos={filteredData}
       />
-    </>
+    </div>
   );
 };
 

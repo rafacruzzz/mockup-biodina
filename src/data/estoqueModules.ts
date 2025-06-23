@@ -161,6 +161,139 @@ export const mockMovimentacaoEstoque = [
 // Export alias for compatibility with existing imports
 export const mockMovimentacoes = mockMovimentacaoEstoque;
 
+export const mockEmprestimos = [
+  {
+    id: 1,
+    produto_codigo: "944-021-U",
+    lote: "LOT001-2024",
+    quantidade: 2,
+    cliente_fornecedor: "Hospital São Francisco",
+    tipo_vinculo: 'cliente' as const,
+    data_emprestimo: "2024-01-10",
+    data_devolucao: undefined,
+    status: 'em_debito' as const,
+    motivo: "Teste de compatibilidade - Picolés importação direta",
+    responsavel: "maria.silva",
+    observacoes: "Produtos consumíveis - não retornam ao estoque"
+  },
+  {
+    id: 2,
+    produto_codigo: "SER001",
+    lote: "LOT004-2024",
+    quantidade: 50,
+    cliente_fornecedor: "Fornecedor ABC Ltda",
+    tipo_vinculo: 'fornecedor' as const,
+    data_emprestimo: "2024-01-05",
+    data_devolucao: "2024-01-15",
+    status: 'quitado' as const,
+    motivo: "Empréstimo para testes de qualidade",
+    responsavel: "carlos.ferreira",
+    observacoes: "Devolvido conforme acordo"
+  },
+  {
+    id: 3,
+    produto_codigo: "LAB-500",
+    lote: "LOT005-2024",
+    quantidade: 1,
+    cliente_fornecedor: "Clínica Beta",
+    tipo_vinculo: 'cliente' as const,
+    data_emprestimo: "2024-01-20",
+    data_devolucao: undefined,
+    status: 'vencido' as const,
+    motivo: "Demonstração técnica",
+    responsavel: "ana.costa",
+    observacoes: "Empréstimo vencido - necessário cobrança"
+  }
+];
+
+export const mockLogsAuditoria = [
+  {
+    id: 1,
+    produto_codigo: "944-021-U",
+    lote: "LOT001-2024",
+    campo_alterado: "quantidade_disponivel",
+    valor_anterior: "150",
+    valor_novo: "148",
+    data_alteracao: "2024-01-22T14:30:00",
+    usuario: "admin",
+    justificativa: "Ajuste após inventário físico - encontradas 2 unidades a menos",
+    tipo_operacao: 'manual' as const
+  },
+  {
+    id: 2,
+    produto_codigo: "SER001",
+    lote: "LOT004-2024",
+    campo_alterado: "localizacao_fisica",
+    valor_anterior: "D1-E2-F3",
+    valor_novo: "D1-E2-F4",
+    data_alteracao: "2024-01-23T09:15:00",
+    usuario: "operador1",
+    justificativa: "Reorganização do depósito - mudança de prateleira",
+    tipo_operacao: 'manual' as const
+  },
+  {
+    id: 3,
+    produto_codigo: "LAB-500",
+    lote: "LOT005-2024",
+    campo_alterado: "status_qualidade",
+    valor_anterior: "quarentena",
+    valor_novo: "aprovado",
+    data_alteracao: "2024-01-24T16:45:00",
+    usuario: "qualidade.supervisor",
+    justificativa: "Liberação após análise laboratorial - conformidade aprovada",
+    tipo_operacao: 'automatica' as const
+  }
+];
+
+export const mockKitsDesmembrados = [
+  {
+    id: 1,
+    kit_codigo: "KIT-CERV-12",
+    kit_descricao: "Caixa Cerveja 12 Unidades",
+    quantidade_kit: 5,
+    data_desmembramento: "2024-01-18T11:20:00",
+    usuario: "operador2",
+    itens_resultantes: [
+      {
+        codigo: "CERV-UNIT-001",
+        descricao: "Cerveja Unidade Individual",
+        quantidade: 60,
+        lote_gerado: "DESM-001-2024"
+      }
+    ],
+    observacoes: "Desmembramento para venda unitária"
+  },
+  {
+    id: 2,
+    kit_codigo: "KIT-MED-EMER",
+    kit_descricao: "Kit Médico Emergência",
+    quantidade_kit: 2,
+    data_desmembramento: "2024-01-19T15:30:00",
+    usuario: "admin",
+    itens_resultantes: [
+      {
+        codigo: "SER-10ML",
+        descricao: "Seringa 10ml",
+        quantidade: 20,
+        lote_gerado: "DESM-002-2024"
+      },
+      {
+        codigo: "BAND-CIR",
+        descricao: "Bandagem Cirúrgica",
+        quantidade: 10,
+        lote_gerado: "DESM-002-2024"
+      },
+      {
+        codigo: "LUVA-DESC",
+        descricao: "Luva Descartável",
+        quantidade: 40,
+        lote_gerado: "DESM-002-2024"
+      }
+    ],
+    observacoes: "Desmembramento para uso hospitalar específico"
+  }
+];
+
 export const mockCNPJs = [
   {
     id: 1,
