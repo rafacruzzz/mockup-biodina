@@ -175,7 +175,7 @@ const FiltrosAvancados = ({ onFiltrosChange, filtrosAtivos }: FiltrosAvancadosPr
                 <SelectValue placeholder="Selecione uma categoria" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas as categorias</SelectItem>
+                <SelectItem value="todas">Todas as categorias</SelectItem>
                 {categorias.map((categoria) => (
                   <SelectItem key={categoria} value={categoria}>
                     {categoria}

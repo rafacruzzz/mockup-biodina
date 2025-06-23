@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -55,7 +54,7 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
       }
 
       // Filtro de categoria
-      if (filtros.categoria && produto.categoria !== filtros.categoria) {
+      if (filtros.categoria && filtros.categoria !== 'todas' && produto.categoria !== filtros.categoria) {
         return false;
       }
 
