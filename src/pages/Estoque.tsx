@@ -92,8 +92,8 @@ const Estoque = () => {
   };
 
   const shouldShowNewButton = () => {
-    // Não mostrar botão "Novo Registro" para posição atual
-    return activeModule !== 'posicao_estoque';
+    // Não mostrar botão "Novo Registro" para posição atual (Est. Adm.)
+    return !(activeModule === 'posicao_estoque' && activeSubModule === 'posicao_atual');
   };
 
   const currentSubModule = activeModule && activeSubModule ? 
@@ -114,7 +114,7 @@ const Estoque = () => {
         />
 
         <div className="flex-1 flex flex-col min-h-0">
-          {activeSubModule && currentSubModule && activeModule !== 'posicao_estoque' ? (
+          {activeSubModule && currentSubModule ? (
             <>
               <ContentHeader
                 title={currentSubModule.name}
@@ -137,6 +137,8 @@ const Estoque = () => {
                   <SeparacaoEstoqueTable 
                     data={currentSubModule?.data || []} 
                   />
+                ) : activeModule === 'posicao_estoque' && activeSubModule === 'posicao_atual' ? (
+                  <EstoqueDashboard />
                 ) : (
                   <DataTable 
                     data={currentSubModule?.data || []} 

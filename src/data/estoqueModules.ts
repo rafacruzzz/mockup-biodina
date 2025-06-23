@@ -1,4 +1,3 @@
-
 import { Package, BarChart3, ArrowLeftRight, Clipboard, TrendingUp, Building2 } from "lucide-react";
 import { EstoqueModulesConfig, StatusSeparacao, StatusItemSeparacao, StatusQualidade } from "@/types/estoque";
 
@@ -634,7 +633,7 @@ export const estoqueModules: EstoqueModulesConfig = {
         data: mockPosicaoEstoque
       },
       separacao_estoque: {
-        name: "Separação",
+        name: "Est. Expedição",
         data: mockSeparacaoEstoque
       }
     }
@@ -645,10 +644,6 @@ export const estoqueModules: EstoqueModulesConfig = {
     subModules: {
       movimentacao_estoque: {
         name: "Movimentação de Estoque",
-        data: mockMovimentacaoEstoque
-      },
-      historico_movimentacoes: {
-        name: "Histórico de Movimentações",
         data: mockMovimentacaoEstoque
       }
     }
