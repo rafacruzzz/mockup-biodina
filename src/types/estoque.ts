@@ -1,4 +1,3 @@
-
 export interface PosicaoEstoque {
   id: number;
   produto_codigo: string;
@@ -102,3 +101,72 @@ export interface ModuleEstoque {
 }
 
 export type EstoqueModulesConfig = Record<string, ModuleEstoque>;
+
+export interface PedidoSeparacao {
+  id: number;
+  numero_pedido: string;
+  nop: string;
+  vendedor: string;
+  cliente: string;
+  endereco_cliente: string;
+  data_entrega: string;
+  status: StatusSeparacao;
+  regiao: string;
+  transportadora?: string;
+  observacoes?: string;
+  quantidade_volumes?: number;
+  peso_bruto?: number;
+  peso_liquido?: number;
+  itens: ItemPedidoSeparacao[];
+  progresso: {
+    separados: number;
+    total: number;
+  };
+}
+
+export interface ItemPedidoSeparacao {
+  id: number;
+  codigo_produto: string;
+  descricao_produto: string;
+  quantidade_solicitada: number;
+  quantidade_separada: number;
+  status: StatusItemSeparacao;
+  observacoes_item?: string;
+  estoques_disponiveis?: EstoqueDisponivel[];
+}
+
+export interface EstoqueDisponivel {
+  id: number;
+  cnpj: string;
+  deposito: string;
+  lote: string;
+  data_validade: string | null;
+  localizacao_fisica: string;
+  quantidade_disponivel: number;
+  tipo_estoque: string;
+  numero_serie?: string;
+  dias_para_vencimento?: number;
+}
+
+export interface SolicitacaoReposicao {
+  item_id: number;
+  motivo: string;
+  notificar_vendedor: boolean;
+  data_solicitacao: string;
+  solicitante: string;
+}
+
+export enum StatusSeparacao {
+  DISPONIVEL = 'disponivel',
+  SEPARADO_PARCIAL = 'separado_parcial',
+  INDISPONIVEL = 'indisponivel',
+  PLANEJADO = 'planejado',
+  FINALIZADO = 'finalizado'
+}
+
+export enum StatusItemSeparacao {
+  PENDENTE = 'pendente',
+  SEPARADO = 'separado',
+  INDISPONIVEL = 'indisponivel',
+  PARCIAL = 'parcial'
+}

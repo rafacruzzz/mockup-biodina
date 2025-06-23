@@ -1,5 +1,5 @@
 import { Package, ArrowUpDown, FileText } from "lucide-react";
-import { EstoqueModulesConfig, StatusMovimentacao, TipoMovimentacaoHistorico } from "@/types/estoque";
+import { EstoqueModulesConfig, StatusMovimentacao, TipoMovimentacaoHistorico, PedidoSeparacao, StatusSeparacao, StatusItemSeparacao } from "@/types/estoque";
 
 const mockPosicaoEstoque = [
   {
@@ -165,6 +165,111 @@ const mockDepositos = [
   { id: 8, nome: "Almoxarifado", cnpj_id: 4 }
 ];
 
+const mockPedidosSeparacao: PedidoSeparacao[] = [
+  {
+    id: 1,
+    numero_pedido: "85696",
+    nop: "6.108 WM",
+    vendedor: "gustavo.brito",
+    cliente: "Bronstein Filial",
+    endereco_cliente: "Rua das Palmeiras, 123 - Centro, Rio de Janeiro - RJ",
+    data_entrega: "2025-05-19",
+    status: StatusSeparacao.SEPARADO_PARCIAL,
+    regiao: "RJ",
+    transportadora: "",
+    observacoes: "Cliente exige validade mínima de 6 meses",
+    quantidade_volumes: 3,
+    peso_bruto: 15.5,
+    peso_liquido: 12.3,
+    progresso: { separados: 2, total: 3 },
+    itens: [
+      {
+        id: 1,
+        codigo_produto: "944-021-U",
+        descricao_produto: "Solução de Calibração S7770",
+        quantidade_solicitada: 2,
+        quantidade_separada: 2,
+        status: StatusItemSeparacao.SEPARADO
+      },
+      {
+        id: 2,
+        codigo_produto: "944-132",
+        descricao_produto: "Solução de Lavagem",
+        quantidade_solicitada: 1,
+        quantidade_separada: 0,
+        status: StatusItemSeparacao.INDISPONIVEL
+      },
+      {
+        id: 3,
+        codigo_produto: "SER001",
+        descricao_produto: "Seringa 3ml BD",
+        quantidade_solicitada: 100,
+        quantidade_separada: 0,
+        status: StatusItemSeparacao.PENDENTE
+      }
+    ]
+  },
+  {
+    id: 2,
+    numero_pedido: "85779",
+    nop: "6.949-RES.ICMS",
+    vendedor: "thais.rodrigues",
+    cliente: "IDEAS",
+    endereco_cliente: "Av. Presidente Vargas, 456 - Centro, Rio de Janeiro - RJ",
+    data_entrega: "2025-05-20",
+    status: StatusSeparacao.DISPONIVEL,
+    regiao: "RJ",
+    transportadora: "",
+    quantidade_volumes: 2,
+    peso_bruto: 8.2,
+    peso_liquido: 6.8,
+    progresso: { separados: 0, total: 2 },
+    itens: [
+      {
+        id: 4,
+        codigo_produto: "CAT024",
+        descricao_produto: "Cateter Venoso 24G",
+        quantidade_solicitada: 50,
+        quantidade_separada: 0,
+        status: StatusItemSeparacao.PENDENTE
+      },
+      {
+        id: 5,
+        codigo_produto: "NOB200",
+        descricao_produto: "Nobreak 600VA PowerTech",
+        quantidade_solicitada: 1,
+        quantidade_separada: 0,
+        status: StatusItemSeparacao.PENDENTE
+      }
+    ]
+  }
+];
+
+const mockEstoquesDisponiveis = [
+  {
+    id: 1,
+    cnpj: "WebMED RJ",
+    deposito: "Prateleira A2",
+    lote: "L2305",
+    data_validade: "2025-12-10",
+    localizacao_fisica: "A2-15-C",
+    quantidade_disponivel: 1200,
+    tipo_estoque: "Importação Direta",
+    dias_para_vencimento: 198
+  },
+  {
+    id: 2,
+    cnpj: "Distrib. SP",
+    deposito: "Câmara 3",
+    lote: "L2308",
+    data_validade: "2026-01-12",
+    localizacao_fisica: "C3-08-A",
+    quantidade_disponivel: 500,
+    tipo_estoque: "Consignado",
+    dias_para_vencimento: 231
+  }
+];
+
 export const estoqueModules: EstoqueModulesConfig = {
   posicao_estoque: {
     name: "Posição de Estoque",
@@ -173,6 +278,10 @@ export const estoqueModules: EstoqueModulesConfig = {
       visao_geral: {
         name: "Visão Geral",
         data: mockPosicaoEstoque
+      },
+      separacao_estoque: {
+        name: "Separação de Estoque",
+        data: mockPedidosSeparacao
       }
     }
   },
@@ -198,4 +307,4 @@ export const estoqueModules: EstoqueModulesConfig = {
   }
 };
 
-export { mockMovimentacoes, mockCNPJs, mockDepositos };
+export { mockMovimentacoes, mockCNPJs, mockDepositos, mockPedidosSeparacao, mockEstoquesDisponiveis };

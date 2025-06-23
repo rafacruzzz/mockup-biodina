@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import EstoqueSidebar from "@/components/estoque/EstoqueSidebar";
@@ -10,6 +9,7 @@ import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
 import { estoqueModules } from "@/data/estoqueModules";
 import { MovimentacaoEstoque } from "@/types/estoque";
+import SeparacaoEstoqueTable from "@/components/estoque/SeparacaoEstoqueTable";
 
 const Estoque = () => {
   const [activeModule, setActiveModule] = useState('');
@@ -126,6 +126,10 @@ const Estoque = () => {
                   <MovimentacoesDataTable 
                     data={currentSubModule?.data || []} 
                     onRowDetails={handleMovimentacaoDetails}
+                  />
+                ) : activeModule === 'posicao_estoque' && activeSubModule === 'separacao_estoque' ? (
+                  <SeparacaoEstoqueTable 
+                    data={currentSubModule?.data || []} 
                   />
                 ) : (
                   <DataTable 
