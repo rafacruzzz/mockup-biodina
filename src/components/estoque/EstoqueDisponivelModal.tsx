@@ -33,6 +33,9 @@ const EstoqueDisponivelModal = ({ item, pedido, isOpen, onOpenChange }: EstoqueD
     id: estoque.id + item.id * 10 // Gerar IDs únicos
   }));
 
+  // CNPJ emissor fictício para demonstração (normalmente viria do pedido)
+  const cnpjEmissor = "12.345.678/0001-90";
+
   const handleSelecionarEstoque = (estoqueId: number, quantidade: number) => {
     setEstoquesSelecionados(prev => ({
       ...prev,
@@ -64,14 +67,14 @@ const EstoqueDisponivelModal = ({ item, pedido, isOpen, onOpenChange }: EstoqueD
     return null;
   };
 
-  const validarEstadosCompatibeis = () => {
+  const validarCNPJEmissor = () => {
     const estoquesComQuantidade = Object.entries(estoquesSelecionados)
       .filter(([_, quantidade]) => quantidade > 0)
       .map(([id, _]) => estoquesDisponiveis.find(e => e.id === parseInt(id)))
       .filter(Boolean) as EstoqueDisponivel[];
 
     for (const estoque of estoquesComQuantidade) {
-      if (estoque.cnpj_estado !== pedido.cliente_estado) {
+      if (estoque.cnpj !== cnpjEmissor) {
         return estoque;
       }
     }
@@ -79,7 +82,7 @@ const EstoqueDisponivelModal = ({ item, pedido, isOpen, onOpenChange }: EstoqueD
   };
 
   const handleConfirmarSeparacao = () => {
-    const estoqueIncompativel = validarEstadosCompatibeis();
+    const estoqueIncompativel = validarCNPJEmissor();
     
     if (estoqueIncompativel) {
       setEstoqueIncompativel(estoqueIncompativel);
@@ -103,7 +106,7 @@ const EstoqueDisponivelModal = ({ item, pedido, isOpen, onOpenChange }: EstoqueD
       estoquesSelecionados,
       numeroSerie,
       totalSeparado: getTotalSelecionado(),
-      clienteEstado: pedido.cliente_estado
+      cnpjEmissor
     });
 
     toast({
@@ -117,8 +120,7 @@ const EstoqueDisponivelModal = ({ item, pedido, isOpen, onOpenChange }: EstoqueD
   const handleRedirecionarMovimentacao = () => {
     console.log("Redirecionando para movimentação com dados:", {
       origem: estoqueIncompativel?.cnpj,
-      estadoOrigem: estoqueIncompativel?.cnpj_estado,
-      estadoDestino: pedido.cliente_estado,
+      destino: cnpjEmissor,
       produto: item.codigo_produto,
       quantidade: estoquesSelecionados[estoqueIncompativel?.id || 0] || 0
     });
@@ -133,15 +135,14 @@ const EstoqueDisponivelModal = ({ item, pedido, isOpen, onOpenChange }: EstoqueD
     onOpenChange(false);
   };
 
-  const getEstadoBadge = (estado: string) => {
-    const isCompativel = estado === pedido.cliente_estado;
+  const getCNPJBadge = (cnpj: string) => {
+    const isCompativel = cnpj === cnpjEmissor;
     return (
       <Badge 
         variant="outline" 
         className={isCompativel ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"}
       >
-        <MapPin className="h-3 w-3 mr-1" />
-        {estado}
+        {cnpj}
         {!isCompativel && <AlertTriangle className="h-3 w-3 ml-1" />}
       </Badge>
     );
@@ -176,10 +177,9 @@ const EstoqueDisponivelModal = ({ item, pedido, isOpen, onOpenChange }: EstoqueD
                     <p className="font-medium">{item.quantidade_separada}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Estado do Cliente</p>
+                    <p className="text-sm font-medium text-gray-500">CNPJ Emissor</p>
                     <Badge className="bg-blue-50 text-blue-700 border-blue-200">
-                      <MapPin className="h-3 w-3 mr-1" />
-                      {pedido.cliente_estado}
+                      {cnpjEmissor}
                     </Badge>
                   </div>
                 </div>
@@ -206,9 +206,14 @@ const EstoqueDisponivelModal = ({ item, pedido, isOpen, onOpenChange }: EstoqueD
                 <TableBody>
                   {estoquesDisponiveis.map((estoque) => (
                     <TableRow key={estoque.id}>
-                      <TableCell className="font-medium">{estoque.cnpj}</TableCell>
+                      <TableCell className="font-medium">
+                        {getCNPJBadge(estoque.cnpj)}
+                      </TableCell>
                       <TableCell>
-                        {getEstadoBadge(estoque.cnpj_estado)}
+                        <Badge variant="outline">
+                          <MapPin className="h-3 w-3 mr-1" />
+                          {estoque.cnpj_estado}
+                        </Badge>
                       </TableCell>
                       <TableCell>{estoque.deposito}</TableCell>
                       <TableCell>
@@ -280,14 +285,14 @@ const EstoqueDisponivelModal = ({ item, pedido, isOpen, onOpenChange }: EstoqueD
                     </div>
                   )}
 
-                  {/* Alerta de Estados Incompatíveis */}
-                  {validarEstadosCompatibeis() && (
+                  {/* Alerta de CNPJ Incompatível */}
+                  {validarCNPJEmissor() && (
                     <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                       <div className="flex items-center gap-2">
                         <AlertTriangle className="h-4 w-4 text-red-600" />
                         <p className="text-sm text-red-800">
-                          <strong>Atenção:</strong> Você selecionou estoque de um CNPJ de estado diferente do cliente. 
-                          Será necessário fazer uma transferência antes da separação.
+                          <strong>Atenção:</strong> Você deve selecionar estoque do mesmo CNPJ emissor da nota fiscal. 
+                          O emissor precisa ter o produto em estoque para poder emitir a nota de venda.
                         </p>
                       </div>
                     </div>
@@ -317,9 +322,8 @@ const EstoqueDisponivelModal = ({ item, pedido, isOpen, onOpenChange }: EstoqueD
         <TransferenciaEstadoModal
           isOpen={showTransferenciaModal}
           onOpenChange={setShowTransferenciaModal}
-          clienteEstado={pedido.cliente_estado}
+          cnpjEmissor={cnpjEmissor}
           cnpjEstoque={estoqueIncompativel.cnpj}
-          estadoEstoque={estoqueIncompativel.cnpj_estado}
           produtoDescricao={item.descricao_produto}
           quantidade={estoquesSelecionados[estoqueIncompativel.id] || 0}
           onRedirecionarMovimentacao={handleRedirecionarMovimentacao}

@@ -7,9 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 interface TransferenciaEstadoModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  clienteEstado: string;
+  cnpjEmissor: string;
   cnpjEstoque: string;
-  estadoEstoque: string;
   produtoDescricao: string;
   quantidade: number;
   onRedirecionarMovimentacao: () => void;
@@ -18,9 +17,8 @@ interface TransferenciaEstadoModalProps {
 const TransferenciaEstadoModal = ({
   isOpen,
   onOpenChange,
-  clienteEstado,
+  cnpjEmissor,
   cnpjEstoque,
-  estadoEstoque,
   produtoDescricao,
   quantidade,
   onRedirecionarMovimentacao
@@ -37,7 +35,7 @@ const TransferenciaEstadoModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-red-600">
             <AlertTriangle className="h-5 w-5" />
-            Estoque em CNPJ de Estado Diferente
+            CNPJ Emissor Incompatível
           </DialogTitle>
         </DialogHeader>
 
@@ -49,7 +47,7 @@ const TransferenciaEstadoModal = ({
                 <div>
                   <h3 className="font-semibold text-yellow-800">Transferência Obrigatória</h3>
                   <p className="text-sm text-yellow-700">
-                    O estoque selecionado não pode ser usado diretamente para este cliente.
+                    O estoque selecionado não pertence ao CNPJ emissor da nota fiscal.
                   </p>
                 </div>
               </div>
@@ -57,14 +55,14 @@ const TransferenciaEstadoModal = ({
               <div className="bg-white p-4 rounded-lg border border-yellow-200">
                 <p className="text-gray-800 mb-3">
                   <strong>Situação:</strong> Você está tentando separar <span className="font-semibold text-blue-600">{quantidade} unidades</span> do CNPJ{" "}
-                  <span className="font-semibold">{cnpjEstoque} ({estadoEstoque})</span>,
-                  mas o cliente pertence a <span className="font-semibold text-green-600">{clienteEstado}</span>.
+                  <span className="font-semibold">{cnpjEstoque}</span>,
+                  mas o emissor da nota fiscal é <span className="font-semibold text-green-600">{cnpjEmissor}</span>.
                 </p>
                 
                 <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
-                  <span className="bg-red-100 text-red-800 px-2 py-1 rounded">{estadoEstoque}</span>
+                  <span className="bg-red-100 text-red-800 px-2 py-1 rounded font-mono text-xs">{cnpjEstoque}</span>
                   <ArrowRight className="h-4 w-4" />
-                  <span className="bg-green-100 text-green-800 px-2 py-1 rounded">{clienteEstado}</span>
+                  <span className="bg-green-100 text-green-800 px-2 py-1 rounded font-mono text-xs">{cnpjEmissor}</span>
                 </div>
 
                 <p className="text-gray-700">
@@ -74,7 +72,7 @@ const TransferenciaEstadoModal = ({
 
               <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-800">
-                  <strong>Solução:</strong> Transfira o estoque para um CNPJ de {clienteEstado} primeiro, 
+                  <strong>Solução:</strong> Transfira o estoque para o CNPJ emissor <span className="font-mono">{cnpjEmissor}</span> primeiro, 
                   depois retorne para confirmar a separação.
                 </p>
               </div>
