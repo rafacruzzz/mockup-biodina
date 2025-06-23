@@ -1,4 +1,3 @@
-
 export interface PosicaoEstoque {
   id: number;
   produto_codigo: string;
@@ -6,7 +5,10 @@ export interface PosicaoEstoque {
   lote: string;
   data_validade: string | null;
   cnpj: string;
+  cnpj_estado: string;
   deposito: string;
+  localizacao_fisica: string;
+  numero_serie: string | null;
   quantidade_disponivel: number;
   quantidade_reservada: number;
   quantidade_total: number;
@@ -15,6 +17,40 @@ export interface PosicaoEstoque {
   fornecedor: string;
   tipo_estoque: string;
   origem_entrada: string;
+  status_qualidade: StatusQualidade;
+  dias_para_vencimento: number | null;
+}
+
+export enum StatusQualidade {
+  APROVADO = 'aprovado',
+  QUARENTENA = 'quarentena',
+  REJEITADO = 'rejeitado',
+  LIBERADO = 'liberado'
+}
+
+export interface HistoricoMovimentacao {
+  id: number;
+  data: string;
+  tipo: string;
+  quantidade: number;
+  documento: string;
+  usuario: string;
+  observacoes?: string;
+}
+
+export interface PedidoVinculado {
+  id: number;
+  numero_pedido: string;
+  cliente: string;
+  quantidade_solicitada: number;
+  data_entrega: string;
+  status: string;
+}
+
+export interface AlertaEstoque {
+  tipo: 'vencimento' | 'estoque_baixo' | 'qualidade';
+  mensagem: string;
+  prioridade: 'alta' | 'media' | 'baixa';
 }
 
 export interface MovimentacaoEstoque {

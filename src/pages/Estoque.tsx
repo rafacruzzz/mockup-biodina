@@ -10,6 +10,7 @@ import DataTable from "@/components/cadastro/DataTable";
 import { estoqueModules } from "@/data/estoqueModules";
 import { MovimentacaoEstoque } from "@/types/estoque";
 import SeparacaoEstoqueTable from "@/components/estoque/SeparacaoEstoqueTable";
+import PosicaoAtualTable from "@/components/estoque/dashboard/PosicaoAtualTable";
 
 const Estoque = () => {
   const [activeModule, setActiveModule] = useState('');
@@ -91,7 +92,8 @@ const Estoque = () => {
   };
 
   const shouldShowNewButton = () => {
-    return activeModule !== 'posicao_estoque' || activeSubModule !== 'separacao_estoque';
+    // Não mostrar botão "Novo Registro" para posição atual e separação
+    return activeModule !== 'posicao_estoque';
   };
 
   const currentSubModule = activeModule && activeSubModule ? 
@@ -133,6 +135,10 @@ const Estoque = () => {
                   />
                 ) : activeModule === 'posicao_estoque' && activeSubModule === 'separacao_estoque' ? (
                   <SeparacaoEstoqueTable 
+                    data={currentSubModule?.data || []} 
+                  />
+                ) : activeModule === 'posicao_estoque' && activeSubModule === 'posicao_atual' ? (
+                  <PosicaoAtualTable 
                     data={currentSubModule?.data || []} 
                   />
                 ) : (
