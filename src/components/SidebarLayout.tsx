@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { 
@@ -22,7 +21,7 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
     { name: "Pessoal", path: "/pessoal", icon: <Users size={20} /> },
     { name: "BI", path: "/bi-geral", icon: <BarChart2 size={20} /> },
     { name: "Cadastro", path: "/cadastro", icon: <FileText size={20} /> },
-    { name: "Controladoria", path: "/controladoria", icon: <Database size={20} /> },
+    { name: "Administrativo", path: "/controladoria", icon: <Database size={20} /> },
     { name: "Comercial", path: "/comercial", icon: <Briefcase size={20} /> },
     { name: "Estoque", path: "/estoque", icon: <Package size={20} /> },
     { name: "Compras", path: "/compras", icon: <ShoppingCart size={20} /> },

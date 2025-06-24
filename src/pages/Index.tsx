@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { ShoppingCart, Users, TrendingUp, DollarSign, FileText, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
