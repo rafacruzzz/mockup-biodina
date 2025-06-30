@@ -92,8 +92,42 @@ export const modules: ModulesConfig = {
       contas_bancarias: {
         name: "Contas Bancárias",
         data: [
-          { id: 1, banco: "Banco do Brasil", agencia: "1234-5", conta: "12345-6", tipo: "Conta Corrente", ativo: true },
-          { id: 2, banco: "Itaú", agencia: "5678-9", conta: "98765-4", tipo: "Conta Corrente", ativo: true }
+          { 
+            id: 1, 
+            situacao: "Ativo", 
+            nome_conta: "Conta Principal Operacional", 
+            instituicao: "Banco do Brasil", 
+            tipo_conta: "Conta Corrente", 
+            agencia: "1234-5", 
+            conta_corrente: "12345-6", 
+            saldo_inicial: 50000.00, 
+            limite_credito: 100000.00,
+            resumo: true,
+            fluxo_caixa: true,
+            emite_boletos: true,
+            incluido: true,
+            ultima_alteracao: "2024-01-15",
+            incluido_por: "João Silva",
+            alterado_por: "João Silva"
+          },
+          { 
+            id: 2, 
+            situacao: "Ativo", 
+            nome_conta: "Conta Reserva Emergencial", 
+            instituicao: "Itaú Unibanco", 
+            tipo_conta: "Conta Poupança", 
+            agencia: "5678-9", 
+            conta_corrente: "98765-4", 
+            saldo_inicial: 25000.00, 
+            limite_credito: 0.00,
+            resumo: false,
+            fluxo_caixa: true,
+            emite_boletos: false,
+            incluido: true,
+            ultima_alteracao: "2024-01-10",
+            incluido_por: "Maria Santos",
+            alterado_por: "Maria Santos"
+          }
         ]
       }
     }

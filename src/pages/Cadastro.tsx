@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import ProductForm from "@/components/ProductForm";
@@ -9,6 +10,7 @@ import ServiceModal from "@/components/cadastro/ServiceModal";
 import UserModal from "@/components/cadastro/UserModal";
 import GenericModal from "@/components/cadastro/GenericModal";
 import EntidadeModal from "@/components/cadastro/EntidadeModal";
+import ContaBancariaModal from "@/components/cadastro/ContaBancariaModal";
 import { modules } from "@/data/cadastroModules";
 
 const Cadastro = () => {
@@ -21,6 +23,7 @@ const Cadastro = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showGenericModal, setShowGenericModal] = useState(false);
   const [showEntidadeModal, setShowEntidadeModal] = useState(false);
+  const [showContaBancariaModal, setShowContaBancariaModal] = useState(false);
   const [genericModalConfig, setGenericModalConfig] = useState<any>(null);
 
   // Reset state when no module is selected
@@ -59,22 +62,6 @@ const Cadastro = () => {
 
   const getModalFields = (module: string, subModule: string) => {
     const configs: Record<string, any> = {
-      'contas_bancarias-contas_bancarias': {
-        title: 'Cadastro de Conta Bancária',
-        fields: [
-          { key: 'banco', label: 'Banco', type: 'text', required: true },
-          { key: 'agencia', label: 'Agência', type: 'text', required: true },
-          { key: 'conta', label: 'Conta', type: 'text', required: true },
-          { key: 'tipo', label: 'Tipo', type: 'select', options: [
-            { value: 'conta_corrente', label: 'Conta Corrente' },
-            { value: 'conta_poupanca', label: 'Conta Poupança' }
-          ]},
-          { key: 'ativo', label: 'Ativo', type: 'select', options: [
-            { value: 'true', label: 'Sim' },
-            { value: 'false', label: 'Não' }
-          ]}
-        ]
-      },
       'categorias-categorias': {
         title: 'Cadastro de Categoria',
         fields: [
@@ -146,6 +133,8 @@ const Cadastro = () => {
       setShowUserModal(true);
     } else if (activeModule === 'entidades' && activeSubModule === 'entidades') {
       setShowEntidadeModal(true);
+    } else if (activeModule === 'contas_bancarias' && activeSubModule === 'contas_bancarias') {
+      setShowContaBancariaModal(true);
     } else {
       const config = getModalFields(activeModule, activeSubModule);
       if (config) {
@@ -214,6 +203,10 @@ const Cadastro = () => {
 
       {showEntidadeModal && (
         <EntidadeModal onClose={() => setShowEntidadeModal(false)} />
+      )}
+
+      {showContaBancariaModal && (
+        <ContaBancariaModal onClose={() => setShowContaBancariaModal(false)} />
       )}
 
       {showGenericModal && genericModalConfig && (
