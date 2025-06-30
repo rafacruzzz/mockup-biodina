@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,9 +6,9 @@ import { Calendar } from "@/components/ui/calendar";
 import SidebarLayout from "@/components/SidebarLayout";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line, AreaChart, Area 
+  PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, ComposedChart
 } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, Package, Calendar as CalendarIcon, MapPin } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Package, Calendar as CalendarIcon, MapPin, AlertCircle, CheckCircle } from "lucide-react";
 
 const BIGeral = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
@@ -39,9 +38,61 @@ const BIGeral = () => {
     { mes: 'Dez', valor: 1350000 },
   ];
 
-  const contasData = [
-    { tipo: 'A Pagar', vencido: 45000, emDia: 120000, total: 165000 },
-    { tipo: 'A Receber', vencido: 25000, emDia: 180000, total: 205000 },
+  // Novo: Dados de comparativo anual de faturamento
+  const faturamentoAnualData = [
+    { mes: 'Jan', ano2023: 1200000, ano2024: 1350000 },
+    { mes: 'Fev', ano2023: 1100000, ano2024: 1250000 },
+    { mes: 'Mar', ano2023: 1300000, ano2024: 1400000 },
+    { mes: 'Abr', ano2023: 1150000, ano2024: 1320000 },
+    { mes: 'Mai', ano2023: 1250000, ano2024: 1450000 },
+    { mes: 'Jun', ano2023: 1180000, ano2024: 1380000 },
+    { mes: 'Jul', ano2023: 850000, ano2024: 1200000 },
+    { mes: 'Ago', ano2023: 920000, ano2024: 1150000 },
+    { mes: 'Set', ano2023: 780000, ano2024: 950000 },
+    { mes: 'Out', ano2023: 1000000, ano2024: 1200000 },
+    { mes: 'Nov', ano2023: 900000, ano2024: 1100000 },
+    { mes: 'Dez', ano2023: 1200000, ano2024: 1350000 },
+  ];
+
+  // Expandido: Dados detalhados de contas a pagar/receber
+  const contasDetalhadasData = {
+    aPagar: {
+      vencido: 45000,
+      aVencer: {
+        recorrente: 85000,
+        eventual: 35000
+      },
+      emDia: 120000,
+      total: 285000
+    },
+    aReceber: {
+      vencido: 25000,
+      aVencer: {
+        recorrente: 120000,
+        eventual: 60000
+      },
+      emDia: 180000,
+      emNegociacao: {
+        reparcelamento: 15000,
+        aumentoPrazo: 8000,
+        desconto: 12000
+      },
+      precatorio: 45000,
+      juridico: 22000,
+      lost: 8000,
+      total: 495000
+    }
+  };
+
+  // Dados para o gráfico de status de contas a receber
+  const statusContasReceberData = [
+    { status: 'Em Dia', valor: 180000, cor: '#10b981' },
+    { status: 'A Vencer', valor: 180000, cor: '#f59e0b' },
+    { status: 'Vencido', valor: 25000, cor: '#ef4444' },
+    { status: 'Negociação', valor: 35000, cor: '#8b5cf6' },
+    { status: 'Precatório', valor: 45000, cor: '#06b6d4' },
+    { status: 'Jurídico', valor: 22000, cor: '#f97316' },
+    { status: 'Lost', valor: 8000, cor: '#6b7280' },
   ];
 
   const dreData = [
@@ -143,23 +194,26 @@ const BIGeral = () => {
             </CardContent>
           </Card>
 
-          {/* Faturamento do Mês */}
-          <Card className="shadow-lg hover:shadow-xl transition-shadow col-span-1 lg:col-span-2">
+          {/* Novo: Comparativo Anual de Faturamento */}
+          <Card className="shadow-lg hover:shadow-xl transition-shadow col-span-1 lg:col-span-3">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-green-600" />
-                Faturamento - Últimos 6 Meses
+                Comparativo Anual de Faturamento - 2023 vs 2024
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={faturamentoData}>
+              <ResponsiveContainer width="100%" height={300}>
+                <ComposedChart data={faturamentoAnualData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="mes" />
                   <YAxis tickFormatter={(value) => `R$ ${(value / 1000)}k`} />
                   <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-                  <Line type="monotone" dataKey="valor" stroke="#0A2342" strokeWidth={3} />
-                </LineChart>
+                  <Legend />
+                  <Bar dataKey="ano2023" fill="#94a3b8" name="2023" />
+                  <Bar dataKey="ano2024" fill="#0A2342" name="2024" />
+                  <Line type="monotone" dataKey="ano2024" stroke="#D5A021" strokeWidth={2} name="Tendência 2024" />
+                </ComposedChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
@@ -192,39 +246,162 @@ const BIGeral = () => {
             </CardContent>
           </Card>
 
-          {/* Contas a Pagar/Receber */}
+          {/* Expandido: Contas a Pagar/Receber Detalhadas */}
           <Card className="shadow-lg hover:shadow-xl transition-shadow col-span-1 lg:col-span-2">
             <CardHeader className="pb-4">
-              <CardTitle className="text-xl">Contas a Pagar/Receber</CardTitle>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-biodina-gold" />
+                Contas a Pagar/Receber - Detalhado
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-6">
-                {contasData.map((conta, index) => (
-                  <div key={index} className="space-y-3">
-                    <h4 className="font-semibold text-center">{conta.tipo}</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center p-2 bg-red-50 rounded">
-                        <span className="text-sm">Vencido</span>
-                        <span className="font-semibold text-red-600">
-                          {formatCurrency(conta.vencido)}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Contas a Pagar */}
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-center text-red-700">Contas a Pagar</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center p-2 bg-red-100 rounded">
+                      <span className="text-sm font-medium">Vencido</span>
+                      <span className="font-semibold text-red-700">
+                        {formatCurrency(contasDetalhadasData.aPagar.vencido)}
+                      </span>
+                    </div>
+                    <div className="pl-4 space-y-1">
+                      <div className="flex justify-between items-center p-2 bg-yellow-50 rounded text-sm">
+                        <span>Recorrente - a vencer</span>
+                        <span className="font-medium text-yellow-700">
+                          {formatCurrency(contasDetalhadasData.aPagar.aVencer.recorrente)}
                         </span>
                       </div>
-                      <div className="flex justify-between items-center p-2 bg-green-50 rounded">
-                        <span className="text-sm">Em Dia</span>
-                        <span className="font-semibold text-green-600">
-                          {formatCurrency(conta.emDia)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center p-2 bg-biodina-blue text-white rounded">
-                        <span className="text-sm font-semibold">Total</span>
-                        <span className="font-bold">
-                          {formatCurrency(conta.total)}
+                      <div className="flex justify-between items-center p-2 bg-yellow-50 rounded text-sm">
+                        <span>Eventual - a vencer</span>
+                        <span className="font-medium text-yellow-700">
+                          {formatCurrency(contasDetalhadasData.aPagar.aVencer.eventual)}
                         </span>
                       </div>
                     </div>
+                    <div className="flex justify-between items-center p-2 bg-green-50 rounded">
+                      <span className="text-sm">Em Dia</span>
+                      <span className="font-semibold text-green-600">
+                        {formatCurrency(contasDetalhadasData.aPagar.emDia)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-biodina-blue text-white rounded">
+                      <span className="text-sm font-semibold">Total</span>
+                      <span className="font-bold">
+                        {formatCurrency(contasDetalhadasData.aPagar.total)}
+                      </span>
+                    </div>
                   </div>
-                ))}
+                </div>
+
+                {/* Contas a Receber */}
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-center text-green-700">Contas a Receber</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center p-2 bg-red-100 rounded">
+                      <span className="text-sm font-medium">Vencido</span>
+                      <span className="font-semibold text-red-700">
+                        {formatCurrency(contasDetalhadasData.aReceber.vencido)}
+                      </span>
+                    </div>
+                    <div className="pl-4 space-y-1">
+                      <div className="flex justify-between items-center p-2 bg-yellow-50 rounded text-sm">
+                        <span>Recorrente - a vencer</span>
+                        <span className="font-medium text-yellow-700">
+                          {formatCurrency(contasDetalhadasData.aReceber.aVencer.recorrente)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center p-2 bg-yellow-50 rounded text-sm">
+                        <span>Eventual - a vencer</span>
+                        <span className="font-medium text-yellow-700">
+                          {formatCurrency(contasDetalhadasData.aReceber.aVencer.eventual)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-green-50 rounded">
+                      <span className="text-sm">Em Dia</span>
+                      <span className="font-semibold text-green-600">
+                        {formatCurrency(contasDetalhadasData.aReceber.emDia)}
+                      </span>
+                    </div>
+                    <div className="pl-4 space-y-1">
+                      <div className="flex justify-between items-center p-1 bg-purple-50 rounded text-xs">
+                        <span>Reparcelamento</span>
+                        <span className="font-medium text-purple-600">
+                          {formatCurrency(contasDetalhadasData.aReceber.emNegociacao.reparcelamento)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center p-1 bg-purple-50 rounded text-xs">
+                        <span>Aumento de prazo</span>
+                        <span className="font-medium text-purple-600">
+                          {formatCurrency(contasDetalhadasData.aReceber.emNegociacao.aumentoPrazo)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center p-1 bg-purple-50 rounded text-xs">
+                        <span>Desconto</span>
+                        <span className="font-medium text-purple-600">
+                          {formatCurrency(contasDetalhadasData.aReceber.emNegociacao.desconto)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-blue-50 rounded">
+                      <span className="text-sm">Precatório</span>
+                      <span className="font-semibold text-blue-600">
+                        {formatCurrency(contasDetalhadasData.aReceber.precatorio)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-orange-50 rounded">
+                      <span className="text-sm">Jurídico</span>
+                      <span className="font-semibold text-orange-600">
+                        {formatCurrency(contasDetalhadasData.aReceber.juridico)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-gray-100 rounded">
+                      <span className="text-sm">Lost</span>
+                      <span className="font-semibold text-gray-600">
+                        {formatCurrency(contasDetalhadasData.aReceber.lost)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center p-2 bg-biodina-blue text-white rounded">
+                      <span className="text-sm font-semibold">Total</span>
+                      <span className="font-bold">
+                        {formatCurrency(contasDetalhadasData.aReceber.total)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Novo: Status de Contas a Receber - Gráfico */}
+          <Card className="shadow-lg hover:shadow-xl transition-shadow">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl flex items-center gap-2">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                Status - Contas a Receber
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie
+                    data={statusContasReceberData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="valor"
+                    label={({ status, percent }) => `${status} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {statusContasReceberData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.cor} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => formatCurrency(Number(value))} />
+                </PieChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
 
