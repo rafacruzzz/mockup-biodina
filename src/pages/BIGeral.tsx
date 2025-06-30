@@ -135,6 +135,30 @@ const BIGeral = () => {
     }
   };
 
+  // Custom label function for better positioning
+  const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, status }) => {
+    const RADIAN = Math.PI / 180;
+    const radius = innerRadius + (outerRadius - innerRadius) * 1.4;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    if (percent < 0.03) return null; // Don't show labels for very small slices
+
+    return (
+      <text 
+        x={x} 
+        y={y} 
+        fill="#374151" 
+        textAnchor={x > cx ? 'start' : 'end'} 
+        dominantBaseline="central"
+        fontSize="11"
+        fontWeight="500"
+      >
+        {`${status} ${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
   return (
     <SidebarLayout>
       <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
@@ -384,22 +408,31 @@ const BIGeral = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
+              <ResponsiveContainer width="100%" height={280}>
+                <PieChart margin={{ top: 20, right: 80, bottom: 20, left: 80 }}>
                   <Pie
                     data={statusContasReceberData}
                     cx="50%"
                     cy="50%"
-                    outerRadius={80}
+                    outerRadius={70}
                     fill="#8884d8"
                     dataKey="valor"
-                    label={({ status, percent }) => `${status} ${(percent * 100).toFixed(0)}%`}
+                    labelLine={false}
+                    label={renderCustomLabel}
                   >
                     {statusContasReceberData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.cor} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => formatCurrency(Number(value))} />
+                  <Tooltip 
+                    formatter={(value) => formatCurrency(Number(value))}
+                    contentStyle={{
+                      backgroundColor: 'white',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      fontSize: '12px'
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </CardContent>
