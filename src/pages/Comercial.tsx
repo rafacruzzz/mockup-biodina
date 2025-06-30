@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,7 @@ import PedidoForm from "@/components/comercial/PedidoForm";
 import TipoPropostaModal from "@/components/comercial/TipoPropostaModal";
 import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
 import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
+import AgendaComercial from "@/components/comercial/AgendaComercial";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
@@ -313,7 +313,7 @@ const Comercial = () => {
   const getModalidadeLabel = (modalidade: string) => {
     switch (modalidade) {
       case 'licitacao': return 'Licitação';
-      case 'contratacao_simples': return 'Contratação Simples';
+      case 'contratacao_simples': return 'Contratação';
       case 'importacao_direta': return 'Importação Direta';
       default: return modalidade;
     }
@@ -522,17 +522,17 @@ const Comercial = () => {
   // Módulo de Vendas (conteúdo original do comercial)
   const renderVendasModule = () => {
     const tabs = [
-      { id: 'funil', label: 'Funil de Oportunidades', icon: TrendingUp },
+      { id: 'agenda', label: 'Agenda', icon: Calendar },
       { id: 'oportunidades', label: 'Oportunidades', icon: Briefcase },
       { id: 'analise', label: 'Análise de Conversão', icon: BarChart3 },
     ];
 
     const renderContent = () => {
       switch (activeTab) {
-        case 'funil': return renderFunil();
+        case 'agenda': return renderAgenda();
         case 'oportunidades': return renderOportunidades();
         case 'analise': return renderAnaliseConversao();
-        default: return renderFunil();
+        default: return renderAgenda();
       }
     };
 
@@ -579,88 +579,10 @@ const Comercial = () => {
     );
   };
 
-  const renderFunil = () => (
+  const renderAgenda = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {/* Card Funil - altura fixa */}
-      <Card className="shadow-lg h-[600px] flex flex-col">
-        <CardHeader className="text-center pb-3 flex-shrink-0">
-          <CardTitle className="flex items-center justify-center gap-3 text-xl font-bold text-biodina-blue mb-1">
-            <TrendingUp className="h-6 w-6 text-biodina-blue" />
-            Funil de Oportunidades
-          </CardTitle>
-          <p className="text-gray-600 text-sm">Pipeline de Vendas por Temperatura</p>
-        </CardHeader>
-        <CardContent className="px-4 pb-4 flex-1 flex flex-col">
-          <div className="space-y-3 flex-1 overflow-y-auto">
-            {funnelData.map((item, index) => (
-              <div 
-                key={index} 
-                className={`relative group animate-fade-in hover:scale-[1.02] transition-all duration-300 hover:shadow-lg`}
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className={`
-                  bg-gradient-to-r ${item.cor} 
-                  rounded-xl p-3 shadow-md hover:shadow-xl transition-all duration-300
-                  border-l-4 ${item.borderColor}
-                  transform hover:-translate-y-1
-                `}>
-                  <div className="flex items-center justify-between text-white">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl">{item.icon}</span>
-                      <div>
-                        <h4 className="font-semibold text-base">{item.fase}</h4>
-                        <p className="text-xs opacity-90">
-                          {item.count} oportunidade{item.count !== 1 ? 's' : ''}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="flex items-center gap-2 mb-1">
-                        <DollarSign className="h-4 w-4" />
-                        <span className="font-bold text-lg">
-                          {item.count}
-                        </span>
-                      </div>
-                      <div className="text-xs opacity-90 font-medium">
-                        {formatCurrency(item.valor)}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Barra de progresso visual */}
-                  <div className="mt-2 bg-white/20 rounded-full h-1.5 overflow-hidden">
-                    <div 
-                      className="h-full bg-white/40 rounded-full transition-all duration-500"
-                      style={{ width: `${item.percentual}%` }}
-                    />
-                  </div>
-                </div>
-                
-                {/* Efeito de brilho no hover */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-              </div>
-            ))}
-          </div>
-          
-          {/* Resumo total - fixo no final */}
-          <div className="mt-4 p-3 bg-gradient-to-r from-biodina-blue to-biodina-darkblue rounded-xl text-white flex-shrink-0">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Trophy className="h-4 w-4" />
-                <span className="font-semibold text-sm">Total do Pipeline</span>
-              </div>
-              <div className="text-right">
-                <div className="font-bold text-base">
-                  {funnelData.reduce((total, item) => total + item.count, 0)} oportunidades
-                </div>
-                <div className="text-xs opacity-90">
-                  {formatCurrency(funnelData.reduce((total, item) => total + item.valor, 0))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Card Agenda - altura fixa */}
+      <AgendaComercial />
 
       {/* Card Indicadores - mesma altura */}
       <Card className="shadow-lg h-[600px] flex flex-col">
@@ -815,7 +737,7 @@ const Comercial = () => {
               <SelectContent>
                 <SelectItem value="todos">Todas as Modalidades</SelectItem>
                 <SelectItem value="licitacao">Licitação</SelectItem>
-                <SelectItem value="contratacao_simples">Contratação Simples</SelectItem>
+                <SelectItem value="contratacao_simples">Contratação</SelectItem>
                 <SelectItem value="importacao_direta">Importação Direta</SelectItem>
               </SelectContent>
             </Select>

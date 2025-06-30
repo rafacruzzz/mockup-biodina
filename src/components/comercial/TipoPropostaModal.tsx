@@ -42,7 +42,7 @@ const TipoPropostaModal = ({ isOpen, onClose, onContinue }: TipoPropostaModalPro
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => onContinue('contratacao_simples')}>
             <CardHeader className="text-center">
               <Building className="h-12 w-12 mx-auto mb-4 text-green-600" />
-              <CardTitle className="text-lg">Contratação Simples</CardTitle>
+              <CardTitle className="text-lg">Contratação</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-600 text-center">
