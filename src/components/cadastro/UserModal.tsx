@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
 import { X, Save } from "lucide-react";
 
 interface UserModalProps {
@@ -18,6 +20,13 @@ const UserModal = ({ onClose }: UserModalProps) => {
     nivelAcesso: "",
     alertas: "ativo",
     status: "ativo"
+  });
+
+  const [departmentData, setDepartmentData] = useState({
+    nome: "",
+    descricao: "",
+    responsavel: "",
+    ativo: "true"
   });
 
   const [acessosModulos, setAcessosModulos] = useState({
@@ -39,6 +48,10 @@ const UserModal = ({ onClose }: UserModalProps) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleDepartmentChange = (field: string, value: string) => {
+    setDepartmentData(prev => ({ ...prev, [field]: value }));
+  };
+
   const handleModuleChange = (module: string, checked: boolean) => {
     setAcessosModulos(prev => ({ ...prev, [module]: checked }));
   };
@@ -49,6 +62,7 @@ const UserModal = ({ onClose }: UserModalProps) => {
       .map(([module, _]) => module);
     
     console.log("Salvando usuário:", { ...formData, acessos: selectedModules });
+    console.log("Salvando departamento:", departmentData);
     onClose();
   };
 
@@ -78,92 +92,147 @@ const UserModal = ({ onClose }: UserModalProps) => {
         </div>
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="nome">Nome *</Label>
-                <Input
-                  id="nome"
-                  value={formData.nome}
-                  onChange={(e) => handleInputChange("nome", e.target.value)}
-                  placeholder="Ex: João Silva"
-                />
+          <Tabs defaultValue="usuario" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="usuario">Usuário</TabsTrigger>
+              <TabsTrigger value="departamento">Departamento</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="usuario" className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="nome">Nome *</Label>
+                  <Input
+                    id="nome"
+                    value={formData.nome}
+                    onChange={(e) => handleInputChange("nome", e.target.value)}
+                    placeholder="Ex: João Silva"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="email">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    placeholder="Ex: joao@biodina.com.br"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="nivelAcesso">Nível de Acesso</Label>
+                  <Select value={formData.nivelAcesso} onValueChange={(value) => handleInputChange("nivelAcesso", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o nível" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="administrador">Administrador</SelectItem>
+                      <SelectItem value="gerente">Gerente</SelectItem>
+                      <SelectItem value="vendedor">Vendedor</SelectItem>
+                      <SelectItem value="operador">Operador</SelectItem>
+                      <SelectItem value="visualizador">Visualizador</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="alertas">Alertas</Label>
+                  <Select value={formData.alertas} onValueChange={(value) => handleInputChange("alertas", value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ativo">Ativo</SelectItem>
+                      <SelectItem value="inativo">Inativo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="status">Status</Label>
+                  <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ativo">Ativo</SelectItem>
+                      <SelectItem value="inativo">Inativo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div>
-                <Label htmlFor="email">Email *</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  placeholder="Ex: joao@biodina.com.br"
-                />
+                <Label className="text-base font-medium">Acessos aos Módulos</Label>
+                <p className="text-sm text-gray-600 mb-4">Selecione os módulos que o usuário terá acesso</p>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {modulos.map((modulo) => (
+                    <div key={modulo.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={modulo.key}
+                        checked={acessosModulos[modulo.key as keyof typeof acessosModulos]}
+                        onCheckedChange={(checked) => handleModuleChange(modulo.key, checked as boolean)}
+                      />
+                      <Label htmlFor={modulo.key} className="text-sm">
+                        {modulo.name}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
               </div>
+            </TabsContent>
 
-              <div>
-                <Label htmlFor="nivelAcesso">Nível de Acesso</Label>
-                <Select value={formData.nivelAcesso} onValueChange={(value) => handleInputChange("nivelAcesso", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o nível" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="administrador">Administrador</SelectItem>
-                    <SelectItem value="gerente">Gerente</SelectItem>
-                    <SelectItem value="vendedor">Vendedor</SelectItem>
-                    <SelectItem value="operador">Operador</SelectItem>
-                    <SelectItem value="visualizador">Visualizador</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <TabsContent value="departamento" className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="nomeDepartamento">Nome *</Label>
+                  <Input
+                    id="nomeDepartamento"
+                    value={departmentData.nome}
+                    onChange={(e) => handleDepartmentChange("nome", e.target.value)}
+                    placeholder="Ex: Comercial"
+                  />
+                </div>
 
-              <div>
-                <Label htmlFor="alertas">Alertas</Label>
-                <Select value={formData.alertas} onValueChange={(value) => handleInputChange("alertas", value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ativo">Ativo</SelectItem>
-                    <SelectItem value="inativo">Inativo</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                <div>
+                  <Label htmlFor="responsavel">Responsável</Label>
+                  <Input
+                    id="responsavel"
+                    value={departmentData.responsavel}
+                    onChange={(e) => handleDepartmentChange("responsavel", e.target.value)}
+                    placeholder="Ex: Maria Santos"
+                  />
+                </div>
 
-              <div>
-                <Label htmlFor="status">Status</Label>
-                <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ativo">Ativo</SelectItem>
-                    <SelectItem value="inativo">Inativo</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                <div className="md:col-span-2">
+                  <Label htmlFor="descricaoDepartamento">Descrição</Label>
+                  <Textarea
+                    id="descricaoDepartamento"
+                    value={departmentData.descricao}
+                    onChange={(e) => handleDepartmentChange("descricao", e.target.value)}
+                    placeholder="Descreva as responsabilidades do departamento"
+                    rows={3}
+                  />
+                </div>
 
-            <div>
-              <Label className="text-base font-medium">Acessos aos Módulos</Label>
-              <p className="text-sm text-gray-600 mb-4">Selecione os módulos que o usuário terá acesso</p>
-              
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                {modulos.map((modulo) => (
-                  <div key={modulo.key} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={modulo.key}
-                      checked={acessosModulos[modulo.key as keyof typeof acessosModulos]}
-                      onCheckedChange={(checked) => handleModuleChange(modulo.key, checked as boolean)}
-                    />
-                    <Label htmlFor={modulo.key} className="text-sm">
-                      {modulo.name}
-                    </Label>
-                  </div>
-                ))}
+                <div>
+                  <Label htmlFor="ativoDepartamento">Ativo</Label>
+                  <Select value={departmentData.ativo} onValueChange={(value) => handleDepartmentChange("ativo", value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="true">Sim</SelectItem>
+                      <SelectItem value="false">Não</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-            </div>
-          </div>
+            </TabsContent>
+          </Tabs>
         </div>
 
         <div className="flex justify-end gap-4 p-6 border-t">

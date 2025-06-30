@@ -59,18 +59,6 @@ const Cadastro = () => {
 
   const getModalFields = (module: string, subModule: string) => {
     const configs: Record<string, any> = {
-      'departamentos-departamentos': {
-        title: 'Cadastro de Departamento',
-        fields: [
-          { key: 'nome', label: 'Nome', type: 'text', required: true },
-          { key: 'descricao', label: 'Descrição', type: 'textarea' },
-          { key: 'responsavel', label: 'Responsável', type: 'text' },
-          { key: 'ativo', label: 'Ativo', type: 'select', options: [
-            { value: 'true', label: 'Sim' },
-            { value: 'false', label: 'Não' }
-          ]}
-        ]
-      },
       'contas_bancarias-contas_bancarias': {
         title: 'Cadastro de Conta Bancária',
         fields: [

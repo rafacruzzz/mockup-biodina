@@ -1,3 +1,4 @@
+
 import { Package, Users, Settings, Wrench, Building, CreditCard, Tag, Clock, Warehouse } from "lucide-react";
 import { ModulesConfig } from "@/types/cadastro";
 
@@ -80,20 +81,6 @@ export const modules: ModulesConfig = {
         data: [
           { id: 1, nome: "João Silva", email: "joao.silva@biodina.com.br", nivel_acesso: "Administrador", acessos: "Todos os módulos", alertas: "Ativo", status: "Ativo" },
           { id: 2, nome: "Maria Santos", email: "maria.santos@biodina.com.br", nivel_acesso: "Vendedor", acessos: "Comercial, Cadastros", alertas: "Ativo", status: "Ativo" }
-        ]
-      }
-    }
-  },
-  departamentos: {
-    name: "Departamentos",
-    icon: Building,
-    subModules: {
-      departamentos: {
-        name: "Departamentos",
-        data: [
-          { id: 1, nome: "Comercial", descricao: "Vendas e relacionamento com clientes", responsavel: "Maria Santos", ativo: true },
-          { id: 2, nome: "Técnico", descricao: "Suporte técnico e desenvolvimento", responsavel: "Carlos Lima", ativo: true },
-          { id: 3, nome: "Administrativo", descricao: "Gestão administrativa", responsavel: "Ana Costa", ativo: true }
         ]
       }
     }
