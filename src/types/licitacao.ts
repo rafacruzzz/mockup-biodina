@@ -7,93 +7,64 @@ export interface Licitacao {
   municipio: string;
   linkEdital?: string;
   objetoLicitacao: string;
-  numeroItem: string;
+  numeroItem?: string;
   empresaConcorrente?: string;
-  palavraChave: string;
-  anexoEdital?: string;
+  palavraChave?: string;
   status: 'triagem' | 'acompanhamento' | 'finalizada' | 'convertida';
   motivoDecisao?: string;
   observacoes?: string;
   dataAbertura: string;
   dataContato?: string;
   createdAt: string;
+  
+  // Novos campos obrigatórios
+  situacaoPregao: 'aberto' | 'suspenso' | 'cancelado' | 'homologado' | 'deserto' | 'fracassado' | 'revogado';
+  statusLicitacao: 'aguardando_abertura' | 'em_andamento' | 'fase_habilitacao' | 'fase_proposta' | 'julgamento' | 'recurso' | 'homologacao' | 'adjudicacao' | 'contratacao' | 'finalizado';
+  haviaContratoAnterior: boolean;
+  resumoEdital: string;
+  analiseTecnica: string;
+  
+  // Campos de estratégia
+  estrategiaValorEntrada?: number;
+  estrategiaValorFinal?: number;
+  estrategiaObjetivo?: string;
+  estrategiaRisco?: 'baixo' | 'medio' | 'alto';
+  
+  // Campos de controle
+  inclusao: string;
+  ultimaAlteracao: string;
+  incluidoPor: string;
+  alteradoPor: string;
 }
 
-export interface AnaliseTecnica {
+export interface Licitante {
   id: number;
   licitacaoId: number;
-  analiseAssessoria: string;
-  avaliacaoTecnica: string;
-  historicoEdital?: string;
-}
-
-export interface Concorrente {
-  id: number;
-  licitacaoId: number;
-  nome: string;
-  produto: string;
-  preco: number;
-  historico?: string;
-}
-
-export interface Pedido {
-  id: number;
-  licitacaoId: number;
-  numeroPedido: string;
-  cliente: string;
-  tipo: 'produto' | 'servico' | 'importacao_direta';
-  status: 'aguardando_liberacao' | 'entregue' | 'faturado' | 'cancelado';
-  valor: number;
-  formaPagamento: string;
+  empresa: string;
+  cnpj: string;
+  marca: string;
+  modelo: string;
+  valorEntrada: number;
+  valorFinal: number;
+  ranking: number;
+  status: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor';
   observacoes?: string;
-  createdAt: string;
 }
 
-export interface ItemPedido {
+export interface ProdutoLicitacao {
   id: number;
-  pedidoId: number;
-  codigoProduto: string;
+  licitanteId: number;
+  codigo: string;
   descricao: string;
-  cfop: string;
-  unidade: string;
+  marca: string;
+  modelo: string;
   quantidade: number;
-  cstIcms: string;
-  precoUnitario: number;
-  faturarAntesEntrega: boolean;
-  soFaturar: boolean;
+  valorUnitario: number;
+  valorTotal: number;
+  especificacoes?: string;
 }
 
-export interface ImportacaoDireta {
-  id: number;
-  licitacaoId: number;
-  fornecedorInternacional: string;
-  moeda: 'USD' | 'EUR' | 'GBP' | 'JPY';
-  valorMoedaOriginal: number;
-  valorReais: number;
-  incoterm: string;
-  tipoFrete: string;
-  numeroInvoice?: string;
-  numeroDI?: string;
-  dataPrevistaChegada?: string;
-  dadosRastreabilidade?: string;
-  observacoesImportacao?: string;
-}
-
-export interface OportunidadeComercial {
-  id: number;
-  licitacaoId: number;
-  cliente: string;
-  contato: string;
-  telefone?: string;
-  representanteComercial: string;
-  familiaComercial: string;
-  fornecedor: string;
-  tipoAplicacao: 'venda' | 'locacao' | 'servico';
-  tipoOportunidade: 'pontual' | 'periodica';
-  situacao: 'aberta' | 'ganha' | 'perdida';
-  dataAbertura: string;
-  dataContato: string;
-  descricao: string;
-  documentos?: string[];
-  observacoes?: string;
+export interface LicitacaoFormData extends Omit<Licitacao, 'id' | 'createdAt' | 'inclusao' | 'ultimaAlteracao' | 'incluidoPor' | 'alteradoPor'> {
+  licitantes?: Licitante[];
+  produtos?: ProdutoLicitacao[];
 }
