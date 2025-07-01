@@ -48,7 +48,6 @@ const OportunidadeAvancadaForm = ({ isOpen = true, oportunidade, onClose, onSave
     status: 'triagem' as 'triagem' | 'acompanhamento' | 'finalizada' | 'convertida',
     motivoDecisao: '',
     observacoes: '',
-    dataAbertura: '',
     dataContato: '',
     
     // Campos obrigatórios
@@ -79,7 +78,6 @@ const OportunidadeAvancadaForm = ({ isOpen = true, oportunidade, onClose, onSave
     
     // Análises
     resumoObjeto: '',
-    resumoEdital: '',
     impugnacaoEdital: '',
     analiseMercado: '',
     analiseEstrategia: '',
@@ -147,7 +145,6 @@ const OportunidadeAvancadaForm = ({ isOpen = true, oportunidade, onClose, onSave
         status: oportunidade.status || 'triagem',
         motivoDecisao: oportunidade.motivoDecisao || '',
         observacoes: oportunidade.observacoes || '',
-        dataAbertura: oportunidade.dataAbertura || '',
         dataContato: oportunidade.dataContato || '',
         situacaoPregao: oportunidade.situacaoPregao || 'aberto',
         statusLicitacao: oportunidade.statusLicitacao || 'aguardando_abertura',
