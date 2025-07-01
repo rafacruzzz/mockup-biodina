@@ -711,9 +711,15 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
               <SelectContent>
                 <SelectItem value="operacao">Em Operação</SelectItem>
                 <SelectItem value="etapa_lances">Etapa de Lances</SelectItem>
-                <SelectItem value="habilitacao">Habilitação</SelectItem>
-                <SelectItem value="recurso">Recurso</SelectItem>
-                <SelectItem value="homologado">Homologado</SelectItem>
+                <SelectItem value="visualizacao_propostas">Visualização de Propostas</SelectItem>
+                <SelectItem value="aceitacao_propostas">Aceitação de Propostas</SelectItem>
+                <SelectItem value="habilitacao">Habilitação de Fornecedores</SelectItem>
+                <SelectItem value="negociacao_preco">Negociação de Preço</SelectItem>
+                <SelectItem value="recurso">Recursos</SelectItem>
+                <SelectItem value="juizo_admissibilidade">Juízo de Admissibilidade</SelectItem>
+                <SelectItem value="homologado">Homologação</SelectItem>
+                <SelectItem value="adjudicacao">Adjudicação</SelectItem>
+                <SelectItem value="empenho">Empenho</SelectItem>
               </SelectContent>
             </Select>
           </div>
