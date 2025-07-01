@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SidebarLayout } from '@/components/SidebarLayout';
+import SidebarLayout from '@/components/SidebarLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -497,7 +497,6 @@ const Comercial = () => {
         {/* Modais */}
         {isFormOpen && (
           <OportunidadeForm
-            isOpen={isFormOpen}
             onClose={closeAllModals}
             onSave={handleCreateOportunidade}
             oportunidade={selectedOportunidade}

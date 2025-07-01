@@ -87,6 +87,8 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave, onCreateComer
   });
 
   const [concorrentes, setConcorrentes] = useState(oportunidade?.concorrentes || []);
+  const [licitantes, setLicitantes] = useState(oportunidade?.licitantes || []);
+  const [produtos, setProdutos] = useState(oportunidade?.produtos || []);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => {
@@ -111,6 +113,8 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave, onCreateComer
     const dataToSave = {
       ...formData,
       concorrentes,
+      licitantes,
+      produtos,
       id: oportunidade?.id || Date.now(),
     };
     
@@ -818,7 +822,13 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave, onCreateComer
                 <CardTitle>Gestão de Licitantes</CardTitle>
               </CardHeader>
               <CardContent>
-                <TabelaLicitantes />
+                <TabelaLicitantes 
+                  licitacaoId={oportunidade?.id || 'nova'}
+                  licitantes={licitantes}
+                  produtos={produtos}
+                  onLicitantesChange={setLicitantes}
+                  onProdutosChange={setProdutos}
+                />
               </CardContent>
             </Card>
           </TabsContent>
