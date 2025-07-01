@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,14 +33,23 @@ const TabelaLicitantes = ({
   const [editingProduto, setEditingProduto] = useState<ProdutoLicitacao | null>(null);
   const [selectedLicitanteId, setSelectedLicitanteId] = useState<number | null>(null);
 
-  const [licitanteForm, setLicitanteForm] = useState({
+  const [licitanteForm, setLicitanteForm] = useState<{
+    empresa: string;
+    cnpj: string;
+    marca: string;
+    modelo: string;
+    valorEntrada: number;
+    valorFinal: number;
+    status: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor';
+    observacoes: string;
+  }>({
     empresa: '',
     cnpj: '',
     marca: '',
     modelo: '',
     valorEntrada: 0,
     valorFinal: 0,
-    status: 'habilitado' as const,
+    status: 'habilitado',
     observacoes: ''
   });
 
@@ -328,7 +336,12 @@ const TabelaLicitantes = ({
 
                       <div>
                         <Label htmlFor="status">Status</Label>
-                        <Select value={licitanteForm.status} onValueChange={(value: any) => setLicitanteForm({...licitanteForm, status: value})}>
+                        <Select 
+                          value={licitanteForm.status} 
+                          onValueChange={(value: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor') => 
+                            setLicitanteForm({...licitanteForm, status: value})
+                          }
+                        >
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
