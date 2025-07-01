@@ -145,7 +145,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <span>
-                {oportunidade ? 'Editar' : 'Nova'} Oportunidade - Comercial Administrativo
+                {oportunidade ? 'Editar' : 'Nova'} Oportunidade - Contratação Simples
               </span>
               <Button variant="ghost" size="sm" onClick={onClose}>
                 <X className="h-4 w-4" />
