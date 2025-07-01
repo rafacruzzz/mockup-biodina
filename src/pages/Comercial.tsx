@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import SidebarLayout from "@/components/SidebarLayout";
 import OportunidadeForm from "@/components/comercial/OportunidadeForm";
 import OportunidadeAvancadaForm from "@/components/comercial/OportunidadeAvancadaForm";
+import LicitacaoForm from "@/components/licitacao/LicitacaoForm";
 import PedidoModal from "@/components/comercial/PedidoModal";
 import PedidoForm from "@/components/comercial/PedidoForm";
 import TipoPropostaModal from "@/components/comercial/TipoPropostaModal";
@@ -35,7 +36,9 @@ const Comercial = () => {
   const [modalidadeFilter, setModalidadeFilter] = useState('todos');
   const [showOportunidadeForm, setShowOportunidadeForm] = useState(false);
   const [showOportunidadeAvancadaForm, setShowOportunidadeAvancadaForm] = useState(false);
+  const [showLicitacaoForm, setShowLicitacaoForm] = useState(false);
   const [editingOportunidade, setEditingOportunidade] = useState<any>();
+  const [editingLicitacao, setEditingLicitacao] = useState<any>();
   const [showPedidoModal, setShowPedidoModal] = useState(false);
   const [showPedidoForm, setShowPedidoForm] = useState(false);
   const [selectedOportunidade, setSelectedOportunidade] = useState<any>();
@@ -43,7 +46,6 @@ const Comercial = () => {
   const [showContratacaoSimplesForm, setShowContratacaoSimplesForm] = useState(false);
   const [showImportacaoDiretaForm, setShowImportacaoDiretaForm] = useState(false);
 
-  // Dados das oportunidades atualizados com modalidade
   const oportunidades = [
     { 
       id: 1,
@@ -167,7 +169,6 @@ const Comercial = () => {
     }
   ];
 
-  // Calcular dados do funil baseado no termômetro e resultado da oportunidade
   const calculateFunnelData = () => {
     const activeOportunidades = oportunidades.filter(op => op.resultadoOportunidade !== 'perda');
     
@@ -222,7 +223,6 @@ const Comercial = () => {
 
   const funnelData = calculateFunnelData();
 
-  // Dados de conversão por UF (alterado de vendedores)
   const conversaoUFData = [
     { uf: 'SP', conversao: 108.3 },
     { uf: 'RJ', conversao: 94.0 },
@@ -230,7 +230,6 @@ const Comercial = () => {
     { uf: 'RN', conversao: 74.8 },
   ];
 
-  // Dados dos indicadores para a tela inicial
   const indicadores = {
     posicaoEstoque: [
       { produto: 'ABL800 Flex', quantidade: 12, localizacao: 'Galpão A' },
@@ -338,8 +337,8 @@ const Comercial = () => {
     setShowTipoPropostaModal(false);
     
     if (tipo === 'licitacao') {
-      setEditingOportunidade(undefined);
-      setShowOportunidadeAvancadaForm(true);
+      setEditingLicitacao(undefined);
+      setShowLicitacaoForm(true);
     } else if (tipo === 'contratacao_simples') {
       setEditingOportunidade(undefined);
       setShowContratacaoSimplesForm(true);
@@ -350,13 +349,14 @@ const Comercial = () => {
   };
 
   const handleEditOportunidade = (oportunidade: any) => {
-    setEditingOportunidade(oportunidade);
-    
     if (oportunidade.modalidade === 'licitacao') {
-      setShowOportunidadeAvancadaForm(true);
+      setEditingLicitacao(oportunidade);
+      setShowLicitacaoForm(true);
     } else if (oportunidade.modalidade === 'contratacao_simples') {
+      setEditingOportunidade(oportunidade);
       setShowContratacaoSimplesForm(true);
     } else if (oportunidade.modalidade === 'importacao_direta') {
+      setEditingOportunidade(oportunidade);
       setShowImportacaoDiretaForm(true);
     }
   };
@@ -368,6 +368,18 @@ const Comercial = () => {
     setShowContratacaoSimplesForm(false);
     setShowImportacaoDiretaForm(false);
     setEditingOportunidade(undefined);
+  };
+
+  const handleSaveLicitacao = (formData: any) => {
+    console.log('Salvando licitação:', formData);
+    
+    // Verificar se é uma licitação sendo convertida
+    if (formData.status === 'convertida') {
+      handleLicitacaoConvertida(formData);
+    }
+    
+    setShowLicitacaoForm(false);
+    setEditingLicitacao(undefined);
   };
 
   const handleGerarPedido = (oportunidade: any) => {
@@ -399,11 +411,9 @@ const Comercial = () => {
     return matchesSearch && matchesStatus && matchesModalidade;
   });
 
-  // Função para processar licitações convertidas automaticamente
   const handleLicitacaoConvertida = (licitacaoData: any) => {
     console.log('Processando licitação convertida automaticamente:', licitacaoData);
     
-    // Criar oportunidade comercial automaticamente
     const novaOportunidade = {
       id: Date.now(),
       codigo: `LIC-${licitacaoData.numeroPregao}`,
@@ -423,23 +433,18 @@ const Comercial = () => {
       termometro: 100,
       fonteLead: 'Licitação Convertida',
       segmento: 'Público',
-      modalidade: 'comercial_administrativo', // Nova modalidade
+      modalidade: 'comercial_administrativo',
       descricao: `Oportunidade criada automaticamente da licitação ${licitacaoData.numeroPregao} - ${licitacaoData.objetoLicitacao}`,
       produtos: [],
       servicos: []
     };
 
-    // Em uma aplicação real, salvaria no backend
     console.log('Nova oportunidade criada:', novaOportunidade);
-    
-    // Mostrar notificação para o usuário
     alert(`Licitação convertida com sucesso! Uma nova oportunidade foi criada automaticamente no Comercial Administrativo.`);
   };
 
-  // Sub-módulos principais
   const renderMainModules = () => (
     <div className="space-y-6">
-      {/* Módulos Principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card 
           className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
@@ -466,7 +471,6 @@ const Comercial = () => {
     </div>
   );
 
-  // Sub-módulos do Pós-Venda
   const renderPosVendaModules = () => (
     <div className="space-y-6">
       <div className="flex items-center gap-4 mb-6">
@@ -507,7 +511,6 @@ const Comercial = () => {
     </div>
   );
 
-  // Placeholder para sub-módulos específicos
   const renderSubModule = () => {
     if (activeSubModule === 'assessoria') {
       return (
@@ -558,7 +561,6 @@ const Comercial = () => {
     return null;
   };
 
-  // Módulo de Vendas (conteúdo original do comercial)
   const renderVendasModule = () => {
     const tabs = [
       { id: 'agenda', label: 'Agenda', icon: Calendar },
@@ -577,7 +579,6 @@ const Comercial = () => {
 
     return (
       <div className="space-y-4">
-        {/* Header compacto com título combinado e botão voltar */}
         <div className="flex items-center gap-4">
           <Button 
             variant="outline" 
@@ -590,7 +591,6 @@ const Comercial = () => {
           <h1 className="text-2xl font-bold text-biodina-blue">Comercial / Vendas</h1>
         </div>
 
-        {/* Navegação por abas - mais compacta */}
         <div className="border-b border-gray-200">
           <nav className="flex space-x-8">
             {tabs.map((tab) => (
@@ -610,7 +610,6 @@ const Comercial = () => {
           </nav>
         </div>
 
-        {/* Conteúdo da aba ativa */}
         <div className="space-y-4">
           {renderContent()}
         </div>
@@ -620,10 +619,8 @@ const Comercial = () => {
 
   const renderAgenda = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {/* Card Agenda - altura fixa */}
       <AgendaComercial />
 
-      {/* Card Indicadores - mesma altura */}
       <Card className="shadow-lg h-[600px] flex flex-col">
         <CardHeader className="pb-4 flex-shrink-0">
           <CardTitle className="flex items-center gap-2 text-biodina-blue text-lg">
@@ -632,7 +629,6 @@ const Comercial = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 px-4 flex-1 overflow-y-auto">
-          {/* Posição de Estoque */}
           <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-3 rounded-lg">
             <h4 className="font-semibold text-sm text-blue-700 mb-2 flex items-center gap-2">
               <Package className="h-4 w-4" />
@@ -650,7 +646,6 @@ const Comercial = () => {
             </div>
           </div>
 
-          {/* Importação Previsão */}
           <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-3 rounded-lg">
             <h4 className="font-semibold text-sm text-orange-700 mb-2 flex items-center gap-2">
               <Truck className="h-4 w-4" />
@@ -666,7 +661,6 @@ const Comercial = () => {
             </div>
           </div>
 
-          {/* Pedidos Programados */}
           <div className="bg-gradient-to-r from-green-50 to-green-100 p-3 rounded-lg">
             <h4 className="font-semibold text-sm text-green-700 mb-2 flex items-center gap-2">
               <Calendar className="h-4 w-4" />
@@ -687,7 +681,6 @@ const Comercial = () => {
             </div>
           </div>
 
-          {/* Restrição Financeira */}
           <div className="bg-gradient-to-r from-red-50 to-red-100 p-3 rounded-lg">
             <h4 className="font-semibold text-sm text-red-700 mb-2 flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
@@ -705,7 +698,6 @@ const Comercial = () => {
             </div>
           </div>
 
-          {/* Aguardando Autorização */}
           <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-3 rounded-lg">
             <h4 className="font-semibold text-sm text-yellow-700 mb-2 flex items-center gap-2">
               <Clock className="h-4 w-4" />
@@ -909,7 +901,6 @@ const Comercial = () => {
   return (
     <SidebarLayout>
       <div className="p-4 space-y-4 bg-gray-50 min-h-screen">
-        {/* Header principal mais compacto */}
         {activeModule === 'main' && (
           <header className="mb-4">
             <h1 className="text-2xl font-bold text-biodina-blue mb-1">Comercial</h1>
@@ -917,14 +908,13 @@ const Comercial = () => {
           </header>
         )}
 
-        {/* Renderização condicional baseada no módulo ativo */}
         {activeModule === 'main' && renderMainModules()}
         {activeModule === 'vendas' && renderVendasModule()}
         {activeModule === 'pos-venda' && !activeSubModule && renderPosVendaModules()}
         {activeModule === 'pos-venda' && activeSubModule && renderSubModule()}
       </div>
 
-      {/* Modais (mantidos iguais) */}
+      {/* Modais */}
       <TipoPropostaModal
         isOpen={showTipoPropostaModal}
         onClose={() => setShowTipoPropostaModal(false)}
@@ -949,13 +939,18 @@ const Comercial = () => {
             setShowOportunidadeAvancadaForm(false);
             setEditingOportunidade(undefined);
           }}
-          onSave={(data) => {
-            // Verificar se é uma licitação sendo convertida
-            if (data.status === 'convertida') {
-              handleLicitacaoConvertida(data);
-            }
-            handleSaveOportunidade(data);
+          onSave={handleSaveOportunidade}
+        />
+      )}
+
+      {showLicitacaoForm && (
+        <LicitacaoForm
+          licitacao={editingLicitacao}
+          onClose={() => {
+            setShowLicitacaoForm(false);
+            setEditingLicitacao(undefined);
           }}
+          onSave={handleSaveLicitacao}
         />
       )}
 
