@@ -88,7 +88,7 @@ const Comercial = () => {
       termometro: 85,
       fonteLead: 'Indicação',
       segmento: 'Universitário',
-      modalidade: 'contratacao_simples',
+      modalidade: 'comercial_administrativo',
       descricao: 'Equipamentos para laboratório de análises clínicas',
       produtos: [],
       servicos: []
@@ -160,7 +160,7 @@ const Comercial = () => {
       termometro: 95,
       fonteLead: 'Referência',
       segmento: 'Privado',
-      modalidade: 'contratacao_simples',
+      modalidade: 'comercial_administrativo',
       descricao: 'Modernização do laboratório de análises',
       produtos: ['ABL800 Basic'],
       servicos: ['Manutenção']
@@ -324,7 +324,7 @@ const Comercial = () => {
     switch (modalidade) {
       case 'licitacao': return 'bg-blue-500';
       case 'contratacao_simples': return 'bg-green-500';
-      case 'comercial_administrativo': return 'bg-blue-500';
+      case 'comercial_administrativo': return 'bg-green-500';
       case 'importacao_direta': return 'bg-purple-500';
       default: return 'bg-gray-500';
     }
@@ -354,7 +354,7 @@ const Comercial = () => {
     
     if (oportunidade.modalidade === 'licitacao') {
       setShowOportunidadeAvancadaForm(true);
-    } else if (oportunidade.modalidade === 'contratacao_simples') {
+    } else if (oportunidade.modalidade === 'contratacao_simples' || oportunidade.modalidade === 'comercial_administrativo') {
       setShowContratacaoSimplesForm(true);
     } else if (oportunidade.modalidade === 'importacao_direta') {
       setShowImportacaoDiretaForm(true);
@@ -368,6 +368,47 @@ const Comercial = () => {
     setShowContratacaoSimplesForm(false);
     setShowImportacaoDiretaForm(false);
     setEditingOportunidade(undefined);
+  };
+
+  // Função para processar licitações convertidas automaticamente
+  const handleLicitacaoConvertida = (licitacaoData: any) => {
+    console.log('Processando licitação convertida automaticamente:', licitacaoData);
+    
+    // Criar oportunidade comercial automaticamente
+    const novaOportunidade = {
+      id: Date.now(),
+      codigo: `CA-${licitacaoData.numeroPregao}`,
+      cliente: licitacaoData.nomeInstituicao,
+      contato: licitacaoData.dataContato || '',
+      responsavel: 'Sistema Automático',
+      origem: `Licitação ${licitacaoData.numeroPregao}`,
+      familiaComercial: 'Automático',
+      situacao: 'ganha',
+      status: 'Ganha',
+      resultadoOportunidade: 'ganho',
+      tipoAplicacao: 'venda',
+      tipoOportunidade: 'pontual',
+      valor: licitacaoData.estrategiaValorFinal || 0,
+      dataAbertura: new Date().toISOString().split('T')[0],
+      dataContato: new Date().toISOString().split('T')[0],
+      termometro: 100,
+      fonteLead: 'Licitação Convertida',
+      segmento: 'Público',
+      modalidade: 'comercial_administrativo',
+      descricao: `Oportunidade criada automaticamente da licitação ${licitacaoData.numeroPregao} - ${licitacaoData.objetoLicitacao}`,
+      produtos: [],
+      servicos: []
+    };
+
+    // Em uma aplicação real, salvaria no backend
+    console.log('Nova oportunidade criada:', novaOportunidade);
+    
+    // Abrir automaticamente o formulário de Comercial Administrativo
+    setEditingOportunidade(novaOportunidade);
+    setShowContratacaoSimplesForm(true);
+    
+    // Mostrar notificação para o usuário
+    alert(`Licitação convertida com sucesso! Uma nova oportunidade foi criada automaticamente no Comercial Administrativo.`);
   };
 
   const handleGerarPedido = (oportunidade: any) => {
@@ -398,43 +439,6 @@ const Comercial = () => {
     
     return matchesSearch && matchesStatus && matchesModalidade;
   });
-
-  // Função para processar licitações convertidas automaticamente
-  const handleLicitacaoConvertida = (licitacaoData: any) => {
-    console.log('Processando licitação convertida automaticamente:', licitacaoData);
-    
-    // Criar oportunidade comercial automaticamente
-    const novaOportunidade = {
-      id: Date.now(),
-      codigo: `LIC-${licitacaoData.numeroPregao}`,
-      cliente: licitacaoData.nomeInstituicao,
-      contato: licitacaoData.dataContato || '',
-      responsavel: 'Sistema Automático',
-      origem: `Licitação ${licitacaoData.numeroPregao}`,
-      familiaComercial: 'Automático',
-      situacao: 'ganha',
-      status: 'Ganha',
-      resultadoOportunidade: 'ganho',
-      tipoAplicacao: 'venda',
-      tipoOportunidade: 'pontual',
-      valor: licitacaoData.estrategiaValorFinal || 0,
-      dataAbertura: new Date().toISOString().split('T')[0],
-      dataContato: new Date().toISOString().split('T')[0],
-      termometro: 100,
-      fonteLead: 'Licitação Convertida',
-      segmento: 'Público',
-      modalidade: 'comercial_administrativo', // Nova modalidade
-      descricao: `Oportunidade criada automaticamente da licitação ${licitacaoData.numeroPregao} - ${licitacaoData.objetoLicitacao}`,
-      produtos: [],
-      servicos: []
-    };
-
-    // Em uma aplicação real, salvaria no backend
-    console.log('Nova oportunidade criada:', novaOportunidade);
-    
-    // Mostrar notificação para o usuário
-    alert(`Licitação convertida com sucesso! Uma nova oportunidade foi criada automaticamente no Comercial Administrativo.`);
-  };
 
   // Sub-módulos principais
   const renderMainModules = () => (
@@ -776,7 +780,7 @@ const Comercial = () => {
               <SelectContent>
                 <SelectItem value="todos">Todas as Modalidades</SelectItem>
                 <SelectItem value="licitacao">Licitação</SelectItem>
-                <SelectItem value="contratacao_simples">Comercial Administrativo</SelectItem>
+                <SelectItem value="comercial_administrativo">Comercial Administrativo</SelectItem>
                 <SelectItem value="importacao_direta">Importação Direta</SelectItem>
               </SelectContent>
             </Select>
