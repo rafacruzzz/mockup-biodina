@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, Calendar, AlertTriangle, Info } from 'lucide-react';
-import TabelaLicitantes from './TabelaLicitantes';
+import TabelaLicitantes from '../licitacao/TabelaLicitantes';
 import ChatInterno from './ChatInterno';
 import { toast } from "sonner";
 
@@ -19,9 +19,10 @@ interface OportunidadeAvancadaFormProps {
   oportunidade?: any;
   onClose: () => void;
   onSave: (data: any) => void;
+  onCreateComercialAdministrativo?: (data: any) => void;
 }
 
-const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: OportunidadeAvancadaFormProps) => {
+const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave, onCreateComercialAdministrativo }: OportunidadeAvancadaFormProps) => {
   const [activeTab, setActiveTab] = useState('dados-gerais');
   const [formData, setFormData] = useState({
     // Dados do Cliente
@@ -113,10 +114,15 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
       id: oportunidade?.id || Date.now(),
     };
     
-    // Se status for "ganho", marcar para conversão automática
-    if (formData.statusLicitacao === 'ganho') {
-      dataToSave.status = 'convertida';
-      dataToSave.autoConvert = true;
+    // Se status for "ganho", criar automaticamente entrada no Comercial Administrativo
+    if (formData.statusLicitacao === 'ganho' && onCreateComercialAdministrativo) {
+      const comercialAdministrativoData = {
+        ...dataToSave,
+        modalidade: 'contratacao_simples',
+        codigoVinculado: `LIC-${dataToSave.id}`,
+        origemLicitacao: true
+      };
+      onCreateComercialAdministrativo(comercialAdministrativoData);
     }
     
     onSave(dataToSave);
@@ -534,7 +540,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                     />
                   </div>
 
-                  {/* Novo campo de resumo técnico */}
+                  {/* Campo de resumo técnico */}
                   <div className="bg-gray-50 p-3 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <Info className="h-4 w-4 text-blue-500" />
