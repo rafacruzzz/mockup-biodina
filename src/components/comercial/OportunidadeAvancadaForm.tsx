@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { X, Save, Plus, Edit, Upload, Download, Eye, Lock, CheckCircle, ChevronRight, Calendar, AlertTriangle } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import LicitacaoValidationModal from "./LicitacaoValidationModal";
+import { TabelaLicitantes } from "../licitacao/TabelaLicitantes";
 import ConcorrenteModal from "./ConcorrenteModal";
 import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
@@ -35,7 +35,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   const [showEmprestimoAlert, setShowEmprestimoAlert] = useState(false);
   
   // Estados para modais
-  const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
   const [showConcorrenteModal, setShowConcorrenteModal] = useState(false);
   const [showPedidoForm, setShowPedidoForm] = useState(false);
   
@@ -94,6 +93,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     // Campos específicos para Licitação
     dataLicitacao: oportunidade?.dataLicitacao || '',
     resumoEdital: oportunidade?.resumoEdital || '',
+    analiseTecnicaLicitacao: oportunidade?.analiseTecnicaLicitacao || '',
     impugnacaoEdital: oportunidade?.impugnacaoEdital || '',
     analiseEstrategia: oportunidade?.analiseEstrategia || '',
     naturezaOperacao: oportunidade?.naturezaOperacao || '',
@@ -768,6 +768,18 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </div>
 
         <div>
+          <Label htmlFor="analiseTecnicaLicitacao">Análise Técnica</Label>
+          <Textarea
+            id="analiseTecnicaLicitacao"
+            value={formData.analiseTecnicaLicitacao}
+            onChange={(e) => setFormData({...formData, analiseTecnicaLicitacao: e.target.value})}
+            placeholder="Análise técnica da licitação"
+            rows={3}
+            disabled={isReadOnlyMode()}
+          />
+        </div>
+
+        <div>
           <Label htmlFor="impugnacaoEdital">Impugnação do Edital</Label>
           <Textarea
             id="impugnacaoEdital"
@@ -832,39 +844,13 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         {/* Tabela de Licitantes */}
         <div>
           <h4 className="text-md font-semibold mb-3">Tabela de Licitantes</h4>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome Licitante</TableHead>
-                <TableHead>Marca/Modelo</TableHead>
-                <TableHead>Quantidade</TableHead>
-                <TableHead>Preço</TableHead>
-                <TableHead>Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {licitantes.map((licitante) => (
-                <TableRow key={licitante.id}>
-                  <TableCell>{licitante.nome}</TableCell>
-                  <TableCell>{licitante.marca}</TableCell>
-                  <TableCell>{licitante.quantidade}</TableCell>
-                  <TableCell>{formatCurrency(licitante.preco)}</TableCell>
-                  <TableCell>
-                    <Button size="sm" variant="outline" disabled={isReadOnlyMode()}>
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {licitantes.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-gray-500 py-4">
-                    Nenhum licitante cadastrado
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <TabelaLicitantes
+            licitacaoId=""
+            licitantes={licitantes}
+            produtos={[]}
+            onLicitantesChange={setLicitantes}
+            onProdutosChange={() => {}}
+          />
           {!isReadOnlyMode() && (
             <Button type="button" className="mt-2" variant="outline">
               <Plus className="h-4 w-4 mr-2" />
@@ -1403,13 +1389,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
       </Card>
 
       {/* Modais */}
-      {showLicitacaoModal && (
-        <LicitacaoValidationModal 
-          chave={formData.cpfCnpj}
-          onClose={() => setShowLicitacaoModal(false)} 
-        />
-      )}
-
       {showConcorrenteModal && (
         <ConcorrenteModal
           onClose={() => setShowConcorrenteModal(false)}
