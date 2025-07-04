@@ -1,4 +1,3 @@
-
 export interface Licitacao {
   id: number;
   numeroPregao: string;
@@ -46,8 +45,9 @@ export interface Licitante {
   modelo: string;
   valorEntrada: number;
   valorFinal: number;
-  ranking: number;
+  unidade: string;
   status: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor';
+  ranking: number;
   observacoes?: string;
 }
 

@@ -40,6 +40,7 @@ const TabelaLicitantes = ({
     modelo: string;
     valorEntrada: number;
     valorFinal: number;
+    unidade: string;
     status: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor';
     observacoes: string;
   }>({
@@ -49,6 +50,7 @@ const TabelaLicitantes = ({
     modelo: '',
     valorEntrada: 0,
     valorFinal: 0,
+    unidade: 'unidade',
     status: 'habilitado',
     observacoes: ''
   });
@@ -62,6 +64,19 @@ const TabelaLicitantes = ({
     valorUnitario: 0,
     especificacoes: ''
   });
+
+  const unidadeOptions = [
+    'unidade',
+    'lote',
+    'caixa',
+    'kit',
+    'conjunto',
+    'pacote',
+    'm²',
+    'm³',
+    'kg',
+    'peça'
+  ];
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -96,11 +111,39 @@ const TabelaLicitantes = ({
 
   const calculateRanking = (newLicitantes: Licitante[]) => {
     return newLicitantes
-      .sort((a, b) => a.valorFinal - b.valorFinal)
+      .sort((a, b) => {
+        // Desclassificados ficam por último
+        if (a.status === 'desclassificado' && b.status !== 'desclassificado') return 1;
+        if (b.status === 'desclassificado' && a.status !== 'desclassificado') return -1;
+        if (a.status === 'desclassificado' && b.status === 'desclassificado') return 0;
+        
+        // Para os demais, ranking por valor final
+        return a.valorFinal - b.valorFinal;
+      })
       .map((licitante, index) => ({
         ...licitante,
-        ranking: index + 1
+        ranking: licitante.status === 'desclassificado' ? 0 : index + 1
       }));
+  };
+
+  const getRankingDisplay = (licitante: Licitante) => {
+    if (licitante.status === 'desclassificado') {
+      return (
+        <Badge variant="outline" className="text-gray-500 border-gray-300">
+          Desclassificado
+        </Badge>
+      );
+    }
+    
+    const rankingText = `${licitante.ranking}º`;
+    return (
+      <div className="flex items-center gap-2">
+        {licitante.ranking === 1 && <Trophy className="h-4 w-4 text-yellow-500" />}
+        <Badge variant="outline" className="font-bold">
+          {rankingText}
+        </Badge>
+      </div>
+    );
   };
 
   const handleSaveLicitante = () => {
@@ -134,6 +177,7 @@ const TabelaLicitantes = ({
       modelo: '',
       valorEntrada: 0,
       valorFinal: 0,
+      unidade: 'unidade',
       status: 'habilitado',
       observacoes: ''
     });
@@ -149,6 +193,7 @@ const TabelaLicitantes = ({
       modelo: licitante.modelo,
       valorEntrada: licitante.valorEntrada,
       valorFinal: licitante.valorFinal,
+      unidade: licitante.unidade || 'unidade',
       status: licitante.status,
       observacoes: licitante.observacoes || ''
     });
@@ -303,7 +348,7 @@ const TabelaLicitantes = ({
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-3 gap-4">
                         <div>
                           <Label htmlFor="valorEntrada">Valor de Entrada</Label>
                           <Input
@@ -331,6 +376,24 @@ const TabelaLicitantes = ({
                           <p className="text-sm text-gray-500 mt-1">
                             {formatCurrency(licitanteForm.valorFinal)}
                           </p>
+                        </div>
+                        <div>
+                          <Label htmlFor="unidade">Unidade</Label>
+                          <Select 
+                            value={licitanteForm.unidade} 
+                            onValueChange={(value) => setLicitanteForm({...licitanteForm, unidade: value})}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {unidadeOptions.map((unidade) => (
+                                <SelectItem key={unidade} value={unidade}>
+                                  {unidade}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
 
@@ -382,22 +445,23 @@ const TabelaLicitantes = ({
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-16">Ranking</TableHead>
-                      <TableHead>Empresa</TableHead>
-                      <TableHead>CNPJ</TableHead>
-                      <TableHead>Marca</TableHead>
-                      <TableHead>Modelo</TableHead>
-                      <TableHead>Valor Entrada</TableHead>
-                      <TableHead>Valor Final</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Produtos</TableHead>
-                      <TableHead>Ações</TableHead>
+                      <TableHead className="w-20">Ranking</TableHead>
+                      <TableHead className="min-w-[200px]">Empresa</TableHead>
+                      <TableHead className="w-32">CNPJ</TableHead>
+                      <TableHead className="w-24">Marca</TableHead>
+                      <TableHead className="w-24">Modelo</TableHead>
+                      <TableHead className="w-28">Valor de Entrada</TableHead>
+                      <TableHead className="w-28">Valor Final</TableHead>
+                      <TableHead className="w-20">Unidade</TableHead>
+                      <TableHead className="w-24">Status</TableHead>
+                      <TableHead className="w-20">Produtos</TableHead>
+                      <TableHead className="w-20">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {licitantes.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={10} className="text-center py-8 text-gray-500">
+                        <TableCell colSpan={11} className="text-center py-8 text-gray-500">
                           Nenhum licitante cadastrado
                         </TableCell>
                       </TableRow>
@@ -405,33 +469,33 @@ const TabelaLicitantes = ({
                       licitantes.map((licitante) => (
                         <TableRow key={licitante.id}>
                           <TableCell>
-                            <div className="flex items-center gap-2">
-                              {licitante.ranking === 1 && <Trophy className="h-4 w-4 text-yellow-500" />}
-                              <Badge variant="outline" className="font-bold">
-                                {licitante.ranking}º
-                              </Badge>
-                            </div>
+                            {getRankingDisplay(licitante)}
                           </TableCell>
                           <TableCell className="font-medium">{licitante.empresa}</TableCell>
-                          <TableCell>{formatCNPJ(licitante.cnpj)}</TableCell>
+                          <TableCell className="text-sm">{formatCNPJ(licitante.cnpj)}</TableCell>
                           <TableCell>{licitante.marca}</TableCell>
                           <TableCell>{licitante.modelo}</TableCell>
-                          <TableCell>{formatCurrency(licitante.valorEntrada)}</TableCell>
-                          <TableCell className="font-bold">{formatCurrency(licitante.valorFinal)}</TableCell>
+                          <TableCell className="text-sm">{formatCurrency(licitante.valorEntrada)}</TableCell>
+                          <TableCell className="font-bold text-sm">{formatCurrency(licitante.valorFinal)}</TableCell>
                           <TableCell>
-                            <Badge className={`${getStatusColor(licitante.status)} text-white`}>
+                            <Badge variant="outline" className="text-xs">
+                              {licitante.unidade || 'unidade'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={`${getStatusColor(licitante.status)} text-white text-xs`}>
                               {getStatusLabel(licitante.status)}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline">
-                              {getProdutosPorLicitante(licitante.id).length} produto(s)
+                            <Badge variant="outline" className="text-xs">
+                              {getProdutosPorLicitante(licitante.id).length}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <div className="flex gap-2">
+                            <div className="flex gap-1">
                               <Button size="sm" variant="outline" onClick={() => handleEditLicitante(licitante)}>
-                                <Edit className="h-4 w-4" />
+                                <Edit className="h-3 w-3" />
                               </Button>
                               <Button 
                                 size="sm" 
@@ -439,7 +503,7 @@ const TabelaLicitantes = ({
                                 onClick={() => handleDeleteLicitante(licitante.id)}
                                 className="text-red-600 hover:text-red-700"
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <Trash2 className="h-3 w-3" />
                               </Button>
                             </div>
                           </TableCell>
