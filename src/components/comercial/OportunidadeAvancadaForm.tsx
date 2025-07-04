@@ -1,4 +1,5 @@
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { X, Save, Plus, Edit, Upload, Download, Eye, Lock, CheckCircle, ChevronRight, Calendar, AlertTriangle } from "lucide-react";
+import { X, Save, Plus, Edit, Upload, Download, Eye, Lock, CheckCircle, ChevronRight, Calendar, AlertTriangle, Trash2 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import LicitacaoValidationModal from "./LicitacaoValidationModal";
@@ -18,11 +19,12 @@ import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
 import ApprovalModal from "./ApprovalModal";
 import CustomAlertModal from "./components/CustomAlertModal";
+import TabelaLicitantes from "./TabelaLicitantes";
 
 interface OportunidadeAvancadaFormProps {
   oportunidade?: any;
   onClose: () => void;
-  onSave: (oportunidade: any) => void;
+  onSave: (data: any) => void;
 }
 
 const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: OportunidadeAvancadaFormProps) => {
@@ -46,8 +48,9 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   ]);
 
   const [licitantes, setLicitantes] = useState([
-    { id: 1, nome: 'Empresa A', marca: 'Marca X', quantidade: 10, preco: 50000 },
-    { id: 2, nome: 'Empresa B', marca: 'Marca Y', quantidade: 8, preco: 48000 }
+    { id: 1, nome: 'Empresa Alpha Ltda', marca: 'Alpha Med', modelo: 'AM-2000', quantidade: 5, preco: 125000, valorEntrada: 120000, valorFinal: 125000, unidade: 'unidade', ranking: 1 },
+    { id: 2, nome: 'Beta Medical Corp', marca: 'Beta Tech', modelo: 'BT-Pro', quantidade: 3, preco: 180000, valorEntrada: 175000, valorFinal: 180000, unidade: 'kit', ranking: 2 },
+    { id: 3, nome: 'Gamma Solutions', marca: 'Gamma Plus', modelo: 'GP-Standard', quantidade: 8, preco: 95000, valorEntrada: 98000, valorFinal: 95000, unidade: 'caixa', ranking: 3 }
   ]);
 
   const [pedidos, setPedidos] = useState([
@@ -142,6 +145,13 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     if (valor < 90) return 'Boas Chances (80-90)';
     if (valor >= 90) return 'Comprometido (90+)';
     return 'Conquistado (100)';
+  };
+
+  const getRankingBadge = (ranking: number) => {
+    if (ranking === 1) return <Badge className="bg-yellow-500 text-white"><Trophy className="h-3 w-3 mr-1" />{ranking}º</Badge>;
+    if (ranking === 2) return <Badge className="bg-gray-400 text-white"><Star className="h-3 w-3 mr-1" />{ranking}º</Badge>;
+    if (ranking === 3) return <Badge className="bg-orange-600 text-white">{ranking}º</Badge>;
+    return <Badge variant="outline">{ranking}º</Badge>;
   };
 
   // Validação ajustada - removeu a dependência de tipoOportunidade
@@ -872,47 +882,69 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </div>
 
         {/* Tabela de Licitantes */}
-        <div>
-          <h4 className="text-md font-semibold mb-3">Tabela de Licitantes</h4>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome Licitante</TableHead>
-                <TableHead>Marca/Modelo</TableHead>
-                <TableHead>Quantidade</TableHead>
-                <TableHead>Preço</TableHead>
-                <TableHead>Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {licitantes.map((licitante) => (
-                <TableRow key={licitante.id}>
-                  <TableCell>{licitante.nome}</TableCell>
-                  <TableCell>{licitante.marca}</TableCell>
-                  <TableCell>{licitante.quantidade}</TableCell>
-                  <TableCell>{formatCurrency(licitante.preco)}</TableCell>
-                  <TableCell>
-                    <Button size="sm" variant="outline" disabled={isReadOnlyMode()}>
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {licitantes.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center text-gray-500 py-4">
-                    Nenhum licitante cadastrado
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          {!isReadOnlyMode() && (
-            <Button type="button" className="mt-2" variant="outline">
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Trophy className="h-5 w-5" />
+              Tabela de Licitantes
+            </h3>
+            <Button size="sm" className="bg-biodina-gold hover:bg-biodina-gold/90">
               <Plus className="h-4 w-4 mr-2" />
               Adicionar Licitante
             </Button>
-          )}
+          </div>
+
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Ranking</TableHead>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>Marca</TableHead>
+                  <TableHead>Modelo</TableHead>
+                  <TableHead>Quantidade</TableHead>
+                  <TableHead>Valor de Entrada</TableHead>
+                  <TableHead>Valor Final</TableHead>
+                  <TableHead>Unidade</TableHead>
+                  <TableHead>Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {licitantes.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={9} className="text-center py-4 text-gray-500">
+                      Nenhum licitante cadastrado
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  licitantes.map((licitante) => (
+                    <TableRow key={licitante.id}>
+                      <TableCell>{getRankingBadge(licitante.ranking)}</TableCell>
+                      <TableCell className="font-medium">{licitante.nome}</TableCell>
+                      <TableCell>{licitante.marca}</TableCell>
+                      <TableCell>{licitante.modelo}</TableCell>
+                      <TableCell>{licitante.quantidade}</TableCell>
+                      <TableCell>{formatCurrency(licitante.valorEntrada)}</TableCell>
+                      <TableCell className="font-bold">{formatCurrency(licitante.valorFinal)}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{licitante.unidade}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button size="sm" variant="outline">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
 
@@ -1375,18 +1407,20 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   );
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-7xl max-h-[95vh] overflow-y-auto">
-        <CardHeader className="flex flex-row items-center justify-between border-b">
-          <CardTitle className="text-2xl">
-            {oportunidade ? 'Editar Oportunidade' : 'Nova Oportunidade Comercial'}
-          </CardTitle>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="h-5 w-5" />
-          </Button>
-        </CardHeader>
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-7xl max-h-[95vh] overflow-y-auto">
+        <DialogHeader>
+          <CardHeader className="flex flex-row items-center justify-between border-b">
+            <CardTitle className="text-2xl">
+              {oportunidade ? 'Editar Oportunidade' : 'Nova Oportunidade Comercial'}
+            </CardTitle>
+            <Button variant="ghost" size="sm" onClick={onClose}>
+              <X className="h-5 w-5" />
+            </Button>
+          </CardHeader>
+        </DialogHeader>
 
-        <CardContent className="p-6">
+        <div className="space-y-6">
           <form onSubmit={handleSubmit}>
             {/* ABAS MASTERS - Nível Superior */}
             <Tabs value={activeMasterTab} onValueChange={handleMasterTabChange} className="w-full">
@@ -1441,67 +1475,67 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
               </Button>
             </div>
           </form>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Modais */}
-      {showLicitacaoModal && (
-        <LicitacaoValidationModal 
-          chave={formData.cpfCnpj}
-          onClose={() => setShowLicitacaoModal(false)} 
+        {/* Modais */}
+        {showLicitacaoModal && (
+          <LicitacaoValidationModal 
+            chave={formData.cpfCnpj}
+            onClose={() => setShowLicitacaoModal(false)} 
+          />
+        )}
+
+        {showConcorrenteModal && (
+          <ConcorrenteModal
+            onClose={() => setShowConcorrenteModal(false)}
+            onSave={(concorrente) => {
+              setConcorrentes([...concorrentes, { ...concorrente, id: Date.now() }]);
+            }}
+            valorReferencia={formData.valorNegocio}
+          />
+        )}
+
+        {showPedidoForm && (
+          <PedidoForm
+            onClose={() => setShowPedidoForm(false)}
+            onSave={(pedidoData) => {
+              const novoPedido = {
+                id: Date.now(),
+                codigo: `PED-${String(pedidos.length + 1).padStart(3, '0')}`,
+                cliente: formData.nome,
+                dataGeracao: new Date().toISOString().split('T')[0],
+                situacao: 'Em Aberto',
+                valor: pedidoData.produtos?.reduce((sum: number, prod: any) => sum + (prod.valorTotal || 0), 0) || 0
+              };
+              setPedidos([...pedidos, novoPedido]);
+              setShowPedidoForm(false);
+            }}
+            oportunidade={formData}
+          />
+        )}
+
+        <ApprovalModal
+          isOpen={showApprovalModal}
+          onClose={() => setShowApprovalModal(false)}
+          onApprove={handleApprovalSuccess}
+          oportunidadeId={oportunidade?.id || formData.cpfCnpj || 'nova'}
         />
-      )}
 
-      {showConcorrenteModal && (
-        <ConcorrenteModal
-          onClose={() => setShowConcorrenteModal(false)}
-          onSave={(concorrente) => {
-            setConcorrentes([...concorrentes, { ...concorrente, id: Date.now() }]);
-          }}
-          valorReferencia={formData.valorNegocio}
+        <ApprovalModal
+          isOpen={showEmprestimoApprovalModal}
+          onClose={() => setShowEmprestimoApprovalModal(false)}
+          onApprove={handleEmprestimoApprovalSuccess}
+          oportunidadeId={oportunidade?.id || formData.cpfCnpj || 'emprestimo'}
         />
-      )}
 
-      {showPedidoForm && (
-        <PedidoForm
-          onClose={() => setShowPedidoForm(false)}
-          onSave={(pedidoData) => {
-            const novoPedido = {
-              id: Date.now(),
-              codigo: `PED-${String(pedidos.length + 1).padStart(3, '0')}`,
-              cliente: formData.nome,
-              dataGeracao: new Date().toISOString().split('T')[0],
-              situacao: 'Em Aberto',
-              valor: pedidoData.produtos?.reduce((sum: number, prod: any) => sum + (prod.valorTotal || 0), 0) || 0
-            };
-            setPedidos([...pedidos, novoPedido]);
-            setShowPedidoForm(false);
-          }}
-          oportunidade={formData}
+        <CustomAlertModal
+          isOpen={showEmprestimoAlert}
+          title="Operação EMPRÉSTIMO Aprovada"
+          message="A natureza da operação foi alterada para EMPRÉSTIMO com sucesso. Esta operação requer aprovação especial e foi autorizada pelo gestor."
+          onConfirm={() => setShowEmprestimoAlert(false)}
         />
-      )}
-
-      <ApprovalModal
-        isOpen={showApprovalModal}
-        onClose={() => setShowApprovalModal(false)}
-        onApprove={handleApprovalSuccess}
-        oportunidadeId={oportunidade?.id || formData.cpfCnpj || 'nova'}
-      />
-
-      <ApprovalModal
-        isOpen={showEmprestimoApprovalModal}
-        onClose={() => setShowEmprestimoApprovalModal(false)}
-        onApprove={handleEmprestimoApprovalSuccess}
-        oportunidadeId={oportunidade?.id || formData.cpfCnpj || 'emprestimo'}
-      />
-
-      <CustomAlertModal
-        isOpen={showEmprestimoAlert}
-        title="Operação EMPRÉSTIMO Aprovada"
-        message="A natureza da operação foi alterada para EMPRÉSTIMO com sucesso. Esta operação requer aprovação especial e foi autorizada pelo gestor."
-        onConfirm={() => setShowEmprestimoAlert(false)}
-      />
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
