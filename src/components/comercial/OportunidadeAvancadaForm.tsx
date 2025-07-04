@@ -94,6 +94,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     // Campos específicos para Licitação
     dataLicitacao: oportunidade?.dataLicitacao || '',
     resumoEdital: oportunidade?.resumoEdital || '',
+    analiseTecnicaLicitacao: oportunidade?.analiseTecnicaLicitacao || '',
     impugnacaoEdital: oportunidade?.impugnacaoEdital || '',
     analiseEstrategia: oportunidade?.analiseEstrategia || '',
     naturezaOperacao: oportunidade?.naturezaOperacao || '',
@@ -307,7 +308,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </div>
       </div>
 
-      {/* Dados do Lead/Negócio - removidos campos: procurandoPor e status */}
+      {/* Dados do Lead/Negócio */}
       <div className="border rounded-lg p-4 space-y-4">
         <h3 className="text-lg font-semibold text-gray-800">Dados do Lead/Negócio</h3>
         <div className="grid grid-cols-2 gap-4">
@@ -762,6 +763,18 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
             value={formData.resumoEdital}
             onChange={(e) => setFormData({...formData, resumoEdital: e.target.value})}
             placeholder="Resumo do edital da licitação"
+            rows={3}
+            disabled={isReadOnlyMode()}
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="analiseTecnicaLicitacao">Análise Técnica</Label>
+          <Textarea
+            id="analiseTecnicaLicitacao"
+            value={formData.analiseTecnicaLicitacao}
+            onChange={(e) => setFormData({...formData, analiseTecnicaLicitacao: e.target.value})}
+            placeholder="Análise técnica da licitação"
             rows={3}
             disabled={isReadOnlyMode()}
           />
