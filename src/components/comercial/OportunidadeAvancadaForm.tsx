@@ -17,10 +17,13 @@ import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
 
 interface OportunidadeAvancadaFormProps {
-  oportunidadeId: number;
+  oportunidadeId?: number;
+  oportunidade?: any;
+  onClose?: () => void;
+  onSave?: (data: any) => void;
 }
 
-const OportunidadeAvancadaForm = ({ oportunidadeId }: OportunidadeAvancadaFormProps) => {
+const OportunidadeAvancadaForm = ({ oportunidadeId, oportunidade, onClose, onSave }: OportunidadeAvancadaFormProps) => {
   const [activeTab, setActiveTab] = useState("detalhes");
   const [showConcorrenteModal, setShowConcorrenteModal] = useState(false);
   const [concorrentes, setConcorrentes] = useState([
@@ -37,7 +40,7 @@ const OportunidadeAvancadaForm = ({ oportunidadeId }: OportunidadeAvancadaFormPr
       modelo: "Modelo Y", 
       valorEntrada: 1200, 
       valorFinal: 1100, 
-      status: "habilitado", 
+      status: "habilitado" as const, 
       ranking: 1 
     },
     { 
@@ -49,7 +52,7 @@ const OportunidadeAvancadaForm = ({ oportunidadeId }: OportunidadeAvancadaFormPr
       modelo: "Modelo W", 
       valorEntrada: 1300, 
       valorFinal: 1200, 
-      status: "inabilitado", 
+      status: "inabilitado" as const, 
       ranking: 2 
     }
   ]);
@@ -87,8 +90,10 @@ const OportunidadeAvancadaForm = ({ oportunidadeId }: OportunidadeAvancadaFormPr
     { value: "cancelada", label: "Cancelada" },
   ];
 
+  const effectiveId = oportunidadeId || oportunidade?.id || 1;
+
   const handleConcorrentesChange = (newConcorrentes: any[]) => {
-    setConcorrentes(newConcorrentes);
+    setConcorrentes(prev => [...prev, ...newConcorrentes]);
   };
 
   const handleLicitantesChange = (newLicitantes: any[]) => {
@@ -99,11 +104,35 @@ const OportunidadeAvancadaForm = ({ oportunidadeId }: OportunidadeAvancadaFormPr
     setProdutos(newProdutos);
   };
 
+  const handleSave = () => {
+    if (onSave) {
+      onSave({
+        ...detalhesForm,
+        concorrentes,
+        licitantes,
+        produtos
+      });
+    }
+  };
+
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
     <div className="w-full">
       <Card>
         <CardHeader>
-          <CardTitle>Oportunidade #{oportunidadeId}</CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle>Oportunidade #{effectiveId}</CardTitle>
+            {onClose && (
+              <Button variant="ghost" size="sm" onClick={handleClose}>
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="detalhes" className="space-y-4">
@@ -114,7 +143,9 @@ const OportunidadeAvancadaForm = ({ oportunidadeId }: OportunidadeAvancadaFormPr
               <TabsTrigger value="chat">Chat Interno</TabsTrigger>
               <TabsTrigger value="pedido">Pedido</TabsTrigger>
             </TabsList>
+
             <TabsContent value="detalhes">
+              
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="nomeOportunidade">Nome da Oportunidade</Label>
@@ -269,12 +300,12 @@ const OportunidadeAvancadaForm = ({ oportunidadeId }: OportunidadeAvancadaFormPr
                   />
                 </div>
               </div>
-              <Button>Salvar Detalhes</Button>
+              <Button onClick={handleSave}>Salvar Detalhes</Button>
             </TabsContent>
 
             <TabsContent value="licitacao">
               <TabelaLicitantes 
-                licitacaoId={oportunidadeId}
+                licitacaoId={effectiveId}
                 licitantes={licitantes}
                 produtos={produtos}
                 onLicitantesChange={handleLicitantesChange}
@@ -295,6 +326,7 @@ const OportunidadeAvancadaForm = ({ oportunidadeId }: OportunidadeAvancadaFormPr
                   isOpen={showConcorrenteModal}
                   onOpenChange={setShowConcorrenteModal}
                   onConcorrentesChange={handleConcorrentesChange}
+                  valorReferencia={detalhesForm.valorEstimado}
                 />
                 <div className="overflow-x-auto">
                   <Table>
@@ -311,7 +343,7 @@ const OportunidadeAvancadaForm = ({ oportunidadeId }: OportunidadeAvancadaFormPr
                       {concorrentes.map((concorrente) => (
                         <TableRow key={concorrente.id}>
                           <TableCell className="font-medium">{concorrente.nome}</TableCell>
-                          <TableCell>{concorrente.preco}</TableCell>
+                          <TableCell>{concorrente.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
                           <TableCell>{concorrente.pontosFortes}</TableCell>
                           <TableCell>{concorrente.pontosFracos}</TableCell>
                           <TableCell>
@@ -329,11 +361,21 @@ const OportunidadeAvancadaForm = ({ oportunidadeId }: OportunidadeAvancadaFormPr
             </TabsContent>
 
             <TabsContent value="chat">
-              <ChatInterno oportunidadeId={oportunidadeId} />
+              <ChatInterno oportunidadeId={effectiveId} />
             </TabsContent>
 
             <TabsContent value="pedido">
-              <PedidoForm oportunidadeId={oportunidadeId} />
+              <PedidoForm 
+                oportunidade={{ 
+                  id: effectiveId, 
+                  ...detalhesForm,
+                  concorrentes,
+                  licitantes,
+                  produtos 
+                }} 
+                onClose={handleClose}
+                onSave={handleSave}
+              />
             </TabsContent>
           </Tabs>
         </CardContent>
