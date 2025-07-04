@@ -45,10 +45,45 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     { id: 2, nome: 'Global Diagnóstico', produto: 'Serviço de instalação', preco: 1200 }
   ]);
 
-  const [licitantes, setLicitantes] = useState([
-    { id: 1, nome: 'Empresa A', marca: 'Marca X', quantidade: 10, preco: 50000 },
-    { id: 2, nome: 'Empresa B', marca: 'Marca Y', quantidade: 8, preco: 48000 }
-  ]);
+  // Dados mock dos licitantes atualizados
+  const licitantes = [
+    { 
+      empresa: 'Empresa Alpha Ltda', 
+      marca: 'ABL800', 
+      modelo: 'Flex Advanced', 
+      valorEntrada: 125000, 
+      valorFinal: 120000, 
+      unidade: 'UN',
+      ranking: '1º'
+    },
+    { 
+      empresa: 'Beta Solutions', 
+      marca: 'Nova Bio', 
+      modelo: 'Pro Series', 
+      valorEntrada: 135000, 
+      valorFinal: 130000, 
+      unidade: 'Lote',
+      ranking: '2º'
+    },
+    { 
+      empresa: 'Gamma Tech', 
+      marca: 'StatProfile', 
+      modelo: 'Prime', 
+      valorEntrada: 145000, 
+      valorFinal: 140000, 
+      unidade: 'Caixa',
+      ranking: '3º'
+    },
+    { 
+      empresa: 'Delta Corp', 
+      marca: 'MedSystem', 
+      modelo: 'Ultimate', 
+      valorEntrada: 155000, 
+      valorFinal: 0, 
+      unidade: 'Kit',
+      ranking: 'Desclassificado'
+    }
+  ];
 
   const [pedidos, setPedidos] = useState([
     { 
@@ -122,6 +157,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
 
   // Funções auxiliares
   const formatCurrency = (value: number) => {
+    if (value === 0) return '-';
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
@@ -142,6 +178,26 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     if (valor < 90) return 'Boas Chances (80-90)';
     if (valor >= 90) return 'Comprometido (90+)';
     return 'Conquistado (100)';
+  };
+
+  const getRankingColor = (ranking: string) => {
+    switch (ranking) {
+      case '1º': return 'bg-green-500 text-white';
+      case '2º': return 'bg-blue-500 text-white';
+      case '3º': return 'bg-orange-500 text-white';
+      case 'Desclassificado': return 'bg-red-500 text-white';
+      default: return 'bg-gray-500 text-white';
+    }
+  };
+
+  const getUnidadeColor = (unidade: string) => {
+    switch (unidade) {
+      case 'UN': return 'bg-blue-100 text-blue-800';
+      case 'Lote': return 'bg-green-100 text-green-800';
+      case 'Caixa': return 'bg-purple-100 text-purple-800';
+      case 'Kit': return 'bg-orange-100 text-orange-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
 
   // Validação ajustada - removeu a dependência de tipoOportunidade
@@ -872,47 +928,44 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </div>
 
         {/* Tabela de Licitantes */}
-        <div>
-          <h4 className="text-md font-semibold mb-3">Tabela de Licitantes</h4>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome Licitante</TableHead>
-                <TableHead>Marca/Modelo</TableHead>
-                <TableHead>Quantidade</TableHead>
-                <TableHead>Preço</TableHead>
-                <TableHead>Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {licitantes.map((licitante) => (
-                <TableRow key={licitante.id}>
-                  <TableCell>{licitante.nome}</TableCell>
-                  <TableCell>{licitante.marca}</TableCell>
-                  <TableCell>{licitante.quantidade}</TableCell>
-                  <TableCell>{formatCurrency(licitante.preco)}</TableCell>
-                  <TableCell>
-                    <Button size="sm" variant="outline" disabled={isReadOnlyMode()}>
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {licitantes.length === 0 && (
+        <div className="space-y-2">
+          <Label className="text-sm font-medium">Tabela de Licitantes</Label>
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-gray-500 py-4">
-                    Nenhum licitante cadastrado
-                  </TableCell>
+                  <TableHead>Empresa</TableHead>
+                  <TableHead>Marca</TableHead>
+                  <TableHead>Modelo</TableHead>
+                  <TableHead>Valor de Entrada</TableHead>
+                  <TableHead>Valor Final</TableHead>
+                  <TableHead>Unidade</TableHead>
+                  <TableHead>Ranking</TableHead>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
-          {!isReadOnlyMode() && (
-            <Button type="button" className="mt-2" variant="outline">
-              <Plus className="h-4 w-4 mr-2" />
-              Adicionar Licitante
-            </Button>
-          )}
+              </TableHeader>
+              <TableBody>
+                {licitantes.map((licitante, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{licitante.empresa}</TableCell>
+                    <TableCell>{licitante.marca}</TableCell>
+                    <TableCell>{licitante.modelo}</TableCell>
+                    <TableCell>{formatCurrency(licitante.valorEntrada)}</TableCell>
+                    <TableCell>{formatCurrency(licitante.valorFinal)}</TableCell>
+                    <TableCell>
+                      <Badge className={getUnidadeColor(licitante.unidade)}>
+                        {licitante.unidade}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getRankingColor(licitante.ranking)}>
+                        {licitante.ranking}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </div>
 
