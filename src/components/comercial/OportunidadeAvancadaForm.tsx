@@ -96,6 +96,8 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     resumoEdital: oportunidade?.resumoEdital || '',
     analiseTecnicaLicitacao: oportunidade?.analiseTecnicaLicitacao || '',
     impugnacaoEdital: oportunidade?.impugnacaoEdital || '',
+    valorEntrada: oportunidade?.valorEntrada || 0,
+    valorMinimoFinal: oportunidade?.valorMinimoFinal || 0,
     analiseEstrategia: oportunidade?.analiseEstrategia || '',
     naturezaOperacao: oportunidade?.naturezaOperacao || '',
     numeroPregao: oportunidade?.numeroPregao || '',
@@ -790,6 +792,33 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
             rows={3}
             disabled={isReadOnlyMode()}
           />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="valorEntrada">Valor para Entrada (R$)</Label>
+            <Input
+              id="valorEntrada"
+              type="number"
+              step="0.01"
+              value={formData.valorEntrada}
+              onChange={(e) => setFormData({...formData, valorEntrada: Number(e.target.value)})}
+              placeholder="0,00"
+              disabled={isReadOnlyMode()}
+            />
+          </div>
+          <div>
+            <Label htmlFor="valorMinimoFinal">Valor mínimo Final (R$)</Label>
+            <Input
+              id="valorMinimoFinal"
+              type="number"
+              step="0.01"
+              value={formData.valorMinimoFinal}
+              onChange={(e) => setFormData({...formData, valorMinimoFinal: Number(e.target.value)})}
+              placeholder="0,00"
+              disabled={isReadOnlyMode()}
+            />
+          </div>
         </div>
 
         <div>
