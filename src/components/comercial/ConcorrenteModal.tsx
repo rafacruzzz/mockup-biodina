@@ -8,13 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import { X, Save, Users } from "lucide-react";
 
 interface ConcorrenteModalProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  onConcorrentesChange: (concorrentes: any[]) => void;
-  valorReferencia?: number;
+  onClose: () => void;
+  onSave: (concorrente: any) => void;
+  valorReferencia: number;
 }
 
-const ConcorrenteModal = ({ isOpen, onOpenChange, onConcorrentesChange, valorReferencia = 0 }: ConcorrenteModalProps) => {
+const ConcorrenteModal = ({ onClose, onSave, valorReferencia }: ConcorrenteModalProps) => {
   const [formData, setFormData] = useState({
     nome: '',
     produto: '',
@@ -23,17 +22,8 @@ const ConcorrenteModal = ({ isOpen, onOpenChange, onConcorrentesChange, valorRef
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newConcorrente = {
-      id: Date.now(),
-      nome: formData.nome,
-      preco: formData.preco,
-      pontosFortes: formData.produto,
-      pontosFracos: ''
-    };
-    
-    onConcorrentesChange([newConcorrente]);
-    onOpenChange(false);
-    setFormData({ nome: '', produto: '', preco: 0 });
+    onSave(formData);
+    onClose();
   };
 
   const formatCurrency = (value: number) => {
@@ -53,8 +43,6 @@ const ConcorrenteModal = ({ isOpen, onOpenChange, onConcorrentesChange, valorRef
     return formData.preco > valorReferencia ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
   };
 
-  if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -63,7 +51,7 @@ const ConcorrenteModal = ({ isOpen, onOpenChange, onConcorrentesChange, valorRef
             <Users className="h-5 w-5 text-biodina-blue" />
             <CardTitle>Adicionar Concorrente</CardTitle>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
+          <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
         </CardHeader>
@@ -104,7 +92,7 @@ const ConcorrenteModal = ({ isOpen, onOpenChange, onConcorrentesChange, valorRef
               />
             </div>
 
-            {formData.preco > 0 && valorReferencia > 0 && (
+            {formData.preco > 0 && (
               <div className="p-3 bg-gray-50 rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Valor de Referência:</span>
@@ -126,7 +114,7 @@ const ConcorrenteModal = ({ isOpen, onOpenChange, onConcorrentesChange, valorRef
             )}
 
             <div className="flex justify-end gap-2 pt-4">
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button type="button" variant="outline" onClick={onClose}>
                 Cancelar
               </Button>
               <Button type="submit" className="bg-biodina-gold hover:bg-biodina-gold/90">
