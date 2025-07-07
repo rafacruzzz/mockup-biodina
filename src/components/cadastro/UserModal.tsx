@@ -9,6 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MoneyInput } from "@/components/ui/money-input";
 import { X, Save } from "lucide-react";
+import ModuleAccessTree from "./ModuleAccessTree";
+import AccessProfileSelector from "./AccessProfileSelector";
+import AccessSummary from "./AccessSummary";
+import { ModuleAccess } from "@/types/permissions";
 
 interface UserModalProps {
   onClose: () => void;
@@ -69,20 +73,101 @@ const UserModal = ({ onClose }: UserModalProps) => {
     ativo: "true"
   });
 
-  const [acessosModulos, setAcessosModulos] = useState({
-    aplicativos: false,
-    pessoal: false,
-    bi: false,
-    cadastro: false,
-    controladoria: false,
-    comercial: false,
-    estoque: false,
-    compras: false,
-    financeiro: false,
-    contabilidade: false,
-    rh: false,
-    ti: false
-  });
+  const [moduleAccess, setModuleAccess] = useState<ModuleAccess[]>([
+    {
+      key: 'cadastro',
+      name: 'Cadastro',
+      icon: 'Users',
+      enabled: false,
+      subModules: [
+        { key: 'entidades', name: 'Entidades', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'produtos', name: 'Produtos', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'tabela_preco', name: 'Tabela de Preço', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'kits', name: 'Kits', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'servicos', name: 'Serviços', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'usuarios', name: 'Usuários', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'contas_bancarias', name: 'Contas Bancárias', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'categorias', name: 'Categorias', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'prazos_pagamento', name: 'Prazos de Pagamento', permissions: { view: false, create: false, edit: false, delete: false, admin: false } }
+      ]
+    },
+    {
+      key: 'comercial',
+      name: 'Comercial',
+      icon: 'ShoppingCart',
+      enabled: false,
+      subModules: [
+        { key: 'oportunidades', name: 'Oportunidades', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'pedidos', name: 'Pedidos', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'propostas', name: 'Propostas', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'licitacoes', name: 'Licitações', permissions: { view: false, create: false, edit: false, delete: false, admin: false } }
+      ]
+    },
+    {
+      key: 'estoque',
+      name: 'Estoque',
+      icon: 'Package',
+      enabled: false,
+      subModules: [
+        { key: 'posicao', name: 'Posição de Estoque', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'movimentacoes', name: 'Movimentações', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'separacao', name: 'Separação', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'transferencias', name: 'Transferências', permissions: { view: false, create: false, edit: false, delete: false, admin: false } }
+      ]
+    },
+    {
+      key: 'compras',
+      name: 'Compras',
+      icon: 'ShoppingBag',
+      enabled: false,
+      subModules: [
+        { key: 'pedidos', name: 'Pedidos de Compra', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'fiscal', name: 'Compra Fiscal', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'di', name: 'DI - Declaração de Importação', permissions: { view: false, create: false, edit: false, delete: false, admin: false } }
+      ]
+    },
+    {
+      key: 'financeiro',
+      name: 'Financeiro',
+      icon: 'DollarSign',
+      enabled: false,
+      subModules: [
+        { key: 'contas_pagar', name: 'Contas a Pagar', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'contas_receber', name: 'Contas a Receber', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'fluxo_caixa', name: 'Fluxo de Caixa', permissions: { view: false, create: false, edit: false, delete: false, admin: false } }
+      ]
+    },
+    {
+      key: 'bi',
+      name: 'BI - Business Intelligence',
+      icon: 'BarChart',
+      enabled: false,
+      subModules: [
+        { key: 'dashboards', name: 'Dashboards', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'relatorios', name: 'Relatórios', permissions: { view: false, create: false, edit: false, delete: false, admin: false } }
+      ]
+    },
+    {
+      key: 'rh',
+      name: 'Recursos Humanos',
+      icon: 'Users',
+      enabled: false,
+      subModules: [
+        { key: 'funcionarios', name: 'Funcionários', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'folha_pagamento', name: 'Folha de Pagamento', permissions: { view: false, create: false, edit: false, delete: false, admin: false } }
+      ]
+    },
+    {
+      key: 'contabilidade',
+      name: 'Contabilidade',
+      icon: 'Calculator',
+      enabled: false,
+      subModules: [
+        { key: 'plano_contas', name: 'Plano de Contas', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+        { key: 'lancamentos', name: 'Lançamentos', permissions: { view: false, create: false, edit: false, delete: false, admin: false } }
+      ]
+    }
+  ]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -90,10 +175,6 @@ const UserModal = ({ onClose }: UserModalProps) => {
 
   const handleDepartmentChange = (field: string, value: string) => {
     setDepartmentData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleModuleChange = (module: string, checked: boolean) => {
-    setAcessosModulos(prev => ({ ...prev, [module]: checked }));
   };
 
   useEffect(() => {
@@ -123,29 +204,10 @@ const UserModal = ({ onClose }: UserModalProps) => {
   }, [formData.dataAdmissao]);
 
   const handleSave = () => {
-    const selectedModules = Object.entries(acessosModulos)
-      .filter(([_, selected]) => selected)
-      .map(([module, _]) => module);
-    
-    console.log("Salvando usuário:", { ...formData, acessos: selectedModules });
+    console.log("Salvando usuário:", { ...formData, moduleAccess });
     console.log("Salvando departamento:", departmentData);
     onClose();
   };
-
-  const modulos = [
-    { key: 'aplicativos', name: 'Aplicativos' },
-    { key: 'pessoal', name: 'Pessoal' },
-    { key: 'bi', name: 'BI' },
-    { key: 'cadastro', name: 'Cadastro' },
-    { key: 'controladoria', name: 'Controladoria' },
-    { key: 'comercial', name: 'Comercial' },
-    { key: 'estoque', name: 'Estoque' },
-    { key: 'compras', name: 'Compras' },
-    { key: 'financeiro', name: 'Financeiro' },
-    { key: 'contabilidade', name: 'Contabilidade' },
-    { key: 'rh', name: 'RH' },
-    { key: 'ti', name: 'TI' }
-  ];
 
   const ufs = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", 
@@ -155,7 +217,7 @@ const UserModal = ({ onClose }: UserModalProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-bold text-biodina-blue">Cadastro de Usuário</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
@@ -165,13 +227,14 @@ const UserModal = ({ onClose }: UserModalProps) => {
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
           <Tabs defaultValue="usuario" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="usuario">Usuário</TabsTrigger>
               <TabsTrigger value="departamento">Departamento</TabsTrigger>
+              <TabsTrigger value="controle">Controle de Sistema</TabsTrigger>
             </TabsList>
             
             <TabsContent value="usuario" className="space-y-6">
-              <Accordion type="multiple" defaultValue={["basicas", "sistema", "acessos"]} className="w-full">
+              <Accordion type="multiple" defaultValue={["basicas"]} className="w-full">
                 <AccordionItem value="basicas">
                   <AccordionTrigger>Informações Básicas</AccordionTrigger>
                   <AccordionContent>
@@ -609,77 +672,6 @@ const UserModal = ({ onClose }: UserModalProps) => {
                     </div>
                   </AccordionContent>
                 </AccordionItem>
-
-                <AccordionItem value="sistema">
-                  <AccordionTrigger>Controle de Sistema</AccordionTrigger>
-                  <AccordionContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="nivelAcesso">Nível de Acesso</Label>
-                        <Select value={formData.nivelAcesso} onValueChange={(value) => handleInputChange("nivelAcesso", value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o nível" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="administrador">Administrador</SelectItem>
-                            <SelectItem value="gerente">Gerente</SelectItem>
-                            <SelectItem value="vendedor">Vendedor</SelectItem>
-                            <SelectItem value="operador">Operador</SelectItem>
-                            <SelectItem value="visualizador">Visualizador</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="alertas">Alertas</Label>
-                        <Select value={formData.alertas} onValueChange={(value) => handleInputChange("alertas", value)}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="ativo">Ativo</SelectItem>
-                            <SelectItem value="inativo">Inativo</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="status">Status</Label>
-                        <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="ativo">Ativo</SelectItem>
-                            <SelectItem value="inativo">Inativo</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="acessos">
-                  <AccordionTrigger>Acessos aos Módulos</AccordionTrigger>
-                  <AccordionContent>
-                    <p className="text-sm text-gray-600 mb-4">Selecione os módulos que o usuário terá acesso</p>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                      {modulos.map((modulo) => (
-                        <div key={modulo.key} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={modulo.key}
-                            checked={acessosModulos[modulo.key as keyof typeof acessosModulos]}
-                            onCheckedChange={(checked) => handleModuleChange(modulo.key, checked as boolean)}
-                          />
-                          <Label htmlFor={modulo.key} className="text-sm">
-                            {modulo.name}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
               </Accordion>
             </TabsContent>
 
@@ -729,6 +721,83 @@ const UserModal = ({ onClose }: UserModalProps) => {
                   </Select>
                 </div>
               </div>
+            </TabsContent>
+
+            <TabsContent value="controle" className="space-y-6">
+              <Accordion type="multiple" defaultValue={["sistema", "acessos"]} className="w-full">
+                <AccordionItem value="sistema">
+                  <AccordionTrigger>Configurações do Sistema</AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <Label htmlFor="nivelAcesso">Nível de Acesso</Label>
+                        <Select value={formData.nivelAcesso} onValueChange={(value) => handleInputChange("nivelAcesso", value)}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o nível" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="administrador">Administrador</SelectItem>
+                            <SelectItem value="gerente">Gerente</SelectItem>
+                            <SelectItem value="vendedor">Vendedor</SelectItem>
+                            <SelectItem value="operador">Operador</SelectItem>
+                            <SelectItem value="visualizador">Visualizador</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="alertas">Alertas</Label>
+                        <Select value={formData.alertas} onValueChange={(value) => handleInputChange("alertas", value)}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ativo">Ativo</SelectItem>
+                            <SelectItem value="inativo">Inativo</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="status">Status</Label>
+                        <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ativo">Ativo</SelectItem>
+                            <SelectItem value="inativo">Inativo</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="perfis">
+                  <AccordionTrigger>Perfis de Acesso</AccordionTrigger>
+                  <AccordionContent>
+                    <AccessProfileSelector onProfileSelect={setModuleAccess} />
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="acessos">
+                  <AccordionTrigger>Controle de Acessos aos Módulos</AccordionTrigger>
+                  <AccordionContent>
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      <div className="lg:col-span-2">
+                        <ModuleAccessTree 
+                          modules={moduleAccess}
+                          onModuleChange={setModuleAccess}
+                        />
+                      </div>
+                      <div>
+                        <AccessSummary modules={moduleAccess} />
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </TabsContent>
           </Tabs>
         </div>
