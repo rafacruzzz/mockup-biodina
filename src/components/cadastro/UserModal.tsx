@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,58 +20,73 @@ interface UserModalProps {
 }
 
 const UserModal = ({ onClose }: UserModalProps) => {
-  const [formData, setFormData] = useState({
+  // Dados básicos do usuário (aba Usuário)
+  const [basicData, setBasicData] = useState({
     nome: "",
     email: "",
-    nivelAcesso: "",
-    alertas: "ativo",
-    status: "ativo",
+    cpf: "",
+    telefone: "",
+    idade: "",
+    sexo: "",
+    etnia: "",
+    endereco: "",
+    bairro: ""
+  });
+
+  // Dados do departamento + informações profissionais (aba Departamento)
+  const [departmentData, setDepartmentData] = useState({
+    // Dados do departamento
+    nome: "",
+    descricao: "",
+    responsavel: "",
+    ativo: "true",
     
+    // Dados profissionais movidos da aba usuário
     empresa: "",
     uf: "",
     setor: "",
     funcao: "",
     cargo: "",
+    escolaridade: "",
+    diploma: false,
+    cbo: "",
+    compativelFuncao: false,
+    funcoesDesempenhadas: "",
+    
+    // Informações salariais
     salarioBase: "",
     adicionalNivel: "",
     insalubridade: "",
     sobreaviso: "",
     salarioBruto: "",
-    dependentesIR: "",
     valorHoraTrabalhada: "",
-    tipoPlano: "",
-    quantidadeDependentesPlano: "",
-    ultimaPromocao: "",
-    previsaoFerias: "",
+    pisoSalarial: "",
+    mediaSalarial: "",
+    
+    // Datas e tempo de serviço
     dataAdmissao: "",
     tempoCase: "",
-    cpf: "",
-    pis: "",
-    idade: "",
-    etnia: "",
-    cid: "",
-    sexo: "",
+    ultimaPromocao: "",
+    previsaoFerias: "",
+    
+    // Dados bancários
     banco: "",
     tipoConta: "",
     agencia: "",
     conta: "",
-    telefone: "",
-    endereco: "",
-    bairro: "",
-    escolaridade: "",
-    diploma: false,
-    pisoSalarial: "",
-    mediaSalarial: "",
-    cbo: "",
-    compativelFuncao: false,
-    funcoesDesempenhadas: ""
+    
+    // Outros dados
+    pis: "",
+    cid: "",
+    dependentesIR: "",
+    tipoPlano: "",
+    quantidadeDependentesPlano: ""
   });
 
-  const [departmentData, setDepartmentData] = useState({
-    nome: "",
-    descricao: "",
-    responsavel: "",
-    ativo: "true"
+  // Dados de controle do sistema (aba Controle de Sistema)
+  const [systemData, setSystemData] = useState({
+    alertas: "ativo",
+    status: "ativo"
   });
 
   const [moduleAccess, setModuleAccess] = useState<ModuleAccess[]>([
@@ -169,27 +185,33 @@ const UserModal = ({ onClose }: UserModalProps) => {
     }
   ]);
 
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleBasicDataChange = (field: string, value: string) => {
+    setBasicData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleDepartmentChange = (field: string, value: string) => {
+  const handleDepartmentChange = (field: string, value: string | boolean) => {
     setDepartmentData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleSystemChange = (field: string, value: string) => {
+    setSystemData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Cálculo automático do salário bruto
   useEffect(() => {
-    const base = parseFloat(formData.salarioBase) / 100 || 0;
-    const adicional = parseFloat(formData.adicionalNivel) / 100 || 0;
-    const insalubridade = parseFloat(formData.insalubridade) / 100 || 0;
-    const sobreaviso = parseFloat(formData.sobreaviso) / 100 || 0;
+    const base = parseFloat(departmentData.salarioBase) / 100 || 0;
+    const adicional = parseFloat(departmentData.adicionalNivel) / 100 || 0;
+    const insalubridade = parseFloat(departmentData.insalubridade) / 100 || 0;
+    const sobreaviso = parseFloat(departmentData.sobreaviso) / 100 || 0;
     
     const bruto = (base + adicional + insalubridade + sobreaviso) * 100;
-    setFormData(prev => ({ ...prev, salarioBruto: bruto.toString() }));
-  }, [formData.salarioBase, formData.adicionalNivel, formData.insalubridade, formData.sobreaviso]);
+    setDepartmentData(prev => ({ ...prev, salarioBruto: bruto.toString() }));
+  }, [departmentData.salarioBase, departmentData.adicionalNivel, departmentData.insalubridade, departmentData.sobreaviso]);
 
+  // Cálculo automático do tempo de casa
   useEffect(() => {
-    if (formData.dataAdmissao) {
-      const admissao = new Date(formData.dataAdmissao);
+    if (departmentData.dataAdmissao) {
+      const admissao = new Date(departmentData.dataAdmissao);
       const hoje = new Date();
       const diffTime = Math.abs(hoje.getTime() - admissao.getTime());
       const diffYears = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 365));
@@ -199,13 +221,12 @@ const UserModal = ({ onClose }: UserModalProps) => {
         `${diffYears} ano(s) e ${diffMonths} mês(es)` : 
         `${diffMonths} mês(es)`;
       
-      setFormData(prev => ({ ...prev, tempoCase: tempoTexto }));
+      setDepartmentData(prev => ({ ...prev, tempoCase: tempoTexto }));
     }
-  }, [formData.dataAdmissao]);
+  }, [departmentData.dataAdmissao]);
 
   const handleSave = () => {
-    console.log("Salvando usuário:", { ...formData, moduleAccess });
-    console.log("Salvando departamento:", departmentData);
+    console.log("Salvando usuário:", { basicData, departmentData, systemData, moduleAccess });
     onClose();
   };
 
@@ -234,105 +255,153 @@ const UserModal = ({ onClose }: UserModalProps) => {
             </TabsList>
             
             <TabsContent value="usuario" className="space-y-6">
-              <Accordion type="multiple" defaultValue={["basicas"]} className="w-full">
-                <AccordionItem value="basicas">
-                  <AccordionTrigger>Informações Básicas</AccordionTrigger>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="nome">Nome *</Label>
+                  <Input
+                    id="nome"
+                    value={basicData.nome}
+                    onChange={(e) => handleBasicDataChange("nome", e.target.value)}
+                    placeholder="Ex: João Silva"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="email">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={basicData.email}
+                    onChange={(e) => handleBasicDataChange("email", e.target.value)}
+                    placeholder="Ex: joao@biodina.com.br"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="cpf">CPF</Label>
+                  <Input
+                    id="cpf"
+                    value={basicData.cpf}
+                    onChange={(e) => handleBasicDataChange("cpf", e.target.value)}
+                    placeholder="000.000.000-00"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="telefone">Telefone</Label>
+                  <Input
+                    id="telefone"
+                    value={basicData.telefone}
+                    onChange={(e) => handleBasicDataChange("telefone", e.target.value)}
+                    placeholder="(11) 99999-9999"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="idade">Idade</Label>
+                  <Input
+                    id="idade"
+                    type="number"
+                    value={basicData.idade}
+                    onChange={(e) => handleBasicDataChange("idade", e.target.value)}
+                    placeholder="Ex: 30"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="sexo">Sexo</Label>
+                  <Select value={basicData.sexo} onValueChange={(value) => handleBasicDataChange("sexo", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="masculino">Masculino</SelectItem>
+                      <SelectItem value="feminino">Feminino</SelectItem>
+                      <SelectItem value="outro">Outro</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="etnia">Etnia</Label>
+                  <Input
+                    id="etnia"
+                    value={basicData.etnia}
+                    onChange={(e) => handleBasicDataChange("etnia", e.target.value)}
+                    placeholder="Ex: Branca, Parda, Negra"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="endereco">Endereço</Label>
+                  <Input
+                    id="endereco"
+                    value={basicData.endereco}
+                    onChange={(e) => handleBasicDataChange("endereco", e.target.value)}
+                    placeholder="Rua, número, complemento"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="bairro">Bairro</Label>
+                  <Input
+                    id="bairro"
+                    value={basicData.bairro}
+                    onChange={(e) => handleBasicDataChange("bairro", e.target.value)}
+                    placeholder="Ex: Centro"
+                  />
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="departamento" className="space-y-6">
+              <Accordion type="multiple" defaultValue={["departamento"]} className="w-full">
+                <AccordionItem value="departamento">
+                  <AccordionTrigger>Dados do Departamento</AccordionTrigger>
                   <AccordionContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="nome">Nome *</Label>
+                        <Label htmlFor="nomeDepartamento">Nome *</Label>
                         <Input
-                          id="nome"
-                          value={formData.nome}
-                          onChange={(e) => handleInputChange("nome", e.target.value)}
-                          placeholder="Ex: João Silva"
+                          id="nomeDepartamento"
+                          value={departmentData.nome}
+                          onChange={(e) => handleDepartmentChange("nome", e.target.value)}
+                          placeholder="Ex: Comercial"
                         />
                       </div>
 
                       <div>
-                        <Label htmlFor="email">Email *</Label>
+                        <Label htmlFor="responsavel">Responsável</Label>
                         <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => handleInputChange("email", e.target.value)}
-                          placeholder="Ex: joao@biodina.com.br"
+                          id="responsavel"
+                          value={departmentData.responsavel}
+                          onChange={(e) => handleDepartmentChange("responsavel", e.target.value)}
+                          placeholder="Ex: Maria Santos"
+                        />
+                      </div>
+
+                      <div className="md:col-span-2">
+                        <Label htmlFor="descricaoDepartamento">Descrição</Label>
+                        <Textarea
+                          id="descricaoDepartamento"
+                          value={departmentData.descricao}
+                          onChange={(e) => handleDepartmentChange("descricao", e.target.value)}
+                          placeholder="Descreva as responsabilidades do departamento"
+                          rows={3}
                         />
                       </div>
 
                       <div>
-                        <Label htmlFor="cpf">CPF</Label>
-                        <Input
-                          id="cpf"
-                          value={formData.cpf}
-                          onChange={(e) => handleInputChange("cpf", e.target.value)}
-                          placeholder="000.000.000-00"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="telefone">Telefone</Label>
-                        <Input
-                          id="telefone"
-                          value={formData.telefone}
-                          onChange={(e) => handleInputChange("telefone", e.target.value)}
-                          placeholder="(11) 99999-9999"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="idade">Idade</Label>
-                        <Input
-                          id="idade"
-                          type="number"
-                          value={formData.idade}
-                          onChange={(e) => handleInputChange("idade", e.target.value)}
-                          placeholder="Ex: 30"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="sexo">Sexo</Label>
-                        <Select value={formData.sexo} onValueChange={(value) => handleInputChange("sexo", value)}>
+                        <Label htmlFor="ativoDepartamento">Ativo</Label>
+                        <Select value={departmentData.ativo} onValueChange={(value) => handleDepartmentChange("ativo", value)}>
                           <SelectTrigger>
-                            <SelectValue placeholder="Selecione" />
+                            <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="masculino">Masculino</SelectItem>
-                            <SelectItem value="feminino">Feminino</SelectItem>
-                            <SelectItem value="outro">Outro</SelectItem>
+                            <SelectItem value="true">Sim</SelectItem>
+                            <SelectItem value="false">Não</SelectItem>
                           </SelectContent>
                         </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="etnia">Etnia</Label>
-                        <Input
-                          id="etnia"
-                          value={formData.etnia}
-                          onChange={(e) => handleInputChange("etnia", e.target.value)}
-                          placeholder="Ex: Branca, Parda, Negra"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="endereco">Endereço</Label>
-                        <Input
-                          id="endereco"
-                          value={formData.endereco}
-                          onChange={(e) => handleInputChange("endereco", e.target.value)}
-                          placeholder="Rua, número, complemento"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="bairro">Bairro</Label>
-                        <Input
-                          id="bairro"
-                          value={formData.bairro}
-                          onChange={(e) => handleInputChange("bairro", e.target.value)}
-                          placeholder="Ex: Centro"
-                        />
                       </div>
                     </div>
                   </AccordionContent>
@@ -346,15 +415,15 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="empresa">Empresa</Label>
                         <Input
                           id="empresa"
-                          value={formData.empresa}
-                          onChange={(e) => handleInputChange("empresa", e.target.value)}
+                          value={departmentData.empresa}
+                          onChange={(e) => handleDepartmentChange("empresa", e.target.value)}
                           placeholder="Nome da empresa"
                         />
                       </div>
 
                       <div>
                         <Label htmlFor="uf">UF</Label>
-                        <Select value={formData.uf} onValueChange={(value) => handleInputChange("uf", value)}>
+                        <Select value={departmentData.uf} onValueChange={(value) => handleDepartmentChange("uf", value)}>
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione o estado" />
                           </SelectTrigger>
@@ -370,8 +439,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="setor">Setor</Label>
                         <Input
                           id="setor"
-                          value={formData.setor}
-                          onChange={(e) => handleInputChange("setor", e.target.value)}
+                          value={departmentData.setor}
+                          onChange={(e) => handleDepartmentChange("setor", e.target.value)}
                           placeholder="Ex: Vendas, Administrativo"
                         />
                       </div>
@@ -380,8 +449,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="funcao">Função</Label>
                         <Input
                           id="funcao"
-                          value={formData.funcao}
-                          onChange={(e) => handleInputChange("funcao", e.target.value)}
+                          value={departmentData.funcao}
+                          onChange={(e) => handleDepartmentChange("funcao", e.target.value)}
                           placeholder="Ex: Vendedor, Analista"
                         />
                       </div>
@@ -390,8 +459,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="cargo">Cargo</Label>
                         <Input
                           id="cargo"
-                          value={formData.cargo}
-                          onChange={(e) => handleInputChange("cargo", e.target.value)}
+                          value={departmentData.cargo}
+                          onChange={(e) => handleDepartmentChange("cargo", e.target.value)}
                           placeholder="Ex: Coordenador, Gerente"
                         />
                       </div>
@@ -400,8 +469,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="escolaridade">Escolaridade</Label>
                         <Input
                           id="escolaridade"
-                          value={formData.escolaridade}
-                          onChange={(e) => handleInputChange("escolaridade", e.target.value)}
+                          value={departmentData.escolaridade}
+                          onChange={(e) => handleDepartmentChange("escolaridade", e.target.value)}
                           placeholder="Ex: Superior, Técnico, Médio"
                         />
                       </div>
@@ -410,8 +479,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="cbo">CBO</Label>
                         <Input
                           id="cbo"
-                          value={formData.cbo}
-                          onChange={(e) => handleInputChange("cbo", e.target.value)}
+                          value={departmentData.cbo}
+                          onChange={(e) => handleDepartmentChange("cbo", e.target.value)}
                           placeholder="Código Brasileiro de Ocupações"
                         />
                       </div>
@@ -419,8 +488,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="diploma"
-                          checked={formData.diploma}
-                          onCheckedChange={(checked) => handleInputChange("diploma", checked as boolean)}
+                          checked={departmentData.diploma}
+                          onCheckedChange={(checked) => handleDepartmentChange("diploma", checked as boolean)}
                         />
                         <Label htmlFor="diploma">Possui Diploma?</Label>
                       </div>
@@ -428,8 +497,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="compativelFuncao"
-                          checked={formData.compativelFuncao}
-                          onCheckedChange={(checked) => handleInputChange("compativelFuncao", checked as boolean)}
+                          checked={departmentData.compativelFuncao}
+                          onCheckedChange={(checked) => handleDepartmentChange("compativelFuncao", checked as boolean)}
                         />
                         <Label htmlFor="compativelFuncao">Compatível com a Função?</Label>
                       </div>
@@ -438,8 +507,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="funcoesDesempenhadas">Funções Desempenhadas</Label>
                         <Textarea
                           id="funcoesDesempenhadas"
-                          value={formData.funcoesDesempenhadas}
-                          onChange={(e) => handleInputChange("funcoesDesempenhadas", e.target.value)}
+                          value={departmentData.funcoesDesempenhadas}
+                          onChange={(e) => handleDepartmentChange("funcoesDesempenhadas", e.target.value)}
                           placeholder="Descreva as funções desempenhadas"
                           rows={3}
                         />
@@ -455,39 +524,39 @@ const UserModal = ({ onClose }: UserModalProps) => {
                       <div>
                         <Label htmlFor="salarioBase">Salário Base</Label>
                         <MoneyInput
-                          value={formData.salarioBase}
-                          onChange={(value) => handleInputChange("salarioBase", value)}
+                          value={departmentData.salarioBase}
+                          onChange={(value) => handleDepartmentChange("salarioBase", value)}
                         />
                       </div>
 
                       <div>
                         <Label htmlFor="adicionalNivel">Adicional Nível</Label>
                         <MoneyInput
-                          value={formData.adicionalNivel}
-                          onChange={(value) => handleInputChange("adicionalNivel", value)}
+                          value={departmentData.adicionalNivel}
+                          onChange={(value) => handleDepartmentChange("adicionalNivel", value)}
                         />
                       </div>
 
                       <div>
                         <Label htmlFor="insalubridade">Insalubridade</Label>
                         <MoneyInput
-                          value={formData.insalubridade}
-                          onChange={(value) => handleInputChange("insalubridade", value)}
+                          value={departmentData.insalubridade}
+                          onChange={(value) => handleDepartmentChange("insalubridade", value)}
                         />
                       </div>
 
                       <div>
                         <Label htmlFor="sobreaviso">Sobreaviso</Label>
                         <MoneyInput
-                          value={formData.sobreaviso}
-                          onChange={(value) => handleInputChange("sobreaviso", value)}
+                          value={departmentData.sobreaviso}
+                          onChange={(value) => handleDepartmentChange("sobreaviso", value)}
                         />
                       </div>
 
                       <div>
                         <Label htmlFor="salarioBruto">Salário Bruto (calculado)</Label>
                         <MoneyInput
-                          value={formData.salarioBruto}
+                          value={departmentData.salarioBruto}
                           onChange={() => {}} // Read-only
                           disabled
                         />
@@ -496,24 +565,24 @@ const UserModal = ({ onClose }: UserModalProps) => {
                       <div>
                         <Label htmlFor="valorHoraTrabalhada">Valor da Hora Trabalhada</Label>
                         <MoneyInput
-                          value={formData.valorHoraTrabalhada}
-                          onChange={(value) => handleInputChange("valorHoraTrabalhada", value)}
+                          value={departmentData.valorHoraTrabalhada}
+                          onChange={(value) => handleDepartmentChange("valorHoraTrabalhada", value)}
                         />
                       </div>
 
                       <div>
                         <Label htmlFor="pisoSalarial">Piso Salarial (referência)</Label>
                         <MoneyInput
-                          value={formData.pisoSalarial}
-                          onChange={(value) => handleInputChange("pisoSalarial", value)}
+                          value={departmentData.pisoSalarial}
+                          onChange={(value) => handleDepartmentChange("pisoSalarial", value)}
                         />
                       </div>
 
                       <div>
                         <Label htmlFor="mediaSalarial">Média Salarial (referência)</Label>
                         <MoneyInput
-                          value={formData.mediaSalarial}
-                          onChange={(value) => handleInputChange("mediaSalarial", value)}
+                          value={departmentData.mediaSalarial}
+                          onChange={(value) => handleDepartmentChange("mediaSalarial", value)}
                         />
                       </div>
                     </div>
@@ -529,8 +598,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Input
                           id="dataAdmissao"
                           type="date"
-                          value={formData.dataAdmissao}
-                          onChange={(e) => handleInputChange("dataAdmissao", e.target.value)}
+                          value={departmentData.dataAdmissao}
+                          onChange={(e) => handleDepartmentChange("dataAdmissao", e.target.value)}
                         />
                       </div>
 
@@ -538,7 +607,7 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="tempoCase">Tempo de Casa (calculado)</Label>
                         <Input
                           id="tempoCase"
-                          value={formData.tempoCase}
+                          value={departmentData.tempoCase}
                           disabled
                           placeholder="Será calculado automaticamente"
                         />
@@ -549,8 +618,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Input
                           id="ultimaPromocao"
                           type="date"
-                          value={formData.ultimaPromocao}
-                          onChange={(e) => handleInputChange("ultimaPromocao", e.target.value)}
+                          value={departmentData.ultimaPromocao}
+                          onChange={(e) => handleDepartmentChange("ultimaPromocao", e.target.value)}
                         />
                       </div>
 
@@ -559,8 +628,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Input
                           id="previsaoFerias"
                           type="date"
-                          value={formData.previsaoFerias}
-                          onChange={(e) => handleInputChange("previsaoFerias", e.target.value)}
+                          value={departmentData.previsaoFerias}
+                          onChange={(e) => handleDepartmentChange("previsaoFerias", e.target.value)}
                         />
                       </div>
                     </div>
@@ -575,8 +644,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="banco">Banco</Label>
                         <Input
                           id="banco"
-                          value={formData.banco}
-                          onChange={(e) => handleInputChange("banco", e.target.value)}
+                          value={departmentData.banco}
+                          onChange={(e) => handleDepartmentChange("banco", e.target.value)}
                           placeholder="Ex: Banco do Brasil, Itaú"
                         />
                       </div>
@@ -585,8 +654,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="tipoConta">Tipo de Conta</Label>
                         <Input
                           id="tipoConta"
-                          value={formData.tipoConta}
-                          onChange={(e) => handleInputChange("tipoConta", e.target.value)}
+                          value={departmentData.tipoConta}
+                          onChange={(e) => handleDepartmentChange("tipoConta", e.target.value)}
                           placeholder="Ex: Corrente, Poupança"
                         />
                       </div>
@@ -595,8 +664,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="agencia">Agência</Label>
                         <Input
                           id="agencia"
-                          value={formData.agencia}
-                          onChange={(e) => handleInputChange("agencia", e.target.value)}
+                          value={departmentData.agencia}
+                          onChange={(e) => handleDepartmentChange("agencia", e.target.value)}
                           placeholder="Ex: 1234-5"
                         />
                       </div>
@@ -605,8 +674,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="conta">Conta</Label>
                         <Input
                           id="conta"
-                          value={formData.conta}
-                          onChange={(e) => handleInputChange("conta", e.target.value)}
+                          value={departmentData.conta}
+                          onChange={(e) => handleDepartmentChange("conta", e.target.value)}
                           placeholder="Ex: 123456-7"
                         />
                       </div>
@@ -622,8 +691,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="pis">PIS</Label>
                         <Input
                           id="pis"
-                          value={formData.pis}
-                          onChange={(e) => handleInputChange("pis", e.target.value)}
+                          value={departmentData.pis}
+                          onChange={(e) => handleDepartmentChange("pis", e.target.value)}
                           placeholder="000.00000.00-0"
                         />
                       </div>
@@ -632,8 +701,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="cid">CID</Label>
                         <Input
                           id="cid"
-                          value={formData.cid}
-                          onChange={(e) => handleInputChange("cid", e.target.value)}
+                          value={departmentData.cid}
+                          onChange={(e) => handleDepartmentChange("cid", e.target.value)}
                           placeholder="Código Internacional de Doenças"
                         />
                       </div>
@@ -643,8 +712,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Input
                           id="dependentesIR"
                           type="number"
-                          value={formData.dependentesIR}
-                          onChange={(e) => handleInputChange("dependentesIR", e.target.value)}
+                          value={departmentData.dependentesIR}
+                          onChange={(e) => handleDepartmentChange("dependentesIR", e.target.value)}
                           placeholder="Número de dependentes"
                         />
                       </div>
@@ -653,8 +722,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Label htmlFor="tipoPlano">Tipo de Plano</Label>
                         <Input
                           id="tipoPlano"
-                          value={formData.tipoPlano}
-                          onChange={(e) => handleInputChange("tipoPlano", e.target.value)}
+                          value={departmentData.tipoPlano}
+                          onChange={(e) => handleDepartmentChange("tipoPlano", e.target.value)}
                           placeholder="Ex: Plano de Saúde"
                         />
                       </div>
@@ -664,8 +733,8 @@ const UserModal = ({ onClose }: UserModalProps) => {
                         <Input
                           id="quantidadeDependentesPlano"
                           type="number"
-                          value={formData.quantidadeDependentesPlano}
-                          onChange={(e) => handleInputChange("quantidadeDependentesPlano", e.target.value)}
+                          value={departmentData.quantidadeDependentesPlano}
+                          onChange={(e) => handleDepartmentChange("quantidadeDependentesPlano", e.target.value)}
                           placeholder="Número de dependentes no plano"
                         />
                       </div>
@@ -675,79 +744,15 @@ const UserModal = ({ onClose }: UserModalProps) => {
               </Accordion>
             </TabsContent>
 
-            <TabsContent value="departamento" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="nomeDepartamento">Nome *</Label>
-                  <Input
-                    id="nomeDepartamento"
-                    value={departmentData.nome}
-                    onChange={(e) => handleDepartmentChange("nome", e.target.value)}
-                    placeholder="Ex: Comercial"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="responsavel">Responsável</Label>
-                  <Input
-                    id="responsavel"
-                    value={departmentData.responsavel}
-                    onChange={(e) => handleDepartmentChange("responsavel", e.target.value)}
-                    placeholder="Ex: Maria Santos"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <Label htmlFor="descricaoDepartamento">Descrição</Label>
-                  <Textarea
-                    id="descricaoDepartamento"
-                    value={departmentData.descricao}
-                    onChange={(e) => handleDepartmentChange("descricao", e.target.value)}
-                    placeholder="Descreva as responsabilidades do departamento"
-                    rows={3}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="ativoDepartamento">Ativo</Label>
-                  <Select value={departmentData.ativo} onValueChange={(value) => handleDepartmentChange("ativo", value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="true">Sim</SelectItem>
-                      <SelectItem value="false">Não</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </TabsContent>
-
             <TabsContent value="controle" className="space-y-6">
               <Accordion type="multiple" defaultValue={["sistema", "acessos"]} className="w-full">
                 <AccordionItem value="sistema">
                   <AccordionTrigger>Configurações do Sistema</AccordionTrigger>
                   <AccordionContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <Label htmlFor="nivelAcesso">Nível de Acesso</Label>
-                        <Select value={formData.nivelAcesso} onValueChange={(value) => handleInputChange("nivelAcesso", value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o nível" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="administrador">Administrador</SelectItem>
-                            <SelectItem value="gerente">Gerente</SelectItem>
-                            <SelectItem value="vendedor">Vendedor</SelectItem>
-                            <SelectItem value="operador">Operador</SelectItem>
-                            <SelectItem value="visualizador">Visualizador</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="alertas">Alertas</Label>
-                        <Select value={formData.alertas} onValueChange={(value) => handleInputChange("alertas", value)}>
+                        <Select value={systemData.alertas} onValueChange={(value) => handleSystemChange("alertas", value)}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
@@ -760,7 +765,7 @@ const UserModal = ({ onClose }: UserModalProps) => {
 
                       <div>
                         <Label htmlFor="status">Status</Label>
-                        <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
+                        <Select value={systemData.status} onValueChange={(value) => handleSystemChange("status", value)}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
