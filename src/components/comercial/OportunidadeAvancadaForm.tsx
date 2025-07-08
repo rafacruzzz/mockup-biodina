@@ -842,6 +842,21 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         <h3 className="text-lg font-semibold text-gray-800">Dados Técnicos</h3>
         
         <div>
+          <Label htmlFor="analiseTecnica">Análise Técnica</Label>
+          <Textarea
+            id="analiseTecnica"
+            value={formData.analiseTecnica}
+            readOnly={true}
+            placeholder="Este campo reflete automaticamente o conteúdo da Análise Técnica-Científica"
+            rows={6}
+            className="bg-gray-50 cursor-not-allowed"
+          />
+          <p className="text-sm text-gray-500 mt-1">
+            Campo somente leitura - Para editar, use o campo "Análise Técnica-Científica" na aba "Análise Técnica"
+          </p>
+        </div>
+
+        <div>
           <Label>Termômetro ({formData.termometro}°)</Label>
           <div className="mt-2 space-y-2">
             <div className="flex items-center gap-4">
@@ -979,9 +994,9 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   const renderAnaliseTecnica = () => (
     <div className="space-y-6">
       <div>
-        <Label htmlFor="analiseTecnica">Análise Técnica-Científica</Label>
+        <Label htmlFor="analiseTecnicaCientifica">Análise Técnica-Científica</Label>
         <Textarea
-          id="analiseTecnica"
+          id="analiseTecnicaCientifica"
           value={formData.analiseTecnica}
           onChange={(e) => setFormData({...formData, analiseTecnica: e.target.value})}
           placeholder="Análise técnica detalhada"
