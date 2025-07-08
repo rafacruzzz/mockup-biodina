@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { X, Save, Plus, Edit, Upload, Download, Eye, Lock, CheckCircle, ChevronRight, Calendar, AlertTriangle } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -20,15 +21,18 @@ import ApprovalModal from "./ApprovalModal";
 import CustomAlertModal from "./components/CustomAlertModal";
 import { concorrentes as mockConcorrentes, licitantes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
 import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getUnidadeColor } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { PedidoCompleto } from "@/types/comercial";
 
 interface OportunidadeAvancadaFormProps {
-  oportunidade?: any;
+  isOpen: boolean;
   onClose: () => void;
-  onSave: (oportunidade: any) => void;
+  onSave: (data: any) => void;
+  oportunidade?: any;
 }
 
-const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: OportunidadeAvancadaFormProps) => {
-  // Estados para controle das fases
+const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: OportunidadeAvancadaFormProps) => {
+  const { toast } = useToast();
   const [activeMasterTab, setActiveMasterTab] = useState('triagem');
   const [activeToolTab, setActiveToolTab] = useState('dados-gerais');
   const [isParticipacaoApproved, setIsParticipacaoApproved] = useState(false);
@@ -93,25 +97,10 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     impugnacaoEdital: oportunidade?.impugnacaoEdital || '',
     valorEntrada: oportunidade?.valorEntrada || 0,
     valorMinimoFinal: oportunidade?.valorMinimoFinal || 0,
-    analiseEstrategia: oportunidade?.analiseEstrategia || '',
-    naturezaOperacao: oportunidade?.naturezaOperacao || '',
-    numeroPregao: oportunidade?.numeroPregao || '',
-    numeroProcesso: oportunidade?.numeroProcesso || '',
-    numeroUasg: oportunidade?.numeroUasg || '',
-    qualSite: oportunidade?.qualSite || '',
-    permiteAdesao: oportunidade?.permiteAdesao || '',
-    observacoesAdesao: oportunidade?.observacoesAdesao || '',
-    produto: oportunidade?.produto || '',
-    valorEstimado: oportunidade?.valorEstimado || 0,
-    quantidadeEquipamentos: oportunidade?.quantidadeEquipamentos || 0,
-    quantidadeExames: oportunidade?.quantidadeExames || 0,
-    haviaContratoAnterior: oportunidade?.haviaContratoAnterior || '',
-    marcaModeloAnterior: oportunidade?.marcaModeloAnterior || '',
-    situacaoPregao: oportunidade?.situacaoPregao || '',
-    manifestacaoRecorrer: oportunidade?.manifestacaoRecorrer || '',
-    motivosFracasso: oportunidade?.motivosFracasso || '',
-    dataAssinaturaAta: oportunidade?.dataAssinaturaAta || '',
-    observacaoGeral: oportunidade?.observacaoGeral || ''
+    participantes: oportunidade?.participantes || [],
+    
+    // Campo para solicitação de análise técnica
+    solicitarAnaliseTecnica: oportunidade?.solicitarAnaliseTecnica || false,
   });
 
   // Validação ajustada - removeu a dependência de tipoOportunidade
@@ -171,6 +160,19 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
+  };
+
+  const handleSalvarPedido = (pedidoData: any) => {
+    const novoPedido = {
+      id: Date.now(),
+      codigo: `PED-${String(pedidos.length + 1).padStart(3, '0')}`,
+      cliente: formData.nome,
+      dataGeracao: new Date().toISOString().split('T')[0],
+      situacao: 'Em Aberto',
+      valor: pedidoData.produtos?.reduce((sum: number, prod: any) => sum + (prod.valorTotal || 0), 0) || 0
+    };
+    setPedidos([...pedidos, novoPedido]);
+    setShowPedidoForm(false);
   };
 
   // Renderização dos conteúdos das ferramentas
@@ -473,7 +475,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
               id="dataLicitacao"
               type="date"
               value={formData.dataLicitacao}
-              onChange={(e) => setFormData({...formData, dataLicitacao: e.target.value})}
+              onChange={(e) => handleInputChange('dataLicitacao', e.target.value)}
               disabled={isReadOnlyMode()}
             />
           </div>
@@ -712,7 +714,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
           <Textarea
             id="resumoEdital"
             value={formData.resumoEdital}
-            onChange={(e) => setFormData({...formData, resumoEdital: e.target.value})}
+            onChange={(e) => handleInputChange('resumoEdital', e.target.value)}
             placeholder="Resumo do edital da licitação"
             rows={3}
             disabled={isReadOnlyMode()}
@@ -740,7 +742,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
           <Textarea
             id="impugnacaoEdital"
             value={formData.impugnacaoEdital}
-            onChange={(e) => setFormData({...formData, impugnacaoEdital: e.target.value})}
+            onChange={(e) => handleInputChange('impugnacaoEdital', e.target.value)}
             placeholder="Detalhes sobre impugnação do edital"
             rows={3}
             disabled={isReadOnlyMode()}
@@ -755,7 +757,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
               type="number"
               step="0.01"
               value={formData.valorEntrada}
-              onChange={(e) => setFormData({...formData, valorEntrada: Number(e.target.value)})}
+              onChange={(e) => handleInputChange('valorEntrada', parseFloat(e.target.value) || 0)}
               placeholder="0,00"
               disabled={isReadOnlyMode()}
             />
@@ -767,7 +769,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
               type="number"
               step="0.01"
               value={formData.valorMinimoFinal}
-              onChange={(e) => setFormData({...formData, valorMinimoFinal: Number(e.target.value)})}
+              onChange={(e) => handleInputChange('valorMinimoFinal', parseFloat(e.target.value) || 0)}
               placeholder="0,00"
               disabled={isReadOnlyMode()}
             />
@@ -1334,49 +1336,48 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-7xl max-h-[95vh] overflow-y-auto">
-        <CardHeader className="flex flex-row items-center justify-between border-b">
-          <CardTitle className="text-2xl">
-            {oportunidade ? 'Editar Oportunidade' : 'Nova Oportunidade Comercial'}
-          </CardTitle>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="h-5 w-5" />
-          </Button>
-        </CardHeader>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>
+                {oportunidade ? 'Editar' : 'Nova'} Oportunidade - Licitação
+              </span>
+              <Button variant="ghost" size="sm" onClick={onClose}>
+                <X className="h-4 w-4" />
+              </Button>
+            </DialogTitle>
+          </DialogHeader>
 
-        <CardContent className="p-6">
-          <form onSubmit={handleSubmit}>
-            {/* ABAS MASTERS - Nível Superior */}
-            <Tabs value={activeMasterTab} onValueChange={handleMasterTabChange} className="w-full">
-              <div className="flex items-center justify-center mb-6">
-                <TabsList className="grid w-auto grid-cols-2 h-14 bg-gray-100">
-                  <TabsTrigger 
-                    value="triagem" 
-                    className={`px-8 py-4 text-base font-bold ${
-                      isParticipacaoApproved ? 'bg-gray-200 text-gray-500' : 'data-[state=active]:bg-blue-600 data-[state=active]:text-white'
-                    }`}
-                    disabled={isParticipacaoApproved}
-                  >
-                    {isParticipacaoApproved && <Lock className="h-4 w-4 mr-2" />}
-                    TRIAGEM
-                  </TabsTrigger>
+          <Tabs value={activeMasterTab} onValueChange={handleMasterTabChange} className="w-full">
+            <div className="flex items-center justify-center mb-6">
+              <TabsList className="grid w-auto grid-cols-2 h-14 bg-gray-100">
+                <TabsTrigger 
+                  value="triagem" 
+                  className={`px-8 py-4 text-base font-bold ${
+                    isParticipacaoApproved ? 'bg-gray-200 text-gray-500' : 'data-[state=active]:bg-blue-600 data-[state=active]:text-white'
+                  }`}
+                  disabled={isParticipacaoApproved}
+                >
+                  {isParticipacaoApproved && <Lock className="h-4 w-4 mr-2" />}
+                  TRIAGEM
+                </TabsTrigger>
                   
-                  {/* Indicador de progressão */}
-                  {isParticipacaoApproved && (
-                    <div className="flex items-center px-2">
-                      <ChevronRight className="h-6 w-6 text-green-600" />
-                    </div>
-                  )}
+                {/* Indicador de progressão */}
+                {isParticipacaoApproved && (
+                  <div className="flex items-center px-2">
+                    <ChevronRight className="h-6 w-6 text-green-600" />
+                  </div>
+                )}
                   
-                  <TabsTrigger 
-                    value="participacao" 
-                    className="px-8 py-4 text-base font-bold data-[state=active]:bg-green-600 data-[state=active]:text-white"
-                    disabled={!isParticipacaoApproved}
-                  >
-                    {isParticipacaoApproved && <CheckCircle className="h-4 w-4 mr-2 text-green-600" />}
-                    PARTICIPAÇÃO
-                  </TabsTrigger>
-                </TabsList>
+                <TabsTrigger 
+                  value="participacao" 
+                  className="px-8 py-4 text-base font-bold data-[state=active]:bg-green-600 data-[state=active]:text-white"
+                  disabled={!isParticipacaoApproved}
+                >
+                  {isParticipacaoApproved && <CheckCircle className="h-4 w-4 mr-2 text-green-600" />}
+                  PARTICIPAÇÃO
+                </TabsTrigger>
               </div>
 
               {/* Conteúdo das abas masters */}
@@ -1390,17 +1391,17 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
             </Tabs>
 
             <div className="flex justify-end gap-2 pt-6 border-t mt-6">
-              <Button type="button" variant="outline" onClick={onClose}>
+              <Button variant="outline" onClick={onClose}>
                 Cancelar
               </Button>
-              <Button type="submit" className="bg-biodina-gold hover:bg-biodina-gold/90">
+              <Button onClick={handleSubmit} className="bg-biodina-gold hover:bg-biodina-gold/90">
                 <Save className="h-4 w-4 mr-2" />
                 Salvar Oportunidade
               </Button>
             </div>
-          </form>
-        </CardContent>
-      </Card>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
 
       {/* Modais */}
       {showLicitacaoModal && (
