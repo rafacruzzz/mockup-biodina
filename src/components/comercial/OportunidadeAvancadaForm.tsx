@@ -928,23 +928,21 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
       </Dialog>
 
       <ConcorrenteModal
-        isOpen={showConcorrenteModal}
         concorrente={editingConcorrente}
         onClose={() => {
           setShowConcorrenteModal(false);
           setEditingConcorrente(null);
         }}
         onSave={handleSaveConcorrente}
+        valorReferencia={100000}
       />
 
-      <LicitacaoValidationModal
-        isOpen={showValidationModal}
-        formData={formData}
-        concorrentes={concorrentes}
-        produtos={produtos}
-        onClose={() => setShowValidationModal(false)}
-        onConfirm={handleConfirmSave}
-      />
+      {showValidationModal && (
+        <LicitacaoValidationModal
+          chave={formData.codigo}
+          onClose={() => setShowValidationModal(false)}
+        />
+      )}
     </>
   );
 };
