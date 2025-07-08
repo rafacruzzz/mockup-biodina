@@ -8,39 +8,43 @@ export const concorrentes = [
 export const licitantes = [
   {
     id: 1,
-    nome: 'EMPRESA ALPHA LTDA',
-    cnpj: '12.345.678/0001-90',
-    valorProposta: 150000.00,
-    classificacao: 1,
-    situacao: 'habilitado',
-    observacoes: 'Proposta dentro do esperado'
+    empresa: 'EMPRESA ALPHA LTDA',
+    marca: 'Siemens',
+    modelo: 'RAPIDPoint 500',
+    valorEntrada: 150000.00,
+    valorFinal: 145000.00,
+    unidade: 'un',
+    ranking: 1
   },
   {
     id: 2,
-    nome: 'BETA SOLUÇÕES EMPRESARIAIS',
-    cnpj: '98.765.432/0001-10',
-    valorProposta: 145000.00,
-    classificacao: 2,
-    situacao: 'habilitado',
-    observacoes: 'Melhor proposta financeira'
+    empresa: 'BETA SOLUÇÕES EMPRESARIAIS',  
+    marca: 'Abbott',
+    modelo: 'i-STAT Alinity',
+    valorEntrada: 160000.00,
+    valorFinal: 148000.00,
+    unidade: 'un',
+    ranking: 2
   },
   {
     id: 3,
-    nome: 'GAMMA TECNOLOGIA E SERVIÇOS',
-    cnpj: '11.222.333/0001-44',
-    valorProposta: 155000.00,
-    classificacao: 3,
-    situacao: 'desabilitado',
-    observacoes: 'Não atendeu requisitos técnicos'
+    empresa: 'GAMMA TECNOLOGIA E SERVIÇOS',
+    marca: 'Roche',
+    modelo: 'cobas b 123',
+    valorEntrada: 170000.00,
+    valorFinal: 155000.00,
+    unidade: 'un', 
+    ranking: 3
   },
   {
     id: 4,
-    nome: 'DELTA COMERCIAL LTDA',
-    cnpj: '55.666.777/0001-88',
-    valorProposta: 160000.00,
-    classificacao: 4,
-    situacao: 'habilitado',
-    observacoes: 'Proposta acima do orçamento'
+    empresa: 'DELTA COMERCIAL LTDA',
+    marca: 'Nova Biomedical',
+    modelo: 'StatSensor',
+    valorEntrada: 180000.00,
+    valorFinal: 160000.00,
+    unidade: 'un',
+    ranking: 4
   }
 ];
 
