@@ -90,7 +90,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     // Campos específicos para Licitação
     dataLicitacao: oportunidade?.dataLicitacao || '',
     resumoEdital: oportunidade?.resumoEdital || '',
-    analiseTecnicaLicitacao: oportunidade?.analiseTecnicaLicitacao || '',
     impugnacaoEdital: oportunidade?.impugnacaoEdital || '',
     valorEntrada: oportunidade?.valorEntrada || 0,
     valorMinimoFinal: oportunidade?.valorMinimoFinal || 0,
@@ -724,12 +723,16 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
           <Label htmlFor="analiseTecnicaLicitacao">Análise Técnica</Label>
           <Textarea
             id="analiseTecnicaLicitacao"
-            value={formData.analiseTecnicaLicitacao}
-            onChange={(e) => setFormData({...formData, analiseTecnicaLicitacao: e.target.value})}
-            placeholder="Análise técnica da licitação"
+            value={formData.analiseTecnica}
+            readOnly={true}
+            placeholder="Este campo reflete automaticamente o conteúdo da Análise Técnica-Científica"
             rows={3}
+            className="bg-gray-50 cursor-not-allowed"
             disabled={isReadOnlyMode()}
           />
+          <p className="text-sm text-gray-500 mt-1">
+            Campo somente leitura - Para editar, use o campo "Análise Técnica-Científica" na aba "Análise Técnica"
+          </p>
         </div>
 
         <div>
@@ -841,21 +844,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
       <div className="border rounded-lg p-4 space-y-4">
         <h3 className="text-lg font-semibold text-gray-800">Dados Técnicos</h3>
         
-        <div>
-          <Label htmlFor="analiseTecnica">Análise Técnica</Label>
-          <Textarea
-            id="analiseTecnica"
-            value={formData.analiseTecnica}
-            readOnly={true}
-            placeholder="Este campo reflete automaticamente o conteúdo da Análise Técnica-Científica"
-            rows={6}
-            className="bg-gray-50 cursor-not-allowed"
-          />
-          <p className="text-sm text-gray-500 mt-1">
-            Campo somente leitura - Para editar, use o campo "Análise Técnica-Científica" na aba "Análise Técnica"
-          </p>
-        </div>
-
         <div>
           <Label>Termômetro ({formData.termometro}°)</Label>
           <div className="mt-2 space-y-2">
