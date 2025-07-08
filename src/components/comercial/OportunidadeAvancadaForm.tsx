@@ -610,15 +610,11 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                               <div>
                                 <h4 className="font-medium">{concorrente.nome}</h4>
                                 <p className="text-sm text-gray-600">
-                                  {concorrente.porte} • Experiência: {concorrente.experiencia}
+                                  {concorrente.produto}
                                 </p>
                                 <p className="text-sm text-gray-600">
-                                  Preço estimado: {formatCurrency(concorrente.precoEstimado)}
+                                  Preço: {formatCurrency(concorrente.preco)}
                                 </p>
-                                <Badge variant={concorrente.nivelAmeaca === 'alta' ? 'destructive' : 
-                                               concorrente.nivelAmeaca === 'media' ? 'default' : 'secondary'}>
-                                  Ameaça {concorrente.nivelAmeaca}
-                                </Badge>
                               </div>
                               <div className="flex gap-2">
                                 <Button variant="outline" size="sm" onClick={() => handleEditConcorrente(concorrente)}>
@@ -927,15 +923,16 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </DialogContent>
       </Dialog>
 
-      <ConcorrenteModal
-        concorrente={editingConcorrente}
-        onClose={() => {
-          setShowConcorrenteModal(false);
-          setEditingConcorrente(null);
-        }}
-        onSave={handleSaveConcorrente}
-        valorReferencia={100000}
-      />
+      {showConcorrenteModal && (
+        <ConcorrenteModal
+          onClose={() => {
+            setShowConcorrenteModal(false);
+            setEditingConcorrente(null);
+          }}
+          onSave={handleSaveConcorrente}
+          valorReferencia={100000}
+        />
+      )}
 
       {showValidationModal && (
         <LicitacaoValidationModal
