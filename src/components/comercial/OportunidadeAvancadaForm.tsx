@@ -1,1461 +1,1285 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { X, Save, Plus, Edit, Upload, Download, Eye, Lock, CheckCircle, ChevronRight, Calendar, AlertTriangle } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import LicitacaoValidationModal from "./LicitacaoValidationModal";
-import ConcorrenteModal from "./ConcorrenteModal";
-import ChatInterno from "./ChatInterno";
-import PedidoForm from "./PedidoForm";
-import ApprovalModal from "./ApprovalModal";
-import CustomAlertModal from "./components/CustomAlertModal";
-import { concorrentes as mockConcorrentes, licitantes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
-import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getUnidadeColor } from "@/lib/utils";
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { Calendar as CalendarIcon, FileText, Save, Plus, Trash2, Building, User, MapPin, Clock, DollarSign, Shield, Search, Target, FileCheck, AlertCircle, CheckCircle } from 'lucide-react';
+import { cn, formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getUnidadeColor } from '@/lib/utils';
+import { licitantes } from '@/data/licitacaoMockData';
 
-interface OportunidadeAvancadaFormProps {
-  oportunidade?: any;
-  onClose: () => void;
-  onSave: (oportunidade: any) => void;
+interface FormData {
+  empresa: string;
+  cnpj: string;
+  telefone: string;
+  email: string;
+  enderecoCompleto: string;
+  contato: string;
+  produto: string;
+  quantidade: number;
+  valor: number;
+  valorTotal: number;
+  prazoEntrega: string;
+  formaPagamento: string;
+  garantia: string;
+  validadeProposta: Date | undefined;
+  dataVencimento: Date | undefined;
+  observacoes: string;
+  analiseTecnica: string;
+  parecer: string;
+  aprovado: boolean;
+  motivo: string;
+  responsavel: string;
+  dataAprovacao: Date | undefined;
+  numeroProcesso: string;
+  orgaoComprador: string;
+  modalidadeLicitacao: string;
+  objetoLicitacao: string;
+  dataAbertura: Date | undefined;
+  dataLimiteEntrega: Date | undefined;
+  dataPublicacao: Date | undefined;
+  valorEstimado: number;
+  situacaoLicitacao: string;
+  classificacao: number;
+  participantes: number;
+  linkEdital: string;
+  numeroEdital: string;
+  numeroUasg: string;
+  srp: boolean;
+  tipo: string;
+  natureza: string;
+  regime: string;
+  criterio: string;
+  localizacao: string;
+  setor: string;
+  categoria: string;
+  subcategoria: string;
+  tags: string[];
+  prioridade: string;
+  probabilidade: number;
+  estagio: string;
+  temperatura: number;
+  proximaAcao: string;
+  dataProximaAcao: Date | undefined;
+  historico: Array<{
+    data: Date;
+    acao: string;
+    usuario: string;
+    observacao: string;
+  }>;
+  anexos: Array<{
+    nome: string;
+    tipo: string;
+    tamanho: string;
+    dataUpload: Date;
+  }>;
 }
 
-const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: OportunidadeAvancadaFormProps) => {
-  // Estados para controle das fases
-  const [activeMasterTab, setActiveMasterTab] = useState('triagem');
-  const [activeToolTab, setActiveToolTab] = useState('dados-gerais');
-  const [isParticipacaoApproved, setIsParticipacaoApproved] = useState(false);
-  const [showApprovalModal, setShowApprovalModal] = useState(false);
-  const [showEmprestimoApprovalModal, setShowEmprestimoApprovalModal] = useState(false);
-  const [showEmprestimoAlert, setShowEmprestimoAlert] = useState(false);
-  
-  // Estados para modais
-  const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
-  const [showConcorrenteModal, setShowConcorrenteModal] = useState(false);
-  const [showPedidoForm, setShowPedidoForm] = useState(false);
-  
-  // Estados para dados
-  const [concorrentes, setConcorrentes] = useState([
-    { id: 1, nome: 'MedTech SA', produto: 'Kit diagnóstico rápido', preco: 4200 },
-    { id: 2, nome: 'Global Diagnóstico', produto: 'Serviço de instalação', preco: 1200 }
-  ]);
-
-  const [pedidos, setPedidos] = useState([
-    { 
-      id: 1, 
-      codigo: 'PED-001', 
-      cliente: 'Associação das Pioneiras Sociais',
-      dataGeracao: '2024-03-20',
-      situacao: 'Em Aberto',
-      valor: 782530
-    }
-  ]);
-
-  const [formData, setFormData] = useState({
-    cpfCnpj: oportunidade?.cpfCnpj || '',
-    nome: oportunidade?.nome || '',
-    nomeFantasia: oportunidade?.nomeFantasia || '',
-    razaoSocial: oportunidade?.razaoSocial || '',
-    endereco: oportunidade?.endereco || '',
-    uf: oportunidade?.uf || '',
-    email: oportunidade?.email || '',
-    telefone: oportunidade?.telefone || '',
-    website: oportunidade?.website || '',
-    ativo: oportunidade?.ativo || true,
-    fonteLead: oportunidade?.fonteLead || '',
-    segmentoLead: oportunidade?.segmentoLead || '',
-    metodoContato: oportunidade?.metodoContato || '',
-    colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || [],
-    valorNegocio: oportunidade?.valorNegocio || 0,
-    tags: oportunidade?.tags || '',
-    caracteristicas: oportunidade?.caracteristicas || '',
-    dataInicio: oportunidade?.dataInicio || '',
-    dataLimite: oportunidade?.dataLimite || '',
-    fluxoTrabalho: oportunidade?.fluxoTrabalho || '',
-    descricao: oportunidade?.descricao || '',
-    analiseTecnica: oportunidade?.analiseTecnica || '',
-    termometro: oportunidade?.termometro || 50,
-    resultadoOportunidade: oportunidade?.resultadoOportunidade || 'em_andamento',
-    motivoGanho: oportunidade?.motivoGanho || '',
-    motivoPerda: oportunidade?.motivoPerda || '',
-    propostaNegociacao: oportunidade?.propostaNegociacao || false,
-    
-    // Campos específicos para Licitação
-    dataLicitacao: oportunidade?.dataLicitacao || '',
-    resumoEdital: oportunidade?.resumoEdital || '',
-    analiseTecnicaLicitacao: oportunidade?.analiseTecnicaLicitacao || '',
-    impugnacaoEdital: oportunidade?.impugnacaoEdital || '',
-    valorEntrada: oportunidade?.valorEntrada || 0,
-    valorMinimoFinal: oportunidade?.valorMinimoFinal || 0,
-    analiseEstrategia: oportunidade?.analiseEstrategia || '',
-    naturezaOperacao: oportunidade?.naturezaOperacao || '',
-    numeroPregao: oportunidade?.numeroPregao || '',
-    numeroProcesso: oportunidade?.numeroProcesso || '',
-    numeroUasg: oportunidade?.numeroUasg || '',
-    qualSite: oportunidade?.qualSite || '',
-    permiteAdesao: oportunidade?.permiteAdesao || '',
-    observacoesAdesao: oportunidade?.observacoesAdesao || '',
-    produto: oportunidade?.produto || '',
-    valorEstimado: oportunidade?.valorEstimado || 0,
-    quantidadeEquipamentos: oportunidade?.quantidadeEquipamentos || 0,
-    quantidadeExames: oportunidade?.quantidadeExames || 0,
-    haviaContratoAnterior: oportunidade?.haviaContratoAnterior || '',
-    marcaModeloAnterior: oportunidade?.marcaModeloAnterior || '',
-    situacaoPregao: oportunidade?.situacaoPregao || '',
-    manifestacaoRecorrer: oportunidade?.manifestacaoRecorrer || '',
-    motivosFracasso: oportunidade?.motivosFracasso || '',
-    dataAssinaturaAta: oportunidade?.dataAssinaturaAta || '',
-    observacaoGeral: oportunidade?.observacaoGeral || ''
+const OportunidadeAvancadaForm = () => {
+  const [formData, setFormData] = useState<FormData>({
+    empresa: '',
+    cnpj: '',
+    telefone: '',
+    email: '',
+    enderecoCompleto: '',
+    contato: '',
+    produto: '',
+    quantidade: 1,
+    valor: 0,
+    valorTotal: 0,
+    prazoEntrega: '',
+    formaPagamento: '',
+    garantia: '',
+    validadeProposta: undefined,
+    dataVencimento: undefined,
+    observacoes: '',
+    analiseTecnica: '',
+    parecer: '',
+    aprovado: false,
+    motivo: '',
+    responsavel: '',
+    dataAprovacao: undefined,
+    numeroProcesso: '',
+    orgaoComprador: '',
+    modalidadeLicitacao: '',
+    objetoLicitacao: '',
+    dataAbertura: undefined,
+    dataLimiteEntrega: undefined,
+    dataPublicacao: undefined,
+    valorEstimado: 0,
+    situacaoLicitacao: '',
+    classificacao: 0,
+    participantes: 0,
+    linkEdital: '',
+    numeroEdital: '',
+    numeroUasg: '',
+    srp: false,
+    tipo: '',
+    natureza: '',
+    regime: '',
+    criterio: '',
+    localizacao: '',
+    setor: '',
+    categoria: '',
+    subcategoria: '',
+    tags: [],
+    prioridade: '',
+    probabilidade: 50,
+    estagio: '',
+    temperatura: 50,
+    proximaAcao: '',
+    dataProximaAcao: undefined,
+    historico: [],
+    anexos: []
   });
 
-  // Validação ajustada - removeu a dependência de tipoOportunidade
-  const isTriagemComplete = () => {
-    return formData.nome && formData.cpfCnpj && formData.valorNegocio > 0;
+  const [activeTab, setActiveTab] = useState('dados-gerais');
+  const [novaTag, setNovaTag] = useState('');
+  const [novoHistorico, setNovoHistorico] = useState({
+    acao: '',
+    observacao: ''
+  });
+
+  const handleInputChange = (field: keyof FormData, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
-  const isStatusGanha = () => {
-    return formData.resultadoOportunidade === 'ganho';
+  const handleDateChange = (field: keyof FormData, date: Date | undefined) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: date
+    }));
   };
 
-  const isStatusPerdida = () => {
-    return formData.resultadoOportunidade === 'perda';
-  };
-
-  const canShowPedidos = () => {
-    return isStatusGanha();
-  };
-
-  const isReadOnlyMode = () => {
-    return (activeMasterTab === 'triagem' && isParticipacaoApproved) || isStatusPerdida();
-  };
-
-  const handleMasterTabChange = (tabValue: string) => {
-    if (tabValue === 'participacao' && !isParticipacaoApproved) {
-      return;
-    }
-    setActiveMasterTab(tabValue);
-  };
-
-  const handleRequestApproval = () => {
-    if (!isTriagemComplete()) {
-      alert('Complete todos os campos obrigatórios da triagem antes de solicitar aprovação.');
-      return;
-    }
-    setShowApprovalModal(true);
-  };
-
-  const handleApprovalSuccess = () => {
-    setIsParticipacaoApproved(true);
-    setActiveMasterTab('participacao');
-  };
-
-  const handleNaturezaOperacaoChange = (value: string) => {
-    if (value === 'emprestimo') {
-      setShowEmprestimoApprovalModal(true);
-    } else {
-      setFormData({...formData, naturezaOperacao: value});
+  const adicionarTag = () => {
+    if (novaTag.trim() && !formData.tags.includes(novaTag.trim())) {
+      setFormData(prev => ({
+        ...prev,
+        tags: [...prev.tags, novaTag.trim()]
+      }));
+      setNovaTag('');
     }
   };
 
-  const handleEmprestimoApprovalSuccess = () => {
-    setFormData({...formData, naturezaOperacao: 'emprestimo'});
-    setShowEmprestimoAlert(true);
+  const removerTag = (tagParaRemover: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagParaRemover)
+    }));
+  };
+
+  const adicionarHistorico = () => {
+    if (novoHistorico.acao.trim()) {
+      const novoItem = {
+        data: new Date(),
+        acao: novoHistorico.acao,
+        usuario: 'Usuário Atual',
+        observacao: novoHistorico.observacao
+      };
+      
+      setFormData(prev => ({
+        ...prev,
+        historico: [novoItem, ...prev.historico]
+      }));
+      
+      setNovoHistorico({ acao: '', observacao: '' });
+    }
+  };
+
+  const calcularTermometro = (temp: number) => {
+    const stage = getTermometroStage(temp);
+    const color = getTermometroColor(stage);
+    return { stage, color };
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    console.log('Dados da oportunidade avançada:', formData);
   };
 
-  // Renderização dos conteúdos das ferramentas
-  const renderDadosGerais = () => (
-    <div className="space-y-6">
-      {/* Dados do Cliente */}
-      <div className="border rounded-lg p-4 space-y-4">
-        <h3 className="text-lg font-semibold text-gray-800">Dados do Cliente</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="cpfCnpj">CPF/CNPJ *</Label>
-            <Input
-              id="cpfCnpj"
-              value={formData.cpfCnpj}
-              onChange={(e) => setFormData({...formData, cpfCnpj: e.target.value})}
-              placeholder="000.000.000-00"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="nome">Nome / Nome Fantasia *</Label>
-            <Input
-              id="nome"
-              value={formData.nome}
-              onChange={(e) => setFormData({...formData, nome: e.target.value})}
-              placeholder="Nome do cliente"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="razaoSocial">Razão Social</Label>
-            <Input
-              id="razaoSocial"
-              value={formData.razaoSocial}
-              onChange={(e) => setFormData({...formData, razaoSocial: e.target.value})}
-              placeholder="Razão social"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="endereco">Endereço do Cliente</Label>
-            <Input
-              id="endereco"
-              value={formData.endereco}
-              onChange={(e) => setFormData({...formData, endereco: e.target.value})}
-              placeholder="Endereço completo"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="uf">UF</Label>
-            <Select 
-              value={formData.uf} 
-              onValueChange={(value) => setFormData({...formData, uf: value})}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="SP">São Paulo</SelectItem>
-                <SelectItem value="RJ">Rio de Janeiro</SelectItem>
-                <SelectItem value="MG">Minas Gerais</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="email">E-mail</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-              placeholder="email@exemplo.com"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="telefone">Telefone</Label>
-            <Input
-              id="telefone"
-              value={formData.telefone}
-              onChange={(e) => setFormData({...formData, telefone: e.target.value})}
-              placeholder="(11) 99999-9999"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="website">Website</Label>
-            <Input
-              id="website"
-              value={formData.website}
-              onChange={(e) => setFormData({...formData, website: e.target.value})}
-              placeholder="https://website.com"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="ativo" 
-            checked={formData.ativo}
-            onCheckedChange={(checked) => setFormData({...formData, ativo: checked as boolean})}
-            disabled={isReadOnlyMode()}
-          />
-          <Label htmlFor="ativo">Ativo</Label>
-        </div>
-      </div>
-
-      {/* Dados do Lead/Negócio */}
-      <div className="border rounded-lg p-4 space-y-4">
-        <h3 className="text-lg font-semibold text-gray-800">Dados do Lead/Negócio</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="fonteLead">Fonte do Lead</Label>
-            <Select 
-              value={formData.fonteLead} 
-              onValueChange={(value) => setFormData({...formData, fonteLead: value})}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="site">Site</SelectItem>
-                <SelectItem value="indicacao">Indicação</SelectItem>
-                <SelectItem value="cold_call">Cold Call</SelectItem>
-                <SelectItem value="licitacao">Licitação</SelectItem>
-                <SelectItem value="referencia">Referência</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="segmentoLead">Segmento do Lead</Label>
-            <Select 
-              value={formData.segmentoLead} 
-              onValueChange={(value) => setFormData({...formData, segmentoLead: value})}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="filantropico">FILANTRÓPICO</SelectItem>
-                <SelectItem value="privado_estetica">PRIVADO - ESTÉTICA</SelectItem>
-                <SelectItem value="privado_hospital">PRIVADO - HOSPITAL</SelectItem>
-                <SelectItem value="privado_laboratorio">PRIVADO - LABORATÓRIO</SelectItem>
-                <SelectItem value="privado_universidade">PRIVADO - UNIVERSIDADE</SelectItem>
-                <SelectItem value="privado_veterinario">PRIVADO - VETERINÁRIO</SelectItem>
-                <SelectItem value="publico_hospital_aeronautica">PÚBLICO - HOSPITAL - AERONÁUTICA</SelectItem>
-                <SelectItem value="publico_hospital_estadual">PÚBLICO - HOSPITAL - ESTADUAL</SelectItem>
-                <SelectItem value="publico_hospital_exercito">PÚBLICO - HOSPITAL - EXÉRCITO</SelectItem>
-                <SelectItem value="publico_hospital_federal">PÚBLICO - HOSPITAL - FEDERAL</SelectItem>
-                <SelectItem value="publico_hospital_marinha">PÚBLICO - HOSPITAL - MARINHA</SelectItem>
-                <SelectItem value="publico_hospital_municipal">PÚBLICO - HOSPITAL - MUNICIPAL</SelectItem>
-                <SelectItem value="publico_hospital_os">PÚBLICO - HOSPITAL - OS</SelectItem>
-                <SelectItem value="publico_hospital_secretaria_saude">PÚBLICO - HOSPITAL - SECRETARIA DA SAÚDE</SelectItem>
-                <SelectItem value="publico_hospital_universidade">PÚBLICO - HOSPITAL - UNIVERSIDADE</SelectItem>
-                <SelectItem value="publico_hospital_upa">PÚBLICO - HOSPITAL - UPA</SelectItem>
-                <SelectItem value="publico_hospital_veterinario">PÚBLICO - HOSPITAL - VETERINÁRIO</SelectItem>
-                <SelectItem value="publico_laboratorio_aeronautica">PÚBLICO - LABORATÓRIO - AERONÁUTICA</SelectItem>
-                <SelectItem value="publico_laboratorio_estadual">PÚBLICO - LABORATÓRIO - ESTADUAL</SelectItem>
-                <SelectItem value="publico_laboratorio_exercito">PÚBLICO - LABORATÓRIO - EXÉRCITO</SelectItem>
-                <SelectItem value="publico_laboratorio_federal">PÚBLICO - LABORATÓRIO - FEDERAL</SelectItem>
-                <SelectItem value="publico_laboratorio_marinha">PÚBLICO - LABORATÓRIO - MARINHA</SelectItem>
-                <SelectItem value="publico_laboratorio_municipal">PÚBLICO - LABORATÓRIO - MUNICIPAL</SelectItem>
-                <SelectItem value="publico_laboratorio_os">PÚBLICO - LABORATÓRIO - OS</SelectItem>
-                <SelectItem value="publico_laboratorio_secretaria_saude">PÚBLICO - LABORATÓRIO - SECRETARIA DA SAÚDE</SelectItem>
-                <SelectItem value="publico_laboratorio_universidade">PÚBLICO - LABORATÓRIO - UNIVERSIDADE</SelectItem>
-                <SelectItem value="publico_laboratorio_upa">PÚBLICO - LABORATÓRIO - UPA</SelectItem>
-                <SelectItem value="publico_laboratorio_veterinario">PÚBLICO - LABORATÓRIO - VETERINÁRIO</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="metodoContato">Método de Contato</Label>
-            <Select 
-              value={formData.metodoContato} 
-              onValueChange={(value) => setFormData({...formData, metodoContato: value})}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="telefone">Telefone</SelectItem>
-                <SelectItem value="email">E-mail</SelectItem>
-                <SelectItem value="presencial">Presencial</SelectItem>
-                <SelectItem value="video_chamada">Videochamada</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="valorNegocio">Valor do Negócio *</Label>
-            <Input
-              id="valorNegocio"
-              type="number"
-              step="0.01"
-              value={formData.valorNegocio}
-              onChange={(e) => setFormData({...formData, valorNegocio: Number(e.target.value)})}
-              placeholder="0,00"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="dataInicio">Data de Início</Label>
-            <Input
-              id="dataInicio"
-              type="date"
-              value={formData.dataInicio}
-              onChange={(e) => setFormData({...formData, dataInicio: e.target.value})}
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="dataLimite">Data Limite</Label>
-            <Input
-              id="dataLimite"
-              type="date"
-              value={formData.dataLimite}
-              onChange={(e) => setFormData({...formData, dataLimite: e.target.value})}
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        </div>
-        
+  return (
+    <div className="max-w-7xl mx-auto p-6 space-y-6">
+      <div className="flex items-center justify-between">
         <div>
-          <Label htmlFor="tags">Tags</Label>
-          <Input
-            id="tags"
-            value={formData.tags}
-            onChange={(e) => setFormData({...formData, tags: e.target.value})}
-            placeholder="Separadas por vírgula"
-            disabled={isReadOnlyMode()}
-          />
+          <h1 className="text-3xl font-bold text-gray-900">Oportunidade Avançada</h1>
+          <p className="text-gray-600 mt-1">Gerencie todos os aspectos da sua oportunidade comercial</p>
         </div>
-        
-        <div>
-          <Label htmlFor="caracteristicas">Características</Label>
-          <Textarea
-            id="caracteristicas"
-            value={formData.caracteristicas}
-            onChange={(e) => setFormData({...formData, caracteristicas: e.target.value})}
-            placeholder="Descreva as características da oportunidade"
-            rows={3}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="fluxoTrabalho">Fluxo de Trabalho (Status controlado pelo RH/Gestor)</Label>
-          <Select 
-            value={formData.fluxoTrabalho} 
-            onValueChange={(value) => setFormData({...formData, fluxoTrabalho: value})}
-            disabled={isReadOnlyMode()}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione o status do trabalho" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="aguardando_inicio">Aguardando Início</SelectItem>
-              <SelectItem value="em_andamento">Em Andamento</SelectItem>
-              <SelectItem value="em_revisao">Em Revisão</SelectItem>
-              <SelectItem value="aguardando_aprovacao">Aguardando Aprovação</SelectItem>
-              <SelectItem value="aprovado">Aprovado</SelectItem>
-              <SelectItem value="suspenso">Suspenso</SelectItem>
-              <SelectItem value="cancelado">Cancelado</SelectItem>
-              <SelectItem value="finalizado">Finalizado</SelectItem>
-            </SelectContent>
-          </Select>
-          <p className="text-sm text-gray-500 mt-1">
-            Este campo será incluído no Kanban para acompanhamento do funcionário
-          </p>
-        </div>
-        
-        <div>
-          <Label htmlFor="descricao">Descrição da Oportunidade</Label>
-          <Textarea
-            id="descricao"
-            value={formData.descricao}
-            onChange={(e) => setFormData({...formData, descricao: e.target.value})}
-            placeholder="Descrição detalhada da oportunidade"
-            rows={4}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-      </div>
-
-      {/* Dados Específicos da Licitação */}
-      <div className="border rounded-lg p-4 space-y-4 bg-yellow-50">
-        <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5 text-yellow-600" />
-          Dados Específicos da Licitação
-        </h3>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="dataLicitacao">Data da Licitação</Label>
-            <Input
-              id="dataLicitacao"
-              type="date"
-              value={formData.dataLicitacao}
-              onChange={(e) => setFormData({...formData, dataLicitacao: e.target.value})}
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="naturezaOperacao">Qual Natureza da Operação</Label>
-            <Select 
-              value={formData.naturezaOperacao} 
-              onValueChange={handleNaturezaOperacaoChange}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="amostra">AMOSTRA</SelectItem>
-                <SelectItem value="comodato">COMODATO</SelectItem>
-                <SelectItem value="conserto">CONSERTO</SelectItem>
-                <SelectItem value="consignacao">CONSIGNAÇÃO</SelectItem>
-                <SelectItem value="demonstracao">DEMONSTRAÇÃO</SelectItem>
-                <SelectItem value="doacao">DOAÇÃO</SelectItem>
-                <SelectItem value="emprestimo">EMPRÉSTIMO</SelectItem>
-                <SelectItem value="exposicao">EXPOSIÇÃO</SelectItem>
-                <SelectItem value="importacao">IMPORTAÇÃO</SelectItem>
-                <SelectItem value="locacao">LOCAÇÃO</SelectItem>
-                <SelectItem value="logistica">LOGÍSTICA</SelectItem>
-                <SelectItem value="mostruario">MOSTRUÁRIO</SelectItem>
-                <SelectItem value="simples_remessa">SIMPLES REMESSA</SelectItem>
-                <SelectItem value="treinamento">TREINAMENTO</SelectItem>
-                <SelectItem value="vendas">VENDAS</SelectItem>
-                <SelectItem value="outras">OUTRAS</SelectItem>
-                <SelectItem value="troca">TROCA</SelectItem>
-                <SelectItem value="perda">PERDA</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="numeroPregao">Nº Pregão / INEX / ATA / SRP</Label>
-            <Input
-              id="numeroPregao"
-              value={formData.numeroPregao}
-              onChange={(e) => setFormData({...formData, numeroPregao: e.target.value})}
-              placeholder="Ex: PE 001/2024"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="numeroProcesso">Nº Processo</Label>
-            <Input
-              id="numeroProcesso"
-              value={formData.numeroProcesso}
-              onChange={(e) => setFormData({...formData, numeroProcesso: e.target.value})}
-              placeholder="Ex: 23038.000001/2024-00"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="numeroUasg">Nº UASG</Label>
-            <Input
-              id="numeroUasg"
-              value={formData.numeroUasg}
-              onChange={(e) => setFormData({...formData, numeroUasg: e.target.value})}
-              placeholder="Ex: 123456"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="qualSite">Qual Site?</Label>
-            <Input
-              id="qualSite"
-              value={formData.qualSite}
-              onChange={(e) => setFormData({...formData, qualSite: e.target.value})}
-              placeholder="https://..."
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        </div>
-
-        <div>
-          <Label>Permite Adesão?</Label>
-          <RadioGroup 
-            value={formData.permiteAdesao} 
-            onValueChange={(value) => setFormData({...formData, permiteAdesao: value})}
-            disabled={isReadOnlyMode()}
-            className="flex flex-row space-x-6 mt-2"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="sim" id="adesao-sim" />
-              <Label htmlFor="adesao-sim">Sim</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="nao" id="adesao-nao" />
-              <Label htmlFor="adesao-nao">Não</Label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        {formData.permiteAdesao === 'sim' && (
-          <div>
-            <Label htmlFor="observacoesAdesao">Observações (Adesão)</Label>
-            <Textarea
-              id="observacoesAdesao"
-              value={formData.observacoesAdesao}
-              onChange={(e) => setFormData({...formData, observacoesAdesao: e.target.value})}
-              placeholder="Observações sobre a adesão"
-              rows={3}
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="produto">Produto</Label>
-            <Select 
-              value={formData.produto} 
-              onValueChange={(value) => setFormData({...formData, produto: value})}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione do cadastro" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="abl800">ABL800 Flex</SelectItem>
-                <SelectItem value="gasometro">Gasômetro</SelectItem>
-                <SelectItem value="sistema">Sistema WEBMED</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="valorEstimado">Valor Estimado</Label>
-            <Input
-              id="valorEstimado"
-              type="number"
-              step="0.01"
-              value={formData.valorEstimado}
-              onChange={(e) => setFormData({...formData, valorEstimado: Number(e.target.value)})}
-              placeholder="0,00"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="quantidadeEquipamentos">Quantidade Equipamentos / Total Estimado</Label>
-            <Input
-              id="quantidadeEquipamentos"
-              type="number"
-              value={formData.quantidadeEquipamentos}
-              onChange={(e) => setFormData({...formData, quantidadeEquipamentos: Number(e.target.value)})}
-              placeholder="0"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="quantidadeExames">Quantidade Exames / Total Estimado</Label>
-            <Input
-              id="quantidadeExames"
-              type="number"
-              value={formData.quantidadeExames}
-              onChange={(e) => setFormData({...formData, quantidadeExames: Number(e.target.value)})}
-              placeholder="0"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        </div>
-
-        <div>
-          <Label>Havia Contrato Anterior?</Label>
-          <RadioGroup 
-            value={formData.haviaContratoAnterior} 
-            onValueChange={(value) => setFormData({...formData, haviaContratoAnterior: value})}
-            disabled={isReadOnlyMode()}
-            className="flex flex-row space-x-6 mt-2"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="sim" id="contrato-sim" />
-              <Label htmlFor="contrato-sim">Sim</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="nao" id="contrato-nao" />
-              <Label htmlFor="contrato-nao">Não</Label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        {formData.haviaContratoAnterior === 'sim' && (
-          <div>
-            <Label htmlFor="marcaModeloAnterior">Qual Marca/Modelo do Contrato Anterior?</Label>
-            <Input
-              id="marcaModeloAnterior"
-              value={formData.marcaModeloAnterior}
-              onChange={(e) => setFormData({...formData, marcaModeloAnterior: e.target.value})}
-              placeholder="Ex: Siemens RAPIDPoint 500"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        )}
-
-        <div>
-          <Label htmlFor="situacaoPregao">Situação do Pregão</Label>
-          <Select 
-            value={formData.situacaoPregao} 
-            onValueChange={(value) => setFormData({...formData, situacaoPregao: value})}
-            disabled={isReadOnlyMode()}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="operacao">Em Operação</SelectItem>
-              <SelectItem value="etapa_lances">Etapa de Lances</SelectItem>
-              <SelectItem value="visualizacao_propostas">Visualização de Propostas</SelectItem>
-              <SelectItem value="aceitacao_propostas">Aceitação de Propostas</SelectItem>
-              <SelectItem value="habilitacao">Habilitação de Fornecedores</SelectItem>
-              <SelectItem value="negociacao_preco">Negociação de Preço</SelectItem>
-              <SelectItem value="recurso">Recursos</SelectItem>
-              <SelectItem value="juizo_admissibilidade">Juízo de Admissibilidade</SelectItem>
-              <SelectItem value="homologado">Homologação</SelectItem>
-              <SelectItem value="adjudicacao">Adjudicação</SelectItem>
-              <SelectItem value="empenho">Empenho</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor="dataAssinaturaAta">Data da Assinatura e Envio da ATA</Label>
-          <Input
-            id="dataAssinaturaAta"
-            type="date"
-            value={formData.dataAssinaturaAta}
-            onChange={(e) => setFormData({...formData, dataAssinaturaAta: e.target.value})}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="resumoEdital">Resumo do Edital</Label>
-          <Textarea
-            id="resumoEdital"
-            value={formData.resumoEdital}
-            onChange={(e) => setFormData({...formData, resumoEdital: e.target.value})}
-            placeholder="Resumo do edital da licitação"
-            rows={3}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="analiseTecnicaLicitacao">Análise Técnica</Label>
-          <Textarea
-            id="analiseTecnicaLicitacao"
-            value={formData.analiseTecnicaLicitacao}
-            onChange={(e) => setFormData({...formData, analiseTecnicaLicitacao: e.target.value})}
-            placeholder="Análise técnica da licitação"
-            rows={3}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="impugnacaoEdital">Impugnação do Edital</Label>
-          <Textarea
-            id="impugnacaoEdital"
-            value={formData.impugnacaoEdital}
-            onChange={(e) => setFormData({...formData, impugnacaoEdital: e.target.value})}
-            placeholder="Detalhes sobre impugnação do edital"
-            rows={3}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="valorEntrada">Valor para Entrada (R$)</Label>
-            <Input
-              id="valorEntrada"
-              type="number"
-              step="0.01"
-              value={formData.valorEntrada}
-              onChange={(e) => setFormData({...formData, valorEntrada: Number(e.target.value)})}
-              placeholder="0,00"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="valorMinimoFinal">Valor mínimo Final (R$)</Label>
-            <Input
-              id="valorMinimoFinal"
-              type="number"
-              step="0.01"
-              value={formData.valorMinimoFinal}
-              onChange={(e) => setFormData({...formData, valorMinimoFinal: Number(e.target.value)})}
-              placeholder="0,00"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        </div>
-
-        <div>
-          <Label htmlFor="analiseEstrategia">Análise de Estratégia</Label>
-          <Textarea
-            id="analiseEstrategia"
-            value={formData.analiseEstrategia}
-            onChange={(e) => setFormData({...formData, analiseEstrategia: e.target.value})}
-            placeholder="Análise estratégica para a licitação"
-            rows={4}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="manifestacaoRecorrer">Manifestação de Interesse em Recorrer</Label>
-          <Textarea
-            id="manifestacaoRecorrer"
-            value={formData.manifestacaoRecorrer}
-            onChange={(e) => setFormData({...formData, manifestacaoRecorrer: e.target.value})}
-            placeholder="Manifestação sobre interesse em recorrer"
-            rows={3}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-
-        {/* Tabela de Licitantes */}
-        <div className="space-y-2">
-          <Label className="text-sm font-medium">Tabela de Licitantes</Label>
-          <div className="border rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Empresa</TableHead>
-                  <TableHead>Marca</TableHead>
-                  <TableHead>Modelo</TableHead>
-                  <TableHead>Valor de Entrada</TableHead>
-                  <TableHead>Valor Final</TableHead>
-                  <TableHead>Unidade</TableHead>
-                  <TableHead>Ranking</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {licitantes.map((licitante, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{licitante.empresa}</TableCell>
-                    <TableCell>{licitante.marca}</TableCell>
-                    <TableCell>{licitante.modelo}</TableCell>
-                    <TableCell>{formatCurrency(licitante.valorEntrada)}</TableCell>
-                    <TableCell>{formatCurrency(licitante.valorFinal)}</TableCell>
-                    <TableCell>
-                      <Badge className={getUnidadeColor(licitante.unidade)}>
-                        {licitante.unidade}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getRankingColor(licitante.ranking)}>
-                        {licitante.ranking}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-      </div>
-
-      {/* Dados Técnicos */}
-      <div className="border rounded-lg p-4 space-y-4">
-        <h3 className="text-lg font-semibold text-gray-800">Dados Técnicos</h3>
-        
-        <div>
-          <Label>Termômetro ({formData.termometro}°)</Label>
-          <div className="mt-2 space-y-2">
-            <div className="flex items-center gap-4">
-              <Slider
-                value={[formData.termometro]}
-                onValueChange={(value) => setFormData({...formData, termometro: value[0]})}
-                max={100}
-                min={0}
-                step={5}
-                className="flex-1"
-                disabled={isReadOnlyMode()}
-              />
-              <div 
-                className="w-6 h-6 rounded-full border-2 border-white shadow-lg"
-                style={{ backgroundColor: getTermometroColor(formData.termometro) }}
-              />
-            </div>
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>0°</span>
-              <span>25°</span>
-              <span>50°</span>
-              <span>75°</span>
-              <span>100°</span>
-            </div>
-            <p className="text-sm font-medium" style={{ color: getTermometroColor(formData.termometro) }}>
-              {getTermometroStage(formData.termometro)}
-            </p>
-          </div>
-        </div>
-
-        <div>
-          <Label htmlFor="resultadoOportunidade">Status da Licitação</Label>
-          <Select 
-            value={formData.resultadoOportunidade} 
-            onValueChange={(value) => setFormData({...formData, resultadoOportunidade: value})}
-            disabled={isReadOnlyMode()}
-          >
-            <SelectTrigger className="mt-2">
-              <SelectValue placeholder="Selecione" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="em_andamento">Em Andamento</SelectItem>
-              <SelectItem value="ganho">Ganho</SelectItem>
-              <SelectItem value="perda">Perda</SelectItem>
-              <SelectItem value="recursos">Recursos</SelectItem>
-              <SelectItem value="fracassado">Fracassado</SelectItem>
-              <SelectItem value="suspenso">Suspenso</SelectItem>
-              <SelectItem value="cancelado">Cancelado</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {formData.resultadoOportunidade === 'ganho' && (
-          <div>
-            <Label htmlFor="motivoGanho">Motivo do Ganho</Label>
-            <Textarea
-              id="motivoGanho"
-              value={formData.motivoGanho}
-              onChange={(e) => setFormData({...formData, motivoGanho: e.target.value})}
-              placeholder="Descreva o motivo do ganho"
-              rows={3}
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        )}
-
-        {formData.resultadoOportunidade === 'perda' && (
-          <div>
-            <Label htmlFor="motivoPerda">Motivo da Perda</Label>
-            <Textarea
-              id="motivoPerda"
-              value={formData.motivoPerda}
-              onChange={(e) => setFormData({...formData, motivoPerda: e.target.value})}
-              placeholder="Descreva o motivo da perda"
-              rows={3}
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        )}
-
-        {formData.resultadoOportunidade === 'fracassado' && (
-          <div>
-            <Label htmlFor="motivosFracasso">Motivos do Fracasso do Pregão</Label>
-            <Textarea
-              id="motivosFracasso"
-              value={formData.motivosFracasso}
-              onChange={(e) => setFormData({...formData, motivosFracasso: e.target.value})}
-              placeholder="Detalhe os motivos do fracasso"
-              rows={3}
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        )}
-
-        <div>
-          <Label htmlFor="observacaoGeral">Observação (Geral Licitação)</Label>
-          <Textarea
-            id="observacaoGeral"
-            value={formData.observacaoGeral}
-            onChange={(e) => setFormData({...formData, observacaoGeral: e.target.value})}
-            placeholder="Observações gerais sobre a licitação"
-            rows={4}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="propostaNegociacao" 
-            checked={formData.propostaNegociacao}
-            onCheckedChange={(checked) => setFormData({...formData, propostaNegociacao: checked as boolean})}
-            disabled={isReadOnlyMode()}
-          />
-          <Label htmlFor="propostaNegociacao">Proposta em Negociação</Label>
-        </div>
-      </div>
-
-      {/* Botão de Solicitação de Aprovação - apenas na fase TRIAGEM */}
-      {activeMasterTab === 'triagem' && !isParticipacaoApproved && (
-        <div className="flex justify-center pt-4">
-          <Button 
-            type="button"
-            onClick={handleRequestApproval}
-            disabled={!isTriagemComplete()}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            <CheckCircle className="h-4 w-4 mr-2" />
-            Solicitar Aprovação para Participação
+        <div className="flex gap-3">
+          <Button variant="outline" className="gap-2">
+            <FileText className="h-4 w-4" />
+            Relatório
+          </Button>
+          <Button onClick={handleSubmit} className="gap-2">
+            <Save className="h-4 w-4" />
+            Salvar
           </Button>
         </div>
-      )}
-    </div>
-  );
-
-  const renderAnaliseTecnica = () => (
-    <div className="space-y-6">
-      <div>
-        <Label htmlFor="analiseTecnica">Análise Técnica-Científica</Label>
-        <Textarea
-          id="analiseTecnica"
-          value={formData.analiseTecnica}
-          onChange={(e) => setFormData({...formData, analiseTecnica: e.target.value})}
-          placeholder="Análise técnica detalhada"
-          rows={6}
-          disabled={isReadOnlyMode()}
-        />
-        {!formData.analiseTecnica && (
-          <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
-            <AlertTriangle className="h-4 w-4" />
-            Campo obrigatório - Alarme diário até preenchimento
-          </p>
-        )}
       </div>
 
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Análise da Concorrência</h3>
-          {!isReadOnlyMode() && (
-            <Button onClick={() => setShowConcorrenteModal(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Adicionar Concorrente
-            </Button>
-          )}
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Concorrentes Cadastrados</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Concorrente</TableHead>
-                  <TableHead>Produto/Serviço</TableHead>
-                  <TableHead>Preço</TableHead>
-                  <TableHead>Comparação</TableHead>
-                  {!isReadOnlyMode() && <TableHead>Ações</TableHead>}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {concorrentes.map((concorrente) => (
-                  <TableRow key={concorrente.id}>
-                    <TableCell className="font-medium">{concorrente.nome}</TableCell>
-                    <TableCell>{concorrente.produto}</TableCell>
-                    <TableCell>{formatCurrency(concorrente.preco)}</TableCell>
-                    <TableCell>
-                      <Badge className={concorrente.preco > formData.valorNegocio ? "bg-red-500" : "bg-green-500"}>
-                        {concorrente.preco > formData.valorNegocio ? "Acima do nosso valor" : "Abaixo do nosso valor"}
-                      </Badge>
-                    </TableCell>
-                    {!isReadOnlyMode() && (
-                      <TableCell>
-                        <Button size="sm" variant="outline">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))}
-                {concorrentes.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={isReadOnlyMode() ? 4 : 5} className="text-center text-gray-500 py-4">
-                      <div className="flex items-center justify-center gap-2">
-                        <AlertTriangle className="h-4 w-4 text-red-500" />
-                        Nenhum concorrente cadastrado - Alarme diário até preenchimento
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-
-  const renderHistorico = () => (
-    <div className="space-y-6">
-      <ChatInterno oportunidadeId={oportunidade?.id || formData.cpfCnpj || 'nova'} />
-    </div>
-  );
-
-  const renderPedidos = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Pedidos da Oportunidade</h3>
-        {canShowPedidos() && (
-          <Button 
-            type="button"
-            className="bg-biodina-gold hover:bg-biodina-gold/90"
-            onClick={() => setShowPedidoForm(true)}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Adicionar novos pedidos
-          </Button>
-        )}
-      </div>
-
-      {!canShowPedidos() && (
-        <div className="text-center text-gray-500 py-8">
-          <Lock className="h-8 w-8 mx-auto mb-2" />
-          <p>Pedidos disponíveis apenas para oportunidades ganhas</p>
-        </div>
-      )}
-
-      {canShowPedidos() && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Resumo de Pedidos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Código</TableHead>
-                  <TableHead>Dt. Gerado</TableHead>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead>Situação</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pedidos.map((pedido) => (
-                  <TableRow key={pedido.id}>
-                    <TableCell className="font-medium">{pedido.codigo}</TableCell>
-                    <TableCell>{pedido.dataGeracao}</TableCell>
-                    <TableCell>{pedido.cliente}</TableCell>
-                    <TableCell>
-                      <Badge className="bg-blue-500 text-white">
-                        {pedido.situacao}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{formatCurrency(pedido.valor)}</TableCell>
-                    <TableCell>
-                      <Button size="sm" variant="outline">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {pedidos.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center text-gray-500 py-4">
-                      Nenhum pedido cadastrado
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
-
-  const renderDocumentos = () => (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Documentos da Oportunidade</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {!isReadOnlyMode() && (
-              <div className="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400">
-                <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                <span className="text-sm text-gray-500">Clique para fazer upload</span>
-              </div>
-            )}
-            
-            <div className="flex flex-col items-center p-4 border rounded-lg">
-              <Calendar className="h-8 w-8 text-blue-500 mb-2" />
-              <span className="text-sm font-medium">Edital.pdf</span>
-              <span className="text-xs text-gray-500">27/05/2025</span>
-              <Button size="sm" variant="outline" className="mt-2">
-                <Download className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            <div className="flex flex-col items-center p-4 border rounded-lg">
-              <Calendar className="h-8 w-8 text-green-500 mb-2" />
-              <span className="text-sm font-medium">ATA.pdf</span>
-              <span className="text-xs text-gray-500">28/05/2025</span>
-              <Button size="sm" variant="outline" className="mt-2">
-                <Download className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            <div className="flex flex-col items-center p-4 border rounded-lg">
-              <Calendar className="h-8 w-8 text-orange-500 mb-2" />
-              <span className="text-sm font-medium">Recurso.pdf</span>
-              <span className="text-xs text-gray-500">26/05/2025</span>
-              <Button size="sm" variant="outline" className="mt-2">
-                <Download className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
-  const renderTriagemContent = () => (
-    <div className="space-y-6">
-      <Tabs value={activeToolTab} onValueChange={setActiveToolTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="dados-gerais" className="w-full">
+        <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
+          <TabsTrigger value="cliente">Cliente</TabsTrigger>
+          <TabsTrigger value="produto">Produto</TabsTrigger>
+          <TabsTrigger value="comercial">Comercial</TabsTrigger>
+          <TabsTrigger value="licitacao">Licitação</TabsTrigger>
           <TabsTrigger value="analise-tecnica">Análise Técnica</TabsTrigger>
-          <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
-          <TabsTrigger value="documentos">Documentos</TabsTrigger>
+          <TabsTrigger value="gestao">Gestão</TabsTrigger>
+          <TabsTrigger value="historico">Histórico</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="dados-gerais" className="mt-6">
-          {renderDadosGerais()}
-        </TabsContent>
-
-        <TabsContent value="analise-tecnica" className="mt-6">
-          {renderAnaliseTecnica()}
-        </TabsContent>
-
-        <TabsContent value="historico" className="mt-6">
-          {renderHistorico()}
-        </TabsContent>
-
-        <TabsContent value="documentos" className="mt-6">
-          {renderDocumentos()}
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-
-  const renderParticipacaoContent = () => (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-green-600" />
-            Fase de Participação - Aprovada
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-              <h3 className="font-semibold text-green-800 mb-2">Triagem Aprovada</h3>
-              <p className="text-green-700">
-                A fase de triagem foi concluída e aprovada com sucesso. Agora você pode trabalhar na participação da oportunidade.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="statusParticipacao">Status da Participação</Label>
-                <Select value={formData.resultadoOportunidade} onValueChange={(value) => setFormData({...formData, resultadoOportunidade: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                    <SelectItem value="ganho">Ganho</SelectItem>
-                    <SelectItem value="perda">Perda</SelectItem>
-                    <SelectItem value="recursos">Recursos</SelectItem>
-                    <SelectItem value="fracassado">Fracassado</SelectItem>
-                    <SelectItem value="suspenso">Suspenso</SelectItem>
-                    <SelectItem value="cancelado">Cancelado</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div>
-                <Label>Termômetro de Chances ({formData.termometro}°)</Label>
-                <div className="mt-2 space-y-2">
-                  <Slider
-                    value={[formData.termometro]}
-                    onValueChange={(value) => setFormData({...formData, termometro: value[0]})}
-                    max={100}
-                    min={0}
-                    step={5}
-                    className="flex-1"
+        <TabsContent value="dados-gerais" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building className="h-5 w-5" />
+                Informações Básicas
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="numeroProcesso">Número do Processo</Label>
+                  <Input
+                    id="numeroProcesso"
+                    value={formData.numeroProcesso}
+                    onChange={(e) => handleInputChange('numeroProcesso', e.target.value)}
+                    placeholder="Ex: 2024/001"
                   />
-                  <div className="flex justify-between text-xs text-gray-500">
-                    <span>0°</span>
-                    <span>50°</span>
-                    <span>100°</span>
-                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="orgaoComprador">Órgão Comprador</Label>
+                  <Input
+                    id="orgaoComprador"
+                    value={formData.orgaoComprador}
+                    onChange={(e) => handleInputChange('orgaoComprador', e.target.value)}
+                    placeholder="Nome do órgão"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="modalidadeLicitacao">Modalidade</Label>
+                  <Select value={formData.modalidadeLicitacao} onValueChange={(value) => handleInputChange('modalidadeLicitacao', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione a modalidade" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pregao">Pregão</SelectItem>
+                      <SelectItem value="concorrencia">Concorrência</SelectItem>
+                      <SelectItem value="tomada-precos">Tomada de Preços</SelectItem>
+                      <SelectItem value="convite">Convite</SelectItem>
+                      <SelectItem value="concurso">Concurso</SelectItem>
+                      <SelectItem value="leilao">Leilão</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
-            </div>
 
-            <div className="space-y-4">
               <div>
-                <Label htmlFor="estrategiaParticipacao">Estratégia de Participação</Label>
+                <Label htmlFor="objetoLicitacao">Objeto da Licitação</Label>
                 <Textarea
-                  id="estrategiaParticipacao"
-                  placeholder="Descreva a estratégia para participação nesta oportunidade..."
-                  rows={4}
+                  id="objetoLicitacao"
+                  value={formData.objetoLicitacao}
+                  onChange={(e) => handleInputChange('objetoLicitacao', e.target.value)}
+                  placeholder="Descreva o objeto da licitação..."
+                  rows={3}
                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label>Data de Abertura</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !formData.dataAbertura && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.dataAbertura ? format(formData.dataAbertura, "dd/MM/yyyy") : "Selecionar data"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={formData.dataAbertura}
+                        onSelect={(date) => handleDateChange('dataAbertura', date)}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div>
+                  <Label>Data Limite de Entrega</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !formData.dataLimiteEntrega && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.dataLimiteEntrega ? format(formData.dataLimiteEntrega, "dd/MM/yyyy") : "Selecionar data"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={formData.dataLimiteEntrega}
+                        onSelect={(date) => handleDateChange('dataLimiteEntrega', date)}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div>
+                  <Label>Data de Publicação</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !formData.dataPublicacao && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.dataPublicacao ? format(formData.dataPublicacao, "dd/MM/yyyy") : "Selecionar data"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={formData.dataPublicacao}
+                        onSelect={(date) => handleDateChange('dataPublicacao', date)}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <Label htmlFor="valorEstimado">Valor Estimado</Label>
+                  <Input
+                    id="valorEstimado"
+                    type="number"
+                    value={formData.valorEstimado}
+                    onChange={(e) => handleInputChange('valorEstimado', Number(e.target.value))}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="situacaoLicitacao">Situação</Label>
+                  <Select value={formData.situacaoLicitacao} onValueChange={(value) => handleInputChange('situacaoLicitacao', value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione a situação" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="aguardando_inicio">Aguardando Início</SelectItem>
+                      <SelectItem value="em_andamento">Em Andamento</SelectItem>
+                      <SelectItem value="concluida">Concluída</SelectItem>
+                      <SelectItem value="cancelada">Cancelada</SelectItem>
+                      <SelectItem value="suspensa">Suspensa</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="classificacao">Classificação</Label>
+                  <Input
+                    id="classificacao"
+                    type="number"
+                    value={formData.classificacao}
+                    onChange={(e) => handleInputChange('classificacao', Number(e.target.value))}
+                    placeholder="1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="participantes">Participantes</Label>
+                  <Input
+                    id="participantes"
+                    type="number"
+                    value={formData.participantes}
+                    onChange={(e) => handleInputChange('participantes', Number(e.target.value))}
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="linkEdital">Link do Edital</Label>
+                  <Input
+                    id="linkEdital"
+                    value={formData.linkEdital}
+                    onChange={(e) => handleInputChange('linkEdital', e.target.value)}
+                    placeholder="https://..."
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="numeroEdital">Número do Edital</Label>
+                  <Input
+                    id="numeroEdital"
+                    value={formData.numeroEdital}
+                    onChange={(e) => handleInputChange('numeroEdital', e.target.value)}
+                    placeholder="Ex: 001/2024"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="numeroUasg">Número UASG</Label>
+                  <Input
+                    id="numeroUasg"
+                    value={formData.numeroUasg}
+                    onChange={(e) => handleInputChange('numeroUasg', e.target.value)}
+                    placeholder="123456"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="srp"
+                    checked={formData.srp}
+                    onCheckedChange={(checked) => handleInputChange('srp', checked)}
+                  />
+                  <Label htmlFor="srp">Sistema de Registro de Preços (SRP)</Label>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="analiseTecnica">Análise Técnica</Label>
+                <Textarea
+                  id="analiseTecnica"
+                  value={formData.analiseTecnica}
+                  readOnly={true}
+                  placeholder="Este campo reflete automaticamente o conteúdo da Análise Técnica-Científica..."
+                  rows={4}
+                  className="bg-gray-50 text-gray-700"
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  Campo somente leitura - Para editar, use a aba "Análise Técnica"
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="cliente" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Informações do Cliente
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="empresa">Empresa</Label>
+                  <Input
+                    id="empresa"
+                    value={formData.empresa}
+                    onChange={(e) => handleInputChange('empresa', e.target.value)}
+                    placeholder="Nome da empresa"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="cnpj">CNPJ</Label>
+                  <Input
+                    id="cnpj"
+                    value={formData.cnpj}
+                    onChange={(e) => handleInputChange('cnpj', e.target.value)}
+                    placeholder="00.000.000/0000-00"
+                  />
+                </div>
               </div>
               
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="telefone">Telefone</Label>
+                  <Input
+                    id="telefone"
+                    value={formData.telefone}
+                    onChange={(e) => handleInputChange('telefone', e.target.value)}
+                    placeholder="(00) 00000-0000"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="email">E-mail</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    placeholder="email@exemplo.com"
+                  />
+                </div>
+              </div>
+
               <div>
-                <Label htmlFor="planejamentoComercial">Planejamento Comercial</Label>
+                <Label htmlFor="enderecoCompleto">Endereço Completo</Label>
                 <Textarea
-                  id="planejamentoComercial"
-                  placeholder="Detalhe o planejamento comercial para esta oportunidade..."
+                  id="enderecoCompleto"
+                  value={formData.enderecoCompleto}
+                  onChange={(e) => handleInputChange('enderecoCompleto', e.target.value)}
+                  placeholder="Rua, número, bairro, cidade, estado, CEP"
+                  rows={3}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="contato">Pessoa de Contato</Label>
+                <Input
+                  id="contato"
+                  value={formData.contato}
+                  onChange={(e) => handleInputChange('contato', e.target.value)}
+                  placeholder="Nome do responsável"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="produto" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="h-5 w-5" />
+                Detalhes do Produto/Serviço
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="produto">Produto/Serviço</Label>
+                <Input
+                  id="produto"
+                  value={formData.produto}
+                  onChange={(e) => handleInputChange('produto', e.target.value)}
+                  placeholder="Descrição do produto ou serviço"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="quantidade">Quantidade</Label>
+                  <Input
+                    id="quantidade"
+                    type="number"
+                    value={formData.quantidade}
+                    onChange={(e) => handleInputChange('quantidade', Number(e.target.value))}
+                    placeholder="1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="valor">Valor Unitário</Label>
+                  <Input
+                    id="valor"
+                    type="number"
+                    value={formData.valor}
+                    onChange={(e) => handleInputChange('valor', Number(e.target.value))}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="valorTotal">Valor Total</Label>
+                  <Input
+                    id="valorTotal"
+                    type="number"
+                    value={formData.valorTotal}
+                    onChange={(e) => handleInputChange('valorTotal', Number(e.target.value))}
+                    placeholder="0.00"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="prazoEntrega">Prazo de Entrega</Label>
+                  <Input
+                    id="prazoEntrega"
+                    value={formData.prazoEntrega}
+                    onChange={(e) => handleInputChange('prazoEntrega', e.target.value)}
+                    placeholder="Ex: 30 dias"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="garantia">Garantia</Label>
+                  <Input
+                    id="garantia"
+                    value={formData.garantia}
+                    onChange={(e) => handleInputChange('garantia', e.target.value)}
+                    placeholder="Ex: 12 meses"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="comercial" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5" />
+                Informações Comerciais
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="formaPagamento">Forma de Pagamento</Label>
+                  <Input
+                    id="formaPagamento"
+                    value={formData.formaPagamento}
+                    onChange={(e) => handleInputChange('formaPagamento', e.target.value)}
+                    placeholder="Ex: À vista, parcelado"
+                  />
+                </div>
+                <div>
+                  <Label>Validade da Proposta</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !formData.validadeProposta && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.validadeProposta ? format(formData.validadeProposta, "dd/MM/yyyy") : "Selecionar data"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={formData.validadeProposta}
+                        onSelect={(date) => handleDateChange('validadeProposta', date)}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+
+              <div>
+                <Label>Data de Vencimento</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !formData.dataVencimento && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.dataVencimento ? format(formData.dataVencimento, "dd/MM/yyyy") : "Selecionar data"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formData.dataVencimento}
+                      onSelect={(date) => handleDateChange('dataVencimento', date)}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div>
+                <Label htmlFor="observacoes">Observações Comerciais</Label>
+                <Textarea
+                  id="observacoes"
+                  value={formData.observacoes}
+                  onChange={(e) => handleInputChange('observacoes', e.target.value)}
+                  placeholder="Observações adicionais sobre a proposta comercial..."
                   rows={4}
                 />
               </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Abas de ferramentas também na fase PARTICIPAÇÃO */}
-      <Tabs value={activeToolTab} onValueChange={setActiveToolTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
-          <TabsTrigger value="analise-tecnica">Análise Técnica</TabsTrigger>
-          <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
-          <TabsTrigger value="pedidos" disabled={!canShowPedidos()}>Pedidos</TabsTrigger>
-          <TabsTrigger value="documentos">Documentos</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="dados-gerais" className="mt-6">
-          {renderDadosGerais()}
+            </CardContent>
+          </Card>
         </TabsContent>
 
-        <TabsContent value="analise-tecnica" className="mt-6">
-          {renderAnaliseTecnica()}
-        </TabsContent>
-
-        <TabsContent value="historico" className="mt-6">
-          {renderHistorico()}
-        </TabsContent>
-
-        <TabsContent value="pedidos" className="mt-6">
-          {renderPedidos()}
-        </TabsContent>
-
-        <TabsContent value="documentos" className="mt-6">
-          {renderDocumentos()}
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-
-  return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-7xl max-h-[95vh] overflow-y-auto">
-        <CardHeader className="flex flex-row items-center justify-between border-b">
-          <CardTitle className="text-2xl">
-            {oportunidade ? 'Editar Oportunidade' : 'Nova Oportunidade Comercial'}
-          </CardTitle>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="h-5 w-5" />
-          </Button>
-        </CardHeader>
-
-        <CardContent className="p-6">
-          <form onSubmit={handleSubmit}>
-            {/* ABAS MASTERS - Nível Superior */}
-            <Tabs value={activeMasterTab} onValueChange={handleMasterTabChange} className="w-full">
-              <div className="flex items-center justify-center mb-6">
-                <TabsList className="grid w-auto grid-cols-2 h-14 bg-gray-100">
-                  <TabsTrigger 
-                    value="triagem" 
-                    className={`px-8 py-4 text-base font-bold ${
-                      isParticipacaoApproved ? 'bg-gray-200 text-gray-500' : 'data-[state=active]:bg-blue-600 data-[state=active]:text-white'
-                    }`}
-                    disabled={isParticipacaoApproved}
-                  >
-                    {isParticipacaoApproved && <Lock className="h-4 w-4 mr-2" />}
-                    TRIAGEM
-                  </TabsTrigger>
-                  
-                  {/* Indicador de progressão */}
-                  {isParticipacaoApproved && (
-                    <div className="flex items-center px-2">
-                      <ChevronRight className="h-6 w-6 text-green-600" />
+        <TabsContent value="licitacao" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileCheck className="h-5 w-5" />
+                Concorrentes e Licitantes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  <div className="text-center p-4 bg-blue-50 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600">{licitantes.length}</div>
+                    <div className="text-sm text-blue-600">Total de Licitantes</div>
+                  </div>
+                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">
+                      {licitantes.filter(l => l.ranking === 1).length}
                     </div>
-                  )}
-                  
-                  <TabsTrigger 
-                    value="participacao" 
-                    className="px-8 py-4 text-base font-bold data-[state=active]:bg-green-600 data-[state=active]:text-white"
-                    disabled={!isParticipacaoApproved}
-                  >
-                    {isParticipacaoApproved && <CheckCircle className="h-4 w-4 mr-2 text-green-600" />}
-                    PARTICIPAÇÃO
-                  </TabsTrigger>
-                </TabsList>
+                    <div className="text-sm text-green-600">1º Colocado</div>
+                  </div>
+                  <div className="text-center p-4 bg-orange-50 rounded-lg">
+                    <div className="text-2xl font-bold text-orange-600">
+                      {formatCurrency(Math.min(...licitantes.map(l => l.valorFinal)))}
+                    </div>
+                    <div className="text-sm text-orange-600">Menor Valor</div>
+                  </div>
+                  <div className="text-center p-4 bg-purple-50 rounded-lg">
+                    <div className="text-2xl font-bold text-purple-600">
+                      {formatCurrency(Math.max(...licitantes.map(l => l.valorFinal)))}
+                    </div>
+                    <div className="text-sm text-purple-600">Maior Valor</div>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full border-collapse border border-gray-300">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="border border-gray-300 p-3 text-left">Ranking</th>
+                        <th className="border border-gray-300 p-3 text-left">Empresa</th>
+                        <th className="border border-gray-300 p-3 text-left">Marca/Modelo</th>
+                        <th className="border border-gray-300 p-3 text-left">Valor Entrada</th>
+                        <th className="border border-gray-300 p-3 text-left">Valor Final</th>
+                        <th className="border border-gray-300 p-3 text-left">Unidade</th>
+                        <th className="border border-gray-300 p-3 text-left">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {licitantes.map((licitante) => (
+                        <tr key={licitante.id} className="hover:bg-gray-50">
+                          <td className="border border-gray-300 p-3">
+                            <div className="flex items-center gap-2">
+                              <Badge className={`${getRankingColor(licitante.ranking)} text-white`}>
+                                {licitante.ranking}º
+                              </Badge>
+                            </div>
+                          </td>
+                          <td className="border border-gray-300 p-3 font-medium">
+                            {licitante.empresa}
+                          </td>
+                          <td className="border border-gray-300 p-3">
+                            {licitante.marca} {licitante.modelo}
+                          </td>
+                          <td className="border border-gray-300 p-3">
+                            {formatCurrency(licitante.valorEntrada)}
+                          </td>
+                          <td className="border border-gray-300 p-3 font-semibold">
+                            {formatCurrency(licitante.valorFinal)}
+                          </td>
+                          <td className="border border-gray-300 p-3">
+                            <Badge className={`${getUnidadeColor(licitante.unidade)} text-white`}>
+                              {licitante.unidade}
+                            </Badge>
+                          </td>
+                          <td className="border border-gray-300 p-3">
+                            {licitante.ranking === 1 ? (
+                              <Badge className="bg-green-500 text-white">Vencedor</Badge>
+                            ) : (
+                              <Badge variant="outline">Participante</Badge>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="analise-tecnica" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5" />
+                Análise Técnica-Científica
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="analiseTecnicaCientifica">Análise Técnica-Científica</Label>
+                <Textarea
+                  id="analiseTecnicaCientifica"
+                  value={formData.analiseTecnica}
+                  onChange={(e) => handleInputChange('analiseTecnica', e.target.value)}
+                  placeholder="Descreva a análise técnica-científica detalhada do produto/serviço..."
+                  rows={6}
+                />
               </div>
 
-              {/* Conteúdo das abas masters */}
-              <TabsContent value="triagem" className="mt-6">
-                {renderTriagemContent()}
-              </TabsContent>
+              <div>
+                <Label htmlFor="parecer">Parecer Técnico</Label>
+                <Textarea
+                  id="parecer"
+                  value={formData.parecer}
+                  onChange={(e) => handleInputChange('parecer', e.target.value)}
+                  placeholder="Parecer técnico sobre a viabilidade e adequação..."
+                  rows={4}
+                />
+              </div>
 
-              <TabsContent value="participacao" className="mt-6">
-                {renderParticipacaoContent()}
-              </TabsContent>
-            </Tabs>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="aprovado"
+                    checked={formData.aprovado}
+                    onCheckedChange={(checked) => handleInputChange('aprovado', checked)}
+                  />
+                  <Label htmlFor="aprovado">Aprovado Tecnicamente</Label>
+                </div>
+                <div>
+                  <Label htmlFor="responsavel">Responsável Técnico</Label>
+                  <Input
+                    id="responsavel"
+                    value={formData.responsavel}
+                    onChange={(e) => handleInputChange('responsavel', e.target.value)}
+                    placeholder="Nome do responsável"
+                  />
+                </div>
+              </div>
 
-            <div className="flex justify-end gap-2 pt-6 border-t mt-6">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Cancelar
-              </Button>
-              <Button type="submit" className="bg-biodina-gold hover:bg-biodina-gold/90">
-                <Save className="h-4 w-4 mr-2" />
-                Salvar Oportunidade
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+              {!formData.aprovado && (
+                <div>
+                  <Label htmlFor="motivo">Motivo da Reprovação</Label>
+                  <Textarea
+                    id="motivo"
+                    value={formData.motivo}
+                    onChange={(e) => handleInputChange('motivo', e.target.value)}
+                    placeholder="Descreva o motivo da reprovação técnica..."
+                    rows={3}
+                  />
+                </div>
+              )}
 
-      {/* Modais */}
-      {showLicitacaoModal && (
-        <LicitacaoValidationModal 
-          chave={formData.cpfCnpj}
-          onClose={() => setShowLicitacaoModal(false)} 
-        />
-      )}
+              <div>
+                <Label>Data da Aprovação</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !formData.dataAprovacao && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.dataAprovacao ? format(formData.dataAprovacao, "dd/MM/yyyy") : "Selecionar data"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formData.dataAprovacao}
+                      onSelect={(date) => handleDateChange('dataAprovacao', date)}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {showConcorrenteModal && (
-        <ConcorrenteModal
-          onClose={() => setShowConcorrenteModal(false)}
-          onSave={(concorrente) => {
-            setConcorrentes([...concorrentes, { ...concorrente, id: Date.now() }]);
-          }}
-          valorReferencia={formData.valorNegocio}
-        />
-      )}
+        <TabsContent value="gestao" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5" />
+                  Classificação e Categorização
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="tipo">Tipo</Label>
+                    <Select value={formData.tipo} onValueChange={(value) => handleInputChange('tipo', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o tipo" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="produto">Produto</SelectItem>
+                        <SelectItem value="servico">Serviço</SelectItem>
+                        <SelectItem value="obra">Obra</SelectItem>
+                        <SelectItem value="consultoria">Consultoria</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="natureza">Natureza</Label>
+                    <Select value={formData.natureza} onValueChange={(value) => handleInputChange('natureza', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a natureza" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="publica">Pública</SelectItem>
+                        <SelectItem value="privada">Privada</SelectItem>
+                        <SelectItem value="mista">Mista</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-      {showPedidoForm && (
-        <PedidoForm
-          onClose={() => setShowPedidoForm(false)}
-          onSave={(pedidoData) => {
-            const novoPedido = {
-              id: Date.now(),
-              codigo: `PED-${String(pedidos.length + 1).padStart(3, '0')}`,
-              cliente: formData.nome,
-              dataGeracao: new Date().toISOString().split('T')[0],
-              situacao: 'Em Aberto',
-              valor: pedidoData.produtos?.reduce((sum: number, prod: any) => sum + (prod.valorTotal || 0), 0) || 0
-            };
-            setPedidos([...pedidos, novoPedido]);
-            setShowPedidoForm(false);
-          }}
-          oportunidade={formData}
-        />
-      )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="regime">Regime</Label>
+                    <Select value={formData.regime} onValueChange={(value) => handleInputChange('regime', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o regime" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="diferenciado">Diferenciado</SelectItem>
+                        <SelectItem value="comum">Comum</SelectItem>
+                        <SelectItem value="integral">Integral</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="criterio">Critério de Julgamento</Label>
+                    <Select value={formData.criterio} onValueChange={(value) => handleInputChange('criterio', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o critério" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="menor_preco">Menor Preço</SelectItem>
+                        <SelectItem value="melhor_tecnica">Melhor Técnica</SelectItem>
+                        <SelectItem value="tecnica_preco">Técnica e Preço</SelectItem>
+                        <SelectItem value="maior_lance">Maior Lance</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-      <ApprovalModal
-        isOpen={showApprovalModal}
-        onClose={() => setShowApprovalModal(false)}
-        onApprove={handleApprovalSuccess}
-        oportunidadeId={oportunidade?.id || formData.cpfCnpj || 'nova'}
-      />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="localizacao">Localização</Label>
+                    <Input
+                      id="localizacao"
+                      value={formData.localizacao}
+                      onChange={(e) => handleInputChange('localizacao', e.target.value)}
+                      placeholder="Estado/Cidade"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="setor">Setor</Label>
+                    <Select value={formData.setor} onValueChange={(value) => handleInputChange('setor', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o setor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="saude">Saúde</SelectItem>
+                        <SelectItem value="educacao">Educação</SelectItem>
+                        <SelectItem value="seguranca">Segurança</SelectItem>
+                        <SelectItem value="infraestrutura">Infraestrutura</SelectItem>
+                        <SelectItem value="tecnologia">Tecnologia</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
 
-      <ApprovalModal
-        isOpen={showEmprestimoApprovalModal}
-        onClose={() => setShowEmprestimoApprovalModal(false)}
-        onApprove={handleEmprestimoApprovalSuccess}
-        oportunidadeId={oportunidade?.id || formData.cpfCnpj || 'emprestimo'}
-      />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="categoria">Categoria</Label>
+                    <Input
+                      id="categoria"
+                      value={formData.categoria}
+                      onChange={(e) => handleInputChange('categoria', e.target.value)}
+                      placeholder="Categoria principal"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="subcategoria">Subcategoria</Label>
+                    <Input
+                      id="subcategoria"
+                      value={formData.subcategoria}
+                      onChange={(e) => handleInputChange('subcategoria', e.target.value)}
+                      placeholder="Subcategoria específica"
+                    />
+                  </div>
+                </div>
 
-      <CustomAlertModal
-        isOpen={showEmprestimoAlert}
-        title="Operação EMPRÉSTIMO Aprovada"
-        message="A natureza da operação foi alterada para EMPRÉSTIMO com sucesso. Esta operação requer aprovação especial e foi autorizada pelo gestor."
-        onConfirm={() => setShowEmprestimoAlert(false)}
-      />
+                <div>
+                  <Label>Tags</Label>
+                  <div className="flex gap-2 mb-2">
+                    <Input
+                      value={novaTag}
+                      onChange={(e) => setNovaTag(e.target.value)}
+                      placeholder="Digite uma tag"
+                      onKeyPress={(e) => e.key === 'Enter' && adicionarTag()}
+                    />
+                    <Button onClick={adicionarTag} size="sm">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {formData.tags.map((tag, index) => (
+                      <Badge key={index} variant="secondary" className="gap-1">
+                        {tag}
+                        <button
+                          onClick={() => removerTag(tag)}
+                          className="ml-1 hover:text-red-500"
+                        >
+                          ×
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Status e Acompanhamento
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="prioridade">Prioridade</Label>
+                    <Select value={formData.prioridade} onValueChange={(value) => handleInputChange('prioridade', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a prioridade" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="baixa">Baixa</SelectItem>
+                        <SelectItem value="media">Média</SelectItem>
+                        <SelectItem value="alta">Alta</SelectItem>
+                        <SelectItem value="critica">Crítica</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="estagio">Estágio</Label>
+                    <Select value={formData.estagio} onValueChange={(value) => handleInputChange('estagio', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o estágio" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="prospecao">Prospecção</SelectItem>
+                        <SelectItem value="qualificacao">Qualificação</SelectItem>
+                        <SelectItem value="proposta">Proposta</SelectItem>
+                        <SelectItem value="negociacao">Negociação</SelectItem>
+                        <SelectItem value="fechamento">Fechamento</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="probabilidade">Probabilidade de Sucesso (%)</Label>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={formData.probabilidade}
+                      onChange={(e) => handleInputChange('probabilidade', Number(e.target.value))}
+                      className="flex-1"
+                    />
+                    <span className="w-12 text-center font-medium">{formData.probabilidade}%</span>
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="temperatura">Termômetro de Negociação</Label>
+                  <div className="flex items-center gap-4">
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={formData.temperatura}
+                      onChange={(e) => handleInputChange('temperatura', Number(e.target.value))}
+                      className="flex-1"
+                    />
+                    <div className="flex items-center gap-2">
+                      <div className={`w-4 h-4 rounded-full ${calcularTermometro(formData.temperatura).color}`}></div>
+                      <span className="capitalize font-medium">{calcularTermometro(formData.temperatura).stage}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="proximaAcao">Próxima Ação</Label>
+                  <Input
+                    id="proximaAcao"
+                    value={formData.proximaAcao}
+                    onChange={(e) => handleInputChange('proximaAcao', e.target.value)}
+                    placeholder="Descreva a próxima ação necessária"
+                  />
+                </div>
+
+                <div>
+                  <Label>Data da Próxima Ação</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !formData.dataProximaAcao && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {formData.dataProximaAcao ? format(formData.dataProximaAcao, "dd/MM/yyyy") : "Selecionar data"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={formData.dataProximaAcao}
+                        onSelect={(date) => handleDateChange('dataProximaAcao', date)}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="historico" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Adicionar ao Histórico
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label htmlFor="novaAcao">Ação Realizada</Label>
+                  <Input
+                    id="novaAcao"
+                    value={novoHistorico.acao}
+                    onChange={(e) => setNovoHistorico(prev => ({ ...prev, acao: e.target.value }))}
+                    placeholder="Descreva a ação realizada"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="novaObservacao">Observação</Label>
+                  <Textarea
+                    id="novaObservacao"
+                    value={novoHistorico.observacao}
+                    onChange={(e) => setNovoHistorico(prev => ({ ...prev, observacao: e.target.value }))}
+                    placeholder="Observações adicionais (opcional)"
+                    rows={3}
+                  />
+                </div>
+                <Button onClick={adicionarHistorico} className="w-full">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar ao Histórico
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Histórico de Ações
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  {formData.historico.length === 0 ? (
+                    <p className="text-gray-500 text-center py-8">Nenhuma ação registrada ainda</p>
+                  ) : (
+                    formData.historico.map((item, index) => (
+                      <div key={index} className="border-l-4 border-blue-500 pl-4 pb-4">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-medium text-gray-900">{item.acao}</h4>
+                          <span className="text-sm text-gray-500">
+                            {format(item.data, "dd/MM/yyyy HH:mm")}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">Por: {item.usuario}</p>
+                        {item.observacao && (
+                          <p className="text-sm text-gray-700 mt-2 bg-gray-50 p-2 rounded">
+                            {item.observacao}
+                          </p>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Anexos
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500 mb-2">Arraste arquivos aqui ou clique para fazer upload</p>
+                  <Button variant="outline">
+                    Selecionar Arquivos
+                  </Button>
+                </div>
+                
+                {formData.anexos.length > 0 && (
+                  <div className="space-y-2">
+                    <h4 className="font-medium">Arquivos Anexados:</h4>
+                    {formData.anexos.map((anexo, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <FileText className="h-5 w-5 text-gray-500" />
+                          <div>
+                            <p className="font-medium">{anexo.nome}</p>
+                            <p className="text-sm text-gray-500">
+                              {anexo.tipo} • {anexo.tamanho} • {format(anexo.dataUpload, "dd/MM/yyyy")}
+                            </p>
+                          </div>
+                        </div>
+                        <Button variant="ghost" size="sm">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
