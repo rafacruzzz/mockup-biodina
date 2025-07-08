@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -155,6 +156,26 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   const handleEmprestimoApprovalSuccess = () => {
     setFormData({...formData, naturezaOperacao: 'emprestimo'});
     setShowEmprestimoAlert(true);
+  };
+
+  const handleInputChange = (field: string, value: any) => {
+    setFormData({...formData, [field]: value});
+  };
+
+  const handleSolicitarAnaliseTecnica = (checked: boolean) => {
+    setFormData({...formData, solicitarAnaliseTecnica: checked});
+    
+    if (checked) {
+      toast({
+        title: "Solicitação enviada",
+        description: "Os responsáveis pela análise técnica foram notificados para preencherem os campos necessários na aba 'Análise Técnica'.",
+      });
+    } else {
+      toast({
+        title: "Solicitação cancelada",
+        description: "A solicitação de análise técnica foi cancelada.",
+      });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -735,6 +756,24 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           <p className="text-sm text-gray-500 mt-1">
             Campo somente leitura - Para editar, use o campo "Análise Técnica-Científica" na aba "Análise Técnica"
           </p>
+          
+          {/* Checkbox para solicitação de análise técnica */}
+          <div className="flex items-start space-x-2 mt-3">
+            <Checkbox 
+              id="solicitarAnaliseTecnica"
+              checked={formData.solicitarAnaliseTecnica}
+              onCheckedChange={handleSolicitarAnaliseTecnica}
+              disabled={isReadOnlyMode()}
+            />
+            <div className="grid gap-1.5 leading-none">
+              <Label htmlFor="solicitarAnaliseTecnica" className="text-sm font-medium">
+                Solicitar análise técnica
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                Enviar notificação para responsáveis pela análise técnica preencherem os campos necessários
+              </p>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -1378,17 +1417,17 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                   {isParticipacaoApproved && <CheckCircle className="h-4 w-4 mr-2 text-green-600" />}
                   PARTICIPAÇÃO
                 </TabsTrigger>
-              </div>
+              </TabsList>
+            </div>
 
-              {/* Conteúdo das abas masters */}
-              <TabsContent value="triagem" className="mt-6">
-                {renderTriagemContent()}
-              </TabsContent>
+            {/* Conteúdo das abas masters */}
+            <TabsContent value="triagem" className="mt-6">
+              {renderTriagemContent()}
+            </TabsContent>
 
-              <TabsContent value="participacao" className="mt-6">
-                {renderParticipacaoContent()}
-              </TabsContent>
-            </Tabs>
+            <TabsContent value="participacao" className="mt-6">
+              {renderParticipacaoContent()}
+            </TabsContent>
 
             <div className="flex justify-end gap-2 pt-6 border-t mt-6">
               <Button variant="outline" onClick={onClose}>
