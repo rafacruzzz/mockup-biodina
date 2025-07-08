@@ -18,6 +18,8 @@ import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
 import ApprovalModal from "./ApprovalModal";
 import CustomAlertModal from "./components/CustomAlertModal";
+import { concorrentes as mockConcorrentes, licitantes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
+import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getUnidadeColor } from "@/lib/utils";
 
 interface OportunidadeAvancadaFormProps {
   oportunidade?: any;
@@ -45,46 +47,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     { id: 2, nome: 'Global Diagnóstico', produto: 'Serviço de instalação', preco: 1200 }
   ]);
 
-  // Dados mock dos licitantes atualizados
-  const licitantes = [
-    { 
-      empresa: 'Empresa Alpha Ltda', 
-      marca: 'ABL800', 
-      modelo: 'Flex Advanced', 
-      valorEntrada: 125000, 
-      valorFinal: 120000, 
-      unidade: 'UN',
-      ranking: '1º'
-    },
-    { 
-      empresa: 'Beta Solutions', 
-      marca: 'Nova Bio', 
-      modelo: 'Pro Series', 
-      valorEntrada: 135000, 
-      valorFinal: 130000, 
-      unidade: 'Lote',
-      ranking: '2º'
-    },
-    { 
-      empresa: 'Gamma Tech', 
-      marca: 'StatProfile', 
-      modelo: 'Prime', 
-      valorEntrada: 145000, 
-      valorFinal: 140000, 
-      unidade: 'Caixa',
-      ranking: '3º'
-    },
-    { 
-      empresa: 'Delta Corp', 
-      marca: 'MedSystem', 
-      modelo: 'Ultimate', 
-      valorEntrada: 155000, 
-      valorFinal: 0, 
-      unidade: 'Kit',
-      ranking: 'Desclassificado'
-    }
-  ];
-
   const [pedidos, setPedidos] = useState([
     { 
       id: 1, 
@@ -97,7 +59,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
   ]);
 
   const [formData, setFormData] = useState({
-    // Campos básicos - removido tipoOportunidade e procurandoPor
     cpfCnpj: oportunidade?.cpfCnpj || '',
     nome: oportunidade?.nome || '',
     nomeFantasia: oportunidade?.nomeFantasia || '',
@@ -149,56 +110,10 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
     marcaModeloAnterior: oportunidade?.marcaModeloAnterior || '',
     situacaoPregao: oportunidade?.situacaoPregao || '',
     manifestacaoRecorrer: oportunidade?.manifestacaoRecorrer || '',
-    statusLicitacao: oportunidade?.statusLicitacao || '',
     motivosFracasso: oportunidade?.motivosFracasso || '',
     dataAssinaturaAta: oportunidade?.dataAssinaturaAta || '',
     observacaoGeral: oportunidade?.observacaoGeral || ''
   });
-
-  // Funções auxiliares
-  const formatCurrency = (value: number) => {
-    if (value === 0) return '-';
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
-
-  const getTermometroColor = (valor: number) => {
-    if (valor < 60) return '#ff8c00';
-    if (valor < 80) return '#ff6600';
-    if (valor < 90) return '#ff4400';
-    if (valor >= 90) return '#cc0000';
-    return '#990000';
-  };
-
-  const getTermometroStage = (valor: number) => {
-    if (valor < 60) return 'Temperatura < 60';
-    if (valor < 80) return 'Em Processo (60-80)';
-    if (valor < 90) return 'Boas Chances (80-90)';
-    if (valor >= 90) return 'Comprometido (90+)';
-    return 'Conquistado (100)';
-  };
-
-  const getRankingColor = (ranking: string) => {
-    switch (ranking) {
-      case '1º': return 'bg-green-500 text-white';
-      case '2º': return 'bg-blue-500 text-white';
-      case '3º': return 'bg-orange-500 text-white';
-      case 'Desclassificado': return 'bg-red-500 text-white';
-      default: return 'bg-gray-500 text-white';
-    }
-  };
-
-  const getUnidadeColor = (unidade: string) => {
-    switch (unidade) {
-      case 'UN': return 'bg-blue-100 text-blue-800';
-      case 'Lote': return 'bg-green-100 text-green-800';
-      case 'Caixa': return 'bg-purple-100 text-purple-800';
-      case 'Kit': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
 
   // Validação ajustada - removeu a dependência de tipoOportunidade
   const isTriagemComplete = () => {
@@ -756,51 +671,30 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="situacaoPregao">Situação do Pregão</Label>
-            <Select 
-              value={formData.situacaoPregao} 
-              onValueChange={(value) => setFormData({...formData, situacaoPregao: value})}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="operacao">Em Operação</SelectItem>
-                <SelectItem value="etapa_lances">Etapa de Lances</SelectItem>
-                <SelectItem value="visualizacao_propostas">Visualização de Propostas</SelectItem>
-                <SelectItem value="aceitacao_propostas">Aceitação de Propostas</SelectItem>
-                <SelectItem value="habilitacao">Habilitação de Fornecedores</SelectItem>
-                <SelectItem value="negociacao_preco">Negociação de Preço</SelectItem>
-                <SelectItem value="recurso">Recursos</SelectItem>
-                <SelectItem value="juizo_admissibilidade">Juízo de Admissibilidade</SelectItem>
-                <SelectItem value="homologado">Homologação</SelectItem>
-                <SelectItem value="adjudicacao">Adjudicação</SelectItem>
-                <SelectItem value="empenho">Empenho</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="statusLicitacao">Status da Licitação</Label>
-            <Select 
-              value={formData.statusLicitacao} 
-              onValueChange={(value) => setFormData({...formData, statusLicitacao: value})}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                <SelectItem value="recursos">Recursos</SelectItem>
-                <SelectItem value="fracassado">Fracassado</SelectItem>
-                <SelectItem value="suspenso">Suspenso</SelectItem>
-                <SelectItem value="cancelado">Cancelado</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <div>
+          <Label htmlFor="situacaoPregao">Situação do Pregão</Label>
+          <Select 
+            value={formData.situacaoPregao} 
+            onValueChange={(value) => setFormData({...formData, situacaoPregao: value})}
+            disabled={isReadOnlyMode()}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="operacao">Em Operação</SelectItem>
+              <SelectItem value="etapa_lances">Etapa de Lances</SelectItem>
+              <SelectItem value="visualizacao_propostas">Visualização de Propostas</SelectItem>
+              <SelectItem value="aceitacao_propostas">Aceitação de Propostas</SelectItem>
+              <SelectItem value="habilitacao">Habilitação de Fornecedores</SelectItem>
+              <SelectItem value="negociacao_preco">Negociação de Preço</SelectItem>
+              <SelectItem value="recurso">Recursos</SelectItem>
+              <SelectItem value="juizo_admissibilidade">Juízo de Admissibilidade</SelectItem>
+              <SelectItem value="homologado">Homologação</SelectItem>
+              <SelectItem value="adjudicacao">Adjudicação</SelectItem>
+              <SelectItem value="empenho">Empenho</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
@@ -901,32 +795,6 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
           />
         </div>
 
-        {formData.statusLicitacao === 'fracassado' && (
-          <div>
-            <Label htmlFor="motivosFracasso">Motivos do Fracasso do Pregão</Label>
-            <Textarea
-              id="motivosFracasso"
-              value={formData.motivosFracasso}
-              onChange={(e) => setFormData({...formData, motivosFracasso: e.target.value})}
-              placeholder="Detalhe os motivos do fracasso"
-              rows={3}
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        )}
-
-        <div>
-          <Label htmlFor="observacaoGeral">Observação (Geral Licitação)</Label>
-          <Textarea
-            id="observacaoGeral"
-            value={formData.observacaoGeral}
-            onChange={(e) => setFormData({...formData, observacaoGeral: e.target.value})}
-            placeholder="Observações gerais sobre a licitação"
-            rows={4}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-
         {/* Tabela de Licitantes */}
         <div className="space-y-2">
           <Label className="text-sm font-medium">Tabela de Licitantes</Label>
@@ -1005,7 +873,7 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
         </div>
 
         <div>
-          <Label htmlFor="resultadoOportunidade">Resultado da Oportunidade</Label>
+          <Label htmlFor="resultadoOportunidade">Status da Licitação</Label>
           <Select 
             value={formData.resultadoOportunidade} 
             onValueChange={(value) => setFormData({...formData, resultadoOportunidade: value})}
@@ -1018,6 +886,10 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
               <SelectItem value="em_andamento">Em Andamento</SelectItem>
               <SelectItem value="ganho">Ganho</SelectItem>
               <SelectItem value="perda">Perda</SelectItem>
+              <SelectItem value="recursos">Recursos</SelectItem>
+              <SelectItem value="fracassado">Fracassado</SelectItem>
+              <SelectItem value="suspenso">Suspenso</SelectItem>
+              <SelectItem value="cancelado">Cancelado</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -1049,6 +921,32 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
             />
           </div>
         )}
+
+        {formData.resultadoOportunidade === 'fracassado' && (
+          <div>
+            <Label htmlFor="motivosFracasso">Motivos do Fracasso do Pregão</Label>
+            <Textarea
+              id="motivosFracasso"
+              value={formData.motivosFracasso}
+              onChange={(e) => setFormData({...formData, motivosFracasso: e.target.value})}
+              placeholder="Detalhe os motivos do fracasso"
+              rows={3}
+              disabled={isReadOnlyMode()}
+            />
+          </div>
+        )}
+
+        <div>
+          <Label htmlFor="observacaoGeral">Observação (Geral Licitação)</Label>
+          <Textarea
+            id="observacaoGeral"
+            value={formData.observacaoGeral}
+            onChange={(e) => setFormData({...formData, observacaoGeral: e.target.value})}
+            placeholder="Observações gerais sobre a licitação"
+            rows={4}
+            disabled={isReadOnlyMode()}
+          />
+        </div>
 
         <div className="flex items-center space-x-2">
           <Checkbox 
@@ -1347,6 +1245,10 @@ const OportunidadeAvancadaForm = ({ oportunidade, onClose, onSave }: Oportunidad
                     <SelectItem value="em_andamento">Em Andamento</SelectItem>
                     <SelectItem value="ganho">Ganho</SelectItem>
                     <SelectItem value="perda">Perda</SelectItem>
+                    <SelectItem value="recursos">Recursos</SelectItem>
+                    <SelectItem value="fracassado">Fracassado</SelectItem>
+                    <SelectItem value="suspenso">Suspenso</SelectItem>
+                    <SelectItem value="cancelado">Cancelado</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
