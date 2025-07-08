@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -99,6 +98,27 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     valorEntrada: oportunidade?.valorEntrada || 0,
     valorMinimoFinal: oportunidade?.valorMinimoFinal || 0,
     participantes: oportunidade?.participantes || [],
+    
+    // Campos adicionais da licitação
+    naturezaOperacao: oportunidade?.naturezaOperacao || '',
+    numeroPregao: oportunidade?.numeroPregao || '',
+    numeroProcesso: oportunidade?.numeroProcesso || '',
+    numeroUasg: oportunidade?.numeroUasg || '',
+    qualSite: oportunidade?.qualSite || '',
+    permiteAdesao: oportunidade?.permiteAdesao || '',
+    observacoesAdesao: oportunidade?.observacoesAdesao || '',
+    produto: oportunidade?.produto || '',
+    valorEstimado: oportunidade?.valorEstimado || 0,
+    quantidadeEquipamentos: oportunidade?.quantidadeEquipamentos || 0,
+    quantidadeExames: oportunidade?.quantidadeExames || 0,
+    haviaContratoAnterior: oportunidade?.haviaContratoAnterior || '',
+    marcaModeloAnterior: oportunidade?.marcaModeloAnterior || '',
+    situacaoPregao: oportunidade?.situacaoPregao || '',
+    dataAssinaturaAta: oportunidade?.dataAssinaturaAta || '',
+    analiseEstrategia: oportunidade?.analiseEstrategia || '',
+    manifestacaoRecorrer: oportunidade?.manifestacaoRecorrer || '',
+    motivosFracasso: oportunidade?.motivosFracasso || '',
+    observacaoGeral: oportunidade?.observacaoGeral || '',
     
     // Campo para solicitação de análise técnica
     solicitarAnaliseTecnica: oportunidade?.solicitarAnaliseTecnica || false,
