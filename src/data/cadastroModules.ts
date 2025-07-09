@@ -1,4 +1,3 @@
-
 import { Package, Users, Settings, Wrench, Building, CreditCard, Tag, Clock, Warehouse } from "lucide-react";
 import { ModulesConfig } from "@/types/cadastro";
 
@@ -24,8 +23,51 @@ export const modules: ModulesConfig = {
       produtos: {
         name: "Produtos",
         data: [
-          { id: 1, codigo: "MED001", nome: "Paracetamol 500mg", categoria: "Analgésicos", unidade: "Caixa", fabricante: "EMS", codigo_barras: "7891234567890", estoque: 250, preco_venda: 12.50, preco_custo: 8.50, ativo: true },
-          { id: 2, codigo: "MED002", nome: "Amoxicilina 875mg", categoria: "Antibióticos", unidade: "Caixa", fabricante: "Eurofarma", codigo_barras: "7891234567891", estoque: 180, preco_venda: 28.90, preco_custo: 19.50, ativo: true }
+          { 
+            id: 1, 
+            codigo: "MED001", 
+            descricao: "Paracetamol 500mg - Caixa com 20 comprimidos", 
+            familiaProduto: "Medicamentos",
+            marca: "EMS", 
+            modelo: "Extra Forte",
+            precoUnitarioVenda: 12.50, 
+            estoqueFisico: 250,
+            reservado: 15,
+            estoqueDisponivel: 235,
+            ultimaAlteracao: new Date('2024-01-15'),
+            vendidoPorUnidade: true,
+            ativo: true 
+          },
+          { 
+            id: 2, 
+            codigo: "MED002", 
+            descricao: "Amoxicilina 875mg - Antibiótico de amplo espectro", 
+            familiaProduto: "Medicamentos",
+            marca: "Eurofarma", 
+            modelo: "Forte",
+            precoUnitarioVenda: 28.90, 
+            estoqueFisico: 180,
+            reservado: 25,
+            estoqueDisponivel: 155,
+            ultimaAlteracao: new Date('2024-01-12'),
+            vendidoPorUnidade: true,
+            ativo: true 
+          },
+          { 
+            id: 3, 
+            codigo: "EQP001", 
+            descricao: "Termômetro Digital Infravermelho", 
+            familiaProduto: "Equipamentos Médicos",
+            marca: "Omron", 
+            modelo: "TH-839S",
+            precoUnitarioVenda: 89.90, 
+            estoqueFisico: 45,
+            reservado: 3,
+            estoqueDisponivel: 42,
+            ultimaAlteracao: new Date('2024-01-10'),
+            vendidoPorUnidade: true,
+            ativo: true 
+          }
         ]
       },
       tabela_preco: {

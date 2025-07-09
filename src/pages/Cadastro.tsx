@@ -1,7 +1,5 @@
-
 import { useState, useEffect } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
-import ProductForm from "@/components/ProductForm";
 import CadastroSidebar from "@/components/cadastro/CadastroSidebar";
 import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
@@ -11,20 +9,85 @@ import UserModal from "@/components/cadastro/UserModal";
 import GenericModal from "@/components/cadastro/GenericModal";
 import EntidadeModal from "@/components/cadastro/EntidadeModal";
 import ContaBancariaModal from "@/components/cadastro/ContaBancariaModal";
+import ProductRegistrationForm from "@/components/product/ProductRegistrationForm";
+import ProductListingTable from "@/components/product/ProductListingTable";
+import { ProductRegistrationData } from "@/types/product";
 import { modules } from "@/data/cadastroModules";
+import { toast } from "@/components/ui/use-toast";
 
 const Cadastro = () => {
   const [activeModule, setActiveModule] = useState('');
   const [activeSubModule, setActiveSubModule] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
+  
+  // Product-specific states
   const [showProductForm, setShowProductForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ProductRegistrationData | null>(null);
+  const [products, setProducts] = useState<ProductRegistrationData[]>([]);
+  
+  // Other modal states
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showGenericModal, setShowGenericModal] = useState(false);
   const [showEntidadeModal, setShowEntidadeModal] = useState(false);
   const [showContaBancariaModal, setShowContaBancariaModal] = useState(false);
   const [genericModalConfig, setGenericModalConfig] = useState<any>(null);
+
+  // Initialize products from modules data
+  useEffect(() => {
+    const productData = modules.produtos?.subModules.produtos?.data || [];
+    const formattedProducts: ProductRegistrationData[] = productData.map((item: any) => ({
+      // Dados Gerais
+      codigo: item.codigo || '',
+      familiaProduto: item.familiaProduto || '',
+      marca: item.marca || '',
+      modelo: item.modelo || '',
+      descricao: item.descricao || '',
+      vendidoPorUnidade: item.vendidoPorUnidade || true,
+
+      // Apresentações
+      apresentacaoPrimaria: '',
+      apresentacaoSecundaria: '',
+      apresentacaoEmbarque: '',
+
+      // Códigos Fiscais
+      codigoNCM: '',
+      cest: '',
+      codigoEANPrimaria: '',
+      codigoEANSecundaria: '',
+      codigoEANEmbarque: '',
+
+      // Preço e Estoque
+      precoUnitarioVenda: item.precoUnitarioVenda || 0,
+      estoqueFisico: item.estoqueFisico || 0,
+      reservado: item.reservado || 0,
+      estoqueDisponivel: item.estoqueDisponivel || 0,
+
+      // Dimensões e Peso
+      pesoLiquido: 0,
+      pesoBruto: 0,
+      altura: 0,
+      largura: 0,
+      profundidade: 0,
+
+      // Logística e Comercial
+      diasGarantia: 0,
+      leadtimeRessuprimento: 0,
+      diasCrossdocking: 0,
+      cupomFiscalPDV: false,
+      marketplace: false,
+      tipoItemBlocoK: '',
+      origemMercadoria: '',
+
+      // Auditoria
+      inclusao: new Date(),
+      ultimaAlteracao: item.ultimaAlteracao || new Date(),
+      incluidoPor: 'Sistema',
+      alteradoPor: 'Sistema'
+    }));
+    setProducts(formattedProducts);
+  }, []);
 
   // Reset state when no module is selected
   useEffect(() => {
@@ -126,6 +189,7 @@ const Cadastro = () => {
 
   const handleNewRecord = () => {
     if (activeModule === 'produtos' && activeSubModule === 'produtos') {
+      setEditingProduct(null);
       setShowProductForm(true);
     } else if (activeModule === 'servicos' && activeSubModule === 'servicos') {
       setShowServiceModal(true);
@@ -145,13 +209,61 @@ const Cadastro = () => {
   };
 
   const handleGetStarted = () => {
-    setActiveModule('entidades');
-    setActiveSubModule('entidades');
-    setExpandedModules(['entidades']);
+    setActiveModule('produtos');
+    setActiveSubModule('produtos');
+    setExpandedModules(['produtos']);
+  };
+
+  // Product-specific handlers
+  const handleSaveProduct = (productData: ProductRegistrationData) => {
+    if (editingProduct) {
+      // Update existing product
+      setProducts(prev => prev.map(p => 
+        p.codigo === editingProduct.codigo ? productData : p
+      ));
+      toast({
+        title: "Produto atualizado",
+        description: `O produto ${productData.codigo} foi atualizado com sucesso.`,
+      });
+    } else {
+      // Add new product
+      setProducts(prev => [...prev, productData]);
+      toast({
+        title: "Produto cadastrado",
+        description: `O produto ${productData.codigo} foi cadastrado com sucesso.`,
+      });
+    }
+    setShowProductForm(false);
+    setEditingProduct(null);
+  };
+
+  const handleEditProduct = (product: ProductRegistrationData) => {
+    setEditingProduct(product);
+    setShowProductForm(true);
+  };
+
+  const handleViewProduct = (product: ProductRegistrationData) => {
+    // For now, just edit the product (can be extended to a view-only modal later)
+    handleEditProduct(product);
+  };
+
+  const handleDeleteProduct = (productCode: string) => {
+    setProducts(prev => prev.filter(p => p.codigo !== productCode));
+    toast({
+      title: "Produto removido",
+      description: `O produto ${productCode} foi removido com sucesso.`,
+    });
   };
 
   const currentSubModule = activeModule && activeSubModule ? 
     modules[activeModule as keyof typeof modules]?.subModules[activeSubModule] : null;
+
+  // Filter products based on search term
+  const filteredProducts = products.filter(product => 
+    product.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.marca.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <SidebarLayout>
@@ -177,10 +289,20 @@ const Cadastro = () => {
               />
 
               <div className="flex-1 p-6 min-h-0">
-                <DataTable 
-                  data={currentSubModule.data} 
-                  moduleName={currentSubModule.name}
-                />
+                {/* Show custom product table for products module */}
+                {activeModule === 'produtos' && activeSubModule === 'produtos' ? (
+                  <ProductListingTable 
+                    products={filteredProducts}
+                    onEdit={handleEditProduct}
+                    onView={handleViewProduct}
+                    onDelete={handleDeleteProduct}
+                  />
+                ) : (
+                  <DataTable 
+                    data={currentSubModule.data} 
+                    moduleName={currentSubModule.name}
+                  />
+                )}
               </div>
             </>
           ) : (
@@ -189,9 +311,16 @@ const Cadastro = () => {
         </div>
       </div>
 
-      {showProductForm && (
-        <ProductForm onClose={() => setShowProductForm(false)} />
-      )}
+      {/* Product Registration Form */}
+      <ProductRegistrationForm
+        isOpen={showProductForm}
+        product={editingProduct}
+        onClose={() => {
+          setShowProductForm(false);
+          setEditingProduct(null);
+        }}
+        onSave={handleSaveProduct}
+      />
 
       {showServiceModal && (
         <ServiceModal onClose={() => setShowServiceModal(false)} />
