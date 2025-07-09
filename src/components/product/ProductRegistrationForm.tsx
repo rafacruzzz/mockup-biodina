@@ -130,13 +130,13 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
         <div className="flex-1 overflow-y-auto p-6">
           <Tabs defaultValue="dados-gerais" className="w-full">
             <TabsList className="grid w-full grid-cols-7 mb-6">
-              <TabsTrigger value="dados-gerais" className="text-xs">🟦 Dados Gerais</TabsTrigger>
-              <TabsTrigger value="apresentacoes" className="text-xs">📦 Apresentações</TabsTrigger>
-              <TabsTrigger value="codigos-fiscais" className="text-xs">🧾 Códigos Fiscais</TabsTrigger>
-              <TabsTrigger value="preco-estoque" className="text-xs">💰 Preço e Estoque</TabsTrigger>
-              <TabsTrigger value="dimensoes-peso" className="text-xs">⚖️ Dimensões e Peso</TabsTrigger>
-              <TabsTrigger value="logistica-comercial" className="text-xs">🚚 Logística e Comercial</TabsTrigger>
-              <TabsTrigger value="auditoria" className="text-xs">🕓 Auditoria</TabsTrigger>
+              <TabsTrigger value="dados-gerais" className="text-xs">Dados Gerais</TabsTrigger>
+              <TabsTrigger value="apresentacoes" className="text-xs">Apresentações</TabsTrigger>
+              <TabsTrigger value="codigos-fiscais" className="text-xs">Códigos Fiscais</TabsTrigger>
+              <TabsTrigger value="preco-estoque" className="text-xs">Preço e Estoque</TabsTrigger>
+              <TabsTrigger value="dimensoes-peso" className="text-xs">Dimensões e Peso</TabsTrigger>
+              <TabsTrigger value="logistica-comercial" className="text-xs">Logística e Comercial</TabsTrigger>
+              <TabsTrigger value="auditoria" className="text-xs">Auditoria</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dados-gerais">
