@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -50,6 +49,15 @@ const Financeiro = () => {
       vencimento: '2025-02-10',
       status: 'Pago',
       categoria: 'Produção'
+    },
+    { 
+      id: 'CP004', 
+      fornecedor: 'Telecomunicações XYZ', 
+      descricao: 'Internet e telefonia', 
+      valor: 1200.00, 
+      vencimento: '2025-01-30',
+      status: 'Pendente',
+      categoria: 'Utilidades'
     },
   ];
 
