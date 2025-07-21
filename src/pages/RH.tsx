@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import RHSidebar from "@/components/rh/RHSidebar";
 import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
 import EmptyState from "@/components/cadastro/EmptyState";
+import ColaboradorModal from "@/components/rh/ColaboradorModal";
 import { modules } from "@/data/rhModules";
 
 const RH = () => {
@@ -12,6 +12,7 @@ const RH = () => {
   const [activeSubModule, setActiveSubModule] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Reset state when no module is selected
   const resetSelection = () => {
@@ -43,8 +44,11 @@ const RH = () => {
   };
 
   const handleNewRecord = () => {
-    // TODO: Implement modal for new employee record
-    console.log('New employee record');
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   const handleGetStarted = () => {
@@ -99,6 +103,8 @@ const RH = () => {
           )}
         </div>
       </div>
+
+      <ColaboradorModal isOpen={isModalOpen} onClose={handleCloseModal} />
     </SidebarLayout>
   );
 };
