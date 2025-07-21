@@ -13,6 +13,7 @@ import Comercial from "./pages/Comercial";
 import Compras from "./pages/Compras";
 import Estoque from "./pages/Estoque";
 import Financeiro from "./pages/Financeiro";
+import RH from "./pages/RH";
 import NotFound from "./pages/NotFound";
 
 // Create QueryClient instance outside of component to avoid recreation
@@ -42,6 +43,7 @@ const App: React.FC = () => {
             <Route path="/compras" element={<Compras />} />
             <Route path="/estoque" element={<Estoque />} />
             <Route path="/financeiro" element={<Financeiro />} />
+            <Route path="/rh" element={<RH />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
