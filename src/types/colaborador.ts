@@ -1,0 +1,68 @@
+
+export interface DadosPessoais {
+  nome: string;
+  cpf: string;
+  pis: string;
+  idade: string;
+  sexo: string;
+  etnia: string;
+  cid: string;
+  email: string;
+  telefone: string;
+  endereco: string;
+  bairro: string;
+}
+
+export interface DadosProfissionais {
+  empresa: string;
+  uf: string;
+  setor: string;
+  funcao: string;
+  cargo: string;
+  nivel: string;
+  cbo: string;
+  compativelFuncao: boolean;
+  funcoesDesempenhadas: string;
+  dataAdmissao: string;
+  tempoCasa: string;
+  ultimaPromocao: string;
+  previsaoFerias: string;
+}
+
+export interface DadosFinanceiros {
+  salarioBase: string;
+  adicionalNivel: string;
+  insalubridade: string;
+  sobreaviso: string;
+  salarioBruto: string;
+  valorHoraTrabalhada: string;
+  pisoSalarial: string;
+  mediaSalarial: string;
+  dependentesIR: string;
+}
+
+export interface DadosBancarios {
+  banco: string;
+  tipoConta: string;
+  agencia: string;
+  conta: string;
+}
+
+export interface FormacaoEscolaridade {
+  escolaridade: string;
+  possuiDiploma: boolean;
+}
+
+export interface Beneficios {
+  tipoPlano: string;
+  quantidadeDependentesPlano: string;
+}
+
+export interface ColaboradorData {
+  dadosPessoais: DadosPessoais;
+  dadosProfissionais: DadosProfissionais;
+  dadosFinanceiros: DadosFinanceiros;
+  dadosBancarios: DadosBancarios;
+  formacaoEscolaridade: FormacaoEscolaridade;
+  beneficios: Beneficios;
+}

@@ -1,11 +1,16 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { X, Save, Calendar } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { X, Save, User } from "lucide-react";
+import { ColaboradorData } from "@/types/colaborador";
+import DadosPessoaisTab from "./tabs/DadosPessoaisTab";
+import DadosProfissionaisTab from "./tabs/DadosProfissionaisTab";
+import DadosFinanceirosTab from "./tabs/DadosFinanceirosTab";
+import DadosBancariosTab from "./tabs/DadosBancariosTab";
+import FormacaoEscolaridadeTab from "./tabs/FormacaoEscolaridadeTab";
+import BeneficiosTab from "./tabs/BeneficiosTab";
 
 interface ColaboradorModalProps {
   isOpen: boolean;
@@ -13,20 +18,70 @@ interface ColaboradorModalProps {
 }
 
 const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
-  const [formData, setFormData] = useState({
-    nome: '',
-    empregador: '',
-    categoria: '',
-    profissao: '',
-    nivelCargo: '',
-    departamento: '',
-    dataNascimento: '',
-    dataAdmissao: '',
-    responsavel: ''
+  const [formData, setFormData] = useState<ColaboradorData>({
+    dadosPessoais: {
+      nome: '',
+      cpf: '',
+      pis: '',
+      idade: '',
+      sexo: '',
+      etnia: '',
+      cid: '',
+      email: '',
+      telefone: '',
+      endereco: '',
+      bairro: ''
+    },
+    dadosProfissionais: {
+      empresa: '',
+      uf: '',
+      setor: '',
+      funcao: '',
+      cargo: '',
+      nivel: '',
+      cbo: '',
+      compativelFuncao: false,
+      funcoesDesempenhadas: '',
+      dataAdmissao: '',
+      tempoCasa: '',
+      ultimaPromocao: '',
+      previsaoFerias: ''
+    },
+    dadosFinanceiros: {
+      salarioBase: '',
+      adicionalNivel: '',
+      insalubridade: '',
+      sobreaviso: '',
+      salarioBruto: '',
+      valorHoraTrabalhada: '',
+      pisoSalarial: '',
+      mediaSalarial: '',
+      dependentesIR: ''
+    },
+    dadosBancarios: {
+      banco: '',
+      tipoConta: '',
+      agencia: '',
+      conta: ''
+    },
+    formacaoEscolaridade: {
+      escolaridade: '',
+      possuiDiploma: false
+    },
+    beneficios: {
+      tipoPlano: '',
+      quantidadeDependentesPlano: ''
+    }
   });
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (section: keyof ColaboradorData, field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value
+      }
+    }));
   };
 
   const handleSave = () => {
@@ -34,161 +89,101 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
     onClose();
   };
 
-  const categorias = [
-    { value: 'efetivo', label: 'Efetivo' },
-    { value: 'terceirizado', label: 'Terceirizado' },
-    { value: 'estagiario', label: 'Estagiário' },
-    { value: 'temporario', label: 'Temporário' }
-  ];
-
-  const niveis = [
-    { value: 'junior', label: 'Júnior' },
-    { value: 'pleno', label: 'Pleno' },
-    { value: 'senior', label: 'Sênior' },
-    { value: 'especialista', label: 'Especialista' },
-    { value: 'coordenador', label: 'Coordenador' },
-    { value: 'gerente', label: 'Gerente' },
-    { value: 'diretor', label: 'Diretor' }
-  ];
-
-  const departamentos = [
-    { value: 'rh', label: 'Recursos Humanos' },
-    { value: 'financeiro', label: 'Financeiro' },
-    { value: 'comercial', label: 'Comercial' },
-    { value: 'operacional', label: 'Operacional' },
-    { value: 'ti', label: 'Tecnologia da Informação' },
-    { value: 'juridico', label: 'Jurídico' },
-    { value: 'marketing', label: 'Marketing' }
-  ];
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-biodina-blue">
-            Novo Colaborador
-          </DialogTitle>
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogHeader className="pb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-biodina-gold/10 rounded-lg">
+              <User className="h-6 w-6 text-biodina-gold" />
+            </div>
+            <div>
+              <DialogTitle className="text-2xl font-bold text-biodina-blue">
+                Novo Colaborador
+              </DialogTitle>
+              <p className="text-gray-600">Cadastre um novo colaborador no sistema</p>
+            </div>
+          </div>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="nome">Nome *</Label>
-            <Input
-              id="nome"
-              value={formData.nome}
-              onChange={(e) => handleInputChange('nome', e.target.value)}
-              placeholder="Digite o nome completo"
-            />
-          </div>
+        <div className="flex-1 overflow-hidden">
+          <Tabs defaultValue="dados-pessoais" className="h-full flex flex-col">
+            <TabsList className="grid w-full grid-cols-6 mb-4">
+              <TabsTrigger value="dados-pessoais" className="text-xs">
+                Dados Pessoais
+              </TabsTrigger>
+              <TabsTrigger value="dados-profissionais" className="text-xs">
+                Dados Profissionais
+              </TabsTrigger>
+              <TabsTrigger value="dados-financeiros" className="text-xs">
+                Dados Financeiros
+              </TabsTrigger>
+              <TabsTrigger value="dados-bancarios" className="text-xs">
+                Dados Bancários
+              </TabsTrigger>
+              <TabsTrigger value="formacao-escolaridade" className="text-xs">
+                Formação
+              </TabsTrigger>
+              <TabsTrigger value="beneficios" className="text-xs">
+                Benefícios
+              </TabsTrigger>
+            </TabsList>
 
-          <div className="space-y-2">
-            <Label htmlFor="empregador">Empregador *</Label>
-            <Input
-              id="empregador"
-              value={formData.empregador}
-              onChange={(e) => handleInputChange('empregador', e.target.value)}
-              placeholder="Digite o nome do empregador"
-            />
-          </div>
+            <div className="flex-1 overflow-y-auto">
+              <TabsContent value="dados-pessoais" className="mt-0">
+                <DadosPessoaisTab 
+                  formData={formData.dadosPessoais}
+                  onInputChange={(field, value) => handleInputChange('dadosPessoais', field, value)}
+                />
+              </TabsContent>
 
-          <div className="space-y-2">
-            <Label htmlFor="categoria">Categoria *</Label>
-            <Select value={formData.categoria} onValueChange={(value) => handleInputChange('categoria', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione a categoria" />
-              </SelectTrigger>
-              <SelectContent>
-                {categorias.map((categoria) => (
-                  <SelectItem key={categoria.value} value={categoria.value}>
-                    {categoria.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+              <TabsContent value="dados-profissionais" className="mt-0">
+                <DadosProfissionaisTab 
+                  formData={formData.dadosProfissionais}
+                  onInputChange={(field, value) => handleInputChange('dadosProfissionais', field, value)}
+                />
+              </TabsContent>
 
-          <div className="space-y-2">
-            <Label htmlFor="profissao">Profissão *</Label>
-            <Input
-              id="profissao"
-              value={formData.profissao}
-              onChange={(e) => handleInputChange('profissao', e.target.value)}
-              placeholder="Digite a profissão"
-            />
-          </div>
+              <TabsContent value="dados-financeiros" className="mt-0">
+                <DadosFinanceirosTab 
+                  formData={formData.dadosFinanceiros}
+                  onInputChange={(field, value) => handleInputChange('dadosFinanceiros', field, value)}
+                />
+              </TabsContent>
 
-          <div className="space-y-2">
-            <Label htmlFor="nivelCargo">Nível do Cargo *</Label>
-            <Select value={formData.nivelCargo} onValueChange={(value) => handleInputChange('nivelCargo', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o nível" />
-              </SelectTrigger>
-              <SelectContent>
-                {niveis.map((nivel) => (
-                  <SelectItem key={nivel.value} value={nivel.value}>
-                    {nivel.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+              <TabsContent value="dados-bancarios" className="mt-0">
+                <DadosBancariosTab 
+                  formData={formData.dadosBancarios}
+                  onInputChange={(field, value) => handleInputChange('dadosBancarios', field, value)}
+                />
+              </TabsContent>
 
-          <div className="space-y-2">
-            <Label htmlFor="departamento">Departamento *</Label>
-            <Select value={formData.departamento} onValueChange={(value) => handleInputChange('departamento', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o departamento" />
-              </SelectTrigger>
-              <SelectContent>
-                {departamentos.map((depto) => (
-                  <SelectItem key={depto.value} value={depto.value}>
-                    {depto.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+              <TabsContent value="formacao-escolaridade" className="mt-0">
+                <FormacaoEscolaridadeTab 
+                  formData={formData.formacaoEscolaridade}
+                  onInputChange={(field, value) => handleInputChange('formacaoEscolaridade', field, value)}
+                />
+              </TabsContent>
 
-          <div className="space-y-2">
-            <Label htmlFor="dataNascimento">Data de Nascimento *</Label>
-            <Input
-              id="dataNascimento"
-              type="date"
-              value={formData.dataNascimento}
-              onChange={(e) => handleInputChange('dataNascimento', e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="dataAdmissao">Data Admissão *</Label>
-            <Input
-              id="dataAdmissao"
-              type="date"
-              value={formData.dataAdmissao}
-              onChange={(e) => handleInputChange('dataAdmissao', e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="responsavel">Responsável/Gerente/Chefe</Label>
-            <Input
-              id="responsavel"
-              value={formData.responsavel}
-              onChange={(e) => handleInputChange('responsavel', e.target.value)}
-              placeholder="Digite o nome do responsável"
-            />
-          </div>
+              <TabsContent value="beneficios" className="mt-0">
+                <BeneficiosTab 
+                  formData={formData.beneficios}
+                  onInputChange={(field, value) => handleInputChange('beneficios', field, value)}
+                />
+              </TabsContent>
+            </div>
+          </Tabs>
         </div>
 
-        <DialogFooter>
+        <div className="flex justify-end gap-3 pt-4 border-t">
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
           <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
             <Save className="h-4 w-4 mr-2" />
-            Salvar
+            Salvar Colaborador
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
