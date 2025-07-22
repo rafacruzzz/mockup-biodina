@@ -1,7 +1,10 @@
 
+import { UserCheck } from "lucide-react";
+
 export const modules = {
   colaboradores: {
     name: "Colaboradores",
+    icon: UserCheck,
     subModules: {
       colaboradores: {
         name: "Colaboradores",
