@@ -123,6 +123,16 @@ const DadosProfissionaisTab = ({ formData, onInputChange }: DadosProfissionaisTa
         </div>
 
         <div className="space-y-2">
+          <Label htmlFor="dataCadastro">Data de Cadastro</Label>
+          <Input
+            id="dataCadastro"
+            type="date"
+            value={formData.dataCadastro}
+            onChange={(e) => onInputChange('dataCadastro', e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-2">
           <Label htmlFor="tempoCasa">Tempo de Casa</Label>
           <Input
             id="tempoCasa"

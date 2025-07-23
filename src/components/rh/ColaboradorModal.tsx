@@ -24,13 +24,23 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
       cpf: '',
       pis: '',
       idade: '',
+      dataNascimento: '',
       sexo: '',
+      genero: '',
       etnia: '',
+      rg: '',
+      orgaoExpedidorRg: '',
+      ufEmissorRg: '',
+      dataExpedicaoRg: '',
+      naturalidade: '',
+      nomeMae: '',
+      nomePai: '',
       cid: '',
       email: '',
       telefone: '',
       endereco: '',
-      bairro: ''
+      bairro: '',
+      observacoes: ''
     },
     dadosProfissionais: {
       empresa: '',
@@ -43,6 +53,7 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
       compativelFuncao: false,
       funcoesDesempenhadas: '',
       dataAdmissao: '',
+      dataCadastro: '',
       tempoCasa: '',
       ultimaPromocao: '',
       previsaoFerias: ''

@@ -4,13 +4,23 @@ export interface DadosPessoais {
   cpf: string;
   pis: string;
   idade: string;
+  dataNascimento: string;
   sexo: string;
+  genero: string;
   etnia: string;
+  rg: string;
+  orgaoExpedidorRg: string;
+  ufEmissorRg: string;
+  dataExpedicaoRg: string;
+  naturalidade: string;
+  nomeMae: string;
+  nomePai: string;
   cid: string;
   email: string;
   telefone: string;
   endereco: string;
   bairro: string;
+  observacoes: string;
 }
 
 export interface DadosProfissionais {
@@ -24,6 +34,7 @@ export interface DadosProfissionais {
   compativelFuncao: boolean;
   funcoesDesempenhadas: string;
   dataAdmissao: string;
+  dataCadastro: string;
   tempoCasa: string;
   ultimaPromocao: string;
   previsaoFerias: string;
