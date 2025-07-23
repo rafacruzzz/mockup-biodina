@@ -1,3 +1,4 @@
+
 export interface DadosPessoais {
   nome: string;
   cpf: string;
@@ -67,6 +68,21 @@ export interface Beneficios {
   quantidadeDependentesPlano: string;
 }
 
+export interface DocumentoAnexo {
+  id: string;
+  nome: string;
+  tipo: string;
+  tamanho: number;
+  dataUpload: string;
+  categoria: string;
+  observacoes?: string;
+  arquivo: File | null;
+}
+
+export interface Documentacao {
+  anexos: DocumentoAnexo[];
+}
+
 export interface ColaboradorData {
   dadosPessoais: DadosPessoais;
   dadosProfissionais: DadosProfissionais;
@@ -74,4 +90,5 @@ export interface ColaboradorData {
   dadosBancarios: DadosBancarios;
   formacaoEscolaridade: FormacaoEscolaridade;
   beneficios: Beneficios;
+  documentacao: Documentacao;
 }

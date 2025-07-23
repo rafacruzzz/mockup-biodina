@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -11,6 +10,7 @@ import DadosFinanceirosTab from "./tabs/DadosFinanceirosTab";
 import DadosBancariosTab from "./tabs/DadosBancariosTab";
 import FormacaoEscolaridadeTab from "./tabs/FormacaoEscolaridadeTab";
 import BeneficiosTab from "./tabs/BeneficiosTab";
+import DocumentacaoTab from "./tabs/DocumentacaoTab";
 
 interface ColaboradorModalProps {
   isOpen: boolean;
@@ -85,6 +85,9 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
     beneficios: {
       tipoPlano: '',
       quantidadeDependentesPlano: ''
+    },
+    documentacao: {
+      anexos: []
     }
   });
 
@@ -143,7 +146,7 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
 
         <div className="flex-1 overflow-hidden">
           <Tabs defaultValue="dados-pessoais" className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-6 mb-4">
+            <TabsList className="grid w-full grid-cols-7 mb-4">
               <TabsTrigger value="dados-pessoais" className="text-xs">
                 Dados Pessoais
               </TabsTrigger>
@@ -161,6 +164,9 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
               </TabsTrigger>
               <TabsTrigger value="beneficios" className="text-xs">
                 Benefícios
+              </TabsTrigger>
+              <TabsTrigger value="documentacao" className="text-xs">
+                Documentação
               </TabsTrigger>
             </TabsList>
 
@@ -210,6 +216,13 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
                 <BeneficiosTab 
                   formData={formData.beneficios}
                   onInputChange={(field, value) => handleInputChange('beneficios', field, value)}
+                />
+              </TabsContent>
+
+              <TabsContent value="documentacao" className="mt-0">
+                <DocumentacaoTab 
+                  formData={formData.documentacao}
+                  onInputChange={(field, value) => handleInputChange('documentacao', field, value)}
                 />
               </TabsContent>
             </div>
