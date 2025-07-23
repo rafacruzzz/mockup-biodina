@@ -11,13 +11,6 @@ interface DadosPessoaisTabProps {
 }
 
 const DadosPessoaisTab = ({ formData, onInputChange }: DadosPessoaisTabProps) => {
-  const sexoOptions = [
-    { value: 'masculino', label: 'Masculino' },
-    { value: 'feminino', label: 'Feminino' },
-    { value: 'outro', label: 'Outro' },
-    { value: 'nao-informar', label: 'Não informar' }
-  ];
-
   const generoOptions = [
     { value: 'masculino', label: 'Masculino' },
     { value: 'feminino', label: 'Feminino' },
@@ -93,22 +86,6 @@ const DadosPessoaisTab = ({ formData, onInputChange }: DadosPessoaisTabProps) =>
             value={formData.dataNascimento}
             onChange={(e) => onInputChange('dataNascimento', e.target.value)}
           />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="sexo">Sexo</Label>
-          <Select value={formData.sexo} onValueChange={(value) => onInputChange('sexo', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione o sexo" />
-            </SelectTrigger>
-            <SelectContent>
-              {sexoOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
 
         <div className="space-y-2">

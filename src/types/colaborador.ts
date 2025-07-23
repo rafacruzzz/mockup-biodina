@@ -1,11 +1,9 @@
-
 export interface DadosPessoais {
   nome: string;
   cpf: string;
   pis: string;
   idade: string;
   dataNascimento: string;
-  sexo: string;
   genero: string;
   etnia: string;
   rg: string;
