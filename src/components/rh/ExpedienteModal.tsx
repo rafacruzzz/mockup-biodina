@@ -50,13 +50,15 @@ const ExpedienteModal = ({ isOpen, onClose }: ExpedienteModalProps) => {
         if (index === diaIndex) {
           if (field.includes('.')) {
             const [parent, child] = field.split('.');
-            return {
-              ...horario,
-              [parent]: {
-                ...horario[parent as keyof ExpedienteHorario],
-                [child]: value
-              }
-            };
+            if (parent === 'primeiroTurno' || parent === 'segundoTurno') {
+              return {
+                ...horario,
+                [parent]: {
+                  ...horario[parent],
+                  [child]: value
+                }
+              };
+            }
           }
           return {
             ...horario,
