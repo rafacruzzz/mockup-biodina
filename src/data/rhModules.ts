@@ -77,39 +77,63 @@ export const modules = {
     name: "Departamentos",
     icon: Building2,
     subModules: {
-      departamentos: {
-        name: "Departamentos",
+      setores: {
+        name: "Setores",
         data: [
           {
             id: 1,
             nome: "Tecnologia",
             responsavel: "João Silva Santos",
-            observacoes: "Departamento responsável por sistemas e infraestrutura"
+            observacoes: "Setor responsável por sistemas e infraestrutura",
+            funcoes: [1, 2, 3] // Analista de Sistemas, Desenvolvedor, Arquiteto de Software
           },
           {
             id: 2,
             nome: "Comercial",
             responsavel: "Maria Oliveira Costa",
-            observacoes: "Departamento de vendas e relacionamento com clientes"
+            observacoes: "Setor de vendas e relacionamento com clientes",
+            funcoes: [4, 5, 6] // Vendedor, Gerente de Vendas, Coordenador Comercial
           },
           {
             id: 3,
             nome: "Financeiro",
             responsavel: "Pedro Almeida Lima",
-            observacoes: "Departamento de controladoria e contabilidade"
+            observacoes: "Setor de controladoria e contabilidade",
+            funcoes: [7, 8, 9] // Contador, Analista Financeiro, Gerente Financeiro
           },
           {
             id: 4,
             nome: "Recursos Humanos",
             responsavel: "Ana Paula Ferreira",
-            observacoes: "Departamento de gestão de pessoas"
+            observacoes: "Setor de gestão de pessoas",
+            funcoes: [10, 11] // Analista de RH, Coordenador de RH
           },
           {
             id: 5,
             nome: "Produção",
             responsavel: "Carlos Eduardo Souza",
-            observacoes: "Departamento operacional de produção"
+            observacoes: "Setor operacional de produção",
+            funcoes: [12, 13, 14] // Operador de Produção, Supervisor de Produção, Gerente de Produção
           }
+        ]
+      },
+      funcoes: {
+        name: "Funções",
+        data: [
+          { id: 1, nome: "Analista de Sistemas" },
+          { id: 2, nome: "Desenvolvedor" },
+          { id: 3, nome: "Arquiteto de Software" },
+          { id: 4, nome: "Vendedor" },
+          { id: 5, nome: "Gerente de Vendas" },
+          { id: 6, nome: "Coordenador Comercial" },
+          { id: 7, nome: "Contador" },
+          { id: 8, nome: "Analista Financeiro" },
+          { id: 9, nome: "Gerente Financeiro" },
+          { id: 10, nome: "Analista de RH" },
+          { id: 11, nome: "Coordenador de RH" },
+          { id: 12, nome: "Operador de Produção" },
+          { id: 13, nome: "Supervisor de Produção" },
+          { id: 14, nome: "Gerente de Produção" }
         ]
       }
     }

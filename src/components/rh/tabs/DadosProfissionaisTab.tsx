@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { DadosProfissionais } from "@/types/colaborador";
+import { modules } from "@/data/rhModules";
 
 interface DadosProfissionaisTabProps {
   formData: DadosProfissionais;
@@ -26,6 +27,23 @@ const DadosProfissionaisTab = ({ formData, onInputChange }: DadosProfissionaisTa
     { value: 'gerente', label: 'Gerente' },
     { value: 'diretor', label: 'Diretor' }
   ];
+
+  const setoresList = modules.departamentos.subModules.setores.data;
+  const funcoesList = modules.departamentos.subModules.funcoes.data;
+
+  // Buscar o setor selecionado
+  const setorSelecionado = setoresList.find(setor => setor.nome === formData.setor);
+
+  // Filtrar funções baseadas no setor selecionado
+  const funcoesDisponiveis = setorSelecionado 
+    ? funcoesList.filter(funcao => setorSelecionado.funcoes?.includes(funcao.id!))
+    : [];
+
+  const handleSetorChange = (value: string) => {
+    onInputChange('setor', value);
+    // Limpar função quando setor mudar
+    onInputChange('funcao', '');
+  };
 
   return (
     <div className="space-y-6">
@@ -58,22 +76,38 @@ const DadosProfissionaisTab = ({ formData, onInputChange }: DadosProfissionaisTa
 
         <div className="space-y-2">
           <Label htmlFor="setor">Setor *</Label>
-          <Input
-            id="setor"
-            value={formData.setor}
-            onChange={(e) => onInputChange('setor', e.target.value)}
-            placeholder="Digite o setor"
-          />
+          <Select value={formData.setor} onValueChange={handleSetorChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Selecione o setor" />
+            </SelectTrigger>
+            <SelectContent>
+              {setoresList.map((setor) => (
+                <SelectItem key={setor.id} value={setor.nome}>
+                  {setor.nome}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="funcao">Função *</Label>
-          <Input
-            id="funcao"
-            value={formData.funcao}
-            onChange={(e) => onInputChange('funcao', e.target.value)}
-            placeholder="Digite a função"
-          />
+          <Select 
+            value={formData.funcao} 
+            onValueChange={(value) => onInputChange('funcao', value)}
+            disabled={!formData.setor}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={formData.setor ? "Selecione a função" : "Selecione primeiro o setor"} />
+            </SelectTrigger>
+            <SelectContent>
+              {funcoesDisponiveis.map((funcao) => (
+                <SelectItem key={funcao.id} value={funcao.nome}>
+                  {funcao.nome}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">

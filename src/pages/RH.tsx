@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import RHSidebar from "@/components/rh/RHSidebar";
@@ -8,6 +7,7 @@ import EmptyState from "@/components/cadastro/EmptyState";
 import ColaboradorModal from "@/components/rh/ColaboradorModal";
 import DepartamentoModal from "@/components/rh/DepartamentoModal";
 import ExpedienteModal from "@/components/rh/ExpedienteModal";
+import FuncaoModal from "@/components/rh/FuncaoModal";
 import { modules } from "@/data/rhModules";
 
 const RH = () => {
@@ -18,6 +18,7 @@ const RH = () => {
   const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
   const [isDepartamentoModalOpen, setIsDepartamentoModalOpen] = useState(false);
   const [isExpedienteModalOpen, setIsExpedienteModalOpen] = useState(false);
+  const [isFuncaoModalOpen, setIsFuncaoModalOpen] = useState(false);
 
   // Reset state when no module is selected
   const resetSelection = () => {
@@ -52,7 +53,11 @@ const RH = () => {
     if (activeModule === 'colaboradores') {
       setIsColaboradorModalOpen(true);
     } else if (activeModule === 'departamentos') {
-      setIsDepartamentoModalOpen(true);
+      if (activeSubModule === 'setores') {
+        setIsDepartamentoModalOpen(true);
+      } else if (activeSubModule === 'funcoes') {
+        setIsFuncaoModalOpen(true);
+      }
     } else if (activeModule === 'expedientes') {
       setIsExpedienteModalOpen(true);
     }
@@ -68,6 +73,10 @@ const RH = () => {
 
   const handleCloseExpedienteModal = () => {
     setIsExpedienteModalOpen(false);
+  };
+
+  const handleCloseFuncaoModal = () => {
+    setIsFuncaoModalOpen(false);
   };
 
   const handleGetStarted = () => {
@@ -89,7 +98,10 @@ const RH = () => {
   // Get button text based on active module
   const getButtonText = () => {
     if (activeModule === 'colaboradores') return "Novo Colaborador";
-    if (activeModule === 'departamentos') return "Novo Departamento";
+    if (activeModule === 'departamentos') {
+      if (activeSubModule === 'setores') return "Novo Setor";
+      if (activeSubModule === 'funcoes') return "Nova Função";
+    }
     if (activeModule === 'expedientes') return "Novo Expediente";
     return "Novo Registro";
   };
@@ -133,6 +145,7 @@ const RH = () => {
 
       <ColaboradorModal isOpen={isColaboradorModalOpen} onClose={handleCloseColaboradorModal} />
       <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={handleCloseDepartamentoModal} />
+      <FuncaoModal isOpen={isFuncaoModalOpen} onClose={handleCloseFuncaoModal} />
       <ExpedienteModal isOpen={isExpedienteModalOpen} onClose={handleCloseExpedienteModal} />
     </SidebarLayout>
   );

@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { X, Save } from "lucide-react";
 import { Departamento } from "@/types/departamento";
+import { modules } from "@/data/rhModules";
 
 interface DepartamentoModalProps {
   isOpen: boolean;
@@ -18,16 +20,28 @@ const DepartamentoModal = ({ isOpen, onClose, departamento }: DepartamentoModalP
     nome: departamento?.nome || "",
     responsavel: departamento?.responsavel || "",
     observacoes: departamento?.observacoes || "",
+    funcoes: departamento?.funcoes || [],
   });
 
   if (!isOpen) return null;
+
+  const funcoesList = modules.departamentos.subModules.funcoes.data;
 
   const handleInputChange = (field: keyof Departamento, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleFuncaoToggle = (funcaoId: number) => {
+    setFormData(prev => ({
+      ...prev,
+      funcoes: prev.funcoes?.includes(funcaoId)
+        ? prev.funcoes.filter(id => id !== funcaoId)
+        : [...(prev.funcoes || []), funcaoId]
+    }));
+  };
+
   const handleSave = () => {
-    console.log("Salvando departamento:", formData);
+    console.log("Salvando setor:", formData);
     onClose();
   };
 
@@ -43,10 +57,10 @@ const DepartamentoModal = ({ isOpen, onClose, departamento }: DepartamentoModalP
             </div>
             <div>
               <h2 className="text-xl font-bold text-biodina-blue">
-                {departamento ? "Editar Departamento" : "Novo Departamento"}
+                {departamento ? "Editar Setor" : "Novo Setor"}
               </h2>
               <p className="text-gray-600 text-sm">
-                {departamento ? "Edite as informações do departamento" : "Cadastre um novo departamento"}
+                {departamento ? "Edite as informações do setor" : "Cadastre um novo setor"}
               </p>
             </div>
           </div>
@@ -64,7 +78,7 @@ const DepartamentoModal = ({ isOpen, onClose, departamento }: DepartamentoModalP
                   id="nome"
                   value={formData.nome}
                   onChange={(e) => handleInputChange("nome", e.target.value)}
-                  placeholder="Digite o nome do departamento"
+                  placeholder="Digite o nome do setor"
                 />
               </div>
 
@@ -84,9 +98,30 @@ const DepartamentoModal = ({ isOpen, onClose, departamento }: DepartamentoModalP
                   id="observacoes"
                   value={formData.observacoes}
                   onChange={(e) => handleInputChange("observacoes", e.target.value)}
-                  placeholder="Digite observações sobre o departamento"
+                  placeholder="Digite observações sobre o setor"
                   rows={4}
                 />
+              </div>
+
+              <div>
+                <Label>Funções do Setor</Label>
+                <div className="mt-2 space-y-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                  {funcoesList.map((funcao) => (
+                    <div key={funcao.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`funcao-${funcao.id}`}
+                        checked={formData.funcoes?.includes(funcao.id!) || false}
+                        onCheckedChange={() => handleFuncaoToggle(funcao.id!)}
+                      />
+                      <Label htmlFor={`funcao-${funcao.id}`} className="text-sm">
+                        {funcao.nome}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Selecione as funções que pertencem a este setor
+                </p>
               </div>
             </div>
           </div>
