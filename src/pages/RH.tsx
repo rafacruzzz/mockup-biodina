@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import RHSidebar from "@/components/rh/RHSidebar";
@@ -8,6 +9,9 @@ import ColaboradorModal from "@/components/rh/ColaboradorModal";
 import DepartamentoModal from "@/components/rh/DepartamentoModal";
 import ExpedienteModal from "@/components/rh/ExpedienteModal";
 import FuncaoModal from "@/components/rh/FuncaoModal";
+import PlanoCarreiraModal from "@/components/rh/PlanoCarreiraModal";
+import CargoPlanoModal from "@/components/rh/CargoPlanoModal";
+import NiveisProgressaoModal from "@/components/rh/NiveisProgressaoModal";
 import { modules } from "@/data/rhModules";
 
 const RH = () => {
@@ -15,10 +19,17 @@ const RH = () => {
   const [activeSubModule, setActiveSubModule] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
+  
+  // Estados dos modais existentes
   const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
   const [isDepartamentoModalOpen, setIsDepartamentoModalOpen] = useState(false);
   const [isExpedienteModalOpen, setIsExpedienteModalOpen] = useState(false);
   const [isFuncaoModalOpen, setIsFuncaoModalOpen] = useState(false);
+  
+  // Estados dos novos modais de Planos de Carreira
+  const [isPlanoCarreiraModalOpen, setIsPlanoCarreiraModalOpen] = useState(false);
+  const [isCargoPlanoModalOpen, setIsCargoPlanoModalOpen] = useState(false);
+  const [isNiveisProgressaoModalOpen, setIsNiveisProgressaoModalOpen] = useState(false);
 
   // Reset state when no module is selected
   const resetSelection = () => {
@@ -60,23 +71,15 @@ const RH = () => {
       }
     } else if (activeModule === 'expedientes') {
       setIsExpedienteModalOpen(true);
+    } else if (activeModule === 'planosCarreira') {
+      if (activeSubModule === 'planos') {
+        setIsPlanoCarreiraModalOpen(true);
+      } else if (activeSubModule === 'cargos') {
+        setIsCargoPlanoModalOpen(true);
+      } else if (activeSubModule === 'niveis') {
+        setIsNiveisProgressaoModalOpen(true);
+      }
     }
-  };
-
-  const handleCloseColaboradorModal = () => {
-    setIsColaboradorModalOpen(false);
-  };
-
-  const handleCloseDepartamentoModal = () => {
-    setIsDepartamentoModalOpen(false);
-  };
-
-  const handleCloseExpedienteModal = () => {
-    setIsExpedienteModalOpen(false);
-  };
-
-  const handleCloseFuncaoModal = () => {
-    setIsFuncaoModalOpen(false);
   };
 
   const handleGetStarted = () => {
@@ -103,6 +106,11 @@ const RH = () => {
       if (activeSubModule === 'funcoes') return "Nova Função";
     }
     if (activeModule === 'expedientes') return "Novo Expediente";
+    if (activeModule === 'planosCarreira') {
+      if (activeSubModule === 'planos') return "Novo Plano de Carreira";
+      if (activeSubModule === 'cargos') return "Novo Cargo";
+      if (activeSubModule === 'niveis') return "Gerenciar Níveis";
+    }
     return "Novo Registro";
   };
 
@@ -143,10 +151,16 @@ const RH = () => {
         </div>
       </div>
 
-      <ColaboradorModal isOpen={isColaboradorModalOpen} onClose={handleCloseColaboradorModal} />
-      <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={handleCloseDepartamentoModal} />
-      <FuncaoModal isOpen={isFuncaoModalOpen} onClose={handleCloseFuncaoModal} />
-      <ExpedienteModal isOpen={isExpedienteModalOpen} onClose={handleCloseExpedienteModal} />
+      {/* Modais existentes */}
+      <ColaboradorModal isOpen={isColaboradorModalOpen} onClose={() => setIsColaboradorModalOpen(false)} />
+      <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={() => setIsDepartamentoModalOpen(false)} />
+      <FuncaoModal isOpen={isFuncaoModalOpen} onClose={() => setIsFuncaoModalOpen(false)} />
+      <ExpedienteModal isOpen={isExpedienteModalOpen} onClose={() => setIsExpedienteModalOpen(false)} />
+      
+      {/* Novos modais de Planos de Carreira */}
+      <PlanoCarreiraModal isOpen={isPlanoCarreiraModalOpen} onClose={() => setIsPlanoCarreiraModalOpen(false)} />
+      <CargoPlanoModal isOpen={isCargoPlanoModalOpen} onClose={() => setIsCargoPlanoModalOpen(false)} />
+      <NiveisProgressaoModal isOpen={isNiveisProgressaoModalOpen} onClose={() => setIsNiveisProgressaoModalOpen(false)} />
     </SidebarLayout>
   );
 };
