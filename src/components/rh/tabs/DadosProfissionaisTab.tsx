@@ -6,26 +6,33 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { DadosProfissionais } from "@/types/colaborador";
 import { modules } from "@/data/rhModules";
+import { calcularSugestaoSalarial, obterCargosDisponiveis } from "@/utils/planoCarreiraUtils";
+import { useEffect, useState } from "react";
+import { AlertCircle, TrendingUp } from "lucide-react";
 
 interface DadosProfissionaisTabProps {
-  formData: DadosProfissionais;
-  onInputChange: (field: keyof DadosProfissionais, value: string | boolean) => void;
+  formData: DadosProfissionais & {
+    planoCarreira?: string;
+    sugestaoSalario?: string;
+    breakdownSalarial?: string;
+  };
+  onInputChange: (field: string, value: string | boolean) => void;
 }
 
 const DadosProfissionaisTab = ({ formData, onInputChange }: DadosProfissionaisTabProps) => {
+  const [cargosDisponiveis, setCargosDisponiveis] = useState<string[]>([]);
+  
   const ufs = [
     'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 
     'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
   ];
 
   const niveis = [
-    { value: 'junior', label: 'Júnior' },
-    { value: 'pleno', label: 'Pleno' },
-    { value: 'senior', label: 'Sênior' },
-    { value: 'especialista', label: 'Especialista' },
-    { value: 'coordenador', label: 'Coordenador' },
-    { value: 'gerente', label: 'Gerente' },
-    { value: 'diretor', label: 'Diretor' }
+    { value: '1', label: 'Nível 1' },
+    { value: '2', label: 'Nível 2' },
+    { value: '3', label: 'Nível 3' },
+    { value: '4', label: 'Nível 4' },
+    { value: '5', label: 'Nível 5' }
   ];
 
   const setoresList = modules.departamentos.subModules.setores.data;
@@ -39,10 +46,51 @@ const DadosProfissionaisTab = ({ formData, onInputChange }: DadosProfissionaisTa
     ? funcoesList.filter(funcao => setorSelecionado.funcoes?.includes(funcao.id!))
     : [];
 
+  // Atualizar cargos disponíveis quando empresa/UF mudar
+  useEffect(() => {
+    if (formData.empresa && formData.uf) {
+      const cargos = obterCargosDisponiveis(formData.empresa, formData.uf);
+      setCargosDisponiveis(cargos);
+    } else {
+      setCargosDisponiveis([]);
+    }
+  }, [formData.empresa, formData.uf]);
+
+  // Calcular sugestão salarial quando cargo e nível mudarem
+  useEffect(() => {
+    if (formData.empresa && formData.uf && formData.cargo && formData.nivel) {
+      const sugestao = calcularSugestaoSalarial(
+        formData.empresa,
+        formData.uf,
+        formData.cargo,
+        formData.nivel
+      );
+
+      if (sugestao) {
+        onInputChange('planoCarreira', sugestao.planoCarreira);
+        onInputChange('sugestaoSalario', `R$ ${sugestao.salarioTotal.toLocaleString('pt-BR', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })}`);
+        onInputChange('breakdownSalarial', sugestao.breakdown);
+      } else {
+        onInputChange('planoCarreira', '');
+        onInputChange('sugestaoSalario', '');
+        onInputChange('breakdownSalarial', '');
+      }
+    }
+  }, [formData.empresa, formData.uf, formData.cargo, formData.nivel, onInputChange]);
+
   const handleSetorChange = (value: string) => {
     onInputChange('setor', value);
     // Limpar função quando setor mudar
     onInputChange('funcao', '');
+  };
+
+  const handleCargoChange = (value: string) => {
+    onInputChange('cargo', value);
+    // Limpar nível quando cargo mudar
+    onInputChange('nivel', '');
   };
 
   return (
@@ -112,19 +160,33 @@ const DadosProfissionaisTab = ({ formData, onInputChange }: DadosProfissionaisTa
 
         <div className="space-y-2">
           <Label htmlFor="cargo">Cargo *</Label>
-          <Input
-            id="cargo"
-            value={formData.cargo}
-            onChange={(e) => onInputChange('cargo', e.target.value)}
-            placeholder="Digite o cargo"
-          />
+          <Select 
+            value={formData.cargo} 
+            onValueChange={handleCargoChange}
+            disabled={!formData.empresa || !formData.uf}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={formData.empresa && formData.uf ? "Selecione o cargo" : "Selecione empresa e UF primeiro"} />
+            </SelectTrigger>
+            <SelectContent>
+              {cargosDisponiveis.map((cargo) => (
+                <SelectItem key={cargo} value={cargo}>
+                  {cargo}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="nivel">Nível</Label>
-          <Select value={formData.nivel} onValueChange={(value) => onInputChange('nivel', value)}>
+          <Label htmlFor="nivel">Nível de Progressão</Label>
+          <Select 
+            value={formData.nivel} 
+            onValueChange={(value) => onInputChange('nivel', value)}
+            disabled={!formData.cargo}
+          >
             <SelectTrigger>
-              <SelectValue placeholder="Selecione o nível" />
+              <SelectValue placeholder={formData.cargo ? "Selecione o nível" : "Selecione o cargo primeiro"} />
             </SelectTrigger>
             <SelectContent>
               {niveis.map((nivel) => (
@@ -155,6 +217,42 @@ const DadosProfissionaisTab = ({ formData, onInputChange }: DadosProfissionaisTa
             onChange={(e) => onInputChange('dataAdmissao', e.target.value)}
           />
         </div>
+
+        {/* Campos informativos do plano de carreira */}
+        {formData.planoCarreira && (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="planoCarreira" className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-blue-600" />
+                Plano de Carreira Identificado
+              </Label>
+              <Input
+                id="planoCarreira"
+                value={formData.planoCarreira}
+                readOnly
+                className="bg-blue-50 border-blue-200 text-blue-800"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="sugestaoSalario" className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-green-600" />
+                Sugestão Salarial
+              </Label>
+              <Input
+                id="sugestaoSalario"
+                value={formData.sugestaoSalario}
+                readOnly
+                className="bg-green-50 border-green-200 text-green-800 font-semibold"
+              />
+              {formData.breakdownSalarial && (
+                <p className="text-xs text-gray-600 mt-1">
+                  {formData.breakdownSalarial}
+                </p>
+              )}
+            </div>
+          </>
+        )}
 
         <div className="space-y-2">
           <Label htmlFor="dataCadastro">Data de Cadastro</Label>

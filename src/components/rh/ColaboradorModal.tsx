@@ -1,8 +1,9 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { X, Save, User } from "lucide-react";
+import { Save, User } from "lucide-react";
 import { ColaboradorData } from "@/types/colaborador";
 import DadosPessoaisTab from "./tabs/DadosPessoaisTab";
 import DadosProfissionaisTab from "./tabs/DadosProfissionaisTab";
@@ -17,7 +18,11 @@ interface ColaboradorModalProps {
 }
 
 const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
-  const [formData, setFormData] = useState<ColaboradorData>({
+  const [formData, setFormData] = useState<ColaboradorData & {
+    planoCarreira?: string;
+    sugestaoSalario?: string;
+    breakdownSalarial?: string;
+  }>({
     dadosPessoais: {
       nome: '',
       cpf: '',
@@ -83,19 +88,40 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
     }
   });
 
-  const handleInputChange = (section: keyof ColaboradorData, field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value
-      }
-    }));
+  const handleInputChange = (section: keyof ColaboradorData | string, field: string, value: any) => {
+    if (section === 'planoCarreira' || section === 'sugestaoSalario' || section === 'breakdownSalarial') {
+      setFormData(prev => ({
+        ...prev,
+        [section]: value
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [section]: {
+          ...prev[section as keyof ColaboradorData],
+          [field]: value
+        }
+      }));
+    }
   };
 
   const handleSave = () => {
     console.log('Salvando colaborador:', formData);
     onClose();
+  };
+
+  const dadosProfissionaisWithSuggestion = {
+    ...formData.dadosProfissionais,
+    planoCarreira: formData.planoCarreira,
+    sugestaoSalario: formData.sugestaoSalario,
+    breakdownSalarial: formData.breakdownSalarial
+  };
+
+  const dadosFinanceirosWithSuggestion = {
+    ...formData.dadosFinanceiros,
+    planoCarreira: formData.planoCarreira,
+    sugestaoSalario: formData.sugestaoSalario,
+    breakdownSalarial: formData.breakdownSalarial
   };
 
   return (
@@ -148,14 +174,20 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
 
               <TabsContent value="dados-profissionais" className="mt-0">
                 <DadosProfissionaisTab 
-                  formData={formData.dadosProfissionais}
-                  onInputChange={(field, value) => handleInputChange('dadosProfissionais', field, value)}
+                  formData={dadosProfissionaisWithSuggestion}
+                  onInputChange={(field, value) => {
+                    if (field === 'planoCarreira' || field === 'sugestaoSalario' || field === 'breakdownSalarial') {
+                      handleInputChange(field, '', value);
+                    } else {
+                      handleInputChange('dadosProfissionais', field, value);
+                    }
+                  }}
                 />
               </TabsContent>
 
               <TabsContent value="dados-financeiros" className="mt-0">
                 <DadosFinanceirosTab 
-                  formData={formData.dadosFinanceiros}
+                  formData={dadosFinanceirosWithSuggestion}
                   onInputChange={(field, value) => handleInputChange('dadosFinanceiros', field, value)}
                 />
               </TabsContent>
