@@ -1,5 +1,5 @@
 
-import { UserCheck } from "lucide-react";
+import { UserCheck, Building2 } from "lucide-react";
 
 export const modules = {
   colaboradores: {
@@ -68,6 +68,47 @@ export const modules = {
             status: "Férias",
             email: "carlos.souza@empresa.com",
             telefone: "(11) 99999-0005"
+          }
+        ]
+      }
+    }
+  },
+  departamentos: {
+    name: "Departamentos",
+    icon: Building2,
+    subModules: {
+      departamentos: {
+        name: "Departamentos",
+        data: [
+          {
+            id: 1,
+            nome: "Tecnologia",
+            responsavel: "João Silva Santos",
+            observacoes: "Departamento responsável por sistemas e infraestrutura"
+          },
+          {
+            id: 2,
+            nome: "Comercial",
+            responsavel: "Maria Oliveira Costa",
+            observacoes: "Departamento de vendas e relacionamento com clientes"
+          },
+          {
+            id: 3,
+            nome: "Financeiro",
+            responsavel: "Pedro Almeida Lima",
+            observacoes: "Departamento de controladoria e contabilidade"
+          },
+          {
+            id: 4,
+            nome: "Recursos Humanos",
+            responsavel: "Ana Paula Ferreira",
+            observacoes: "Departamento de gestão de pessoas"
+          },
+          {
+            id: 5,
+            nome: "Produção",
+            responsavel: "Carlos Eduardo Souza",
+            observacoes: "Departamento operacional de produção"
           }
         ]
       }

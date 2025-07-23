@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import RHSidebar from "@/components/rh/RHSidebar";
@@ -5,6 +6,7 @@ import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
 import EmptyState from "@/components/cadastro/EmptyState";
 import ColaboradorModal from "@/components/rh/ColaboradorModal";
+import DepartamentoModal from "@/components/rh/DepartamentoModal";
 import { modules } from "@/data/rhModules";
 
 const RH = () => {
@@ -12,7 +14,8 @@ const RH = () => {
   const [activeSubModule, setActiveSubModule] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
+  const [isDepartamentoModalOpen, setIsDepartamentoModalOpen] = useState(false);
 
   // Reset state when no module is selected
   const resetSelection = () => {
@@ -44,11 +47,19 @@ const RH = () => {
   };
 
   const handleNewRecord = () => {
-    setIsModalOpen(true);
+    if (activeModule === 'colaboradores') {
+      setIsColaboradorModalOpen(true);
+    } else if (activeModule === 'departamentos') {
+      setIsDepartamentoModalOpen(true);
+    }
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseColaboradorModal = () => {
+    setIsColaboradorModalOpen(false);
+  };
+
+  const handleCloseDepartamentoModal = () => {
+    setIsDepartamentoModalOpen(false);
   };
 
   const handleGetStarted = () => {
@@ -66,6 +77,13 @@ const RH = () => {
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   ) || [];
+
+  // Get button text based on active module
+  const getButtonText = () => {
+    if (activeModule === 'colaboradores') return "Novo Colaborador";
+    if (activeModule === 'departamentos') return "Novo Departamento";
+    return "Novo Registro";
+  };
 
   return (
     <SidebarLayout>
@@ -88,7 +106,7 @@ const RH = () => {
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
                 onNewRecord={handleNewRecord}
-                buttonText="Novo Colaborador"
+                buttonText={getButtonText()}
               />
 
               <div className="flex-1 p-6 min-h-0">
@@ -104,7 +122,8 @@ const RH = () => {
         </div>
       </div>
 
-      <ColaboradorModal isOpen={isModalOpen} onClose={handleCloseModal} />
+      <ColaboradorModal isOpen={isColaboradorModalOpen} onClose={handleCloseColaboradorModal} />
+      <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={handleCloseDepartamentoModal} />
     </SidebarLayout>
   );
 };
