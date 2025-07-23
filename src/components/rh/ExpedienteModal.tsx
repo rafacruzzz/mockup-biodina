@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -71,18 +70,40 @@ const ExpedienteModal = ({ isOpen, onClose }: ExpedienteModalProps) => {
   };
 
   const handleAplicarTodos = () => {
+    // Encontrar o primeiro horário ativo para usar como modelo
     const primeiroHorarioAtivo = formData.horarios.find(h => h.ativo);
+    
+    let horariosModelo;
     if (primeiroHorarioAtivo) {
-      setFormData(prev => ({
-        ...prev,
-        horarios: prev.horarios.map(horario => ({
-          ...horario,
-          ativo: true,
-          primeiroTurno: { ...primeiroHorarioAtivo.primeiroTurno },
-          segundoTurno: { ...primeiroHorarioAtivo.segundoTurno }
-        }))
-      }));
+      // Se já existe um dia ativo, usar seus horários como modelo
+      horariosModelo = {
+        primeiroTurno: { ...primeiroHorarioAtivo.primeiroTurno },
+        segundoTurno: { ...primeiroHorarioAtivo.segundoTurno }
+      };
+    } else {
+      // Se nenhum dia estiver ativo, usar horários padrão
+      horariosModelo = {
+        primeiroTurno: {
+          inicio: '08:00',
+          fim: '12:00'
+        },
+        segundoTurno: {
+          inicio: '13:00',
+          fim: '18:00'
+        }
+      };
     }
+
+    // Ativar todos os dias com os horários modelo
+    setFormData(prev => ({
+      ...prev,
+      horarios: prev.horarios.map(horario => ({
+        ...horario,
+        ativo: true,
+        primeiroTurno: { ...horariosModelo.primeiroTurno },
+        segundoTurno: { ...horariosModelo.segundoTurno }
+      }))
+    }));
   };
 
   const handleSave = () => {
