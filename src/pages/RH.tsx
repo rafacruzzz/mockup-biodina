@@ -7,6 +7,7 @@ import DataTable from "@/components/cadastro/DataTable";
 import EmptyState from "@/components/cadastro/EmptyState";
 import ColaboradorModal from "@/components/rh/ColaboradorModal";
 import DepartamentoModal from "@/components/rh/DepartamentoModal";
+import ExpedienteModal from "@/components/rh/ExpedienteModal";
 import { modules } from "@/data/rhModules";
 
 const RH = () => {
@@ -16,6 +17,7 @@ const RH = () => {
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
   const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
   const [isDepartamentoModalOpen, setIsDepartamentoModalOpen] = useState(false);
+  const [isExpedienteModalOpen, setIsExpedienteModalOpen] = useState(false);
 
   // Reset state when no module is selected
   const resetSelection = () => {
@@ -51,6 +53,8 @@ const RH = () => {
       setIsColaboradorModalOpen(true);
     } else if (activeModule === 'departamentos') {
       setIsDepartamentoModalOpen(true);
+    } else if (activeModule === 'expedientes') {
+      setIsExpedienteModalOpen(true);
     }
   };
 
@@ -60,6 +64,10 @@ const RH = () => {
 
   const handleCloseDepartamentoModal = () => {
     setIsDepartamentoModalOpen(false);
+  };
+
+  const handleCloseExpedienteModal = () => {
+    setIsExpedienteModalOpen(false);
   };
 
   const handleGetStarted = () => {
@@ -82,6 +90,7 @@ const RH = () => {
   const getButtonText = () => {
     if (activeModule === 'colaboradores') return "Novo Colaborador";
     if (activeModule === 'departamentos') return "Novo Departamento";
+    if (activeModule === 'expedientes') return "Novo Expediente";
     return "Novo Registro";
   };
 
@@ -124,6 +133,7 @@ const RH = () => {
 
       <ColaboradorModal isOpen={isColaboradorModalOpen} onClose={handleCloseColaboradorModal} />
       <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={handleCloseDepartamentoModal} />
+      <ExpedienteModal isOpen={isExpedienteModalOpen} onClose={handleCloseExpedienteModal} />
     </SidebarLayout>
   );
 };

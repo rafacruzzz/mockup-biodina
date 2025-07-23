@@ -1,5 +1,5 @@
 
-import { UserCheck, Building2 } from "lucide-react";
+import { UserCheck, Building2, Clock } from "lucide-react";
 
 export const modules = {
   colaboradores: {
@@ -109,6 +109,32 @@ export const modules = {
             nome: "Produção",
             responsavel: "Carlos Eduardo Souza",
             observacoes: "Departamento operacional de produção"
+          }
+        ]
+      }
+    }
+  },
+  expedientes: {
+    name: "Expedientes",
+    icon: Clock,
+    subModules: {
+      expedientes: {
+        name: "Expedientes",
+        data: [
+          {
+            id: 1,
+            nome: "Expediente Comercial",
+            observacoes: "Horário padrão para departamentos administrativos"
+          },
+          {
+            id: 2,
+            nome: "Expediente Produção",
+            observacoes: "Horário específico para área de produção com dois turnos"
+          },
+          {
+            id: 3,
+            nome: "Expediente Flexível",
+            observacoes: "Horário flexível para equipes de desenvolvimento"
           }
         ]
       }
