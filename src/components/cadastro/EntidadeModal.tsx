@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +33,11 @@ const EntidadeModal = ({ onClose }: EntidadeModalProps) => {
     agencia: "",
     conta: "",
     prazo_pagamento: "",
+    // Campos específicos para Detentores Registro ANVISA
+    nome_empresa: "",
+    contato: "",
+    status: "",
+    data_cadastro: new Date().toISOString().split('T')[0],
     observacoes: ""
   });
 
@@ -206,6 +210,62 @@ const EntidadeModal = ({ onClose }: EntidadeModalProps) => {
     </>
   );
 
+  const renderDetentoresAnvisaFields = () => (
+    <>
+      <div>
+        <Label htmlFor="nome_empresa">Nome da Empresa *</Label>
+        <Input
+          id="nome_empresa"
+          value={formData.nome_empresa}
+          onChange={(e) => handleInputChange("nome_empresa", e.target.value)}
+          placeholder="Ex: EMS S.A."
+        />
+      </div>
+      <div>
+        <Label htmlFor="endereco">Endereço Completo</Label>
+        <Textarea
+          id="endereco"
+          value={formData.endereco}
+          onChange={(e) => handleInputChange("endereco", e.target.value)}
+          rows={3}
+          placeholder="Endereço completo da empresa"
+        />
+      </div>
+      <div>
+        <Label htmlFor="contato">Contato Responsável</Label>
+        <Input
+          id="contato"
+          value={formData.contato}
+          onChange={(e) => handleInputChange("contato", e.target.value)}
+          placeholder="Ex: Dr. Roberto Silva"
+        />
+      </div>
+      <div>
+        <Label htmlFor="status">Status</Label>
+        <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ativo">Ativo</SelectItem>
+            <SelectItem value="inativo">Inativo</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <div>
+        <Label htmlFor="data_cadastro">Data de Cadastro</Label>
+        <Input
+          id="data_cadastro"
+          type="date"
+          value={formData.data_cadastro}
+          onChange={(e) => handleInputChange("data_cadastro", e.target.value)}
+          readOnly
+          className="bg-gray-100"
+        />
+      </div>
+    </>
+  );
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
@@ -229,63 +289,83 @@ const EntidadeModal = ({ onClose }: EntidadeModalProps) => {
                     <SelectItem value="cliente">Cliente</SelectItem>
                     <SelectItem value="fornecedor">Fornecedor</SelectItem>
                     <SelectItem value="lead">Lead</SelectItem>
+                    <SelectItem value="detentores_registro_anvisa">Detentores Registro ANVISA</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              <div>
-                <Label htmlFor="nome_razao_social">Nome/Razão Social *</Label>
-                <Input
-                  id="nome_razao_social"
-                  value={formData.nome_razao_social}
-                  onChange={(e) => handleInputChange("nome_razao_social", e.target.value)}
-                  placeholder="Ex: Hospital São Lucas"
-                />
-              </div>
+              {formData.tipo !== 'detentores_registro_anvisa' && (
+                <>
+                  <div>
+                    <Label htmlFor="nome_razao_social">Nome/Razão Social *</Label>
+                    <Input
+                      id="nome_razao_social"
+                      value={formData.nome_razao_social}
+                      onChange={(e) => handleInputChange("nome_razao_social", e.target.value)}
+                      placeholder="Ex: Hospital São Lucas"
+                    />
+                  </div>
 
-              <div>
-                <Label htmlFor="cnpj_cpf">CNPJ/CPF</Label>
-                <Input
-                  id="cnpj_cpf"
-                  value={formData.cnpj_cpf}
-                  onChange={(e) => handleInputChange("cnpj_cpf", e.target.value)}
-                  placeholder="Ex: 11.222.333/0001-44"
-                />
-              </div>
+                  <div>
+                    <Label htmlFor="cnpj_cpf">CNPJ/CPF</Label>
+                    <Input
+                      id="cnpj_cpf"
+                      value={formData.cnpj_cpf}
+                      onChange={(e) => handleInputChange("cnpj_cpf", e.target.value)}
+                      placeholder="Ex: 11.222.333/0001-44"
+                    />
+                  </div>
 
-              <div>
-                <Label htmlFor="email">E-mail</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  placeholder="Ex: contato@empresa.com.br"
-                />
-              </div>
+                  <div>
+                    <Label htmlFor="email">E-mail</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange("email", e.target.value)}
+                      placeholder="Ex: contato@empresa.com.br"
+                    />
+                  </div>
 
-              <div>
-                <Label htmlFor="telefone">Telefone</Label>
-                <Input
-                  id="telefone"
-                  value={formData.telefone}
-                  onChange={(e) => handleInputChange("telefone", e.target.value)}
-                  placeholder="Ex: (11) 9999-8888"
-                />
-              </div>
+                  <div>
+                    <Label htmlFor="telefone">Telefone</Label>
+                    <Input
+                      id="telefone"
+                      value={formData.telefone}
+                      onChange={(e) => handleInputChange("telefone", e.target.value)}
+                      placeholder="Ex: (11) 9999-8888"
+                    />
+                  </div>
 
-              <div>
-                <Label htmlFor="responsavel">Responsável</Label>
-                <Input
-                  id="responsavel"
-                  value={formData.responsavel}
-                  onChange={(e) => handleInputChange("responsavel", e.target.value)}
-                />
-              </div>
+                  <div>
+                    <Label htmlFor="responsavel">Responsável</Label>
+                    <Input
+                      id="responsavel"
+                      value={formData.responsavel}
+                      onChange={(e) => handleInputChange("responsavel", e.target.value)}
+                    />
+                  </div>
+                </>
+              )}
+
+              {formData.tipo === 'detentores_registro_anvisa' && (
+                <>
+                  <div>
+                    <Label htmlFor="cnpj_cpf">CNPJ *</Label>
+                    <Input
+                      id="cnpj_cpf"
+                      value={formData.cnpj_cpf}
+                      onChange={(e) => handleInputChange("cnpj_cpf", e.target.value)}
+                      placeholder="Ex: 57.507.378/0001-83"
+                    />
+                  </div>
+                </>
+              )}
 
               {formData.tipo === 'cliente' && renderClienteFields()}
               {formData.tipo === 'fornecedor' && renderFornecedorFields()}
               {formData.tipo === 'lead' && renderLeadFields()}
+              {formData.tipo === 'detentores_registro_anvisa' && renderDetentoresAnvisaFields()}
             </div>
 
             <div className="md:col-span-2">

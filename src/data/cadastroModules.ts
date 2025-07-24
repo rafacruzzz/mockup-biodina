@@ -11,7 +11,10 @@ export const modules: ModulesConfig = {
         data: [
           { id: 1, nome_razao_social: "Hospital São Lucas", tipo: "Cliente", cnpj_cpf: "11.222.333/0001-44", contato: "Dr. Carlos Lima", telefone: "(11) 7777-6666", email: "carlos@saolucas.com.br", status: "Ativo" },
           { id: 2, nome_razao_social: "Fornecedor Medicamentos ABC Ltda", tipo: "Fornecedor", cnpj_cpf: "12.345.678/0001-90", contato: "João Silva", telefone: "(11) 9999-8888", email: "joao@abc.com.br", status: "Ativo" },
-          { id: 3, nome_razao_social: "Hospital Regional Norte", tipo: "Lead", cnpj_cpf: "", contato: "Dr. Pedro Oliveira", telefone: "(85) 5555-4444", email: "pedro@regionalrte.com.br", status: "Novo" }
+          { id: 3, nome_razao_social: "Hospital Regional Norte", tipo: "Lead", cnpj_cpf: "", contato: "Dr. Pedro Oliveira", telefone: "(85) 5555-4444", email: "pedro@regionalrte.com.br", status: "Novo" },
+          { id: 4, nome_razao_social: "EMS S.A.", tipo: "Detentores Registro ANVISA", cnpj_cpf: "57.507.378/0001-83", contato: "Dr. Roberto Silva", telefone: "(19) 3707-8000", email: "regulatorio@ems.com.br", status: "Ativo", endereco: "Rod. Jornalista Francisco Aguirre Proença, 2374 - Chácara Primavera, Campinas - SP", data_cadastro: "2024-01-15" },
+          { id: 5, nome_razao_social: "Eurofarma Laboratórios S.A.", tipo: "Detentores Registro ANVISA", cnpj_cpf: "61.190.096/0001-92", contato: "Dra. Maria Santos", telefone: "(11) 5090-3000", email: "assuntos.regulatorios@eurofarma.com.br", status: "Ativo", endereco: "Av. Vereador José Diniz, 3465 - Campo Belo, São Paulo - SP", data_cadastro: "2024-01-10" },
+          { id: 6, nome_razao_social: "Pfizer Brasil Ltda.", tipo: "Detentores Registro ANVISA", cnpj_cpf: "46.070.868/0001-69", contato: "Dr. Fernando Costa", telefone: "(11) 5185-8500", email: "regulatory@pfizer.com", status: "Ativo", endereco: "Rua Alexandre Dumas, 1860 - Santo Amaro, São Paulo - SP", data_cadastro: "2024-01-08" }
         ]
       }
     }
