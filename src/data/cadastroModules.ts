@@ -33,13 +33,54 @@ export const modules: ModulesConfig = {
             familiaProduto: "Medicamentos",
             marca: "EMS", 
             modelo: "Extra Forte",
+            nomeMarketing: "Paracetamol EMS Extra Forte",
+            descritivoBreve: "Analgésico e antitérmico de ação rápida",
+            descritivoCompleto: "Medicamento analgésico e antitérmico indicado para o alívio da dor e redução da febre. Cada comprimido contém 500mg de paracetamol. Apresentação em embalagem com 20 comprimidos revestidos.",
+            tags: ["analgésico", "antitérmico", "dor", "febre"],
+            fabricanteId: "1",
+            codigoProdutoFabricante: "EMS-PAR-500",
+            nomeProdutoFabricante: "Paracetamol 500mg EMS",
             precoUnitarioVenda: 12.50, 
             estoqueFisico: 250,
             reservado: 15,
             estoqueDisponivel: 235,
             ultimaAlteracao: new Date('2024-01-15'),
             vendidoPorUnidade: true,
-            ativo: true 
+            ativo: true,
+            // Regulamentação ANVISA
+            detentorRegistroId: "1",
+            nomeEmpresaDetentora: "EMS S.A.",
+            cnpjDetentor: "57.507.378/0001-83",
+            autorizacaoFuncionamento: "25351.916696/2019-26",
+            nomeDispositivoMedico: "Paracetamol 500mg",
+            nomeTecnicoDispositivo: "Paracetamol - N-acetil-para-aminofenol",
+            numeroNotificacaoRegistro: "1.0068.0279.001-4",
+            situacaoNotificacaoRegistro: "Vigente",
+            processoNotificacaoRegistro: "25351.916696/2019-26",
+            classificacaoRisco: "Classe I - Baixo Risco",
+            dataInicioVigencia: new Date('2020-01-15'),
+            dataVencimento: new Date('2025-01-15'),
+            linkConsultaAnvisa: "https://consultas.anvisa.gov.br/#/medicamentos/25351916696201926/",
+            // Apresentações expandidas
+            apresentacaoPrimaria: "Blister com 10 comprimidos",
+            apresentacaoSecundaria: "Caixa com 2 blisters (20 comprimidos)",
+            apresentacaoEmbarque: "Caixa master com 50 unidades",
+            componentes: "Princípio ativo: Paracetamol 500mg; Excipientes: Amido de milho, celulose microcristalina, estearato de magnésio, dióxido de silício coloidal, croscarmelose sódica",
+            referenciasComercializadas: ["REF001 - Caixa 20 comp", "REF002 - Blister avulso 10 comp", "REF003 - Caixa hospitalar 100 comp"],
+            // Documentação
+            documentacaoLinks: {
+              linksDocumentacao: [
+                {
+                  id: "1",
+                  titulo: "Bula do Paciente",
+                  url: "https://bulario.anvisa.gov.br/documento/paracetamol",
+                  tipo: "Manual" as const,
+                  dataUpload: new Date('2024-01-10'),
+                  versao: "v2.1"
+                }
+              ],
+              arquivosLocais: []
+            }
           },
           { 
             id: 2, 
@@ -48,13 +89,54 @@ export const modules: ModulesConfig = {
             familiaProduto: "Medicamentos",
             marca: "Eurofarma", 
             modelo: "Forte",
+            nomeMarketing: "Amoxicilina Eurofarma Forte",
+            descritivoBreve: "Antibiótico de amplo espectro para infecções bacterianas",
+            descritivoCompleto: "Antibiótico de amplo espectro da classe das penicilinas, indicado para o tratamento de infecções causadas por bactérias sensíveis. Cada comprimido contém 875mg de amoxicilina tri-hidratada.",
+            tags: ["antibiótico", "infecção", "bactéria", "amplo espectro"],
+            fabricanteId: "2",
+            codigoProdutoFabricante: "EUR-AMX-875",
+            nomeProdutoFabricante: "Amoxicilina 875mg Eurofarma",
             precoUnitarioVenda: 28.90, 
             estoqueFisico: 180,
             reservado: 25,
             estoqueDisponivel: 155,
             ultimaAlteracao: new Date('2024-01-12'),
             vendidoPorUnidade: true,
-            ativo: true 
+            ativo: true,
+            // Regulamentação ANVISA
+            detentorRegistroId: "2",
+            nomeEmpresaDetentora: "Eurofarma Laboratórios S.A.",
+            cnpjDetentor: "61.190.096/0001-92",
+            autorizacaoFuncionamento: "25351.172702/2018-81",
+            nomeDispositivoMedico: "Amoxicilina 875mg",
+            nomeTecnicoDispositivo: "Amoxicilina tri-hidratada",
+            numeroNotificacaoRegistro: "1.0235.0158.002-1",
+            situacaoNotificacaoRegistro: "Vigente",
+            processoNotificacaoRegistro: "25351.172702/2018-81",
+            classificacaoRisco: "Classe II - Médio Risco",
+            dataInicioVigencia: new Date('2019-03-20'),
+            dataVencimento: new Date('2024-03-20'),
+            linkConsultaAnvisa: "https://consultas.anvisa.gov.br/#/medicamentos/25351172702201881/",
+            // Apresentações expandidas
+            apresentacaoPrimaria: "Blister com 14 comprimidos",
+            apresentacaoSecundaria: "Caixa com 1 blister (14 comprimidos)",
+            apresentacaoEmbarque: "Caixa master com 30 unidades",
+            componentes: "Princípio ativo: Amoxicilina tri-hidratada equivalente a 875mg de amoxicilina; Excipientes: Celulose microcristalina, croscarmelose sódica, estearato de magnésio, dióxido de silício coloidal",
+            referenciasComercializadas: ["REF004 - Caixa 14 comp", "REF005 - Caixa hospitalar 70 comp"],
+            // Documentação
+            documentacaoLinks: {
+              linksDocumentacao: [
+                {
+                  id: "2",
+                  titulo: "Protocolo de Uso Hospitalar", 
+                  url: "https://eurofarma.com.br/protocolos/amoxicilina",
+                  tipo: "Treinamento" as const,
+                  dataUpload: new Date('2024-01-08'),
+                  versao: "v1.3"
+                }
+              ],
+              arquivosLocais: []
+            }
           },
           { 
             id: 3, 
@@ -63,13 +145,62 @@ export const modules: ModulesConfig = {
             familiaProduto: "Equipamentos Médicos",
             marca: "Omron", 
             modelo: "TH-839S",
+            nomeMarketing: "Termômetro Omron Precision",
+            descritivoBreve: "Termômetro digital sem contato por infravermelho",
+            descritivoCompleto: "Termômetro digital infravermelho para medição de temperatura corporal sem contato físico. Tecnologia de precisão com display LCD e memória para últimas 25 medições. Ideal para uso doméstico e hospitalar.",
+            tags: ["termômetro", "infravermelho", "digital", "sem contato"],
+            fabricanteId: "4",
+            codigoProdutoFabricante: "OMR-TH839S",
+            nomeProdutoFabricante: "Digital Thermometer TH-839S",
             precoUnitarioVenda: 89.90, 
             estoqueFisico: 45,
             reservado: 3,
             estoqueDisponivel: 42,
             ultimaAlteracao: new Date('2024-01-10'),
             vendidoPorUnidade: true,
-            ativo: true 
+            ativo: true,
+            // Regulamentação ANVISA
+            detentorRegistroId: "3",
+            nomeEmpresaDetentora: "Pfizer Brasil Ltda.",
+            cnpjDetentor: "46.070.868/0001-69",
+            autorizacaoFuncionamento: "25351.653421/2020-15",
+            nomeDispositivoMedico: "Termômetro Digital Infravermelho",
+            nomeTecnicoDispositivo: "Termômetro clínico eletrônico infravermelho",
+            numeroNotificacaoRegistro: "80146300012",
+            situacaoNotificacaoRegistro: "Vigente",
+            processoNotificacaoRegistro: "25351.653421/2020-15",
+            classificacaoRisco: "Classe II - Médio Risco",
+            dataInicioVigencia: new Date('2021-06-15'),
+            dataVencimento: new Date('2026-06-15'),
+            linkConsultaAnvisa: "https://consultas.anvisa.gov.br/#/equipamentos/80146300012/",
+            // Apresentações expandidas
+            apresentacaoPrimaria: "Unidade individual com estojo",
+            apresentacaoSecundaria: "Caixa com manual e pilhas",
+            apresentacaoEmbarque: "Caixa master com 20 unidades",
+            componentes: "Sensor infravermelho MLX90614, display LCD, processador ARM Cortex-M0, carcaça em ABS médico",
+            referenciasComercializadas: ["REF006 - Unidade doméstica", "REF007 - Kit hospitalar com suporte"],
+            // Documentação
+            documentacaoLinks: {
+              linksDocumentacao: [
+                {
+                  id: "3",
+                  titulo: "Manual de Operação",
+                  url: "https://omron.com.br/manuais/th839s",
+                  tipo: "Manual" as const,
+                  dataUpload: new Date('2024-01-05'),
+                  versao: "v3.2"
+                },
+                {
+                  id: "4", 
+                  titulo: "Treinamento de Calibração",
+                  url: "https://omron.com.br/treinamentos/calibracao",
+                  tipo: "Treinamento" as const,
+                  dataUpload: new Date('2024-01-03'),
+                  versao: "v1.0"
+                }
+              ],
+              arquivosLocais: []
+            }
           }
         ]
       },

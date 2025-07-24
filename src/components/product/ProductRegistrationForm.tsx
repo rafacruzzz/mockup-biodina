@@ -5,10 +5,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { X, Save } from "lucide-react";
 import { ProductRegistrationData, ProductRegistrationFormProps } from "@/types/product";
 import DadosGeraisTab from "./DadosGeraisTab";
+import RegulamentacaoAnvisaTab from "./RegulamentacaoAnvisaTab";
 import ApresentacoesTab from "./ApresentacoesTab";
 import CodigosFiscaisTab from "./CodigosFiscaisTab";
 import PrecoEstoqueTab from "./PrecoEstoqueTab";
 import DimensoesPesoTab from "./DimensoesPesoTab";
+import DocumentacaoLinksTab from "./DocumentacaoLinksTab";
 import LogisticaComercialTab from "./LogisticaComercialTab";
 import AuditoriaTab from "./AuditoriaTab";
 
@@ -21,11 +23,35 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
     modelo: "",
     descricao: "",
     vendidoPorUnidade: true,
+    nomeMarketing: "",
+    descritivoBreve: "",
+    descritivoCompleto: "",
+    tags: [],
+    fabricanteId: "",
+    codigoProdutoFabricante: "",
+    nomeProdutoFabricante: "",
+
+    // Regulamentação ANVISA
+    detentorRegistroId: "",
+    nomeEmpresaDetentora: "",
+    cnpjDetentor: "",
+    autorizacaoFuncionamento: "",
+    nomeDispositivoMedico: "",
+    nomeTecnicoDispositivo: "",
+    numeroNotificacaoRegistro: "",
+    situacaoNotificacaoRegistro: "",
+    processoNotificacaoRegistro: "",
+    classificacaoRisco: "",
+    dataInicioVigencia: null,
+    dataVencimento: null,
+    linkConsultaAnvisa: "",
 
     // Apresentações
     apresentacaoPrimaria: "",
     apresentacaoSecundaria: "",
     apresentacaoEmbarque: "",
+    componentes: "",
+    referenciasComercializadas: [],
 
     // Códigos Fiscais
     codigoNCM: "",
@@ -46,6 +72,12 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
     altura: 0,
     largura: 0,
     profundidade: 0,
+
+    // Documentação e Links
+    documentacaoLinks: {
+      linksDocumentacao: [],
+      arquivosLocais: []
+    },
 
     // Logística e Comercial
     diasGarantia: 0,
@@ -129,18 +161,24 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
         {/* Conteúdo com scroll */}
         <div className="flex-1 overflow-y-auto p-6">
           <Tabs defaultValue="dados-gerais" className="w-full">
-            <TabsList className="grid w-full grid-cols-7 mb-6">
+            <TabsList className="grid w-full grid-cols-9 mb-6">
               <TabsTrigger value="dados-gerais" className="text-xs">Dados Gerais</TabsTrigger>
+              <TabsTrigger value="regulamentacao-anvisa" className="text-xs">Regulamentação ANVISA</TabsTrigger>
               <TabsTrigger value="apresentacoes" className="text-xs">Apresentações</TabsTrigger>
               <TabsTrigger value="codigos-fiscais" className="text-xs">Códigos Fiscais</TabsTrigger>
               <TabsTrigger value="preco-estoque" className="text-xs">Preço e Estoque</TabsTrigger>
               <TabsTrigger value="dimensoes-peso" className="text-xs">Dimensões e Peso</TabsTrigger>
+              <TabsTrigger value="documentacao-links" className="text-xs">Documentação e Links</TabsTrigger>
               <TabsTrigger value="logistica-comercial" className="text-xs">Logística e Comercial</TabsTrigger>
               <TabsTrigger value="auditoria" className="text-xs">Auditoria</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dados-gerais">
               <DadosGeraisTab formData={formData} onInputChange={handleInputChange} />
+            </TabsContent>
+
+            <TabsContent value="regulamentacao-anvisa">
+              <RegulamentacaoAnvisaTab formData={formData} onInputChange={handleInputChange} />
             </TabsContent>
 
             <TabsContent value="apresentacoes">
@@ -157,6 +195,10 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
 
             <TabsContent value="dimensoes-peso">
               <DimensoesPesoTab formData={formData} onInputChange={handleInputChange} />
+            </TabsContent>
+
+            <TabsContent value="documentacao-links">
+              <DocumentacaoLinksTab formData={formData} onInputChange={handleInputChange} />
             </TabsContent>
 
             <TabsContent value="logistica-comercial">

@@ -1,39 +1,89 @@
 
 export interface ProductRegistrationData {
-  // Aba 1 - Dados Gerais
+  // Aba 1 - Dados Gerais (expandida)
   codigo: string;
   familiaProduto: string;
   marca: string;
   modelo: string;
   descricao: string;
   vendidoPorUnidade: boolean;
+  // Novos campos de marketing
+  nomeMarketing: string;
+  descritivoBreve: string;
+  descritivoCompleto: string;
+  tags: string[];
+  // Informações do fabricante
+  fabricanteId: string;
+  codigoProdutoFabricante: string;
+  nomeProdutoFabricante: string;
 
-  // Aba 2 - Apresentações
+  // Aba 2 - Regulamentação ANVISA (nova)
+  // Detentor do Registro
+  detentorRegistroId: string;
+  nomeEmpresaDetentora: string;
+  cnpjDetentor: string;
+  autorizacaoFuncionamento: string;
+  // Informações do Dispositivo
+  nomeDispositivoMedico: string;
+  nomeTecnicoDispositivo: string;
+  numeroNotificacaoRegistro: string;
+  situacaoNotificacaoRegistro: string;
+  processoNotificacaoRegistro: string;
+  classificacaoRisco: string;
+  dataInicioVigencia: Date | null;
+  dataVencimento: Date | null;
+  linkConsultaAnvisa: string;
+
+  // Aba 3 - Apresentações (expandida)
   apresentacaoPrimaria: string;
   apresentacaoSecundaria: string;
   apresentacaoEmbarque: string;
+  componentes: string;
+  referenciasComercializadas: string[];
 
-  // Aba 3 - Códigos Fiscais
+  // Aba 4 - Códigos Fiscais
   codigoNCM: string;
   cest: string;
   codigoEANPrimaria: string;
   codigoEANSecundaria: string;
   codigoEANEmbarque: string;
 
-  // Aba 4 - Preço e Estoque
+  // Aba 5 - Preço e Estoque
   precoUnitarioVenda: number;
   estoqueFisico: number;
   reservado: number;
   estoqueDisponivel: number; // calculado
 
-  // Aba 5 - Dimensões e Peso
+  // Aba 6 - Dimensões e Peso
   pesoLiquido: number;
   pesoBruto: number;
   altura: number;
   largura: number;
   profundidade: number;
 
-  // Aba 6 - Logística e Comercial
+  // Aba 7 - Documentação e Links (nova)
+  documentacaoLinks: {
+    linksDocumentacao: Array<{
+      id: string;
+      titulo: string;
+      url: string;
+      tipo: 'Treinamento' | 'Manual' | 'Especificação' | 'Outro';
+      dataUpload: Date;
+      versao?: string;
+    }>;
+    arquivosLocais: Array<{
+      id: string;
+      nomeArquivo: string;
+      arquivo: File | null;
+      tipo: string;
+      tamanho: number;
+      dataUpload: Date;
+      versao: string;
+      observacoes?: string;
+    }>;
+  };
+
+  // Aba 8 - Logística e Comercial
   diasGarantia: number;
   leadtimeRessuprimento: number;
   diasCrossdocking: number;
@@ -42,7 +92,7 @@ export interface ProductRegistrationData {
   tipoItemBlocoK: string;
   origemMercadoria: string;
 
-  // Aba 7 - Auditoria
+  // Aba 9 - Auditoria
   inclusao: Date;
   ultimaAlteracao: Date;
   incluidoPor: string;
