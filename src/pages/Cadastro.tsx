@@ -45,18 +45,42 @@ const Cadastro = () => {
       modelo: item.modelo || '',
       descricao: item.descricao || '',
       vendidoPorUnidade: item.vendidoPorUnidade || true,
+      nomeMarketing: item.nomeMarketing || '',
+      descritivoBreve: item.descritivoBreve || '',
+      descritivoCompleto: item.descritivoCompleto || '',
+      tags: item.tags || [],
+      fabricanteId: item.fabricanteId || '',
+      codigoProdutoFabricante: item.codigoProdutoFabricante || '',
+      nomeProdutoFabricante: item.nomeProdutoFabricante || '',
+
+      // Regulamentação ANVISA
+      detentorRegistroId: item.detentorRegistroId || '',
+      nomeEmpresaDetentora: item.nomeEmpresaDetentora || '',
+      cnpjDetentor: item.cnpjDetentor || '',
+      autorizacaoFuncionamento: item.autorizacaoFuncionamento || '',
+      nomeDispositivoMedico: item.nomeDispositivoMedico || '',
+      nomeTecnicoDispositivo: item.nomeTecnicoDispositivo || '',
+      numeroNotificacaoRegistro: item.numeroNotificacaoRegistro || '',
+      situacaoNotificacaoRegistro: item.situacaoNotificacaoRegistro || '',
+      processoNotificacaoRegistro: item.processoNotificacaoRegistro || '',
+      classificacaoRisco: item.classificacaoRisco || '',
+      dataInicioVigencia: item.dataInicioVigencia || null,
+      dataVencimento: item.dataVencimento || null,
+      linkConsultaAnvisa: item.linkConsultaAnvisa || '',
 
       // Apresentações
-      apresentacaoPrimaria: '',
-      apresentacaoSecundaria: '',
-      apresentacaoEmbarque: '',
+      apresentacaoPrimaria: item.apresentacaoPrimaria || '',
+      apresentacaoSecundaria: item.apresentacaoSecundaria || '',
+      apresentacaoEmbarque: item.apresentacaoEmbarque || '',
+      componentes: item.componentes || '',
+      referenciasComercializadas: item.referenciasComercializadas || [],
 
       // Códigos Fiscais
-      codigoNCM: '',
-      cest: '',
-      codigoEANPrimaria: '',
-      codigoEANSecundaria: '',
-      codigoEANEmbarque: '',
+      codigoNCM: item.codigoNCM || '',
+      cest: item.cest || '',
+      codigoEANPrimaria: item.codigoEANPrimaria || '',
+      codigoEANSecundaria: item.codigoEANSecundaria || '',
+      codigoEANEmbarque: item.codigoEANEmbarque || '',
 
       // Preço e Estoque
       precoUnitarioVenda: item.precoUnitarioVenda || 0,
@@ -65,26 +89,32 @@ const Cadastro = () => {
       estoqueDisponivel: item.estoqueDisponivel || 0,
 
       // Dimensões e Peso
-      pesoLiquido: 0,
-      pesoBruto: 0,
-      altura: 0,
-      largura: 0,
-      profundidade: 0,
+      pesoLiquido: item.pesoLiquido || 0,
+      pesoBruto: item.pesoBruto || 0,
+      altura: item.altura || 0,
+      largura: item.largura || 0,
+      profundidade: item.profundidade || 0,
+
+      // Documentação e Links
+      documentacaoLinks: item.documentacaoLinks || {
+        linksDocumentacao: [],
+        arquivosLocais: []
+      },
 
       // Logística e Comercial
-      diasGarantia: 0,
-      leadtimeRessuprimento: 0,
-      diasCrossdocking: 0,
-      cupomFiscalPDV: false,
-      marketplace: false,
-      tipoItemBlocoK: '',
-      origemMercadoria: '',
+      diasGarantia: item.diasGarantia || 0,
+      leadtimeRessuprimento: item.leadtimeRessuprimento || 0,
+      diasCrossdocking: item.diasCrossdocking || 0,
+      cupomFiscalPDV: item.cupomFiscalPDV || false,
+      marketplace: item.marketplace || false,
+      tipoItemBlocoK: item.tipoItemBlocoK || '',
+      origemMercadoria: item.origemMercadoria || '',
 
       // Auditoria
-      inclusao: new Date(),
+      inclusao: item.inclusao || new Date(),
       ultimaAlteracao: item.ultimaAlteracao || new Date(),
-      incluidoPor: 'Sistema',
-      alteradoPor: 'Sistema'
+      incluidoPor: item.incluidoPor || 'Sistema',
+      alteradoPor: item.alteradoPor || 'Sistema'
     }));
     setProducts(formattedProducts);
   }, []);
