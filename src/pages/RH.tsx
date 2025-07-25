@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import RHSidebar from "@/components/rh/RHSidebar";
@@ -94,7 +93,7 @@ const RH = () => {
   const handleEditItem = (item: any, moduleName: string) => {
     if (activeModule === 'colaboradores' && moduleName === 'Colaboradores') {
       setIsEditMode(true);
-      setEditingColaboradorId(item.id);
+      setEditingColaboradorId(String(item.id)); // Converter para string
       
       // Simular dados completos do colaborador baseado no item da tabela
       const colaboradorCompleto = {

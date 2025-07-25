@@ -1,4 +1,3 @@
-
 import { SolicitacaoAlteracao } from '@/types/solicitacao';
 
 export const solicitacoes: SolicitacaoAlteracao[] = [
@@ -33,7 +32,7 @@ export const solicitacoes: SolicitacaoAlteracao[] = [
   },
   {
     id: '3',
-    colaboradorId: '2', // João Santos (exemplo)
+    colaboradorId: '2', // João Silva Santos
     protocolo: '20241003',
     campo: 'Conta Bancária',
     aba: 'Dados Bancários',
@@ -47,7 +46,7 @@ export const solicitacoes: SolicitacaoAlteracao[] = [
   },
   {
     id: '4',
-    colaboradorId: '3', // Maria Oliveira (exemplo)
+    colaboradorId: '3', // Maria Oliveira Santos
     protocolo: '20241004',
     campo: 'Dependentes IR',
     aba: 'Dados Financeiros',
@@ -76,7 +75,7 @@ export const solicitacoes: SolicitacaoAlteracao[] = [
   },
   {
     id: '6',
-    colaboradorId: '2', // João Santos
+    colaboradorId: '2', // João Silva Santos
     protocolo: '20241006',
     campo: 'E-mail',
     aba: 'Dados Pessoais',
@@ -89,7 +88,7 @@ export const solicitacoes: SolicitacaoAlteracao[] = [
   },
   {
     id: '7',
-    colaboradorId: '3', // Maria Oliveira
+    colaboradorId: '3', // Maria Oliveira Santos
     protocolo: '20241007',
     campo: 'Cargo',
     aba: 'Dados Profissionais',
@@ -119,7 +118,7 @@ export const solicitacoes: SolicitacaoAlteracao[] = [
   },
   {
     id: '9',
-    colaboradorId: '4', // Pedro Almeida (exemplo)
+    colaboradorId: '4', // Pedro Almeida Costa
     protocolo: '20241009',
     campo: 'Banco',
     aba: 'Dados Bancários',
@@ -132,7 +131,7 @@ export const solicitacoes: SolicitacaoAlteracao[] = [
   },
   {
     id: '10',
-    colaboradorId: '2', // João Santos
+    colaboradorId: '2', // João Silva Santos
     protocolo: '20241010',
     campo: 'Escolaridade',
     aba: 'Formação e Escolaridade',
@@ -146,8 +145,9 @@ export const solicitacoes: SolicitacaoAlteracao[] = [
   }
 ];
 
-export const getSolicitacoesByColaborador = (colaboradorId: string): SolicitacaoAlteracao[] => {
-  return solicitacoes.filter(sol => sol.colaboradorId === colaboradorId);
+export const getSolicitacoesByColaborador = (colaboradorId: string | number): SolicitacaoAlteracao[] => {
+  const idString = String(colaboradorId);
+  return solicitacoes.filter(sol => sol.colaboradorId === idString);
 };
 
 export const getSolicitacoesPendentes = (): SolicitacaoAlteracao[] => {
