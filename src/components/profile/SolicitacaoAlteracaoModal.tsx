@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
 import { AlertCircle, FileText, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -27,7 +26,6 @@ const SolicitacaoAlteracaoModal = ({
 }: SolicitacaoAlteracaoModalProps) => {
   const [novoValor, setNovoValor] = useState('');
   const [motivo, setMotivo] = useState('');
-  const [urgencia, setUrgencia] = useState('media');
   const [tipoSolicitacao, setTipoSolicitacao] = useState('correcao');
   const { toast } = useToast();
 
@@ -53,7 +51,6 @@ const SolicitacaoAlteracaoModal = ({
     // Limpar campos
     setNovoValor('');
     setMotivo('');
-    setUrgencia('media');
     setTipoSolicitacao('correcao');
     onOpenChange(false);
   };
@@ -61,7 +58,6 @@ const SolicitacaoAlteracaoModal = ({
   const handleCancel = () => {
     setNovoValor('');
     setMotivo('');
-    setUrgencia('media');
     setTipoSolicitacao('correcao');
     onOpenChange(false);
   };
@@ -125,36 +121,6 @@ const SolicitacaoAlteracaoModal = ({
               placeholder="Descreva o motivo da alteração (ex: mudança de endereço, correção de erro, etc.)"
               rows={3}
             />
-          </div>
-
-          {/* Urgência */}
-          <div className="space-y-2">
-            <Label>Urgência</Label>
-            <Select value={urgencia} onValueChange={setUrgencia}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="baixa">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary">Baixa</Badge>
-                    <span>Até 7 dias úteis</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="media">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="default">Média</Badge>
-                    <span>Até 3 dias úteis</span>
-                  </div>
-                </SelectItem>
-                <SelectItem value="alta">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="destructive">Alta</Badge>
-                    <span>Até 1 dia útil</span>
-                  </div>
-                </SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           {/* Informações adicionais */}
