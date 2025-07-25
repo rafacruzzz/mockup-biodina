@@ -1,22 +1,21 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { ProductTabProps } from "@/types/product";
 import { useState } from "react";
+import UnidadeMedidaSelect from "@/components/estoque/UnidadeMedidaSelect";
 
 const DadosGeraisTab = ({ formData, onInputChange }: ProductTabProps) => {
   const [tagInput, setTagInput] = useState("");
 
   const familiasProduto = [
     "Medicamentos",
-    "Equipamentos Médicos",
+    "Equipamentos Médicos", 
     "Materiais Hospitalares",
     "Produtos de Higiene",
     "Suplementos"
@@ -126,18 +125,12 @@ const DadosGeraisTab = ({ formData, onInputChange }: ProductTabProps) => {
               />
             </div>
 
-            <div className="space-y-2 md:col-span-1">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="vendidoPorUnidade"
-                  checked={formData.vendidoPorUnidade}
-                  onCheckedChange={(checked) => onInputChange('vendidoPorUnidade', checked)}
-                />
-                <Label htmlFor="vendidoPorUnidade" className="text-sm font-semibold">
-                  Vendido por Unidade
-                </Label>
-              </div>
-            </div>
+            <UnidadeMedidaSelect
+              value={formData.unidadeMedida}
+              onValueChange={(value) => onInputChange('unidadeMedida', value)}
+              label="Unidade de Medida"
+              placeholder="Selecione a unidade"
+            />
           </div>
 
           <div className="space-y-2">

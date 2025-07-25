@@ -1,4 +1,3 @@
-
 export interface ProductRegistrationData {
   // Aba 1 - Dados Gerais (expandida)
   codigo: string;
@@ -6,7 +5,7 @@ export interface ProductRegistrationData {
   marca: string;
   modelo: string;
   descricao: string;
-  vendidoPorUnidade: boolean;
+  unidadeMedida: string;
   // Novos campos de marketing
   nomeMarketing: string;
   descritivoBreve: string;
