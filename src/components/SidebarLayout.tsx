@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { 
@@ -7,6 +8,7 @@ import {
   Package, Calculator, UserCheck, Cpu
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import UserProfileMenu from "@/components/UserProfileMenu";
 
 interface SidebarLayoutProps {
   children: React.ReactNode;
@@ -100,7 +102,7 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
           <div className="flex items-center justify-between w-full">
             <h2 className="text-xl font-semibold text-biodina-blue ml-4">Biodina Sistemas</h2>
             
-            {/* Botão X para fechar submenu inteiro */}
+            {/* User Profile Menu */}
             <div className="ml-auto flex items-center gap-4">
               <button 
                 onClick={() => setIsSidebarOpen(false)}
@@ -109,9 +111,7 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
               >
                 <X size={20} />
               </button>
-              <button className="p-2 text-gray-600 hover:text-biodina-blue rounded-lg hover:bg-gray-50 transition-colors">
-                <Settings size={20} />
-              </button>
+              <UserProfileMenu />
             </div>
           </div>
         </header>
