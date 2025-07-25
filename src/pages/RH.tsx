@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import React, { useState } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import RHSidebar from "@/components/rh/RHSidebar";
 import ContentHeader from "@/components/cadastro/ContentHeader";
