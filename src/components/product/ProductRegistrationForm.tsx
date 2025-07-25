@@ -22,7 +22,7 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
     marca: "",
     modelo: "",
     descricao: "",
-    unidadeMedida: "unidade", // Mudança: de vendidoPorUnidade para unidadeMedida com valor padrão
+    vendidoPorUnidade: true,
     nomeMarketing: "",
     descritivoBreve: "",
     descritivoCompleto: "",
