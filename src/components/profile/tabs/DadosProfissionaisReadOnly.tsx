@@ -4,15 +4,10 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, AlertCircle } from 'lucide-react';
 import { DadosProfissionais } from '@/types/colaborador';
 
 interface DadosProfissionaisReadOnlyProps {
-  data: DadosProfissionais & {
-    planoCarreira?: string;
-    sugestaoSalario?: string;
-    breakdownSalarial?: string;
-  };
+  data: DadosProfissionais;
 }
 
 const DadosProfissionaisReadOnly = ({ data }: DadosProfissionaisReadOnlyProps) => {
@@ -65,39 +60,6 @@ const DadosProfissionaisReadOnly = ({ data }: DadosProfissionaisReadOnlyProps) =
             className="bg-gray-50" 
           />
         </div>
-
-        {data.planoCarreira && (
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-blue-600" />
-              Plano de Carreira
-            </Label>
-            <Input
-              value={data.planoCarreira}
-              readOnly
-              className="bg-blue-50 border-blue-200 text-blue-800"
-            />
-          </div>
-        )}
-
-        {data.sugestaoSalario && (
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 text-green-600" />
-              Sugestão Salarial
-            </Label>
-            <Input
-              value={data.sugestaoSalario}
-              readOnly
-              className="bg-green-50 border-green-200 text-green-800 font-semibold"
-            />
-            {data.breakdownSalarial && (
-              <p className="text-xs text-gray-600">
-                {data.breakdownSalarial}
-              </p>
-            )}
-          </div>
-        )}
 
         <div className="space-y-2">
           <Label>Data de Cadastro</Label>

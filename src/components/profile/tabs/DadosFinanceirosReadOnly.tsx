@@ -2,15 +2,10 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { AlertCircle } from 'lucide-react';
 import { DadosFinanceiros } from '@/types/colaborador';
 
 interface DadosFinanceirosReadOnlyProps {
-  data: DadosFinanceiros & {
-    sugestaoSalario?: string;
-    breakdownSalarial?: string;
-    planoCarreira?: string;
-  };
+  data: DadosFinanceiros;
 }
 
 const DadosFinanceirosReadOnly = ({ data }: DadosFinanceirosReadOnlyProps) => {
@@ -24,36 +19,6 @@ const DadosFinanceirosReadOnly = ({ data }: DadosFinanceirosReadOnlyProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Seção de Sugestão Salarial */}
-      {data.sugestaoSalario && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <AlertCircle className="h-5 w-5 text-green-600" />
-            <h3 className="font-semibold text-green-800">Sugestão Salarial do Sistema</h3>
-          </div>
-          
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-green-700">Valor Atual:</span>
-              <span className="font-bold text-lg text-green-800">{data.sugestaoSalario}</span>
-            </div>
-            
-            {data.breakdownSalarial && (
-              <p className="text-xs text-green-600">
-                {data.breakdownSalarial}
-              </p>
-            )}
-            
-            {data.planoCarreira && (
-              <p className="text-xs text-green-600">
-                Baseado no: {data.planoCarreira}
-              </p>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Campos Financeiros */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Salário Base</Label>
