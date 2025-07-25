@@ -37,6 +37,9 @@ export interface DadosProfissionais {
   tempoCasa: string;
   ultimaPromocao: string;
   previsaoFerias: string;
+  planoCarreira?: string;
+  sugestaoSalario?: string;
+  breakdownSalarial?: string;
 }
 
 export interface DadosFinanceiros {
@@ -49,6 +52,9 @@ export interface DadosFinanceiros {
   pisoSalarial: string;
   mediaSalarial: string;
   dependentesIR: string;
+  sugestaoSalario?: string;
+  breakdownSalarial?: string;
+  planoCarreira?: string;
 }
 
 export interface DadosBancarios {
