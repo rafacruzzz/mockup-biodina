@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import RHSidebar from "@/components/rh/RHSidebar";
@@ -31,6 +30,11 @@ const RH = () => {
   const [isCargoPlanoModalOpen, setIsCargoPlanoModalOpen] = useState(false);
   const [isNiveisProgressaoModalOpen, setIsNiveisProgressaoModalOpen] = useState(false);
 
+  // Estados para modo edição
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingColaboradorId, setEditingColaboradorId] = useState<string | null>(null);
+  const [editingColaboradorData, setEditingColaboradorData] = useState<any>(null);
+
   // Reset state when no module is selected
   const resetSelection = () => {
     setActiveModule('');
@@ -61,6 +65,10 @@ const RH = () => {
   };
 
   const handleNewRecord = () => {
+    setIsEditMode(false);
+    setEditingColaboradorId(null);
+    setEditingColaboradorData(null);
+    
     if (activeModule === 'colaboradores') {
       setIsColaboradorModalOpen(true);
     } else if (activeModule === 'departamentos') {
@@ -80,6 +88,93 @@ const RH = () => {
         setIsNiveisProgressaoModalOpen(true);
       }
     }
+  };
+
+  const handleEditItem = (item: any, moduleName: string) => {
+    if (activeModule === 'colaboradores' && moduleName === 'Colaboradores') {
+      setIsEditMode(true);
+      setEditingColaboradorId(item.id);
+      
+      // Simular dados completos do colaborador baseado no item da tabela
+      const colaboradorCompleto = {
+        dadosPessoais: {
+          nome: item.nome || '',
+          cpf: item.cpf || '',
+          pis: item.pis || '',
+          idade: item.idade || '',
+          dataNascimento: item.dataNascimento || '',
+          genero: item.genero || '',
+          etnia: item.etnia || '',
+          rg: item.rg || '',
+          orgaoExpedidorRg: item.orgaoExpedidorRg || '',
+          ufEmissorRg: item.ufEmissorRg || '',
+          dataExpedicaoRg: item.dataExpedicaoRg || '',
+          naturalidade: item.naturalidade || '',
+          nomeMae: item.nomeMae || '',
+          nomePai: item.nomePai || '',
+          cid: item.cid || '',
+          email: item.email || '',
+          telefone: item.telefone || '',
+          endereco: item.endereco || '',
+          bairro: item.bairro || '',
+          observacoes: item.observacoes || ''
+        },
+        dadosProfissionais: {
+          empresa: item.empresa || '',
+          uf: item.uf || '',
+          setor: item.setor || '',
+          funcao: item.funcao || '',
+          cargo: item.cargo || '',
+          nivel: item.nivel || '',
+          cbo: item.cbo || '',
+          compativelFuncao: item.compativelFuncao || false,
+          funcoesDesempenhadas: item.funcoesDesempenhadas || '',
+          dataAdmissao: item.dataAdmissao || '',
+          dataCadastro: item.dataCadastro || '',
+          tempoCasa: item.tempoCasa || '',
+          ultimaPromocao: item.ultimaPromocao || '',
+          previsaoFerias: item.previsaoFerias || ''
+        },
+        dadosFinanceiros: {
+          salarioBase: item.salarioBase || '',
+          adicionalNivel: item.adicionalNivel || '',
+          insalubridade: item.insalubridade || '',
+          sobreaviso: item.sobreaviso || '',
+          salarioBruto: item.salarioBruto || '',
+          valorHoraTrabalhada: item.valorHoraTrabalhada || '',
+          pisoSalarial: item.pisoSalarial || '',
+          mediaSalarial: item.mediaSalarial || '',
+          dependentesIR: item.dependentesIR || ''
+        },
+        dadosBancarios: {
+          banco: item.banco || '',
+          tipoConta: item.tipoConta || '',
+          agencia: item.agencia || '',
+          conta: item.conta || ''
+        },
+        formacaoEscolaridade: {
+          escolaridade: item.escolaridade || '',
+          possuiDiploma: item.possuiDiploma || false
+        },
+        beneficios: {
+          tipoPlano: item.tipoPlano || '',
+          quantidadeDependentesPlano: item.quantidadeDependentesPlano || ''
+        },
+        documentacao: {
+          anexos: item.anexos || []
+        }
+      };
+      
+      setEditingColaboradorData(colaboradorCompleto);
+      setIsColaboradorModalOpen(true);
+    }
+  };
+
+  const handleCloseColaboradorModal = () => {
+    setIsColaboradorModalOpen(false);
+    setIsEditMode(false);
+    setEditingColaboradorId(null);
+    setEditingColaboradorData(null);
   };
 
   const handleGetStarted = () => {
@@ -113,6 +208,16 @@ const RH = () => {
     }
     return "Novo Registro";
   };
+
+  // Adicionar listener para eventos de edição
+  React.useEffect(() => {
+    const handleEditEvent = (event: any) => {
+      handleEditItem(event.detail.item, event.detail.moduleName);
+    };
+
+    window.addEventListener('editItem', handleEditEvent);
+    return () => window.removeEventListener('editItem', handleEditEvent);
+  }, [activeModule]);
 
   return (
     <SidebarLayout>
@@ -151,8 +256,16 @@ const RH = () => {
         </div>
       </div>
 
-      {/* Modais existentes */}
-      <ColaboradorModal isOpen={isColaboradorModalOpen} onClose={() => setIsColaboradorModalOpen(false)} />
+      {/* Modal do Colaborador - agora suporta edição */}
+      <ColaboradorModal 
+        isOpen={isColaboradorModalOpen} 
+        onClose={handleCloseColaboradorModal}
+        editMode={isEditMode}
+        colaboradorId={editingColaboradorId || undefined}
+        colaboradorData={editingColaboradorData}
+      />
+      
+      {/* Outros modais existentes */}
       <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={() => setIsDepartamentoModalOpen(false)} />
       <FuncaoModal isOpen={isFuncaoModalOpen} onClose={() => setIsFuncaoModalOpen(false)} />
       <ExpedienteModal isOpen={isExpedienteModalOpen} onClose={() => setIsExpedienteModalOpen(false)} />

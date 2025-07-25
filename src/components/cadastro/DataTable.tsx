@@ -79,6 +79,17 @@ const DataTable = ({ data, moduleName, onRowClick }: DataTableProps) => {
     return <span className="text-gray-700">{String(value)}</span>;
   };
 
+  // Função para lidar com clique no botão de editar
+  const handleEditClick = (item: ModuleData, event: React.MouseEvent) => {
+    event.stopPropagation(); // Evita que o clique na linha seja acionado
+    
+    // Emitir evento customizado para o componente pai
+    const editEvent = new CustomEvent('editItem', { 
+      detail: { item, moduleName } 
+    });
+    window.dispatchEvent(editEvent);
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
       <div className="overflow-x-auto">
@@ -108,7 +119,12 @@ const DataTable = ({ data, moduleName, onRowClick }: DataTableProps) => {
                   ))}
                   <TableCell className="text-center sticky right-0 bg-white border-l border-gray-100">
                     <div className="flex justify-center gap-1">
-                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-biodina-gold/10">
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="h-8 w-8 p-0 hover:bg-biodina-gold/10"
+                        onClick={(event) => handleEditClick(item, event)}
+                      >
                         <Edit className="h-4 w-4 text-biodina-gold" />
                       </Button>
                       <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-red-50">

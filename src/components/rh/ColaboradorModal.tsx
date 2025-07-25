@@ -1,9 +1,12 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Save, User } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Save, User, Bell } from "lucide-react";
 import { ColaboradorData } from "@/types/colaborador";
+import { getSolicitacoesByColaborador } from "@/data/solicitacoes";
 import DadosPessoaisTab from "./tabs/DadosPessoaisTab";
 import DadosProfissionaisTab from "./tabs/DadosProfissionaisTab";
 import DadosFinanceirosTab from "./tabs/DadosFinanceirosTab";
@@ -11,83 +14,93 @@ import DadosBancariosTab from "./tabs/DadosBancariosTab";
 import FormacaoEscolaridadeTab from "./tabs/FormacaoEscolaridadeTab";
 import BeneficiosTab from "./tabs/BeneficiosTab";
 import DocumentacaoTab from "./tabs/DocumentacaoTab";
+import SolicitacoesTab from "./tabs/SolicitacoesTab";
 
 interface ColaboradorModalProps {
   isOpen: boolean;
   onClose: () => void;
+  colaboradorId?: string;
+  editMode?: boolean;
+  colaboradorData?: ColaboradorData;
 }
 
-const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
+const ColaboradorModal = ({ 
+  isOpen, 
+  onClose, 
+  colaboradorId, 
+  editMode = false,
+  colaboradorData 
+}: ColaboradorModalProps) => {
   const [formData, setFormData] = useState<ColaboradorData & {
     planoCarreira?: string;
     sugestaoSalario?: string;
     breakdownSalarial?: string;
   }>({
     dadosPessoais: {
-      nome: '',
-      cpf: '',
-      pis: '',
-      idade: '',
-      dataNascimento: '',
-      genero: '',
-      etnia: '',
-      rg: '',
-      orgaoExpedidorRg: '',
-      ufEmissorRg: '',
-      dataExpedicaoRg: '',
-      naturalidade: '',
-      nomeMae: '',
-      nomePai: '',
-      cid: '',
-      email: '',
-      telefone: '',
-      endereco: '',
-      bairro: '',
-      observacoes: ''
+      nome: colaboradorData?.dadosPessoais?.nome || '',
+      cpf: colaboradorData?.dadosPessoais?.cpf || '',
+      pis: colaboradorData?.dadosPessoais?.pis || '',
+      idade: colaboradorData?.dadosPessoais?.idade || '',
+      dataNascimento: colaboradorData?.dadosPessoais?.dataNascimento || '',
+      genero: colaboradorData?.dadosPessoais?.genero || '',
+      etnia: colaboradorData?.dadosPessoais?.etnia || '',
+      rg: colaboradorData?.dadosPessoais?.rg || '',
+      orgaoExpedidorRg: colaboradorData?.dadosPessoais?.orgaoExpedidorRg || '',
+      ufEmissorRg: colaboradorData?.dadosPessoais?.ufEmissorRg || '',
+      dataExpedicaoRg: colaboradorData?.dadosPessoais?.dataExpedicaoRg || '',
+      naturalidade: colaboradorData?.dadosPessoais?.naturalidade || '',
+      nomeMae: colaboradorData?.dadosPessoais?.nomeMae || '',
+      nomePai: colaboradorData?.dadosPessoais?.nomePai || '',
+      cid: colaboradorData?.dadosPessoais?.cid || '',
+      email: colaboradorData?.dadosPessoais?.email || '',
+      telefone: colaboradorData?.dadosPessoais?.telefone || '',
+      endereco: colaboradorData?.dadosPessoais?.endereco || '',
+      bairro: colaboradorData?.dadosPessoais?.bairro || '',
+      observacoes: colaboradorData?.dadosPessoais?.observacoes || ''
     },
     dadosProfissionais: {
-      empresa: '',
-      uf: '',
-      setor: '',
-      funcao: '',
-      cargo: '',
-      nivel: '',
-      cbo: '',
-      compativelFuncao: false,
-      funcoesDesempenhadas: '',
-      dataAdmissao: '',
-      dataCadastro: '',
-      tempoCasa: '',
-      ultimaPromocao: '',
-      previsaoFerias: ''
+      empresa: colaboradorData?.dadosProfissionais?.empresa || '',
+      uf: colaboradorData?.dadosProfissionais?.uf || '',
+      setor: colaboradorData?.dadosProfissionais?.setor || '',
+      funcao: colaboradorData?.dadosProfissionais?.funcao || '',
+      cargo: colaboradorData?.dadosProfissionais?.cargo || '',
+      nivel: colaboradorData?.dadosProfissionais?.nivel || '',
+      cbo: colaboradorData?.dadosProfissionais?.cbo || '',
+      compativelFuncao: colaboradorData?.dadosProfissionais?.compativelFuncao || false,
+      funcoesDesempenhadas: colaboradorData?.dadosProfissionais?.funcoesDesempenhadas || '',
+      dataAdmissao: colaboradorData?.dadosProfissionais?.dataAdmissao || '',
+      dataCadastro: colaboradorData?.dadosProfissionais?.dataCadastro || '',
+      tempoCasa: colaboradorData?.dadosProfissionais?.tempoCasa || '',
+      ultimaPromocao: colaboradorData?.dadosProfissionais?.ultimaPromocao || '',
+      previsaoFerias: colaboradorData?.dadosProfissionais?.previsaoFerias || ''
     },
     dadosFinanceiros: {
-      salarioBase: '',
-      adicionalNivel: '',
-      insalubridade: '',
-      sobreaviso: '',
-      salarioBruto: '',
-      valorHoraTrabalhada: '',
-      pisoSalarial: '',
-      mediaSalarial: '',
-      dependentesIR: ''
+      salarioBase: colaboradorData?.dadosFinanceiros?.salarioBase || '',
+      adicionalNivel: colaboradorData?.dadosFinanceiros?.adicionalNivel || '',
+      insalubridade: colaboradorData?.dadosFinanceiros?.insalubridade || '',
+      sobreaviso: colaboradorData?.dadosFinanceiros?.sobreaviso || '',
+      salarioBruto: colaboradorData?.dadosFinanceiros?.salarioBruto || '',
+      valorHoraTrabalhada: colaboradorData?.dadosFinanceiros?.valorHoraTrabalhada || '',
+      pisoSalarial: colaboradorData?.dadosFinanceiros?.pisoSalarial || '',
+      mediaSalarial: colaboradorData?.dadosFinanceiros?.mediaSalarial || '',
+      dependentesIR: colaboradorData?.dadosFinanceiros?.dependentesIR || ''
     },
     dadosBancarios: {
-      banco: '',
-      tipoConta: '',
-      agencia: '',
-      conta: ''
+      banco: colaboradorData?.dadosBancarios?.banco || '',
+      tipoConta: colaboradorData?.dadosBancarios?.tipoConta || '',
+      agencia: colaboradorData?.dadosBancarios?.agencia || '',
+      conta: colaboradorData?.dadosBancarios?.conta || ''
     },
     formacaoEscolaridade: {
-      escolaridade: '',
-      possuiDiploma: false
+      escolaridade: colaboradorData?.formacaoEscolaridade?.escolaridade || '',
+      possuiDiploma: colaboradorData?.formacaoEscolaridade?.possuiDiploma || false
     },
     beneficios: {
-      tipoPlano: '',
-      quantidadeDependentesPlano: ''
+      tipoPlano: colaboradorData?.beneficios?.tipoPlano || '',
+      quantidadeDependentesPlano: colaboradorData?.beneficios?.quantidadeDependentesPlano || ''
     },
     documentacao: {
-      anexos: []
+      anexos: colaboradorData?.documentacao?.anexos || []
     }
   });
 
@@ -127,6 +140,10 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
     breakdownSalarial: formData.breakdownSalarial
   };
 
+  // Contar solicitações pendentes para o colaborador
+  const solicitacoesPendentes = editMode && colaboradorId ? 
+    getSolicitacoesByColaborador(colaboradorId).filter(s => s.status === 'pendente').length : 0;
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
@@ -137,16 +154,18 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
             </div>
             <div>
               <DialogTitle className="text-2xl font-bold text-biodina-blue">
-                Novo Colaborador
+                {editMode ? `Editar Colaborador - ${formData.dadosPessoais.nome}` : 'Novo Colaborador'}
               </DialogTitle>
-              <p className="text-gray-600">Cadastre um novo colaborador no sistema</p>
+              <p className="text-gray-600">
+                {editMode ? 'Edite as informações do colaborador' : 'Cadastre um novo colaborador no sistema'}
+              </p>
             </div>
           </div>
         </DialogHeader>
 
         <div className="flex-1 overflow-hidden">
           <Tabs defaultValue="dados-pessoais" className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-7 mb-4">
+            <TabsList className={`grid w-full ${editMode ? 'grid-cols-8' : 'grid-cols-7'} mb-4`}>
               <TabsTrigger value="dados-pessoais" className="text-xs">
                 Dados Pessoais
               </TabsTrigger>
@@ -168,6 +187,20 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
               <TabsTrigger value="documentacao" className="text-xs">
                 Documentação
               </TabsTrigger>
+              {editMode && (
+                <TabsTrigger value="solicitacoes" className="text-xs relative">
+                  <Bell className="h-4 w-4 mr-1" />
+                  Solicitações
+                  {solicitacoesPendentes > 0 && (
+                    <Badge 
+                      variant="destructive" 
+                      className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs flex items-center justify-center"
+                    >
+                      {solicitacoesPendentes}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+              )}
             </TabsList>
 
             <div className="flex-1 overflow-y-auto">
@@ -225,6 +258,12 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
                   onInputChange={(field, value) => handleInputChange('documentacao', field, value)}
                 />
               </TabsContent>
+
+              {editMode && colaboradorId && (
+                <TabsContent value="solicitacoes" className="mt-0">
+                  <SolicitacoesTab colaboradorId={colaboradorId} />
+                </TabsContent>
+              )}
             </div>
           </Tabs>
         </div>
@@ -235,7 +274,7 @@ const ColaboradorModal = ({ isOpen, onClose }: ColaboradorModalProps) => {
           </Button>
           <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
             <Save className="h-4 w-4 mr-2" />
-            Salvar Colaborador
+            {editMode ? 'Salvar Alterações' : 'Salvar Colaborador'}
           </Button>
         </div>
       </DialogContent>
