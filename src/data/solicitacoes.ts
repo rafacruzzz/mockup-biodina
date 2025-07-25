@@ -73,6 +73,76 @@ export const solicitacoes: SolicitacaoAlteracao[] = [
     observacoesRH: 'Plano familiar não disponível para o cargo atual',
     dataProcessamento: '2024-01-27',
     processadoPor: 'Carlos Lima - RH'
+  },
+  {
+    id: '6',
+    colaboradorId: '2', // João Santos
+    protocolo: '20241006',
+    campo: 'E-mail',
+    aba: 'Dados Pessoais',
+    valorAtual: 'joao.santos@empresa.com',
+    valorSolicitado: 'joao.santos.dev@empresa.com',
+    motivo: 'Solicitação de e-mail mais específico conforme função',
+    tipoSolicitacao: 'atualizacao',
+    dataSolicitacao: '2024-01-28',
+    status: 'pendente'
+  },
+  {
+    id: '7',
+    colaboradorId: '3', // Maria Oliveira
+    protocolo: '20241007',
+    campo: 'Cargo',
+    aba: 'Dados Profissionais',
+    valorAtual: 'Analista Jr.',
+    valorSolicitado: 'Analista Pleno',
+    motivo: 'Promoção aprovada pela chefia imediata',
+    tipoSolicitacao: 'atualizacao',
+    dataSolicitacao: '2024-01-29',
+    status: 'em-analise',
+    observacoesRH: 'Validando com departamento de gestão de pessoas'
+  },
+  {
+    id: '8',
+    colaboradorId: '1', // Danilo Silva
+    protocolo: '20241008',
+    campo: 'Nome da Mãe',
+    aba: 'Dados Pessoais',
+    valorAtual: 'Maria Silva Santos',
+    valorSolicitado: 'Maria Silva Santos Oliveira',
+    motivo: 'Correção do nome completo conforme documentos',
+    tipoSolicitacao: 'correcao',
+    dataSolicitacao: '2024-01-30',
+    status: 'aprovada',
+    observacoesRH: 'Documentos conferidos e aprovados',
+    dataProcessamento: '2024-01-31',
+    processadoPor: 'Ana Costa - RH'
+  },
+  {
+    id: '9',
+    colaboradorId: '4', // Pedro Almeida (exemplo)
+    protocolo: '20241009',
+    campo: 'Banco',
+    aba: 'Dados Bancários',
+    valorAtual: 'Banco do Brasil',
+    valorSolicitado: 'Caixa Econômica Federal',
+    motivo: 'Mudança de banco para facilitar movimentação',
+    tipoSolicitacao: 'atualizacao',
+    dataSolicitacao: '2024-02-01',
+    status: 'pendente'
+  },
+  {
+    id: '10',
+    colaboradorId: '2', // João Santos
+    protocolo: '20241010',
+    campo: 'Escolaridade',
+    aba: 'Formação e Escolaridade',
+    valorAtual: 'Ensino Superior Completo',
+    valorSolicitado: 'Pós-graduação',
+    motivo: 'Conclusão do curso de especialização',
+    tipoSolicitacao: 'atualizacao',
+    dataSolicitacao: '2024-02-02',
+    status: 'em-analise',
+    observacoesRH: 'Aguardando diploma para validação'
   }
 ];
 
