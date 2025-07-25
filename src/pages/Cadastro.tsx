@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -9,7 +10,7 @@ import { SetFilterModule } from 'ag-grid-community';
 import { MenuModule } from 'ag-grid-community';
 import { ColumnsToolPanelModule } from 'ag-grid-community';
 
-import cadastroModules from '@/data/cadastroModules';
+import { modules } from '@/data/cadastroModules';
 import { ProductRegistrationData } from '@/types/product';
 
 const Cadastro = () => {
@@ -31,7 +32,7 @@ const Cadastro = () => {
     { headerName: 'Nome Fabricante', field: 'nomeProdutoFabricante', filter: true, sortable: true },
   ]);
 
-  const [modules] = useState<Module[]>([
+  const [gridModules] = useState<Module[]>([
     ClientSideRowModelModule,
     SetFilterModule,
     MenuModule,
@@ -40,14 +41,14 @@ const Cadastro = () => {
   ]);
 
   useEffect(() => {
-    const formattedProducts = cadastroModules.produtos.map((item: any) => ({
+    const formattedProducts = modules.produtos.map((item: any) => ({
       // Dados Gerais
       codigo: item.codigo || '',
       familiaProduto: item.familiaProduto || '',
       marca: item.marca || '',
       modelo: item.modelo || '',
       descricao: item.descricao || '',
-      unidadeMedida: item.unidadeMedida || 'unidade', // Mudança: de vendidoPorUnidade para unidadeMedida
+      unidadeMedida: item.unidadeMedida || 'unidade',
       nomeMarketing: item.nomeMarketing || '',
       descritivoBreve: item.descritivoBreve || '',
       descritivoCompleto: item.descritivoCompleto || '',
@@ -116,7 +117,7 @@ const Cadastro = () => {
       <AgGridReact
         columnDefs={columnDefs}
         rowData={products}
-        modules={modules}
+        modules={gridModules}
       />
     </div>
   );

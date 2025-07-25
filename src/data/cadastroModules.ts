@@ -1,3 +1,6 @@
+
+import { Package, Users, Building, ShoppingCart, FileText } from "lucide-react";
+
 export const modules = {
   categorias: [
     {
@@ -95,7 +98,7 @@ export const modules = {
       marca: "EMS",
       modelo: "Genérico",
       descricao: "Dipirona Sódica 500mg - Analgésico e antitérmico",
-      unidadeMedida: "caixa", // Mudança: de vendidoPorUnidade para unidadeMedida
+      unidadeMedida: "caixa",
       nomeMarketing: "Dipirona EMS",
       descritivoBreve: "Analgésico e antitérmico de rápida ação",
       descritivoCompleto: "Dipirona sódica 500mg, indicada para dor e febre. Ação rápida e eficaz.",
@@ -166,7 +169,7 @@ export const modules = {
       marca: "Medley",
       modelo: "Digital",
       descricao: "Termômetro Digital Infravermelho",
-      unidadeMedida: "unidade", // Mudança: de vendidoPorUnidade para unidadeMedida
+      unidadeMedida: "unidade",
       nomeMarketing: "Termômetro Pro",
       descritivoBreve: "Termômetro digital sem contato",
       descritivoCompleto:
@@ -238,7 +241,7 @@ export const modules = {
       marca: "Biosintética",
       modelo: "Descartável",
       descricao: "Seringa Descartável 10ml",
-      unidadeMedida: "pacote", // Mudança: de vendidoPorUnidade para unidadeMedida
+      unidadeMedida: "pacote",
       nomeMarketing: "Seringa Bio 10ml",
       descritivoBreve: "Seringa descartável estéril 10ml",
       descritivoCompleto:
@@ -306,3 +309,51 @@ export const modules = {
     },
   ],
 };
+
+// Export structure for sidebar compatibility
+export const cadastroModules = {
+  produtos: {
+    name: "Produtos",
+    icon: Package,
+    subModules: {
+      lista: {
+        name: "Lista de Produtos",
+        data: modules.produtos
+      },
+      cadastro: {
+        name: "Cadastro de Produto",
+        data: []
+      }
+    }
+  },
+  fornecedores: {
+    name: "Fornecedores",
+    icon: Building,
+    subModules: {
+      lista: {
+        name: "Lista de Fornecedores",
+        data: modules.fornecedores
+      },
+      cadastro: {
+        name: "Cadastro de Fornecedor",
+        data: []
+      }
+    }
+  },
+  categorias: {
+    name: "Categorias",
+    icon: FileText,
+    subModules: {
+      lista: {
+        name: "Lista de Categorias",
+        data: modules.categorias
+      },
+      cadastro: {
+        name: "Cadastro de Categoria",
+        data: []
+      }
+    }
+  }
+};
+
+export default cadastroModules;
