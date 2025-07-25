@@ -1,48 +1,26 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Camera, Save, X } from 'lucide-react';
+import { ArrowLeft, User, Briefcase, DollarSign, CreditCard, GraduationCap, Heart, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser } from '@/contexts/UserContext';
 import SidebarLayout from '@/components/SidebarLayout';
+import InformacoesPessoaisTab from '@/components/profile/tabs/InformacoesPessoaisTab';
+import DadosProfissionaisReadOnly from '@/components/profile/tabs/DadosProfissionaisReadOnly';
+import DadosFinanceirosReadOnly from '@/components/profile/tabs/DadosFinanceirosReadOnly';
+import DadosBancariosReadOnly from '@/components/profile/tabs/DadosBancariosReadOnly';
+import FormacaoEscolaridadeReadOnly from '@/components/profile/tabs/FormacaoEscolaridadeReadOnly';
+import BeneficiosReadOnly from '@/components/profile/tabs/BeneficiosReadOnly';
+import DocumentacaoReadOnly from '@/components/profile/tabs/DocumentacaoReadOnly';
 
 const EditarPerfil = () => {
-  const { user, updateUser } = useUser();
+  const { user } = useUser();
   const navigate = useNavigate();
-  
-  const [formData, setFormData] = useState({
-    nome: user?.nome || '',
-    email: user?.email || '',
-    senhaAtual: '',
-    novaSenha: '',
-    confirmarSenha: ''
-  });
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
+  const [activeTab, setActiveTab] = useState('informacoes-pessoais');
 
   const handleSave = () => {
-    // Validações básicas
-    if (formData.novaSenha && formData.novaSenha !== formData.confirmarSenha) {
-      alert('As senhas não coincidem');
-      return;
-    }
-
-    // Atualizar dados do usuário
-    updateUser({
-      nome: formData.nome,
-      email: formData.email
-    });
-
-    // Voltar para página anterior
     navigate(-1);
   };
 
@@ -50,147 +28,100 @@ const EditarPerfil = () => {
     navigate(-1);
   };
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  if (!user) {
+    return null;
+  }
 
   return (
     <SidebarLayout>
       <div className="p-6">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="flex items-center gap-4 mb-6">
             <Button variant="ghost" onClick={handleCancel}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-biodina-blue">Editar Perfil</h1>
-              <p className="text-gray-600">Altere suas informações pessoais</p>
+              <h1 className="text-2xl font-bold text-biodina-blue">Meu Perfil</h1>
+              <p className="text-gray-600">Visualize e edite suas informações pessoais</p>
             </div>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle>Informações Pessoais</CardTitle>
+              <CardTitle>Informações do Colaborador</CardTitle>
               <CardDescription>
-                Atualize suas informações de perfil e configurações de conta
+                Visualize todos os seus dados cadastrais. Apenas informações pessoais básicas podem ser editadas.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Foto de Perfil */}
-              <div className="flex items-center gap-4">
-                <Avatar className="h-20 w-20">
-                  <AvatarImage src={user?.fotoPerfil} alt={user?.nome} />
-                  <AvatarFallback className="bg-biodina-blue text-white text-lg">
-                    {user ? getInitials(user.nome) : 'U'}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="space-y-2">
-                  <Label>Foto de Perfil</Label>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      <Camera className="h-4 w-4 mr-2" />
-                      Alterar Foto
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <X className="h-4 w-4 mr-2" />
-                      Remover
-                    </Button>
-                  </div>
-                </div>
-              </div>
+            <CardContent>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-7">
+                  <TabsTrigger value="informacoes-pessoais" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    <span className="hidden sm:inline">Informações Pessoais</span>
+                    <span className="sm:hidden">Pessoais</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="dados-profissionais" className="flex items-center gap-2">
+                    <Briefcase className="h-4 w-4" />
+                    <span className="hidden sm:inline">Dados Profissionais</span>
+                    <span className="sm:hidden">Profissionais</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="dados-financeiros" className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    <span className="hidden sm:inline">Dados Financeiros</span>
+                    <span className="sm:hidden">Financeiros</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="dados-bancarios" className="flex items-center gap-2">
+                    <CreditCard className="h-4 w-4" />
+                    <span className="hidden sm:inline">Dados Bancários</span>
+                    <span className="sm:hidden">Bancários</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="formacao" className="flex items-center gap-2">
+                    <GraduationCap className="h-4 w-4" />
+                    <span className="hidden sm:inline">Formação</span>
+                    <span className="sm:hidden">Formação</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="beneficios" className="flex items-center gap-2">
+                    <Heart className="h-4 w-4" />
+                    <span className="hidden sm:inline">Benefícios</span>
+                    <span className="sm:hidden">Benefícios</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="documentacao" className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    <span className="hidden sm:inline">Documentação</span>
+                    <span className="sm:hidden">Docs</span>
+                  </TabsTrigger>
+                </TabsList>
 
-              {/* Dados Pessoais */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="nome">Nome Completo</Label>
-                  <Input
-                    id="nome"
-                    value={formData.nome}
-                    onChange={(e) => handleInputChange('nome', e.target.value)}
-                    placeholder="Digite seu nome completo"
-                  />
-                </div>
+                <TabsContent value="informacoes-pessoais" className="mt-6">
+                  <InformacoesPessoaisTab onSave={handleSave} onCancel={handleCancel} />
+                </TabsContent>
 
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="Digite seu email"
-                  />
-                </div>
-              </div>
+                <TabsContent value="dados-profissionais" className="mt-6">
+                  <DadosProfissionaisReadOnly data={user.colaboradorData.dadosProfissionais} />
+                </TabsContent>
 
-              <div className="space-y-2">
-                <Label>Nome de Usuário</Label>
-                <Input
-                  value={user?.nomeUsuario || ''}
-                  disabled
-                  className="bg-gray-50"
-                />
-                <p className="text-xs text-gray-500">
-                  O nome de usuário não pode ser alterado
-                </p>
-              </div>
+                <TabsContent value="dados-financeiros" className="mt-6">
+                  <DadosFinanceirosReadOnly data={user.colaboradorData.dadosFinanceiros} />
+                </TabsContent>
 
-              {/* Alterar Senha */}
-              <div className="space-y-4 pt-4 border-t">
-                <h3 className="font-semibold text-gray-900">Alterar Senha</h3>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="senhaAtual">Senha Atual</Label>
-                  <Input
-                    id="senhaAtual"
-                    type="password"
-                    value={formData.senhaAtual}
-                    onChange={(e) => handleInputChange('senhaAtual', e.target.value)}
-                    placeholder="Digite sua senha atual"
-                  />
-                </div>
+                <TabsContent value="dados-bancarios" className="mt-6">
+                  <DadosBancariosReadOnly data={user.colaboradorData.dadosBancarios} />
+                </TabsContent>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="novaSenha">Nova Senha</Label>
-                    <Input
-                      id="novaSenha"
-                      type="password"
-                      value={formData.novaSenha}
-                      onChange={(e) => handleInputChange('novaSenha', e.target.value)}
-                      placeholder="Digite a nova senha"
-                    />
-                  </div>
+                <TabsContent value="formacao" className="mt-6">
+                  <FormacaoEscolaridadeReadOnly data={user.colaboradorData.formacaoEscolaridade} />
+                </TabsContent>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmarSenha">Confirmar Nova Senha</Label>
-                    <Input
-                      id="confirmarSenha"
-                      type="password"
-                      value={formData.confirmarSenha}
-                      onChange={(e) => handleInputChange('confirmarSenha', e.target.value)}
-                      placeholder="Confirme a nova senha"
-                    />
-                  </div>
-                </div>
-              </div>
+                <TabsContent value="beneficios" className="mt-6">
+                  <BeneficiosReadOnly data={user.colaboradorData.beneficios} />
+                </TabsContent>
 
-              {/* Botões */}
-              <div className="flex justify-end gap-3 pt-4">
-                <Button variant="outline" onClick={handleCancel}>
-                  Cancelar
-                </Button>
-                <Button onClick={handleSave}>
-                  <Save className="h-4 w-4 mr-2" />
-                  Salvar Alterações
-                </Button>
-              </div>
+                <TabsContent value="documentacao" className="mt-6">
+                  <DocumentacaoReadOnly data={user.colaboradorData.documentacao} />
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         </div>
