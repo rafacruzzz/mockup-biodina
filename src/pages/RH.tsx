@@ -13,6 +13,8 @@ import CargoPlanoModal from "@/components/rh/CargoPlanoModal";
 import NiveisProgressaoModal from "@/components/rh/NiveisProgressaoModal";
 import ProcessoSeletivoKanban from "@/components/rh/ProcessoSeletivoKanban";
 import BancoCurriculos from "@/components/rh/BancoCurriculos";
+import EtapasSelecao from "@/components/rh/EtapasSelecao";
+import Admissao from "@/components/rh/Admissao";
 import { ProcessoSeletivoProvider } from "@/contexts/ProcessoSeletivoContext";
 import { modules } from "@/data/rhModules";
 
@@ -193,23 +195,9 @@ const RH = () => {
       case 'bancoCurriculos':
         return <BancoCurriculos />;
       case 'etapasSelecao':
-        return (
-          <div className="flex items-center justify-center h-64 text-gray-500">
-            <div className="text-center">
-              <h3 className="text-lg font-medium mb-2">Etapas de Seleção</h3>
-              <p className="text-sm">Funcionalidade em desenvolvimento</p>
-            </div>
-          </div>
-        );
+        return <EtapasSelecao />;
       case 'admissao':
-        return (
-          <div className="flex items-center justify-center h-64 text-gray-500">
-            <div className="text-center">
-              <h3 className="text-lg font-medium mb-2">Processo de Admissão</h3>
-              <p className="text-sm">Funcionalidade em desenvolvimento</p>
-            </div>
-          </div>
-        );
+        return <Admissao />;
       default:
         return null;
     }
