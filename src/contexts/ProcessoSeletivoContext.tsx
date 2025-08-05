@@ -21,9 +21,6 @@ interface ProcessoSeletivoContextType {
   adicionarCandidatoProcesso: (candidato: Omit<CandidatoProcesso, 'id'>) => void;
   moverCandidatoEtapa: (candidatoId: string, novaEtapa: string) => void;
   atualizarStatusCandidato: (candidatoId: string, status: CandidatoProcesso['status']) => void;
-  
-  // Nova função para admissão
-  atualizarStatusAdmissao: (candidatoId: string, processoId: string, statusAdmissao: 'admitido') => void;
 }
 
 const ProcessoSeletivoContext = createContext<ProcessoSeletivoContextType | null>(null);
@@ -123,12 +120,6 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
     );
   }, []);
 
-  const atualizarStatusAdmissao = useCallback((candidatoId: string, processoId: string, statusAdmissao: 'admitido') => {
-    // Esta função marca um candidato como admitido
-    // Na implementação real, isso seria persistido no banco de dados
-    console.log(`Candidato ${candidatoId} do processo ${processoId} foi admitido`);
-  }, []);
-
   const contextValue: ProcessoSeletivoContextType = {
     curriculos,
     processosSeletivos,
@@ -140,8 +131,7 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
     atualizarProcessoSeletivo,
     adicionarCandidatoProcesso,
     moverCandidatoEtapa,
-    atualizarStatusCandidato,
-    atualizarStatusAdmissao
+    atualizarStatusCandidato
   };
 
   return (
