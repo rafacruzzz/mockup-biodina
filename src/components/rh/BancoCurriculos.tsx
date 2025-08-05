@@ -7,9 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Search, Plus, Eye, Edit, Trash2, Download, Link, Users, FileText, Clock, Filter } from 'lucide-react';
+import { Search, Plus, Eye, Edit, Trash2, Download, Copy, Users, FileText, Clock, Filter } from 'lucide-react';
 import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
 import { Curriculo } from '@/types/processoSeletivo';
+import { useToast } from '@/hooks/use-toast';
+import AdicionarCurriculoModal from './AdicionarCurriculoModal';
 
 interface FiltrosCurriculo {
   busca: string;
@@ -20,6 +22,7 @@ interface FiltrosCurriculo {
 
 const BancoCurriculos: React.FC = () => {
   const { curriculos, buscarCurriculos } = useProcessoSeletivo();
+  const { toast } = useToast();
   const [filtros, setFiltros] = useState<FiltrosCurriculo>({
     busca: '',
     departamento: 'all',
@@ -28,6 +31,7 @@ const BancoCurriculos: React.FC = () => {
   });
   const [curriculoSelecionado, setCurriculoSelecionado] = useState<Curriculo | null>(null);
   const [modalVisualizacao, setModalVisualizacao] = useState(false);
+  const [modalAdicionarCurriculo, setModalAdicionarCurriculo] = useState(false);
 
   const curriculosFiltrados = useMemo(() => {
     return buscarCurriculos({
@@ -78,13 +82,19 @@ const BancoCurriculos: React.FC = () => {
     setModalVisualizacao(true);
   };
 
-  const handleGerarLinkPublico = () => {
+  const handleCopiarLink = () => {
     const linkId = Math.random().toString(36).substring(7);
     const linkCompleto = `${window.location.origin}/candidatura/${linkId}`;
     
     navigator.clipboard.writeText(linkCompleto);
-    // Aqui você pode adicionar um toast de sucesso
-    console.log('Link copiado:', linkCompleto);
+    toast({
+      title: "Link copiado com sucesso!",
+      description: "O link foi copiado para a área de transferência.",
+    });
+  };
+
+  const handleAdicionarCurriculo = () => {
+    setModalAdicionarCurriculo(true);
   };
 
   return (
@@ -97,11 +107,11 @@ const BancoCurriculos: React.FC = () => {
         </div>
         
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handleGerarLinkPublico}>
-            <Link className="h-4 w-4 mr-2" />
-            Gerar Link Público
+          <Button variant="outline" onClick={handleCopiarLink}>
+            <Copy className="h-4 w-4 mr-2" />
+            Copiar Link
           </Button>
-          <Button>
+          <Button onClick={handleAdicionarCurriculo}>
             <Plus className="h-4 w-4 mr-2" />
             Adicionar Currículo
           </Button>
@@ -361,6 +371,12 @@ const BancoCurriculos: React.FC = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Modal de Adicionar Currículo */}
+      <AdicionarCurriculoModal
+        isOpen={modalAdicionarCurriculo}
+        onClose={() => setModalAdicionarCurriculo(false)}
+      />
     </div>
   );
 };
