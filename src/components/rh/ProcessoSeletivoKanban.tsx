@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { User, Mail, Phone, Clock, MoreHorizontal, Plus } from 'lucide-react';
+import { User, Mail, Phone, Clock, MoreHorizontal, Plus, Users } from 'lucide-react';
 import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
 import { ProcessoSeletivo, CandidatoProcesso, Curriculo } from '@/types/processoSeletivo';
 
