@@ -48,12 +48,25 @@ const AdmissaoDetailsModal = ({ isOpen, onClose, candidatoAdmissao }: AdmissaoDe
   const [salarioFinal, setSalarioFinal] = useState('');
   const [cargoFinal, setCargoFinal] = useState('');
 
-  const { atualizarStatusAdmissao } = useProcessoSeletivo();
-  const { adicionarColaborador } = useColaboradores();
+  // Use hooks with proper error handling
+  let processoSeletivoContext: any = null;
+  let colaboradoresContext: any = null;
+  
+  try {
+    processoSeletivoContext = useProcessoSeletivo();
+    colaboradoresContext = useColaboradores();
+  } catch (error) {
+    console.error('Context error:', error);
+  }
+  
   const { toast } = useToast();
 
-  if (!candidatoAdmissao) return null;
+  if (!candidatoAdmissao || !processoSeletivoContext || !colaboradoresContext) {
+    return null;
+  }
 
+  const { atualizarStatusAdmissao } = processoSeletivoContext;
+  const { adicionarColaborador } = colaboradoresContext;
   const { candidato, curriculo, processo, statusAdmissao } = candidatoAdmissao;
 
   // Mock dos documentos - na implementação real, isso viria do contexto
