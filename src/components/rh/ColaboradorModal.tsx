@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -22,6 +21,7 @@ interface ColaboradorModalProps {
   colaboradorId?: string;
   editMode?: boolean;
   colaboradorData?: ColaboradorData;
+  onSave?: (data: ColaboradorData) => void;
 }
 
 const ColaboradorModal = ({ 
@@ -29,7 +29,8 @@ const ColaboradorModal = ({
   onClose, 
   colaboradorId, 
   editMode = false,
-  colaboradorData 
+  colaboradorData,
+  onSave
 }: ColaboradorModalProps) => {
   const [formData, setFormData] = useState<ColaboradorData & {
     planoCarreira?: string;
@@ -122,8 +123,12 @@ const ColaboradorModal = ({
   };
 
   const handleSave = () => {
-    console.log('Salvando colaborador:', formData);
-    onClose();
+    if (onSave) {
+      onSave(formData);
+    } else {
+      console.log('Salvando colaborador:', formData);
+      onClose();
+    }
   };
 
   const dadosProfissionaisWithSuggestion = {
