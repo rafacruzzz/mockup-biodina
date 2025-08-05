@@ -118,7 +118,9 @@ const Colaboradores = () => {
       <ColaboradorModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        colaborador={colaboradorEdit}
+        colaboradorId={colaboradorEdit?.id}
+        editMode={!!colaboradorEdit}
+        colaboradorData={colaboradorEdit}
         onSave={handleCloseModal}
       />
     </div>
