@@ -1,7 +1,6 @@
 
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { ColaboradorData } from '@/types/colaborador';
-import { colaboradores as colaboradoresData } from '@/data/rhModules';
 
 interface ColaboradorContextType {
   colaboradores: (ColaboradorData & { id: string; status: 'ativo' | 'inativo' | 'novo' })[];
@@ -16,12 +15,7 @@ interface ColaboradorContextType {
 const ColaboradorContext = createContext<ColaboradorContextType | null>(null);
 
 export const ColaboradorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [colaboradores, setColaboradores] = useState<(ColaboradorData & { id: string; status: 'ativo' | 'inativo' | 'novo' })[]>(
-    colaboradoresData.map(col => ({
-      ...col,
-      status: 'ativo' as const
-    }))
-  );
+  const [colaboradores, setColaboradores] = useState<(ColaboradorData & { id: string; status: 'ativo' | 'inativo' | 'novo' })[]>([]);
   const [loading, setLoading] = useState(false);
 
   const adicionarColaborador = useCallback((novoColaborador: ColaboradorData): string => {
