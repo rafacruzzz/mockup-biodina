@@ -1,4 +1,3 @@
-
 import { Curriculo, ProcessoSeletivo, EtapaSelecao, CandidatoProcesso, Admissao, DocumentoAdmissao, TemplateEtapas } from "@/types/processoSeletivo";
 
 export const curriculos: Curriculo[] = [
@@ -14,7 +13,7 @@ export const curriculos: Curriculo[] = [
     escolaridade: "Superior Completo - Sistemas de Informação",
     habilidades: ["React", "TypeScript", "Node.js", "Git"],
     dataEnvio: "2024-01-15",
-    status: "em-analise",
+    status: "contratado",
     fonte: "site",
     observacoes: "Ótimo portfólio, experiência com projetos similares"
   },
@@ -46,8 +45,9 @@ export const curriculos: Curriculo[] = [
     escolaridade: "Superior Completo - Ciências Contábeis",
     habilidades: ["Contabilidade", "Excel", "SAP", "Legislação Fiscal"],
     dataEnvio: "2024-01-25",
-    status: "novo",
-    fonte: "indicacao"
+    status: "aprovado",
+    fonte: "indicacao",
+    observacoes: "Conhecimento sólido em legislação fiscal"
   },
   {
     id: "4",
@@ -63,6 +63,38 @@ export const curriculos: Curriculo[] = [
     dataEnvio: "2024-02-01",
     status: "em-analise",
     fonte: "site"
+  },
+  {
+    id: "5",
+    nome: "Carolina Martins Rocha",
+    email: "carolina.martins@email.com",
+    telefone: "(11) 94321-0987",
+    cpf: "321.654.987-00",
+    departamento: "Marketing",
+    cargoDesejado: "Analista de Marketing Digital",
+    experiencia: "3 anos",
+    escolaridade: "Superior Completo - Marketing",
+    habilidades: ["Google Ads", "Facebook Ads", "Analytics", "Photoshop"],
+    dataEnvio: "2024-02-05",
+    status: "aprovado",
+    fonte: "site",
+    observacoes: "Excelente conhecimento em marketing digital"
+  },
+  {
+    id: "6",
+    nome: "Pedro Santos Silva",
+    email: "pedro.santos@email.com",
+    telefone: "(11) 93210-8765",
+    cpf: "654.321.098-00",
+    departamento: "Tecnologia",
+    cargoDesejado: "Desenvolvedor Backend",
+    experiencia: "4 anos",
+    escolaridade: "Superior Completo - Engenharia de Software",
+    habilidades: ["Java", "Spring Boot", "MySQL", "AWS"],
+    dataEnvio: "2024-02-10",
+    status: "aprovado",
+    fonte: "linkedin",
+    observacoes: "Forte experiência em arquitetura de sistemas"
   }
 ];
 
@@ -121,8 +153,8 @@ export const processosSeletivos: ProcessoSeletivo[] = [
         id: "c1",
         curriculoId: "1",
         processoSeletivoId: "1",
-        etapaAtual: "e2",
-        status: "em-andamento",
+        etapaAtual: "e4",
+        status: "aprovado",
         feedback: [
           {
             etapaId: "e1",
@@ -130,10 +162,34 @@ export const processosSeletivos: ProcessoSeletivo[] = [
             comentario: "Perfil adequado, boa experiência com React",
             dataAvaliacao: "2024-01-16",
             aprovado: true
+          },
+          {
+            etapaId: "e2",
+            avaliador: "João Silva Santos",
+            comentario: "Excelente conhecimento técnico, demonstrou domínio das tecnologias",
+            dataAvaliacao: "2024-01-18",
+            aprovado: true,
+            nota: 9
+          },
+          {
+            etapaId: "e3",
+            avaliador: "João Silva Santos",
+            comentario: "Teste prático muito bem executado, código limpo e organizado",
+            dataAvaliacao: "2024-01-20",
+            aprovado: true,
+            nota: 9.5
+          },
+          {
+            etapaId: "e4",
+            avaliador: "Maria Oliveira Costa",
+            comentario: "Perfil comportamental excelente, fit cultural perfeito",
+            dataAvaliacao: "2024-01-22",
+            aprovado: true,
+            nota: 9
           }
         ],
         dataInicio: "2024-01-15",
-        dataUltimaAtualizacao: "2024-01-16"
+        dataUltimaAtualizacao: "2024-01-22"
       }
     ],
     status: "ativo",
@@ -156,6 +212,7 @@ export const processosSeletivos: ProcessoSeletivo[] = [
         descricao: "Análise inicial dos currículos",
         ordem: 1,
         tipo: "triagem",
+        responsavel: "Ana Paula Ferreira",
         obrigatoria: true
       },
       {
@@ -164,6 +221,7 @@ export const processosSeletivos: ProcessoSeletivo[] = [
         descricao: "Primeira entrevista com RH",
         ordem: 2,
         tipo: "entrevista",
+        responsavel: "Ana Paula Ferreira",
         duracao: "30 minutos",
         obrigatoria: true
       },
@@ -173,6 +231,7 @@ export const processosSeletivos: ProcessoSeletivo[] = [
         descricao: "Dinâmica para avaliar perfil comercial",
         ordem: 3,
         tipo: "dinamica",
+        responsavel: "Carlos Comercial",
         duracao: "2 horas",
         obrigatoria: true
       },
@@ -182,14 +241,313 @@ export const processosSeletivos: ProcessoSeletivo[] = [
         descricao: "Entrevista com gerente comercial",
         ordem: 4,
         tipo: "entrevista",
+        responsavel: "Carlos Comercial",
         duracao: "45 minutos",
         obrigatoria: true
       }
     ],
-    candidatos: [],
+    candidatos: [
+      {
+        id: "c2",
+        curriculoId: "2",
+        processoSeletivoId: "2",
+        etapaAtual: "e8",
+        status: "aprovado",
+        feedback: [
+          {
+            etapaId: "e5",
+            avaliador: "Ana Paula Ferreira",
+            comentario: "Experiência comercial sólida, histórico de vendas excelente",
+            dataAvaliacao: "2024-01-21",
+            aprovado: true
+          },
+          {
+            etapaId: "e6",
+            avaliador: "Ana Paula Ferreira",
+            comentario: "Boa apresentação pessoal, comunicação clara",
+            dataAvaliacao: "2024-01-23",
+            aprovado: true,
+            nota: 8
+          },
+          {
+            etapaId: "e7",
+            avaliador: "Carlos Comercial",
+            comentario: "Destacou-se na dinâmica, perfil comercial nato",
+            dataAvaliacao: "2024-01-25",
+            aprovado: true,
+            nota: 9
+          },
+          {
+            etapaId: "e8",
+            avaliador: "Carlos Comercial",
+            comentario: "Aprovado! Demonstrou conhecimento do mercado e técnicas de venda",
+            dataAvaliacao: "2024-01-27",
+            aprovado: true,
+            nota: 8.5
+          }
+        ],
+        dataInicio: "2024-01-20",
+        dataUltimaAtualizacao: "2024-01-27"
+      }
+    ],
     status: "ativo",
     responsavel: "Ana Paula Ferreira",
     dataInicio: "2024-01-20"
+  },
+  {
+    id: "3",
+    titulo: "Analista Contábil Júnior",
+    departamento: "Financeiro",
+    cargo: "Analista Contábil",
+    descricao: "Vaga para analista contábil com foco em conciliações e relatórios",
+    vagas: 1,
+    salario: "R$ 3.500,00 - R$ 5.000,00",
+    etapas: [
+      {
+        id: "e9",
+        nome: "Triagem de Currículos",
+        descricao: "Análise inicial dos currículos",
+        ordem: 1,
+        tipo: "triagem",
+        responsavel: "Ana Paula Ferreira",
+        obrigatoria: true
+      },
+      {
+        id: "e10",
+        nome: "Teste Técnico Contábil",
+        descricao: "Avaliação de conhecimentos contábeis",
+        ordem: 2,
+        tipo: "teste",
+        responsavel: "Marina Financeiro",
+        duracao: "2 horas",
+        obrigatoria: true
+      },
+      {
+        id: "e11",
+        nome: "Entrevista Final",
+        descricao: "Entrevista com coordenador financeiro",
+        ordem: 3,
+        tipo: "entrevista",
+        responsavel: "Marina Financeiro",
+        duracao: "45 minutos",
+        obrigatoria: true
+      }
+    ],
+    candidatos: [
+      {
+        id: "c3",
+        curriculoId: "3",
+        processoSeletivoId: "3",
+        etapaAtual: "e11",
+        status: "aprovado",
+        feedback: [
+          {
+            etapaId: "e9",
+            avaliador: "Ana Paula Ferreira",
+            comentario: "Formação adequada, experiência relevante",
+            dataAvaliacao: "2024-01-26",
+            aprovado: true
+          },
+          {
+            etapaId: "e10",
+            avaliador: "Marina Financeiro",
+            comentario: "Conhecimento técnico sólido, resolveu bem os casos práticos",
+            dataAvaliacao: "2024-01-28",
+            aprovado: true,
+            nota: 8.5
+          },
+          {
+            etapaId: "e11",
+            avaliador: "Marina Financeiro",
+            comentario: "Aprovada! Demonstrou organização e conhecimento da legislação",
+            dataAvaliacao: "2024-01-30",
+            aprovado: true,
+            nota: 8
+          }
+        ],
+        dataInicio: "2024-01-25",
+        dataUltimaAtualizacao: "2024-01-30"
+      }
+    ],
+    status: "ativo",
+    responsavel: "Ana Paula Ferreira",
+    dataInicio: "2024-01-25"
+  },
+  {
+    id: "4",
+    titulo: "Analista de Marketing Digital",
+    departamento: "Marketing",
+    cargo: "Analista de Marketing Digital",
+    descricao: "Vaga para analista de marketing digital com foco em campanhas online",
+    vagas: 1,
+    salario: "R$ 4.000,00 - R$ 6.000,00",
+    etapas: [
+      {
+        id: "e12",
+        nome: "Triagem de Currículos",
+        descricao: "Análise inicial dos currículos",
+        ordem: 1,
+        tipo: "triagem",
+        responsavel: "Ana Paula Ferreira",
+        obrigatoria: true
+      },
+      {
+        id: "e13",
+        nome: "Apresentação de Portfolio",
+        descricao: "Apresentação de cases e projetos anteriores",
+        ordem: 2,
+        tipo: "teste",
+        responsavel: "Laura Marketing",
+        duracao: "1 hora",
+        obrigatoria: true
+      },
+      {
+        id: "e14",
+        nome: "Entrevista Final",
+        descricao: "Entrevista com coordenador de marketing",
+        ordem: 3,
+        tipo: "entrevista",
+        responsavel: "Laura Marketing",
+        duracao: "30 minutos",
+        obrigatoria: true
+      }
+    ],
+    candidatos: [
+      {
+        id: "c4",
+        curriculoId: "5",
+        processoSeletivoId: "4",
+        etapaAtual: "e14",
+        status: "aprovado",
+        feedback: [
+          {
+            etapaId: "e12",
+            avaliador: "Ana Paula Ferreira",
+            comentario: "Experiência relevante em marketing digital",
+            dataAvaliacao: "2024-02-06",
+            aprovado: true
+          },
+          {
+            etapaId: "e13",
+            avaliador: "Laura Marketing",
+            comentario: "Portfolio impressionante, cases muito bem apresentados",
+            dataAvaliacao: "2024-02-08",
+            aprovado: true,
+            nota: 9
+          },
+          {
+            etapaId: "e14",
+            avaliador: "Laura Marketing",
+            comentario: "Aprovada! Conhecimento atualizado das ferramentas e tendências",
+            dataAvaliacao: "2024-02-10",
+            aprovado: true,
+            nota: 8.5
+          }
+        ],
+        dataInicio: "2024-02-05",
+        dataUltimaAtualizacao: "2024-02-10"
+      }
+    ],
+    status: "ativo",
+    responsavel: "Ana Paula Ferreira",
+    dataInicio: "2024-02-05"
+  },
+  {
+    id: "5",
+    titulo: "Desenvolvedor Backend Sênior",
+    departamento: "Tecnologia",
+    cargo: "Desenvolvedor Backend",
+    descricao: "Vaga para desenvolvedor backend com experiência em Java e Spring",
+    vagas: 1,
+    salario: "R$ 9.000,00 - R$ 13.000,00",
+    etapas: [
+      {
+        id: "e15",
+        nome: "Triagem de Currículos",
+        descricao: "Análise inicial dos currículos",
+        ordem: 1,
+        tipo: "triagem",
+        responsavel: "Ana Paula Ferreira",
+        obrigatoria: true
+      },
+      {
+        id: "e16",
+        nome: "Entrevista Técnica",
+        descricao: "Entrevista técnica com arquiteto de software",
+        ordem: 2,
+        tipo: "entrevista",
+        responsavel: "Roberto Tech",
+        duracao: "1.5 horas",
+        obrigatoria: true
+      },
+      {
+        id: "e17",
+        nome: "Desafio de Código",
+        descricao: "Resolução de problema de arquitetura",
+        ordem: 3,
+        tipo: "teste",
+        responsavel: "Roberto Tech",
+        duracao: "4 horas",
+        obrigatoria: true
+      },
+      {
+        id: "e18",
+        nome: "Entrevista Final",
+        descricao: "Entrevista com CTO",
+        ordem: 4,
+        tipo: "entrevista",
+        responsavel: "Roberto Tech",
+        duracao: "45 minutos",
+        obrigatoria: true
+      }
+    ],
+    candidatos: [
+      {
+        id: "c5",
+        curriculoId: "6",
+        processoSeletivoId: "5",
+        etapaAtual: "e18",
+        status: "aprovado",
+        feedback: [
+          {
+            etapaId: "e15",
+            avaliador: "Ana Paula Ferreira",
+            comentario: "Perfil sênior, experiência sólida em backend",
+            dataAvaliacao: "2024-02-11",
+            aprovado: true
+          },
+          {
+            etapaId: "e16",
+            avaliador: "Roberto Tech",
+            comentario: "Excelente conhecimento técnico e experiência em arquitetura",
+            dataAvaliacao: "2024-02-13",
+            aprovado: true,
+            nota: 9
+          },
+          {
+            etapaId: "e17",
+            avaliador: "Roberto Tech",
+            comentario: "Solução muito bem elaborada, código limpo e eficiente",
+            dataAvaliacao: "2024-02-15",
+            aprovado: true,
+            nota: 9.5
+          },
+          {
+            etapaId: "e18",
+            avaliador: "Roberto Tech",
+            comentario: "Aprovado! Perfil ideal para liderar projetos complexos",
+            dataAvaliacao: "2024-02-17",
+            aprovado: true,
+            nota: 9
+          }
+        ],
+        dataInicio: "2024-02-10",
+        dataUltimaAtualizacao: "2024-02-17"
+      }
+    ],
+    status: "ativo",
+    responsavel: "Ana Paula Ferreira",
+    dataInicio: "2024-02-10"
   }
 ];
 
