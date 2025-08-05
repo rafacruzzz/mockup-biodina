@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { Curriculo, ProcessoSeletivo, CandidatoProcesso } from '@/types/processoSeletivo';
 import { curriculos as curriculosData, processosSeletivos as processosData } from '@/data/processoSeletivo';
@@ -21,6 +20,9 @@ interface ProcessoSeletivoContextType {
   adicionarCandidatoProcesso: (candidato: Omit<CandidatoProcesso, 'id'>) => void;
   moverCandidatoEtapa: (candidatoId: string, novaEtapa: string) => void;
   atualizarStatusCandidato: (candidatoId: string, status: CandidatoProcesso['status']) => void;
+  
+  // Função para admissão
+  atualizarStatusAdmissao: (candidatoId: string, status: string) => void;
 }
 
 const ProcessoSeletivoContext = createContext<ProcessoSeletivoContextType | null>(null);
@@ -120,6 +122,12 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
     );
   }, []);
 
+  const atualizarStatusAdmissao = useCallback((candidatoId: string, status: string) => {
+    // Atualizar o status da admissão do candidato
+    console.log(`Atualizando status de admissão do candidato ${candidatoId} para ${status}`);
+    // Em uma implementação real, isso seria persistido no banco de dados
+  }, []);
+
   const contextValue: ProcessoSeletivoContextType = {
     curriculos,
     processosSeletivos,
@@ -131,7 +139,8 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
     atualizarProcessoSeletivo,
     adicionarCandidatoProcesso,
     moverCandidatoEtapa,
-    atualizarStatusCandidato
+    atualizarStatusCandidato,
+    atualizarStatusAdmissao
   };
 
   return (

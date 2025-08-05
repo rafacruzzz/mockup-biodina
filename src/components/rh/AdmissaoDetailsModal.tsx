@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -22,6 +21,9 @@ import {
   UserPlus
 } from 'lucide-react';
 import { checklistDocumentosAdmissao } from '@/data/processoSeletivo';
+import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
+import { useColaboradores } from '@/hooks/useColaboradores';
+import { useToast } from '@/hooks/use-toast';
 
 interface CandidatoAdmissao {
   candidato: any;
@@ -45,6 +47,10 @@ const AdmissaoDetailsModal = ({ isOpen, onClose, candidatoAdmissao }: AdmissaoDe
   const [observacoes, setObservacoes] = useState('');
   const [salarioFinal, setSalarioFinal] = useState('');
   const [cargoFinal, setCargoFinal] = useState('');
+
+  const { atualizarStatusAdmissao } = useProcessoSeletivo();
+  const { adicionarColaborador } = useColaboradores();
+  const { toast } = useToast();
 
   if (!candidatoAdmissao) return null;
 
@@ -83,15 +89,31 @@ const AdmissaoDetailsModal = ({ isOpen, onClose, candidatoAdmissao }: AdmissaoDe
   const progressoDocumentos = Math.round((documentosRecebidos / documentos.length) * 100);
 
   const handleCadastrarColaborador = () => {
-    // Implementar navegação para cadastro de colaborador com dados pré-preenchidos
-    console.log('Cadastrar colaborador:', {
+    // Atualizar status da admissão para "admitido"
+    atualizarStatusAdmissao(candidato.id, 'admitido');
+    
+    // Adicionar colaborador na tabela
+    const novoColaborador = {
       nome: curriculo.nome,
+      cargo: cargoFinal || candidatoAdmissao.cargoDefinitivo || curriculo.cargoDesejado,
+      departamento: curriculo.departamento,
       email: curriculo.email,
       telefone: curriculo.telefone,
-      cpf: curriculo.cpf,
-      cargo: cargoFinal || candidatoAdmissao.cargoDefinitivo,
-      salario: salarioFinal || candidatoAdmissao.salarioDefinitivo
+      dataAdmissao: new Date().toISOString(),
+      status: 'Novo' as const,
+      documentos: documentos.filter(d => d.recebido)
+    };
+    
+    adicionarColaborador(novoColaborador);
+    
+    // Mostrar toast de sucesso
+    toast({
+      title: "Colaborador cadastrado com sucesso!",
+      description: `${curriculo.nome} foi adicionado ao módulo de colaboradores.`,
     });
+    
+    // Fechar modal
+    onClose();
   };
 
   return (
