@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { User, Mail, Phone, Clock, MoreHorizontal, Plus, Users } from 'lucide-react';
 import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
 import { ProcessoSeletivo, CandidatoProcesso, Curriculo } from '@/types/processoSeletivo';
+import ConfigurarEtapasModal from './ConfigurarEtapasModal';
 
 interface KanbanCardProps {
   candidato: CandidatoProcesso;
@@ -85,6 +85,7 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ candidato, curriculo, onMoverEt
 const ProcessoSeletivoKanban: React.FC = () => {
   const { processosSeletivos, curriculos, moverCandidatoEtapa, atualizarStatusCandidato } = useProcessoSeletivo();
   const [processoSelecionado, setProcessoSelecionado] = useState<string>('');
+  const [configurarEtapasModal, setConfigurarEtapasModal] = useState(false);
 
   const processoAtual = useMemo(() => {
     if (processoSelecionado && processosSeletivos.find(p => p.id === processoSelecionado)) {
@@ -127,16 +128,37 @@ const ProcessoSeletivoKanban: React.FC = () => {
     atualizarStatusCandidato(candidatoId, status);
   };
 
+  const handleNovoProcesso = () => {
+    setConfigurarEtapasModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setConfigurarEtapasModal(false);
+  };
+
+  // Update selected process when a new one is created
+  React.useEffect(() => {
+    const latestProcess = processosSeletivos[processosSeletivos.length - 1];
+    if (latestProcess && !processoSelecionado) {
+      setProcessoSelecionado(latestProcess.id);
+    }
+  }, [processosSeletivos.length]);
+
   if (processosSeletivos.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-gray-500">
         <Users className="h-12 w-12 mb-4 text-gray-300" />
         <h3 className="text-lg font-medium mb-2">Nenhum processo seletivo encontrado</h3>
         <p className="text-sm text-center mb-4">Crie um novo processo seletivo para começar</p>
-        <Button>
+        <Button onClick={handleNovoProcesso}>
           <Plus className="h-4 w-4 mr-2" />
           Novo Processo Seletivo
         </Button>
+        <ConfigurarEtapasModal
+          isOpen={configurarEtapasModal}
+          onClose={handleCloseModal}
+          processo={null}
+        />
       </div>
     );
   }
@@ -175,7 +197,7 @@ const ProcessoSeletivoKanban: React.FC = () => {
             </SelectContent>
           </Select>
           
-          <Button>
+          <Button onClick={handleNovoProcesso}>
             <Plus className="h-4 w-4 mr-2" />
             Novo Processo
           </Button>
@@ -232,6 +254,12 @@ const ProcessoSeletivoKanban: React.FC = () => {
           ))}
         </div>
       </div>
+
+      <ConfigurarEtapasModal
+        isOpen={configurarEtapasModal}
+        onClose={handleCloseModal}
+        processo={null}
+      />
     </div>
   );
 };
