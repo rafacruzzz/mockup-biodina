@@ -1,6 +1,5 @@
 
 import { useState, useCallback } from 'react';
-import { colaboradores as colaboradoresData } from '@/data/rhModules';
 
 export interface Colaborador {
   id: string;
@@ -14,8 +13,11 @@ export interface Colaborador {
   documentos?: any[];
 }
 
+// Initialize with empty array since we'll be adding colaboradores dynamically
+const initialColaboradores: Colaborador[] = [];
+
 export const useColaboradores = () => {
-  const [colaboradores, setColaboradores] = useState<Colaborador[]>(colaboradoresData || []);
+  const [colaboradores, setColaboradores] = useState<Colaborador[]>(initialColaboradores);
 
   const adicionarColaborador = useCallback((novoColaborador: Omit<Colaborador, 'id'>) => {
     const colaborador: Colaborador = {
