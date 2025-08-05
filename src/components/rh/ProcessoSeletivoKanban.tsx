@@ -87,7 +87,17 @@ const ProcessoSeletivoKanban: React.FC = () => {
   const [processoSelecionado, setProcessoSelecionado] = useState<string>('');
 
   const processoAtual = useMemo(() => {
-    return processosSeletivos.find(p => p.id === processoSelecionado) || processosSeletivos[0];
+    if (processoSelecionado && processosSeletivos.find(p => p.id === processoSelecionado)) {
+      return processosSeletivos.find(p => p.id === processoSelecionado);
+    }
+    return processosSeletivos[0] || null;
+  }, [processosSeletivos, processoSelecionado]);
+
+  // Set initial selection when processes are loaded
+  React.useEffect(() => {
+    if (!processoSelecionado && processosSeletivos.length > 0) {
+      setProcessoSelecionado(processosSeletivos[0].id);
+    }
   }, [processosSeletivos, processoSelecionado]);
 
   const candidatosPorEtapa = useMemo(() => {
@@ -117,7 +127,7 @@ const ProcessoSeletivoKanban: React.FC = () => {
     atualizarStatusCandidato(candidatoId, status);
   };
 
-  if (!processoAtual) {
+  if (processosSeletivos.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-gray-500">
         <Users className="h-12 w-12 mb-4 text-gray-300" />
@@ -127,6 +137,15 @@ const ProcessoSeletivoKanban: React.FC = () => {
           <Plus className="h-4 w-4 mr-2" />
           Novo Processo Seletivo
         </Button>
+      </div>
+    );
+  }
+
+  if (!processoAtual) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-gray-500">
+        <Users className="h-12 w-12 mb-4 text-gray-300" />
+        <h3 className="text-lg font-medium mb-2">Carregando processo seletivo...</h3>
       </div>
     );
   }
