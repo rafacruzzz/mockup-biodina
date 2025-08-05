@@ -11,6 +11,9 @@ import FuncaoModal from "@/components/rh/FuncaoModal";
 import PlanoCarreiraModal from "@/components/rh/PlanoCarreiraModal";
 import CargoPlanoModal from "@/components/rh/CargoPlanoModal";
 import NiveisProgressaoModal from "@/components/rh/NiveisProgressaoModal";
+import ProcessoSeletivoKanban from "@/components/rh/ProcessoSeletivoKanban";
+import BancoCurriculos from "@/components/rh/BancoCurriculos";
+import { ProcessoSeletivoProvider } from "@/contexts/ProcessoSeletivoContext";
 import { modules } from "@/data/rhModules";
 
 const RH = () => {
@@ -25,7 +28,7 @@ const RH = () => {
   const [isExpedienteModalOpen, setIsExpedienteModalOpen] = useState(false);
   const [isFuncaoModalOpen, setIsFuncaoModalOpen] = useState(false);
   
-  // Estados dos novos modais de Planos de Carreira
+  // Estados dos modais de Planos de Carreira
   const [isPlanoCarreiraModalOpen, setIsPlanoCarreiraModalOpen] = useState(false);
   const [isCargoPlanoModalOpen, setIsCargoPlanoModalOpen] = useState(false);
   const [isNiveisProgressaoModalOpen, setIsNiveisProgressaoModalOpen] = useState(false);
@@ -93,9 +96,8 @@ const RH = () => {
   const handleEditItem = (item: any, moduleName: string) => {
     if (activeModule === 'colaboradores' && moduleName === 'Colaboradores') {
       setIsEditMode(true);
-      setEditingColaboradorId(String(item.id)); // Converter para string
+      setEditingColaboradorId(String(item.id));
       
-      // Simular dados completos do colaborador baseado no item da tabela
       const colaboradorCompleto = {
         dadosPessoais: {
           nome: item.nome || '',
@@ -183,10 +185,40 @@ const RH = () => {
     setExpandedModules(['colaboradores']);
   };
 
-  const currentSubModule = activeModule && activeSubModule ? 
+  // Renderizar componente específico do Processo Seletivo
+  const renderProcessoSeletivoContent = () => {
+    switch (activeSubModule) {
+      case 'visaoGeral':
+        return <ProcessoSeletivoKanban />;
+      case 'bancoCurriculos':
+        return <BancoCurriculos />;
+      case 'etapasSelecao':
+        return (
+          <div className="flex items-center justify-center h-64 text-gray-500">
+            <div className="text-center">
+              <h3 className="text-lg font-medium mb-2">Etapas de Seleção</h3>
+              <p className="text-sm">Funcionalidade em desenvolvimento</p>
+            </div>
+          </div>
+        );
+      case 'admissao':
+        return (
+          <div className="flex items-center justify-center h-64 text-gray-500">
+            <div className="text-center">
+              <h3 className="text-lg font-medium mb-2">Processo de Admissão</h3>
+              <p className="text-sm">Funcionalidade em desenvolvimento</p>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const currentSubModule = activeModule && activeSubModule && activeModule !== 'processoSeletivo' ? 
     modules[activeModule as keyof typeof modules]?.subModules[activeSubModule] : null;
 
-  // Filter data based on search term
+  // Filter data based on search term for non-processo-seletivo modules
   const filteredData = currentSubModule?.data?.filter((item: any) => 
     Object.values(item).some(value => 
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
@@ -220,61 +252,69 @@ const RH = () => {
   }, [activeModule]);
 
   return (
-    <SidebarLayout>
-      <div className="flex h-full bg-gray-50/50">
-        <RHSidebar
-          activeModule={activeModule}
-          activeSubModule={activeSubModule}
-          expandedModules={expandedModules}
-          onModuleToggle={toggleModule}
-          onModuleSelect={handleModuleSelect}
-          onClose={handleCloseSidebar}
-        />
+    <ProcessoSeletivoProvider>
+      <SidebarLayout>
+        <div className="flex h-full bg-gray-50/50">
+          <RHSidebar
+            activeModule={activeModule}
+            activeSubModule={activeSubModule}
+            expandedModules={expandedModules}
+            onModuleToggle={toggleModule}
+            onModuleSelect={handleModuleSelect}
+            onClose={handleCloseSidebar}
+          />
 
-        <div className="flex-1 flex flex-col min-h-0">
-          {activeSubModule && currentSubModule ? (
-            <>
-              <ContentHeader
-                title={currentSubModule.name}
-                description={`Gerencie os registros de ${currentSubModule.name.toLowerCase()}`}
-                searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
-                onNewRecord={handleNewRecord}
-                buttonText={getButtonText()}
-              />
+          <div className="flex-1 flex flex-col min-h-0">
+            {activeSubModule ? (
+              <>
+                {activeModule === 'processoSeletivo' ? (
+                  <div className="flex-1 p-6 min-h-0">
+                    {renderProcessoSeletivoContent()}
+                  </div>
+                ) : (
+                  <>
+                    <ContentHeader
+                      title={currentSubModule?.name || ''}
+                      description={`Gerencie os registros de ${currentSubModule?.name?.toLowerCase() || ''}`}
+                      searchTerm={searchTerm}
+                      onSearchChange={setSearchTerm}
+                      onNewRecord={handleNewRecord}
+                      buttonText={getButtonText()}
+                    />
 
-              <div className="flex-1 p-6 min-h-0">
-                <DataTable 
-                  data={filteredData} 
-                  moduleName={currentSubModule.name}
-                />
-              </div>
-            </>
-          ) : (
-            <EmptyState onGetStarted={handleGetStarted} />
-          )}
+                    <div className="flex-1 p-6 min-h-0">
+                      <DataTable 
+                        data={filteredData} 
+                        moduleName={currentSubModule?.name || ''}
+                      />
+                    </div>
+                  </>
+                )}
+              </>
+            ) : (
+              <EmptyState onGetStarted={handleGetStarted} />
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Modal do Colaborador - agora suporta edição */}
-      <ColaboradorModal 
-        isOpen={isColaboradorModalOpen} 
-        onClose={handleCloseColaboradorModal}
-        editMode={isEditMode}
-        colaboradorId={editingColaboradorId || undefined}
-        colaboradorData={editingColaboradorData}
-      />
-      
-      {/* Outros modais existentes */}
-      <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={() => setIsDepartamentoModalOpen(false)} />
-      <FuncaoModal isOpen={isFuncaoModalOpen} onClose={() => setIsFuncaoModalOpen(false)} />
-      <ExpedienteModal isOpen={isExpedienteModalOpen} onClose={() => setIsExpedienteModalOpen(false)} />
-      
-      {/* Novos modais de Planos de Carreira */}
-      <PlanoCarreiraModal isOpen={isPlanoCarreiraModalOpen} onClose={() => setIsPlanoCarreiraModalOpen(false)} />
-      <CargoPlanoModal isOpen={isCargoPlanoModalOpen} onClose={() => setIsCargoPlanoModalOpen(false)} />
-      <NiveisProgressaoModal isOpen={isNiveisProgressaoModalOpen} onClose={() => setIsNiveisProgressaoModalOpen(false)} />
-    </SidebarLayout>
+        {/* Modais existentes */}
+        <ColaboradorModal 
+          isOpen={isColaboradorModalOpen} 
+          onClose={handleCloseColaboradorModal}
+          editMode={isEditMode}
+          colaboradorId={editingColaboradorId || undefined}
+          colaboradorData={editingColaboradorData}
+        />
+        
+        <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={() => setIsDepartamentoModalOpen(false)} />
+        <FuncaoModal isOpen={isFuncaoModalOpen} onClose={() => setIsFuncaoModalOpen(false)} />
+        <ExpedienteModal isOpen={isExpedienteModalOpen} onClose={() => setIsExpedienteModalOpen(false)} />
+        
+        <PlanoCarreiraModal isOpen={isPlanoCarreiraModalOpen} onClose={() => setIsPlanoCarreiraModalOpen(false)} />
+        <CargoPlanoModal isOpen={isCargoPlanoModalOpen} onClose={() => setIsCargoPlanoModalOpen(false)} />
+        <NiveisProgressaoModal isOpen={isNiveisProgressaoModalOpen} onClose={() => setIsNiveisProgressaoModalOpen(false)} />
+      </SidebarLayout>
+    </ProcessoSeletivoProvider>
   );
 };
 

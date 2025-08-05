@@ -1,4 +1,4 @@
-import { UserCheck, Building2, Clock, Trophy } from "lucide-react";
+import { UserCheck, Building2, Clock, Trophy, Users } from "lucide-react";
 
 export const modules = {
   colaboradores: {
@@ -69,6 +69,28 @@ export const modules = {
             telefone: "(11) 99999-0005"
           }
         ]
+      }
+    }
+  },
+  processoSeletivo: {
+    name: "Processo Seletivo",
+    icon: Users,
+    subModules: {
+      visaoGeral: {
+        name: "Visão Geral",
+        data: []
+      },
+      bancoCurriculos: {
+        name: "Banco de Currículos",
+        data: []
+      },
+      etapasSelecao: {
+        name: "Etapas de Seleção",
+        data: []
+      },
+      admissao: {
+        name: "Admissão",
+        data: []
       }
     }
   },
