@@ -22,15 +22,20 @@ const BancoCurriculos: React.FC = () => {
   const { curriculos, buscarCurriculos } = useProcessoSeletivo();
   const [filtros, setFiltros] = useState<FiltrosCurriculo>({
     busca: '',
-    departamento: '',
-    status: '',
-    fonte: ''
+    departamento: 'all',
+    status: 'all',
+    fonte: 'all'
   });
   const [curriculoSelecionado, setCurriculoSelecionado] = useState<Curriculo | null>(null);
   const [modalVisualizacao, setModalVisualizacao] = useState(false);
 
   const curriculosFiltrados = useMemo(() => {
-    return buscarCurriculos(filtros);
+    return buscarCurriculos({
+      ...filtros,
+      departamento: filtros.departamento === 'all' ? '' : filtros.departamento,
+      status: filtros.status === 'all' ? '' : filtros.status,
+      fonte: filtros.fonte === 'all' ? '' : filtros.fonte
+    });
   }, [curriculos, filtros, buscarCurriculos]);
 
   const estatisticas = useMemo(() => {
@@ -43,7 +48,7 @@ const BancoCurriculos: React.FC = () => {
   }, [curriculos]);
 
   const departamentos = useMemo(() => {
-    const deps = [...new Set(curriculos.map(c => c.departamento))];
+    const deps = [...new Set(curriculos.map(c => c.departamento).filter(dep => dep && dep.trim() !== ''))];
     return deps.sort();
   }, [curriculos]);
 
@@ -174,7 +179,7 @@ const BancoCurriculos: React.FC = () => {
                 <SelectValue placeholder="Departamento" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os departamentos</SelectItem>
+                <SelectItem value="all">Todos os departamentos</SelectItem>
                 {departamentos.map(dep => (
                   <SelectItem key={dep} value={dep}>{dep}</SelectItem>
                 ))}
@@ -189,7 +194,7 @@ const BancoCurriculos: React.FC = () => {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os status</SelectItem>
+                <SelectItem value="all">Todos os status</SelectItem>
                 <SelectItem value="novo">Novo</SelectItem>
                 <SelectItem value="em-analise">Em Análise</SelectItem>
                 <SelectItem value="aprovado">Aprovado</SelectItem>
@@ -206,7 +211,7 @@ const BancoCurriculos: React.FC = () => {
                 <SelectValue placeholder="Fonte" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas as fontes</SelectItem>
+                <SelectItem value="all">Todas as fontes</SelectItem>
                 <SelectItem value="site">Site</SelectItem>
                 <SelectItem value="linkedin">LinkedIn</SelectItem>
                 <SelectItem value="indicacao">Indicação</SelectItem>
