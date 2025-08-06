@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -6,8 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
-import { UserCheck, FileText, Calendar, Clock, Search, User, Mail, Phone, CheckCircle, AlertCircle, FileX } from 'lucide-react';
+import { UserCheck, FileText, Calendar, Clock, Search, User, Mail, Phone, CheckCircle, AlertCircle, FileX, UserPlus } from 'lucide-react';
 import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
+import { useColaboradores } from '@/hooks/useColaboradores';
+import { useToast } from '@/hooks/use-toast';
 import { CandidatoProcesso, Curriculo } from '@/types/processoSeletivo';
 import AdmissaoDetailsModal from './AdmissaoDetailsModal';
 
@@ -24,13 +25,15 @@ interface CandidatoAdmissao {
 }
 
 const Admissao = () => {
-  const { processosSeletivos, curriculos } = useProcessoSeletivo();
+  const { processosSeletivos, curriculos, atualizarStatusAdmissao, obterStatusAdmissao } = useProcessoSeletivo();
+  const { adicionarColaborador } = useColaboradores();
+  const { toast } = useToast();
   const [busca, setBusca] = useState('');
   const [filtroStatus, setFiltroStatus] = useState('all');
   const [candidatoSelecionado, setCandidatoSelecionado] = useState<CandidatoAdmissao | null>(null);
   const [modalDetalhes, setModalDetalhes] = useState(false);
 
-  // Mock data para demonstração - na implementação real, isso viria do contexto
+  // Candidatos em processo de admissão usando status real do contexto
   const candidatosAdmissao: CandidatoAdmissao[] = useMemo(() => {
     const candidatosAprovados: CandidatoAdmissao[] = [];
 
@@ -39,11 +42,8 @@ const Admissao = () => {
         if (candidato.status === 'aprovado') {
           const curriculo = curriculos.find(c => c.id === candidato.curriculoId);
           if (curriculo) {
-            // Simula dados de admissão para demonstração
-            const statusOptions: CandidatoAdmissao['statusAdmissao'][] = [
-              'documentos-pendentes', 'documentos-completos', 'aguardando-assinatura', 'admitido'
-            ];
-            const statusAdmissao = statusOptions[Math.floor(Math.random() * statusOptions.length)];
+            // Usar status real do contexto ao invés de gerar aleatoriamente
+            const statusAdmissao = obterStatusAdmissao(candidato.id) as CandidatoAdmissao['statusAdmissao'];
             const totalDocumentos = 8;
             const documentosRecebidos = statusAdmissao === 'admitido' ? totalDocumentos : 
               statusAdmissao === 'aguardando-assinatura' ? totalDocumentos :
@@ -67,7 +67,7 @@ const Admissao = () => {
     });
 
     return candidatosAprovados;
-  }, [processosSeletivos, curriculos]);
+  }, [processosSeletivos, curriculos, obterStatusAdmissao]);
 
   const candidatosFiltrados = useMemo(() => {
     return candidatosAdmissao.filter(item => {
@@ -128,6 +128,34 @@ const Admissao = () => {
     setModalDetalhes(true);
   };
 
+  const handleCadastrarColaborador = (item: CandidatoAdmissao) => {
+    console.log('Iniciando cadastro de colaborador da tabela...');
+    
+    // Atualizar status da admissão para "admitido"
+    atualizarStatusAdmissao(item.candidato.id, 'admitido');
+    console.log('Status de admissão atualizado para admitido');
+    
+    // Adicionar colaborador na tabela
+    const novoColaborador = {
+      nome: item.curriculo.nome,
+      cargo: item.cargoDefinitivo || item.curriculo.cargoDesejado,
+      departamento: item.curriculo.departamento,
+      email: item.curriculo.email,
+      telefone: item.curriculo.telefone,
+      dataAdmissao: new Date().toISOString(),
+      status: 'Novo' as const
+    };
+    
+    adicionarColaborador(novoColaborador);
+    console.log('Colaborador adicionado:', novoColaborador);
+    
+    // Mostrar toast de sucesso
+    toast({
+      title: "Colaborador cadastrado com sucesso!",
+      description: `${item.curriculo.nome} foi adicionado ao módulo de colaboradores.`,
+    });
+  };
+
   const calcularProgressoDocumentos = (recebidos: number, total: number) => {
     return Math.round((recebidos / total) * 100);
   };
@@ -141,7 +169,6 @@ const Admissao = () => {
         </div>
       </div>
 
-      {/* Estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-4">
@@ -204,7 +231,6 @@ const Admissao = () => {
         </Card>
       </div>
 
-      {/* Filtros */}
       <div className="flex gap-4 items-center bg-white p-4 rounded-lg border">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -230,7 +256,6 @@ const Admissao = () => {
         </Select>
       </div>
 
-      {/* Lista de Candidatos */}
       <div className="space-y-4">
         {candidatosFiltrados.length === 0 ? (
           <div className="text-center py-12">
@@ -291,7 +316,6 @@ const Admissao = () => {
                           </div>
                         </div>
                         
-                        {/* Progresso dos Documentos */}
                         <div className="space-y-2">
                           <div className="flex items-center justify-between text-sm">
                             <span className="font-medium text-gray-700">Documentos</span>
@@ -305,7 +329,6 @@ const Admissao = () => {
                           />
                         </div>
                         
-                        {/* Informações do Cargo */}
                         {(item.cargoDefinitivo || item.salarioDefinitivo) && (
                           <div className="mt-3 p-3 bg-gray-50 rounded-lg">
                             <div className="flex items-center gap-4 text-sm">
@@ -330,9 +353,15 @@ const Admissao = () => {
                       Ver Detalhes
                     </Button>
                     
-                    {item.statusAdmissao === 'documentos-completos' && (
-                      <Button size="sm" variant="outline">
-                        Cadastrar Colaborador
+                    {(item.statusAdmissao === 'documentos-completos' || item.statusAdmissao === 'admitido') && (
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleCadastrarColaborador(item)}
+                        disabled={item.statusAdmissao === 'admitido'}
+                      >
+                        <UserPlus className="h-4 w-4 mr-1" />
+                        {item.statusAdmissao === 'admitido' ? 'Cadastrado' : 'Cadastrar Colaborador'}
                       </Button>
                     )}
                   </div>
