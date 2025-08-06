@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { MoreHorizontal, CheckCircle, XCircle, Clock, ArrowRight, Eye } from 'lucide-react';
 import { CandidatoProcesso } from '@/types/processoSeletivo';
-import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivo';
+import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
 
 interface CandidatoContextMenuProps {
   candidato: CandidatoProcesso;
@@ -80,7 +80,7 @@ const CandidatoContextMenu: React.FC<CandidatoContextMenuProps> = ({
           </DropdownMenuItem>
           
           <DropdownMenuItem 
-            onClick={() => handleStatusChange('em-analise')}
+            onClick={() => handleStatusChange('aguardando')}
             className="flex items-center gap-2 hover:bg-gray-50"
           >
             <Clock className="h-4 w-4 text-yellow-600" />
