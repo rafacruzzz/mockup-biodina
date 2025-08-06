@@ -41,9 +41,15 @@ interface AdmissaoDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   candidatoAdmissao: CandidatoAdmissao | null;
+  onStatusUpdate?: (candidatoId: string, novoStatus: string) => void;
 }
 
-const AdmissaoDetailsModal = ({ isOpen, onClose, candidatoAdmissao }: AdmissaoDetailsModalProps) => {
+const AdmissaoDetailsModal = ({ 
+  isOpen, 
+  onClose, 
+  candidatoAdmissao,
+  onStatusUpdate 
+}: AdmissaoDetailsModalProps) => {
   const [observacoes, setObservacoes] = useState('');
   const [salarioFinal, setSalarioFinal] = useState('');
   const [cargoFinal, setCargoFinal] = useState('');
@@ -104,6 +110,11 @@ const AdmissaoDetailsModal = ({ isOpen, onClose, candidatoAdmissao }: AdmissaoDe
   const handleCadastrarColaborador = () => {
     // Atualizar status da admissão para "admitido"
     atualizarStatusAdmissao(candidato.id, 'admitido');
+    
+    // Chamar callback para atualizar o status na tabela pai
+    if (onStatusUpdate) {
+      onStatusUpdate(candidato.id, 'admitido');
+    }
     
     // Adicionar colaborador na tabela
     const novoColaborador = {
