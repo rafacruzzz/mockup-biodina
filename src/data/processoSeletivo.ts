@@ -95,6 +95,66 @@ export const curriculos: Curriculo[] = [
     status: "aprovado",
     fonte: "linkedin",
     observacoes: "Forte experiência em arquitetura de sistemas"
+  },
+  {
+    id: "7",
+    nome: "Ana Beatriz Oliveira",
+    email: "ana.beatriz@email.com",
+    telefone: "(11) 92109-8765",
+    cpf: "111.222.333-44",
+    departamento: "Tecnologia",
+    cargoDesejado: "Desenvolvedora Frontend",
+    experiencia: "2 anos",
+    escolaridade: "Superior Completo - Análise e Desenvolvimento de Sistemas",
+    habilidades: ["Vue.js", "JavaScript", "CSS", "HTML"],
+    dataEnvio: "2024-01-18",
+    status: "em-analise",
+    fonte: "site"
+  },
+  {
+    id: "8",
+    nome: "Carlos Eduardo Ferreira",
+    email: "carlos.eduardo@email.com",
+    telefone: "(11) 91098-7654",
+    cpf: "555.666.777-88",
+    departamento: "Tecnologia",
+    cargoDesejado: "Desenvolvedor Frontend",
+    experiencia: "5 anos",
+    escolaridade: "Superior Completo - Ciência da Computação",
+    habilidades: ["React", "Angular", "TypeScript", "GraphQL"],
+    dataEnvio: "2024-01-22",
+    status: "reprovado",
+    fonte: "linkedin"
+  },
+  {
+    id: "9",
+    nome: "Mariana Costa Lima",
+    email: "mariana.costa@email.com",
+    telefone: "(11) 90987-6543",
+    cpf: "999.888.777-66",
+    departamento: "Comercial",
+    cargoDesejado: "Analista de Vendas",
+    experiencia: "3 anos",
+    escolaridade: "Superior Completo - Marketing",
+    habilidades: ["Vendas B2B", "HubSpot", "Negociação", "Prospecção"],
+    dataEnvio: "2024-01-25",
+    status: "em-analise",
+    fonte: "indicacao"
+  },
+  {
+    id: "10",
+    nome: "Rafael Souza Pereira",
+    email: "rafael.souza@email.com",
+    telefone: "(11) 98876-5432",
+    cpf: "333.444.555-22",
+    departamento: "Comercial",
+    cargoDesejado: "Analista de Vendas",
+    experiencia: "1 ano",
+    escolaridade: "Superior em Andamento - Administração",
+    habilidades: ["Vendas", "Atendimento", "Excel", "PowerPoint"],
+    dataEnvio: "2024-01-28",
+    status: "novo",
+    fonte: "site"
   }
 ];
 
@@ -190,6 +250,58 @@ export const processosSeletivos: ProcessoSeletivo[] = [
         ],
         dataInicio: "2024-01-15",
         dataUltimaAtualizacao: "2024-01-22"
+      },
+      {
+        id: "c7",
+        curriculoId: "7",
+        processoSeletivoId: "1",
+        etapaAtual: "e2",
+        status: "em-andamento",
+        feedback: [
+          {
+            etapaId: "e1",
+            avaliador: "Ana Paula Ferreira",
+            comentario: "Boa formação técnica, experiência adequada para júnior",
+            dataAvaliacao: "2024-01-19",
+            aprovado: true
+          }
+        ],
+        dataInicio: "2024-01-18",
+        dataUltimaAtualizacao: "2024-01-19"
+      },
+      {
+        id: "c8",
+        curriculoId: "8",
+        processoSeletivoId: "1",
+        etapaAtual: "e3",
+        status: "reprovado",
+        feedback: [
+          {
+            etapaId: "e1",
+            avaliador: "Ana Paula Ferreira",
+            comentario: "Excelente experiência, perfil sênior",
+            dataAvaliacao: "2024-01-23",
+            aprovado: true
+          },
+          {
+            etapaId: "e2",
+            avaliador: "João Silva Santos",
+            comentario: "Ótimo conhecimento técnico",
+            dataAvaliacao: "2024-01-25",
+            aprovado: true,
+            nota: 8.5
+          },
+          {
+            etapaId: "e3",
+            avaliador: "João Silva Santos",
+            comentario: "Não conseguiu completar o teste no tempo esperado",
+            dataAvaliacao: "2024-01-27",
+            aprovado: false,
+            nota: 4
+          }
+        ],
+        dataInicio: "2024-01-22",
+        dataUltimaAtualizacao: "2024-01-27"
       }
     ],
     status: "ativo",
@@ -288,6 +400,34 @@ export const processosSeletivos: ProcessoSeletivo[] = [
         ],
         dataInicio: "2024-01-20",
         dataUltimaAtualizacao: "2024-01-27"
+      },
+      {
+        id: "c9",
+        curriculoId: "9",
+        processoSeletivoId: "2",
+        etapaAtual: "e6",
+        status: "aguardando",
+        feedback: [
+          {
+            etapaId: "e5",
+            avaliador: "Ana Paula Ferreira",
+            comentario: "Boa experiência em B2B, conhecimento em ferramentas digitais",
+            dataAvaliacao: "2024-01-26",
+            aprovado: true
+          }
+        ],
+        dataInicio: "2024-01-25",
+        dataUltimaAtualizacao: "2024-01-26"
+      },
+      {
+        id: "c10",
+        curriculoId: "10",
+        processoSeletivoId: "2",
+        etapaAtual: "e5",
+        status: "em-andamento",
+        feedback: [],
+        dataInicio: "2024-01-28",
+        dataUltimaAtualizacao: "2024-01-28"
       }
     ],
     status: "ativo",
