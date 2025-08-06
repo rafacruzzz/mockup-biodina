@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { 
@@ -9,6 +8,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import UserProfileMenu from "@/components/UserProfileMenu";
+import FloatingChat from "@/components/chat/FloatingChat";
 
 interface SidebarLayoutProps {
   children: React.ReactNode;
@@ -120,6 +120,9 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
           {children}
         </main>
       </div>
+
+      {/* Chat Flutuante */}
+      <FloatingChat />
     </div>
   );
 };
