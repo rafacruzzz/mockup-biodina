@@ -71,9 +71,12 @@ const AdmissaoDetailsModal = ({
     return null;
   }
 
-  const { atualizarStatusAdmissao } = processoSeletivoContext;
+  const { atualizarStatusAdmissao, obterStatusAdmissao } = processoSeletivoContext;
   const { adicionarColaborador } = colaboradoresContext;
-  const { candidato, curriculo, processo, statusAdmissao } = candidatoAdmissao;
+  const { candidato, curriculo, processo } = candidatoAdmissao;
+
+  // Obter o status atual da admissão
+  const statusAdmissaoAtual = obterStatusAdmissao(candidato.id);
 
   // Mock dos documentos - na implementação real, isso viria do contexto
   const documentos = checklistDocumentosAdmissao.map((doc, index) => ({
@@ -108,12 +111,16 @@ const AdmissaoDetailsModal = ({
   const progressoDocumentos = Math.round((documentosRecebidos / documentos.length) * 100);
 
   const handleCadastrarColaborador = () => {
+    console.log('Iniciando cadastro de colaborador...');
+    
     // Atualizar status da admissão para "admitido"
     atualizarStatusAdmissao(candidato.id, 'admitido');
+    console.log('Status de admissão atualizado para admitido');
     
     // Chamar callback para atualizar o status na tabela pai
     if (onStatusUpdate) {
       onStatusUpdate(candidato.id, 'admitido');
+      console.log('Callback onStatusUpdate executado');
     }
     
     // Adicionar colaborador na tabela
@@ -129,6 +136,7 @@ const AdmissaoDetailsModal = ({
     };
     
     adicionarColaborador(novoColaborador);
+    console.log('Colaborador adicionado:', novoColaborador);
     
     // Mostrar toast de sucesso
     toast({
@@ -146,8 +154,8 @@ const AdmissaoDetailsModal = ({
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="text-xl">Processo de Admissão</DialogTitle>
-            <Badge className={getStatusColor(statusAdmissao)}>
-              {getStatusText(statusAdmissao)}
+            <Badge className={getStatusColor(statusAdmissaoAtual)}>
+              {getStatusText(statusAdmissaoAtual)}
             </Badge>
           </div>
         </DialogHeader>
@@ -320,7 +328,7 @@ const AdmissaoDetailsModal = ({
           </TabsContent>
 
           <TabsContent value="finalizacao" className="space-y-4">
-            {statusAdmissao === 'admitido' ? (
+            {statusAdmissaoAtual === 'admitido' ? (
               <Card className="border-green-200 bg-green-50">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-4">
@@ -346,11 +354,11 @@ const AdmissaoDetailsModal = ({
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <h4 className="font-medium text-yellow-800 mb-2">Status Atual: {getStatusText(statusAdmissao)}</h4>
+                    <h4 className="font-medium text-yellow-800 mb-2">Status Atual: {getStatusText(statusAdmissaoAtual)}</h4>
                     <p className="text-sm text-yellow-700">
-                      {statusAdmissao === 'documentos-pendentes' && 'Ainda existem documentos pendentes. Complete a coleta de documentos antes de prosseguir.'}
-                      {statusAdmissao === 'documentos-completos' && 'Todos os documentos foram coletados. Proceda com a assinatura do contrato.'}
-                      {statusAdmissao === 'aguardando-assinatura' && 'Aguardando assinatura do contrato. Finalize o processo após a assinatura.'}
+                      {statusAdmissaoAtual === 'documentos-pendentes' && 'Ainda existem documentos pendentes. Complete a coleta de documentos antes de prosseguir.'}
+                      {statusAdmissaoAtual === 'documentos-completos' && 'Todos os documentos foram coletados. Proceda com a assinatura do contrato.'}
+                      {statusAdmissaoAtual === 'aguardando-assinatura' && 'Aguardando assinatura do contrato. Finalize o processo após a assinatura.'}
                     </p>
                   </div>
                   
@@ -358,14 +366,15 @@ const AdmissaoDetailsModal = ({
                     <Button 
                       variant="outline" 
                       className="w-full"
-                      disabled={statusAdmissao !== 'documentos-completos'}
+                      disabled={statusAdmissaoAtual !== 'documentos-completos'}
                     >
                       Gerar Contrato de Trabalho
                     </Button>
                     
                     <Button 
                       className="w-full"
-                      disabled={statusAdmissao !== 'aguardando-assinatura'}
+                      disabled={statusAdmissaoAtual !== 'aguardando-assinatura'}
+                      onClick={() => atualizarStatusAdmissao(candidato.id, 'admitido')}
                     >
                       Finalizar Admissão
                     </Button>
@@ -380,7 +389,7 @@ const AdmissaoDetailsModal = ({
           <Button variant="outline" onClick={onClose}>
             Fechar
           </Button>
-          {statusAdmissao === 'documentos-completos' && (
+          {(statusAdmissaoAtual === 'documentos-completos' || statusAdmissaoAtual === 'admitido') && (
             <Button onClick={handleCadastrarColaborador}>
               <UserPlus className="h-4 w-4 mr-2" />
               Cadastrar Colaborador

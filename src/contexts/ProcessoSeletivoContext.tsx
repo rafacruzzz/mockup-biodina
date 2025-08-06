@@ -1,10 +1,17 @@
+
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { Curriculo, ProcessoSeletivo, CandidatoProcesso } from '@/types/processoSeletivo';
 import { curriculos as curriculosData, processosSeletivos as processosData } from '@/data/processoSeletivo';
 
+interface CandidatoAdmissao {
+  candidatoId: string;
+  statusAdmissao: 'documentos-pendentes' | 'documentos-completos' | 'aguardando-assinatura' | 'admitido';
+}
+
 interface ProcessoSeletivoContextType {
   curriculos: Curriculo[];
   processosSeletivos: ProcessoSeletivo[];
+  candidatosAdmissao: CandidatoAdmissao[];
   loading: boolean;
   
   // Funções para currículos
@@ -23,6 +30,7 @@ interface ProcessoSeletivoContextType {
   
   // Função para admissão
   atualizarStatusAdmissao: (candidatoId: string, status: string) => void;
+  obterStatusAdmissao: (candidatoId: string) => string;
 }
 
 const ProcessoSeletivoContext = createContext<ProcessoSeletivoContextType | null>(null);
@@ -30,6 +38,7 @@ const ProcessoSeletivoContext = createContext<ProcessoSeletivoContextType | null
 export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [curriculos, setCurriculos] = useState<Curriculo[]>(curriculosData);
   const [processosSeletivos, setProcessosSeletivos] = useState<ProcessoSeletivo[]>(processosData);
+  const [candidatosAdmissao, setCandidatosAdmissao] = useState<CandidatoAdmissao[]>([]);
   const [loading, setLoading] = useState(false);
 
   const adicionarCurriculo = useCallback((novoCurriculo: Omit<Curriculo, 'id'>) => {
@@ -123,14 +132,34 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
   }, []);
 
   const atualizarStatusAdmissao = useCallback((candidatoId: string, status: string) => {
-    // Atualizar o status da admissão do candidato
     console.log(`Atualizando status de admissão do candidato ${candidatoId} para ${status}`);
-    // Em uma implementação real, isso seria persistido no banco de dados
+    
+    setCandidatosAdmissao(prev => {
+      const existing = prev.find(c => c.candidatoId === candidatoId);
+      if (existing) {
+        return prev.map(c => 
+          c.candidatoId === candidatoId 
+            ? { ...c, statusAdmissao: status as any }
+            : c
+        );
+      } else {
+        return [...prev, { 
+          candidatoId, 
+          statusAdmissao: status as any 
+        }];
+      }
+    });
   }, []);
+
+  const obterStatusAdmissao = useCallback((candidatoId: string): string => {
+    const candidatoAdmissao = candidatosAdmissao.find(c => c.candidatoId === candidatoId);
+    return candidatoAdmissao?.statusAdmissao || 'documentos-pendentes';
+  }, [candidatosAdmissao]);
 
   const contextValue: ProcessoSeletivoContextType = {
     curriculos,
     processosSeletivos,
+    candidatosAdmissao,
     loading,
     adicionarCurriculo,
     atualizarCurriculo,
@@ -140,7 +169,8 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
     adicionarCandidatoProcesso,
     moverCandidatoEtapa,
     atualizarStatusCandidato,
-    atualizarStatusAdmissao
+    atualizarStatusAdmissao,
+    obterStatusAdmissao
   };
 
   return (
