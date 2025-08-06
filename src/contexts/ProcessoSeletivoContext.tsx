@@ -1,5 +1,6 @@
+
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Curriculo, ProcessoSeletivo, CandidatoProcesso } from '@/types/processoSeletivo';
+import { Curriculo, ProcessoSeletivo, CandidatoProcesso, HistoricoStatus, NotificacaoProcesso } from '@/types/processoSeletivo';
 import { curriculos as curriculosData, processosSeletivos as processosData } from '@/data/processoSeletivo';
 
 interface CandidatoAdmissao {
@@ -11,6 +12,8 @@ interface ProcessoSeletivoContextType {
   curriculos: Curriculo[];
   processosSeletivos: ProcessoSeletivo[];
   candidatosAdmissao: CandidatoAdmissao[];
+  historicoStatus: HistoricoStatus[];
+  notificacoes: NotificacaoProcesso[];
   loading: boolean;
   
   // Funções para currículos
@@ -25,11 +28,16 @@ interface ProcessoSeletivoContextType {
   // Funções para candidatos
   adicionarCandidatoProcesso: (candidato: Omit<CandidatoProcesso, 'id'>) => void;
   moverCandidatoEtapa: (candidatoId: string, novaEtapa: string) => void;
-  atualizarStatusCandidato: (candidatoId: string, status: CandidatoProcesso['status']) => void;
+  atualizarStatusCandidato: (candidatoId: string, status: CandidatoProcesso['status'], motivo?: string) => void;
   
   // Função para admissão
   atualizarStatusAdmissao: (candidatoId: string, status: string) => void;
   obterStatusAdmissao: (candidatoId: string) => string;
+  
+  // Funções para histórico e notificações
+  obterHistoricoStatus: (candidatoId: string) => HistoricoStatus[];
+  criarNotificacao: (notificacao: Omit<NotificacaoProcesso, 'id'>) => void;
+  marcarNotificacaoComoLida: (notificacaoId: string) => void;
 }
 
 const ProcessoSeletivoContext = createContext<ProcessoSeletivoContextType | null>(null);
@@ -63,6 +71,8 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
   const [curriculos, setCurriculos] = useState<Curriculo[]>(curriculosData);
   const [processosSeletivos, setProcessosSeletivos] = useState<ProcessoSeletivo[]>(processosData);
   const [candidatosAdmissao, setCandidatosAdmissao] = useState<CandidatoAdmissao[]>(criarStatusIniciais());
+  const [historicoStatus, setHistoricoStatus] = useState<HistoricoStatus[]>([]);
+  const [notificacoes, setNotificacoes] = useState<NotificacaoProcesso[]>([]);
   const [loading, setLoading] = useState(false);
 
   const adicionarCurriculo = useCallback((novoCurriculo: Omit<Curriculo, 'id'>) => {
@@ -130,6 +140,25 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
   }, []);
 
   const moverCandidatoEtapa = useCallback((candidatoId: string, novaEtapa: string) => {
+    const candidatoAtual = processosSeletivos
+      .flatMap(p => p.candidatos)
+      .find(c => c.id === candidatoId);
+
+    if (candidatoAtual) {
+      // Registrar no histórico
+      const novoHistorico: HistoricoStatus = {
+        id: Date.now().toString(),
+        candidatoId,
+        statusAnterior: candidatoAtual.status,
+        statusNovo: candidatoAtual.status,
+        dataAlteracao: new Date().toISOString(),
+        usuario: 'Ana Paula Ferreira', // TODO: Pegar usuário logado
+        observacoes: `Movido para etapa ${novaEtapa}`
+      };
+
+      setHistoricoStatus(prev => [...prev, novoHistorico]);
+    }
+
     setProcessosSeletivos(prev =>
       prev.map(processo => ({
         ...processo,
@@ -140,9 +169,44 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
         )
       }))
     );
-  }, []);
+  }, [processosSeletivos]);
 
-  const atualizarStatusCandidato = useCallback((candidatoId: string, status: CandidatoProcesso['status']) => {
+  const atualizarStatusCandidato = useCallback((candidatoId: string, status: CandidatoProcesso['status'], motivo?: string) => {
+    const candidatoAtual = processosSeletivos
+      .flatMap(p => p.candidatos)
+      .find(c => c.id === candidatoId);
+
+    if (candidatoAtual && candidatoAtual.status !== status) {
+      // Registrar no histórico
+      const novoHistorico: HistoricoStatus = {
+        id: Date.now().toString(),
+        candidatoId,
+        statusAnterior: candidatoAtual.status,
+        statusNovo: status,
+        dataAlteracao: new Date().toISOString(),
+        usuario: 'Ana Paula Ferreira', // TODO: Pegar usuário logado
+        motivo
+      };
+
+      setHistoricoStatus(prev => [...prev, novoHistorico]);
+
+      // Criar notificação se necessário
+      if (status === 'aprovado' || status === 'reprovado') {
+        const notificacao: Omit<NotificacaoProcesso, 'id'> = {
+          tipo: status === 'aprovado' ? 'aprovacao' : 'reprovacao',
+          candidatoId,
+          processoSeletivoId: candidatoAtual.processoSeletivoId,
+          titulo: `Candidato ${status === 'aprovado' ? 'Aprovado' : 'Reprovado'}`,
+          mensagem: `O candidato foi ${status === 'aprovado' ? 'aprovado' : 'reprovado'} no processo seletivo`,
+          lida: false,
+          dataEnvio: new Date().toISOString(),
+          destinatarios: ['gestores@empresa.com']
+        };
+
+        criarNotificacao(notificacao);
+      }
+    }
+
     setProcessosSeletivos(prev =>
       prev.map(processo => ({
         ...processo,
@@ -153,7 +217,7 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
         )
       }))
     );
-  }, []);
+  }, [processosSeletivos]);
 
   const atualizarStatusAdmissao = useCallback((candidatoId: string, status: string) => {
     console.log(`Atualizando status de admissão do candidato ${candidatoId} para ${status}`);
@@ -180,10 +244,36 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
     return candidatoAdmissao?.statusAdmissao || 'documentos-pendentes';
   }, [candidatosAdmissao]);
 
+  const obterHistoricoStatus = useCallback((candidatoId: string) => {
+    return historicoStatus
+      .filter(h => h.candidatoId === candidatoId)
+      .sort((a, b) => new Date(b.dataAlteracao).getTime() - new Date(a.dataAlteracao).getTime());
+  }, [historicoStatus]);
+
+  const criarNotificacao = useCallback((notificacao: Omit<NotificacaoProcesso, 'id'>) => {
+    const novaNotificacao: NotificacaoProcesso = {
+      ...notificacao,
+      id: Date.now().toString()
+    };
+    setNotificacoes(prev => [...prev, novaNotificacao]);
+  }, []);
+
+  const marcarNotificacaoComoLida = useCallback((notificacaoId: string) => {
+    setNotificacoes(prev =>
+      prev.map(notificacao =>
+        notificacao.id === notificacaoId
+          ? { ...notificacao, lida: true }
+          : notificacao
+      )
+    );
+  }, []);
+
   const contextValue: ProcessoSeletivoContextType = {
     curriculos,
     processosSeletivos,
     candidatosAdmissao,
+    historicoStatus,
+    notificacoes,
     loading,
     adicionarCurriculo,
     atualizarCurriculo,
@@ -194,7 +284,10 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
     moverCandidatoEtapa,
     atualizarStatusCandidato,
     atualizarStatusAdmissao,
-    obterStatusAdmissao
+    obterStatusAdmissao,
+    obterHistoricoStatus,
+    criarNotificacao,
+    marcarNotificacaoComoLida
   };
 
   return (

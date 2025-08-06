@@ -1,12 +1,15 @@
+
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { User, Mail, Phone, Clock, MoreHorizontal, Plus, Users } from 'lucide-react';
+import { User, Mail, Phone, Clock, Plus, Users } from 'lucide-react';
 import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
 import { ProcessoSeletivo, CandidatoProcesso, Curriculo } from '@/types/processoSeletivo';
 import ConfigurarEtapasModal from './ConfigurarEtapasModal';
+import CandidatoDetailsModal from './CandidatoDetailsModal';
+import CandidatoContextMenu from './CandidatoContextMenu';
 import DroppableColumn from './DroppableColumn';
 import {
   DndContext,
@@ -29,9 +32,19 @@ interface KanbanCardProps {
   onMoverEtapa: (candidatoId: string, etapaId: string) => void;
   onStatusChange: (candidatoId: string, status: CandidatoProcesso['status']) => void;
   isDragOverlay?: boolean;
+  etapas?: Array<{ id: string; nome: string }>;
 }
 
-const KanbanCard: React.FC<KanbanCardProps> = ({ candidato, curriculo, onMoverEtapa, onStatusChange, isDragOverlay }) => {
+const KanbanCard: React.FC<KanbanCardProps> = ({ 
+  candidato, 
+  curriculo, 
+  onMoverEtapa, 
+  onStatusChange, 
+  isDragOverlay,
+  etapas = []
+}) => {
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+  
   const {
     attributes,
     listeners,
@@ -56,67 +69,82 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ candidato, curriculo, onMoverEt
     }
   };
 
+  const handleViewDetails = () => {
+    setIsDetailsModalOpen(true);
+  };
+
   return (
-    <Card 
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className={`mb-3 shadow-sm hover:shadow-md transition-shadow bg-white border border-gray-200 cursor-grab active:cursor-grabbing ${
-        isDragging ? 'opacity-50' : ''
-      } ${isDragOverlay ? 'rotate-3 scale-105 shadow-lg' : ''}`}
-    >
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-full bg-biodina-blue/10">
-              <User className="h-4 w-4 text-biodina-blue" />
+    <>
+      <Card 
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+        className={`mb-3 shadow-sm hover:shadow-md transition-shadow bg-white border border-gray-200 cursor-grab active:cursor-grabbing ${
+          isDragging ? 'opacity-50' : ''
+        } ${isDragOverlay ? 'rotate-3 scale-105 shadow-lg' : ''}`}
+      >
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-full bg-biodina-blue/10">
+                <User className="h-4 w-4 text-biodina-blue" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm text-gray-900">{curriculo.nome}</h4>
+                <p className="text-xs text-gray-600">{curriculo.cargoDesejado}</p>
+              </div>
             </div>
-            <div>
-              <h4 className="font-semibold text-sm text-gray-900">{curriculo.nome}</h4>
-              <p className="text-xs text-gray-600">{curriculo.cargoDesejado}</p>
+            <CandidatoContextMenu
+              candidato={candidato}
+              etapas={etapas}
+              onViewDetails={handleViewDetails}
+            />
+          </div>
+          <Badge className={`text-xs w-fit ${getStatusColor(candidato.status)}`}>
+            {candidato.status}
+          </Badge>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="space-y-2 text-xs text-gray-600">
+            <div className="flex items-center gap-2">
+              <Mail className="h-3 w-3" />
+              <span className="truncate">{curriculo.email}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Phone className="h-3 w-3" />
+              <span>{curriculo.telefone}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock className="h-3 w-3" />
+              <span>Há {Math.floor((new Date().getTime() - new Date(candidato.dataUltimaAtualizacao).getTime()) / (1000 * 60 * 60 * 24))} dias</span>
             </div>
           </div>
-          <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </div>
-        <Badge className={`text-xs w-fit ${getStatusColor(candidato.status)}`}>
-          {candidato.status}
-        </Badge>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-2 text-xs text-gray-600">
-          <div className="flex items-center gap-2">
-            <Mail className="h-3 w-3" />
-            <span className="truncate">{curriculo.email}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Phone className="h-3 w-3" />
-            <span>{curriculo.telefone}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Clock className="h-3 w-3" />
-            <span>Há {Math.floor((new Date().getTime() - new Date(candidato.dataUltimaAtualizacao).getTime()) / (1000 * 60 * 60 * 24))} dias</span>
-          </div>
-        </div>
-        
-        {curriculo.habilidades.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1">
-            {curriculo.habilidades.slice(0, 3).map((habilidade, index) => (
-              <Badge key={index} variant="outline" className="text-xs px-1 py-0">
-                {habilidade}
-              </Badge>
-            ))}
-            {curriculo.habilidades.length > 3 && (
-              <Badge variant="outline" className="text-xs px-1 py-0">
-                +{curriculo.habilidades.length - 3}
-              </Badge>
-            )}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          
+          {curriculo.habilidades.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1">
+              {curriculo.habilidades.slice(0, 3).map((habilidade, index) => (
+                <Badge key={index} variant="outline" className="text-xs px-1 py-0">
+                  {habilidade}
+                </Badge>
+              ))}
+              {curriculo.habilidades.length > 3 && (
+                <Badge variant="outline" className="text-xs px-1 py-0">
+                  +{curriculo.habilidades.length - 3}
+                </Badge>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <CandidatoDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        candidato={candidato}
+        curriculo={curriculo}
+      />
+    </>
   );
 };
 
@@ -245,6 +273,11 @@ const ProcessoSeletivoKanban: React.FC = () => {
     );
   }
 
+  const etapasSimplificadas = processoAtual.etapas.map(etapa => ({
+    id: etapa.id,
+    nome: etapa.nome
+  }));
+
   return (
     <DndContext
       sensors={sensors}
@@ -302,7 +335,12 @@ const ProcessoSeletivoKanban: React.FC = () => {
                 candidatos={candidatosPorEtapa[etapa.id] || []}
                 onMoverEtapa={handleMoverEtapa}
                 onStatusChange={handleStatusChange}
-                KanbanCard={KanbanCard}
+                KanbanCard={(props) => (
+                  <KanbanCard 
+                    {...props} 
+                    etapas={etapasSimplificadas} 
+                  />
+                )}
               />
             ))}
           </div>
@@ -322,6 +360,7 @@ const ProcessoSeletivoKanban: React.FC = () => {
             curriculo={activeCandidato.curriculo}
             onMoverEtapa={handleMoverEtapa}
             onStatusChange={handleStatusChange}
+            etapas={etapasSimplificadas}
             isDragOverlay
           />
         ) : null}

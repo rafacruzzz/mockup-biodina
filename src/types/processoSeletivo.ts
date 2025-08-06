@@ -1,4 +1,3 @@
-
 export interface Curriculo {
   id: string;
   nome: string;
@@ -113,4 +112,43 @@ export interface TemplateEtapas {
   nome: string;
   cargo: string;
   etapas: Omit<EtapaSelecao, 'id'>[];
+}
+
+export interface HistoricoStatus {
+  id: string;
+  candidatoId: string;
+  statusAnterior: CandidatoProcesso['status'];
+  statusNovo: CandidatoProcesso['status'];
+  dataAlteracao: string;
+  usuario: string;
+  motivo?: string;
+  observacoes?: string;
+}
+
+export interface NotificacaoProcesso {
+  id: string;
+  tipo: 'mudanca-status' | 'nova-etapa' | 'aprovacao' | 'reprovacao';
+  candidatoId: string;
+  processoSeletivoId: string;
+  titulo: string;
+  mensagem: string;
+  lida: boolean;
+  dataEnvio: string;
+  destinatarios: string[];
+}
+
+export interface ConfiguracaoStatus {
+  id: string;
+  nome: string;
+  cor: string;
+  ativo: boolean;
+  ordem: number;
+  descricao?: string;
+}
+
+export interface MotivoReprovacao {
+  id: string;
+  nome: string;
+  descricao: string;
+  ativo: boolean;
 }
