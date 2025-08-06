@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import { checklistDocumentosAdmissao } from '@/data/processoSeletivo';
 import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
-import { useColaboradores } from '@/contexts/ColaboradoresContext';
+import { useColaboradores } from '@/hooks/useColaboradores';
 import { useToast } from '@/hooks/use-toast';
 
 interface CandidatoAdmissao {
@@ -54,14 +54,25 @@ const AdmissaoDetailsModal = ({
   const [salarioFinal, setSalarioFinal] = useState('');
   const [cargoFinal, setCargoFinal] = useState('');
 
-  const { atualizarStatusAdmissao, obterStatusAdmissao } = useProcessoSeletivo();
-  const { adicionarColaborador } = useColaboradores();
+  // Use hooks with proper error handling
+  let processoSeletivoContext: any = null;
+  let colaboradoresContext: any = null;
+  
+  try {
+    processoSeletivoContext = useProcessoSeletivo();
+    colaboradoresContext = useColaboradores();
+  } catch (error) {
+    console.error('Context error:', error);
+  }
+  
   const { toast } = useToast();
 
-  if (!candidatoAdmissao) {
+  if (!candidatoAdmissao || !processoSeletivoContext || !colaboradoresContext) {
     return null;
   }
 
+  const { atualizarStatusAdmissao, obterStatusAdmissao } = processoSeletivoContext;
+  const { adicionarColaborador } = colaboradoresContext;
   const { candidato, curriculo, processo } = candidatoAdmissao;
 
   // Obter o status atual da admissão
@@ -71,7 +82,7 @@ const AdmissaoDetailsModal = ({
   const documentos = checklistDocumentosAdmissao.map((doc, index) => ({
     ...doc,
     id: `doc-${index}`,
-    recebido: Math.random() > 0.3,
+    recebido: Math.random() > 0.3, // Simula alguns documentos já recebidos
     arquivo: Math.random() > 0.5 ? 'documento.pdf' : undefined,
     dataRecebimento: Math.random() > 0.5 ? new Date().toISOString() : undefined
   }));
