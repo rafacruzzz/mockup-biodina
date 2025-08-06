@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { Curriculo, ProcessoSeletivo, CandidatoProcesso } from '@/types/processoSeletivo';
 import { curriculos as curriculosData, processosSeletivos as processosData } from '@/data/processoSeletivo';
@@ -35,10 +34,35 @@ interface ProcessoSeletivoContextType {
 
 const ProcessoSeletivoContext = createContext<ProcessoSeletivoContextType | null>(null);
 
+// Função para obter candidatos aprovados e criar status iniciais variados
+const criarStatusIniciais = () => {
+  const candidatosAprovados: string[] = [];
+  
+  processosData.forEach(processo => {
+    processo.candidatos.forEach(candidato => {
+      if (candidato.status === 'aprovado') {
+        candidatosAprovados.push(candidato.id);
+      }
+    });
+  });
+
+  const statusOptions: CandidatoAdmissao['statusAdmissao'][] = [
+    'documentos-pendentes',
+    'documentos-completos', 
+    'aguardando-assinatura',
+    'admitido'
+  ];
+
+  return candidatosAprovados.map((candidatoId, index) => ({
+    candidatoId,
+    statusAdmissao: statusOptions[index % statusOptions.length]
+  }));
+};
+
 export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [curriculos, setCurriculos] = useState<Curriculo[]>(curriculosData);
   const [processosSeletivos, setProcessosSeletivos] = useState<ProcessoSeletivo[]>(processosData);
-  const [candidatosAdmissao, setCandidatosAdmissao] = useState<CandidatoAdmissao[]>([]);
+  const [candidatosAdmissao, setCandidatosAdmissao] = useState<CandidatoAdmissao[]>(criarStatusIniciais());
   const [loading, setLoading] = useState(false);
 
   const adicionarCurriculo = useCallback((novoCurriculo: Omit<Curriculo, 'id'>) => {
