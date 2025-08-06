@@ -7,15 +7,45 @@ import { User, Mail, Phone, Clock, MoreHorizontal, Plus, Users } from 'lucide-re
 import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
 import { ProcessoSeletivo, CandidatoProcesso, Curriculo } from '@/types/processoSeletivo';
 import ConfigurarEtapasModal from './ConfigurarEtapasModal';
+import DroppableColumn from './DroppableColumn';
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCorners,
+} from '@dnd-kit/core';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface KanbanCardProps {
   candidato: CandidatoProcesso;
   curriculo: Curriculo;
   onMoverEtapa: (candidatoId: string, etapaId: string) => void;
   onStatusChange: (candidatoId: string, status: CandidatoProcesso['status']) => void;
+  isDragOverlay?: boolean;
 }
 
-const KanbanCard: React.FC<KanbanCardProps> = ({ candidato, curriculo, onMoverEtapa, onStatusChange }) => {
+const KanbanCard: React.FC<KanbanCardProps> = ({ candidato, curriculo, onMoverEtapa, onStatusChange, isDragOverlay }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: candidato.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   const getStatusColor = (status: CandidatoProcesso['status']) => {
     switch (status) {
       case 'em-andamento': return 'bg-blue-100 text-blue-700 border-blue-200';
@@ -27,7 +57,15 @@ const KanbanCard: React.FC<KanbanCardProps> = ({ candidato, curriculo, onMoverEt
   };
 
   return (
-    <Card className="mb-3 shadow-sm hover:shadow-md transition-shadow cursor-move bg-white border border-gray-200">
+    <Card 
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`mb-3 shadow-sm hover:shadow-md transition-shadow bg-white border border-gray-200 cursor-grab active:cursor-grabbing ${
+        isDragging ? 'opacity-50' : ''
+      } ${isDragOverlay ? 'rotate-3 scale-105 shadow-lg' : ''}`}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">
@@ -86,6 +124,15 @@ const ProcessoSeletivoKanban: React.FC = () => {
   const { processosSeletivos, curriculos, moverCandidatoEtapa, atualizarStatusCandidato } = useProcessoSeletivo();
   const [processoSelecionado, setProcessoSelecionado] = useState<string>('');
   const [configurarEtapasModal, setConfigurarEtapasModal] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
 
   const processoAtual = useMemo(() => {
     if (processoSelecionado && processosSeletivos.find(p => p.id === processoSelecionado)) {
@@ -136,13 +183,39 @@ const ProcessoSeletivoKanban: React.FC = () => {
     setConfigurarEtapasModal(false);
   };
 
-  // Update selected process when a new one is created
-  React.useEffect(() => {
-    const latestProcess = processosSeletivos[processosSeletivos.length - 1];
-    if (latestProcess && !processoSelecionado) {
-      setProcessoSelecionado(latestProcess.id);
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) {
+      setActiveId(null);
+      return;
     }
-  }, [processosSeletivos.length]);
+
+    const candidatoId = active.id as string;
+    const overEtapaId = over.id as string;
+    
+    const activeItem = Object.values(candidatosPorEtapa)
+      .flat()
+      .find(item => item.candidato.id === candidatoId);
+
+    if (activeItem && processoAtual?.etapas.some(etapa => etapa.id === overEtapaId)) {
+      if (activeItem.candidato.etapaAtual !== overEtapaId) {
+        handleMoverEtapa(candidatoId, overEtapaId);
+      }
+    }
+
+    setActiveId(null);
+  };
+
+  // Get the active candidato for drag overlay
+  const activeCandidato = activeId ? 
+    Object.values(candidatosPorEtapa)
+      .flat()
+      .find(item => item.candidato.id === activeId) : null;
 
   if (processosSeletivos.length === 0) {
     return (
@@ -173,94 +246,87 @@ const ProcessoSeletivoKanban: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Processo Seletivo</h2>
-          <p className="text-gray-600">Acompanhe os candidatos através das etapas de seleção</p>
-        </div>
-        
-        <div className="flex items-center gap-4">
-          <Select
-            value={processoSelecionado}
-            onValueChange={setProcessoSelecionado}
-          >
-            <SelectTrigger className="w-64">
-              <SelectValue placeholder="Selecionar processo" />
-            </SelectTrigger>
-            <SelectContent>
-              {processosSeletivos.map((processo) => (
-                <SelectItem key={processo.id} value={processo.id}>
-                  {processo.titulo}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCorners}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Processo Seletivo</h2>
+            <p className="text-gray-600">Acompanhe os candidatos através das etapas de seleção</p>
+          </div>
           
-          <Button onClick={handleNovoProcesso}>
-            <Plus className="h-4 w-4 mr-2" />
-            Novo Processo
-          </Button>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <div className="mb-4">
-          <h3 className="font-semibold text-lg text-gray-900">{processoAtual.titulo}</h3>
-          <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-            <span><strong>Departamento:</strong> {processoAtual.departamento}</span>
-            <span><strong>Cargo:</strong> {processoAtual.cargo}</span>
-            <span><strong>Vagas:</strong> {processoAtual.vagas}</span>
-            <span><strong>Responsável:</strong> {processoAtual.responsavel}</span>
+          <div className="flex items-center gap-4">
+            <Select
+              value={processoSelecionado}
+              onValueChange={setProcessoSelecionado}
+            >
+              <SelectTrigger className="w-64">
+                <SelectValue placeholder="Selecionar processo" />
+              </SelectTrigger>
+              <SelectContent>
+                {processosSeletivos.map((processo) => (
+                  <SelectItem key={processo.id} value={processo.id}>
+                    {processo.titulo}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Button onClick={handleNovoProcesso}>
+              <Plus className="h-4 w-4 mr-2" />
+              Novo Processo
+            </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 min-h-[500px]">
-          {processoAtual.etapas.map((etapa) => (
-            <div key={etapa.id} className="space-y-3">
-              <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-gray-900">{etapa.nome}</h4>
-                  <Badge variant="outline" className="text-xs">
-                    {candidatosPorEtapa[etapa.id]?.length || 0}
-                  </Badge>
-                </div>
-                <p className="text-xs text-gray-600 line-clamp-2">{etapa.descricao}</p>
-                {etapa.responsavel && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    <strong>Responsável:</strong> {etapa.responsavel}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2 max-h-96 overflow-y-auto">
-                {candidatosPorEtapa[etapa.id]?.map(({ candidato, curriculo }) => (
-                  <KanbanCard
-                    key={candidato.id}
-                    candidato={candidato}
-                    curriculo={curriculo}
-                    onMoverEtapa={handleMoverEtapa}
-                    onStatusChange={handleStatusChange}
-                  />
-                ))}
-                
-                {(!candidatosPorEtapa[etapa.id] || candidatosPorEtapa[etapa.id].length === 0) && (
-                  <div className="h-20 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-sm">
-                    Nenhum candidato
-                  </div>
-                )}
-              </div>
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="mb-4">
+            <h3 className="font-semibold text-lg text-gray-900">{processoAtual.titulo}</h3>
+            <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
+              <span><strong>Departamento:</strong> {processoAtual.departamento}</span>
+              <span><strong>Cargo:</strong> {processoAtual.cargo}</span>
+              <span><strong>Vagas:</strong> {processoAtual.vagas}</span>
+              <span><strong>Responsável:</strong> {processoAtual.responsavel}</span>
             </div>
-          ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 min-h-[500px]">
+            {processoAtual.etapas.map((etapa) => (
+              <DroppableColumn
+                key={etapa.id}
+                etapa={etapa}
+                candidatos={candidatosPorEtapa[etapa.id] || []}
+                onMoverEtapa={handleMoverEtapa}
+                onStatusChange={handleStatusChange}
+                KanbanCard={KanbanCard}
+              />
+            ))}
+          </div>
         </div>
+
+        <ConfigurarEtapasModal
+          isOpen={configurarEtapasModal}
+          onClose={handleCloseModal}
+          processo={null}
+        />
       </div>
 
-      <ConfigurarEtapasModal
-        isOpen={configurarEtapasModal}
-        onClose={handleCloseModal}
-        processo={null}
-      />
-    </div>
+      <DragOverlay>
+        {activeId && activeCandidato ? (
+          <KanbanCard
+            candidato={activeCandidato.candidato}
+            curriculo={activeCandidato.curriculo}
+            onMoverEtapa={handleMoverEtapa}
+            onStatusChange={handleStatusChange}
+            isDragOverlay
+          />
+        ) : null}
+      </DragOverlay>
+    </DndContext>
   );
 };
 
