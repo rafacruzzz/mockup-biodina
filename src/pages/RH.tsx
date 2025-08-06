@@ -16,9 +16,10 @@ import BancoCurriculos from "@/components/rh/BancoCurriculos";
 import EtapasSelecao from "@/components/rh/EtapasSelecao";
 import Admissao from "@/components/rh/Admissao";
 import { ProcessoSeletivoProvider } from "@/contexts/ProcessoSeletivoContext";
+import { ColaboradoresProvider, useColaboradores } from "@/contexts/ColaboradoresContext";
 import { modules } from "@/data/rhModules";
 
-const RH = () => {
+const RHContent = () => {
   const [activeModule, setActiveModule] = useState('');
   const [activeSubModule, setActiveSubModule] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,6 +40,9 @@ const RH = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingColaboradorId, setEditingColaboradorId] = useState<string | null>(null);
   const [editingColaboradorData, setEditingColaboradorData] = useState<any>(null);
+
+  // Get colaboradores from context
+  const { colaboradores } = useColaboradores();
 
   // Reset state when no module is selected
   const resetSelection = () => {
@@ -203,15 +207,33 @@ const RH = () => {
     }
   };
 
+  // Get current module data, using colaboradores from context if it's the colaboradores module
   const currentSubModule = activeModule && activeSubModule && activeModule !== 'processoSeletivo' ? 
     modules[activeModule as keyof typeof modules]?.subModules[activeSubModule] : null;
 
+  const getCurrentModuleData = () => {
+    if (activeModule === 'colaboradores' && activeSubModule === 'colaboradores') {
+      // Use colaboradores from context instead of static data
+      return colaboradores.map(col => ({
+        id: col.id,
+        nome: col.nome,
+        cargo: col.cargo,
+        departamento: col.departamento,
+        email: col.email,
+        telefone: col.telefone,
+        dataAdmissao: new Date(col.dataAdmissao).toLocaleDateString(),
+        status: col.status
+      }));
+    }
+    return currentSubModule?.data || [];
+  };
+
   // Filter data based on search term for non-processo-seletivo modules
-  const filteredData = currentSubModule?.data?.filter((item: any) => 
+  const filteredData = getCurrentModuleData().filter((item: any) => 
     Object.values(item).some(value => 
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
-  ) || [];
+  );
 
   // Get button text based on active module
   const getButtonText = () => {
@@ -229,7 +251,6 @@ const RH = () => {
     return "Novo Registro";
   };
 
-  // Adicionar listener para eventos de edição
   React.useEffect(() => {
     const handleEditEvent = (event: any) => {
       handleEditItem(event.detail.item, event.detail.moduleName);
@@ -240,68 +261,76 @@ const RH = () => {
   }, [activeModule]);
 
   return (
-    <ProcessoSeletivoProvider>
-      <SidebarLayout>
-        <div className="flex h-full bg-gray-50/50">
-          <RHSidebar
-            activeModule={activeModule}
-            activeSubModule={activeSubModule}
-            expandedModules={expandedModules}
-            onModuleToggle={toggleModule}
-            onModuleSelect={handleModuleSelect}
-            onClose={handleCloseSidebar}
-          />
-
-          <div className="flex-1 flex flex-col min-h-0">
-            {activeSubModule ? (
-              <>
-                {activeModule === 'processoSeletivo' ? (
-                  <div className="flex-1 p-6 min-h-0">
-                    {renderProcessoSeletivoContent()}
-                  </div>
-                ) : (
-                  <>
-                    <ContentHeader
-                      title={currentSubModule?.name || ''}
-                      description={`Gerencie os registros de ${currentSubModule?.name?.toLowerCase() || ''}`}
-                      searchTerm={searchTerm}
-                      onSearchChange={setSearchTerm}
-                      onNewRecord={handleNewRecord}
-                      buttonText={getButtonText()}
-                    />
-
-                    <div className="flex-1 p-6 min-h-0">
-                      <DataTable 
-                        data={filteredData} 
-                        moduleName={currentSubModule?.name || ''}
-                      />
-                    </div>
-                  </>
-                )}
-              </>
-            ) : (
-              <EmptyState onGetStarted={handleGetStarted} />
-            )}
-          </div>
-        </div>
-
-        {/* Modais existentes */}
-        <ColaboradorModal 
-          isOpen={isColaboradorModalOpen} 
-          onClose={handleCloseColaboradorModal}
-          editMode={isEditMode}
-          colaboradorId={editingColaboradorId || undefined}
-          colaboradorData={editingColaboradorData}
+    <SidebarLayout>
+      <div className="flex h-full bg-gray-50/50">
+        <RHSidebar
+          activeModule={activeModule}
+          activeSubModule={activeSubModule}
+          expandedModules={expandedModules}
+          onModuleToggle={toggleModule}
+          onModuleSelect={handleModuleSelect}
+          onClose={handleCloseSidebar}
         />
-        
-        <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={() => setIsDepartamentoModalOpen(false)} />
-        <FuncaoModal isOpen={isFuncaoModalOpen} onClose={() => setIsFuncaoModalOpen(false)} />
-        <ExpedienteModal isOpen={isExpedienteModalOpen} onClose={() => setIsExpedienteModalOpen(false)} />
-        
-        <PlanoCarreiraModal isOpen={isPlanoCarreiraModalOpen} onClose={() => setIsPlanoCarreiraModalOpen(false)} />
-        <CargoPlanoModal isOpen={isCargoPlanoModalOpen} onClose={() => setIsCargoPlanoModalOpen(false)} />
-        <NiveisProgressaoModal isOpen={isNiveisProgressaoModalOpen} onClose={() => setIsNiveisProgressaoModalOpen(false)} />
-      </SidebarLayout>
+
+        <div className="flex-1 flex flex-col min-h-0">
+          {activeSubModule ? (
+            <>
+              {activeModule === 'processoSeletivo' ? (
+                <div className="flex-1 p-6 min-h-0">
+                  {renderProcessoSeletivoContent()}
+                </div>
+              ) : (
+                <>
+                  <ContentHeader
+                    title={currentSubModule?.name || ''}
+                    description={`Gerencie os registros de ${currentSubModule?.name?.toLowerCase() || ''}`}
+                    searchTerm={searchTerm}
+                    onSearchChange={setSearchTerm}
+                    onNewRecord={handleNewRecord}
+                    buttonText={getButtonText()}
+                  />
+
+                  <div className="flex-1 p-6 min-h-0">
+                    <DataTable 
+                      data={filteredData} 
+                      moduleName={currentSubModule?.name || ''}
+                    />
+                  </div>
+                </>
+              )}
+            </>
+          ) : (
+            <EmptyState onGetStarted={handleGetStarted} />
+          )}
+        </div>
+      </div>
+
+      {/* Modais existentes */}
+      <ColaboradorModal 
+        isOpen={isColaboradorModalOpen} 
+        onClose={handleCloseColaboradorModal}
+        editMode={isEditMode}
+        colaboradorId={editingColaboradorId || undefined}
+        colaboradorData={editingColaboradorData}
+      />
+      
+      <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={() => setIsDepartamentoModalOpen(false)} />
+      <FuncaoModal isOpen={isFuncaoModalOpen} onClose={() => setIsFuncaoModalOpen(false)} />
+      <ExpedienteModal isOpen={isExpedienteModalOpen} onClose={() => setIsExpedienteModalOpen(false)} />
+      
+      <PlanoCarreiraModal isOpen={isPlanoCarreiraModalOpen} onClose={() => setIsPlanoCarreiraModalOpen(false)} />
+      <CargoPlanoModal isOpen={isCargoPlanoModalOpen} onClose={() => setIsCargoPlanoModalOpen(false)} />
+      <NiveisProgressaoModal isOpen={isNiveisProgressaoModalOpen} onClose={() => setIsNiveisProgressaoModalOpen(false)} />
+    </SidebarLayout>
+  );
+};
+
+const RH = () => {
+  return (
+    <ProcessoSeletivoProvider>
+      <ColaboradoresProvider>
+        <RHContent />
+      </ColaboradoresProvider>
     </ProcessoSeletivoProvider>
   );
 };
