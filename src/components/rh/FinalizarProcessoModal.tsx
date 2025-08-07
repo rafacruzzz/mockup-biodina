@@ -21,7 +21,7 @@ const FinalizarProcessoModal: React.FC<FinalizarProcessoModalProps> = ({
   processo
 }) => {
   const { atualizarProcessoSeletivo, curriculos } = useProcessoSeletivo();
-  const [motivo, setMotivo] = useState<ProcessoSeletivo['motivoFinalizacao']>('');
+  const [motivo, setMotivo] = useState<ProcessoSeletivo['motivoFinalizacao'] | null>(null);
   const [candidatoContratado, setCandidatoContratado] = useState<string>('');
   const [observacoes, setObservacoes] = useState('');
   const [loading, setLoading] = useState(false);
@@ -59,7 +59,7 @@ const FinalizarProcessoModal: React.FC<FinalizarProcessoModalProps> = ({
       atualizarProcessoSeletivo(processo.id, dadosFinalizacao);
 
       // Reset form
-      setMotivo('');
+      setMotivo(null);
       setCandidatoContratado('');
       setObservacoes('');
       
@@ -72,7 +72,7 @@ const FinalizarProcessoModal: React.FC<FinalizarProcessoModalProps> = ({
   };
 
   const handleClose = () => {
-    setMotivo('');
+    setMotivo(null);
     setCandidatoContratado('');
     setObservacoes('');
     onClose();
