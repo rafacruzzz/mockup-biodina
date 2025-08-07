@@ -1,68 +1,105 @@
 
 import React from 'react';
-import { useDroppable } from '@dnd-kit/core';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CandidatoProcesso, Curriculo } from '@/types/processoSeletivo';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-
-interface KanbanCardProps {
-  candidato: CandidatoProcesso;
-  curriculo: Curriculo;
-  onMoverEtapa: (candidatoId: string, etapaId: string) => void;
-  onStatusChange: (candidatoId: string, status: CandidatoProcesso['status']) => void;
-  isDragOverlay?: boolean;
-}
+import { EtapaSelecao, CandidatoProcesso, Curriculo } from '@/types/processoSeletivo';
+import { useDroppable } from '@dnd-kit/core';
 
 interface DroppableColumnProps {
-  etapa: any;
+  etapa: EtapaSelecao;
   candidatos: Array<{ candidato: CandidatoProcesso; curriculo: Curriculo }>;
   onMoverEtapa: (candidatoId: string, etapaId: string) => void;
   onStatusChange: (candidatoId: string, status: CandidatoProcesso['status']) => void;
-  KanbanCard: React.ComponentType<KanbanCardProps>;
+  disabled?: boolean;
+  KanbanCard: React.ComponentType<{
+    candidato: CandidatoProcesso;
+    curriculo: Curriculo;
+    onMoverEtapa: (candidatoId: string, etapaId: string) => void;
+    onStatusChange: (candidatoId: string, status: CandidatoProcesso['status']) => void;
+  }>;
 }
 
-const DroppableColumn: React.FC<DroppableColumnProps> = ({ 
-  etapa, 
-  candidatos, 
-  onMoverEtapa, 
-  onStatusChange, 
-  KanbanCard 
+const DroppableColumn: React.FC<DroppableColumnProps> = ({
+  etapa,
+  candidatos,
+  onMoverEtapa,
+  onStatusChange,
+  disabled = false,
+  KanbanCard
 }) => {
   const { isOver, setNodeRef } = useDroppable({
     id: etapa.id,
+    disabled
   });
 
-  const style = {
-    backgroundColor: isOver ? 'rgba(59, 130, 246, 0.1)' : undefined,
-    transition: 'background-color 200ms ease',
+  const getColumnColor = (tipo: EtapaSelecao['tipo']) => {
+    switch (tipo) {
+      case 'triagem':
+        return 'border-t-blue-500 bg-blue-50/30';
+      case 'entrevista':
+        return 'border-t-green-500 bg-green-50/30';
+      case 'teste':
+        return 'border-t-purple-500 bg-purple-50/30';
+      case 'dinamica':
+        return 'border-t-orange-500 bg-orange-50/30';
+      case 'aprovacao':
+        return 'border-t-emerald-500 bg-emerald-50/30';
+      default:
+        return 'border-t-gray-500 bg-gray-50/30';
+    }
+  };
+
+  const getTipoText = (tipo: EtapaSelecao['tipo']) => {
+    switch (tipo) {
+      case 'triagem': return 'Triagem';
+      case 'entrevista': return 'Entrevista';
+      case 'teste': return 'Teste';
+      case 'dinamica': return 'Dinâmica';
+      case 'aprovacao': return 'Aprovação';
+      default: return tipo;
+    }
   };
 
   return (
-    <div 
-      ref={setNodeRef} 
-      style={style}
-      className={`space-y-3 p-2 rounded-lg min-h-[400px] ${
-        isOver ? 'ring-2 ring-blue-300 ring-opacity-50' : ''
-      }`}
+    <Card 
+      ref={setNodeRef}
+      className={`h-full border-t-4 ${getColumnColor(etapa.tipo)} ${
+        isOver ? 'ring-2 ring-biodina-blue ring-opacity-50' : ''
+      } ${disabled ? 'opacity-75' : ''}`}
     >
-      <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="font-medium text-gray-900">{etapa.nome}</h4>
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base font-semibold text-gray-900">
+            {etapa.nome}
+          </CardTitle>
           <Badge variant="outline" className="text-xs">
             {candidatos.length}
           </Badge>
         </div>
-        <p className="text-xs text-gray-600 line-clamp-2">{etapa.descricao}</p>
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="text-xs">
+            {getTipoText(etapa.tipo)}
+          </Badge>
+          {etapa.duracao && (
+            <Badge variant="outline" className="text-xs">
+              {etapa.duracao}
+            </Badge>
+          )}
+        </div>
         {etapa.responsavel && (
-          <p className="text-xs text-gray-500 mt-1">
-            <strong>Responsável:</strong> {etapa.responsavel}
+          <p className="text-xs text-gray-600">
+            <strong>Resp:</strong> {etapa.responsavel}
           </p>
         )}
-      </div>
-
-      <SortableContext items={candidatos.map(c => c.candidato.id)} strategy={verticalListSortingStrategy}>
-        <div className="space-y-2 max-h-96 overflow-y-auto">
-          {candidatos.map(({ candidato, curriculo }) => (
+      </CardHeader>
+      
+      <CardContent className="pt-0 space-y-3 max-h-96 overflow-y-auto">
+        {candidatos.length === 0 ? (
+          <div className="text-center py-8 text-gray-400 text-sm">
+            Nenhum candidato nesta etapa
+          </div>
+        ) : (
+          candidatos.map(({ candidato, curriculo }) => (
             <KanbanCard
               key={candidato.id}
               candidato={candidato}
@@ -70,16 +107,10 @@ const DroppableColumn: React.FC<DroppableColumnProps> = ({
               onMoverEtapa={onMoverEtapa}
               onStatusChange={onStatusChange}
             />
-          ))}
-          
-          {candidatos.length === 0 && (
-            <div className="h-20 border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-sm">
-              Nenhum candidato
-            </div>
-          )}
-        </div>
-      </SortableContext>
-    </div>
+          ))
+        )}
+      </CardContent>
+    </Card>
   );
 };
 

@@ -1,3 +1,4 @@
+
 export interface Curriculo {
   id: string;
   nome: string;
@@ -31,6 +32,9 @@ export interface ProcessoSeletivo {
   dataInicio: string;
   dataFim?: string;
   linkPublico?: string;
+  motivoFinalizacao?: 'vaga-preenchida' | 'vaga-cancelada' | 'sem-candidatos-qualificados' | 'orcamento-indisponivel' | 'mudanca-prioridades' | 'outros';
+  candidatoContratado?: string;
+  observacoes?: string;
 }
 
 export interface EtapaSelecao {

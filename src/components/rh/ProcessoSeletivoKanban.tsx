@@ -3,14 +3,15 @@ import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { User, Mail, Phone, Clock, Plus, Users } from 'lucide-react';
+import { User, Mail, Phone, Clock, Plus, ArrowLeft, UserPlus, Square } from 'lucide-react';
 import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
 import { ProcessoSeletivo, CandidatoProcesso, Curriculo } from '@/types/processoSeletivo';
 import ConfigurarEtapasModal from './ConfigurarEtapasModal';
 import CandidatoDetailsModal from './CandidatoDetailsModal';
 import CandidatoContextMenu from './CandidatoContextMenu';
 import DroppableColumn from './DroppableColumn';
+import AdicionarCurriculoBancoModal from './AdicionarCurriculoBancoModal';
+import FinalizarProcessoModal from './FinalizarProcessoModal';
 import {
   DndContext,
   DragEndEvent,
@@ -26,6 +27,11 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+interface ProcessoSeletivoKanbanProps {
+  processoId?: string;
+  onVoltar?: () => void;
+}
+
 interface KanbanCardProps {
   candidato: CandidatoProcesso;
   curriculo: Curriculo;
@@ -33,6 +39,7 @@ interface KanbanCardProps {
   onStatusChange: (candidatoId: string, status: CandidatoProcesso['status']) => void;
   isDragOverlay?: boolean;
   etapas?: Array<{ id: string; nome: string }>;
+  isProcessoFinalizado?: boolean;
 }
 
 const KanbanCard: React.FC<KanbanCardProps> = ({ 
@@ -41,7 +48,8 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
   onMoverEtapa, 
   onStatusChange, 
   isDragOverlay,
-  etapas = []
+  etapas = [],
+  isProcessoFinalizado = false
 }) => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   
@@ -52,7 +60,10 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: candidato.id });
+  } = useSortable({ 
+    id: candidato.id,
+    disabled: isProcessoFinalizado
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -79,10 +90,12 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
         ref={setNodeRef}
         style={style}
         {...attributes}
-        {...listeners}
-        className={`mb-3 shadow-sm hover:shadow-md transition-shadow bg-white border border-gray-200 cursor-grab active:cursor-grabbing ${
-          isDragging ? 'opacity-50' : ''
-        } ${isDragOverlay ? 'rotate-3 scale-105 shadow-lg' : ''}`}
+        {...(!isProcessoFinalizado ? listeners : {})}
+        className={`mb-3 shadow-sm hover:shadow-md transition-shadow bg-white border border-gray-200 ${
+          !isProcessoFinalizado ? 'cursor-grab active:cursor-grabbing' : 'cursor-default'
+        } ${isDragging ? 'opacity-50' : ''} ${isDragOverlay ? 'rotate-3 scale-105 shadow-lg' : ''} ${
+          isProcessoFinalizado ? 'opacity-75' : ''
+        }`}
       >
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
@@ -95,11 +108,13 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
                 <p className="text-xs text-gray-600">{curriculo.cargoDesejado}</p>
               </div>
             </div>
-            <CandidatoContextMenu
-              candidato={candidato}
-              etapas={etapas}
-              onViewDetails={handleViewDetails}
-            />
+            {!isProcessoFinalizado && (
+              <CandidatoContextMenu
+                candidato={candidato}
+                etapas={etapas}
+                onViewDetails={handleViewDetails}
+              />
+            )}
           </div>
           <Badge className={`text-xs w-fit ${getStatusColor(candidato.status)}`}>
             {candidato.status}
@@ -148,10 +163,14 @@ const KanbanCard: React.FC<KanbanCardProps> = ({
   );
 };
 
-const ProcessoSeletivoKanban: React.FC = () => {
+const ProcessoSeletivoKanban: React.FC<ProcessoSeletivoKanbanProps> = ({ 
+  processoId, 
+  onVoltar 
+}) => {
   const { processosSeletivos, curriculos, moverCandidatoEtapa, atualizarStatusCandidato } = useProcessoSeletivo();
-  const [processoSelecionado, setProcessoSelecionado] = useState<string>('');
   const [configurarEtapasModal, setConfigurarEtapasModal] = useState(false);
+  const [adicionarCurriculoModal, setAdicionarCurriculoModal] = useState(false);
+  const [finalizarProcessoModal, setFinalizarProcessoModal] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -163,18 +182,11 @@ const ProcessoSeletivoKanban: React.FC = () => {
   );
 
   const processoAtual = useMemo(() => {
-    if (processoSelecionado && processosSeletivos.find(p => p.id === processoSelecionado)) {
-      return processosSeletivos.find(p => p.id === processoSelecionado);
+    if (processoId) {
+      return processosSeletivos.find(p => p.id === processoId);
     }
     return processosSeletivos[0] || null;
-  }, [processosSeletivos, processoSelecionado]);
-
-  // Set initial selection when processes are loaded
-  React.useEffect(() => {
-    if (!processoSelecionado && processosSeletivos.length > 0) {
-      setProcessoSelecionado(processosSeletivos[0].id);
-    }
-  }, [processosSeletivos, processoSelecionado]);
+  }, [processosSeletivos, processoId]);
 
   const candidatosPorEtapa = useMemo(() => {
     if (!processoAtual) return {};
@@ -196,29 +208,24 @@ const ProcessoSeletivoKanban: React.FC = () => {
   }, [processoAtual, curriculos]);
 
   const handleMoverEtapa = (candidatoId: string, etapaId: string) => {
+    if (processoAtual?.status === 'finalizado') return;
     moverCandidatoEtapa(candidatoId, etapaId);
   };
 
   const handleStatusChange = (candidatoId: string, status: CandidatoProcesso['status']) => {
+    if (processoAtual?.status === 'finalizado') return;
     atualizarStatusCandidato(candidatoId, status);
   };
 
-  const handleNovoProcesso = () => {
-    setConfigurarEtapasModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setConfigurarEtapasModal(false);
-  };
-
   const handleDragStart = (event: DragStartEvent) => {
+    if (processoAtual?.status === 'finalizado') return;
     setActiveId(event.active.id as string);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (!over) {
+    if (!over || processoAtual?.status === 'finalizado') {
       setActiveId(null);
       return;
     }
@@ -245,30 +252,18 @@ const ProcessoSeletivoKanban: React.FC = () => {
       .flat()
       .find(item => item.candidato.id === activeId) : null;
 
-  if (processosSeletivos.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-        <Users className="h-12 w-12 mb-4 text-gray-300" />
-        <h3 className="text-lg font-medium mb-2">Nenhum processo seletivo encontrado</h3>
-        <p className="text-sm text-center mb-4">Crie um novo processo seletivo para começar</p>
-        <Button onClick={handleNovoProcesso}>
-          <Plus className="h-4 w-4 mr-2" />
-          Novo Processo Seletivo
-        </Button>
-        <ConfigurarEtapasModal
-          isOpen={configurarEtapasModal}
-          onClose={handleCloseModal}
-          processo={null}
-        />
-      </div>
-    );
-  }
-
   if (!processoAtual) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-gray-500">
-        <Users className="h-12 w-12 mb-4 text-gray-300" />
-        <h3 className="text-lg font-medium mb-2">Carregando processo seletivo...</h3>
+        <Square className="h-12 w-12 mb-4 text-gray-300" />
+        <h3 className="text-lg font-medium mb-2">Processo não encontrado</h3>
+        <p className="text-sm text-center mb-4">O processo seletivo solicitado não foi encontrado</p>
+        {onVoltar && (
+          <Button onClick={onVoltar} variant="outline">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar para Lista
+          </Button>
+        )}
       </div>
     );
   }
@@ -277,6 +272,8 @@ const ProcessoSeletivoKanban: React.FC = () => {
     id: etapa.id,
     nome: etapa.nome
   }));
+
+  const isProcessoFinalizado = processoAtual.status === 'finalizado';
 
   return (
     <DndContext
@@ -287,43 +284,69 @@ const ProcessoSeletivoKanban: React.FC = () => {
     >
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">Processo Seletivo</h2>
-            <p className="text-gray-600">Acompanhe os candidatos através das etapas de seleção</p>
+          <div className="flex items-center gap-4">
+            {onVoltar && (
+              <Button variant="outline" onClick={onVoltar}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Voltar
+              </Button>
+            )}
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                {processoAtual.titulo}
+                {isProcessoFinalizado && (
+                  <Badge variant="outline" className="bg-gray-100 text-gray-700 border-gray-300">
+                    Finalizado
+                  </Badge>
+                )}
+              </h2>
+              <p className="text-gray-600">
+                Acompanhe os candidatos através das etapas de seleção
+                {isProcessoFinalizado && ' (Processo finalizado - somente leitura)'}
+              </p>
+            </div>
           </div>
           
-          <div className="flex items-center gap-4">
-            <Select
-              value={processoSelecionado}
-              onValueChange={setProcessoSelecionado}
-            >
-              <SelectTrigger className="w-64">
-                <SelectValue placeholder="Selecionar processo" />
-              </SelectTrigger>
-              <SelectContent>
-                {processosSeletivos.map((processo) => (
-                  <SelectItem key={processo.id} value={processo.id}>
-                    {processo.titulo}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            <Button onClick={handleNovoProcesso}>
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Processo
-            </Button>
+          <div className="flex items-center gap-2">
+            {!isProcessoFinalizado && (
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setAdicionarCurriculoModal(true)}
+                  className="flex items-center gap-2"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  Adicionar Currículo do Banco
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => setConfigurarEtapasModal(true)}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Configurar Etapas
+                </Button>
+                <Button 
+                  variant="destructive"
+                  onClick={() => setFinalizarProcessoModal(true)}
+                >
+                  <Square className="h-4 w-4 mr-2" />
+                  Finalizar Processo
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
         <div className="bg-white rounded-lg border border-gray-200 p-4">
           <div className="mb-4">
-            <h3 className="font-semibold text-lg text-gray-900">{processoAtual.titulo}</h3>
             <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
               <span><strong>Departamento:</strong> {processoAtual.departamento}</span>
               <span><strong>Cargo:</strong> {processoAtual.cargo}</span>
               <span><strong>Vagas:</strong> {processoAtual.vagas}</span>
               <span><strong>Responsável:</strong> {processoAtual.responsavel}</span>
+              {processoAtual.dataFim && (
+                <span><strong>Finalizado em:</strong> {new Date(processoAtual.dataFim).toLocaleDateString('pt-BR')}</span>
+              )}
             </div>
           </div>
 
@@ -335,10 +358,12 @@ const ProcessoSeletivoKanban: React.FC = () => {
                 candidatos={candidatosPorEtapa[etapa.id] || []}
                 onMoverEtapa={handleMoverEtapa}
                 onStatusChange={handleStatusChange}
+                disabled={isProcessoFinalizado}
                 KanbanCard={(props) => (
                   <KanbanCard 
                     {...props} 
-                    etapas={etapasSimplificadas} 
+                    etapas={etapasSimplificadas}
+                    isProcessoFinalizado={isProcessoFinalizado}
                   />
                 )}
               />
@@ -346,10 +371,23 @@ const ProcessoSeletivoKanban: React.FC = () => {
           </div>
         </div>
 
+        {/* Modais */}
         <ConfigurarEtapasModal
           isOpen={configurarEtapasModal}
-          onClose={handleCloseModal}
-          processo={null}
+          onClose={() => setConfigurarEtapasModal(false)}
+          processo={processoAtual}
+        />
+
+        <AdicionarCurriculoBancoModal
+          isOpen={adicionarCurriculoModal}
+          onClose={() => setAdicionarCurriculoModal(false)}
+          processoSeletivoId={processoAtual.id}
+        />
+
+        <FinalizarProcessoModal
+          isOpen={finalizarProcessoModal}
+          onClose={() => setFinalizarProcessoModal(false)}
+          processo={processoAtual}
         />
       </div>
 
@@ -361,6 +399,7 @@ const ProcessoSeletivoKanban: React.FC = () => {
             onMoverEtapa={handleMoverEtapa}
             onStatusChange={handleStatusChange}
             etapas={etapasSimplificadas}
+            isProcessoFinalizado={isProcessoFinalizado}
             isDragOverlay
           />
         ) : null}

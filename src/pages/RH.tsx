@@ -12,6 +12,7 @@ import PlanoCarreiraModal from "@/components/rh/PlanoCarreiraModal";
 import CargoPlanoModal from "@/components/rh/CargoPlanoModal";
 import NiveisProgressaoModal from "@/components/rh/NiveisProgressaoModal";
 import ProcessoSeletivoKanban from "@/components/rh/ProcessoSeletivoKanban";
+import ProcessosSeletivosTable from "@/components/rh/ProcessosSeletivosTable";
 import BancoCurriculos from "@/components/rh/BancoCurriculos";
 import EtapasSelecao from "@/components/rh/EtapasSelecao";
 import Admissao from "@/components/rh/Admissao";
@@ -23,6 +24,9 @@ const RH = () => {
   const [activeSubModule, setActiveSubModule] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
+  
+  // Estado para controlar o processo seletivo específico no Kanban
+  const [selectedProcessoId, setSelectedProcessoId] = useState<string | null>(null);
   
   // Estados dos modais existentes
   const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
@@ -45,6 +49,7 @@ const RH = () => {
     setActiveModule('');
     setActiveSubModule('');
     setSearchTerm('');
+    setSelectedProcessoId(null);
   };
 
   const toggleModule = (module: string) => {
@@ -62,6 +67,7 @@ const RH = () => {
     setActiveModule(module);
     setActiveSubModule(subModule);
     setSearchTerm('');
+    setSelectedProcessoId(null); // Reset selected process when changing modules
   };
 
   const handleCloseSidebar = () => {
@@ -187,11 +193,30 @@ const RH = () => {
     setExpandedModules(['colaboradores']);
   };
 
+  // Handlers para navegação do processo seletivo
+  const handleViewProcess = (processoId: string) => {
+    setSelectedProcessoId(processoId);
+  };
+
+  const handleVoltarParaTabela = () => {
+    setSelectedProcessoId(null);
+  };
+
   // Renderizar componente específico do Processo Seletivo
   const renderProcessoSeletivoContent = () => {
     switch (activeSubModule) {
       case 'visaoGeral':
-        return <ProcessoSeletivoKanban />;
+        // Se um processo específico foi selecionado, mostrar o Kanban
+        if (selectedProcessoId) {
+          return (
+            <ProcessoSeletivoKanban 
+              processoId={selectedProcessoId}
+              onVoltar={handleVoltarParaTabela}
+            />
+          );
+        }
+        // Caso contrário, mostrar a tabela de processos
+        return <ProcessosSeletivosTable onViewProcess={handleViewProcess} />;
       case 'bancoCurriculos':
         return <BancoCurriculos />;
       case 'etapasSelecao':
