@@ -21,18 +21,18 @@ const FinalizarProcessoModal: React.FC<FinalizarProcessoModalProps> = ({
   processo
 }) => {
   const { atualizarProcessoSeletivo, curriculos } = useProcessoSeletivo();
-  const [motivo, setMotivo] = useState<string>('');
+  const [motivo, setMotivo] = useState<ProcessoSeletivo['motivoFinalizacao']>('');
   const [candidatoContratado, setCandidatoContratado] = useState<string>('');
   const [observacoes, setObservacoes] = useState('');
   const [loading, setLoading] = useState(false);
 
   const motivosFinalizacao = [
-    { value: 'vaga-preenchida', label: 'Vaga Preenchida' },
-    { value: 'vaga-cancelada', label: 'Vaga Cancelada' },
-    { value: 'sem-candidatos-qualificados', label: 'Sem Candidatos Qualificados' },
-    { value: 'orcamento-indisponivel', label: 'Orçamento Indisponível' },
-    { value: 'mudanca-prioridades', label: 'Mudança de Prioridades' },
-    { value: 'outros', label: 'Outros' }
+    { value: 'vaga-preenchida' as const, label: 'Vaga Preenchida' },
+    { value: 'vaga-cancelada' as const, label: 'Vaga Cancelada' },
+    { value: 'sem-candidatos-qualificados' as const, label: 'Sem Candidatos Qualificados' },
+    { value: 'orcamento-indisponivel' as const, label: 'Orçamento Indisponível' },
+    { value: 'mudanca-prioridades' as const, label: 'Mudança de Prioridades' },
+    { value: 'outros' as const, label: 'Outros' }
   ];
 
   // Candidatos aprovados que podem ser contratados
@@ -103,7 +103,7 @@ const FinalizarProcessoModal: React.FC<FinalizarProcessoModalProps> = ({
 
           <div className="space-y-2">
             <Label htmlFor="motivo">Motivo da Finalização *</Label>
-            <Select value={motivo} onValueChange={setMotivo}>
+            <Select value={motivo || ''} onValueChange={(value) => setMotivo(value as ProcessoSeletivo['motivoFinalizacao'])}>
               <SelectTrigger>
                 <SelectValue placeholder="Selecione o motivo..." />
               </SelectTrigger>
