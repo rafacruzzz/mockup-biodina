@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { AlertTriangle, CheckCircle } from 'lucide-react';
 import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
 import { ProcessoSeletivo, Curriculo } from '@/types/processoSeletivo';
@@ -22,7 +23,7 @@ const FinalizarProcessoModal: React.FC<FinalizarProcessoModalProps> = ({
 }) => {
   const { atualizarProcessoSeletivo, curriculos } = useProcessoSeletivo();
   const [motivo, setMotivo] = useState<ProcessoSeletivo['motivoFinalizacao'] | null>(null);
-  const [candidatoContratado, setCandidatoContratado] = useState<string>('');
+  const [candidatosContratados, setCandidatosContratados] = useState<string[]>([]);
   const [observacoes, setObservacoes] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -42,6 +43,17 @@ const FinalizarProcessoModal: React.FC<FinalizarProcessoModalProps> = ({
     return { candidato, curriculo };
   }).filter(item => item.curriculo);
 
+  const handleCandidatoToggle = (candidatoId: string) => {
+    setCandidatosContratados(prev => {
+      if (prev.includes(candidatoId)) {
+        return prev.filter(id => id !== candidatoId);
+      } else if (prev.length < processo.vagas) {
+        return [...prev, candidatoId];
+      }
+      return prev;
+    });
+  };
+
   const handleFinalizarProcesso = async () => {
     if (!motivo) return;
 
@@ -53,14 +65,14 @@ const FinalizarProcessoModal: React.FC<FinalizarProcessoModalProps> = ({
         dataFim: new Date().toISOString(),
         motivoFinalizacao: motivo,
         observacoes: observacoes || undefined,
-        candidatoContratado: candidatoContratado || undefined
+        candidatosContratados: candidatosContratados.length > 0 ? candidatosContratados : undefined
       };
 
       atualizarProcessoSeletivo(processo.id, dadosFinalizacao);
 
       // Reset form
       setMotivo(null);
-      setCandidatoContratado('');
+      setCandidatosContratados([]);
       setObservacoes('');
       
       onClose();
@@ -73,13 +85,13 @@ const FinalizarProcessoModal: React.FC<FinalizarProcessoModalProps> = ({
 
   const handleClose = () => {
     setMotivo(null);
-    setCandidatoContratado('');
+    setCandidatosContratados([]);
     setObservacoes('');
     onClose();
   };
 
   const isVagaPreenchida = motivo === 'vaga-preenchida';
-  const canFinalize = motivo && (!isVagaPreenchida || candidatoContratado);
+  const canFinalize = motivo && (!isVagaPreenchida || candidatosContratados.length > 0);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -98,6 +110,7 @@ const FinalizarProcessoModal: React.FC<FinalizarProcessoModalProps> = ({
           <div className="p-4 bg-gray-50 rounded-lg">
             <h4 className="font-semibold text-gray-900">{processo.titulo}</h4>
             <p className="text-sm text-gray-600">{processo.cargo} - {processo.departamento}</p>
+            <p className="text-sm text-gray-600">{processo.vagas} vaga(s) disponível(eis)</p>
             <p className="text-sm text-gray-600">{processo.candidatos.length} candidato(s) no processo</p>
           </div>
 
@@ -119,24 +132,48 @@ const FinalizarProcessoModal: React.FC<FinalizarProcessoModalProps> = ({
 
           {isVagaPreenchida && (
             <div className="space-y-2">
-              <Label htmlFor="candidato">Candidato Contratado *</Label>
+              <Label>
+                Candidatos Contratados * 
+                <span className="text-sm text-gray-500 ml-2">
+                  (até {processo.vagas} vaga{processo.vagas > 1 ? 's' : ''})
+                </span>
+              </Label>
+              
               {candidatosComCurriculos.length === 0 ? (
                 <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-700">
                   Nenhum candidato aprovado encontrado para contratação.
                 </div>
               ) : (
-                <Select value={candidatoContratado} onValueChange={setCandidatoContratado}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o candidato contratado..." />
-                  </SelectTrigger>
-                  <SelectContent>
+                <div className="space-y-3">
+                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center gap-2 text-sm text-blue-700">
+                      <CheckCircle className="h-4 w-4" />
+                      <span>
+                        {candidatosContratados.length} de {processo.vagas} vaga{processo.vagas > 1 ? 's' : ''} preenchida{candidatosContratados.length !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
                     {candidatosComCurriculos.map(({ candidato, curriculo }) => (
-                      <SelectItem key={candidato.id} value={candidato.id}>
-                        {curriculo!.nome} - {curriculo!.email}
-                      </SelectItem>
+                      <div key={candidato.id} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                        <Checkbox
+                          id={candidato.id}
+                          checked={candidatosContratados.includes(candidato.id)}
+                          onCheckedChange={() => handleCandidatoToggle(candidato.id)}
+                          disabled={!candidatosContratados.includes(candidato.id) && candidatosContratados.length >= processo.vagas}
+                        />
+                        <label 
+                          htmlFor={candidato.id} 
+                          className="flex-1 cursor-pointer text-sm"
+                        >
+                          <div className="font-medium text-gray-900">{curriculo!.nome}</div>
+                          <div className="text-gray-500">{curriculo!.email}</div>
+                        </label>
+                      </div>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </div>
+                </div>
               )}
             </div>
           )}
