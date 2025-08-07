@@ -10,10 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones } from 'lucide-react';
 import { PedidoCompleto } from '@/types/comercial';
+import { Chamado, StatusChamado } from '@/types/chamado';
 import ChatInterno from './ChatInterno';
 import PedidoModal from './PedidoModal';
+import ChamadosTab from './ChamadosTab';
 
 interface ContratacaoSimplesFormProps {
   isOpen: boolean;
@@ -25,6 +27,7 @@ interface ContratacaoSimplesFormProps {
 const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: ContratacaoSimplesFormProps) => {
   const [activeTab, setActiveTab] = useState('dados-gerais');
   const [pedidos, setPedidos] = useState<PedidoCompleto[]>([]);
+  const [chamados, setChamados] = useState<Chamado[]>(oportunidade?.chamados || []);
   const [isPedidoModalOpen, setIsPedidoModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     // Dados do Cliente
@@ -80,11 +83,23 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     }));
   };
 
+  const handleAdicionarChamado = (novoChamado: Omit<Chamado, 'id' | 'dataAbertura' | 'status'>) => {
+    const chamado: Chamado = {
+      ...novoChamado,
+      id: `chamado_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      dataAbertura: new Date().toISOString(),
+      status: StatusChamado.ABERTO
+    };
+
+    setChamados(prev => [...prev, chamado]);
+  };
+
   const handleSave = () => {
     const dataToSave = {
       ...formData,
       concorrentes,
       pedidos,
+      chamados,
       id: oportunidade?.id || Date.now(),
     };
     onSave(dataToSave);
@@ -154,7 +169,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
           </DialogHeader>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="dados-gerais" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Dados Gerais
@@ -174,6 +189,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               <TabsTrigger value="pedidos" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
                 Pedidos
+              </TabsTrigger>
+              <TabsTrigger value="chamados" className="flex items-center gap-2">
+                <Headphones className="h-4 w-4" />
+                Chamados
               </TabsTrigger>
             </TabsList>
 
@@ -722,6 +741,13 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                   )}
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="chamados" className="space-y-4">
+              <ChamadosTab 
+                chamados={chamados}
+                onAdicionarChamado={handleAdicionarChamado}
+              />
             </TabsContent>
           </Tabs>
 
