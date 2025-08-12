@@ -1,15 +1,15 @@
 
 import { useState } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
-import { ComercialTabs } from "@/components/comercial/components/ComercialTabs";
-import { OportunidadeForm } from "@/components/comercial/OportunidadeForm";
-import { PedidoForm } from "@/components/comercial/PedidoForm";
-import { AgendaComercial } from "@/components/comercial/AgendaComercial";
-import { ChatInterno } from "@/components/comercial/ChatInterno";
-import { ChamadosTab } from "@/components/comercial/ChamadosTab";
-import { ImportacaoDiretaForm } from "@/components/comercial/ImportacaoDiretaForm";
-import { ContratacaoSimplesForm } from "@/components/comercial/ContratacaoSimplesForm";
-import { EmprestimosDashboard } from "@/components/comercial/EmprestimosDashboard";
+import ComercialTabs from "@/components/comercial/components/ComercialTabs";
+import OportunidadeForm from "@/components/comercial/OportunidadeForm";
+import PedidoForm from "@/components/comercial/PedidoForm";
+import AgendaComercial from "@/components/comercial/AgendaComercial";
+import ChatInterno from "@/components/comercial/ChatInterno";
+import ChamadosTab from "@/components/comercial/ChamadosTab";
+import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
+import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
+import EmprestimosDashboard from "@/components/comercial/EmprestimosDashboard";
 
 const Comercial = () => {
   const [activeModule, setActiveModule] = useState<string>("oportunidades");
