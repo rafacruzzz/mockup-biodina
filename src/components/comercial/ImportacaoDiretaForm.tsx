@@ -8,6 +8,7 @@ import InstrucaoEmbarqueForm from './components/InstrucaoEmbarqueForm';
 import PackingListForm from './components/PackingListForm';
 import DDRForm from './components/DDRForm';
 import OVCForm from './components/OVCForm';
+import ComercialTabs from './components/ComercialTabs';
 import SPIDownloadModal from './components/SPIDownloadModal';
 import { generateSPIPDF } from './utils/spiUtils';
 
@@ -20,6 +21,7 @@ interface ImportacaoDiretaFormProps {
 
 const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: ImportacaoDiretaFormProps) => {
   const [activeMasterTab, setActiveMasterTab] = useState('comercial');
+  const [activeToolTab, setActiveToolTab] = useState('dados-gerais');
   const [showSPIDownloadModal, setShowSPIDownloadModal] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -297,9 +299,13 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     
     if (activeMasterTab === 'comercial') {
       return (
-        <div className="flex items-center justify-center h-64 text-gray-500">
-          <p>Conteúdo da aba COMERCIAL em desenvolvimento...</p>
-        </div>
+        <ComercialTabs
+          activeTab={activeToolTab}
+          onTabChange={setActiveToolTab}
+          formData={formData}
+          onInputChange={handleInputChange}
+          oportunidade={oportunidade}
+        />
       );
     }
     
