@@ -10,9 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock } from 'lucide-react';
 import { PedidoCompleto } from '@/types/comercial';
 import { Chamado, StatusChamado } from '@/types/chamado';
+import { licitacoesGanhasDetalhadas } from '@/data/licitacaoMockData';
 import ChatInterno from './ChatInterno';
 import PedidoModal from './PedidoModal';
 import ChamadosTab from './ChamadosTab';
@@ -29,6 +30,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [pedidos, setPedidos] = useState<PedidoCompleto[]>([]);
   const [chamados, setChamados] = useState<Chamado[]>(oportunidade?.chamados || []);
   const [isPedidoModalOpen, setIsPedidoModalOpen] = useState(false);
+  const [licitacaoVinculada, setLicitacaoVinculada] = useState<string>('');
+  const [documentosLicitacao, setDocumentosLicitacao] = useState<any[]>([]);
+  const [historicoLicitacao, setHistoricoLicitacao] = useState<any[]>([]);
+  
   const [formData, setFormData] = useState({
     // Dados do Cliente
     cpfCnpj: oportunidade?.cpfCnpj || '',
@@ -83,6 +88,43 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     }));
   };
 
+  const handleVincularLicitacao = (licitacaoId: string) => {
+    if (!licitacaoId) {
+      setLicitacaoVinculada('');
+      setDocumentosLicitacao([]);
+      setHistoricoLicitacao([]);
+      return;
+    }
+
+    const licitacao = licitacoesGanhasDetalhadas.find(l => l.id.toString() === licitacaoId);
+    if (!licitacao) return;
+
+    setLicitacaoVinculada(licitacaoId);
+    setDocumentosLicitacao(licitacao.documentos);
+    setHistoricoLicitacao(licitacao.historico);
+    setPedidos(licitacao.pedidos);
+
+    // Preencher automaticamente os campos da contratação
+    setFormData(prev => ({
+      ...prev,
+      cpfCnpj: licitacao.cnpj,
+      nomeFantasia: licitacao.nomeInstituicao,
+      razaoSocial: licitacao.nomeInstituicao,
+      endereco: `${licitacao.municipio} - ${licitacao.uf}`,
+      uf: licitacao.uf,
+      website: licitacao.linkEdital || '',
+      fonteLead: 'licitacao',
+      valorNegocio: licitacao.estrategiaValorFinal,
+      tags: licitacao.palavraChave,
+      caracteristicas: licitacao.objetoLicitacao,
+      fluxoTrabalho: `Contrato derivado da licitação ${licitacao.numeroPregao}`,
+      status: 'ganha',
+      descricao: licitacao.resumoEdital,
+      analiseTecnica: licitacao.analiseTecnica,
+      dataInicio: licitacao.dataAbertura
+    }));
+  };
+
   const handleAdicionarChamado = (novoChamado: Omit<Chamado, 'id' | 'dataAbertura' | 'status'>) => {
     const chamado: Chamado = {
       ...novoChamado,
@@ -100,6 +142,9 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       concorrentes,
       pedidos,
       chamados,
+      licitacaoVinculada,
+      documentosLicitacao,
+      historicoLicitacao,
       id: oportunidade?.id || Date.now(),
     };
     onSave(dataToSave);
@@ -153,15 +198,25 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     }
   };
 
+  const licitacaoVinculadaData = licitacoesGanhasDetalhadas.find(l => l.id.toString() === licitacaoVinculada);
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
-              <span>
-                {oportunidade ? 'Editar' : 'Nova'} Oportunidade - Contratação
-              </span>
+              <div className="flex items-center gap-3">
+                <span>
+                  {oportunidade ? 'Editar' : 'Nova'} Oportunidade - Contratação
+                </span>
+                {licitacaoVinculadaData && (
+                  <Badge variant="secondary" className="bg-green-100 text-green-800">
+                    <Link2 className="h-3 w-3 mr-1" />
+                    Vinculada à {licitacaoVinculadaData.numeroPregao}
+                  </Badge>
+                )}
+              </div>
               <Button variant="ghost" size="sm" onClick={onClose}>
                 <X className="h-4 w-4" />
               </Button>
@@ -197,6 +252,48 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             </TabsList>
 
             <TabsContent value="dados-gerais" className="space-y-6">
+              {/* Vincular Licitação */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Link2 className="h-5 w-5" />
+                    Vincular Licitação Ganha
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="licitacao">Selecionar Licitação</Label>
+                      <Select value={licitacaoVinculada} onValueChange={handleVincularLicitacao}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione uma licitação ganha para vincular" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {licitacoesGanhasDetalhadas.map((licitacao) => (
+                            <SelectItem key={licitacao.id} value={licitacao.id.toString()}>
+                              {licitacao.numeroPregao} - {licitacao.nomeInstituicao} ({formatCurrency(licitacao.estrategiaValorFinal)})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {licitacaoVinculadaData && (
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-sm text-green-800">
+                          <strong>Licitação Vinculada:</strong> {licitacaoVinculadaData.numeroPregao}
+                        </p>
+                        <p className="text-sm text-green-600">
+                          {licitacaoVinculadaData.objetoLicitacao}
+                        </p>
+                        <p className="text-xs text-green-600 mt-1">
+                          Os dados do cliente, documentos, histórico e pedidos foram importados automaticamente.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Dados do Cliente */}
                 <Card>
@@ -639,9 +736,50 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             </TabsContent>
 
             <TabsContent value="historico-chat" className="space-y-4">
+              {/* Histórico importado da licitação */}
+              {historicoLicitacao.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Clock className="h-5 w-5" />
+                      Histórico Importado da Licitação
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {historicoLicitacao.map((entry, index) => (
+                        <div key={index} className="border-l-4 border-blue-200 pl-4 py-2">
+                          <div className="flex items-center justify-between mb-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-sm">{entry.usuario}</span>
+                              <Badge variant="outline" className="text-xs">
+                                {entry.departamento}
+                              </Badge>
+                            </div>
+                            <span className="text-xs text-gray-500">
+                              {new Date(entry.timestamp).toLocaleString('pt-BR')}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-700">{entry.texto}</p>
+                          {entry.anexos && entry.anexos.length > 0 && (
+                            <div className="mt-2">
+                              {entry.anexos.map((anexo, idx) => (
+                                <Badge key={idx} variant="secondary" className="text-xs mr-1">
+                                  {anexo}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               <Card>
                 <CardHeader>
-                  <CardTitle>Histórico e Chat Interno</CardTitle>
+                  <CardTitle>Chat Interno</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ChatInterno oportunidadeId={oportunidade?.id || 'nova'} />
@@ -650,9 +788,41 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             </TabsContent>
 
             <TabsContent value="documentos" className="space-y-4">
+              {/* Documentos importados da licitação */}
+              {documentosLicitacao.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Documentos Importados da Licitação
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {documentosLicitacao.map((doc, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <FileText className="h-5 w-5 text-blue-500" />
+                            <div>
+                              <p className="font-medium text-sm">{doc.nome}</p>
+                              <p className="text-xs text-gray-500">
+                                {doc.tipo} • {new Date(doc.data).toLocaleDateString('pt-BR')}
+                              </p>
+                            </div>
+                          </div>
+                          <Button variant="ghost" size="sm">
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               <Card>
                 <CardHeader>
-                  <CardTitle>Documentos</CardTitle>
+                  <CardTitle>Adicionar Novos Documentos</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
