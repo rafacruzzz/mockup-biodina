@@ -102,7 +102,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     setLicitacaoVinculada(licitacaoId);
     setDocumentosLicitacao(licitacao.documentos);
     setHistoricoLicitacao(licitacao.historico);
-    setPedidos(licitacao.pedidos);
+    // Removida a linha: setPedidos(licitacao.pedidos);
 
     // Preencher automaticamente os campos da contratação
     setFormData(prev => ({
