@@ -25,7 +25,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
   const [activeToolTab, setActiveToolTab] = useState('dados-gerais');
   const [showSPIDownloadModal, setShowSPIDownloadModal] = useState(false);
 
-  const [formData, setFormData({
+  const [formData, setFormData] = useState({
     // Informações Básicas do Cliente
     cpfCnpj: '',
     nome: '',
