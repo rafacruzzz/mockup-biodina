@@ -13,13 +13,14 @@ import PedidoModal from "@/components/comercial/PedidoModal";
 import PedidoForm from "@/components/comercial/PedidoForm";
 import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
 import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
+import EmprestimosTable from "@/components/comercial/EmprestimosTable";
 // import AgendaComercial from "@/components/comercial/AgendaComercial"; // Commented out for future use
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
   ShoppingCart, Headphones, ArrowLeft, Package, Truck, ClipboardList,
   AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal,
-  Gavel, Building2, Globe
+  Gavel, Building2, Globe, HandCoins
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -27,7 +28,7 @@ import {
 } from 'recharts';
 
 const Comercial = () => {
-  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'pos-venda'>('main');
+  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'pos-venda' | 'emprestimos'>('main');
   const [activeSubModule, setActiveSubModule] = useState<'assessoria' | 'departamento-tecnico' | null>(null);
   const [activeTab, setActiveTab] = useState('indicadores');
   const [searchTerm, setSearchTerm] = useState('');
@@ -413,7 +414,7 @@ const Comercial = () => {
 
   const renderMainModules = () => (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card 
           className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
           onClick={() => setActiveModule('vendas')}
@@ -433,6 +434,17 @@ const Comercial = () => {
             <Headphones className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-biodina-blue mb-2">Pós-Venda</h3>
             <p className="text-gray-600">Suporte científico e técnico pós-venda</p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+          onClick={() => setActiveModule('emprestimos')}
+        >
+          <CardContent className="p-8 text-center">
+            <HandCoins className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Empréstimos</h3>
+            <p className="text-gray-600">Gestão de empréstimos de equipamentos</p>
           </CardContent>
         </Card>
       </div>
@@ -583,6 +595,26 @@ const Comercial = () => {
         <div className="space-y-4">
           {renderContent()}
         </div>
+      </div>
+    );
+  };
+
+  const renderEmprestimosModule = () => {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="outline" 
+            onClick={() => setActiveModule('main')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar
+          </Button>
+          <h1 className="text-2xl font-bold text-biodina-blue">Comercial / Empréstimos</h1>
+        </div>
+
+        <EmprestimosTable />
       </div>
     );
   };
@@ -986,6 +1018,7 @@ const Comercial = () => {
         {activeModule === 'vendas' && renderVendasModule()}
         {activeModule === 'pos-venda' && !activeSubModule && renderPosVendaModules()}
         {activeModule === 'pos-venda' && activeSubModule && renderSubModule()}
+        {activeModule === 'emprestimos' && renderEmprestimosModule()}
       </div>
 
       {showOportunidadeForm && (
