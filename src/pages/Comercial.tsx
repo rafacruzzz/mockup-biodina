@@ -11,7 +11,6 @@ import OportunidadeForm from "@/components/comercial/OportunidadeForm";
 import OportunidadeAvancadaForm from "@/components/comercial/OportunidadeAvancadaForm";
 import PedidoModal from "@/components/comercial/PedidoModal";
 import PedidoForm from "@/components/comercial/PedidoForm";
-import TipoPropostaModal from "@/components/comercial/TipoPropostaModal";
 import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
 import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
 import AgendaComercial from "@/components/comercial/AgendaComercial";
@@ -19,7 +18,8 @@ import {
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
   ShoppingCart, Headphones, ArrowLeft, Package, Truck, ClipboardList,
-  AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal
+  AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal,
+  Gavel, Building2, Globe
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -29,21 +29,18 @@ import {
 const Comercial = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'pos-venda'>('main');
   const [activeSubModule, setActiveSubModule] = useState<'assessoria' | 'departamento-tecnico' | null>(null);
-  const [activeTab, setActiveTab] = useState('funil');
+  const [activeTab, setActiveTab] = useState('agenda');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
-  const [modalidadeFilter, setModalidadeFilter] = useState('todos');
   const [showOportunidadeForm, setShowOportunidadeForm] = useState(false);
   const [showOportunidadeAvancadaForm, setShowOportunidadeAvancadaForm] = useState(false);
   const [editingOportunidade, setEditingOportunidade] = useState<any>();
   const [showPedidoModal, setShowPedidoModal] = useState(false);
   const [showPedidoForm, setShowPedidoForm] = useState(false);
   const [selectedOportunidade, setSelectedOportunidade] = useState<any>();
-  const [showTipoPropostaModal, setShowTipoPropostaModal] = useState(false);
   const [showContratacaoSimplesForm, setShowContratacaoSimplesForm] = useState(false);
   const [showImportacaoDiretaForm, setShowImportacaoDiretaForm] = useState(false);
 
-  // Dados das oportunidades atualizados com modalidade
   const oportunidades = [
     { 
       id: 1,
@@ -167,7 +164,6 @@ const Comercial = () => {
     }
   ];
 
-  // Calcular dados do funil baseado no termômetro e resultado da oportunidade
   const calculateFunnelData = () => {
     const activeOportunidades = oportunidades.filter(op => op.resultadoOportunidade !== 'perda');
     
@@ -222,7 +218,6 @@ const Comercial = () => {
 
   const funnelData = calculateFunnelData();
 
-  // Dados de conversão por UF (alterado de vendedores)
   const conversaoUFData = [
     { uf: 'SP', conversao: 108.3 },
     { uf: 'RJ', conversao: 94.0 },
@@ -230,7 +225,6 @@ const Comercial = () => {
     { uf: 'RN', conversao: 74.8 },
   ];
 
-  // Dados dos indicadores para a tela inicial
   const indicadores = {
     posicaoEstoque: [
       { produto: 'ABL800 Flex', quantidade: 12, localizacao: 'Galpão A' },
@@ -310,41 +304,14 @@ const Comercial = () => {
     return 'bg-green-500';
   };
 
-  const getModalidadeLabel = (modalidade: string) => {
-    switch (modalidade) {
-      case 'licitacao': return 'Licitação';
-      case 'contratacao_simples': return 'Comercial Administrativo';
-      case 'comercial_administrativo': return 'Comercial Administrativo';
-      case 'importacao_direta': return 'Importação Direta';
-      default: return modalidade;
-    }
-  };
-
-  const getModalidadeColor = (modalidade: string) => {
-    switch (modalidade) {
-      case 'licitacao': return 'bg-blue-500';
-      case 'contratacao_simples': return 'bg-green-500';
-      case 'comercial_administrativo': return 'bg-blue-500';
-      case 'importacao_direta': return 'bg-purple-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const handleNovaOportunidade = () => {
-    setShowTipoPropostaModal(true);
-  };
-
-  const handleTipoPropostaSelecionado = (tipo: 'licitacao' | 'contratacao_simples' | 'importacao_direta') => {
-    setShowTipoPropostaModal(false);
+  const handleNovaOportunidade = (modalidade: 'licitacao' | 'contratacao_simples' | 'importacao_direta') => {
+    setEditingOportunidade(undefined);
     
-    if (tipo === 'licitacao') {
-      setEditingOportunidade(undefined);
+    if (modalidade === 'licitacao') {
       setShowOportunidadeAvancadaForm(true);
-    } else if (tipo === 'contratacao_simples') {
-      setEditingOportunidade(undefined);
+    } else if (modalidade === 'contratacao_simples') {
       setShowContratacaoSimplesForm(true);
-    } else if (tipo === 'importacao_direta') {
-      setEditingOportunidade(undefined);
+    } else if (modalidade === 'importacao_direta') {
       setShowImportacaoDiretaForm(true);
     }
   };
@@ -354,7 +321,7 @@ const Comercial = () => {
     
     if (oportunidade.modalidade === 'licitacao') {
       setShowOportunidadeAvancadaForm(true);
-    } else if (oportunidade.modalidade === 'contratacao_simples') {
+    } else if (oportunidade.modalidade === 'contratacao_simples' || oportunidade.modalidade === 'comercial_administrativo') {
       setShowContratacaoSimplesForm(true);
     } else if (oportunidade.modalidade === 'importacao_direta') {
       setShowImportacaoDiretaForm(true);
@@ -388,22 +355,34 @@ const Comercial = () => {
     setShowPedidoForm(false);
   };
 
-  const filteredOportunidades = oportunidades.filter(oportunidade => {
-    const matchesSearch = oportunidade.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      oportunidade.codigo.includes(searchTerm) ||
-      oportunidade.responsavel.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesStatus = statusFilter === 'todos' || oportunidade.status === statusFilter;
-    const matchesModalidade = modalidadeFilter === 'todos' || oportunidade.modalidade === modalidadeFilter;
-    
-    return matchesSearch && matchesStatus && matchesModalidade;
-  });
+  const getOportunidadesPorModalidade = (modalidade: string) => {
+    return oportunidades.filter(oportunidade => {
+      // Compatibilidade: comercial_administrativo = contratacao_simples
+      const oportunidadeModalidade = oportunidade.modalidade === 'comercial_administrativo' 
+        ? 'contratacao_simples' 
+        : oportunidade.modalidade;
+      
+      return oportunidadeModalidade === modalidade;
+    });
+  };
 
-  // Função para processar licitações convertidas automaticamente
+  const filteredOportunidades = (modalidade: string) => {
+    const oportunidadesPorModalidade = getOportunidadesPorModalidade(modalidade);
+    
+    return oportunidadesPorModalidade.filter(oportunidade => {
+      const matchesSearch = oportunidade.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        oportunidade.codigo.includes(searchTerm) ||
+        oportunidade.responsavel.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesStatus = statusFilter === 'todos' || oportunidade.status === statusFilter;
+      
+      return matchesSearch && matchesStatus;
+    });
+  };
+
   const handleLicitacaoConvertida = (licitacaoData: any) => {
     console.log('Processando licitação convertida automaticamente:', licitacaoData);
     
-    // Criar oportunidade comercial automaticamente
     const novaOportunidade = {
       id: Date.now(),
       codigo: `LIC-${licitacaoData.numeroPregao}`,
@@ -423,23 +402,18 @@ const Comercial = () => {
       termometro: 100,
       fonteLead: 'Licitação Convertida',
       segmento: 'Público',
-      modalidade: 'comercial_administrativo', // Nova modalidade
+      modalidade: 'comercial_administrativo',
       descricao: `Oportunidade criada automaticamente da licitação ${licitacaoData.numeroPregao} - ${licitacaoData.objetoLicitacao}`,
       produtos: [],
       servicos: []
     };
 
-    // Em uma aplicação real, salvaria no backend
     console.log('Nova oportunidade criada:', novaOportunidade);
-    
-    // Mostrar notificação para o usuário
     alert(`Licitação convertida com sucesso! Uma nova oportunidade foi criada automaticamente no Comercial Administrativo.`);
   };
 
-  // Sub-módulos principais
   const renderMainModules = () => (
     <div className="space-y-6">
-      {/* Módulos Principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card 
           className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
@@ -466,7 +440,6 @@ const Comercial = () => {
     </div>
   );
 
-  // Sub-módulos do Pós-Venda
   const renderPosVendaModules = () => (
     <div className="space-y-6">
       <div className="flex items-center gap-4 mb-6">
@@ -507,7 +480,6 @@ const Comercial = () => {
     </div>
   );
 
-  // Placeholder para sub-módulos específicos
   const renderSubModule = () => {
     if (activeSubModule === 'assessoria') {
       return (
@@ -558,18 +530,21 @@ const Comercial = () => {
     return null;
   };
 
-  // Módulo de Vendas (conteúdo original do comercial)
   const renderVendasModule = () => {
     const tabs = [
       { id: 'agenda', label: 'Agenda', icon: Calendar },
-      { id: 'oportunidades', label: 'Oportunidades', icon: Briefcase },
+      { id: 'licitacao', label: 'Licitação', icon: Gavel },
+      { id: 'contratacao', label: 'Contratação', icon: Building2 },
+      { id: 'importacao', label: 'Importação Direta', icon: Globe },
       { id: 'analise', label: 'Análise de Conversão', icon: BarChart3 },
     ];
 
     const renderContent = () => {
       switch (activeTab) {
         case 'agenda': return renderAgenda();
-        case 'oportunidades': return renderOportunidades();
+        case 'licitacao': return renderOportunidadesPorModalidade('licitacao');
+        case 'contratacao': return renderOportunidadesPorModalidade('contratacao_simples');
+        case 'importacao': return renderOportunidadesPorModalidade('importacao_direta');
         case 'analise': return renderAnaliseConversao();
         default: return renderAgenda();
       }
@@ -577,7 +552,6 @@ const Comercial = () => {
 
     return (
       <div className="space-y-4">
-        {/* Header compacto com título combinado e botão voltar */}
         <div className="flex items-center gap-4">
           <Button 
             variant="outline" 
@@ -590,7 +564,6 @@ const Comercial = () => {
           <h1 className="text-2xl font-bold text-biodina-blue">Comercial / Vendas</h1>
         </div>
 
-        {/* Navegação por abas - mais compacta */}
         <div className="border-b border-gray-200">
           <nav className="flex space-x-8">
             {tabs.map((tab) => (
@@ -610,7 +583,6 @@ const Comercial = () => {
           </nav>
         </div>
 
-        {/* Conteúdo da aba ativa */}
         <div className="space-y-4">
           {renderContent()}
         </div>
@@ -618,12 +590,146 @@ const Comercial = () => {
     );
   };
 
+  const renderOportunidadesPorModalidade = (modalidade: string) => {
+    const getModalidadeLabel = (modalidade: string) => {
+      switch (modalidade) {
+        case 'licitacao': return 'Licitação';
+        case 'contratacao_simples': return 'Contratação';
+        case 'importacao_direta': return 'Importação Direta';
+        default: return modalidade;
+      }
+    };
+
+    const getModalidadeIcon = (modalidade: string) => {
+      switch (modalidade) {
+        case 'licitacao': return Gavel;
+        case 'contratacao_simples': return Building2;
+        case 'importacao_direta': return Globe;
+        default: return Briefcase;
+      }
+    };
+
+    const Icon = getModalidadeIcon(modalidade);
+
+    return (
+      <Card className="shadow-lg">
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle className="flex items-center gap-2">
+              <Icon className="h-5 w-5" />
+              {getModalidadeLabel(modalidade)}
+            </CardTitle>
+            <div className="flex gap-2">
+              <Button 
+                className="bg-biodina-gold hover:bg-biodina-gold/90"
+                onClick={() => handleNovaOportunidade(modalidade as 'licitacao' | 'contratacao_simples' | 'importacao_direta')}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Novo Projeto
+              </Button>
+            </div>
+          </div>
+          <div className="flex gap-4 mt-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input 
+                placeholder="Pesquisar oportunidades..." 
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-gray-400" />
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Filtrar por status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos os Status</SelectItem>
+                  <SelectItem value="Em Triagem">Em Triagem</SelectItem>
+                  <SelectItem value="Em Acompanhamento">Em Acompanhamento</SelectItem>
+                  <SelectItem value="Ganha">Ganha</SelectItem>
+                  <SelectItem value="Perdida">Perdida</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto max-h-96 overflow-y-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Código</TableHead>
+                  <TableHead>Cliente</TableHead>
+                  <TableHead>Responsável</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Fonte</TableHead>
+                  <TableHead>Segmento</TableHead>
+                  <TableHead>Termômetro</TableHead>
+                  <TableHead>Valor</TableHead>
+                  <TableHead>Data Abertura</TableHead>
+                  <TableHead>Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredOportunidades(modalidade).map((oportunidade) => (
+                  <TableRow key={oportunidade.id}>
+                    <TableCell className="font-medium">{oportunidade.codigo}</TableCell>
+                    <TableCell>{oportunidade.cliente}</TableCell>
+                    <TableCell>{oportunidade.responsavel}</TableCell>
+                    <TableCell>
+                      <Badge className={`${getSituacaoColor(oportunidade.situacao)} text-white`}>
+                        {oportunidade.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>{oportunidade.fonteLead}</TableCell>
+                    <TableCell>{oportunidade.segmento}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1">
+                          <Thermometer className="h-4 w-4" />
+                          <span className="text-sm font-medium">{oportunidade.termometro}°</span>
+                        </div>
+                        <div 
+                          className={`w-3 h-3 rounded-full ${getTermometroColor(oportunidade.termometro)}`}
+                          title={`Termômetro: ${oportunidade.termometro}°`}
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell>{formatCurrency(oportunidade.valor)}</TableCell>
+                    <TableCell>{oportunidade.dataAbertura}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" onClick={() => handleEditOportunidade(oportunidade)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          onClick={() => handleGerarPedido(oportunidade)}
+                          disabled={oportunidade.status !== 'Ganha'}
+                          title={oportunidade.status !== 'Ganha' ? 'Pedidos só podem ser gerados para oportunidades ganhas' : 'Gerar pedido'}
+                        >
+                          <FileText className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
   const renderAgenda = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {/* Card Agenda - altura fixa */}
       <AgendaComercial />
 
-      {/* Card Indicadores - mesma altura */}
       <Card className="shadow-lg h-[600px] flex flex-col">
         <CardHeader className="pb-4 flex-shrink-0">
           <CardTitle className="flex items-center gap-2 text-biodina-blue text-lg">
@@ -632,7 +738,6 @@ const Comercial = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 px-4 flex-1 overflow-y-auto">
-          {/* Posição de Estoque */}
           <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-3 rounded-lg">
             <h4 className="font-semibold text-sm text-blue-700 mb-2 flex items-center gap-2">
               <Package className="h-4 w-4" />
@@ -650,7 +755,6 @@ const Comercial = () => {
             </div>
           </div>
 
-          {/* Importação Previsão */}
           <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-3 rounded-lg">
             <h4 className="font-semibold text-sm text-orange-700 mb-2 flex items-center gap-2">
               <Truck className="h-4 w-4" />
@@ -666,7 +770,6 @@ const Comercial = () => {
             </div>
           </div>
 
-          {/* Pedidos Programados */}
           <div className="bg-gradient-to-r from-green-50 to-green-100 p-3 rounded-lg">
             <h4 className="font-semibold text-sm text-green-700 mb-2 flex items-center gap-2">
               <Calendar className="h-4 w-4" />
@@ -687,7 +790,6 @@ const Comercial = () => {
             </div>
           </div>
 
-          {/* Restrição Financeira */}
           <div className="bg-gradient-to-r from-red-50 to-red-100 p-3 rounded-lg">
             <h4 className="font-semibold text-sm text-red-700 mb-2 flex items-center gap-2">
               <AlertTriangle className="h-4 w-4" />
@@ -705,7 +807,6 @@ const Comercial = () => {
             </div>
           </div>
 
-          {/* Aguardando Autorização */}
           <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-3 rounded-lg">
             <h4 className="font-semibold text-sm text-yellow-700 mb-2 flex items-center gap-2">
               <Clock className="h-4 w-4" />
@@ -725,137 +826,6 @@ const Comercial = () => {
         </CardContent>
       </Card>
     </div>
-  );
-
-  const renderOportunidades = () => (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle className="flex items-center gap-2">
-            <Briefcase className="h-5 w-5" />
-            Oportunidades Comerciais
-          </CardTitle>
-          <div className="flex gap-2">
-            <Button 
-              className="bg-biodina-gold hover:bg-biodina-gold/90"
-              onClick={handleNovaOportunidade}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Projeto
-            </Button>
-          </div>
-        </div>
-        <div className="flex gap-4 mt-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input 
-              placeholder="Pesquisar oportunidades..." 
-              className="pl-10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-gray-400" />
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Filtrar por status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos os Status</SelectItem>
-                <SelectItem value="Em Triagem">Em Triagem</SelectItem>
-                <SelectItem value="Em Acompanhamento">Em Acompanhamento</SelectItem>
-                <SelectItem value="Ganha">Ganha</SelectItem>
-                <SelectItem value="Perdida">Perdida</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={modalidadeFilter} onValueChange={setModalidadeFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Filtrar por modalidade" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todas as Modalidades</SelectItem>
-                <SelectItem value="licitacao">Licitação</SelectItem>
-                <SelectItem value="contratacao_simples">Comercial Administrativo</SelectItem>
-                <SelectItem value="importacao_direta">Importação Direta</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto max-h-96 overflow-y-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Código</TableHead>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Responsável</TableHead>
-                <TableHead>Modalidade</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Fonte</TableHead>
-                <TableHead>Segmento</TableHead>
-                <TableHead>Termômetro</TableHead>
-                <TableHead>Valor</TableHead>
-                <TableHead>Data Abertura</TableHead>
-                <TableHead>Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredOportunidades.map((oportunidade) => (
-                <TableRow key={oportunidade.id}>
-                  <TableCell className="font-medium">{oportunidade.codigo}</TableCell>
-                  <TableCell>{oportunidade.cliente}</TableCell>
-                  <TableCell>{oportunidade.responsavel}</TableCell>
-                  <TableCell>
-                    <Badge className={`${getModalidadeColor(oportunidade.modalidade)} text-white`}>
-                      {getModalidadeLabel(oportunidade.modalidade)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={`${getSituacaoColor(oportunidade.situacao)} text-white`}>
-                      {oportunidade.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{oportunidade.fonteLead}</TableCell>
-                  <TableCell>{oportunidade.segmento}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1">
-                        <Thermometer className="h-4 w-4" />
-                        <span className="text-sm font-medium">{oportunidade.termometro}°</span>
-                      </div>
-                      <div 
-                        className={`w-3 h-3 rounded-full ${getTermometroColor(oportunidade.termometro)}`}
-                        title={`Termômetro: ${oportunidade.termometro}°`}
-                      />
-                    </div>
-                  </TableCell>
-                  <TableCell>{formatCurrency(oportunidade.valor)}</TableCell>
-                  <TableCell>{oportunidade.dataAbertura}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => handleEditOportunidade(oportunidade)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        onClick={() => handleGerarPedido(oportunidade)}
-                        disabled={oportunidade.status !== 'Ganha'}
-                        title={oportunidade.status !== 'Ganha' ? 'Pedidos só podem ser gerados para oportunidades ganhas' : 'Gerar pedido'}
-                      >
-                        <FileText className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-    </Card>
   );
 
   const renderAnaliseConversao = () => (
@@ -909,7 +879,6 @@ const Comercial = () => {
   return (
     <SidebarLayout>
       <div className="p-4 space-y-4 bg-gray-50 min-h-screen">
-        {/* Header principal mais compacto */}
         {activeModule === 'main' && (
           <header className="mb-4">
             <h1 className="text-2xl font-bold text-biodina-blue mb-1">Comercial</h1>
@@ -917,19 +886,11 @@ const Comercial = () => {
           </header>
         )}
 
-        {/* Renderização condicional baseada no módulo ativo */}
         {activeModule === 'main' && renderMainModules()}
         {activeModule === 'vendas' && renderVendasModule()}
         {activeModule === 'pos-venda' && !activeSubModule && renderPosVendaModules()}
         {activeModule === 'pos-venda' && activeSubModule && renderSubModule()}
       </div>
-
-      {/* Modais (mantidos iguais) */}
-      <TipoPropostaModal
-        isOpen={showTipoPropostaModal}
-        onClose={() => setShowTipoPropostaModal(false)}
-        onContinue={handleTipoPropostaSelecionado}
-      />
 
       {showOportunidadeForm && (
         <OportunidadeForm
@@ -951,7 +912,6 @@ const Comercial = () => {
             setEditingOportunidade(undefined);
           }}
           onSave={(data) => {
-            // Verificar se é uma licitação sendo convertida
             if (data.status === 'convertida') {
               handleLicitacaoConvertida(data);
             }
