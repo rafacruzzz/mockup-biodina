@@ -9,7 +9,7 @@ import ChatInterno from "@/components/comercial/ChatInterno";
 import ChamadosTab from "@/components/comercial/ChamadosTab";
 import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
 import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
-import EmprestimosDashboard from "@/components/comercial/EmprestimosDashboard";
+import { EmprestimosDashboard } from "@/components/comercial/EmprestimosDashboard";
 
 const Comercial = () => {
   const [activeModule, setActiveModule] = useState<string>("oportunidades");
