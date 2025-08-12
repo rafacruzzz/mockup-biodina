@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import SidebarLayout from '@/components/SidebarLayout';
 
@@ -49,7 +50,6 @@ const modules: Module[] = [
 const comercialSubModules: SubModule[] = [
   { id: 'indicadores-comerciais', name: 'Indicadores Comerciais' },
   { id: 'licitacao', name: 'Licitação' },
-  { id: 'contratacao', name: 'Contratação' },
   { id: 'importacao-direta', name: 'Importação Direta' },
 ];
 
@@ -89,12 +89,14 @@ const DroppableModule = ({
   module, 
   isSelected, 
   isOver, 
-  onClick 
+  onClick,
+  badgeCount 
 }: { 
   module: Module; 
   isSelected: boolean; 
   isOver: boolean; 
-  onClick: () => void; 
+  onClick: () => void;
+  badgeCount?: number;
 }) => {
   const { setNodeRef } = useDroppable({
     id: module.id,
@@ -122,7 +124,12 @@ const DroppableModule = ({
           isSelected ? 'text-white' : 'text-biodina-gold'
         )} />
       </div>
-      <span className="font-medium">{module.name}</span>
+      <span className="font-medium flex-1">{module.name}</span>
+      {badgeCount && badgeCount > 0 && (
+        <Badge variant="secondary" className="bg-biodina-gold text-white text-xs">
+          {badgeCount}
+        </Badge>
+      )}
     </div>
   );
 };
@@ -208,6 +215,7 @@ const PersonalizarNavegacaoContent = () => {
                     isSelected={selectedModule === module.id}
                     isOver={overId === module.id}
                     onClick={() => setSelectedModule(module.id)}
+                    badgeCount={module.id === 'financeiro' ? 1 : undefined}
                   />
                 ))}
               </div>
