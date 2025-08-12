@@ -20,7 +20,7 @@ import {
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
   ShoppingCart, Headphones, ArrowLeft, Package, Truck, ClipboardList,
   AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal,
-  Gavel, Building2, Globe, HandCoins
+  Gavel, Building2, Globe, HandCoins, FileSpreadsheet
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -722,6 +722,12 @@ const Comercial = () => {
               {getModalidadeLabel(modalidade)}
             </CardTitle>
             <div className="flex gap-2">
+              {modalidade === 'importacao_direta' && (
+                <Button variant="outline">
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  Modelo de Importação
+                </Button>
+              )}
               <Button 
                 className="bg-biodina-gold hover:bg-biodina-gold/90"
                 onClick={() => handleNovaOportunidade(modalidade as 'licitacao' | 'contratacao_simples' | 'importacao_direta')}
