@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -13,7 +14,7 @@ import {
 import {
   Users, BarChart2, FileText, Database, Briefcase, 
   Package, ShoppingCart, DollarSign, Calculator, 
-  UserCheck, Cpu, GripVertical, Settings
+  UserCheck, Cpu, GripVertical, Settings, Pencil
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -67,13 +68,18 @@ const DraggableSubModule = ({ subModule }: { subModule: SubModule }) => {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
   } : undefined;
 
+  // Estado especial para mostrar "Contratação" como sendo arrastado
+  const isContratacao = subModule.id === 'contratacao';
+  const isBeingDragged = isContratacao; // Simular que está sendo arrastado
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       className={cn(
         "flex items-center gap-3 p-3 bg-white border rounded-lg shadow-sm transition-all",
-        isDragging && "opacity-50"
+        isDragging && "opacity-50",
+        isBeingDragged && "shadow-lg ring-2 ring-biodina-blue/50 bg-blue-50/50"
       )}
       {...listeners}
       {...attributes}
@@ -100,18 +106,24 @@ const DroppableModule = ({
   });
 
   const Icon = module.icon;
+  
+  // Estado especial para mostrar "Financeiro" como drop target
+  const isFinanceiro = module.id === 'financeiro';
+  const isDropTarget = isFinanceiro; // Simular que é um drop target válido
 
   return (
     <div
       ref={setNodeRef}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-3 p-4 rounded-lg cursor-pointer transition-all",
+        "group flex items-center gap-3 p-4 rounded-lg cursor-pointer transition-all",
         isSelected && "bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md",
         !isSelected && "hover:bg-gray-50 text-gray-700",
-        isOver && "border-2 border-dashed border-biodina-gold ring-2 ring-biodina-gold/20"
+        isOver && "border-2 border-dashed border-biodina-gold ring-2 ring-biodina-gold/20",
+        isDropTarget && "border-2 border-dashed border-biodina-blue ring-2 ring-biodina-blue/20 bg-blue-50/30"
       )}
     >
+      <GripVertical className="h-4 w-4 text-gray-400 cursor-grab" />
       <div className={cn(
         "p-2 rounded-lg",
         isSelected ? 'bg-white/20' : 'bg-biodina-gold/10'
@@ -122,6 +134,10 @@ const DroppableModule = ({
         )} />
       </div>
       <span className="font-medium flex-1">{module.name}</span>
+      <Pencil className={cn(
+        "h-4 w-4 transition-opacity cursor-pointer hover:text-biodina-blue",
+        "opacity-0 group-hover:opacity-100 text-gray-400"
+      )} />
     </div>
   );
 };
