@@ -19,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import SidebarLayout from '@/components/SidebarLayout';
 
 interface Module {
   id: string;
@@ -126,7 +127,7 @@ const DroppableModule = ({
   );
 };
 
-const PersonalizarNavegacao = () => {
+const PersonalizarNavegacaoContent = () => {
   const navigate = useNavigate();
   const [selectedModule, setSelectedModule] = useState('comercial');
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -162,94 +163,100 @@ const PersonalizarNavegacao = () => {
   const activeSubModule = comercialSubModules.find(sub => sub.id === activeId);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Personalizar Navegação
-            </h1>
-            <p className="text-gray-600">
-              Arraste e solte as abas para reorganizar os módulos do sistema.
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <Button variant="secondary" onClick={handleCancel}>
-              Cancelar
-            </Button>
-            <Button onClick={handleSave}>
-              Salvar Alterações
-            </Button>
-          </div>
+    <div className="container mx-auto px-6 py-8">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Personalizar Navegação
+          </h1>
+          <p className="text-gray-600">
+            Arraste e solte as abas para reorganizar os módulos do sistema.
+          </p>
         </div>
+        <div className="flex gap-3">
+          <Button variant="secondary" onClick={handleCancel}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSave}>
+            Salvar Alterações
+          </Button>
+        </div>
+      </div>
 
-        <DndContext
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDragEnd={handleDragEnd}
-        >
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Left Column - Main Modules */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5" />
-                  Módulos Principais
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  {modules.map((module) => (
-                    <DroppableModule
-                      key={module.id}
-                      module={module}
-                      isSelected={selectedModule === module.id}
-                      isOver={overId === module.id}
-                      onClick={() => setSelectedModule(module.id)}
+      <DndContext
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Left Column - Main Modules */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Settings className="h-5 w-5" />
+                Módulos Principais
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {modules.map((module) => (
+                  <DroppableModule
+                    key={module.id}
+                    module={module}
+                    isSelected={selectedModule === module.id}
+                    isOver={overId === module.id}
+                    onClick={() => setSelectedModule(module.id)}
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Right Column - Sub-modules */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Abas do Módulo Selecionado</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {selectedModule === 'comercial' ? (
+                <div className="space-y-3">
+                  {comercialSubModules.map((subModule) => (
+                    <DraggableSubModule
+                      key={subModule.id}
+                      subModule={subModule}
                     />
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <Settings className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                  <p>Selecione um módulo para visualizar as abas.</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-            {/* Right Column - Sub-modules */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Abas do Módulo Selecionado</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {selectedModule === 'comercial' ? (
-                  <div className="space-y-3">
-                    {comercialSubModules.map((subModule) => (
-                      <DraggableSubModule
-                        key={subModule.id}
-                        subModule={subModule}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    <Settings className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                    <p>Selecione um módulo para visualizar as abas.</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-
-          <DragOverlay>
-            {activeId && activeSubModule ? (
-              <div className="flex items-center gap-3 p-3 bg-white border rounded-lg shadow-lg">
-                <GripVertical className="h-4 w-4 text-gray-400" />
-                <span className="font-medium text-gray-700">{activeSubModule.name}</span>
-              </div>
-            ) : null}
-          </DragOverlay>
-        </DndContext>
-      </div>
+        <DragOverlay>
+          {activeId && activeSubModule ? (
+            <div className="flex items-center gap-3 p-3 bg-white border rounded-lg shadow-lg">
+              <GripVertical className="h-4 w-4 text-gray-400" />
+              <span className="font-medium text-gray-700">{activeSubModule.name}</span>
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
     </div>
+  );
+};
+
+const PersonalizarNavegacao = () => {
+  return (
+    <SidebarLayout>
+      <PersonalizarNavegacaoContent />
+    </SidebarLayout>
   );
 };
 
