@@ -1,91 +1,68 @@
 
-export interface ProdutoPedido {
-  id: number;
-  codigo: string;
+export interface Projeto {
+  id: string;
+  nome: string;
+  cliente: string;
+  valor: string;
+  status: string;
+  dataInicio: string;
+  responsavel: string;
+  descricao?: string;
+  tipo?: string;
+}
+
+export interface OportunidadeComercial {
+  id: string;
+  cliente: string;
+  projeto: string;
+  valor: number;
+  probabilidade: number;
+  dataFechamento: string;
+  status: 'prospeccao' | 'qualificacao' | 'proposta' | 'negociacao' | 'fechamento' | 'perdida';
+  responsavel: string;
+  origem: string;
+  observacoes?: string;
+  historico?: {
+    data: string;
+    acao: string;
+    usuario: string;
+    observacao?: string;
+  }[];
+}
+
+export interface PedidoComercial {
+  id: string;
+  numero: string;
+  cliente: string;
+  valorTotal: number;
+  status: 'rascunho' | 'pendente' | 'aprovado' | 'rejeitado' | 'enviado' | 'cancelado';
+  dataEmissao: string;
+  dataPrevista?: string;
+  vendedor: string;
+  observacoes?: string;
+  itens: PedidoItem[];
+}
+
+export interface PedidoItem {
+  id: string;
+  produto: string;
   descricao: string;
   quantidade: number;
-  unidade: UnidadeVenda;
-  precoUnitario: number;
-  desconto: number;
-  precoFinal: number;
-  observacoes?: string;
-  estoqueDisponivel: EstoqueVendivel;
-}
-
-export interface EstoqueVendivel {
-  totalDisponivel: number;
-  totalReservado: number;
-  estoquesPorCnpj: EstoquePorCnpj[];
-  lotes: LoteEstoque[];
-  tiposEstoque: TipoEstoqueInfo[];
-  reservasAtivas: ReservaAtiva[];
-  historicoVendas: HistoricoVenda[];
-  precoSugerido: number;
-  alertas: AlertaEstoque[];
-  localizacaoFisica: string;
-  exigeNumeroSerie: boolean;
-  unidadesDisponiveis: UnidadeDisponivel[];
-}
-
-export interface EstoquePorCnpj {
-  cnpj: string;
-  nomeEmpresa: string;
-  quantidade: number;
-}
-
-export interface LoteEstoque {
-  lote: string;
-  quantidade: number;
-  dataValidade: string | null;
-  diasParaVencimento?: number;
-  alertaValidade: boolean;
-}
-
-export interface TipoEstoqueInfo {
-  tipo: 'Nacional' | 'Importação Direta' | 'Consignado';
-  quantidade: number;
-}
-
-export interface ReservaAtiva {
-  pedidoId: string;
-  quantidade: number;
-  dataReserva: string;
-}
-
-export interface HistoricoVenda {
-  data: string;
-  cliente: string;
-  quantidade: number;
-  precoVenda: number;
-}
-
-export interface AlertaEstoque {
-  tipo: 'validade_proxima' | 'multiplos_lotes' | 'estoque_baixo' | 'numero_serie' | 'transferencia_disponivel';
-  mensagem: string;
-  severidade: 'baixa' | 'media' | 'alta';
-}
-
-export interface UnidadeDisponivel {
-  unidade: UnidadeVenda;
-  quantidade: number;
-  fatorConversao: number;
-}
-
-export enum UnidadeVenda {
-  UNIDADE = 'unidade',
-  CAIXA = 'caixa',
-  FRASCO = 'frasco',
-  KIT = 'kit'
-}
-
-export interface PedidoCompleto {
-  id: number;
-  numeroOportunidade: string;
-  cliente: string;
-  vendedor: string;
-  dataVenda: string;
-  status: 'rascunho' | 'enviado' | 'aprovado' | 'cancelado';
-  produtos: ProdutoPedido[];
+  valorUnitario: number;
   valorTotal: number;
-  observacoesGerais?: string;
+  observacoes?: string;
+}
+
+export interface Chamado {
+  id: string;
+  titulo: string;
+  cliente: string;
+  tipo: 'suporte' | 'comercial' | 'tecnico' | 'financeiro';
+  prioridade: 'baixa' | 'media' | 'alta' | 'critica';
+  status: 'aberto' | 'em_andamento' | 'aguardando' | 'resolvido' | 'fechado';
+  dataAbertura: string;
+  dataUltimaAtualizacao: string;
+  responsavel?: string;
+  descricao: string;
+  solucao?: string;
 }
