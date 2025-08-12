@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -10,14 +11,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Save, Plus, Edit, Upload, Download, Eye, Lock, CheckCircle, ChevronRight, Calendar, AlertTriangle } from "lucide-react";
+import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import LicitacaoValidationModal from "./LicitacaoValidationModal";
 import ConcorrenteModal from "./ConcorrenteModal";
 import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
-import ApprovalModal from "./ApprovalModal";
 import CustomAlertModal from "./components/CustomAlertModal";
 import { concorrentes as mockConcorrentes, licitantes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
 import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getUnidadeColor } from "@/lib/utils";
@@ -33,11 +33,7 @@ interface OportunidadeAvancadaFormProps {
 
 const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: OportunidadeAvancadaFormProps) => {
   const { toast } = useToast();
-  const [activeMasterTab, setActiveMasterTab] = useState('triagem');
-  const [activeToolTab, setActiveToolTab] = useState('dados-gerais');
-  const [isParticipacaoApproved, setIsParticipacaoApproved] = useState(false);
-  const [showApprovalModal, setShowApprovalModal] = useState(false);
-  const [showEmprestimoApprovalModal, setShowEmprestimoApprovalModal] = useState(false);
+  const [activeTab, setActiveTab] = useState('dados-gerais');
   const [showEmprestimoAlert, setShowEmprestimoAlert] = useState(false);
   
   // Estados para modais
@@ -120,62 +116,31 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     motivosFracasso: oportunidade?.motivosFracasso || '',
     observacaoGeral: oportunidade?.observacaoGeral || '',
     
+    // Novos campos da participação
+    estrategiaParticipacao: oportunidade?.estrategiaParticipacao || '',
+    planejamentoComercial: oportunidade?.planejamentoComercial || '',
+    
     // Campo para solicitação de análise técnica
     solicitarAnaliseTecnica: oportunidade?.solicitarAnaliseTecnica || false,
   });
-
-  // Validação ajustada - removeu a dependência de tipoOportunidade
-  const isTriagemComplete = () => {
-    return formData.nome && formData.cpfCnpj && formData.valorNegocio > 0;
-  };
-
-  const isStatusGanha = () => {
-    return formData.resultadoOportunidade === 'ganho';
-  };
 
   const isStatusPerdida = () => {
     return formData.resultadoOportunidade === 'perda';
   };
 
   const canShowPedidos = () => {
-    return isStatusGanha();
+    return formData.resultadoOportunidade === 'ganho';
   };
 
   const isReadOnlyMode = () => {
-    return (activeMasterTab === 'triagem' && isParticipacaoApproved) || isStatusPerdida();
-  };
-
-  const handleMasterTabChange = (tabValue: string) => {
-    if (tabValue === 'participacao' && !isParticipacaoApproved) {
-      return;
-    }
-    setActiveMasterTab(tabValue);
-  };
-
-  const handleRequestApproval = () => {
-    if (!isTriagemComplete()) {
-      alert('Complete todos os campos obrigatórios da triagem antes de solicitar aprovação.');
-      return;
-    }
-    setShowApprovalModal(true);
-  };
-
-  const handleApprovalSuccess = () => {
-    setIsParticipacaoApproved(true);
-    setActiveMasterTab('participacao');
+    return isStatusPerdida();
   };
 
   const handleNaturezaOperacaoChange = (value: string) => {
     if (value === 'emprestimo') {
-      setShowEmprestimoApprovalModal(true);
-    } else {
-      setFormData({...formData, naturezaOperacao: value});
+      setShowEmprestimoAlert(true);
     }
-  };
-
-  const handleEmprestimoApprovalSuccess = () => {
-    setFormData({...formData, naturezaOperacao: 'emprestimo'});
-    setShowEmprestimoAlert(true);
+    setFormData({...formData, naturezaOperacao: value});
   };
 
   const handleInputChange = (field: string, value: any) => {
@@ -901,6 +866,35 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         </div>
       </div>
 
+      {/* Estratégia e Planejamento */}
+      <div className="border rounded-lg p-4 space-y-4 bg-green-50">
+        <h3 className="text-lg font-semibold text-gray-800">Estratégia e Planejamento</h3>
+        
+        <div>
+          <Label htmlFor="estrategiaParticipacao">Estratégia de Participação</Label>
+          <Textarea
+            id="estrategiaParticipacao"
+            value={formData.estrategiaParticipacao}
+            onChange={(e) => setFormData({...formData, estrategiaParticipacao: e.target.value})}
+            placeholder="Descreva a estratégia para participação nesta oportunidade..."
+            rows={4}
+            disabled={isReadOnlyMode()}
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="planejamentoComercial">Planejamento Comercial</Label>
+          <Textarea
+            id="planejamentoComercial"
+            value={formData.planejamentoComercial}
+            onChange={(e) => setFormData({...formData, planejamentoComercial: e.target.value})}
+            placeholder="Detalhe o planejamento comercial para esta oportunidade..."
+            rows={4}
+            disabled={isReadOnlyMode()}
+          />
+        </div>
+      </div>
+
       {/* Dados Técnicos */}
       <div className="border rounded-lg p-4 space-y-4">
         <h3 className="text-lg font-semibold text-gray-800">Dados Técnicos</h3>
@@ -1022,21 +1016,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           <Label htmlFor="propostaNegociacao">Proposta em Negociação</Label>
         </div>
       </div>
-
-      {/* Botão de Solicitação de Aprovação - apenas na fase TRIAGEM */}
-      {activeMasterTab === 'triagem' && !isParticipacaoApproved && (
-        <div className="flex justify-center pt-4">
-          <Button 
-            type="button"
-            onClick={handleRequestApproval}
-            disabled={!isTriagemComplete()}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            <CheckCircle className="h-4 w-4 mr-2" />
-            Solicitar Aprovação para Participação
-          </Button>
-        </div>
-      )}
     </div>
   );
 
@@ -1148,7 +1127,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
       {!canShowPedidos() && (
         <div className="text-center text-gray-500 py-8">
-          <Lock className="h-8 w-8 mx-auto mb-2" />
           <p>Pedidos disponíveis apenas para oportunidades ganhas</p>
         </div>
       )}
@@ -1251,148 +1229,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     </div>
   );
 
-  const renderTriagemContent = () => (
-    <div className="space-y-6">
-      <Tabs value={activeToolTab} onValueChange={setActiveToolTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
-          <TabsTrigger value="analise-tecnica">Análise Técnica</TabsTrigger>
-          <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
-          <TabsTrigger value="documentos">Documentos</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="dados-gerais" className="mt-6">
-          {renderDadosGerais()}
-        </TabsContent>
-
-        <TabsContent value="analise-tecnica" className="mt-6">
-          {renderAnaliseTecnica()}
-        </TabsContent>
-
-        <TabsContent value="historico" className="mt-6">
-          {renderHistorico()}
-        </TabsContent>
-
-        <TabsContent value="documentos" className="mt-6">
-          {renderDocumentos()}
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-
-  const renderParticipacaoContent = () => (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-green-600" />
-            Fase de Participação - Aprovada
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-              <h3 className="font-semibold text-green-800 mb-2">Triagem Aprovada</h3>
-              <p className="text-green-700">
-                A fase de triagem foi concluída e aprovada com sucesso. Agora você pode trabalhar na participação da oportunidade.
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="statusParticipacao">Status da Participação</Label>
-                <Select value={formData.resultadoOportunidade} onValueChange={(value) => setFormData({...formData, resultadoOportunidade: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                    <SelectItem value="ganho">Ganho</SelectItem>
-                    <SelectItem value="perda">Perda</SelectItem>
-                    <SelectItem value="recursos">Recursos</SelectItem>
-                    <SelectItem value="fracassado">Fracassado</SelectItem>
-                    <SelectItem value="suspenso">Suspenso</SelectItem>
-                    <SelectItem value="cancelado">Cancelado</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div>
-                <Label>Termômetro de Chances ({formData.termometro}°)</Label>
-                <div className="mt-2 space-y-2">
-                  <Slider
-                    value={[formData.termometro]}
-                    onValueChange={(value) => setFormData({...formData, termometro: value[0]})}
-                    max={100}
-                    min={0}
-                    step={5}
-                    className="flex-1"
-                  />
-                  <div className="flex justify-between text-xs text-gray-500">
-                    <span>0°</span>
-                    <span>50°</span>
-                    <span>100°</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="estrategiaParticipacao">Estratégia de Participação</Label>
-                <Textarea
-                  id="estrategiaParticipacao"
-                  placeholder="Descreva a estratégia para participação nesta oportunidade..."
-                  rows={4}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="planejamentoComercial">Planejamento Comercial</Label>
-                <Textarea
-                  id="planejamentoComercial"
-                  placeholder="Detalhe o planejamento comercial para esta oportunidade..."
-                  rows={4}
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Abas de ferramentas também na fase PARTICIPAÇÃO */}
-      <Tabs value={activeToolTab} onValueChange={setActiveToolTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
-          <TabsTrigger value="analise-tecnica">Análise Técnica</TabsTrigger>
-          <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
-          <TabsTrigger value="pedidos" disabled={!canShowPedidos()}>Pedidos</TabsTrigger>
-          <TabsTrigger value="documentos">Documentos</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="dados-gerais" className="mt-6">
-          {renderDadosGerais()}
-        </TabsContent>
-
-        <TabsContent value="analise-tecnica" className="mt-6">
-          {renderAnaliseTecnica()}
-        </TabsContent>
-
-        <TabsContent value="historico" className="mt-6">
-          {renderHistorico()}
-        </TabsContent>
-
-        <TabsContent value="pedidos" className="mt-6">
-          {renderPedidos()}
-        </TabsContent>
-
-        <TabsContent value="documentos" className="mt-6">
-          {renderDocumentos()}
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
-
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -1408,45 +1244,33 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             </DialogTitle>
           </DialogHeader>
 
-          <Tabs value={activeMasterTab} onValueChange={handleMasterTabChange} className="w-full">
-            <div className="flex items-center justify-center mb-6">
-              <TabsList className="grid w-auto grid-cols-2 h-14 bg-gray-100">
-                <TabsTrigger 
-                  value="triagem" 
-                  className={`px-8 py-4 text-base font-bold ${
-                    isParticipacaoApproved ? 'bg-gray-200 text-gray-500' : 'data-[state=active]:bg-blue-600 data-[state=active]:text-white'
-                  }`}
-                  disabled={isParticipacaoApproved}
-                >
-                  {isParticipacaoApproved && <Lock className="h-4 w-4 mr-2" />}
-                  TRIAGEM
-                </TabsTrigger>
-                  
-                {/* Indicador de progressão */}
-                {isParticipacaoApproved && (
-                  <div className="flex items-center px-2">
-                    <ChevronRight className="h-6 w-6 text-green-600" />
-                  </div>
-                )}
-                  
-                <TabsTrigger 
-                  value="participacao" 
-                  className="px-8 py-4 text-base font-bold data-[state=active]:bg-green-600 data-[state=active]:text-white"
-                  disabled={!isParticipacaoApproved}
-                >
-                  {isParticipacaoApproved && <CheckCircle className="h-4 w-4 mr-2 text-green-600" />}
-                  PARTICIPAÇÃO
-                </TabsTrigger>
-              </TabsList>
-            </div>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
+              <TabsTrigger value="analise-tecnica">Análise Técnica</TabsTrigger>
+              <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
+              <TabsTrigger value="pedidos" disabled={!canShowPedidos()}>Pedidos</TabsTrigger>
+              <TabsTrigger value="documentos">Documentos</TabsTrigger>
+            </TabsList>
 
-            {/* Conteúdo das abas masters */}
-            <TabsContent value="triagem" className="mt-6">
-              {renderTriagemContent()}
+            <TabsContent value="dados-gerais" className="mt-6">
+              {renderDadosGerais()}
             </TabsContent>
 
-            <TabsContent value="participacao" className="mt-6">
-              {renderParticipacaoContent()}
+            <TabsContent value="analise-tecnica" className="mt-6">
+              {renderAnaliseTecnica()}
+            </TabsContent>
+
+            <TabsContent value="historico" className="mt-6">
+              {renderHistorico()}
+            </TabsContent>
+
+            <TabsContent value="pedidos" className="mt-6">
+              {renderPedidos()}
+            </TabsContent>
+
+            <TabsContent value="documentos" className="mt-6">
+              {renderDocumentos()}
             </TabsContent>
 
             <div className="flex justify-end gap-2 pt-6 border-t mt-6">
@@ -1499,24 +1323,10 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         />
       )}
 
-      <ApprovalModal
-        isOpen={showApprovalModal}
-        onClose={() => setShowApprovalModal(false)}
-        onApprove={handleApprovalSuccess}
-        oportunidadeId={oportunidade?.id || formData.cpfCnpj || 'nova'}
-      />
-
-      <ApprovalModal
-        isOpen={showEmprestimoApprovalModal}
-        onClose={() => setShowEmprestimoApprovalModal(false)}
-        onApprove={handleEmprestimoApprovalSuccess}
-        oportunidadeId={oportunidade?.id || formData.cpfCnpj || 'emprestimo'}
-      />
-
       <CustomAlertModal
         isOpen={showEmprestimoAlert}
-        title="Operação EMPRÉSTIMO Aprovada"
-        message="A natureza da operação foi alterada para EMPRÉSTIMO com sucesso. Esta operação requer aprovação especial e foi autorizada pelo gestor."
+        title="Operação EMPRÉSTIMO Selecionada"
+        message="A natureza da operação foi alterada para EMPRÉSTIMO. Esta operação pode requerer aprovação especial dependendo das políticas da empresa."
         onConfirm={() => setShowEmprestimoAlert(false)}
       />
     </div>
