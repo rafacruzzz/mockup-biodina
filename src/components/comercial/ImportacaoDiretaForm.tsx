@@ -1,35 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon } from "@radix-ui/react-icons"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { Checkbox } from "@/components/ui/checkbox"
-import EmprestimosTab from './EmprestimosTab';
+import { FileText } from 'lucide-react';
+import SPIForm from './components/SPIForm';
+import NOMainForm from './components/NOMainForm';
+import InstrucaoEmbarqueForm from './components/InstrucaoEmbarqueForm';
+import PackingListForm from './components/PackingListForm';
+import DDRForm from './components/DDRForm';
+import OVCForm from './components/OVCForm';
+import ComercialTabs from './components/ComercialTabs';
+import SPIDownloadModal from './components/SPIDownloadModal';
+import { generateSPIPDF } from './utils/spiUtils';
 
 interface ImportacaoDiretaFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (data: any) => void;
-  oportunidade: any;
+  oportunidade?: any;
 }
 
 const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: ImportacaoDiretaFormProps) => {
-  const [activeTab, setActiveTab] = useState('dados-gerais');
+  const [activeMasterTab, setActiveMasterTab] = useState('comercial');
   const [activeToolTab, setActiveToolTab] = useState('dados-gerais');
   const [showSPIDownloadModal, setShowSPIDownloadModal] = useState(false);
 
   const [formData, setFormData] = useState({
-    id: '',
     // Informações Básicas do Cliente
     cpfCnpj: '',
     nome: '',
@@ -42,297 +37,351 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     email: '',
     telefone: '',
     website: '',
+    
+    // Informações do Negócio
     valorNegocio: '',
+    metodoContato: '',
+    segmentoLead: '',
+    colaboradoresResponsaveis: [],
+    dataInicio: '',
+    dataLimite: '',
+    procurandoPor: '',
+    tags: [],
+    caracteristicas: '',
+    fluxoTrabalho: '',
+    status: '',
+    descricao: '',
+    dataVisita: '',
     
-    // Detalhes da Importação
-    produtoImportado: '',
-    quantidade: '',
-    unidadeMedida: '',
-    valorUnitario: '',
-    incoterms: '',
-    paisOrigemProduto: '',
-    portoEmbarque: '',
-    portoDestino: '',
-    moedaNegociada: '',
-    
-    // Fornecedor Estrangeiro
-    nomeFornecedorEstrangeiro: '',
-    paisFornecedor: '',
-    tempoRelacionamento: '',
-    termosPagamento: '',
-    
-    // Aspectos Fiscais
-    ncm: '',
-    tratamentoTributario: '',
-    impostosIncidentes: '',
-    beneficiosFiscais: '',
-    
-    // Logística Internacional
-    modalTransporte: '',
-    agenteCarga: '',
-    numeroContainer: '',
-    dataEmbarque: '',
-    previsaoChegadaBrasil: '',
-    
-    // Despacho Aduaneiro
-    despachante: '',
-    numeroDeclaracaoImportacao: '',
-    dataRegistroDeclaracao: '',
-    canalParametrizacao: '',
-    
-    // Custos Estimados
-    custoProduto: '',
-    freteInternacional: '',
-    seguroInternacional: '',
-    impostosImportacao: '',
-    taxasDespacho: '',
-    armazenagem: '',
-    outrosCustos: '',
-    custoTotalEstimado: '',
-    
-    // Análise de Risco
-    analiseRisco: '',
-    
-    // DU-E
-    numeroDue: '',
-    statusDue: '',
-    dataRegistroDue: '',
-    valorMercadoriasDue: '',
-    pesoLiquidoDue: '',
-    qtdVolumesDue: '',
-    dadosTransporteDue: '',
-    observacoesDue: '',
-    
-    // Licenças e Permissões
-    licencaImportacao: '',
-    registroAnvisa: '',
-    certificadoOrigem: '',
-    outrasLicencas: '',
-    statusLicencas: '',
-    validadeLicencas: '',
-    
-    // Documentação Aduaneira
-    conhecimentoEmbarque: '',
-    faturaComercial: '',
-    listaEmbalagem: '',
-    certificadoSeguro: '',
-    outrosDocumentos: '',
-    statusDocumentacao: '',
-    
-    // Controle de Qualidade
-    inspecaoMercadorias: '',
-    laudoTecnico: '',
-    certificadoQualidade: '',
-    observacoesQualidade: '',
-    statusQualidade: '',
-    
-    // Logística e Entrega
-    previsaoChegada: '',
-    localDescarga: '',
-    transportadoraResponsavel: '',
-    contatoTransportadora: '',
-    statusEntrega: '',
-    observacoesLogistica: '',
-    
-    // Conformidade e Auditoria
-    auditoriaInterna: '',
-    conformidadeRegulamentacoes: '',
-    relatorioConformidade: '',
-    observacoesConformidade: '',
+    // Campos Específicos de Importação
+    spi: '',
+    di: '',
+    invoice: '',
+    comissao: '',
+    numeroProjeto: '',
+    numeroPedido: '',
+    numeroContrato: '',
+    publicoPrivado: '',
+    naturezaOperacao: '',
+    tipoContrato: '',
+    situacao: '',
+    previsaoFechamento: '',
+    gerarExpedicao: false,
+    nfConsumoFinal: false,
+    localEstoque: '',
     
     // Dados Financeiros
-    valorTotalOperacao: '',
-    moedaOperacao: '',
-    taxaCambio: '',
+    emailNotasFiscais: '',
     formaPagamento: '',
-    prazosPagamento: '',
-    custosTaxas: '',
-    seguro: '',
-    frete: '',
-    observacoesFinanceiras: '',
+    dadosBancarios: '',
+    parcelas: '',
+    prazoPagamento: '',
+    documentacaoNF: '',
+    destacarIR: false,
+    saldoEmpenho: '',
+    saldoAta: '',
+    programacaoFaturamento: '',
     
-    // Cronograma e Marcos
-    dataInicioProcesso: '',
-    previsaoLiberacao: '',
-    dataEfetivacaoBanco: '',
-    marcosCriticos: '',
-    statusCronograma: '',
+    // Informações de Frete
+    fretePagar: '',
+    freteRetirar: '',
+    prazoEntrega: '',
+    entregarRetirar: '',
+    dadosRecebedor: '',
+    horariosPermitidos: '',
+    locaisEntrega: '',
+    informacoesEntrega: '',
     
-    // Observações Gerais
-    observacoesGerais: '',
+    // Campos Adicionais
+    urgente: false,
+    justificativaUrgencia: '',
+    autorizadoPor: '',
+    dataAutorizacao: '',
+    termometro: 85, // Fixado como "CONQUISTADO/QUENTE"
+    motivoGanho: '',
     
-    // Comunicação e Follow-up
-    contatoPrincipal: '',
-    emailContato: '',
-    telefoneContato: '',
-    frequenciaUpdate: '',
-    proximoFollowUp: '',
+    // Análise Técnica
+    analiseTecnica: '',
     
-    // Status e Prioridade
-    statusGeral: 'Em Andamento',
-    prioridade: 'Média',
-    responsavel: '',
-    equipeEnvolvida: '',
+    // Análise da Concorrência
+    analiseComcorrencia: '',
+    propostaNegociacao: false,
     
-    // Histórico de Alterações
-    ultimaAtualizacao: '',
-    alteradoPor: '',
-    versaoDocumento: '1.0',
+    // Produtos e Serviços
+    produtos: [],
+    servicos: [],
+    itensNaoCadastrados: '',
+    kits: [],
+    informacoesComplementares: '',
     
-    // Anexos e Links
-    anexos: '',
-    linksRelevantes: '',
+    // Campos específicos do SPI
+    spiCliente: '',
+    spiDadosProforma: '',
+    spiEmNomeDe: '',
+    spiCnpj: '',
+    spiEndereco: '',
+    spiInscricaoEstadual: '',
+    spiNumero: '',
+    spiData: '',
+    spiProposta: '',
+    spiEquipamento: '',
+    spiModelo: '',
+    spiPacking: '',
+    spiFabricante: '',
+    spiFormaPagamento: 'CAD',
+    spiTemComissao: false,
+    spiPercentualComissao: '',
+    spiRepresentante: '',
+    spiMercadorias: [],
+    spiObservacoes: '',
+    spiFaturamentoConfirmado: false,
+    spiPagamentoForma: '',
+    spiPagamentoPrazo: '',
+    spiEntregaPrazo: '',
+    spiFormaVenda: 'licitacao',
+    spiFormaVendaOutros: '',
+    spiValor: '',
+    spiPrazo: '',
+    spiDataConfirmacao: '',
+    spiClienteAprovacao: '', // Novo campo para aprovação do cliente
     
-    // Informações Técnicas do Produto
-    descricaoTecnica: '',
-    especificacoesTecnicas: '',
-    codigoNcm: '',
-    classificacaoFiscal: '',
-    
-    // Informações do Fornecedor
-    nomeFornecedor: '',
-    paisOrigem: '',
-    contatoFornecedor: '',
-    certificacoesFornecedor: '',
-    
-    // Controles Especiais
-    produtoControlado: false,
-    orgaoControlador: '',
-    licencaEspecial: '',
-    procedimentosEspeciais: '',
-    
-    // Rastreabilidade
-    codigoRastreamento: '',
-    sistemaRastreamento: '',
-    pontosVerificacao: '',
-    
-    // Sustentabilidade e ESG
-    certificacaoAmbiental: '',
-    relatorioSustentabilidade: '',
-    praticasEsg: '',
-    
-    // EAA (Estudo de Adequação de Acesso)
-    numeroEaa: '',
-    statusEaa: '',
-    dataAprovacaoEaa: '',
-    validadeEaa: '',
-    observacoesEaa: '',
-    responsavelEaa: '',
-    anexoEaa: '',
-    numeroProtocoloEaa: '',
-    orgaoExpeditorEaa: '',
-    categoriaEaa: '',
-    
-    // NO (Natureza da Operação)
-    numeroNo: '',
-    statusNo: '',
-    dataAprovacaoNo: '',
-    validadeNo: '',
-    observacoesNo: '',
-    responsavelNo: '',
-    anexoNo: '',
-    numeroProtocoloNo: '',
-    orgaoExpeditorNo: '',
-    categoriaNo: ''
+    // Campos específicos do NO
+    noDestinatario: '',
+    noAtencao: '',
+    noAssunto: '',
+    noCliente: '',
+    noConsignadoPara: '',
+    noEnderecoConsignado: '',
+    noCepConsignado: '',
+    noCnpjConsignado: '',
+    noTermoPagamento: '',
+    noInstrucaoEnvio: '',
+    noAssinante: '',
+    noCargo: '',
+    noEaa: ''
   });
 
-  const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+  // Estado específico para OVC items - começando vazio
+  const [ovcItems, setOvcItems] = useState([]);
 
-  const handleSave = async () => {
-    try {
-      console.log('Salvando importação direta:', formData);
+  // Sincronizar produtos SPI com OVC
+  useEffect(() => {
+    if (formData.spiMercadorias && formData.spiMercadorias.length > 0) {
+      const syncedOvcItems = formData.spiMercadorias.map((mercadoria: any, index: number) => {
+        // Procurar item existente no OVC pelo ID da mercadoria
+        const existingOvcItem = ovcItems.find(item => item.id === mercadoria.id);
+        
+        return {
+          id: mercadoria.id || Date.now() + index,
+          code: mercadoria.codigo || '',
+          qty: mercadoria.totalOrdens || '0',
+          priceListUnit: existingOvcItem?.priceListUnit || '0.00',
+          priceListTotal: existingOvcItem?.priceListTotal || '0.00',
+          customerDiscountPercent: existingOvcItem?.customerDiscountPercent || '0',
+          customerDiscountUnit: existingOvcItem?.customerDiscountUnit || '0.00',
+          customerDiscountTotal: existingOvcItem?.customerDiscountTotal || '0.00',
+          subTotalUnit: existingOvcItem?.subTotalUnit || '0.00',
+          subTotalTotal: existingOvcItem?.subTotalTotal || '0.00',
+          handlingCharge: existingOvcItem?.handlingCharge || '0.00',
+          total: existingOvcItem?.total || '0.00',
+          comissionPercent: existingOvcItem?.comissionPercent || '5',
+          comissionValue: existingOvcItem?.comissionValue || '0.00',
+          netRadiometer: existingOvcItem?.netRadiometer || '0.00'
+        };
+      });
       
-      // Generate an ID if it doesn't exist
-      if (!formData.id) {
-        formData.id = Date.now().toString();
-      }
+      // Manter items OVC que não vieram do SPI (se houver)
+      const ovcOnlyItems = ovcItems.filter(ovcItem => 
+        !formData.spiMercadorias.some((mercadoria: any) => mercadoria.id === ovcItem.id)
+      );
       
-      onSave(formData);
-      onClose();
-    } catch (error) {
-      console.error('Erro ao salvar importação direta:', error);
+      setOvcItems([...syncedOvcItems, ...ovcOnlyItems]);
+    } else {
+      // Se não há mercadorias no SPI, limpar OVC também
+      setOvcItems([]);
     }
+  }, [formData.spiMercadorias]);
+
+  const masterTabs = [
+    { id: 'comercial', label: 'COMERCIAL' },
+    { id: 'spi', label: 'SPI' },
+    { id: 'ovc', label: 'OVC' },
+    { id: 'no', label: 'NO' },
+    { id: 'instrucao-embarque', label: 'INSTRUÇÃO DE EMBARQUE' },
+    { id: 'packing-list', label: 'PACKING LIST OU VALIDADES' },
+    { id: 'ddr', label: 'DDR' }
+  ];
+
+  const handleInputChange = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
-  const renderDadosGerais = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="nome">Nome do Cliente *</Label>
-          <Input
-            id="nome"
-            value={formData.nome}
-            onChange={(e) => handleInputChange('nome', e.target.value)}
-            placeholder="Nome completo do cliente"
-            required
-          />
-        </div>
-        <div>
-          <Label htmlFor="cpfCnpj">CPF/CNPJ *</Label>
-          <Input
-            id="cpfCnpj"
-            value={formData.cpfCnpj}
-            onChange={(e) => handleInputChange('cpfCnpj', e.target.value)}
-            placeholder="000.000.000-00 ou 00.000.000/0000-00"
-            required
-          />
-        </div>
-        {/* Add more fields as needed */}
+  const handleSave = () => {
+    const dataToSave = {
+      ...formData,
+      id: oportunidade?.id || Date.now(),
+    };
+    onSave(dataToSave);
+    onClose();
+  };
+
+  const handleGenerateSPIPDF = () => {
+    setShowSPIDownloadModal(true);
+  };
+
+  const handleDownloadWithCnpj = (selectedCnpj: string) => {
+    generateSPIPDF(formData, selectedCnpj);
+  };
+
+  const handleMasterTabChange = (tabId: string) => {
+    setActiveMasterTab(tabId);
+  };
+
+  const renderMasterTabContent = () => {
+    if (activeMasterTab === 'spi') {
+      return (
+        <SPIForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
+    
+    if (activeMasterTab === 'ovc') {
+      return (
+        <OVCForm
+          formData={formData}
+          onInputChange={handleInputChange}
+          ovcItems={ovcItems}
+          onUpdateItems={setOvcItems}
+        />
+      );
+    }
+    
+    if (activeMasterTab === 'no') {
+      return (
+        <NOMainForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
+    
+    if (activeMasterTab === 'instrucao-embarque') {
+      return (
+        <InstrucaoEmbarqueForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
+    
+    if (activeMasterTab === 'packing-list') {
+      return (
+        <PackingListForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
+    
+    if (activeMasterTab === 'ddr') {
+      return (
+        <DDRForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
+    
+    if (activeMasterTab === 'comercial') {
+      return (
+        <ComercialTabs
+          activeTab={activeToolTab}
+          onTabChange={setActiveToolTab}
+          formData={formData}
+          onInputChange={handleInputChange}
+          oportunidade={oportunidade}
+        />
+      );
+    }
+    
+    return (
+      <div className="flex items-center justify-center h-64 text-gray-500">
+        <p>Conteúdo da aba {activeMasterTab.toUpperCase()} em desenvolvimento...</p>
       </div>
-    </div>
-  );
+    );
+  };
 
   if (!isOpen) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-biodina-blue">
-            {oportunidade ? 'Editar' : 'Nova'} Importação Direta
-          </DialogTitle>
-        </DialogHeader>
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-[95vw] max-h-[90vh] overflow-hidden">
+          <DialogHeader className="flex-shrink-0">
+            <DialogTitle className="text-2xl font-bold text-purple-600">
+              Nova Importação Direta
+            </DialogTitle>
+          </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
-            <TabsTrigger value="emprestimos">Empréstimos</TabsTrigger>
-            <TabsTrigger value="ferramentas">Ferramentas</TabsTrigger>
-          </TabsList>
-
-          <div className="mt-4 h-[calc(90vh-200px)] overflow-y-auto">
-            <TabsContent value="dados-gerais" className="space-y-4">
-              {renderDadosGerais()}
-            </TabsContent>
-
-            <TabsContent value="emprestimos" className="space-y-4">
-              <EmprestimosTab importacaoId={formData.id} />
-            </TabsContent>
-
-            <TabsContent value="ferramentas" className="space-y-4">
-              {/* Tools content */}
-              <div className="text-center py-8">
-                <p className="text-gray-500">Ferramentas de importação em desenvolvimento...</p>
+          <div className="flex flex-col h-full min-h-0">
+            {/* Abas Masters */}
+            <div className="mb-6 flex-shrink-0">
+              <div className="flex space-x-4 bg-gray-50 p-2 rounded-lg overflow-x-auto">
+                {masterTabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => handleMasterTabChange(tab.id)}
+                    className={`px-6 py-3 rounded-md font-medium transition-colors whitespace-nowrap ${
+                      activeMasterTab === tab.id
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-white text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
               </div>
-            </TabsContent>
-          </div>
-        </Tabs>
+            </div>
 
-        <div className="flex justify-end space-x-4 pt-4 border-t">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button 
-            onClick={handleSave}
-            className="bg-biodina-gold hover:bg-biodina-gold/90"
-          >
-            Salvar Importação
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+            {/* Conteúdo da aba master ativa com scroll */}
+            <div className="flex-1 overflow-y-auto max-h-[60vh] pr-2">
+              {renderMasterTabContent()}
+            </div>
+
+            {/* Rodapé com botões */}
+            <div className="flex justify-end space-x-4 pt-6 border-t flex-shrink-0 mt-4">
+              <Button variant="outline" onClick={onClose}>
+                Cancelar
+              </Button>
+              {activeMasterTab === 'spi' && (
+                <Button 
+                  onClick={handleGenerateSPIPDF} 
+                  variant="outline"
+                  className="bg-red-600 text-white hover:bg-red-700"
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  Baixar SPI
+                </Button>
+              )}
+              <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
+                {oportunidade ? 'Atualizar' : 'Salvar'} Importação Direta
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <SPIDownloadModal
+        isOpen={showSPIDownloadModal}
+        onClose={() => setShowSPIDownloadModal(false)}
+        onDownload={handleDownloadWithCnpj}
+      />
+    </>
   );
 };
 
