@@ -1,4 +1,6 @@
 
+import { UnidadeVenda } from '@/types/comercial';
+
 export const concorrentes = [
   { id: 1, nome: 'Empresa A', valor: 150000 },
   { id: 2, nome: 'Empresa B', valor: 145000 },
@@ -147,7 +149,7 @@ export const licitacoesGanhasDetalhadas = [
             codigo: 'SIE-RP500',
             descricao: 'Analisador Bioquímico Siemens RAPIDPoint 500',
             quantidade: 1,
-            unidade: 'UNIDADE' as const,
+            unidade: UnidadeVenda.UNIDADE,
             precoUnitario: 145000.00,
             desconto: 0,
             precoFinal: 145000.00,
@@ -239,7 +241,7 @@ export const licitacoesGanhasDetalhadas = [
             codigo: 'ABT-KIT-001',
             descricao: 'Kit Diagnóstico Abbott i-STAT - Painel Básico',
             quantidade: 50,
-            unidade: 'KIT' as const,
+            unidade: UnidadeVenda.KIT,
             precoUnitario: 1780.00,
             desconto: 0,
             precoFinal: 1780.00,
