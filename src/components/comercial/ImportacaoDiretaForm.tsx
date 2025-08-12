@@ -10,6 +10,7 @@ import DDRForm from './components/DDRForm';
 import OVCForm from './components/OVCForm';
 import ComercialTabs from './components/ComercialTabs';
 import SPIDownloadModal from './components/SPIDownloadModal';
+import EmprestimosTab from './EmprestimosTab';
 import { generateSPIPDF } from './utils/spiUtils';
 
 interface ImportacaoDiretaFormProps {
@@ -24,7 +25,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
   const [activeToolTab, setActiveToolTab] = useState('dados-gerais');
   const [showSPIDownloadModal, setShowSPIDownloadModal] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData({
     // Informações Básicas do Cliente
     cpfCnpj: '',
     nome: '',
@@ -209,7 +210,8 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     { id: 'no', label: 'NO' },
     { id: 'instrucao-embarque', label: 'INSTRUÇÃO DE EMBARQUE' },
     { id: 'packing-list', label: 'PACKING LIST OU VALIDADES' },
-    { id: 'ddr', label: 'DDR' }
+    { id: 'ddr', label: 'DDR' },
+    { id: 'emprestimos', label: 'EMPRÉSTIMOS' }
   ];
 
   const handleInputChange = (field: string, value: any) => {
@@ -241,6 +243,10 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
   };
 
   const renderMasterTabContent = () => {
+    if (activeMasterTab === 'emprestimos') {
+      return <EmprestimosTab importacaoId={formData.id || oportunidade?.id} />;
+    }
+    
     if (activeMasterTab === 'spi') {
       return (
         <SPIForm
