@@ -10,11 +10,7 @@ import DDRForm from './components/DDRForm';
 import OVCForm from './components/OVCForm';
 import ComercialTabs from './components/ComercialTabs';
 import SPIDownloadModal from './components/SPIDownloadModal';
-import EmprestimosImportacaoTab from './emprestimos/EmprestimosImportacaoTab';
-import NovoEmprestimoModal from './emprestimos/NovoEmprestimoModal';
-import DevolucaoModal from './emprestimos/DevolucaoModal';
 import { generateSPIPDF } from './utils/spiUtils';
-import { EmprestimoResumo } from '@/types/emprestimo';
 
 interface ImportacaoDiretaFormProps {
   isOpen: boolean;
@@ -27,11 +23,6 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
   const [activeMasterTab, setActiveMasterTab] = useState('comercial');
   const [activeToolTab, setActiveToolTab] = useState('dados-gerais');
   const [showSPIDownloadModal, setShowSPIDownloadModal] = useState(false);
-  
-  // Empréstimos state
-  const [showNovoEmprestimoModal, setShowNovoEmprestimoModal] = useState(false);
-  const [showDevolucaoModal, setShowDevolucaoModal] = useState(false);
-  const [selectedEmprestimo, setSelectedEmprestimo] = useState<EmprestimoResumo | null>(null);
 
   const [formData, setFormData] = useState({
     // Informações Básicas do Cliente
@@ -218,8 +209,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     { id: 'no', label: 'NO' },
     { id: 'instrucao-embarque', label: 'INSTRUÇÃO DE EMBARQUE' },
     { id: 'packing-list', label: 'PACKING LIST OU VALIDADES' },
-    { id: 'ddr', label: 'DDR' },
-    { id: 'gestao-emprestimos', label: 'GESTÃO DE EMPRÉSTIMOS' }
+    { id: 'ddr', label: 'DDR' }
   ];
 
   const handleInputChange = (field: string, value: any) => {
@@ -248,11 +238,6 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
 
   const handleMasterTabChange = (tabId: string) => {
     setActiveMasterTab(tabId);
-  };
-
-  const handleRegistrarDevolucao = (emprestimo: EmprestimoResumo) => {
-    setSelectedEmprestimo(emprestimo);
-    setShowDevolucaoModal(true);
   };
 
   const renderMasterTabContent = () => {
@@ -308,16 +293,6 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
         <DDRForm
           formData={formData}
           onInputChange={handleInputChange}
-        />
-      );
-    }
-    
-    if (activeMasterTab === 'gestao-emprestimos') {
-      return (
-        <EmprestimosImportacaoTab
-          importacaoId={oportunidade?.id}
-          onNovoEmprestimo={() => setShowNovoEmprestimoModal(true)}
-          onRegistrarDevolucao={handleRegistrarDevolucao}
         />
       );
     }
@@ -405,22 +380,6 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
         isOpen={showSPIDownloadModal}
         onClose={() => setShowSPIDownloadModal(false)}
         onDownload={handleDownloadWithCnpj}
-      />
-
-      {/* Empréstimos Modals */}
-      <NovoEmprestimoModal
-        isOpen={showNovoEmprestimoModal}
-        onClose={() => setShowNovoEmprestimoModal(false)}
-        importacaoId={oportunidade?.id}
-      />
-
-      <DevolucaoModal
-        isOpen={showDevolucaoModal}
-        onClose={() => {
-          setShowDevolucaoModal(false);
-          setSelectedEmprestimo(null);
-        }}
-        emprestimo={selectedEmprestimo}
       />
     </>
   );
