@@ -1,1068 +1,369 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import SidebarLayout from "@/components/SidebarLayout";
-import OportunidadeForm from "@/components/comercial/OportunidadeForm";
-import OportunidadeAvancadaForm from "@/components/comercial/OportunidadeAvancadaForm";
-import PedidoModal from "@/components/comercial/PedidoModal";
-import PedidoForm from "@/components/comercial/PedidoForm";
-import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
-import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
-// import AgendaComercial from "@/components/comercial/AgendaComercial"; // Commented out for future use
-import { 
-  TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
-  DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
-  ShoppingCart, Headphones, ArrowLeft, Package, Truck, ClipboardList,
-  AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal,
-  Gavel, Building2, Globe
-} from "lucide-react";
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
-  PieChart, Pie, Cell, ResponsiveContainer 
-} from 'recharts';
+import { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { TrendingUp, Users, UserCheck, BarChart3, Calendar, Settings, ShoppingCart, Package, DollarSign, FileText, HandCoins } from 'lucide-react';
+import AgendaComercial from '@/components/comercial/AgendaComercial';
+import OportunidadeForm from '@/components/comercial/OportunidadeForm';
+import OportunidadeAvancadaForm from '@/components/comercial/OportunidadeAvancadaForm';
+import ImportacaoDiretaForm from '@/components/comercial/ImportacaoDiretaForm';
+import ContratacaoSimplesForm from '@/components/comercial/ContratacaoSimplesForm';
+import PedidoForm from '@/components/comercial/PedidoForm';
+import AdicionarProdutoModal from '@/components/comercial/AdicionarProdutoModal';
+import FiltrosAvancados from '@/components/comercial/FiltrosAvancados';
+import ApprovalModal from '@/components/comercial/ApprovalModal';
+import TipoPropostaModal from '@/components/comercial/TipoPropostaModal';
+import EmprestimosTable from '@/components/comercial/emprestimos/EmprestimosTable';
+import NovoEmprestimoModal from '@/components/comercial/emprestimos/NovoEmprestimoModal';
+import DevolucaoModal from '@/components/comercial/emprestimos/DevolucaoModal';
+import { EmprestimoResumo } from '@/types/emprestimo';
+
+// Mock data for demonstration purposes
+const mockOportunidades = [
+  { id: 1, nome: 'Oportunidade A', cliente: 'Cliente X', valor: 15000, status: 'Em Aberto' },
+  { id: 2, nome: 'Oportunidade B', cliente: 'Cliente Y', valor: 25000, status: 'Aprovada' },
+  { id: 3, nome: 'Oportunidade C', cliente: 'Cliente Z', valor: 10000, status: 'Concluída' },
+];
+
+const mockProdutos = [
+  { id: 101, nome: 'Produto Alpha', preco: 50, estoque: 200 },
+  { id: 102, nome: 'Produto Beta', preco: 75, estoque: 150 },
+  { id: 103, nome: 'Produto Gamma', preco: 100, estoque: 100 },
+];
+
+const mockClientes = [
+  { id: 201, nome: 'Cliente X', segmento: 'Industrial' },
+  { id: 202, nome: 'Cliente Y', segmento: 'Varejo' },
+  { id: 203, nome: 'Cliente Z', segmento: 'Serviços' },
+];
+
+const mockChamados = [
+  { id: 301, cliente: 'Cliente X', assunto: 'Problema técnico', status: 'Aberto' },
+  { id: 302, cliente: 'Cliente Y', assunto: 'Solicitação de suporte', status: 'Em Andamento' },
+  { id: 303, cliente: 'Cliente Z', assunto: 'Dúvida sobre o produto', status: 'Resolvido' },
+];
+
+interface Oportunidade {
+  id: number;
+  nome: string;
+  cliente: string;
+  valor: number;
+  status: string;
+}
 
 const Comercial = () => {
-  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'pos-venda'>('main');
-  const [activeSubModule, setActiveSubModule] = useState<'assessoria' | 'departamento-tecnico' | null>(null);
-  const [activeTab, setActiveTab] = useState('indicadores');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('todos');
+  const [activeModule, setActiveModule] = useState<'vendas' | 'pos-venda' | 'emprestimos'>('vendas');
   const [showOportunidadeForm, setShowOportunidadeForm] = useState(false);
   const [showOportunidadeAvancadaForm, setShowOportunidadeAvancadaForm] = useState(false);
-  const [editingOportunidade, setEditingOportunidade] = useState<any>();
-  const [showPedidoModal, setShowPedidoModal] = useState(false);
-  const [showPedidoForm, setShowPedidoForm] = useState(false);
-  const [selectedOportunidade, setSelectedOportunidade] = useState<any>();
-  const [showContratacaoSimplesForm, setShowContratacaoSimplesForm] = useState(false);
   const [showImportacaoDiretaForm, setShowImportacaoDiretaForm] = useState(false);
+  const [showContratacaoSimplesForm, setShowContratacaoSimplesForm] = useState(false);
+  const [showPedidoForm, setShowPedidoForm] = useState(false);
+  const [showAdicionarProdutoModal, setShowAdicionarProdutoModal] = useState(false);
+  const [showFiltrosAvancados, setShowFiltrosAvancados] = useState(false);
+  const [showApprovalModal, setShowApprovalModal] = useState(false);
+  const [showTipoPropostaModal, setShowTipoPropostaModal] = useState(false);
+  const [selectedOportunidade, setSelectedOportunidade] = useState<Oportunidade | null>(null);
 
-  const oportunidades = [
-    { 
-      id: 1,
-      codigo: '10678',
-      cliente: 'Associação das Pioneiras Sociais',
-      contato: 'Ramal - 3319-1111',
-      responsavel: 'Faber Oliveira',
-      origem: 'Vendas RJ',
-      familiaComercial: 'Radiometer ABL',
-      situacao: 'ganha',
-      status: 'Ganha',
-      resultadoOportunidade: 'ganho',
-      tipoAplicacao: 'venda',
-      tipoOportunidade: 'pontual',
-      valor: 782530,
-      dataAbertura: '20/03/2024',
-      dataContato: '20/03/2024',
-      termometro: 100,
-      fonteLead: 'Site',
-      segmento: 'Hospitalar',
-      modalidade: 'licitacao',
-      descricao: 'DOS 3 EQUIPAMENTOS ADQUIRIDOS POR (ID) O DE Nº SERIE 754R2826N025 IRA SER INSTALADO NO SARAH-DF.',
-      produtos: ['ABL800 Flex', 'Sensor pH'],
-      servicos: ['Instalação', 'Treinamento']
-    },
-    { 
-      id: 2,
-      codigo: '10679',
-      cliente: 'Hospital Universitário Onofre Lopes',
-      contato: 'contato@huol.ufrn.br',
-      responsavel: 'Maria Santos',
-      origem: 'Vendas RN',
-      familiaComercial: 'Nova Biomedical',
-      situacao: 'em_triagem',
-      status: 'Em Triagem',
-      resultadoOportunidade: 'em_andamento',
-      tipoAplicacao: 'locacao',
-      tipoOportunidade: 'periodica',
-      valor: 450000,
-      dataAbertura: '15/03/2024',
-      dataContato: '16/03/2024',
-      termometro: 85,
-      fonteLead: 'Indicação',
-      segmento: 'Universitário',
-      modalidade: 'contratacao_simples',
-      descricao: 'Equipamentos para laboratório de análises clínicas',
-      produtos: [],
-      servicos: []
-    },
-    { 
-      id: 3,
-      codigo: '10680',
-      cliente: 'CEMA - Central de Medicamentos',
-      contato: '(85) 3101-1234',
-      responsavel: 'João Silva',
-      origem: 'Vendas CE',
-      familiaComercial: 'WEBMED',
-      situacao: 'em_acompanhamento',
-      status: 'Em Acompanhamento',
-      resultadoOportunidade: 'em_andamento',
-      tipoAplicacao: 'servico',
-      tipoOportunidade: 'pontual',
-      valor: 280000,
-      dataAbertura: '10/03/2024',
-      dataContato: '12/03/2024',
-      termometro: 45,
-      fonteLead: 'Cold Call',
-      segmento: 'Público',
-      modalidade: 'licitacao',
-      descricao: 'Sistema de gestão hospitalar integrado',
-      produtos: ['Sistema WEBMED'],
-      servicos: ['Consultoria', 'Implementação']
-    },
-    { 
-      id: 4,
-      codigo: '10681',
-      cliente: 'Prefeitura de São Paulo',
-      contato: 'licitacoes@saude.sp.gov.br',
-      responsavel: 'Carlos Oliveira',
-      origem: 'Vendas SP',
-      familiaComercial: 'Stat Profile',
-      situacao: 'perdida',
-      status: 'Perdida',
-      resultadoOportunidade: 'perda',
-      tipoAplicacao: 'venda',
-      tipoOportunidade: 'pontual',
-      valor: 1250000,
-      dataAbertura: '05/03/2024',
-      dataContato: '08/03/2024',
-      termometro: 75,
-      fonteLead: 'Licitação',
-      segmento: 'Municipal',
-      modalidade: 'licitacao',
-      descricao: 'Gasômetros para rede municipal de saúde',
-      produtos: ['Gasômetro Stat Profile'],
-      servicos: []
-    },
-    {
-      id: 5,
-      codigo: '10682',
-      cliente: 'Hospital Albert Einstein',
-      contato: 'compras@einstein.br',
-      responsavel: 'Ana Costa',
-      origem: 'Vendas SP',
-      familiaComercial: 'Radiometer ABL',
-      situacao: 'em_acompanhamento',
-      status: 'Em Acompanhamento',
-      resultadoOportunidade: 'em_andamento',
-      tipoAplicacao: 'venda',
-      tipoOportunidade: 'pontual',
-      valor: 890000,
-      dataAbertura: '25/03/2024',
-      dataContato: '26/03/2024',
-      termometro: 95,
-      fonteLead: 'Referência',
-      segmento: 'Privado',
-      modalidade: 'contratacao_simples',
-      descricao: 'Modernização do laboratório de análises',
-      produtos: ['ABL800 Basic'],
-      servicos: ['Manutenção']
-    }
-  ];
+  // New state for empréstimos module
+  const [showNovoEmprestimoModal, setShowNovoEmprestimoModal] = useState(false);
+  const [showDevolucaoModal, setShowDevolucaoModal] = useState(false);
+  const [selectedEmprestimo, setSelectedEmprestimo] = useState<EmprestimoResumo | null>(null);
 
-  const calculateFunnelData = () => {
-    const activeOportunidades = oportunidades.filter(op => op.resultadoOportunidade !== 'perda');
-    
-    const funnelStages = [
-      {
-        fase: 'Temperatura < 60',
-        cor: 'from-orange-400 to-orange-500',
-        borderColor: 'border-orange-400',
-        icon: '🌡️',
-        count: activeOportunidades.filter(op => op.termometro < 60).length,
-        valor: activeOportunidades.filter(op => op.termometro < 60).reduce((sum, op) => sum + op.valor, 0)
-      },
-      {
-        fase: 'Em Processo (60-80)',
-        cor: 'from-yellow-400 to-orange-400',
-        borderColor: 'border-yellow-400',
-        icon: '📈',
-        count: activeOportunidades.filter(op => op.termometro >= 60 && op.termometro < 80).length,
-        valor: activeOportunidades.filter(op => op.termometro >= 60 && op.termometro < 80).reduce((sum, op) => sum + op.valor, 0)
-      },
-      {
-        fase: 'Boas Chances (80-90)',
-        cor: 'from-orange-500 to-red-500',
-        borderColor: 'border-orange-500',
-        icon: '🔥',
-        count: activeOportunidades.filter(op => op.termometro >= 80 && op.termometro < 90).length,
-        valor: activeOportunidades.filter(op => op.termometro >= 80 && op.termometro < 90).reduce((sum, op) => sum + op.valor, 0)
-      },
-      {
-        fase: 'Comprometido (90+)',
-        cor: 'from-red-500 to-red-600',
-        borderColor: 'border-red-500',
-        icon: '🚀',
-        count: activeOportunidades.filter(op => op.termometro >= 90 && op.resultadoOportunidade !== 'ganho').length,
-        valor: activeOportunidades.filter(op => op.termometro >= 90 && op.resultadoOportunidade !== 'ganho').reduce((sum, op) => sum + op.valor, 0)
-      },
-      {
-        fase: 'Conquistado (100)',
-        cor: 'from-red-800 to-red-900',
-        borderColor: 'border-red-800',
-        icon: '🏆',
-        count: activeOportunidades.filter(op => op.resultadoOportunidade === 'ganho').length,
-        valor: activeOportunidades.filter(op => op.resultadoOportunidade === 'ganho').reduce((sum, op) => sum + op.valor, 0)
-      }
-    ];
-
-    return funnelStages.map((stage, index) => ({
-      ...stage,
-      percentual: Math.max((stage.count / Math.max(funnelStages[0].count, 1)) * 100, 20)
-    }));
+  const handleOpenOportunidadeForm = () => {
+    setShowOportunidadeForm(true);
   };
 
-  const funnelData = calculateFunnelData();
-
-  const conversaoUFData = [
-    { uf: 'SP', conversao: 108.3 },
-    { uf: 'RJ', conversao: 94.0 },
-    { uf: 'CE', conversao: 82.5 },
-    { uf: 'RN', conversao: 74.8 },
-  ];
-
-  const indicadores = {
-    posicaoEstoque: [
-      { produto: 'ABL800 Flex', quantidade: 12, localizacao: 'Galpão A' },
-      { produto: 'Sensor pH', quantidade: 45, localizacao: 'Galpão B' },
-      { produto: 'Gasômetro Stat Profile', quantidade: 3, localizacao: 'Galpão A' },
-      { produto: 'Sistema WEBMED', quantidade: 8, localizacao: 'Digital' }
-    ],
-    importacaoPrevisao: [
-      { item: 'ABL800 Basic', previsao: '15/02/2025', quantidade: 5, fornecedor: 'Radiometer' },
-      { item: 'Nova Biomedical Kit', previsao: '28/02/2025', quantidade: 10, fornecedor: 'Nova Biomedical' },
-      { item: 'Sensores Diversos', previsao: '10/03/2025', quantidade: 25, fornecedor: 'Multiple' }
-    ],
-    pedidosProgramados: [
-      { cliente: 'Hospital Albert Einstein', data: '20/01/2025', valor: 890000, status: 'Confirmado' },
-      { cliente: 'HUOL', data: '05/02/2025', valor: 450000, status: 'Pendente' },
-      { cliente: 'CEMA', data: '15/02/2025', valor: 280000, status: 'Confirmado' }
-    ],
-    faturamentoProjeto: [
-      { projeto: 'Radiometer ABL - Associação Pioneiras', valor: 782530, status: 'Faturado' },
-      { projeto: 'Nova Biomedical - HUOL', valor: 450000, status: 'Em Processamento' },
-      { projeto: 'WEBMED - CEMA', valor: 280000, status: 'Aguardando' }
-    ],
-    restricaoFinanceira: [
-      { cliente: 'Prefeitura São Paulo', valor: 125000, motivo: 'Inadimplência', dias: 45 },
-      { cliente: 'Hospital Regional CE', valor: 89000, motivo: 'Documentação Pendente', dias: 12 }
-    ],
-    pedidosSeparacao: [
-      { pedido: 'PED-2025-001', cliente: 'Hospital Einstein', itens: 3, status: 'Em Separação' },
-      { pedido: 'PED-2025-002', cliente: 'HUOL', itens: 5, status: 'Aguardando Peças' }
-    ],
-    pedidosDesmembramento: [
-      { pedido: 'PED-2024-078', cliente: 'CEMA', original: 280000, desmembrado: 140000, motivo: 'Entrega Parcial' }
-    ],
-    posicaoPedidos: [
-      { pedido: 'PED-2025-001', cliente: 'Hospital Einstein', status: 'Em Trânsito', previsao: '25/01/2025' },
-      { pedido: 'PED-2024-089', cliente: 'Hospital Regional', status: 'Separado', previsao: '22/01/2025' }
-    ],
-    aguardandoAutorizacao: [
-      { item: 'Desconto Especial - HUOL', valor: 50000, gestor: 'Carlos Oliveira', dias: 3 },
-      { item: 'Prazo Estendido - Einstein', valor: 890000, gestor: 'Ana Costa', dias: 1 }
-    ]
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
-
-  const getSituacaoColor = (situacao: string) => {
-    switch (situacao) {
-      case 'ganha': return 'bg-green-500';
-      case 'em_triagem': return 'bg-blue-500';
-      case 'em_acompanhamento': return 'bg-orange-500';
-      case 'perdida': return 'bg-red-500';
-      case 'cancelada': return 'bg-gray-500';
-      default: return 'bg-blue-500';
-    }
-  };
-
-  const getSituacaoLabel = (situacao: string) => {
-    switch (situacao) {
-      case 'ganha': return 'Ganha';
-      case 'em_triagem': return 'Em Triagem';
-      case 'em_acompanhamento': return 'Em Acompanhamento';
-      case 'perdida': return 'Perdida';
-      case 'cancelada': return 'Cancelada';
-      default: return situacao;
-    }
-  };
-
-  const getTermometroColor = (termometro: number) => {
-    if (termometro < 60) return 'bg-red-500';
-    if (termometro < 80) return 'bg-yellow-500';
-    if (termometro < 90) return 'bg-orange-500';
-    return 'bg-green-500';
-  };
-
-  const handleNovaOportunidade = (modalidade: 'licitacao' | 'contratacao_simples' | 'importacao_direta') => {
-    setEditingOportunidade(undefined);
-    
-    if (modalidade === 'licitacao') {
-      setShowOportunidadeAvancadaForm(true);
-    } else if (modalidade === 'contratacao_simples') {
-      setShowContratacaoSimplesForm(true);
-    } else if (modalidade === 'importacao_direta') {
-      setShowImportacaoDiretaForm(true);
-    }
-  };
-
-  const handleEditOportunidade = (oportunidade: any) => {
-    setEditingOportunidade(oportunidade);
-    
-    if (oportunidade.modalidade === 'licitacao') {
-      setShowOportunidadeAvancadaForm(true);
-    } else if (oportunidade.modalidade === 'contratacao_simples' || oportunidade.modalidade === 'comercial_administrativo') {
-      setShowContratacaoSimplesForm(true);
-    } else if (oportunidade.modalidade === 'importacao_direta') {
-      setShowImportacaoDiretaForm(true);
-    }
-  };
-
-  const handleSaveOportunidade = (formData: any) => {
-    console.log('Salvando oportunidade:', formData);
+  const handleCloseOportunidadeForm = () => {
     setShowOportunidadeForm(false);
+  };
+
+  const handleOpenOportunidadeAvancadaForm = () => {
+    setShowOportunidadeAvancadaForm(true);
+  };
+
+  const handleCloseOportunidadeAvancadaForm = () => {
     setShowOportunidadeAvancadaForm(false);
-    setShowContratacaoSimplesForm(false);
+  };
+
+  const handleOpenImportacaoDiretaForm = (oportunidade?: Oportunidade) => {
+    setSelectedOportunidade(oportunidade || null);
+    setShowImportacaoDiretaForm(true);
+  };
+
+  const handleCloseImportacaoDiretaForm = () => {
     setShowImportacaoDiretaForm(false);
-    setEditingOportunidade(undefined);
+    setSelectedOportunidade(null);
   };
 
-  const handleGerarPedido = (oportunidade: any) => {
-    if (oportunidade.status !== 'Ganha') {
-      alert('Pedidos só podem ser gerados para oportunidades com status "Ganha"');
-      return;
-    }
-    setSelectedOportunidade(oportunidade);
-    setShowPedidoModal(true);
+  const handleOpenContratacaoSimplesForm = () => {
+    setShowContratacaoSimplesForm(true);
   };
 
-  const handleAdicionarPedido = () => {
+  const handleCloseContratacaoSimplesForm = () => {
+    setShowContratacaoSimplesForm(false);
+  };
+
+  const handleOpenPedidoForm = () => {
     setShowPedidoForm(true);
   };
 
-  const handleSavePedido = (pedidoData: any) => {
-    console.log('Salvando pedido:', pedidoData);
+  const handleClosePedidoForm = () => {
     setShowPedidoForm(false);
   };
 
-  const getOportunidadesPorModalidade = (modalidade: string) => {
-    return oportunidades.filter(oportunidade => {
-      const oportunidadeModalidade = oportunidade.modalidade === 'comercial_administrativo' 
-        ? 'contratacao_simples' 
-        : oportunidade.modalidade;
-      
-      return oportunidadeModalidade === modalidade;
-    });
+  const handleOpenAdicionarProdutoModal = () => {
+    setShowAdicionarProdutoModal(true);
   };
 
-  const filteredOportunidades = (modalidade: string) => {
-    const oportunidadesPorModalidade = getOportunidadesPorModalidade(modalidade);
-    
-    return oportunidadesPorModalidade.filter(oportunidade => {
-      const matchesSearch = oportunidade.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        oportunidade.codigo.includes(searchTerm) ||
-        oportunidade.responsavel.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesStatus = statusFilter === 'todos' || oportunidade.status === statusFilter;
-      
-      return matchesSearch && matchesStatus;
-    });
+  const handleCloseAdicionarProdutoModal = () => {
+    setShowAdicionarProdutoModal(false);
   };
 
-  const handleLicitacaoConvertida = (licitacaoData: any) => {
-    console.log('Processando licitação convertida automaticamente:', licitacaoData);
-    
-    const novaOportunidade = {
-      id: Date.now(),
-      codigo: `LIC-${licitacaoData.numeroPregao}`,
-      cliente: licitacaoData.nomeInstituicao,
-      contato: licitacaoData.dataContato || '',
-      responsavel: 'Sistema Automático',
-      origem: `Licitação ${licitacaoData.numeroPregao}`,
-      familiaComercial: 'Automático',
-      situacao: 'ganha',
-      status: 'Ganha',
-      resultadoOportunidade: 'ganho',
-      tipoAplicacao: 'venda',
-      tipoOportunidade: 'pontual',
-      valor: licitacaoData.estrategiaValorFinal || 0,
-      dataAbertura: new Date().toISOString().split('T')[0],
-      dataContato: new Date().toISOString().split('T')[0],
-      termometro: 100,
-      fonteLead: 'Licitação Convertida',
-      segmento: 'Público',
-      modalidade: 'comercial_administrativo',
-      descricao: `Oportunidade criada automaticamente da licitação ${licitacaoData.numeroPregao} - ${licitacaoData.objetoLicitacao}`,
-      produtos: [],
-      servicos: []
-    };
-
-    console.log('Nova oportunidade criada:', novaOportunidade);
-    alert(`Licitação convertida com sucesso! Uma nova oportunidade foi criada automaticamente no Comercial Administrativo.`);
+  const handleOpenFiltrosAvancados = () => {
+    setShowFiltrosAvancados(true);
   };
 
-  const renderMainModules = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card 
-          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-          onClick={() => setActiveModule('vendas')}
-        >
-          <CardContent className="p-8 text-center">
-            <ShoppingCart className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Vendas</h3>
-            <p className="text-gray-600">Gestão do processo comercial e oportunidades</p>
-          </CardContent>
-        </Card>
+  const handleCloseFiltrosAvancados = () => {
+    setShowFiltrosAvancados(false);
+  };
 
-        <Card 
-          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-          onClick={() => setActiveModule('pos-venda')}
-        >
-          <CardContent className="p-8 text-center">
-            <Headphones className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Pós-Venda</h3>
-            <p className="text-gray-600">Suporte científico e técnico pós-venda</p>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
+  const handleOpenApprovalModal = () => {
+    setShowApprovalModal(true);
+  };
 
-  const renderPosVendaModules = () => (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <Button 
-          variant="outline" 
-          onClick={() => setActiveModule('main')}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Voltar
-        </Button>
-        <h2 className="text-2xl font-bold text-biodina-blue">Pós-Venda</h2>
-      </div>
+  const handleCloseApprovalModal = () => {
+    setShowApprovalModal(false);
+  };
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card 
-          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-          onClick={() => setActiveSubModule('assessoria')}
-        >
-          <CardContent className="p-8 text-center">
-            <Target className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Assessoria Científica</h3>
-            <p className="text-gray-600">Suporte científico especializado</p>
-          </CardContent>
-        </Card>
+  const handleOpenTipoPropostaModal = () => {
+    setShowTipoPropostaModal(true);
+  };
 
-        <Card 
-          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-          onClick={() => setActiveSubModule('departamento-tecnico')}
-        >
-          <CardContent className="p-8 text-center">
-            <FileText className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Departamento Técnico</h3>
-            <p className="text-gray-600">Suporte técnico e manutenção</p>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
+  const handleCloseTipoPropostaModal = () => {
+    setShowTipoPropostaModal(false);
+  };
 
-  const renderSubModule = () => {
-    if (activeSubModule === 'assessoria') {
-      return (
-        <div className="space-y-6">
-          <div className="flex items-center gap-4 mb-6">
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSubModule(null)}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <h2 className="text-2xl font-bold text-biodina-blue">Assessoria Científica</h2>
-          </div>
-          <Card>
-            <CardContent className="p-8 text-center">
-              <p className="text-gray-600">Módulo de Assessoria Científica em desenvolvimento</p>
-            </CardContent>
-          </Card>
-        </div>
-      );
-    }
-
-    if (activeSubModule === 'departamento-tecnico') {
-      return (
-        <div className="space-y-6">
-          <div className="flex items-center gap-4 mb-6">
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSubModule(null)}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <h2 className="text-2xl font-bold text-biodina-blue">Departamento Técnico</h2>
-          </div>
-          <Card>
-            <CardContent className="p-8 text-center">
-              <p className="text-gray-600">Módulo de Departamento Técnico em desenvolvimento</p>
-            </CardContent>
-          </Card>
-        </div>
-      );
-    }
-
-    return null;
+  const handleRegistrarDevolucao = (emprestimo: EmprestimoResumo) => {
+    setSelectedEmprestimo(emprestimo);
+    setShowDevolucaoModal(true);
   };
 
   const renderVendasModule = () => {
-    const tabs = [
-      { id: 'indicadores', label: 'Indicadores Comerciais e Análise de Conversão', icon: BarChart3 },
-      { id: 'licitacao', label: 'Licitação', icon: Gavel },
-      { id: 'contratacao', label: 'Contratação', icon: Building2 },
-      { id: 'importacao', label: 'Importação Direta', icon: Globe },
-    ];
-
-    const renderContent = () => {
-      switch (activeTab) {
-        case 'indicadores': return renderIndicadoresEAnalise();
-        case 'licitacao': return renderOportunidadesPorModalidade('licitacao');
-        case 'contratacao': return renderOportunidadesPorModalidade('contratacao_simples');
-        case 'importacao': return renderOportunidadesPorModalidade('importacao_direta');
-        default: return renderIndicadoresEAnalise();
-      }
-    };
-
     return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="outline" 
-            onClick={() => setActiveModule('main')}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Voltar
-          </Button>
-          <h1 className="text-2xl font-bold text-biodina-blue">Comercial / Vendas</h1>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Oportunidades de Vendas</h2>
+            <p className="text-gray-600">Gerencie suas oportunidades de vendas e feche mais negócios</p>
+          </div>
+          <div className="space-x-2">
+            <Button onClick={handleOpenOportunidadeForm} className="bg-blue-600 hover:bg-blue-700">
+              Nova Oportunidade
+            </Button>
+            <Button onClick={handleOpenImportacaoDiretaForm} className="bg-green-600 hover:bg-green-700">
+              Nova Importação Direta
+            </Button>
+          </div>
         </div>
 
-        <div className="border-b border-gray-200">
-          <nav className="flex space-x-8">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === tab.id
-                    ? 'border-biodina-blue text-biodina-blue'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <tab.icon className="h-4 w-4" />
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        <div className="space-y-4">
-          {renderContent()}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {mockOportunidades.map(oportunidade => (
+            <Card key={oportunidade.id} className="shadow-md">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">{oportunidade.nome}</CardTitle>
+                <CardDescription>Cliente: {oportunidade.cliente}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700">Valor: R$ {oportunidade.valor.toFixed(2)}</p>
+                <Badge className="mt-2">{oportunidade.status}</Badge>
+                <div className="flex justify-end mt-4">
+                  <Button variant="outline" size="sm" onClick={() => handleOpenImportacaoDiretaForm(oportunidade)}>
+                    Ver Detalhes
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     );
   };
 
-  const renderOportunidadesPorModalidade = (modalidade: string) => {
-    const getModalidadeLabel = (modalidade: string) => {
-      switch (modalidade) {
-        case 'licitacao': return 'Licitação';
-        case 'contratacao_simples': return 'Contratação';
-        case 'importacao_direta': return 'Importação Direta';
-        default: return modalidade;
-      }
-    };
-
-    const getModalidadeIcon = (modalidade: string) => {
-      switch (modalidade) {
-        case 'licitacao': return Gavel;
-        case 'contratacao_simples': return Building2;
-        case 'importacao_direta': return Globe;
-        default: return Briefcase;
-      }
-    };
-
-    const Icon = getModalidadeIcon(modalidade);
-
+  const renderPosVendaModule = () => {
     return (
-      <Card className="shadow-lg">
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="flex items-center gap-2">
-              <Icon className="h-5 w-5" />
-              {getModalidadeLabel(modalidade)}
-            </CardTitle>
-            <div className="flex gap-2">
-              <Button 
-                className="bg-biodina-gold hover:bg-biodina-gold/90"
-                onClick={() => handleNovaOportunidade(modalidade as 'licitacao' | 'contratacao_simples' | 'importacao_direta')}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Novo Projeto
-              </Button>
-            </div>
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Gestão de Pós-Venda</h2>
+            <p className="text-gray-600">Acompanhe os chamados e garanta a satisfação dos seus clientes</p>
           </div>
-          <div className="flex gap-4 mt-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input 
-                placeholder="Pesquisar oportunidades..." 
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-gray-400" />
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Filtrar por status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos os Status</SelectItem>
-                  <SelectItem value="Em Triagem">Em Triagem</SelectItem>
-                  <SelectItem value="Em Acompanhamento">Em Acompanhamento</SelectItem>
-                  <SelectItem value="Ganha">Ganha</SelectItem>
-                  <SelectItem value="Perdida">Perdida</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto max-h-96 overflow-y-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Código</TableHead>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead>Responsável</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Fonte</TableHead>
-                  <TableHead>Segmento</TableHead>
-                  <TableHead>Termômetro</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Data Abertura</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredOportunidades(modalidade).map((oportunidade) => (
-                  <TableRow key={oportunidade.id}>
-                    <TableCell className="font-medium">{oportunidade.codigo}</TableCell>
-                    <TableCell>{oportunidade.cliente}</TableCell>
-                    <TableCell>{oportunidade.responsavel}</TableCell>
-                    <TableCell>
-                      <Badge className={`${getSituacaoColor(oportunidade.situacao)} text-white`}>
-                        {oportunidade.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{oportunidade.fonteLead}</TableCell>
-                    <TableCell>{oportunidade.segmento}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1">
-                          <Thermometer className="h-4 w-4" />
-                          <span className="text-sm font-medium">{oportunidade.termometro}°</span>
-                        </div>
-                        <div 
-                          className={`w-3 h-3 rounded-full ${getTermometroColor(oportunidade.termometro)}`}
-                          title={`Termômetro: ${oportunidade.termometro}°`}
-                        />
-                      </div>
-                    </TableCell>
-                    <TableCell>{formatCurrency(oportunidade.valor)}</TableCell>
-                    <TableCell>{oportunidade.dataAbertura}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline" onClick={() => handleEditOportunidade(oportunidade)}>
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          onClick={() => handleGerarPedido(oportunidade)}
-                          disabled={oportunidade.status !== 'Ganha'}
-                          title={oportunidade.status !== 'Ganha' ? 'Pedidos só podem ser gerados para oportunidades ganhas' : 'Gerar pedido'}
-                        >
-                          <FileText className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+          <Button className="bg-green-600 hover:bg-green-700">Novo Chamado</Button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {mockChamados.map(chamado => (
+            <Card key={chamado.id} className="shadow-md">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">Chamado #{chamado.id}</CardTitle>
+                <CardDescription>Cliente: {chamado.cliente}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-700">Assunto: {chamado.assunto}</p>
+                <Badge className="mt-2">{chamado.status}</Badge>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
     );
   };
 
-  const renderIndicadoresEAnalise = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-      {/* Indicadores Comerciais Card */}
-      <Card className="shadow-lg h-[600px] flex flex-col xl:col-span-1">
-        <CardHeader className="pb-4 flex-shrink-0">
-          <CardTitle className="flex items-center gap-2 text-biodina-blue text-lg">
-            <BarChart3 className="h-5 w-5" />
-            Indicadores Comerciais
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 px-4 flex-1 overflow-y-auto">
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-3 rounded-lg">
-            <h4 className="font-semibold text-sm text-blue-700 mb-2 flex items-center gap-2">
-              <Package className="h-4 w-4" />
-              POSIÇÃO DE ESTOQUE
-            </h4>
-            <div className="space-y-2">
-              {indicadores.posicaoEstoque.slice(0, 3).map((item, index) => (
-                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
-                  <span className="text-sm font-medium text-gray-700">{item.produto}</span>
-                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                    {item.quantidade} un.
-                  </Badge>
-                </div>
-              ))}
-            </div>
+  const renderEmprestimosModule = () => {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Gestão de Empréstimos</h2>
+            <p className="text-gray-600">Gerencie empréstimos de produtos e suas devoluções</p>
           </div>
+        </div>
 
-          <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-3 rounded-lg">
-            <h4 className="font-semibold text-sm text-orange-700 mb-2 flex items-center gap-2">
-              <Truck className="h-4 w-4" />
-              IMPORTAÇÃO PREVISÃO
-            </h4>
-            <div className="space-y-2">
-              {indicadores.importacaoPrevisao.slice(0, 2).map((item, index) => (
-                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
-                  <span className="text-sm font-medium text-gray-700">{item.item}</span>
-                  <span className="text-xs text-orange-600 font-medium">{item.previsao}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+        <EmprestimosTable
+          onNovoEmprestimo={() => setShowNovoEmprestimoModal(true)}
+          onRegistrarDevolucao={handleRegistrarDevolucao}
+        />
+      </div>
+    );
+  };
 
-          <div className="bg-gradient-to-r from-green-50 to-green-100 p-3 rounded-lg">
-            <h4 className="font-semibold text-sm text-green-700 mb-2 flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              PEDIDOS PROGRAMADOS
-            </h4>
-            <div className="space-y-2">
-              {indicadores.pedidosProgramados.slice(0, 2).map((item, index) => (
-                <div key={index} className="bg-white p-2 rounded-md shadow-sm">
-                  <div className="flex justify-between items-start">
-                    <span className="text-sm font-medium text-gray-700">{item.cliente}</span>
-                    <div className="text-right">
-                      <div className="text-sm font-bold text-green-600">{formatCurrency(item.valor)}</div>
-                      <div className="text-xs text-gray-500">{item.data}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-red-50 to-red-100 p-3 rounded-lg">
-            <h4 className="font-semibold text-sm text-red-700 mb-2 flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" />
-              RESTRIÇÃO FINANCEIRA
-            </h4>
-            <div className="space-y-2">
-              {indicadores.restricaoFinanceira.map((item, index) => (
-                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
-                  <span className="text-sm font-medium text-gray-700">{item.cliente}</span>
-                  <Badge variant="destructive" className="bg-red-100 text-red-700 border-red-200">
-                    {item.dias} dias
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-3 rounded-lg">
-            <h4 className="font-semibold text-sm text-yellow-700 mb-2 flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              AGUARDANDO AUTORIZAÇÃO
-            </h4>
-            <div className="space-y-2">
-              {indicadores.aguardandoAutorizacao.map((item, index) => (
-                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
-                  <span className="text-sm font-medium text-gray-700">{item.item}</span>
-                  <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
-                    {item.dias} dias
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Conversão por UF Chart */}
-      <Card className="shadow-lg xl:col-span-1">
-        <CardHeader>
-          <CardTitle>Conversão por UF</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={conversaoUFData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="uf" />
-              <YAxis />
-              <Tooltip formatter={(value) => [`${value}%`, 'Taxa de Conversão']} />
-              <Bar dataKey="conversao" fill="#0A2342" />
-            </BarChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      {/* Distribuição por Situação Chart */}
-      <Card className="shadow-lg xl:col-span-1">
-        <CardHeader>
-          <CardTitle>Distribuição por Situação</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={[
-                  { name: 'Ganha', value: 1, fill: '#22c55e' },
-                  { name: 'Em Triagem', value: 1, fill: '#3b82f6' },
-                  { name: 'Em Acompanhamento', value: 1, fill: '#f97316' },
-                  { name: 'Perdida', value: 1, fill: '#ef4444' }
-                ]}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-              />
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-    </div>
-  );
-
-  const renderAgenda = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {/* <AgendaComercial /> */} {/* Commented out AgendaComercial component for future use */}
-
-      <Card className="shadow-lg h-[600px] flex flex-col">
-        <CardHeader className="pb-4 flex-shrink-0">
-          <CardTitle className="flex items-center gap-2 text-biodina-blue text-lg">
-            <BarChart3 className="h-5 w-5" />
-            Indicadores Comerciais
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 px-4 flex-1 overflow-y-auto">
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-3 rounded-lg">
-            <h4 className="font-semibold text-sm text-blue-700 mb-2 flex items-center gap-2">
-              <Package className="h-4 w-4" />
-              POSIÇÃO DE ESTOQUE
-            </h4>
-            <div className="space-y-2">
-              {indicadores.posicaoEstoque.slice(0, 3).map((item, index) => (
-                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
-                  <span className="text-sm font-medium text-gray-700">{item.produto}</span>
-                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                    {item.quantidade} un.
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-3 rounded-lg">
-            <h4 className="font-semibold text-sm text-orange-700 mb-2 flex items-center gap-2">
-              <Truck className="h-4 w-4" />
-              IMPORTAÇÃO PREVISÃO
-            </h4>
-            <div className="space-y-2">
-              {indicadores.importacaoPrevisao.slice(0, 2).map((item, index) => (
-                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
-                  <span className="text-sm font-medium text-gray-700">{item.item}</span>
-                  <span className="text-xs text-orange-600 font-medium">{item.previsao}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-green-50 to-green-100 p-3 rounded-lg">
-            <h4 className="font-semibold text-sm text-green-700 mb-2 flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              PEDIDOS PROGRAMADOS
-            </h4>
-            <div className="space-y-2">
-              {indicadores.pedidosProgramados.slice(0, 2).map((item, index) => (
-                <div key={index} className="bg-white p-2 rounded-md shadow-sm">
-                  <div className="flex justify-between items-start">
-                    <span className="text-sm font-medium text-gray-700">{item.cliente}</span>
-                    <div className="text-right">
-                      <div className="text-sm font-bold text-green-600">{formatCurrency(item.valor)}</div>
-                      <div className="text-xs text-gray-500">{item.data}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-red-50 to-red-100 p-3 rounded-lg">
-            <h4 className="font-semibold text-sm text-red-700 mb-2 flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4" />
-              RESTRIÇÃO FINANCEIRA
-            </h4>
-            <div className="space-y-2">
-              {indicadores.restricaoFinanceira.map((item, index) => (
-                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
-                  <span className="text-sm font-medium text-gray-700">{item.cliente}</span>
-                  <Badge variant="destructive" className="bg-red-100 text-red-700 border-red-200">
-                    {item.dias} dias
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-3 rounded-lg">
-            <h4 className="font-semibold text-sm text-yellow-700 mb-2 flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              AGUARDANDO AUTORIZAÇÃO
-            </h4>
-            <div className="space-y-2">
-              {indicadores.aguardandoAutorizacao.map((item, index) => (
-                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
-                  <span className="text-sm font-medium text-gray-700">{item.item}</span>
-                  <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
-                    {item.dias} dias
-                  </Badge>
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+  const renderActiveModule = () => {
+    switch (activeModule) {
+      case 'vendas':
+        return renderVendasModule();
+      case 'pos-venda':
+        return renderPosVendaModule();
+      case 'emprestimos':
+        return renderEmprestimosModule();
+      default:
+        return renderVendasModule();
+    }
+  };
 
   return (
-    <SidebarLayout>
-      <div className="p-4 space-y-4 bg-gray-50 min-h-screen">
-        {activeModule === 'main' && (
-          <header className="mb-4">
-            <h1 className="text-2xl font-bold text-biodina-blue mb-1">Comercial</h1>
-            <p className="text-gray-600 text-sm">Gestão completa do processo comercial</p>
-          </header>
-        )}
-
-        {activeModule === 'main' && renderMainModules()}
-        {activeModule === 'vendas' && renderVendasModule()}
-        {activeModule === 'pos-venda' && !activeSubModule && renderPosVendaModules()}
-        {activeModule === 'pos-venda' && activeSubModule && renderSubModule()}
+    <div className="container mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Comercial</h1>
+          <p className="text-gray-600">Gerencie vendas, pós-venda e empréstimos</p>
+        </div>
       </div>
 
-      {showOportunidadeForm && (
-        <OportunidadeForm
-          oportunidade={editingOportunidade}
-          onClose={() => {
-            setShowOportunidadeForm(false);
-            setEditingOportunidade(undefined);
-          }}
-          onSave={handleSaveOportunidade}
-        />
-      )}
+      {/* Navigation Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card 
+          className={`cursor-pointer transition-all hover:shadow-lg ${
+            activeModule === 'vendas' ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+          }`}
+          onClick={() => setActiveModule('vendas')}
+        >
+          <CardHeader className="flex flex-row items-center space-y-0 pb-2">
+            <div className="flex items-center space-x-2">
+              <TrendingUp className="h-6 w-6 text-blue-600" />
+              <CardTitle className="text-lg font-medium">Vendas</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <CardDescription>
+              Gestão de oportunidades, pedidos e propostas comerciais
+            </CardDescription>
+            <div className="flex justify-between items-center mt-4">
+              <Badge variant="secondary">127 Oportunidades</Badge>
+            </div>
+          </CardContent>
+        </Card>
 
-      {showOportunidadeAvancadaForm && (
-        <OportunidadeAvancadaForm
-          isOpen={showOportunidadeAvancadaForm}
-          oportunidade={editingOportunidade}
-          onClose={() => {
-            setShowOportunidadeAvancadaForm(false);
-            setEditingOportunidade(undefined);
-          }}
-          onSave={(data) => {
-            if (data.status === 'convertida') {
-              handleLicitacaoConvertida(data);
-            }
-            handleSaveOportunidade(data);
-          }}
-        />
-      )}
+        <Card 
+          className={`cursor-pointer transition-all hover:shadow-lg ${
+            activeModule === 'pos-venda' ? 'ring-2 ring-green-500 bg-green-50' : ''
+          }`}
+          onClick={() => setActiveModule('pos-venda')}
+        >
+          <CardHeader className="flex flex-row items-center space-y-0 pb-2">
+            <div className="flex items-center space-x-2">
+              <UserCheck className="h-6 w-6 text-green-600" />
+              <CardTitle className="text-lg font-medium">Pós-Venda</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <CardDescription>
+              Acompanhamento de chamados e suporte aos clientes
+            </CardDescription>
+            <div className="flex justify-between items-center mt-4">
+              <Badge variant="secondary">23 Chamados Ativos</Badge>
+            </div>
+          </CardContent>
+        </Card>
 
-      {showContratacaoSimplesForm && (
-        <ContratacaoSimplesForm
-          isOpen={showContratacaoSimplesForm}
-          oportunidade={editingOportunidade}
-          onClose={() => {
-            setShowContratacaoSimplesForm(false);
-            setEditingOportunidade(undefined);
-          }}
-          onSave={handleSaveOportunidade}
-        />
-      )}
+        <Card 
+          className={`cursor-pointer transition-all hover:shadow-lg ${
+            activeModule === 'emprestimos' ? 'ring-2 ring-purple-500 bg-purple-50' : ''
+          }`}
+          onClick={() => setActiveModule('emprestimos')}
+        >
+          <CardHeader className="flex flex-row items-center space-y-0 pb-2">
+            <div className="flex items-center space-x-2">
+              <HandCoins className="h-6 w-6 text-purple-600" />
+              <CardTitle className="text-lg font-medium">Gestão de Empréstimos</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <CardDescription>
+              Controle de empréstimos de produtos e devoluções
+            </CardDescription>
+            <div className="flex justify-between items-center mt-4">
+              <Badge variant="secondary">Empréstimos Ativos</Badge>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-      {showImportacaoDiretaForm && (
-        <ImportacaoDiretaForm
-          isOpen={showImportacaoDiretaForm}
-          oportunidade={editingOportunidade}
-          onClose={() => {
-            setShowImportacaoDiretaForm(false);
-            setEditingOportunidade(undefined);
-          }}
-          onSave={handleSaveOportunidade}
-        />
-      )}
+      {/* Main Content */}
+      {renderActiveModule()}
 
-      {showPedidoModal && selectedOportunidade && (
-        <PedidoModal
-          isOpen={showPedidoModal}
-          oportunidade={selectedOportunidade}
-          onClose={() => {
-            setShowPedidoModal(false);
-            setSelectedOportunidade(undefined);
-          }}
-          onSave={(pedido) => {
-            console.log('Salvando pedido:', pedido);
-            setShowPedidoModal(false);
-            setSelectedOportunidade(undefined);
-          }}
-        />
-      )}
+      {/* Modals */}
+      <OportunidadeForm isOpen={showOportunidadeForm} onClose={handleCloseOportunidadeForm} />
+      <OportunidadeAvancadaForm isOpen={showOportunidadeAvancadaForm} onClose={handleCloseOportunidadeAvancadaForm} />
+      <ImportacaoDiretaForm
+        isOpen={showImportacaoDiretaForm}
+        onClose={handleCloseImportacaoDiretaForm}
+        onSave={(data) => {
+          console.log('Dados da Importação Direta:', data);
+        }}
+        oportunidade={selectedOportunidade}
+      />
+      <ContratacaoSimplesForm isOpen={showContratacaoSimplesForm} onClose={handleCloseContratacaoSimplesForm} />
+      <PedidoForm isOpen={showPedidoForm} onClose={handleClosePedidoForm} />
+      <AdicionarProdutoModal isOpen={showAdicionarProdutoModal} onClose={handleCloseAdicionarProdutoModal} produtos={mockProdutos} />
+      <FiltrosAvancados isOpen={showFiltrosAvancados} onClose={handleCloseFiltrosAvancados} />
+      <ApprovalModal isOpen={showApprovalModal} onClose={handleCloseApprovalModal} />
+      <TipoPropostaModal isOpen={showTipoPropostaModal} onClose={handleCloseTipoPropostaModal} />
 
-      {showPedidoForm && (
-        <PedidoForm
-          onClose={() => setShowPedidoForm(false)}
-          onSave={handleSavePedido}
-        />
-      )}
-    </SidebarLayout>
+      {/* Empréstimos Modals */}
+      <NovoEmprestimoModal
+        isOpen={showNovoEmprestimoModal}
+        onClose={() => setShowNovoEmprestimoModal(false)}
+      />
+
+      <DevolucaoModal
+        isOpen={showDevolucaoModal}
+        onClose={() => {
+          setShowDevolucaoModal(false);
+          setSelectedEmprestimo(null);
+        }}
+        emprestimo={selectedEmprestimo}
+      />
+    </div>
   );
 };
 
