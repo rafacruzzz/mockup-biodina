@@ -308,24 +308,6 @@ const Comercial = () => {
 
         {renderModuleContent()}
 
-        {/* Modais */}
-        <OportunidadeForm
-          isOpen={showOportunidadeForm}
-          onClose={handleOportunidadeFormClose}
-          onSave={handleOportunidadeSaved}
-          oportunidade={selectedOportunidade}
-        />
-
-        <OportunidadeAvancadaForm
-          isOpen={showOportunidadeAvancadaForm}
-          onClose={handleOportunidadeAvancadaFormClose}
-        />
-
-        <ContratacaoSimplesForm
-          isOpen={showContratacaoSimplesForm}
-          onClose={handleContratacaoSimplesFormClose}
-        />
-
         <ImportacaoDiretaForm
           isOpen={showImportacaoDiretaForm}
           onClose={handleImportacaoDiretaFormClose}
@@ -350,7 +332,7 @@ const Comercial = () => {
               <CardDescription>Comunicação interna da equipe comercial</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChatInterno />
+              <ChatInterno oportunidadeId="" />
             </CardContent>
           </Card>
         </div>

@@ -7,11 +7,12 @@ import { useEmprestimos } from '@/hooks/useEmprestimos';
 import EmprestimosTable from './EmprestimosTable';
 import NovoEmprestimoModal from './NovoEmprestimoModal';
 import RegistrarDevolucaoModal from './RegistrarDevolucaoModal';
+import type { EmprestimoResumo } from '@/types/emprestimo';
 
 const EmprestimosDashboard = () => {
   const [showNovoEmprestimo, setShowNovoEmprestimo] = useState(false);
   const [showDevolucao, setShowDevolucao] = useState(false);
-  const [selectedEmprestimo, setSelectedEmprestimo] = useState(null);
+  const [selectedEmprestimo, setSelectedEmprestimo] = useState<EmprestimoResumo | null>(null);
   
   const { data: emprestimos, isLoading } = useEmprestimos();
 
@@ -42,7 +43,7 @@ const EmprestimosDashboard = () => {
     saldoPendente: 0
   };
 
-  const handleRegistrarDevolucao = (emprestimo: any) => {
+  const handleRegistrarDevolucao = (emprestimo: EmprestimoResumo) => {
     setSelectedEmprestimo(emprestimo);
     setShowDevolucao(true);
   };

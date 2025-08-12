@@ -1,6 +1,40 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import type { EmprestimoResumo, Emprestimo, EmprestimoDevolucao } from '@/types/emprestimo';
+
+// Mock data for demonstration
+const mockEmprestimos: EmprestimoResumo[] = [
+  {
+    id: '1',
+    numero_processo: 'EMP-2024-0001',
+    cliente_cnpj: '12.345.678/0001-90',
+    cliente_nome: 'Empresa ABC Ltda',
+    ref_produto_emprestado: 'PROD-001',
+    desc_produto_emprestado: 'Equipamento médico portátil',
+    valor_emprestimo_dolar: 5000.00,
+    data_emprestimo: '2024-01-15',
+    total_retornado: 2500.00,
+    saldo: 2500.00,
+    status: 'Ativo',
+    created_at: '2024-01-15T10:00:00Z',
+    updated_at: '2024-01-15T10:00:00Z'
+  },
+  {
+    id: '2',
+    numero_processo: 'EMP-2024-0002',
+    cliente_cnpj: '98.765.432/0001-10',
+    cliente_nome: 'Clínica XYZ S.A.',
+    ref_produto_emprestado: 'PROD-002',
+    desc_produto_emprestado: 'Monitor cardíaco',
+    valor_emprestimo_dolar: 3000.00,
+    data_emprestimo: '2024-02-01',
+    total_retornado: 3000.00,
+    saldo: 0.00,
+    status: 'Quitado',
+    created_at: '2024-02-01T14:30:00Z',
+    updated_at: '2024-02-15T16:20:00Z'
+  }
+];
 
 // Tipos locais para evitar problemas com tipos auto-gerados
 interface EmprestimoInsert {
@@ -30,43 +64,42 @@ interface DevolucaoInsert {
 export const useEmprestimos = () => {
   const queryClient = useQueryClient();
 
-  // Buscar lista resumida de empréstimos
+  // Buscar lista resumida de empréstimos (usando mock data por enquanto)
   const { data, isLoading, error } = useQuery({
     queryKey: ['emprestimos'],
-    queryFn: async () => {
-      console.log('Buscando empréstimos...');
-      const { data, error } = await supabase
-        .from('emprestimos_resumo')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Erro ao buscar empréstimos:', error);
-        throw error;
-      }
-
-      console.log('Empréstimos encontrados:', data);
-      return data;
+    queryFn: async (): Promise<EmprestimoResumo[]> => {
+      console.log('Buscando empréstimos (mock data)...');
+      // Simular delay de API
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return mockEmprestimos;
     },
   });
 
   // Criar novo empréstimo
   const createMutation = useMutation({
-    mutationFn: async (emprestimo: EmprestimoInsert) => {
-      console.log('Criando empréstimo:', emprestimo);
-      const { data, error } = await supabase
-        .from('emprestimos')
-        .insert(emprestimo as any)
-        .select()
-        .single();
+    mutationFn: async (emprestimo: EmprestimoInsert): Promise<Emprestimo> => {
+      console.log('Criando empréstimo (mock):', emprestimo);
+      
+      // Simular criação
+      const novoEmprestimo: Emprestimo = {
+        id: Date.now().toString(),
+        numero_processo: `EMP-2024-${String(mockEmprestimos.length + 1).padStart(4, '0')}`,
+        ...emprestimo,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
 
-      if (error) {
-        console.error('Erro ao criar empréstimo:', error);
-        throw error;
-      }
-
-      console.log('Empréstimo criado:', data);
-      return data;
+      // Adicionar ao mock data
+      const novoResumo: EmprestimoResumo = {
+        ...novoEmprestimo,
+        total_retornado: 0,
+        saldo: emprestimo.valor_emprestimo_dolar,
+        status: 'Ativo'
+      };
+      
+      mockEmprestimos.push(novoResumo);
+      
+      return novoEmprestimo;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['emprestimos'] });
@@ -75,21 +108,26 @@ export const useEmprestimos = () => {
 
   // Criar devolução
   const createDevolucaoMutation = useMutation({
-    mutationFn: async (devolucao: DevolucaoInsert) => {
-      console.log('Criando devolução:', devolucao);
-      const { data, error } = await supabase
-        .from('emprestimos_devolucoes')
-        .insert(devolucao as any)
-        .select()
-        .single();
+    mutationFn: async (devolucao: DevolucaoInsert): Promise<EmprestimoDevolucao> => {
+      console.log('Criando devolução (mock):', devolucao);
+      
+      const novaDevolucao: EmprestimoDevolucao = {
+        id: Date.now().toString(),
+        ...devolucao,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
 
-      if (error) {
-        console.error('Erro ao criar devolução:', error);
-        throw error;
+      // Atualizar empréstimo correspondente no mock
+      const emprestimoIndex = mockEmprestimos.findIndex(emp => emp.id === devolucao.emprestimo_id);
+      if (emprestimoIndex !== -1) {
+        const emprestimo = mockEmprestimos[emprestimoIndex];
+        emprestimo.total_retornado += devolucao.valor_retornado_dolar;
+        emprestimo.saldo = emprestimo.valor_emprestimo_dolar - emprestimo.total_retornado;
+        emprestimo.status = emprestimo.saldo <= 0 ? 'Quitado' : 'Ativo';
       }
 
-      console.log('Devolução criada:', data);
-      return data;
+      return novaDevolucao;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['emprestimos'] });
@@ -97,18 +135,9 @@ export const useEmprestimos = () => {
   });
 
   // Buscar empréstimos por ID de importação direta
-  const getEmprestimosByImportacao = async (importacaoId: string) => {
-    const { data, error } = await supabase
-      .from('emprestimos_resumo')
-      .select('*')
-      .eq('id_importacao_direta', importacaoId);
-
-    if (error) {
-      console.error('Erro ao buscar empréstimos por importação:', error);
-      throw error;
-    }
-
-    return data;
+  const getEmprestimosByImportacao = async (importacaoId: string): Promise<EmprestimoResumo[]> => {
+    console.log('Buscando empréstimos por importação (mock):', importacaoId);
+    return mockEmprestimos.filter(emp => emp.id_importacao_direta === importacaoId);
   };
 
   return {

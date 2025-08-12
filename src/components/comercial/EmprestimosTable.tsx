@@ -1,15 +1,15 @@
-
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ArrowLeft, Eye, Package } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import type { EmprestimoResumo } from '@/types/emprestimo';
 
 interface EmprestimosTableProps {
-  emprestimos: any[];
+  emprestimos: EmprestimoResumo[];
   isLoading: boolean;
-  onRegistrarDevolucao: (emprestimo: any) => void;
+  onRegistrarDevolucao: (emprestimo: EmprestimoResumo) => void;
 }
 
 const EmprestimosTable = ({ emprestimos, isLoading, onRegistrarDevolucao }: EmprestimosTableProps) => {

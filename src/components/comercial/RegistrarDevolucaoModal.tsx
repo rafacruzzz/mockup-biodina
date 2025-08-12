@@ -10,15 +10,16 @@ import { useEmprestimos } from '@/hooks/useEmprestimos';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import type { EmprestimoResumo } from '@/types/emprestimo';
 
 interface RegistrarDevolucaoModalProps {
   isOpen: boolean;
   onClose: () => void;
-  emprestimo: any;
+  emprestimo: EmprestimoResumo | null;
 }
 
 const RegistrarDevolucaoModal = ({ isOpen, onClose, emprestimo }: RegistrarDevolucaoModalProps) => {
-  const { createDevolucao, isCreating } = useEmprestimos();
+  const { createDevolucao, isCreatingDevolucao } = useEmprestimos();
   
   const [formData, setFormData] = useState({
     danfe_retorno: '',
@@ -210,9 +211,9 @@ const RegistrarDevolucaoModal = ({ isOpen, onClose, emprestimo }: RegistrarDevol
             <Button 
               type="submit" 
               className="bg-green-600 hover:bg-green-700"
-              disabled={isCreating}
+              disabled={isCreatingDevolucao}
             >
-              {isCreating ? 'Registrando...' : 'Registrar Devolução'}
+              {isCreatingDevolucao ? 'Registrando...' : 'Registrar Devolução'}
             </Button>
           </div>
         </form>
