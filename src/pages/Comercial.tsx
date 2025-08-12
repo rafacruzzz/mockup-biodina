@@ -160,7 +160,7 @@ const Comercial = () => {
             <Button onClick={handleOpenOportunidadeForm} className="bg-blue-600 hover:bg-blue-700">
               Nova Oportunidade
             </Button>
-            <Button onClick={handleOpenImportacaoDiretaForm} className="bg-green-600 hover:bg-green-700">
+            <Button onClick={() => handleOpenImportacaoDiretaForm()} className="bg-green-600 hover:bg-green-700">
               Nova Importação Direta
             </Button>
           </div>
@@ -333,11 +333,15 @@ const Comercial = () => {
 
       {/* Modals - Only show minimal required props to fix build errors */}
       {showOportunidadeForm && (
-        <OportunidadeForm onClose={handleCloseOportunidadeForm} />
+        <OportunidadeForm 
+          onClose={handleCloseOportunidadeForm}
+          onSave={(data) => console.log('Oportunidade:', data)}
+        />
       )}
       
       {showOportunidadeAvancadaForm && (
         <OportunidadeAvancadaForm 
+          isOpen={showOportunidadeAvancadaForm}
           onClose={handleCloseOportunidadeAvancadaForm}
           onSave={(data) => console.log('Oportunidade avançada:', data)}
         />
@@ -354,17 +358,25 @@ const Comercial = () => {
       
       {showContratacaoSimplesForm && (
         <ContratacaoSimplesForm 
+          isOpen={showContratacaoSimplesForm}
           onClose={handleCloseContratacaoSimplesForm}
           onSave={(data) => console.log('Contratação simples:', data)}
         />
       )}
       
       {showPedidoForm && (
-        <PedidoForm onClose={handleClosePedidoForm} />
+        <PedidoForm 
+          onClose={handleClosePedidoForm}
+          onSave={(data) => console.log('Pedido:', data)}
+        />
       )}
       
       {showAdicionarProdutoModal && (
-        <AdicionarProdutoModal onClose={handleCloseAdicionarProdutoModal} />
+        <AdicionarProdutoModal 
+          isOpen={showAdicionarProdutoModal}
+          onClose={handleCloseAdicionarProdutoModal}
+          onAdicionarProduto={(produto) => console.log('Produto adicionado:', produto)}
+        />
       )}
       
       {showFiltrosAvancados && (
@@ -373,6 +385,7 @@ const Comercial = () => {
       
       {showApprovalModal && (
         <ApprovalModal 
+          isOpen={showApprovalModal}
           onClose={handleCloseApprovalModal}
           onApprove={() => console.log('Approved')}
           oportunidadeId="mock-id"
@@ -381,6 +394,7 @@ const Comercial = () => {
       
       {showTipoPropostaModal && (
         <TipoPropostaModal 
+          isOpen={showTipoPropostaModal}
           onClose={handleCloseTipoPropostaModal}
           onContinue={(tipo) => console.log('Tipo proposta:', tipo)}
         />
