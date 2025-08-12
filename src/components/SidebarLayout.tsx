@@ -31,6 +31,7 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
     { name: "Contabilidade", path: "/contabilidade", icon: <Calculator size={20} /> },
     { name: "RH", path: "/rh", icon: <UserCheck size={20} /> },
     { name: "TI", path: "/ti", icon: <Cpu size={20} /> },
+    { name: "Personalizar Navegação", path: "/personalizar-navegacao", icon: <Settings size={20} /> },
   ];
 
   return (
