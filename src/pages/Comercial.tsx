@@ -10,7 +10,7 @@ import ImportacaoDiretaForm from '@/components/comercial/ImportacaoDiretaForm';
 import ContratacaoSimplesForm from '@/components/comercial/ContratacaoSimplesForm';
 import PedidoForm from '@/components/comercial/PedidoForm';
 import AdicionarProdutoModal from '@/components/comercial/AdicionarProdutoModal';
-import FiltrosAvancados from '@/components/comercial/FiltrosAvancados';
+import FiltrosAvancados, { FiltrosState } from '@/components/comercial/FiltrosAvancados';
 import ApprovalModal from '@/components/comercial/ApprovalModal';
 import TipoPropostaModal from '@/components/comercial/TipoPropostaModal';
 import EmprestimosTable from '@/components/comercial/emprestimos/EmprestimosTable';
@@ -68,6 +68,14 @@ const Comercial = () => {
   const [showNovoEmprestimoModal, setShowNovoEmprestimoModal] = useState(false);
   const [showDevolucaoModal, setShowDevolucaoModal] = useState(false);
   const [selectedEmprestimo, setSelectedEmprestimo] = useState<EmprestimoResumo | null>(null);
+
+  // State for filtros
+  const [filtrosAtivos, setFiltrosAtivos] = useState<FiltrosState>({
+    cnpjs: [],
+    tipoEstoque: [],
+    validadeMinima: '',
+    categoria: ''
+  });
 
   const handleOpenOportunidadeForm = () => {
     setShowOportunidadeForm(true);
@@ -146,6 +154,10 @@ const Comercial = () => {
   const handleRegistrarDevolucao = (emprestimo: EmprestimoResumo) => {
     setSelectedEmprestimo(emprestimo);
     setShowDevolucaoModal(true);
+  };
+
+  const handleFiltrosChange = (novosFiltros: FiltrosState) => {
+    setFiltrosAtivos(novosFiltros);
   };
 
   const renderVendasModule = () => {
@@ -331,7 +343,7 @@ const Comercial = () => {
       {/* Main Content */}
       {renderActiveModule()}
 
-      {/* Modals - Only show minimal required props to fix build errors */}
+      {/* Modals */}
       {showOportunidadeForm && (
         <OportunidadeForm 
           onClose={handleCloseOportunidadeForm}
@@ -380,7 +392,10 @@ const Comercial = () => {
       )}
       
       {showFiltrosAvancados && (
-        <FiltrosAvancados />
+        <FiltrosAvancados 
+          onFiltrosChange={handleFiltrosChange}
+          filtrosAtivos={filtrosAtivos}
+        />
       )}
       
       {showApprovalModal && (
