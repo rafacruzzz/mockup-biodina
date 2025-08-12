@@ -36,9 +36,23 @@ export const useEmprestimos = () => {
   // Mutation to create new empréstimo
   const createEmprestimoMutation = useMutation({
     mutationFn: async (data: NovoEmprestimoData): Promise<Emprestimo> => {
+      // Create insert data without numero_processo as it's auto-generated
+      const insertData = {
+        cliente_cnpj: data.cliente_cnpj,
+        cliente_nome: data.cliente_nome,
+        danfe_emprestimo: data.danfe_emprestimo,
+        ref_produto_emprestado: data.ref_produto_emprestado,
+        desc_produto_emprestado: data.desc_produto_emprestado,
+        valor_emprestimo_dolar: data.valor_emprestimo_dolar,
+        data_emprestimo: data.data_emprestimo,
+        data_saida: data.data_saida,
+        id_importacao_direta: data.id_importacao_direta,
+        observacoes: data.observacoes
+      };
+
       const { data: result, error } = await supabase
         .from('emprestimos')
-        .insert(data)
+        .insert(insertData)
         .select()
         .single();
 

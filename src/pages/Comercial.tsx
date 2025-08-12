@@ -380,7 +380,7 @@ const Comercial = () => {
       )}
       
       {showFiltrosAvancados && (
-        <FiltrosAvancados onClose={handleCloseFiltrosAvancados} />
+        <FiltrosAvancados />
       )}
       
       {showApprovalModal && (
