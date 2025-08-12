@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -14,7 +13,7 @@ import {
 import {
   Users, BarChart2, FileText, Database, Briefcase, 
   Package, ShoppingCart, DollarSign, Calculator, 
-  UserCheck, Cpu, GripVertical, Settings, Pencil
+  UserCheck, Cpu, GripVertical, Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,7 +36,7 @@ const modules: Module[] = [
   { id: 'bi', name: 'BI', icon: BarChart2 },
   { id: 'cadastro', name: 'Cadastro', icon: FileText },
   { id: 'administrativo', name: 'Administrativo', icon: Database },
-  { id: 'comercial', name: 'Vendas', icon: Briefcase },
+  { id: 'comercial', name: 'Comercial', icon: Briefcase },
   { id: 'financeiro', name: 'Financeiro', icon: DollarSign },
   { id: 'estoque', name: 'Estoque', icon: Package },
   { id: 'compras', name: 'Compras', icon: ShoppingCart },
@@ -107,13 +106,12 @@ const DroppableModule = ({
       ref={setNodeRef}
       onClick={onClick}
       className={cn(
-        "group flex items-center gap-3 p-4 rounded-lg cursor-pointer transition-all",
+        "flex items-center gap-3 p-4 rounded-lg cursor-pointer transition-all",
         isSelected && "bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md",
         !isSelected && "hover:bg-gray-50 text-gray-700",
         isOver && "border-2 border-dashed border-biodina-gold ring-2 ring-biodina-gold/20"
       )}
     >
-      <GripVertical className="h-4 w-4 text-gray-400 cursor-grab" />
       <div className={cn(
         "p-2 rounded-lg",
         isSelected ? 'bg-white/20' : 'bg-biodina-gold/10'
@@ -124,12 +122,6 @@ const DroppableModule = ({
         )} />
       </div>
       <span className="font-medium flex-1">{module.name}</span>
-      <Pencil className={cn(
-        "h-4 w-4 transition-opacity",
-        module.id === 'comercial' 
-          ? "opacity-100 text-gray-500" 
-          : "opacity-0 group-hover:opacity-100 text-gray-400"
-      )} />
     </div>
   );
 };
@@ -224,9 +216,7 @@ const PersonalizarNavegacaoContent = () => {
           {/* Right Column - Sub-modules */}
           <Card>
             <CardHeader>
-              <CardTitle>
-                {selectedModule === 'comercial' ? 'Abas do Módulo Vendas' : 'Abas do Módulo Selecionado'}
-              </CardTitle>
+              <CardTitle>Abas do Módulo Selecionado</CardTitle>
             </CardHeader>
             <CardContent>
               {selectedModule === 'comercial' ? (
