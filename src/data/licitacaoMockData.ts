@@ -140,14 +140,14 @@ export const licitacoesGanhasDetalhadas = [
         cliente: 'PREFEITURA MUNICIPAL DE SÃO PAULO',
         vendedor: 'Carlos Silva',
         dataVenda: '2024-03-16',
-        status: 'aprovado',
+        status: 'aprovado' as const,
         produtos: [
           {
             id: 1,
             codigo: 'SIE-RP500',
             descricao: 'Analisador Bioquímico Siemens RAPIDPoint 500',
             quantidade: 1,
-            unidade: 'UNIDADE',
+            unidade: 'UNIDADE' as const,
             precoUnitario: 145000.00,
             desconto: 0,
             precoFinal: 145000.00,
@@ -232,14 +232,14 @@ export const licitacoesGanhasDetalhadas = [
         cliente: 'HOSPITAL UNIVERSITÁRIO FEDERAL',
         vendedor: 'Maria Oliveira',
         dataVenda: '2024-04-21',
-        status: 'enviado',
+        status: 'enviado' as const,
         produtos: [
           {
             id: 2,
             codigo: 'ABT-KIT-001',
             descricao: 'Kit Diagnóstico Abbott i-STAT - Painel Básico',
             quantidade: 50,
-            unidade: 'KIT',
+            unidade: 'KIT' as const,
             precoUnitario: 1780.00,
             desconto: 0,
             precoFinal: 1780.00,
