@@ -13,7 +13,7 @@ import PedidoModal from "@/components/comercial/PedidoModal";
 import PedidoForm from "@/components/comercial/PedidoForm";
 import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
 import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
-import AgendaComercial from "@/components/comercial/AgendaComercial";
+// import AgendaComercial from "@/components/comercial/AgendaComercial"; // Commented out for future use
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
@@ -29,7 +29,7 @@ import {
 const Comercial = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'pos-venda'>('main');
   const [activeSubModule, setActiveSubModule] = useState<'assessoria' | 'departamento-tecnico' | null>(null);
-  const [activeTab, setActiveTab] = useState('agenda');
+  const [activeTab, setActiveTab] = useState('indicadores');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [showOportunidadeForm, setShowOportunidadeForm] = useState(false);
@@ -357,7 +357,6 @@ const Comercial = () => {
 
   const getOportunidadesPorModalidade = (modalidade: string) => {
     return oportunidades.filter(oportunidade => {
-      // Compatibilidade: comercial_administrativo = contratacao_simples
       const oportunidadeModalidade = oportunidade.modalidade === 'comercial_administrativo' 
         ? 'contratacao_simples' 
         : oportunidade.modalidade;
@@ -532,21 +531,19 @@ const Comercial = () => {
 
   const renderVendasModule = () => {
     const tabs = [
-      { id: 'agenda', label: 'Agenda', icon: Calendar },
+      { id: 'indicadores', label: 'Indicadores Comerciais e Análise de Conversão', icon: BarChart3 },
       { id: 'licitacao', label: 'Licitação', icon: Gavel },
       { id: 'contratacao', label: 'Contratação', icon: Building2 },
       { id: 'importacao', label: 'Importação Direta', icon: Globe },
-      { id: 'analise', label: 'Análise de Conversão', icon: BarChart3 },
     ];
 
     const renderContent = () => {
       switch (activeTab) {
-        case 'agenda': return renderAgenda();
+        case 'indicadores': return renderIndicadoresEAnalise();
         case 'licitacao': return renderOportunidadesPorModalidade('licitacao');
         case 'contratacao': return renderOportunidadesPorModalidade('contratacao_simples');
         case 'importacao': return renderOportunidadesPorModalidade('importacao_direta');
-        case 'analise': return renderAnaliseConversao();
-        default: return renderAgenda();
+        default: return renderIndicadoresEAnalise();
       }
     };
 
@@ -726,11 +723,10 @@ const Comercial = () => {
     );
   };
 
-  const renderAgenda = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <AgendaComercial />
-
-      <Card className="shadow-lg h-[600px] flex flex-col">
+  const renderIndicadoresEAnalise = () => (
+    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      {/* Indicadores Comerciais Card */}
+      <Card className="shadow-lg h-[600px] flex flex-col xl:col-span-1">
         <CardHeader className="pb-4 flex-shrink-0">
           <CardTitle className="flex items-center gap-2 text-biodina-blue text-lg">
             <BarChart3 className="h-5 w-5" />
@@ -825,12 +821,9 @@ const Comercial = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
 
-  const renderAnaliseConversao = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="shadow-lg">
+      {/* Conversão por UF Chart */}
+      <Card className="shadow-lg xl:col-span-1">
         <CardHeader>
           <CardTitle>Conversão por UF</CardTitle>
         </CardHeader>
@@ -847,7 +840,8 @@ const Comercial = () => {
         </CardContent>
       </Card>
 
-      <Card className="shadow-lg">
+      {/* Distribuição por Situação Chart */}
+      <Card className="shadow-lg xl:col-span-1">
         <CardHeader>
           <CardTitle>Distribuição por Situação</CardTitle>
         </CardHeader>
@@ -871,6 +865,108 @@ const Comercial = () => {
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const renderAgenda = () => (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      {/* <AgendaComercial /> */} {/* Commented out AgendaComercial component for future use */}
+
+      <Card className="shadow-lg h-[600px] flex flex-col">
+        <CardHeader className="pb-4 flex-shrink-0">
+          <CardTitle className="flex items-center gap-2 text-biodina-blue text-lg">
+            <BarChart3 className="h-5 w-5" />
+            Indicadores Comerciais
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 px-4 flex-1 overflow-y-auto">
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-3 rounded-lg">
+            <h4 className="font-semibold text-sm text-blue-700 mb-2 flex items-center gap-2">
+              <Package className="h-4 w-4" />
+              POSIÇÃO DE ESTOQUE
+            </h4>
+            <div className="space-y-2">
+              {indicadores.posicaoEstoque.slice(0, 3).map((item, index) => (
+                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
+                  <span className="text-sm font-medium text-gray-700">{item.produto}</span>
+                  <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                    {item.quantidade} un.
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-3 rounded-lg">
+            <h4 className="font-semibold text-sm text-orange-700 mb-2 flex items-center gap-2">
+              <Truck className="h-4 w-4" />
+              IMPORTAÇÃO PREVISÃO
+            </h4>
+            <div className="space-y-2">
+              {indicadores.importacaoPrevisao.slice(0, 2).map((item, index) => (
+                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
+                  <span className="text-sm font-medium text-gray-700">{item.item}</span>
+                  <span className="text-xs text-orange-600 font-medium">{item.previsao}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-green-50 to-green-100 p-3 rounded-lg">
+            <h4 className="font-semibold text-sm text-green-700 mb-2 flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              PEDIDOS PROGRAMADOS
+            </h4>
+            <div className="space-y-2">
+              {indicadores.pedidosProgramados.slice(0, 2).map((item, index) => (
+                <div key={index} className="bg-white p-2 rounded-md shadow-sm">
+                  <div className="flex justify-between items-start">
+                    <span className="text-sm font-medium text-gray-700">{item.cliente}</span>
+                    <div className="text-right">
+                      <div className="text-sm font-bold text-green-600">{formatCurrency(item.valor)}</div>
+                      <div className="text-xs text-gray-500">{item.data}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-red-50 to-red-100 p-3 rounded-lg">
+            <h4 className="font-semibold text-sm text-red-700 mb-2 flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" />
+              RESTRIÇÃO FINANCEIRA
+            </h4>
+            <div className="space-y-2">
+              {indicadores.restricaoFinanceira.map((item, index) => (
+                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
+                  <span className="text-sm font-medium text-gray-700">{item.cliente}</span>
+                  <Badge variant="destructive" className="bg-red-100 text-red-700 border-red-200">
+                    {item.dias} dias
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-3 rounded-lg">
+            <h4 className="font-semibold text-sm text-yellow-700 mb-2 flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              AGUARDANDO AUTORIZAÇÃO
+            </h4>
+            <div className="space-y-2">
+              {indicadores.aguardandoAutorizacao.map((item, index) => (
+                <div key={index} className="flex justify-between items-center bg-white p-2 rounded-md shadow-sm">
+                  <span className="text-sm font-medium text-gray-700">{item.item}</span>
+                  <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">
+                    {item.dias} dias
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
