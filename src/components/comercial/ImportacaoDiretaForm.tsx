@@ -302,9 +302,6 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
         <ComercialTabs
           activeModule={activeToolTab}
           onModuleChange={setActiveToolTab}
-          formData={formData}
-          onInputChange={handleInputChange}
-          oportunidade={oportunidade}
         />
       );
     }
