@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -1109,79 +1108,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     </div>
   );
 
-  const renderPedidos = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Pedidos da Oportunidade</h3>
-        {canShowPedidos() && (
-          <Button 
-            type="button"
-            className="bg-biodina-gold hover:bg-biodina-gold/90"
-            onClick={() => setShowPedidoForm(true)}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Adicionar novos pedidos
-          </Button>
-        )}
-      </div>
-
-      {!canShowPedidos() && (
-        <div className="text-center text-gray-500 py-8">
-          <p>Pedidos disponíveis apenas para oportunidades ganhas</p>
-        </div>
-      )}
-
-      {canShowPedidos() && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Resumo de Pedidos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Código</TableHead>
-                  <TableHead>Dt. Gerado</TableHead>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead>Situação</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pedidos.map((pedido) => (
-                  <TableRow key={pedido.id}>
-                    <TableCell className="font-medium">{pedido.codigo}</TableCell>
-                    <TableCell>{pedido.dataGeracao}</TableCell>
-                    <TableCell>{pedido.cliente}</TableCell>
-                    <TableCell>
-                      <Badge className="bg-blue-500 text-white">
-                        {pedido.situacao}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{formatCurrency(pedido.valor)}</TableCell>
-                    <TableCell>
-                      <Button size="sm" variant="outline">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {pedidos.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center text-gray-500 py-4">
-                      Nenhum pedido cadastrado
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
-
   const renderDocumentos = () => (
     <div className="space-y-6">
       <Card>
@@ -1245,11 +1171,10 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </DialogHeader>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
               <TabsTrigger value="analise-tecnica">Análise Técnica</TabsTrigger>
               <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
-              <TabsTrigger value="pedidos" disabled={!canShowPedidos()}>Pedidos</TabsTrigger>
               <TabsTrigger value="documentos">Documentos</TabsTrigger>
             </TabsList>
 
@@ -1263,10 +1188,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
             <TabsContent value="historico" className="mt-6">
               {renderHistorico()}
-            </TabsContent>
-
-            <TabsContent value="pedidos" className="mt-6">
-              {renderPedidos()}
             </TabsContent>
 
             <TabsContent value="documentos" className="mt-6">
