@@ -1,5 +1,6 @@
+
 import { Link } from "react-router-dom";
-import { ShoppingCart, Users, TrendingUp, DollarSign, FileText, Package } from "lucide-react";
+import { ShoppingCart, Users, TrendingUp, DollarSign, FileText, Package, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -39,6 +40,13 @@ const Index = () => {
       icon: FileText,
       href: "/bi-geral",
       color: "bg-indigo-500"
+    },
+    {
+      title: "Personalizar Navegação",
+      description: "Configure e organize os módulos do sistema",
+      icon: Settings,
+      href: "/personalizar-navegacao",
+      color: "bg-gray-600"
     }
   ];
 

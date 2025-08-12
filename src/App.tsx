@@ -17,6 +17,7 @@ import Financeiro from "./pages/Financeiro";
 import RH from "./pages/RH";
 import EditarPerfil from "./pages/EditarPerfil";
 import CandidaturaPublica from "./pages/CandidaturaPublica";
+import PersonalizarNavegacao from "./pages/PersonalizarNavegacao";
 import NotFound from "./pages/NotFound";
 
 // Create QueryClient instance outside of component to avoid recreation
@@ -49,6 +50,7 @@ const App: React.FC = () => {
               <Route path="/financeiro" element={<Financeiro />} />
               <Route path="/rh" element={<RH />} />
               <Route path="/editar-perfil" element={<EditarPerfil />} />
+              <Route path="/personalizar-navegacao" element={<PersonalizarNavegacao />} />
               {/* Rota pública para candidatura */}
               <Route path="/candidatura/:linkId" element={<CandidaturaPublica />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
