@@ -14,12 +14,20 @@ import { EmprestimosDashboard } from "@/components/comercial/EmprestimosDashboar
 const Comercial = () => {
   const [activeModule, setActiveModule] = useState<string>("oportunidades");
 
+  const handleSave = (data: any) => {
+    console.log("Dados salvos:", data);
+  };
+
+  const handleClose = () => {
+    console.log("Modal fechado");
+  };
+
   const renderModuleContent = () => {
     switch (activeModule) {
       case "oportunidades":
-        return <OportunidadeForm />;
+        return <OportunidadeForm onClose={handleClose} onSave={handleSave} />;
       case "vendas":
-        return <PedidoForm />;
+        return <PedidoForm onClose={handleClose} onSave={handleSave} />;
       case "pos-venda":
         return <AgendaComercial />;
       case "emprestimos":
@@ -27,15 +35,15 @@ const Comercial = () => {
       case "agenda":
         return <AgendaComercial />;
       case "chat":
-        return <ChatInterno />;
+        return <ChatInterno oportunidadeId="1" />;
       case "chamados":
-        return <ChamadosTab />;
+        return <ChamadosTab chamados={[]} onAdicionarChamado={handleSave} />;
       case "importacao-direta":
-        return <ImportacaoDiretaForm />;
+        return <ImportacaoDiretaForm isOpen={true} onClose={handleClose} onSave={handleSave} />;
       case "contratacao-simples":
-        return <ContratacaoSimplesForm />;
+        return <ContratacaoSimplesForm isOpen={true} onClose={handleClose} onSave={handleSave} />;
       default:
-        return <OportunidadeForm />;
+        return <OportunidadeForm onClose={handleClose} onSave={handleSave} />;
     }
   };
 

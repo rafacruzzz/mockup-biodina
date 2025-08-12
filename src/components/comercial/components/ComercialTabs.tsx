@@ -9,7 +9,7 @@ import {
   Calendar, 
   MessageSquare, 
   Phone,
-  FileImport,
+  Import,
   FileCheck
 } from 'lucide-react';
 
@@ -58,7 +58,7 @@ const ComercialTabs = ({ activeModule, onModuleChange }: ComercialTabsProps) => 
     {
       id: "importacao-direta",
       label: "Importação Direta",
-      icon: FileImport
+      icon: Import
     },
     {
       id: "contratacao-simples", 
