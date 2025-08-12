@@ -12,7 +12,6 @@ interface ContentHeaderProps {
   buttonText?: string;
   showExcelButton?: boolean;
   onExcelClick?: () => void;
-  extraActions?: React.ReactNode;
 }
 
 const ContentHeader = ({ 
@@ -23,8 +22,7 @@ const ContentHeader = ({
   onNewRecord,
   buttonText = "Novo Registro",
   showExcelButton = false,
-  onExcelClick,
-  extraActions
+  onExcelClick
 }: ContentHeaderProps) => {
   return (
     <div className="bg-white border-b border-gray-200/80 p-6">
@@ -34,7 +32,6 @@ const ContentHeader = ({
           <p className="text-gray-600">{description}</p>
         </div>
         <div className="flex gap-3">
-          {extraActions}
           {showExcelButton && (
             <Button 
               onClick={onExcelClick}
