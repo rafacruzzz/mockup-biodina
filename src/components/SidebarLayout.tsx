@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { 
@@ -11,29 +10,73 @@ import { cn } from "@/lib/utils";
 import UserProfileMenu from "@/components/UserProfileMenu";
 import FloatingChat from "@/components/chat/FloatingChat";
 
-interface SidebarLayoutProps {
-  children: React.ReactNode;
+interface NavOverrides {
+  order?: string[];
+  labels?: Record<string, string>;
 }
 
-const SidebarLayout = ({ children }: SidebarLayoutProps) => {
+interface SidebarLayoutProps {
+  children: React.ReactNode;
+  navOverrides?: NavOverrides;
+}
+
+const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
 
-  const menuItems = [
-    { name: "Aplicativos", path: "/aplicativos", icon: <Home size={20} /> },
-    { name: "Pessoal", path: "/pessoal", icon: <Users size={20} /> },
-    { name: "BI", path: "/bi-geral", icon: <BarChart2 size={20} /> },
-    { name: "Cadastro", path: "/cadastro", icon: <FileText size={20} /> },
-    { name: "Administrativo", path: "/controladoria", icon: <Database size={20} /> },
-    { name: "Comercial", path: "/comercial", icon: <Briefcase size={20} /> },
-    { name: "Estoque", path: "/estoque", icon: <Package size={20} /> },
-    { name: "Compras", path: "/compras", icon: <ShoppingCart size={20} /> },
-    { name: "Financeiro", path: "/financeiro", icon: <DollarSign size={20} /> },
-    { name: "Contabilidade", path: "/contabilidade", icon: <Calculator size={20} /> },
-    { name: "RH", path: "/rh", icon: <UserCheck size={20} /> },
-    { name: "TI", path: "/ti", icon: <Cpu size={20} /> },
-    { name: "Personalizar Navegação", path: "/personalizar-navegacao", icon: <Settings size={20} /> },
+  const defaultMenuItems = [
+    { name: "Aplicativos", path: "/aplicativos", icon: <Home size={20} />, id: "aplicativos" },
+    { name: "Pessoal", path: "/pessoal", icon: <Users size={20} />, id: "pessoal" },
+    { name: "BI", path: "/bi-geral", icon: <BarChart2 size={20} />, id: "bi" },
+    { name: "Cadastro", path: "/cadastro", icon: <FileText size={20} />, id: "cadastro" },
+    { name: "Administrativo", path: "/controladoria", icon: <Database size={20} />, id: "administrativo" },
+    { name: "Comercial", path: "/comercial", icon: <Briefcase size={20} />, id: "comercial" },
+    { name: "Estoque", path: "/estoque", icon: <Package size={20} />, id: "estoque" },
+    { name: "Compras", path: "/compras", icon: <ShoppingCart size={20} />, id: "compras" },
+    { name: "Financeiro", path: "/financeiro", icon: <DollarSign size={20} />, id: "financeiro" },
+    { name: "Contabilidade", path: "/contabilidade", icon: <Calculator size={20} />, id: "contabilidade" },
+    { name: "RH", path: "/rh", icon: <UserCheck size={20} />, id: "rh" },
+    { name: "TI", path: "/ti", icon: <Cpu size={20} />, id: "ti" },
+    { name: "Personalizar Navegação", path: "/personalizar-navegacao", icon: <Settings size={20} />, id: "personalizar-navegacao" },
   ];
+
+  // Apply navigation overrides if provided
+  const getMenuItems = () => {
+    if (!navOverrides) return defaultMenuItems;
+
+    // Keep "Aplicativos" at the top and "Personalizar Navegação" at the bottom
+    const aplicativos = defaultMenuItems.find(item => item.id === "aplicativos");
+    const personalizar = defaultMenuItems.find(item => item.id === "personalizar-navegacao");
+    
+    // Get the module items (excluding fixed items)
+    const moduleItems = defaultMenuItems.filter(item => 
+      item.id !== "aplicativos" && item.id !== "personalizar-navegacao"
+    );
+
+    // Reorder according to navOverrides.order if provided
+    let orderedModuleItems = moduleItems;
+    if (navOverrides.order) {
+      orderedModuleItems = navOverrides.order
+        .map(id => moduleItems.find(item => item.id === id))
+        .filter(Boolean) as typeof moduleItems;
+    }
+
+    // Apply label overrides if provided
+    if (navOverrides.labels) {
+      orderedModuleItems = orderedModuleItems.map(item => ({
+        ...item,
+        name: navOverrides.labels![item.id] || item.name
+      }));
+    }
+
+    return [
+      aplicativos!,
+      ...orderedModuleItems,
+      personalizar!
+    ];
+  };
+
+  const menuItems = getMenuItems();
 
   return (
     <div className="flex h-screen bg-gray-50/50">
