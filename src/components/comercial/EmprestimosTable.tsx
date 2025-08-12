@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Plus, Download } from "lucide-react";
+import NovoEmprestimoModal from "./NovoEmprestimoModal";
 
 interface Emprestimo {
   numeroProcesso: string;
@@ -32,6 +32,7 @@ const EmprestimosTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [clienteFilter, setClienteFilter] = useState('todos');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Dados mock de empréstimos
   const emprestimos: Emprestimo[] = [
@@ -164,7 +165,10 @@ const EmprestimosTable = () => {
             <Download className="h-4 w-4 mr-2" />
             Exportar
           </Button>
-          <Button className="bg-biodina-gold hover:bg-biodina-gold/90">
+          <Button 
+            className="bg-biodina-gold hover:bg-biodina-gold/90"
+            onClick={() => setIsModalOpen(true)}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Novo Empréstimo
           </Button>
@@ -305,6 +309,11 @@ const EmprestimosTable = () => {
           </div>
         </CardContent>
       </Card>
+
+      <NovoEmprestimoModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };
