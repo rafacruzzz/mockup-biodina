@@ -23,6 +23,8 @@ const Comercial = () => {
   };
 
   const renderModuleContent = () => {
+    console.log("Renderizando módulo:", activeModule);
+    
     switch (activeModule) {
       case "oportunidades":
         return <OportunidadeForm onClose={handleClose} onSave={handleSave} />;
@@ -31,6 +33,7 @@ const Comercial = () => {
       case "pos-venda":
         return <AgendaComercial />;
       case "emprestimos":
+        console.log("Renderizando EmprestimosDashboard");
         return <EmprestimosDashboard />;
       case "agenda":
         return <AgendaComercial />;
@@ -43,6 +46,7 @@ const Comercial = () => {
       case "contratacao-simples":
         return <ContratacaoSimplesForm isOpen={true} onClose={handleClose} onSave={handleSave} />;
       default:
+        console.log("Módulo padrão: oportunidades");
         return <OportunidadeForm onClose={handleClose} onSave={handleSave} />;
     }
   };
