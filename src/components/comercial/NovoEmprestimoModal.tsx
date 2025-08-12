@@ -5,16 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { MoneyInput } from "@/components/ui/money-input";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Save, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { CalendarIcon, Save, X, Search, CheckCircle, XCircle } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface NovoEmprestimoModalProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+interface ImportacaoDireta {
+  id: string;
+  numeroProcesso: string;
+  cliente: string;
+  status: string;
+  valorTotal: number;
 }
 
 const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
@@ -37,12 +46,93 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
     idImportacaoDireta: ""
   });
 
+  const [importacaoSearch, setImportacaoSearch] = useState("");
+  const [selectedImportacao, setSelectedImportacao] = useState<ImportacaoDireta | null>(null);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const debouncedSearch = useDebounce(importacaoSearch, 300);
+
+  // Mock data for Direct Import IDs
+  const mockImportacoes: ImportacaoDireta[] = [
+    {
+      id: "IMP-2024-001",
+      numeroProcesso: "001",
+      cliente: "Hospital Albert Einstein",
+      status: "Em Andamento",
+      valorTotal: 150000
+    },
+    {
+      id: "IMP-2024-002", 
+      numeroProcesso: "002",
+      cliente: "Hospital Sírio-Libanês",
+      status: "Concluída",
+      valorTotal: 250000
+    },
+    {
+      id: "IMP-2024-003",
+      numeroProcesso: "003", 
+      cliente: "INCA - Instituto Nacional de Câncer",
+      status: "Em Andamento",
+      valorTotal: 180000
+    }
+  ];
+
+  const normalizeId = (input: string) => {
+    const cleanInput = input.trim();
+    if (/^\d{3}$/.test(cleanInput)) {
+      return `IMP-${new Date().getFullYear()}-${cleanInput}`;
+    }
+    return cleanInput;
+  };
+
+  const searchImportacoes = (searchTerm: string) => {
+    if (!searchTerm) return [];
+    
+    const normalizedTerm = normalizeId(searchTerm).toLowerCase();
+    return mockImportacoes.filter(imp => 
+      imp.id.toLowerCase().includes(normalizedTerm) ||
+      imp.numeroProcesso.includes(searchTerm) ||
+      imp.cliente.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  };
+
+  const handleImportacaoSearch = (value: string) => {
+    setImportacaoSearch(value);
+    setShowSuggestions(value.length > 0);
+    
+    if (value) {
+      const results = searchImportacoes(value);
+      if (results.length === 1 && (results[0].id === normalizeId(value) || results[0].numeroProcesso === value)) {
+        setSelectedImportacao(results[0]);
+        handleInputChange('idImportacaoDireta', results[0].id);
+      } else {
+        setSelectedImportacao(null);
+        handleInputChange('idImportacaoDireta', value);
+      }
+    } else {
+      setSelectedImportacao(null);
+      handleInputChange('idImportacaoDireta', "");
+    }
+  };
+
+  const handleSelectImportacao = (importacao: ImportacaoDireta) => {
+    setImportacaoSearch(importacao.numeroProcesso);
+    setSelectedImportacao(importacao);
+    setShowSuggestions(false);
+    handleInputChange('idImportacaoDireta', importacao.id);
+  };
+
+  const quickSuggestions = ["001", "002", "003"];
+
   const handleInputChange = (field: string, value: string | Date | null) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
     console.log("Salvando empréstimo:", formData);
+    if (selectedImportacao) {
+      console.log("Vinculado à importação:", selectedImportacao);
+    }
     onClose();
   };
 
@@ -235,11 +325,82 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
 
               <div className="space-y-2 md:col-span-2">
                 <Label>ID da Importação Direta</Label>
-                <Input
-                  value={formData.idImportacaoDireta}
-                  onChange={(e) => handleInputChange('idImportacaoDireta', e.target.value)}
-                  placeholder="ID vinculado à importação direta (opcional)"
-                />
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    value={importacaoSearch}
+                    onChange={(e) => handleImportacaoSearch(e.target.value)}
+                    onFocus={() => setShowSuggestions(importacaoSearch.length > 0)}
+                    placeholder="Digite o ID (ex: 001, 002, 003) ou busque..."
+                    className="pl-10 pr-10"
+                  />
+                  {selectedImportacao && (
+                    <CheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-500" />
+                  )}
+                  {importacaoSearch && !selectedImportacao && (
+                    <XCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-500" />
+                  )}
+                </div>
+
+                {/* Quick Suggestions */}
+                <div className="flex gap-2 flex-wrap">
+                  <span className="text-sm text-gray-500">Sugestões rápidas:</span>
+                  {quickSuggestions.map((suggestion) => (
+                    <Badge
+                      key={suggestion}
+                      variant="outline"
+                      className="cursor-pointer hover:bg-biodina-gold/10 hover:border-biodina-gold"
+                      onClick={() => handleImportacaoSearch(suggestion)}
+                    >
+                      {suggestion}
+                    </Badge>
+                  ))}
+                </div>
+
+                {/* Search Results */}
+                {showSuggestions && importacaoSearch && (
+                  <div className="border rounded-md bg-white shadow-lg max-h-48 overflow-y-auto">
+                    {searchImportacoes(importacaoSearch).map((importacao) => (
+                      <div
+                        key={importacao.id}
+                        className="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                        onClick={() => handleSelectImportacao(importacao)}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <div className="font-medium text-biodina-blue">{importacao.id}</div>
+                            <div className="text-sm text-gray-600">{importacao.cliente}</div>
+                            <div className="text-xs text-gray-500">Status: {importacao.status}</div>
+                          </div>
+                          <div className="text-sm font-medium text-green-600">
+                            ${importacao.valorTotal.toLocaleString()}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {searchImportacoes(importacaoSearch).length === 0 && (
+                      <div className="p-3 text-center text-gray-500">
+                        Nenhuma importação encontrada
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Selected Import Info */}
+                {selectedImportacao && (
+                  <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <span className="text-sm font-medium text-green-700">
+                        Vinculado à: {selectedImportacao.id}
+                      </span>
+                    </div>
+                    <div className="text-sm text-green-600 mt-1">
+                      Cliente: {selectedImportacao.cliente} | Status: {selectedImportacao.status}
+                    </div>
+                  </div>
+                )}
+
                 <p className="text-xs text-gray-500">Chave estrangeira para o módulo de Importação Direta</p>
               </div>
             </div>
