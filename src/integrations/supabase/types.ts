@@ -41,7 +41,7 @@ export type Database = {
           desc_produto_emprestado?: string | null
           id?: string
           id_importacao_direta?: string | null
-          numero_processo: string
+          numero_processo?: string
           observacoes?: string | null
           ref_produto_emprestado: string
           updated_at?: string
