@@ -10,6 +10,7 @@ import DDRForm from './components/DDRForm';
 import OVCForm from './components/OVCForm';
 import ComercialTabs from './components/ComercialTabs';
 import SPIDownloadModal from './components/SPIDownloadModal';
+import GestaoEmprestimosTab from './components/GestaoEmprestimosTab';
 import { generateSPIPDF } from './utils/spiUtils';
 
 interface ImportacaoDiretaFormProps {
@@ -209,8 +210,29 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     { id: 'no', label: 'NO' },
     { id: 'instrucao-embarque', label: 'INSTRUÇÃO DE EMBARQUE' },
     { id: 'packing-list', label: 'PACKING LIST OU VALIDADES' },
-    { id: 'ddr', label: 'DDR' }
+    { id: 'ddr', label: 'DDR' },
+    { id: 'gestao-emprestimos', label: 'GESTÃO DE EMPRÉSTIMOS' }
   ];
+
+  // Computar o ID da importação atual
+  const getImportacaoId = () => {
+    // Verificar se oportunidade já tem um ID no padrão IMP-YYYY-XXX
+    if (oportunidade?.id && typeof oportunidade.id === 'string' && oportunidade.id.startsWith('IMP-')) {
+      return oportunidade.id;
+    }
+    
+    // Verificar se spiNumero está no padrão
+    if (formData.spiNumero && formData.spiNumero.startsWith('IMP-')) {
+      return formData.spiNumero;
+    }
+    
+    // Verificar se numeroProjeto está no padrão
+    if (formData.numeroProjeto && formData.numeroProjeto.startsWith('IMP-')) {
+      return formData.numeroProjeto;
+    }
+    
+    return undefined;
+  };
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
@@ -293,6 +315,14 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
         <DDRForm
           formData={formData}
           onInputChange={handleInputChange}
+        />
+      );
+    }
+
+    if (activeMasterTab === 'gestao-emprestimos') {
+      return (
+        <GestaoEmprestimosTab
+          importacaoId={getImportacaoId()}
         />
       );
     }

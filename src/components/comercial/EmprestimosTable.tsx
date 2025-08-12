@@ -7,26 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter, Plus, Download } from "lucide-react";
 import NovoEmprestimoModal from "./NovoEmprestimoModal";
-
-interface Emprestimo {
-  numeroProcesso: string;
-  cnpjCliente: string;
-  nomeCliente: string;
-  numeroDanfeEmprestimo: string;
-  referenciaProdutoEmprestado: string;
-  descricaoProdutoEmprestado: string;
-  valorEmprestimoDolar: number;
-  dataEmprestimo: string;
-  dataSaida: string;
-  numeroDanfeRetorno?: string;
-  referenciaProdutoRecebido?: string;
-  descricaoProdutoRecebido?: string;
-  dataRetorno?: string;
-  dataBaixa?: string;
-  valorRetornadoDolar?: number;
-  idImportacaoDireta?: string;
-  status: 'emprestado' | 'devolvido' | 'vencido' | 'parcial';
-}
+import { emprestimosMock, Emprestimo } from "@/data/emprestimos";
 
 const EmprestimosTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -34,69 +15,8 @@ const EmprestimosTable = () => {
   const [clienteFilter, setClienteFilter] = useState('todos');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Dados mock de empréstimos
-  const emprestimos: Emprestimo[] = [
-    {
-      numeroProcesso: "EMP-2024-001",
-      cnpjCliente: "12.345.678/0001-99",
-      nomeCliente: "Hospital Albert Einstein",
-      numeroDanfeEmprestimo: "55240112345678000199550010000000011123456789",
-      referenciaProdutoEmprestado: "ABL800-FLEX-001",
-      descricaoProdutoEmprestado: "Analisador de Gases Sanguíneos ABL800 FLEX",
-      valorEmprestimoDolar: 85000.00,
-      dataEmprestimo: "2024-01-15",
-      dataSaida: "2024-01-16",
-      numeroDanfeRetorno: "55240112345678000199550010000000021123456790",
-      referenciaProdutoRecebido: "ABL800-FLEX-001",
-      descricaoProdutoRecebido: "Analisador de Gases Sanguíneos ABL800 FLEX",
-      dataRetorno: "2024-03-15",
-      dataBaixa: "2024-03-16",
-      valorRetornadoDolar: 85000.00,
-      idImportacaoDireta: "IMP-2024-001",
-      status: 'devolvido'
-    },
-    {
-      numeroProcesso: "EMP-2024-002",
-      cnpjCliente: "98.765.432/0001-11",
-      nomeCliente: "Hospital Sírio-Libanês",
-      numeroDanfeEmprestimo: "55240198765432000111550010000000031123456791",
-      referenciaProdutoEmprestado: "NOVA-STAT-002",
-      descricaoProdutoEmprestado: "Nova StatProfile Prime Plus",
-      valorEmprestimoDolar: 65000.00,
-      dataEmprestimo: "2024-02-01",
-      dataSaida: "2024-02-02",
-      status: 'emprestado'
-    },
-    {
-      numeroProcesso: "EMP-2024-003",
-      cnpjCliente: "11.222.333/0001-44",
-      nomeCliente: "INCA - Instituto Nacional de Câncer",
-      numeroDanfeEmprestimo: "55240111222333000144550010000000041123456792",
-      referenciaProdutoEmprestado: "RADIOMETER-PHO-003",
-      descricaoProdutoEmprestado: "Eletrodos pH e Gases Radiometer",
-      valorEmprestimoDolar: 12000.00,
-      dataEmprestimo: "2023-12-10",
-      dataSaida: "2023-12-11",
-      status: 'vencido'
-    },
-    {
-      numeroProcesso: "EMP-2024-004",
-      cnpjCliente: "33.444.555/0001-66",
-      nomeCliente: "Hospital das Clínicas - USP",
-      numeroDanfeEmprestimo: "55240133444555000166550010000000051123456793",
-      referenciaProdutoEmprestado: "WEBMED-SYS-001",
-      descricaoProdutoEmprestado: "Sistema WEBMED Gestão Hospitalar",
-      valorEmprestimoDolar: 45000.00,
-      dataEmprestimo: "2024-03-01",
-      dataSaida: "2024-03-02",
-      numeroDanfeRetorno: "55240133444555000166550010000000061123456794",
-      referenciaProdutoRecebido: "WEBMED-SYS-001-UPG",
-      descricaoProdutoRecebido: "Sistema WEBMED Gestão Hospitalar - Versão Atualizada",
-      dataRetorno: "2024-03-20",
-      valorRetornadoDolar: 50000.00,
-      status: 'parcial'
-    }
-  ];
+  // Usar dados centralizados
+  const emprestimos: Emprestimo[] = emprestimosMock;
 
   const getStatusColor = (status: string) => {
     switch (status) {
