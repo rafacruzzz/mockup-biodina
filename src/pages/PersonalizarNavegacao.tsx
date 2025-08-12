@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import SidebarLayout from '@/components/SidebarLayout';
 
@@ -39,9 +38,9 @@ const modules: Module[] = [
   { id: 'cadastro', name: 'Cadastro', icon: FileText },
   { id: 'administrativo', name: 'Administrativo', icon: Database },
   { id: 'comercial', name: 'Comercial', icon: Briefcase },
+  { id: 'financeiro', name: 'Financeiro', icon: DollarSign },
   { id: 'estoque', name: 'Estoque', icon: Package },
   { id: 'compras', name: 'Compras', icon: ShoppingCart },
-  { id: 'financeiro', name: 'Financeiro', icon: DollarSign },
   { id: 'contabilidade', name: 'Contabilidade', icon: Calculator },
   { id: 'rh', name: 'RH', icon: UserCheck },
   { id: 'ti', name: 'TI', icon: Cpu },
@@ -50,6 +49,7 @@ const modules: Module[] = [
 const comercialSubModules: SubModule[] = [
   { id: 'indicadores-comerciais', name: 'Indicadores Comerciais' },
   { id: 'licitacao', name: 'Licitação' },
+  { id: 'contratacao', name: 'Contratação' },
   { id: 'importacao-direta', name: 'Importação Direta' },
 ];
 
@@ -89,14 +89,12 @@ const DroppableModule = ({
   module, 
   isSelected, 
   isOver, 
-  onClick,
-  badgeCount 
+  onClick
 }: { 
   module: Module; 
   isSelected: boolean; 
   isOver: boolean; 
   onClick: () => void;
-  badgeCount?: number;
 }) => {
   const { setNodeRef } = useDroppable({
     id: module.id,
@@ -115,6 +113,7 @@ const DroppableModule = ({
         isOver && "border-2 border-dashed border-biodina-gold ring-2 ring-biodina-gold/20"
       )}
     >
+      <GripVertical className="h-4 w-4 text-gray-400 cursor-grab" />
       <div className={cn(
         "p-2 rounded-lg",
         isSelected ? 'bg-white/20' : 'bg-biodina-gold/10'
@@ -125,11 +124,6 @@ const DroppableModule = ({
         )} />
       </div>
       <span className="font-medium flex-1">{module.name}</span>
-      {badgeCount && badgeCount > 0 && (
-        <Badge variant="secondary" className="bg-biodina-gold text-white text-xs">
-          {badgeCount}
-        </Badge>
-      )}
     </div>
   );
 };
@@ -215,7 +209,6 @@ const PersonalizarNavegacaoContent = () => {
                     isSelected={selectedModule === module.id}
                     isOver={overId === module.id}
                     onClick={() => setSelectedModule(module.id)}
-                    badgeCount={module.id === 'financeiro' ? 1 : undefined}
                   />
                 ))}
               </div>
