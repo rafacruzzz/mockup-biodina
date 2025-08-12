@@ -2,7 +2,7 @@
 import { useState } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import ComercialTabs from "@/components/comercial/components/ComercialTabs";
-import OportunidadeForm from "@/components/comercial/OportunidadeForm";
+import { OportunidadesDashboard } from "@/components/comercial/OportunidadesDashboard";
 import PedidoForm from "@/components/comercial/PedidoForm";
 import AgendaComercial from "@/components/comercial/AgendaComercial";
 import ChatInterno from "@/components/comercial/ChatInterno";
@@ -27,7 +27,7 @@ const Comercial = () => {
     
     switch (activeModule) {
       case "oportunidades":
-        return <OportunidadeForm onClose={handleClose} onSave={handleSave} />;
+        return <OportunidadesDashboard />;
       case "vendas":
         return <PedidoForm onClose={handleClose} onSave={handleSave} />;
       case "pos-venda":
@@ -47,7 +47,7 @@ const Comercial = () => {
         return <ContratacaoSimplesForm isOpen={true} onClose={handleClose} onSave={handleSave} />;
       default:
         console.log("Módulo padrão: oportunidades");
-        return <OportunidadeForm onClose={handleClose} onSave={handleSave} />;
+        return <OportunidadesDashboard />;
     }
   };
 
