@@ -21,7 +21,7 @@ import {
   Users, BarChart2, FileText, Database, Briefcase, 
   Package, ShoppingCart, DollarSign, Calculator, 
   UserCheck, Cpu, GripVertical, Settings, Pencil, Check,
-  Plus, Folder
+  Plus, Folder, Home
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,9 +35,11 @@ interface Module {
   id: string;
   name: string;
   icon: React.ComponentType<any>;
+  isFixed?: boolean; // For Aplicativos and Personalizar Navegação
 }
 
 const initialModules: Module[] = [
+  { id: 'aplicativos', name: 'Aplicativos', icon: Home, isFixed: true },
   { id: 'pessoal', name: 'Pessoal', icon: Users },
   { id: 'bi', name: 'BI', icon: BarChart2 },
   { id: 'cadastro', name: 'Cadastro', icon: FileText },
@@ -49,9 +51,11 @@ const initialModules: Module[] = [
   { id: 'contabilidade', name: 'Contabilidade', icon: Calculator },
   { id: 'rh', name: 'RH', icon: UserCheck },
   { id: 'ti', name: 'TI', icon: Cpu },
+  { id: 'personalizar-navegacao', name: 'Personalizar Navegação', icon: Settings, isFixed: true },
 ];
 
 const initialTreeStructure: Record<string, TreeItem[]> = {
+  aplicativos: [],
   cadastro: [
     {
       id: 'entidades-group',
@@ -67,9 +71,107 @@ const initialTreeStructure: Record<string, TreeItem[]> = {
       ]
     },
     {
-      id: 'produtos-item',
+      id: 'produtos-group',
       name: 'Produtos',
-      type: 'item'
+      type: 'group',
+      children: [
+        {
+          id: 'produtos-item',
+          name: 'Produtos',
+          type: 'item',
+          parentId: 'produtos-group'
+        },
+        {
+          id: 'tabela-preco-item',
+          name: 'Tabela de Preço',
+          type: 'item',
+          parentId: 'produtos-group'
+        },
+        {
+          id: 'kits-item',
+          name: 'Kits',
+          type: 'item',
+          parentId: 'produtos-group'
+        }
+      ]
+    },
+    {
+      id: 'estoque-group',
+      name: 'Estoque',
+      type: 'group',
+      children: [
+        {
+          id: 'estoque-item',
+          name: 'Estoque',
+          type: 'item',
+          parentId: 'estoque-group'
+        }
+      ]
+    },
+    {
+      id: 'servicos-group',
+      name: 'Serviços',
+      type: 'group',
+      children: [
+        {
+          id: 'servicos-item',
+          name: 'Serviços',
+          type: 'item',
+          parentId: 'servicos-group'
+        }
+      ]
+    },
+    {
+      id: 'usuarios-group',
+      name: 'Usuários',
+      type: 'group',
+      children: [
+        {
+          id: 'usuarios-item',
+          name: 'Usuários',
+          type: 'item',
+          parentId: 'usuarios-group'
+        }
+      ]
+    },
+    {
+      id: 'contas-bancarias-group',
+      name: 'Contas Bancárias',
+      type: 'group',
+      children: [
+        {
+          id: 'contas-bancarias-item',
+          name: 'Contas Bancárias',
+          type: 'item',
+          parentId: 'contas-bancarias-group'
+        }
+      ]
+    },
+    {
+      id: 'categorias-group',
+      name: 'Categorias',
+      type: 'group',
+      children: [
+        {
+          id: 'categorias-item',
+          name: 'Categorias',
+          type: 'item',
+          parentId: 'categorias-group'
+        }
+      ]
+    },
+    {
+      id: 'prazos-pagamento-group',
+      name: 'Prazos de Pagamento',
+      type: 'group',
+      children: [
+        {
+          id: 'prazos-pagamento-item',
+          name: 'Prazos de Pagamento',
+          type: 'item',
+          parentId: 'prazos-pagamento-group'
+        }
+      ]
     }
   ],
   comercial: [
@@ -131,6 +233,7 @@ const initialTreeStructure: Record<string, TreeItem[]> = {
   contabilidade: [],
   rh: [],
   ti: [],
+  'personalizar-navegacao': [],
 };
 
 const SortableModule = ({ 
@@ -144,7 +247,8 @@ const SortableModule = ({
   onEditingNameChange,
   onSaveEdit,
   onCancelEdit,
-  activeType
+  activeType,
+  isDragPreview = false
 }: { 
   module: Module; 
   isSelected: boolean; 
@@ -157,9 +261,11 @@ const SortableModule = ({
   onSaveEdit: () => void;
   onCancelEdit: () => void;
   activeType: 'tree-item' | 'module' | null;
+  isDragPreview?: boolean;
 }) => {
   const { setNodeRef: setDroppableRef } = useDroppable({
     id: module.id,
+    disabled: module.isFixed || isDragPreview,
   });
 
   const {
@@ -171,7 +277,8 @@ const SortableModule = ({
     isDragging,
   } = useSortable({
     id: module.id,
-    data: { type: 'module' }
+    data: { type: 'module' },
+    disabled: module.isFixed || isDragPreview
   });
 
   const style = {
@@ -181,7 +288,7 @@ const SortableModule = ({
 
   const Icon = module.icon;
   
-  const isDropTarget = activeType === 'tree-item' && isOver;
+  const isDropTarget = activeType === 'tree-item' && isOver && !module.isFixed;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -194,8 +301,10 @@ const SortableModule = ({
   return (
     <div
       ref={(node) => {
-        setDroppableRef(node);
-        setSortableRef(node);
+        if (!isDragPreview) {
+          setDroppableRef(node);
+          setSortableRef(node);
+        }
       }}
       style={style}
       onClick={onClick}
@@ -204,12 +313,15 @@ const SortableModule = ({
         isSelected && "bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md",
         !isSelected && "hover:bg-gray-50 text-gray-700",
         isDropTarget && "border-2 border-dashed border-biodina-blue ring-2 ring-biodina-blue/20 bg-blue-50/30",
-        isDragging && "opacity-50"
+        isDragging && "opacity-50",
+        isDragPreview && "shadow-2xl ring-2 ring-biodina-blue/50 bg-white"
       )}
     >
-      <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing">
-        <GripVertical className="h-4 w-4 text-gray-400" />
-      </div>
+      {!module.isFixed && (
+        <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing">
+          <GripVertical className="h-4 w-4 text-gray-400" />
+        </div>
+      )}
       <div className={cn(
         "p-2 rounded-lg",
         isSelected ? 'bg-white/20' : 'bg-biodina-gold/10'
@@ -220,7 +332,7 @@ const SortableModule = ({
         )} />
       </div>
       <div className="flex-1">
-        {isEditing ? (
+        {isEditing && !module.isFixed ? (
           <Input
             value={editingName}
             onChange={(e) => onEditingNameChange(e.target.value)}
@@ -238,29 +350,33 @@ const SortableModule = ({
           <span className="font-medium">{module.name}</span>
         )}
       </div>
-      {isEditing ? (
-        <Check 
-          className={cn(
-            "h-4 w-4 cursor-pointer hover:opacity-80",
-            isSelected ? "text-white" : "text-green-600"
+      {!module.isFixed && (
+        <>
+          {isEditing ? (
+            <Check 
+              className={cn(
+                "h-4 w-4 cursor-pointer hover:opacity-80",
+                isSelected ? "text-white" : "text-green-600"
+              )}
+              onClick={(e) => {
+                e.stopPropagation();
+                onSaveEdit();
+              }}
+            />
+          ) : (
+            <Pencil 
+              className={cn(
+                "h-4 w-4 transition-opacity cursor-pointer hover:opacity-80",
+                "opacity-0 group-hover:opacity-100",
+                isSelected ? "text-white" : "text-gray-400 hover:text-biodina-blue"
+              )}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit();
+              }}
+            />
           )}
-          onClick={(e) => {
-            e.stopPropagation();
-            onSaveEdit();
-          }}
-        />
-      ) : (
-        <Pencil 
-          className={cn(
-            "h-4 w-4 transition-opacity cursor-pointer hover:opacity-80",
-            "opacity-0 group-hover:opacity-100",
-            isSelected ? "text-white" : "text-gray-400 hover:text-biodina-blue"
-          )}
-          onClick={(e) => {
-            e.stopPropagation();
-            onEdit();
-          }}
-        />
+        </>
       )}
     </div>
   );
@@ -301,15 +417,29 @@ const PersonalizarNavegacaoContent = () => {
 
     if (activeType === 'tree-item') {
       // Handle tree item movement logic here
-      // This would involve complex nested structure updates
       console.log('Tree item drag end:', { active: active.id, over: over.id });
     } else if (activeType === 'module') {
-      // Reordering modules
+      // Reordering modules (excluding fixed ones)
       const oldIndex = modules.findIndex(m => m.id === active.id);
       const newIndex = modules.findIndex(m => m.id === over.id);
       
-      if (oldIndex !== newIndex) {
-        setModules(arrayMove(modules, oldIndex, newIndex));
+      if (oldIndex !== newIndex && !modules[oldIndex].isFixed && !modules[newIndex].isFixed) {
+        // Keep fixed modules in place
+        const reorderableModules = modules.filter(m => !m.isFixed);
+        const fixedModules = modules.filter(m => m.isFixed);
+        
+        const oldReorderableIndex = reorderableModules.findIndex(m => m.id === active.id);
+        const newReorderableIndex = reorderableModules.findIndex(m => m.id === over.id);
+        
+        if (oldReorderableIndex !== -1 && newReorderableIndex !== -1) {
+          const reorderedModules = arrayMove(reorderableModules, oldReorderableIndex, newReorderableIndex);
+          
+          // Reconstruct the full list with fixed modules in correct positions
+          const aplicativos = fixedModules.find(m => m.id === 'aplicativos');
+          const personalizar = fixedModules.find(m => m.id === 'personalizar-navegacao');
+          
+          setModules([aplicativos!, ...reorderedModules, personalizar!]);
+        }
       }
     }
     
@@ -328,7 +458,7 @@ const PersonalizarNavegacaoContent = () => {
 
   const handleEditModule = (moduleId: string) => {
     const module = modules.find(m => m.id === moduleId);
-    if (module) {
+    if (module && !module.isFixed) {
       setEditingModuleId(moduleId);
       setEditingName(module.name);
     }
@@ -418,6 +548,9 @@ const PersonalizarNavegacaoContent = () => {
 
   const selectedModuleName = modules.find(m => m.id === selectedModule)?.name || 'Selecionado';
   const currentTreeItems = treeStructure[selectedModule] || [];
+
+  // Get dragged item for overlay
+  const draggedModule = activeType === 'module' ? modules.find(m => m.id === activeId) : null;
 
   // Prepare navigation overrides for SidebarLayout
   const navOverrides = {
@@ -509,6 +642,7 @@ const PersonalizarNavegacaoContent = () => {
                     items={currentTreeItems}
                     onEdit={handleEditTreeItem}
                     isEditing={editingTreeItemId !== null}
+                    editingItemId={editingTreeItemId}
                     editingName={editingName}
                     onEditingNameChange={setEditingName}
                     onSaveEdit={handleSaveTreeItemEdit}
@@ -527,8 +661,23 @@ const PersonalizarNavegacaoContent = () => {
           </div>
 
           <DragOverlay>
-            {activeId && activeType === 'tree-item' ? (
-              <div className="flex items-center gap-2 p-2 bg-white border rounded-lg shadow-lg ring-2 ring-biodina-blue/50">
+            {activeId && activeType === 'module' && draggedModule ? (
+              <SortableModule
+                module={draggedModule}
+                isSelected={false}
+                isOver={false}
+                onClick={() => {}}
+                onEdit={() => {}}
+                isEditing={false}
+                editingName=""
+                onEditingNameChange={() => {}}
+                onSaveEdit={() => {}}
+                onCancelEdit={() => {}}
+                activeType={null}
+                isDragPreview={true}
+              />
+            ) : activeId && activeType === 'tree-item' ? (
+              <div className="flex items-center gap-2 p-3 bg-white border rounded-lg shadow-lg ring-2 ring-biodina-blue/50">
                 <GripVertical className="h-4 w-4 text-gray-400" />
                 <Folder className="h-4 w-4 text-yellow-600" />
                 <span className="text-sm font-medium text-gray-700">Item sendo arrastado</span>
