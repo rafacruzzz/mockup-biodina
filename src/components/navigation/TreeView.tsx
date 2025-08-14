@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { 
@@ -65,7 +64,10 @@ const TreeNode: React.FC<TreeNodeProps> = ({
 
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-  } : {};
+    marginLeft: `${depth * 24}px`,
+  } : {
+    marginLeft: `${depth * 24}px`,
+  };
 
   const hasChildren = item.children && item.children.length > 0;
   const isGroup = item.type === 'group';
@@ -84,10 +86,25 @@ const TreeNode: React.FC<TreeNodeProps> = ({
     <div className="relative">
       {/* Connection lines for hierarchy */}
       {depth > 0 && (
-        <div 
-          className="absolute left-0 top-0 w-6 h-6 border-l-2 border-b-2 border-gray-200 rounded-bl-md"
-          style={{ marginLeft: `${(depth - 1) * 24 + 8}px` }}
-        />
+        <>
+          {/* Horizontal line */}
+          <div 
+            className="absolute top-6 border-l-2 border-b-2 border-gray-200 rounded-bl-md"
+            style={{ 
+              left: `${(depth - 1) * 24 + 8}px`,
+              width: '16px',
+              height: '12px'
+            }}
+          />
+          {/* Vertical connecting line from parent */}
+          <div 
+            className="absolute top-0 w-0.5 bg-gray-200"
+            style={{ 
+              left: `${(depth - 1) * 24 + 8}px`,
+              height: '18px'
+            }}
+          />
+        </>
       )}
       
       {/* Main item */}
@@ -101,14 +118,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({
           "group flex items-center gap-2 p-2 rounded-lg transition-all relative",
           "hover:bg-gray-50",
           isDragging && "opacity-50 z-50",
-          isOver && canDrop && "bg-blue-50 border-2 border-dashed border-biodina-blue",
-          // Add left margin for indentation
-          depth > 0 && "ml-6"
+          isOver && canDrop && "bg-blue-50 border-2 border-dashed border-biodina-blue"
         )}
-        style={{
-          ...style,
-          marginLeft: `${depth * 24}px`,
-        }}
       >
         {/* Drag handle */}
         <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing">
@@ -180,8 +191,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({
         <div className="relative">
           {/* Vertical line for children */}
           <div 
-            className="absolute left-0 top-0 bottom-0 w-px bg-gray-200"
-            style={{ marginLeft: `${depth * 24 + 20}px` }}
+            className="absolute top-0 bottom-0 w-0.5 bg-gray-200"
+            style={{ left: `${depth * 24 + 20}px` }}
           />
           
           <div>
