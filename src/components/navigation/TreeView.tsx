@@ -171,7 +171,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
               isOver={false}
               canDrop={false}
               onEdit={onEdit}
-              isEditing={isEditing && editingName === child.name}
+              isEditing={isEditing}
               editingName={editingName}
               onEditingNameChange={onEditingNameChange}
               onSaveEdit={onSaveEdit}

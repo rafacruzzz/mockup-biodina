@@ -227,7 +227,12 @@ const SortableModule = ({
             onKeyDown={handleKeyDown}
             onBlur={onSaveEdit}
             autoFocus
-            className="h-6 text-sm font-medium bg-white border-biodina-blue focus:ring-biodina-blue"
+            className={cn(
+              "h-8 text-sm font-medium border-2",
+              isSelected 
+                ? "bg-white text-gray-900 border-white focus:ring-white focus:border-white" 
+                : "bg-white text-gray-900 border-biodina-blue focus:ring-biodina-blue focus:border-biodina-blue"
+            )}
           />
         ) : (
           <span className="font-medium">{module.name}</span>
@@ -235,7 +240,10 @@ const SortableModule = ({
       </div>
       {isEditing ? (
         <Check 
-          className="h-4 w-4 text-green-600 cursor-pointer hover:text-green-700"
+          className={cn(
+            "h-4 w-4 cursor-pointer hover:opacity-80",
+            isSelected ? "text-white" : "text-green-600"
+          )}
           onClick={(e) => {
             e.stopPropagation();
             onSaveEdit();
@@ -244,8 +252,9 @@ const SortableModule = ({
       ) : (
         <Pencil 
           className={cn(
-            "h-4 w-4 transition-opacity cursor-pointer hover:text-biodina-blue",
-            "opacity-0 group-hover:opacity-100 text-gray-400"
+            "h-4 w-4 transition-opacity cursor-pointer hover:opacity-80",
+            "opacity-0 group-hover:opacity-100",
+            isSelected ? "text-white" : "text-gray-400 hover:text-biodina-blue"
           )}
           onClick={(e) => {
             e.stopPropagation();
@@ -365,7 +374,25 @@ const PersonalizarNavegacaoContent = () => {
   };
 
   const handleSaveTreeItemEdit = () => {
-    // Implementation for saving tree item edits would go here
+    if (editingTreeItemId && editingName.trim()) {
+      // Update the tree structure with the new name
+      const updateItemName = (items: TreeItem[]): TreeItem[] => {
+        return items.map(item => {
+          if (item.id === editingTreeItemId) {
+            return { ...item, name: editingName.trim() };
+          }
+          if (item.children) {
+            return { ...item, children: updateItemName(item.children) };
+          }
+          return item;
+        });
+      };
+
+      setTreeStructure(prev => ({
+        ...prev,
+        [selectedModule]: updateItemName(prev[selectedModule] || [])
+      }));
+    }
     setEditingTreeItemId(null);
     setEditingName('');
   };
