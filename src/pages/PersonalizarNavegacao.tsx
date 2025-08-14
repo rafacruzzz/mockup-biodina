@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -21,23 +20,21 @@ import { CSS } from '@dnd-kit/utilities';
 import {
   Users, BarChart2, FileText, Database, Briefcase, 
   Package, ShoppingCart, DollarSign, Calculator, 
-  UserCheck, Cpu, GripVertical, Settings, Pencil, Check
+  UserCheck, Cpu, GripVertical, Settings, Pencil, Check,
+  Plus, Folder
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import SidebarLayout from '@/components/SidebarLayout';
+import TreeView from '@/components/navigation/TreeView';
+import { TreeItem, NavigationModule } from '@/types/navigation';
 
 interface Module {
   id: string;
   name: string;
   icon: React.ComponentType<any>;
-}
-
-interface SubModule {
-  id: string;
-  name: string;
 }
 
 const initialModules: Module[] = [
@@ -54,64 +51,86 @@ const initialModules: Module[] = [
   { id: 'ti', name: 'TI', icon: Cpu },
 ];
 
-const initialSubModulesByModule: Record<string, SubModule[]> = {
+const initialTreeStructure: Record<string, TreeItem[]> = {
+  cadastro: [
+    {
+      id: 'entidades-group',
+      name: 'Entidades',
+      type: 'group',
+      children: [
+        {
+          id: 'entidades-item',
+          name: 'Entidades',
+          type: 'item',
+          parentId: 'entidades-group'
+        }
+      ]
+    },
+    {
+      id: 'produtos-item',
+      name: 'Produtos',
+      type: 'item'
+    }
+  ],
   comercial: [
-    { id: 'indicadores-comerciais', name: 'Indicadores Comerciais' },
-    { id: 'licitacao', name: 'Licitação' },
-    { id: 'contratacao', name: 'Contratação' },
-    { id: 'importacao-direta', name: 'Importação Direta' },
+    {
+      id: 'indicadores-comerciais',
+      name: 'Indicadores Comerciais',
+      type: 'item'
+    },
+    {
+      id: 'licitacao',
+      name: 'Licitação',
+      type: 'item'
+    },
+    {
+      id: 'contratacao',
+      name: 'Contratação',
+      type: 'item'
+    },
+    {
+      id: 'importacao-direta',
+      name: 'Importação Direta',
+      type: 'item'
+    }
   ],
   financeiro: [
-    { id: 'contas-pagar', name: 'Contas a Pagar' },
-    { id: 'contas-receber', name: 'Contas a Receber' },
-    { id: 'fluxo-caixa', name: 'Fluxo de Caixa' },
+    {
+      id: 'contas-pagar',
+      name: 'Contas a Pagar',
+      type: 'item'
+    },
+    {
+      id: 'contas-receber',
+      name: 'Contas a Receber',
+      type: 'item'
+    },
+    {
+      id: 'fluxo-caixa',
+      name: 'Fluxo de Caixa',
+      type: 'item'
+    }
   ],
   pessoal: [
-    { id: 'colaboradores', name: 'Colaboradores' },
-    { id: 'folha-pagamento', name: 'Folha de Pagamento' },
+    {
+      id: 'colaboradores',
+      name: 'Colaboradores',
+      type: 'item'
+    },
+    {
+      id: 'folha-pagamento',
+      name: 'Folha de Pagamento',
+      type: 'item'
+    }
   ],
-  // Add empty arrays for other modules
+  // Empty arrays for other modules
   bi: [],
-  cadastro: [],
   administrativo: [],
   estoque: [],
   compras: [],
   contabilidade: [],
   rh: [],
   ti: [],
-};
-
-const DraggableSubModule = ({ subModule }: { subModule: SubModule }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    isDragging,
-  } = useDraggable({
-    id: subModule.id,
-    data: { type: 'submodule' }
-  });
-
-  const style = transform ? {
-    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-  } : undefined;
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={cn(
-        "flex items-center gap-3 p-3 bg-white border rounded-lg shadow-sm transition-all",
-        isDragging && "opacity-50"
-      )}
-      {...listeners}
-      {...attributes}
-    >
-      <GripVertical className="h-4 w-4 text-gray-400 cursor-grab" />
-      <span className="font-medium text-gray-700">{subModule.name}</span>
-    </div>
-  );
 };
 
 const SortableModule = ({ 
@@ -137,7 +156,7 @@ const SortableModule = ({
   onEditingNameChange: (name: string) => void;
   onSaveEdit: () => void;
   onCancelEdit: () => void;
-  activeType: 'submodule' | 'module' | null;
+  activeType: 'tree-item' | 'module' | null;
 }) => {
   const { setNodeRef: setDroppableRef } = useDroppable({
     id: module.id,
@@ -162,7 +181,7 @@ const SortableModule = ({
 
   const Icon = module.icon;
   
-  const isDropTarget = activeType === 'submodule' && isOver;
+  const isDropTarget = activeType === 'tree-item' && isOver;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -241,14 +260,15 @@ const SortableModule = ({
 const PersonalizarNavegacaoContent = () => {
   const navigate = useNavigate();
   const [modules, setModules] = useState<Module[]>(initialModules);
-  const [subModulesByModule, setSubModulesByModule] = useState<Record<string, SubModule[]>>(initialSubModulesByModule);
-  const [selectedModule, setSelectedModule] = useState('comercial');
+  const [treeStructure, setTreeStructure] = useState<Record<string, TreeItem[]>>(initialTreeStructure);
+  const [selectedModule, setSelectedModule] = useState('cadastro');
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [activeType, setActiveType] = useState<'submodule' | 'module' | null>(null);
+  const [activeType, setActiveType] = useState<'tree-item' | 'module' | null>(null);
   const [overId, setOverId] = useState<string | null>(null);
   
   // Editing state
   const [editingModuleId, setEditingModuleId] = useState<string | null>(null);
+  const [editingTreeItemId, setEditingTreeItemId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState<string>('');
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -270,36 +290,10 @@ const PersonalizarNavegacaoContent = () => {
       return;
     }
 
-    if (activeType === 'submodule') {
-      // Moving submodule to a different module
-      if (over.data.current?.type === 'module' || modules.find(m => m.id === over.id)) {
-        const activeSubmoduleId = active.id as string;
-        const targetModuleId = over.id as string;
-        
-        // Find source module
-        let sourceModuleId: string | null = null;
-        for (const [moduleId, subModules] of Object.entries(subModulesByModule)) {
-          if (subModules.find(sm => sm.id === activeSubmoduleId)) {
-            sourceModuleId = moduleId;
-            break;
-          }
-        }
-        
-        if (sourceModuleId && sourceModuleId !== targetModuleId) {
-          const subModuleToMove = subModulesByModule[sourceModuleId].find(sm => sm.id === activeSubmoduleId);
-          
-          if (subModuleToMove) {
-            setSubModulesByModule(prev => ({
-              ...prev,
-              [sourceModuleId]: prev[sourceModuleId].filter(sm => sm.id !== activeSubmoduleId),
-              [targetModuleId]: [...(prev[targetModuleId] || []), subModuleToMove]
-            }));
-            
-            // Switch to target module to show the result
-            setSelectedModule(targetModuleId);
-          }
-        }
-      }
+    if (activeType === 'tree-item') {
+      // Handle tree item movement logic here
+      // This would involve complex nested structure updates
+      console.log('Tree item drag end:', { active: active.id, over: over.id });
     } else if (activeType === 'module') {
       // Reordering modules
       const oldIndex = modules.findIndex(m => m.id === active.id);
@@ -331,7 +325,7 @@ const PersonalizarNavegacaoContent = () => {
     }
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveModuleEdit = () => {
     if (editingModuleId && editingName.trim()) {
       setModules(prev => 
         prev.map(m => 
@@ -345,16 +339,58 @@ const PersonalizarNavegacaoContent = () => {
     setEditingName('');
   };
 
-  const handleCancelEdit = () => {
+  const handleCancelModuleEdit = () => {
     setEditingModuleId(null);
     setEditingName('');
   };
 
-  const activeSubModule = activeType === 'submodule' ? 
-    Object.values(subModulesByModule).flat().find(sub => sub.id === activeId) : null;
+  const handleEditTreeItem = (itemId: string) => {
+    // Find the item in the tree structure to get its current name
+    const findItemName = (items: TreeItem[]): string => {
+      for (const item of items) {
+        if (item.id === itemId) return item.name;
+        if (item.children) {
+          const found = findItemName(item.children);
+          if (found) return found;
+        }
+      }
+      return '';
+    };
+
+    const currentItems = treeStructure[selectedModule] || [];
+    const itemName = findItemName(currentItems);
+    
+    setEditingTreeItemId(itemId);
+    setEditingName(itemName);
+  };
+
+  const handleSaveTreeItemEdit = () => {
+    // Implementation for saving tree item edits would go here
+    setEditingTreeItemId(null);
+    setEditingName('');
+  };
+
+  const handleCancelTreeItemEdit = () => {
+    setEditingTreeItemId(null);
+    setEditingName('');
+  };
+
+  const handleNewGroup = () => {
+    const newGroup: TreeItem = {
+      id: `group-${Date.now()}`,
+      name: 'Novo Grupo',
+      type: 'group',
+      children: []
+    };
+
+    setTreeStructure(prev => ({
+      ...prev,
+      [selectedModule]: [...(prev[selectedModule] || []), newGroup]
+    }));
+  };
 
   const selectedModuleName = modules.find(m => m.id === selectedModule)?.name || 'Selecionado';
-  const currentSubModules = subModulesByModule[selectedModule] || [];
+  const currentTreeItems = treeStructure[selectedModule] || [];
 
   // Prepare navigation overrides for SidebarLayout
   const navOverrides = {
@@ -372,7 +408,7 @@ const PersonalizarNavegacaoContent = () => {
               Personalizar Navegação
             </h1>
             <p className="text-gray-600">
-              Arraste e solte as abas para reorganizar os módulos do sistema.
+              Arraste e solte as abas para reorganizar os módulos do sistema e criar estruturas hierárquicas.
             </p>
           </div>
           <div className="flex gap-3">
@@ -414,8 +450,8 @@ const PersonalizarNavegacaoContent = () => {
                         isEditing={editingModuleId === module.id}
                         editingName={editingName}
                         onEditingNameChange={setEditingName}
-                        onSaveEdit={handleSaveEdit}
-                        onCancelEdit={handleCancelEdit}
+                        onSaveEdit={handleSaveModuleEdit}
+                        onCancelEdit={handleCancelModuleEdit}
                         activeType={activeType}
                       />
                     ))}
@@ -424,25 +460,39 @@ const PersonalizarNavegacaoContent = () => {
               </CardContent>
             </Card>
 
-            {/* Right Column - Sub-modules */}
+            {/* Right Column - Tree Structure */}
             <Card>
               <CardHeader>
-                <CardTitle>Abas do Módulo {selectedModuleName}</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Estrutura do Módulo {selectedModuleName}</CardTitle>
+                  <Button
+                    onClick={handleNewGroup}
+                    size="sm"
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Novo Grupo
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                {currentSubModules.length > 0 ? (
-                  <div className="space-y-3">
-                    {currentSubModules.map((subModule) => (
-                      <DraggableSubModule
-                        key={subModule.id}
-                        subModule={subModule}
-                      />
-                    ))}
-                  </div>
+                {currentTreeItems.length > 0 ? (
+                  <TreeView
+                    items={currentTreeItems}
+                    onEdit={handleEditTreeItem}
+                    isEditing={editingTreeItemId !== null}
+                    editingName={editingName}
+                    onEditingNameChange={setEditingName}
+                    onSaveEdit={handleSaveTreeItemEdit}
+                    onCancelEdit={handleCancelTreeItemEdit}
+                    overId={overId}
+                  />
                 ) : (
                   <div className="text-center py-8 text-gray-500">
-                    <Settings className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                    <p>Este módulo não possui abas configuradas.</p>
+                    <Folder className="h-12 w-12 mx-auto mb-4 opacity-30" />
+                    <p>Este módulo não possui estrutura configurada.</p>
+                    <p className="text-sm mt-2">Clique em "Novo Grupo" para começar.</p>
                   </div>
                 )}
               </CardContent>
@@ -450,10 +500,11 @@ const PersonalizarNavegacaoContent = () => {
           </div>
 
           <DragOverlay>
-            {activeId && activeSubModule ? (
-              <div className="flex items-center gap-3 p-3 bg-white border rounded-lg shadow-lg ring-2 ring-biodina-blue/50">
+            {activeId && activeType === 'tree-item' ? (
+              <div className="flex items-center gap-2 p-2 bg-white border rounded-lg shadow-lg ring-2 ring-biodina-blue/50">
                 <GripVertical className="h-4 w-4 text-gray-400" />
-                <span className="font-medium text-gray-700">{activeSubModule.name}</span>
+                <Folder className="h-4 w-4 text-yellow-600" />
+                <span className="text-sm font-medium text-gray-700">Item sendo arrastado</span>
               </div>
             ) : null}
           </DragOverlay>
