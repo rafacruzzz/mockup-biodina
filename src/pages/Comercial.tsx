@@ -14,7 +14,7 @@ import PedidoForm from "@/components/comercial/PedidoForm";
 import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
 import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
 import EmprestimosTable from "@/components/comercial/EmprestimosTable";
-// import AgendaComercial from "@/components/comercial/AgendaComercial"; // Commented out for future use
+import AgendaComercial from "@/components/comercial/AgendaComercial";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
@@ -520,6 +520,11 @@ const Comercial = () => {
             <p className="text-gray-600">Gestão de empréstimos de equipamentos</p>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Agenda Comercial Section */}
+      <div className="w-full">
+        <AgendaComercial />
       </div>
     </div>
   );
