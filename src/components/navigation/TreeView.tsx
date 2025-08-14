@@ -63,7 +63,10 @@ const TreeNode: React.FC<TreeNodeProps> = ({
 
   const style = transform ? {
     transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-  } : undefined;
+    marginLeft: `${depth * 24}px`,
+  } : {
+    marginLeft: `${depth * 24}px`,
+  };
 
   const hasChildren = item.children && item.children.length > 0;
   const isGroup = item.type === 'group';
@@ -93,10 +96,6 @@ const TreeNode: React.FC<TreeNodeProps> = ({
           isOver && canDrop && "bg-blue-50 border-2 border-dashed border-biodina-blue",
           depth > 0 && "border-l-2 border-gray-200"
         )}
-        style={{ 
-          ...style,
-          marginLeft: `${depth * 24}px`,
-        }}
       >
         {/* Drag handle */}
         <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing">
