@@ -18,6 +18,9 @@ import EtapasSelecao from "@/components/rh/EtapasSelecao";
 import Admissao from "@/components/rh/Admissao";
 import { ProcessoSeletivoProvider } from "@/contexts/ProcessoSeletivoContext";
 import { modules } from "@/data/rhModules";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Search, Filter, Download, Upload } from "lucide-react";
 
 const RH = () => {
   const [activeModule, setActiveModule] = useState('');
@@ -80,9 +83,7 @@ const RH = () => {
     setEditingColaboradorId(null);
     setEditingColaboradorData(null);
     
-    if (activeModule === 'colaboradores') {
-      setIsColaboradorModalOpen(true);
-    } else if (activeModule === 'departamentos') {
+    if (activeModule === 'departamentos') {
       if (activeSubModule === 'setores') {
         setIsDepartamentoModalOpen(true);
       } else if (activeSubModule === 'funcoes') {
@@ -240,7 +241,6 @@ const RH = () => {
 
   // Get button text based on active module
   const getButtonText = () => {
-    if (activeModule === 'colaboradores') return "Novo Colaborador";
     if (activeModule === 'departamentos') {
       if (activeSubModule === 'setores') return "Novo Setor";
       if (activeSubModule === 'funcoes') return "Nova Função";
@@ -252,6 +252,11 @@ const RH = () => {
       if (activeSubModule === 'niveis') return "Gerenciar Níveis";
     }
     return "Novo Registro";
+  };
+
+  // Verifica se deve mostrar o botão de novo registro (não mostrar para colaboradores)
+  const shouldShowNewRecordButton = () => {
+    return activeModule !== 'colaboradores';
   };
 
   // Adicionar listener para eventos de edição
@@ -286,14 +291,51 @@ const RH = () => {
                   </div>
                 ) : (
                   <>
-                    <ContentHeader
-                      title={currentSubModule?.name || ''}
-                      description={`Gerencie os registros de ${currentSubModule?.name?.toLowerCase() || ''}`}
-                      searchTerm={searchTerm}
-                      onSearchChange={setSearchTerm}
-                      onNewRecord={handleNewRecord}
-                      buttonText={getButtonText()}
-                    />
+                    {shouldShowNewRecordButton() && (
+                      <ContentHeader
+                        title={currentSubModule?.name || ''}
+                        description={`Gerencie os registros de ${currentSubModule?.name?.toLowerCase() || ''}`}
+                        searchTerm={searchTerm}
+                        onSearchChange={setSearchTerm}
+                        onNewRecord={handleNewRecord}
+                        buttonText={getButtonText()}
+                      />
+                    )}
+
+                    {!shouldShowNewRecordButton() && (
+                      <div className="bg-white border-b border-gray-200/80 p-6">
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <h1 className="text-3xl font-bold text-biodina-blue mb-2">{currentSubModule?.name || ''}</h1>
+                            <p className="text-gray-600">{`Gerencie os registros de ${currentSubModule?.name?.toLowerCase() || ''}`}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-4 items-center">
+                          <div className="relative flex-1 max-w-md">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                            <Input
+                              placeholder="Pesquisar registros..."
+                              value={searchTerm}
+                              onChange={(e) => setSearchTerm(e.target.value)}
+                              className="pl-10 border-gray-200 focus:border-biodina-gold rounded-xl"
+                            />
+                          </div>
+                          <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50 rounded-xl">
+                            <Filter className="h-4 w-4 mr-2" />
+                            Filtros
+                          </Button>
+                          <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50 rounded-xl">
+                            <Download className="h-4 w-4 mr-2" />
+                            Exportar
+                          </Button>
+                          <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50 rounded-xl">
+                            <Upload className="h-4 w-4 mr-2" />
+                            Importar
+                          </Button>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="flex-1 p-6 min-h-0">
                       <DataTable 
