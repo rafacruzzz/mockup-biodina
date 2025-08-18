@@ -1,4 +1,3 @@
-
 export interface DependenteIR {
   id: string;
   nome: string;
@@ -93,6 +92,8 @@ export interface DadosBancarios {
 export interface FormacaoEscolaridade {
   escolaridade: string;
   possuiDiploma: boolean;
+  curriculo?: DocumentoAnexo;
+  comprovantesEscolaridade: DocumentoAnexo[];
 }
 
 export interface Beneficios {

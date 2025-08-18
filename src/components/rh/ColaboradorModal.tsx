@@ -113,7 +113,9 @@ const ColaboradorModal = ({
     },
     formacaoEscolaridade: {
       escolaridade: colaboradorData?.formacaoEscolaridade?.escolaridade || '',
-      possuiDiploma: colaboradorData?.formacaoEscolaridade?.possuiDiploma || false
+      possuiDiploma: colaboradorData?.formacaoEscolaridade?.possuiDiploma || false,
+      curriculo: colaboradorData?.formacaoEscolaridade?.curriculo || undefined,
+      comprovantesEscolaridade: colaboradorData?.formacaoEscolaridade?.comprovantesEscolaridade || []
     },
     beneficios: {
       tipoPlano: colaboradorData?.beneficios?.tipoPlano || '',
