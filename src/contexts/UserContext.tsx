@@ -170,7 +170,38 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       },
       beneficios: {
         tipoPlano: 'premium',
-        quantidadeDependentesPlano: '2'
+        quantidadeDependentesPlano: '2',
+        
+        valeTransporte: {
+          modalidade: 'banco',
+          dataSolicitacaoCartao: '2024-01-10',
+          dataPagamento: '2024-01-31'
+        },
+        valeAlimentacao: {
+          dataSolicitacaoCartao: '2024-01-10',
+          dataPagamento: '2024-01-26'
+        },
+        planoSaude: {
+          operadora: 'bradesco',
+          dataSolicitacao: '2024-01-05',
+          vigenciaInicio: '2024-02-01',
+          tipoPlano: 'Plano Executivo Premium com cobertura nacional e internacional',
+          possuiDependentes: true,
+          dependentes: [
+            {
+              id: '1',
+              nomeCompleto: 'Ana Silva Santos',
+              documento: '123.456.789-01',
+              dataNascimento: '2015-05-20'
+            },
+            {
+              id: '2',
+              nomeCompleto: 'Carlos Silva Santos',
+              documento: '123.456.789-02',
+              dataNascimento: '2011-08-12'
+            }
+          ]
+        }
       },
       documentacao: {
         anexos: [

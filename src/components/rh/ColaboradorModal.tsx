@@ -119,7 +119,24 @@ const ColaboradorModal = ({
     },
     beneficios: {
       tipoPlano: colaboradorData?.beneficios?.tipoPlano || '',
-      quantidadeDependentesPlano: colaboradorData?.beneficios?.quantidadeDependentesPlano || ''
+      quantidadeDependentesPlano: colaboradorData?.beneficios?.quantidadeDependentesPlano || '',
+      valeTransporte: colaboradorData?.beneficios?.valeTransporte || {
+        modalidade: '',
+        dataSolicitacaoCartao: '',
+        dataPagamento: ''
+      },
+      valeAlimentacao: colaboradorData?.beneficios?.valeAlimentacao || {
+        dataSolicitacaoCartao: '',
+        dataPagamento: ''
+      },
+      planoSaude: colaboradorData?.beneficios?.planoSaude || {
+        operadora: '',
+        dataSolicitacao: '',
+        vigenciaInicio: '',
+        tipoPlano: '',
+        possuiDependentes: false,
+        dependentes: []
+      }
     },
     documentacao: {
       anexos: colaboradorData?.documentacao?.anexos || []
@@ -139,6 +156,29 @@ const ColaboradorModal = ({
         ...prev,
         [section]: value
       }));
+    } else if (section === 'beneficios') {
+      if (field === 'valeTransporte' || field === 'valeAlimentacao' || field === 'planoSaude') {
+        try {
+          const parsedValue = typeof value === 'string' ? JSON.parse(value) : value;
+          setFormData(prev => ({
+            ...prev,
+            beneficios: {
+              ...prev.beneficios,
+              [field]: parsedValue
+            }
+          }));
+        } catch (e) {
+          console.error('Error parsing nested benefit data:', e);
+        }
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          beneficios: {
+            ...prev.beneficios,
+            [field]: value
+          }
+        }));
+      }
     } else {
       setFormData(prev => ({
         ...prev,
@@ -154,7 +194,7 @@ const ColaboradorModal = ({
     const dadosDesligamento = {
       motivoDesligamento: motivo,
       dataDesligamento: data,
-      processadoPor: 'Administrador', // Pode ser obtido do contexto de usuário
+      processadoPor: 'Administrador',
       observacoes: '',
       itensDesligamento: [
         { id: '1', nome: 'Crachá hospital', necessario: false, dataEntrega: '', entregue: false },

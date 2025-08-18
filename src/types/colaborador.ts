@@ -5,6 +5,13 @@ export interface DependenteIR {
   idade: number;
 }
 
+export interface DependentePlanoSaude {
+  id: string;
+  nomeCompleto: string;
+  documento: string;
+  dataNascimento: string;
+}
+
 export interface DadosPessoais {
   nome: string;
   cpf: string;
@@ -97,8 +104,32 @@ export interface FormacaoEscolaridade {
 }
 
 export interface Beneficios {
+  // Campos existentes (compatibilidade)
   tipoPlano: string;
   quantidadeDependentesPlano: string;
+  
+  // Vale-transporte
+  valeTransporte: {
+    modalidade: string;
+    dataSolicitacaoCartao: string;
+    dataPagamento: string;
+  };
+  
+  // Vale-alimentação
+  valeAlimentacao: {
+    dataSolicitacaoCartao: string;
+    dataPagamento: string;
+  };
+  
+  // Plano de Saúde
+  planoSaude: {
+    operadora: string;
+    dataSolicitacao: string;
+    vigenciaInicio: string;
+    tipoPlano: string;
+    possuiDependentes: boolean;
+    dependentes: DependentePlanoSaude[];
+  };
 }
 
 export interface DocumentoAnexo {
