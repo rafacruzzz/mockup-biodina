@@ -98,6 +98,16 @@ const SolicitacaoAlteracaoModal = ({
                 <SelectItem value="atualizacao">Atualização de informações</SelectItem>
                 <SelectItem value="inclusao">Inclusão de dados</SelectItem>
                 <SelectItem value="exclusao">Exclusão de dados</SelectItem>
+                <SelectItem value="processo-seletivo">Solicitação de Processo Seletivo/Admissão</SelectItem>
+                <SelectItem value="rescisao">Solicitação de Rescisão</SelectItem>
+                <SelectItem value="programacao-ferias">Programação de Férias</SelectItem>
+                <SelectItem value="evolucao-promocao">Evolução/Promoção</SelectItem>
+                <SelectItem value="alteracao-endereco-vt">Alteração de Endereço (VT)</SelectItem>
+                <SelectItem value="licenca">Licença – maternidade/paternidade/INSS</SelectItem>
+                <SelectItem value="inclusao-dependente-ir">Inclusão de Dependente IR</SelectItem>
+                <SelectItem value="inclusao-dependente-saude">Inclusão de Dependente Plano de Saúde</SelectItem>
+                <SelectItem value="ponto-eletronico">Ponto Eletrônico</SelectItem>
+                <SelectItem value="outras-solicitacoes">Outras dúvidas e solicitações</SelectItem>
               </SelectContent>
             </Select>
           </div>
