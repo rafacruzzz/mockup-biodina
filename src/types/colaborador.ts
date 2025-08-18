@@ -1,3 +1,11 @@
+
+export interface DependenteIR {
+  id: string;
+  nome: string;
+  documento: string;
+  idade: number;
+}
+
 export interface DadosPessoais {
   nome: string;
   cpf: string;
@@ -68,7 +76,8 @@ export interface DadosFinanceiros {
   valorHoraTrabalhada: string;
   pisoSalarial: string;
   mediaSalarial: string;
-  dependentesIR: string;
+  dependentesIR: DependenteIR[];
+  adiantamentoSalarial: boolean;
   sugestaoSalario?: string;
   breakdownSalarial?: string;
   planoCarreira?: string;

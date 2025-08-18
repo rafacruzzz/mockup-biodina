@@ -102,7 +102,8 @@ const ColaboradorModal = ({
       valorHoraTrabalhada: colaboradorData?.dadosFinanceiros?.valorHoraTrabalhada || '',
       pisoSalarial: colaboradorData?.dadosFinanceiros?.pisoSalarial || '',
       mediaSalarial: colaboradorData?.dadosFinanceiros?.mediaSalarial || '',
-      dependentesIR: colaboradorData?.dadosFinanceiros?.dependentesIR || ''
+      dependentesIR: colaboradorData?.dadosFinanceiros?.dependentesIR || [],
+      adiantamentoSalarial: colaboradorData?.dadosFinanceiros?.adiantamentoSalarial || false
     },
     dadosBancarios: {
       banco: colaboradorData?.dadosBancarios?.banco || '',
