@@ -50,6 +50,13 @@ export interface DadosProfissionais {
   nomeDepartamento?: string;
   responsavelDepartamento?: string;
   descricaoDepartamento?: string;
+  // Novos campos adicionados
+  tipoUsuario: string;
+  sindicatoVinculado?: string;
+  regimeTrabalho: string;
+  horarioTrabalho: string;
+  cargaHorariaSemanal: string;
+  origemContratacao: string;
 }
 
 export interface DadosFinanceiros {

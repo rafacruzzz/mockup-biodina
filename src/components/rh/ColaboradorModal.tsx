@@ -85,7 +85,13 @@ const ColaboradorModal = ({
       dataCadastro: colaboradorData?.dadosProfissionais?.dataCadastro || '',
       tempoCasa: colaboradorData?.dadosProfissionais?.tempoCasa || '',
       ultimaPromocao: colaboradorData?.dadosProfissionais?.ultimaPromocao || '',
-      previsaoFerias: colaboradorData?.dadosProfissionais?.previsaoFerias || ''
+      previsaoFerias: colaboradorData?.dadosProfissionais?.previsaoFerias || '',
+      tipoUsuario: colaboradorData?.dadosProfissionais?.tipoUsuario || '',
+      sindicatoVinculado: colaboradorData?.dadosProfissionais?.sindicatoVinculado || '',
+      regimeTrabalho: colaboradorData?.dadosProfissionais?.regimeTrabalho || '',
+      horarioTrabalho: colaboradorData?.dadosProfissionais?.horarioTrabalho || '',
+      cargaHorariaSemanal: colaboradorData?.dadosProfissionais?.cargaHorariaSemanal || '',
+      origemContratacao: colaboradorData?.dadosProfissionais?.origemContratacao || ''
     },
     dadosFinanceiros: {
       salarioBase: colaboradorData?.dadosFinanceiros?.salarioBase || '',

@@ -51,6 +51,93 @@ const DadosProfissionaisTab = ({ formData, onInputChange }: DadosProfissionaisTa
         </div>
       </div>
 
+      {/* Informações de Contratação */}
+      <div className="space-y-4">
+        <h3 className="font-semibold text-gray-900 border-b pb-2">Informações de Contratação</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="tipoUsuario">Tipo de Usuário *</Label>
+            <Select value={formData.tipoUsuario} onValueChange={(value) => onInputChange('tipoUsuario', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o tipo de usuário" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="diretoria">Diretoria</SelectItem>
+                <SelectItem value="funcionario">Funcionário</SelectItem>
+                <SelectItem value="autonomo">Autônomo</SelectItem>
+                <SelectItem value="pj">PJ</SelectItem>
+                <SelectItem value="estagio">Estágio</SelectItem>
+                <SelectItem value="jovem-aprendiz">Jovem Aprendiz</SelectItem>
+                <SelectItem value="externo">Externo</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="sindicatoVinculado">Sindicato Vinculado (se aplicável)</Label>
+            <Input
+              id="sindicatoVinculado"
+              value={formData.sindicatoVinculado || ''}
+              onChange={(e) => onInputChange('sindicatoVinculado', e.target.value)}
+              placeholder="Nome do sindicato"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="regimeTrabalho">Regime de Trabalho *</Label>
+            <Select value={formData.regimeTrabalho} onValueChange={(value) => onInputChange('regimeTrabalho', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o regime" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="presencial">Presencial</SelectItem>
+                <SelectItem value="remoto">Remoto</SelectItem>
+                <SelectItem value="hibrido">Híbrido</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="origemContratacao">Origem da Contratação *</Label>
+            <Select value={formData.origemContratacao} onValueChange={(value) => onInputChange('origemContratacao', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione a origem" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="agencia">Agência</SelectItem>
+                <SelectItem value="site-recrutamento">Site de recrutamento</SelectItem>
+                <SelectItem value="linkedin">LinkedIn</SelectItem>
+                <SelectItem value="indicacao">Indicação</SelectItem>
+                <SelectItem value="outros">Outros</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="horarioTrabalho">Horário de Trabalho</Label>
+            <Input
+              id="horarioTrabalho"
+              value={formData.horarioTrabalho}
+              onChange={(e) => onInputChange('horarioTrabalho', e.target.value)}
+              placeholder="Ex: 08:00 às 17:00"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="cargaHorariaSemanal">Carga Horária Semanal (h)</Label>
+            <Input
+              id="cargaHorariaSemanal"
+              type="number"
+              value={formData.cargaHorariaSemanal}
+              onChange={(e) => onInputChange('cargaHorariaSemanal', e.target.value)}
+              placeholder="Ex: 40"
+              min="1"
+              max="60"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Informações do Departamento (campos migrados) */}
       <div className="space-y-4">
         <h3 className="font-semibold text-gray-900 border-b pb-2">Informações do Departamento</h3>
