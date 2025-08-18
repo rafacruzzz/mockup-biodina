@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -51,6 +52,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         pis: '12345678901',
         idade: '35',
         dataNascimento: '1989-03-15',
+        estadoCivil: 'Casado',
+        nacionalidade: 'Brasileira',
         genero: 'masculino',
         etnia: 'branco',
         rg: '1234567',
@@ -60,11 +63,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         naturalidade: 'Brasília-DF',
         nomeMae: 'Maria Silva Santos',
         nomePai: 'João Silva',
-        cid: '',
+        cep: '70000-000',
+        endereco: 'SQN 410 Bloco A Apt 101, Asa Norte',
+        numeroResidencia: '101',
+        complemento: 'Bloco A, Apt 101',
+        bairro: 'Asa Norte',
+        pcd: 'Não informado',
+        doencaPreExistente: 'Não informado',
         email: 'danilo@tecnologiadc.com.br',
         telefone: '(61) 99999-9999',
-        endereco: 'SQN 410 Bloco A Apt 101, Asa Norte',
-        bairro: 'Asa Norte',
         observacoes: 'Colaborador exemplar, sempre pontual e dedicado.'
       },
       dadosProfissionais: {
