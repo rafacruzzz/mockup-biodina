@@ -1,10 +1,11 @@
-
 export interface DadosPessoais {
   nome: string;
   cpf: string;
   pis: string;
   idade: string;
   dataNascimento: string;
+  estadoCivil: string;
+  nacionalidade: string;
   genero: string;
   etnia: string;
   rg: string;
@@ -14,11 +15,16 @@ export interface DadosPessoais {
   naturalidade: string;
   nomeMae: string;
   nomePai: string;
-  cid: string;
+  cep: string;
+  endereco: string;
+  numeroResidencia: string;
+  complemento: string;
+  bairro: string;
+  comprovanteResidencia?: File;
+  pcd: string;
+  doencaPreExistente: string;
   email: string;
   telefone: string;
-  endereco: string;
-  bairro: string;
   observacoes: string;
 }
 

@@ -48,6 +48,8 @@ const ColaboradorModal = ({
       pis: colaboradorData?.dadosPessoais?.pis || '',
       idade: colaboradorData?.dadosPessoais?.idade || '',
       dataNascimento: colaboradorData?.dadosPessoais?.dataNascimento || '',
+      estadoCivil: colaboradorData?.dadosPessoais?.estadoCivil || '',
+      nacionalidade: colaboradorData?.dadosPessoais?.nacionalidade || '',
       genero: colaboradorData?.dadosPessoais?.genero || '',
       etnia: colaboradorData?.dadosPessoais?.etnia || '',
       rg: colaboradorData?.dadosPessoais?.rg || '',
@@ -57,11 +59,16 @@ const ColaboradorModal = ({
       naturalidade: colaboradorData?.dadosPessoais?.naturalidade || '',
       nomeMae: colaboradorData?.dadosPessoais?.nomeMae || '',
       nomePai: colaboradorData?.dadosPessoais?.nomePai || '',
-      cid: colaboradorData?.dadosPessoais?.cid || '',
+      cep: colaboradorData?.dadosPessoais?.cep || '',
+      endereco: colaboradorData?.dadosPessoais?.endereco || '',
+      numeroResidencia: colaboradorData?.dadosPessoais?.numeroResidencia || '',
+      complemento: colaboradorData?.dadosPessoais?.complemento || '',
+      bairro: colaboradorData?.dadosPessoais?.bairro || '',
+      comprovanteResidencia: colaboradorData?.dadosPessoais?.comprovanteResidencia || undefined,
+      pcd: colaboradorData?.dadosPessoais?.pcd || '',
+      doencaPreExistente: colaboradorData?.dadosPessoais?.doencaPreExistente || '',
       email: colaboradorData?.dadosPessoais?.email || '',
       telefone: colaboradorData?.dadosPessoais?.telefone || '',
-      endereco: colaboradorData?.dadosPessoais?.endereco || '',
-      bairro: colaboradorData?.dadosPessoais?.bairro || '',
       observacoes: colaboradorData?.dadosPessoais?.observacoes || ''
     },
     dadosProfissionais: {
@@ -193,7 +200,7 @@ const ColaboradorModal = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
           <DialogHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -228,7 +235,7 @@ const ColaboradorModal = ({
             </div>
           </DialogHeader>
 
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto">
             <Tabs defaultValue="dados-pessoais" className="h-full flex flex-col">
               <TabsList className={`grid w-full grid-cols-${totalTabs} mb-4`}>
                 <TabsTrigger value="dados-pessoais" className="text-xs">
@@ -274,7 +281,7 @@ const ColaboradorModal = ({
                 )}
               </TabsList>
 
-              <div className="flex-1 overflow-y-auto">
+              <div className="flex-1 overflow-y-auto px-1">
                 <TabsContent value="dados-pessoais" className="mt-0">
                   <DadosPessoaisTab 
                     formData={formData.dadosPessoais}
