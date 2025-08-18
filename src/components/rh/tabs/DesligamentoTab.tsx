@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { CheckCircle, Clock, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CheckCircle, Clock, AlertCircle, Upload, Image as ImageIcon, X } from "lucide-react";
 import { ItemDesligamento, DadosDesligamento } from "@/types/colaborador";
 
 interface DesligamentoTabProps {
@@ -45,6 +46,7 @@ const DesligamentoTab = ({ formData, onInputChange }: DesligamentoTabProps) => {
         if (field === 'necessario' && !value) {
           itemAtualizado.dataEntrega = '';
           itemAtualizado.entregue = false;
+          itemAtualizado.imagemComprovante = undefined;
         }
         // Se tem data de entrega, marcar como entregue automaticamente
         if (field === 'dataEntrega' && value) {
@@ -56,6 +58,23 @@ const DesligamentoTab = ({ formData, onInputChange }: DesligamentoTabProps) => {
     });
     
     onInputChange('itensDesligamento', novosItens);
+  };
+
+  const handleImageUpload = (itemId: string, event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Criar URL para preview
+      const imageUrl = URL.createObjectURL(file);
+      handleItemChange(itemId, 'imagemComprovante', {
+        file,
+        url: imageUrl,
+        nome: file.name
+      });
+    }
+  };
+
+  const removeImage = (itemId: string) => {
+    handleItemChange(itemId, 'imagemComprovante', undefined);
   };
 
   const getStatusIcon = (item: ItemDesligamento) => {
@@ -159,17 +178,67 @@ const DesligamentoTab = ({ formData, onInputChange }: DesligamentoTabProps) => {
                   </div>
                   
                   {item.necessario && (
-                    <div className="ml-6 flex gap-4">
-                      <div className="flex-1">
-                        <Label className="text-xs">Data de Entrega</Label>
-                        <Input
-                          type="date"
-                          value={item.dataEntrega}
-                          onChange={(e) => 
-                            handleItemChange(item.id, 'dataEntrega', e.target.value)
-                          }
-                          className="mt-1"
-                        />
+                    <div className="ml-6 space-y-4">
+                      <div className="flex gap-4">
+                        <div className="flex-1">
+                          <Label className="text-xs">Data de Entrega</Label>
+                          <Input
+                            type="date"
+                            value={item.dataEntrega}
+                            onChange={(e) => 
+                              handleItemChange(item.id, 'dataEntrega', e.target.value)
+                            }
+                            className="mt-1"
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* Seção de Upload de Imagem */}
+                      <div className="space-y-2">
+                        <Label className="text-xs">Comprovante Fotográfico</Label>
+                        
+                        {!item.imagemComprovante ? (
+                          <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(item.id, e)}
+                              className="hidden"
+                              id={`image-${item.id}`}
+                            />
+                            <label
+                              htmlFor={`image-${item.id}`}
+                              className="cursor-pointer flex flex-col items-center gap-2"
+                            >
+                              <ImageIcon className="h-8 w-8 text-gray-400" />
+                              <span className="text-sm text-gray-600">
+                                Clique para anexar uma imagem
+                              </span>
+                            </label>
+                          </div>
+                        ) : (
+                          <div className="relative border rounded-lg p-2">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={item.imagemComprovante.url}
+                                alt={`Comprovante ${item.nome}`}
+                                className="w-16 h-16 object-cover rounded"
+                              />
+                              <div className="flex-1">
+                                <p className="text-sm font-medium">{item.imagemComprovante.nome}</p>
+                                <p className="text-xs text-gray-600">Comprovante de devolução</p>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeImage(item.id)}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

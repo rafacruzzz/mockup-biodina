@@ -94,6 +94,11 @@ export interface ItemDesligamento {
   necessario: boolean;
   dataEntrega: string;
   entregue: boolean;
+  imagemComprovante?: {
+    file: File;
+    url: string;
+    nome: string;
+  };
 }
 
 export interface DadosDesligamento {
