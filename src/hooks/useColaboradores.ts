@@ -9,7 +9,7 @@ export interface Colaborador {
   email: string;
   telefone: string;
   dataAdmissao: string;
-  status: 'Novo' | 'Ativo' | 'Inativo';
+  status: 'Novo' | 'Ativo' | 'Inativo' | 'Desligado';
   documentos?: any[];
 }
 
@@ -28,8 +28,19 @@ export const useColaboradores = () => {
     return colaborador;
   }, []);
 
+  const desligarColaborador = useCallback((id: string) => {
+    setColaboradores(prev => 
+      prev.map(colaborador => 
+        colaborador.id === id 
+          ? { ...colaborador, status: 'Desligado' as const }
+          : colaborador
+      )
+    );
+  }, []);
+
   return {
     colaboradores,
-    adicionarColaborador
+    adicionarColaborador,
+    desligarColaborador
   };
 };

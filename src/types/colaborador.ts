@@ -1,4 +1,3 @@
-
 export interface DadosPessoais {
   nome: string;
   cpf: string;
@@ -89,6 +88,22 @@ export interface Documentacao {
   anexos: DocumentoAnexo[];
 }
 
+export interface ItemDesligamento {
+  id: string;
+  nome: string;
+  necessario: boolean;
+  dataEntrega: string;
+  entregue: boolean;
+}
+
+export interface DadosDesligamento {
+  motivoDesligamento: string;
+  dataDesligamento: string;
+  processadoPor: string;
+  observacoes: string;
+  itensDesligamento: ItemDesligamento[];
+}
+
 export interface ColaboradorData {
   dadosPessoais: DadosPessoais;
   dadosProfissionais: DadosProfissionais;
@@ -97,4 +112,5 @@ export interface ColaboradorData {
   formacaoEscolaridade: FormacaoEscolaridade;
   beneficios: Beneficios;
   documentacao: Documentacao;
+  desligamento?: DadosDesligamento;
 }
