@@ -356,9 +356,10 @@ const Cadastro = () => {
         <ServiceModal onClose={() => setShowServiceModal(false)} />
       )}
 
-      {showUserModal && (
-        <UserModal onClose={() => setShowUserModal(false)} />
-      )}
+      <UserModal 
+        isOpen={showUserModal}
+        onClose={() => setShowUserModal(false)} 
+      />
 
       {showEntidadeModal && (
         <EntidadeModal onClose={() => setShowEntidadeModal(false)} />
