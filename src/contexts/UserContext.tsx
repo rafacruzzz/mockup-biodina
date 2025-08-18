@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -95,7 +96,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         sindicatoVinculado: 'SINTTEL-DF',
         regimeTrabalho: 'Híbrido',
         horarioTrabalho: '08:00 às 17:00',
-        cargaHorariaSemanal: 40,
+        cargaHorariaSemanal: '40', // fix: must be string to match DadosProfissionais type
         origemContratacao: 'Indicação'
       },
       dadosFinanceiros: {
