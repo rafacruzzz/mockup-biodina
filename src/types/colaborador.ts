@@ -1,3 +1,4 @@
+
 export interface DadosPessoais {
   nome: string;
   cpf: string;
@@ -39,6 +40,10 @@ export interface DadosProfissionais {
   planoCarreira?: string;
   sugestaoSalario?: string;
   breakdownSalarial?: string;
+  // Campos migrados da aba Departamento do usuário
+  nomeDepartamento?: string;
+  responsavelDepartamento?: string;
+  descricaoDepartamento?: string;
 }
 
 export interface DadosFinanceiros {

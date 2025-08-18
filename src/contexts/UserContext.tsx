@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -10,6 +9,7 @@ interface User {
   email: string;
   nomeUsuario: string;
   fotoPerfil?: string;
+  colaboradorId?: string;
   colaboradorData: ColaboradorData;
 }
 
@@ -42,6 +42,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     nome: 'Danilo Silva',
     email: 'danilo@tecnologiadc.com.br',
     nomeUsuario: 'GERENCIADOR',
+    colaboradorId: '1',
     fotoPerfil: undefined,
     colaboradorData: {
       dadosPessoais: {
