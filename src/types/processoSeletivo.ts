@@ -68,11 +68,22 @@ export interface CandidatoFeedback {
   aprovado: boolean;
 }
 
+export interface TreinamentoAdmissao {
+  id: string;
+  nome: string;
+  concluido: boolean;
+  dataRealizacao?: string;
+  arquivos?: string[];
+  obrigatorio: boolean;
+  observacoes?: string;
+}
+
 export interface Admissao {
   id: string;
   candidatoId: string;
   processoSeletivoId: string;
   documentos: DocumentoAdmissao[];
+  treinamentos: TreinamentoAdmissao[];
   status: 'documentos-pendentes' | 'documentos-completos' | 'aguardando-assinatura' | 'admitido';
   dataAprovacao: string;
   dataAdmissao?: string;

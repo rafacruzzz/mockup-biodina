@@ -1,10 +1,10 @@
-import { Curriculo, ProcessoSeletivo, EtapaSelecao, CandidatoProcesso, Admissao, DocumentoAdmissao, TemplateEtapas } from "@/types/processoSeletivo";
+import { Curriculo, ProcessoSeletivo, EtapaSelecao, CandidatoProcesso, Admissao, DocumentoAdmissao, TemplateEtapas, TreinamentoAdmissao } from "@/types/processoSeletivo";
 
 export const curriculos: Curriculo[] = [
   {
     id: "1",
     nome: "Julia Silva Santos",
-    email: "julia.silva@email.com",
+    email: "julia.silva@email.com", 
     telefone: "(11) 98765-4321",
     cpf: "123.456.789-00",
     departamento: "Tecnologia",
@@ -18,7 +18,7 @@ export const curriculos: Curriculo[] = [
     observacoes: "Ótimo portfólio, experiência com projetos similares"
   },
   {
-    id: "2",
+    id: "2", 
     nome: "Ricardo Oliveira Costa",
     email: "ricardo.oliveira@email.com",
     telefone: "(11) 97654-3210",
@@ -830,5 +830,43 @@ export const checklistDocumentosAdmissao: Omit<DocumentoAdmissao, 'id' | 'recebi
     tipo: "civil",
     obrigatorio: false,
     observacoes: "Com comprovante de votação"
+  }
+];
+
+export const checklistTreinamentosAdmissao: Omit<TreinamentoAdmissao, 'id' | 'concluido' | 'dataRealizacao' | 'arquivos'>[] = [
+  {
+    nome: "Treinamento de Compliance",
+    obrigatorio: true,
+    observacoes: "Treinamento obrigatório sobre compliance e ética empresarial"
+  },
+  {
+    nome: "Treinamento de Boas Práticas",
+    obrigatorio: true,
+    observacoes: "Treinamento sobre procedimentos e boas práticas da empresa"
+  },
+  {
+    nome: "Treinamento de Sistema",
+    obrigatorio: true,
+    observacoes: "Capacitação nos sistemas internos da empresa"
+  },
+  {
+    nome: "Treinamento de EPI",
+    obrigatorio: true,
+    observacoes: "Treinamento sobre uso correto dos equipamentos de proteção individual"
+  },
+  {
+    nome: "Lista de Treinamentos Assinada",
+    obrigatorio: true,
+    observacoes: "Lista completa de treinamentos realizados com assinatura do colaborador"
+  },
+  {
+    nome: "Outros Treinamentos",
+    obrigatorio: false,
+    observacoes: "Treinamentos específicos da área ou função"
+  },
+  {
+    nome: "Ficha de Recebimento de EPIs Assinada",
+    obrigatorio: true,
+    observacoes: "Comprovante de entrega e recebimento dos equipamentos de proteção"
   }
 ];

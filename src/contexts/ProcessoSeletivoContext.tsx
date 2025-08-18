@@ -1,11 +1,11 @@
-
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Curriculo, ProcessoSeletivo, CandidatoProcesso, HistoricoStatus, NotificacaoProcesso } from '@/types/processoSeletivo';
-import { curriculos as curriculosData, processosSeletivos as processosData } from '@/data/processoSeletivo';
+import { Curriculo, ProcessoSeletivo, CandidatoProcesso, HistoricoStatus, NotificacaoProcesso, TreinamentoAdmissao } from '@/types/processoSeletivo';
+import { curriculos as curriculosData, processosSeletivos as processosData, checklistTreinamentosAdmissao } from '@/data/processoSeletivo';
 
 interface CandidatoAdmissao {
   candidatoId: string;
   statusAdmissao: 'documentos-pendentes' | 'documentos-completos' | 'aguardando-assinatura' | 'admitido';
+  treinamentos?: TreinamentoAdmissao[];
 }
 
 interface ProcessoSeletivoContextType {
@@ -34,6 +34,10 @@ interface ProcessoSeletivoContextType {
   atualizarStatusAdmissao: (candidatoId: string, status: string) => void;
   obterStatusAdmissao: (candidatoId: string) => string;
   
+  // Funções para treinamentos
+  obterTreinamentos: (candidatoId: string) => TreinamentoAdmissao[];
+  atualizarTreinamento: (candidatoId: string, treinamentoId: string, dados: Partial<TreinamentoAdmissao>) => void;
+  
   // Funções para histórico e notificações
   obterHistoricoStatus: (candidatoId: string) => HistoricoStatus[];
   criarNotificacao: (notificacao: Omit<NotificacaoProcesso, 'id'>) => void;
@@ -41,6 +45,19 @@ interface ProcessoSeletivoContextType {
 }
 
 const ProcessoSeletivoContext = createContext<ProcessoSeletivoContextType | null>(null);
+
+// Função para criar treinamentos iniciais para um candidato
+const criarTreinamentosIniciais = (): TreinamentoAdmissao[] => {
+  return checklistTreinamentosAdmissao.map((treinamento, index) => ({
+    id: `treinamento-${index}`,
+    nome: treinamento.nome,
+    concluido: Math.random() > 0.7, // Simula alguns treinamentos já concluídos
+    dataRealizacao: Math.random() > 0.5 ? new Date().toISOString() : undefined,
+    arquivos: [],
+    obrigatorio: treinamento.obrigatorio,
+    observacoes: treinamento.observacoes
+  }));
+};
 
 // Função para obter candidatos aprovados e criar status iniciais variados
 const criarStatusIniciais = () => {
@@ -63,7 +80,8 @@ const criarStatusIniciais = () => {
 
   return candidatosAprovados.map((candidatoId, index) => ({
     candidatoId,
-    statusAdmissao: statusOptions[index % statusOptions.length]
+    statusAdmissao: statusOptions[index % statusOptions.length],
+    treinamentos: criarTreinamentosIniciais()
   }));
 };
 
@@ -233,7 +251,8 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
       } else {
         return [...prev, { 
           candidatoId, 
-          statusAdmissao: status as any 
+          statusAdmissao: status as any,
+          treinamentos: criarTreinamentosIniciais()
         }];
       }
     });
@@ -243,6 +262,33 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
     const candidatoAdmissao = candidatosAdmissao.find(c => c.candidatoId === candidatoId);
     return candidatoAdmissao?.statusAdmissao || 'documentos-pendentes';
   }, [candidatosAdmissao]);
+
+  const obterTreinamentos = useCallback((candidatoId: string): TreinamentoAdmissao[] => {
+    const candidatoAdmissao = candidatosAdmissao.find(c => c.candidatoId === candidatoId);
+    return candidatoAdmissao?.treinamentos || criarTreinamentosIniciais();
+  }, [candidatosAdmissao]);
+
+  const atualizarTreinamento = useCallback((candidatoId: string, treinamentoId: string, dados: Partial<TreinamentoAdmissao>) => {
+    console.log(`Atualizando treinamento ${treinamentoId} do candidato ${candidatoId}`, dados);
+    
+    setCandidatosAdmissao(prev => {
+      return prev.map(candidato => {
+        if (candidato.candidatoId === candidatoId) {
+          const treinamentosAtualizados = candidato.treinamentos?.map(treinamento => 
+            treinamento.id === treinamentoId 
+              ? { ...treinamento, ...dados }
+              : treinamento
+          ) || [];
+          
+          return {
+            ...candidato,
+            treinamentos: treinamentosAtualizados
+          };
+        }
+        return candidato;
+      });
+    });
+  }, []);
 
   const obterHistoricoStatus = useCallback((candidatoId: string) => {
     return historicoStatus
@@ -285,6 +331,8 @@ export const ProcessoSeletivoProvider: React.FC<{ children: React.ReactNode }> =
     atualizarStatusCandidato,
     atualizarStatusAdmissao,
     obterStatusAdmissao,
+    obterTreinamentos,
+    atualizarTreinamento,
     obterHistoricoStatus,
     criarNotificacao,
     marcarNotificacaoComoLida
