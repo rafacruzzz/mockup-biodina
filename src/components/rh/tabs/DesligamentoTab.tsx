@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { CheckCircle, Clock, AlertCircle } from "lucide-react";
 import { ItemDesligamento, DadosDesligamento } from "@/types/colaborador";
 
@@ -70,128 +71,130 @@ const DesligamentoTab = ({ formData, onInputChange }: DesligamentoTabProps) => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Informações do Desligamento */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-red-600" />
-            Informações do Desligamento
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-2 gap-4">
-          <div>
-            <Label>Data do Desligamento</Label>
-            <Input
-              type="date"
-              value={formData.dataDesligamento}
-              readOnly
-              className="bg-gray-50"
-            />
-          </div>
-          <div>
-            <Label>Processado por</Label>
-            <Input
-              value={formData.processadoPor}
-              readOnly
-              className="bg-gray-50"
-            />
-          </div>
-          <div className="col-span-2">
-            <Label>Motivo do Desligamento</Label>
-            <Textarea
-              value={formData.motivoDesligamento}
-              readOnly
-              className="bg-gray-50"
-              rows={3}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Progress da Entrega de Itens */}
-      {itensNecessarios.length > 0 && (
+    <ScrollArea className="h-[500px] w-full pr-4">
+      <div className="space-y-6">
+        {/* Informações do Desligamento */}
         <Card>
           <CardHeader>
-            <CardTitle>Progresso das Devoluções</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-red-600" />
+              Informações do Desligamento
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Itens Entregues</span>
-                <span>{itensEntregues.length} de {itensNecessarios.length}</span>
-              </div>
-              <Progress value={progressoEntrega} className="h-2" />
-              <p className="text-xs text-gray-600">
-                {Math.round(progressoEntrega)}% dos itens obrigatórios foram devolvidos
-              </p>
+          <CardContent className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Data do Desligamento</Label>
+              <Input
+                type="date"
+                value={formData.dataDesligamento}
+                readOnly
+                className="bg-gray-50"
+              />
+            </div>
+            <div>
+              <Label>Processado por</Label>
+              <Input
+                value={formData.processadoPor}
+                readOnly
+                className="bg-gray-50"
+              />
+            </div>
+            <div className="col-span-2">
+              <Label>Motivo do Desligamento</Label>
+              <Textarea
+                value={formData.motivoDesligamento}
+                readOnly
+                className="bg-gray-50"
+                rows={3}
+              />
             </div>
           </CardContent>
         </Card>
-      )}
 
-      {/* Lista de Itens de Desligamento */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Itens para Devolução</CardTitle>
-          <p className="text-sm text-gray-600">
-            Marque os itens que devem ser devolvidos pelo colaborador
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            {itens.map((item) => (
-              <div key={item.id} className="p-4 border rounded-lg space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Checkbox
-                      checked={item.necessario}
-                      onCheckedChange={(checked) => 
-                        handleItemChange(item.id, 'necessario', !!checked)
-                      }
-                    />
-                    <Label className="font-medium">{item.nome}</Label>
-                    {getStatusIcon(item)}
-                  </div>
-                  {getStatusBadge(item)}
+        {/* Progress da Entrega de Itens */}
+        {itensNecessarios.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Progresso das Devoluções</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Itens Entregues</span>
+                  <span>{itensEntregues.length} de {itensNecessarios.length}</span>
                 </div>
-                
-                {item.necessario && (
-                  <div className="ml-6 flex gap-4">
-                    <div className="flex-1">
-                      <Label className="text-xs">Data de Entrega</Label>
-                      <Input
-                        type="date"
-                        value={item.dataEntrega}
-                        onChange={(e) => 
-                          handleItemChange(item.id, 'dataEntrega', e.target.value)
-                        }
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
-                )}
+                <Progress value={progressoEntrega} className="h-2" />
+                <p className="text-xs text-gray-600">
+                  {Math.round(progressoEntrega)}% dos itens obrigatórios foram devolvidos
+                </p>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        )}
 
-      {/* Observações */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Observações do Desligamento</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Textarea
-            value={formData.observacoes}
-            onChange={(e) => onInputChange('observacoes', e.target.value)}
-            placeholder="Adicione observações sobre o processo de desligamento..."
-            rows={4}
-          />
-        </CardContent>
-      </Card>
-    </div>
+        {/* Lista de Itens de Desligamento */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Itens para Devolução</CardTitle>
+            <p className="text-sm text-gray-600">
+              Marque os itens que devem ser devolvidos pelo colaborador
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              {itens.map((item) => (
+                <div key={item.id} className="p-4 border rounded-lg space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        checked={item.necessario}
+                        onCheckedChange={(checked) => 
+                          handleItemChange(item.id, 'necessario', !!checked)
+                        }
+                      />
+                      <Label className="font-medium">{item.nome}</Label>
+                      {getStatusIcon(item)}
+                    </div>
+                    {getStatusBadge(item)}
+                  </div>
+                  
+                  {item.necessario && (
+                    <div className="ml-6 flex gap-4">
+                      <div className="flex-1">
+                        <Label className="text-xs">Data de Entrega</Label>
+                        <Input
+                          type="date"
+                          value={item.dataEntrega}
+                          onChange={(e) => 
+                            handleItemChange(item.id, 'dataEntrega', e.target.value)
+                          }
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Observações */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Observações do Desligamento</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Textarea
+              value={formData.observacoes}
+              onChange={(e) => onInputChange('observacoes', e.target.value)}
+              placeholder="Adicione observações sobre o processo de desligamento..."
+              rows={4}
+            />
+          </CardContent>
+        </Card>
+      </div>
+    </ScrollArea>
   );
 };
 
