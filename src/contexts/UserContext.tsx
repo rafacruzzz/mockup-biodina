@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -135,7 +134,39 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       },
       formacaoEscolaridade: {
         escolaridade: 'superior-completo',
-        possuiDiploma: true
+        possuiDiploma: true,
+        curriculo: {
+          id: 'curriculo-1',
+          nome: 'Curriculo_Danilo_Silva.pdf',
+          tipo: 'application/pdf',
+          tamanho: 2048000,
+          dataUpload: '2024-01-15',
+          categoria: 'curriculo',
+          observacoes: 'admissao',
+          arquivo: null
+        },
+        comprovantesEscolaridade: [
+          {
+            id: 'comp-1',
+            nome: 'Diploma_Sistemas_Informacao.pdf',
+            tipo: 'application/pdf',
+            tamanho: 1536000,
+            dataUpload: '2024-01-15',
+            categoria: 'comprovante-escolaridade',
+            observacoes: 'Bacharel em Sistemas de Informação - UnB (2010)',
+            arquivo: null
+          },
+          {
+            id: 'comp-2',
+            nome: 'Certificado_Gestao_Projetos.pdf',
+            tipo: 'application/pdf',
+            tamanho: 1024000,
+            dataUpload: '2024-01-20',
+            categoria: 'comprovante-escolaridade',
+            observacoes: 'Certificação em Gestão de Projetos - PMI (2020)',
+            arquivo: null
+          }
+        ]
       },
       beneficios: {
         tipoPlano: 'premium',
