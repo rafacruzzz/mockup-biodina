@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,9 +11,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Save, User, Shield } from "lucide-react";
 import { useColaboradores } from "@/hooks/useColaboradores";
+import { ModuleAccess } from "@/types/permissions";
 import ColaboradorSelector from "./ColaboradorSelector";
 import UserColaboradorLink from "./UserColaboradorLink";
 import ColaboradorModal from "../rh/ColaboradorModal";
+import AccessProfileSelector from "./AccessProfileSelector";
+import ModuleAccessTree from "./ModuleAccessTree";
 
 interface UserData {
   // Campos específicos do usuário
@@ -29,7 +33,7 @@ interface UserData {
   // Controle de sistema
   isActive: boolean;
   userType: string;
-  permissions: string[];
+  moduleAccess: ModuleAccess[];
 }
 
 interface UserModalProps {
@@ -53,7 +57,7 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
     colaboradorId: userData?.colaboradorId || '',
     isActive: userData?.isActive ?? true,
     userType: userData?.userType || '',
-    permissions: userData?.permissions || []
+    moduleAccess: userData?.moduleAccess || []
   });
 
   const handleColaboradorChange = (colaboradorId: string) => {
@@ -74,6 +78,13 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
     setFormData(prev => ({
       ...prev,
       [field]: value
+    }));
+  };
+
+  const handleModuleAccessChange = (modules: ModuleAccess[]) => {
+    setFormData(prev => ({
+      ...prev,
+      moduleAccess: modules
     }));
   };
 
@@ -115,189 +126,194 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
                 </TabsTrigger>
               </TabsList>
 
-              <div className="flex-1 overflow-y-auto">
-                <TabsContent value="usuario" className="mt-0 space-y-6">
-                  {/* Seleção do Colaborador */}
-                  <ColaboradorSelector
-                    value={formData.colaboradorId}
-                    onChange={handleColaboradorChange}
-                    onCreateNew={() => setIsColaboradorModalOpen(true)}
-                  />
-
-                  {/* Link para o Colaborador (se selecionado) */}
-                  {formData.colaboradorId && (
-                    <UserColaboradorLink
-                      colaboradorId={formData.colaboradorId}
-                      onViewColaborador={() => setIsColaboradorModalOpen(true)}
-                    />
-                  )}
-
-                  {/* Dados Básicos (Auto-preenchidos) */}
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900 border-b pb-2">
-                      Dados Básicos (auto-preenchidos do colaborador)
-                    </h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="nome">Nome Completo</Label>
-                        <Input
-                          id="nome"
-                          value={formData.nome}
-                          onChange={(e) => handleInputChange('nome', e.target.value)}
-                          placeholder="Nome será preenchido automaticamente"
-                          className="bg-gray-50"
-                          readOnly={!!formData.colaboradorId}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => handleInputChange('email', e.target.value)}
-                          placeholder="Email será preenchido automaticamente"
-                          className="bg-gray-50"
-                          readOnly={!!formData.colaboradorId}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="cpf">CPF</Label>
-                        <Input
-                          id="cpf"
-                          value={formData.cpf}
-                          onChange={(e) => handleInputChange('cpf', e.target.value)}
-                          placeholder="CPF será preenchido automaticamente"
-                          className="bg-gray-50"
-                          readOnly={!!formData.colaboradorId}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="telefone">Telefone</Label>
-                        <Input
-                          id="telefone"
-                          value={formData.telefone}
-                          onChange={(e) => handleInputChange('telefone', e.target.value)}
-                          placeholder="Telefone será preenchido automaticamente"
-                          className="bg-gray-50"
-                          readOnly={!!formData.colaboradorId}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Credenciais de Acesso */}
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900 border-b pb-2">
-                      Credenciais de Acesso
-                    </h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="username">Nome de Usuário *</Label>
-                        <Input
-                          id="username"
-                          value={formData.username}
-                          onChange={(e) => handleInputChange('username', e.target.value)}
-                          placeholder="Digite o nome de usuário"
-                          required
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="userType">Tipo de Usuário *</Label>
-                        <Select value={formData.userType} onValueChange={(value) => handleInputChange('userType', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o tipo" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="admin">Administrador</SelectItem>
-                            <SelectItem value="gerente">Gerente</SelectItem>
-                            <SelectItem value="usuario">Usuário</SelectItem>
-                            <SelectItem value="visitante">Visitante</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="password">Senha *</Label>
-                        <Input
-                          id="password"
-                          type="password"
-                          value={formData.password}
-                          onChange={(e) => handleInputChange('password', e.target.value)}
-                          placeholder="Digite a senha"
-                          required
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="confirmPassword">Confirmar Senha *</Label>
-                        <Input
-                          id="confirmPassword"
-                          type="password"
-                          value={formData.confirmPassword}
-                          onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                          placeholder="Confirme a senha"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Status */}
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900 border-b pb-2">
-                      Status
-                    </h3>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="isActive"
-                        checked={formData.isActive}
-                        onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+              <div className="flex-1 overflow-hidden">
+                <TabsContent value="usuario" className="mt-0 h-full">
+                  <ScrollArea className="h-full pr-4">
+                    <div className="space-y-6 pb-4">
+                      {/* Seleção do Colaborador */}
+                      <ColaboradorSelector
+                        value={formData.colaboradorId}
+                        onChange={handleColaboradorChange}
+                        onCreateNew={() => setIsColaboradorModalOpen(true)}
                       />
-                      <Label htmlFor="isActive">Usuário ativo</Label>
-                      <Badge variant={formData.isActive ? "default" : "secondary"}>
-                        {formData.isActive ? "Ativo" : "Inativo"}
-                      </Badge>
-                    </div>
-                  </div>
-                </TabsContent>
 
-                <TabsContent value="controle-sistema" className="mt-0">
-                  <div className="space-y-6">
-                    <h3 className="font-semibold text-gray-900">Permissões e Controles de Sistema</h3>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      {/* Aqui ficam as permissões específicas do sistema */}
-                      <div className="space-y-2">
-                        <Label>Módulos Disponíveis</Label>
-                        <div className="space-y-2">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="rh" />
-                            <Label htmlFor="rh">Recursos Humanos</Label>
+                      {/* Link para o Colaborador (se selecionado) */}
+                      {formData.colaboradorId && (
+                        <UserColaboradorLink
+                          colaboradorId={formData.colaboradorId}
+                          onViewColaborador={() => setIsColaboradorModalOpen(true)}
+                        />
+                      )}
+
+                      {/* Dados Básicos (Auto-preenchidos) */}
+                      <div className="space-y-4">
+                        <h3 className="font-semibold text-gray-900 border-b pb-2">
+                          Dados Básicos (auto-preenchidos do colaborador)
+                        </h3>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="nome">Nome Completo</Label>
+                            <Input
+                              id="nome"
+                              value={formData.nome}
+                              onChange={(e) => handleInputChange('nome', e.target.value)}
+                              placeholder="Nome será preenchido automaticamente"
+                              className="bg-gray-50"
+                              readOnly={!!formData.colaboradorId}
+                            />
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="comercial" />
-                            <Label htmlFor="comercial">Comercial</Label>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="email">Email</Label>
+                            <Input
+                              id="email"
+                              type="email"
+                              value={formData.email}
+                              onChange={(e) => handleInputChange('email', e.target.value)}
+                              placeholder="Email será preenchido automaticamente"
+                              className="bg-gray-50"
+                              readOnly={!!formData.colaboradorId}
+                            />
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="estoque" />
-                            <Label htmlFor="estoque">Estoque</Label>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="cpf">CPF</Label>
+                            <Input
+                              id="cpf"
+                              value={formData.cpf}
+                              onChange={(e) => handleInputChange('cpf', e.target.value)}
+                              placeholder="CPF será preenchido automaticamente"
+                              className="bg-gray-50"
+                              readOnly={!!formData.colaboradorId}
+                            />
                           </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox id="financeiro" />
-                            <Label htmlFor="financeiro">Financeiro</Label>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="telefone">Telefone</Label>
+                            <Input
+                              id="telefone"
+                              value={formData.telefone}
+                              onChange={(e) => handleInputChange('telefone', e.target.value)}
+                              placeholder="Telefone será preenchido automaticamente"
+                              className="bg-gray-50"
+                              readOnly={!!formData.colaboradorId}
+                            />
                           </div>
                         </div>
                       </div>
+
+                      {/* Credenciais de Acesso */}
+                      <div className="space-y-4">
+                        <h3 className="font-semibold text-gray-900 border-b pb-2">
+                          Credenciais de Acesso
+                        </h3>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="username">Nome de Usuário *</Label>
+                            <Input
+                              id="username"
+                              value={formData.username}
+                              onChange={(e) => handleInputChange('username', e.target.value)}
+                              placeholder="Digite o nome de usuário"
+                              required
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="userType">Tipo de Usuário *</Label>
+                            <Select value={formData.userType} onValueChange={(value) => handleInputChange('userType', value)}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione o tipo" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="admin">Administrador</SelectItem>
+                                <SelectItem value="gerente">Gerente</SelectItem>
+                                <SelectItem value="usuario">Usuário</SelectItem>
+                                <SelectItem value="visitante">Visitante</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="password">Senha *</Label>
+                            <Input
+                              id="password"
+                              type="password"
+                              value={formData.password}
+                              onChange={(e) => handleInputChange('password', e.target.value)}
+                              placeholder="Digite a senha"
+                              required
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="confirmPassword">Confirmar Senha *</Label>
+                            <Input
+                              id="confirmPassword"
+                              type="password"
+                              value={formData.confirmPassword}
+                              onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                              placeholder="Confirme a senha"
+                              required
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Status */}
+                      <div className="space-y-4">
+                        <h3 className="font-semibold text-gray-900 border-b pb-2">
+                          Status
+                        </h3>
+                        
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="isActive"
+                            checked={formData.isActive}
+                            onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+                          />
+                          <Label htmlFor="isActive">Usuário ativo</Label>
+                          <Badge variant={formData.isActive ? "default" : "secondary"}>
+                            {formData.isActive ? "Ativo" : "Inativo"}
+                          </Badge>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </ScrollArea>
+                </TabsContent>
+
+                <TabsContent value="controle-sistema" className="mt-0 h-full">
+                  <ScrollArea className="h-full pr-4">
+                    <div className="space-y-6 pb-4">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 mb-4">Permissões e Controles de Sistema</h3>
+                        <p className="text-sm text-gray-600 mb-6">
+                          Configure as permissões de acesso aos módulos do sistema. Você pode aplicar um perfil pré-definido ou configurar as permissões individualmente.
+                        </p>
+                      </div>
+
+                      {/* Seletor de Perfil */}
+                      <div className="space-y-4">
+                        <AccessProfileSelector onProfileSelect={handleModuleAccessChange} />
+                      </div>
+
+                      {/* Árvore de Permissões */}
+                      <div className="space-y-4">
+                        <div className="border-t pt-6">
+                          <h4 className="font-medium text-gray-900 mb-4">Permissões Detalhadas</h4>
+                          <p className="text-sm text-gray-600 mb-4">
+                            Configure permissões específicas para cada módulo e funcionalidade
+                          </p>
+                          <ModuleAccessTree 
+                            modules={formData.moduleAccess}
+                            onModuleChange={handleModuleAccessChange}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </ScrollArea>
                 </TabsContent>
               </div>
             </Tabs>
