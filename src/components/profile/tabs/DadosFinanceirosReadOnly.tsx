@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Edit3, AlertCircle } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Edit3, AlertCircle, User } from 'lucide-react';
 import { DadosFinanceiros } from '@/types/colaborador';
 import SolicitacaoAlteracaoModal from '../SolicitacaoAlteracaoModal';
 
@@ -106,23 +108,75 @@ const DadosFinanceirosReadOnly = ({ data }: DadosFinanceirosReadOnlyProps) => {
         </div>
 
         <div className="space-y-2">
-          <Label>Dependentes IR</Label>
+          <Label>Adiantamento Salarial</Label>
           <div className="flex items-center gap-2">
             <Input
-              value={`${data.dependentesIR} dependente${parseInt(data.dependentesIR) !== 1 ? 's' : ''}`}
+              value={data.adiantamentoSalarial ? 'Sim' : 'Não'}
               readOnly
               className="bg-gray-50"
             />
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => handleSolicitarAlteracao('Dependentes IR', data.dependentesIR)}
+              onClick={() => handleSolicitarAlteracao('Adiantamento Salarial', data.adiantamentoSalarial ? 'Sim' : 'Não')}
               className="text-blue-600 hover:text-blue-800"
             >
               <Edit3 className="h-4 w-4" />
             </Button>
           </div>
         </div>
+      </div>
+
+      {/* Dependentes para IR */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Label className="text-base font-semibold">Dependentes para IR</Label>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleSolicitarAlteracao('Dependentes IR', `${data.dependentesIR.length} dependentes`)}
+            className="text-blue-600 hover:text-blue-800"
+          >
+            <Edit3 className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {data.dependentesIR.length === 0 ? (
+          <Card className="border-dashed">
+            <CardContent className="p-6 text-center">
+              <User className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+              <p className="text-gray-500">Nenhum dependente cadastrado</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {data.dependentesIR.map((dependente, index) => (
+              <Card key={dependente.id} className="border-gray-200">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-gray-500" />
+                      <span className="font-medium">Dependente {index + 1}</span>
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {dependente.idade} anos
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <span className="text-gray-500">Nome:</span>
+                      <p className="font-medium">{dependente.nome}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Documento:</span>
+                      <p className="font-medium">{dependente.documento}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Aviso sobre alterações */}

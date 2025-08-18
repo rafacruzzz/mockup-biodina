@@ -96,7 +96,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         sindicatoVinculado: 'SINTTEL-DF',
         regimeTrabalho: 'Híbrido',
         horarioTrabalho: '08:00 às 17:00',
-        cargaHorariaSemanal: '40', // fix: must be string to match DadosProfissionais type
+        cargaHorariaSemanal: '40',
         origemContratacao: 'Indicação'
       },
       dadosFinanceiros: {
@@ -108,7 +108,21 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         valorHoraTrabalhada: '48.30',
         pisoSalarial: '6500.00',
         mediaSalarial: '8200.00',
-        dependentesIR: '2',
+        dependentesIR: [
+          {
+            id: '1',
+            nome: 'Ana Silva',
+            documento: '123.456.789-01',
+            idade: 8
+          },
+          {
+            id: '2',
+            nome: 'Carlos Silva',
+            documento: '123.456.789-02',
+            idade: 12
+          }
+        ],
+        adiantamentoSalarial: true,
         sugestaoSalario: 'R$ 8.500,00',
         breakdownSalarial: 'Salário base: R$ 7.000,00 + Nível 4: R$ 1.000,00 + Adicional gestão: R$ 500,00',
         planoCarreira: 'Plano de Carreira - Gerência de TI'
