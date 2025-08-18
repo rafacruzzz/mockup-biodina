@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
@@ -91,7 +90,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         previsaoFerias: '2024-12-15',
         planoCarreira: 'Plano de Carreira - Gerência de TI',
         sugestaoSalario: 'R$ 8.500,00',
-        breakdownSalarial: 'Salário base: R$ 7.000,00 + Nível 4: R$ 1.000,00 + Adicional gestão: R$ 500,00'
+        breakdownSalarial: 'Salário base: R$ 7.000,00 + Nível 4: R$ 1.000,00 + Adicional gestão: R$ 500,00',
+        tipoUsuario: 'Funcionário',
+        sindicatoVinculado: 'SINTTEL-DF',
+        regimeTrabalho: 'Híbrido',
+        horarioTrabalho: '08:00 às 17:00',
+        cargaHorariaSemanal: 40,
+        origemContratacao: 'Indicação'
       },
       dadosFinanceiros: {
         salarioBase: '7000.00',
