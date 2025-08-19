@@ -143,7 +143,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           dataUpload: '2024-01-15',
           categoria: 'curriculo',
           observacoes: 'admissao',
-          arquivo: null
+          arquivo: null,
+          validadeIndeterminada: true
         },
         comprovantesEscolaridade: [
           {
@@ -154,7 +155,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             dataUpload: '2024-01-15',
             categoria: 'comprovante-escolaridade',
             observacoes: 'Bacharel em Sistemas de Informação - UnB (2010)',
-            arquivo: null
+            arquivo: null,
+            validadeIndeterminada: true
           },
           {
             id: 'comp-2',
@@ -164,7 +166,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             dataUpload: '2024-01-20',
             categoria: 'comprovante-escolaridade',
             observacoes: 'Certificação em Gestão de Projetos - PMI (2020)',
-            arquivo: null
+            arquivo: null,
+            validadeIndeterminada: true
           }
         ]
       },

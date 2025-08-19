@@ -36,7 +36,8 @@ const FormacaoEscolaridadeTab = ({ formData, onInputChange }: FormacaoEscolarida
       tamanho: file.size,
       dataUpload: new Date().toISOString(),
       categoria: 'curriculo',
-      arquivo: file
+      arquivo: file,
+      validadeIndeterminada: true
     };
     onInputChange('curriculo', documento);
   };
@@ -53,7 +54,8 @@ const FormacaoEscolaridadeTab = ({ formData, onInputChange }: FormacaoEscolarida
       tamanho: file.size,
       dataUpload: new Date().toISOString(),
       categoria: 'comprovante-escolaridade',
-      arquivo: file
+      arquivo: file,
+      validadeIndeterminada: true
     };
     const novosComprovantes = [...(formData.comprovantesEscolaridade || []), documento];
     onInputChange('comprovantesEscolaridade', novosComprovantes);
