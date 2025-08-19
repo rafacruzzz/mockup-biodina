@@ -139,7 +139,16 @@ const ColaboradorModal = ({
       }
     },
     documentacao: {
-      anexos: colaboradorData?.documentacao?.anexos || []
+      anexos: colaboradorData?.documentacao?.anexos || [],
+      solicitadoParaDPEm: colaboradorData?.documentacao?.solicitadoParaDPEm || '',
+      solicitadoPor: colaboradorData?.documentacao?.solicitadoPor || '',
+      motivoContratacao: colaboradorData?.documentacao?.motivoContratacao || '',
+      observacoesGerais: colaboradorData?.documentacao?.observacoesGerais || '',
+      exameAdmissional: colaboradorData?.documentacao?.exameAdmissional || {
+        data: '',
+        local: '',
+        horario: ''
+      }
     },
     desligamento: colaboradorData?.desligamento || {
       motivoDesligamento: '',
@@ -383,6 +392,7 @@ const ColaboradorModal = ({
                   <DocumentacaoTab 
                     formData={formData.documentacao}
                     onInputChange={(field, value) => handleInputChange('documentacao', field, value)}
+                    colaboradorData={formData}
                   />
                 </TabsContent>
 

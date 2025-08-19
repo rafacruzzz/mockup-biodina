@@ -1,3 +1,4 @@
+
 export interface DependenteIR {
   id: string;
   nome: string;
@@ -141,10 +142,23 @@ export interface DocumentoAnexo {
   categoria: string;
   observacoes?: string;
   arquivo: File | null;
+  dataValidade?: string;
+  validadeIndeterminada: boolean;
+}
+
+export interface ExameAdmissional {
+  data: string;
+  local: string;
+  horario: string;
 }
 
 export interface Documentacao {
   anexos: DocumentoAnexo[];
+  solicitadoParaDPEm?: string;
+  solicitadoPor?: string;
+  motivoContratacao?: string;
+  observacoesGerais?: string;
+  exameAdmissional?: ExameAdmissional;
 }
 
 export interface ItemDesligamento {

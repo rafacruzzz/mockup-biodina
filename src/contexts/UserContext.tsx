@@ -207,55 +207,38 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         anexos: [
           {
             id: '1',
-            nome: 'RG_Danilo_Silva.pdf',
+            nome: 'RG_Frente_Verso.pdf',
             tipo: 'application/pdf',
             tamanho: 1024000,
             dataUpload: '2024-01-15',
             categoria: 'RG',
-            observacoes: 'Documento principal de identificação',
-            arquivo: null
+            observacoes: 'RG válido em todo território nacional',
+            arquivo: null,
+            dataValidade: '2029-01-15',
+            validadeIndeterminada: false
           },
           {
             id: '2',
-            nome: 'CPF_Danilo_Silva.pdf',
+            nome: 'CPF.pdf',
             tipo: 'application/pdf',
-            tamanho: 856000,
+            tamanho: 512000,
             dataUpload: '2024-01-15',
             categoria: 'CPF',
-            observacoes: 'Comprovante de situação cadastral',
-            arquivo: null
-          },
-          {
-            id: '3',
-            nome: 'Diploma_Sistemas_Informacao.pdf',
-            tipo: 'application/pdf',
-            tamanho: 2048000,
-            dataUpload: '2024-01-15',
-            categoria: 'Diploma/Certificado',
-            observacoes: 'Bacharel em Sistemas de Informação - UnB (2010)',
-            arquivo: null
-          },
-          {
-            id: '4',
-            nome: 'Comprovante_Residencia.pdf',
-            tipo: 'application/pdf',
-            tamanho: 1536000,
-            dataUpload: '2024-01-15',
-            categoria: 'Comprovante de Residência',
-            observacoes: 'Conta de luz - dezembro 2024',
-            arquivo: null
-          },
-          {
-            id: '5',
-            nome: 'Exames_Medicos_2024.pdf',
-            tipo: 'application/pdf',
-            tamanho: 3072000,
-            dataUpload: '2024-01-15',
-            categoria: 'Exames Médicos',
-            observacoes: 'Exames admissionais e periódicos',
-            arquivo: null
+            observacoes: 'Documento atualizado',
+            arquivo: null,
+            dataValidade: undefined,
+            validadeIndeterminada: true
           }
-        ]
+        ],
+        solicitadoParaDPEm: '2024-01-20',
+        solicitadoPor: 'Maria Silva Santos',
+        motivoContratacao: 'Contratação para suprir demanda crescente do setor',
+        observacoesGerais: 'Colaborador com experiência prévia na área',
+        exameAdmissional: {
+          data: '2024-01-25',
+          local: 'Clínica Ocupacional São Paulo',
+          horario: '14:00'
+        }
       }
     }
   });
