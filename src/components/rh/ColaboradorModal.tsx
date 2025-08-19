@@ -255,6 +255,15 @@ const ColaboradorModal = ({
 
   const totalTabs = editMode ? (colaboradorDesligado ? 9 : 8) : 7;
 
+  const getTabsGridClass = (totalTabs: number) => {
+    switch (totalTabs) {
+      case 7: return 'grid grid-cols-7';
+      case 8: return 'grid grid-cols-8';
+      case 9: return 'grid grid-cols-9';
+      default: return 'grid grid-cols-7';
+    }
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -295,7 +304,7 @@ const ColaboradorModal = ({
 
           <div className="flex-1 overflow-y-auto">
             <Tabs defaultValue="dados-pessoais" className="h-full flex flex-col">
-              <TabsList className={`grid w-full grid-cols-${totalTabs} mb-4`}>
+              <TabsList className={`${getTabsGridClass(totalTabs)} w-full mb-4`}>
                 <TabsTrigger value="dados-pessoais" className="text-xs">
                   Dados Pessoais
                 </TabsTrigger>
