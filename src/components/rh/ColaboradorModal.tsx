@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Save, User, Bell, UserMinus, AlertTriangle } from "lucide-react";
+import { Save, User, Bell, UserMinus, AlertTriangle, Monitor } from "lucide-react";
 import { ColaboradorData } from "@/types/colaborador";
 import { getSolicitacoesByColaborador } from "@/data/solicitacoes";
 import { useColaboradores } from "@/hooks/useColaboradores";
@@ -17,6 +17,7 @@ import DocumentacaoTab from "./tabs/DocumentacaoTab";
 import SolicitacoesTab from "./tabs/SolicitacoesTab";
 import DesligamentoTab from "./tabs/DesligamentoTab";
 import DesligarColaboradorModal from "./DesligarColaboradorModal";
+import TITab from "./tabs/TITab";
 
 interface ColaboradorModalProps {
   isOpen: boolean;
@@ -150,6 +151,14 @@ const ColaboradorModal = ({
         horario: ''
       }
     },
+    dadosTI: colaboradorData?.dadosTI || {
+      servidorAcesso: '',
+      permissoesNecessarias: '',
+      restricoes: '',
+      pastasAcesso: '',
+      emailCorporativo: '',
+      ramal: ''
+    },
     desligamento: colaboradorData?.desligamento || {
       motivoDesligamento: '',
       dataDesligamento: '',
@@ -253,13 +262,14 @@ const ColaboradorModal = ({
   const solicitacoesPendentes = editMode && colaboradorId ? 
     getSolicitacoesByColaborador(colaboradorId).filter(s => s.status === 'pendente').length : 0;
 
-  const totalTabs = editMode ? (colaboradorDesligado ? 9 : 8) : 7;
+  const totalTabs = editMode ? (colaboradorDesligado ? 10 : 9) : 7;
 
   const getTabsGridClass = (totalTabs: number) => {
     switch (totalTabs) {
       case 7: return 'grid grid-cols-7';
       case 8: return 'grid grid-cols-8';
       case 9: return 'grid grid-cols-9';
+      case 10: return 'grid grid-cols-10';
       default: return 'grid grid-cols-7';
     }
   };
@@ -340,6 +350,12 @@ const ColaboradorModal = ({
                     )}
                   </TabsTrigger>
                 )}
+                {editMode && (
+                  <TabsTrigger value="ti" className="text-xs">
+                    <Monitor className="h-4 w-4 mr-1" />
+                    TI
+                  </TabsTrigger>
+                )}
                 {colaboradorDesligado && (
                   <TabsTrigger value="desligamento" className="text-xs">
                     <AlertTriangle className="h-4 w-4 mr-1" />
@@ -408,6 +424,15 @@ const ColaboradorModal = ({
                 {editMode && colaboradorId && (
                   <TabsContent value="solicitacoes" className="mt-0">
                     <SolicitacoesTab colaboradorId={colaboradorId} />
+                  </TabsContent>
+                )}
+
+                {editMode && (
+                  <TabsContent value="ti" className="mt-0">
+                    <TITab 
+                      formData={formData.dadosTI!}
+                      onInputChange={(field, value) => handleInputChange('dadosTI', field, value)}
+                    />
                   </TabsContent>
                 )}
 

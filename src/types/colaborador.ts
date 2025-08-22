@@ -1,4 +1,3 @@
-
 export interface DependenteIR {
   id: string;
   nome: string;
@@ -182,6 +181,15 @@ export interface DadosDesligamento {
   itensDesligamento: ItemDesligamento[];
 }
 
+export interface DadosTI {
+  servidorAcesso: string;
+  permissoesNecessarias: string;
+  restricoes: string;
+  pastasAcesso: string;
+  emailCorporativo: string;
+  ramal: string;
+}
+
 export interface ColaboradorData {
   dadosPessoais: DadosPessoais;
   dadosProfissionais: DadosProfissionais;
@@ -190,5 +198,6 @@ export interface ColaboradorData {
   formacaoEscolaridade: FormacaoEscolaridade;
   beneficios: Beneficios;
   documentacao: Documentacao;
+  dadosTI?: DadosTI;
   desligamento?: DadosDesligamento;
 }
