@@ -720,15 +720,14 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           />
         </div>
 
-        <div>
+        <div className="space-y-2">
           <Label htmlFor="resumoEdital">Resumo do Edital</Label>
           <Textarea
             id="resumoEdital"
             value={formData.resumoEdital}
-            onChange={(e) => handleInputChange('resumoEdital', e.target.value)}
-            placeholder="Resumo do edital da licitação"
-            rows={3}
-            disabled={isReadOnlyMode()}
+            onChange={(e) => setFormData({ ...formData, resumoEdital: e.target.value })}
+            placeholder="Descreva o resumo do edital..."
+            className="min-h-[120px] resize-y"
           />
         </div>
 
