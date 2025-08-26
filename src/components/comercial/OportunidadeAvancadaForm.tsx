@@ -682,26 +682,28 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         )}
 
         <div>
-          <Label htmlFor="situacaoPregao">Situação do Pregão</Label>
+          <Label htmlFor="situacaoPregao">Situação/Status do Pregão *</Label>
           <Select 
             value={formData.situacaoPregao} 
             onValueChange={(value) => setFormData({...formData, situacaoPregao: value})}
             disabled={isReadOnlyMode()}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Selecione" />
+              <SelectValue placeholder="Selecione a situação" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="operacao">Em Operação</SelectItem>
-              <SelectItem value="etapa_lances">Etapa de Lances</SelectItem>
+              <SelectItem value="cadastro_proposta">Cadastro de proposta</SelectItem>
+              <SelectItem value="em_analise">Em análise</SelectItem>
+              <SelectItem value="etapa_lances">Etapa de lances</SelectItem>
               <SelectItem value="visualizacao_propostas">Visualização de Propostas</SelectItem>
               <SelectItem value="aceitacao_propostas">Aceitação de Propostas</SelectItem>
-              <SelectItem value="habilitacao">Habilitação de Fornecedores</SelectItem>
+              <SelectItem value="habilitacao_fornecedores">Habilitação de Fornecedores</SelectItem>
               <SelectItem value="negociacao_preco">Negociação de Preço</SelectItem>
-              <SelectItem value="recurso">Recursos</SelectItem>
-              <SelectItem value="juizo_admissibilidade">Juízo de Admissibilidade</SelectItem>
-              <SelectItem value="homologado">Homologação</SelectItem>
+              <SelectItem value="recursos">Recursos</SelectItem>
+              <SelectItem value="suspenso">Suspenso</SelectItem>
               <SelectItem value="adjudicacao">Adjudicação</SelectItem>
+              <SelectItem value="homologacao">Homologação</SelectItem>
+              <SelectItem value="ata_contrato">Ata/Contrato</SelectItem>
               <SelectItem value="empenho">Empenho</SelectItem>
             </SelectContent>
           </Select>
