@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import {
   Form,
@@ -51,6 +52,7 @@ const OportunidadeAvancadaForm: React.FC<OportunidadeAvancadaFormProps> = ({ isO
     dataContato: oportunidade?.dataContato || undefined,
     observacoes: oportunidade?.observacoes || '',
     status: oportunidade?.status || 'pendente',
+    situacaoPregao: oportunidade?.situacaoPregao || 'cadastro_proposta',
     haviaContratoAnterior: oportunidade?.haviaContratoAnterior || 'nao',
     marcaModeloContratoAnterior: oportunidade?.marcaModeloContratoAnterior || '',
   });
@@ -70,6 +72,7 @@ const OportunidadeAvancadaForm: React.FC<OportunidadeAvancadaFormProps> = ({ isO
         dataContato: oportunidade.dataContato ? new Date(oportunidade.dataContato) : undefined,
         observacoes: oportunidade.observacoes || '',
         status: oportunidade.status || 'pendente',
+        situacaoPregao: oportunidade.situacaoPregao || 'cadastro_proposta',
         haviaContratoAnterior: oportunidade.haviaContratoAnterior || 'nao',
         marcaModeloContratoAnterior: oportunidade.marcaModeloContratoAnterior || '',
       });
@@ -87,6 +90,7 @@ const OportunidadeAvancadaForm: React.FC<OportunidadeAvancadaFormProps> = ({ isO
         dataContato: undefined,
         observacoes: '',
         status: 'pendente',
+        situacaoPregao: 'cadastro_proposta',
         haviaContratoAnterior: 'nao',
         marcaModeloContratoAnterior: '',
       });
@@ -297,6 +301,30 @@ const OportunidadeAvancadaForm: React.FC<OportunidadeAvancadaFormProps> = ({ isO
           </div>
 
           <div>
+            <Label htmlFor="situacaoPregao">Situação/Status do Pregão</Label>
+            <Select value={formData.situacaoPregao} onValueChange={(value) => setFormData({ ...formData, situacaoPregao: value })}>
+              <SelectTrigger className="w-[240px]">
+                <SelectValue placeholder="Selecione a situação" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="cadastro_proposta">Cadastro de proposta</SelectItem>
+                <SelectItem value="em_analise">Em análise</SelectItem>
+                <SelectItem value="etapa_lances">Etapa de lances</SelectItem>
+                <SelectItem value="visualizacao_propostas">Visualização de Propostas</SelectItem>
+                <SelectItem value="aceitacao_propostas">Aceitação de Propostas</SelectItem>
+                <SelectItem value="habilitacao_fornecedores">Habilitação de Fornecedores</SelectItem>
+                <SelectItem value="negociacao_preco">Negociação de Preço</SelectItem>
+                <SelectItem value="recursos">Recursos</SelectItem>
+                <SelectItem value="suspenso">Suspenso</SelectItem>
+                <SelectItem value="adjudicacao">Adjudicação</SelectItem>
+                <SelectItem value="homologacao">Homologação</SelectItem>
+                <SelectItem value="ata_contrato">Ata/Contrato</SelectItem>
+                <SelectItem value="empenho">Empenho</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
             <Label htmlFor="haviaContratoAnterior">Fornecedor anterior?</Label>
             <RadioGroup 
               value={formData.haviaContratoAnterior} 
@@ -342,3 +370,4 @@ const OportunidadeAvancadaForm: React.FC<OportunidadeAvancadaFormProps> = ({ isO
 };
 
 export default OportunidadeAvancadaForm;
+

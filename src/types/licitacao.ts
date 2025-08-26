@@ -1,4 +1,3 @@
-
 export interface Licitacao {
   id: number;
   numeroPregao: string;
@@ -18,7 +17,7 @@ export interface Licitacao {
   createdAt: string;
   
   // Novos campos obrigatórios
-  situacaoPregao: 'aberto' | 'suspenso' | 'cancelado' | 'homologado' | 'deserto' | 'fracassado' | 'revogado';
+  situacaoPregao: 'cadastro_proposta' | 'em_analise' | 'etapa_lances' | 'visualizacao_propostas' | 'aceitacao_propostas' | 'habilitacao_fornecedores' | 'negociacao_preco' | 'recursos' | 'suspenso' | 'adjudicacao' | 'homologacao' | 'ata_contrato' | 'empenho';
   statusLicitacao: 'aguardando_abertura' | 'em_andamento' | 'fase_habilitacao' | 'fase_proposta' | 'julgamento' | 'recurso' | 'homologacao' | 'adjudicacao' | 'contratacao' | 'finalizado';
   haviaContratoAnterior: boolean;
   resumoEdital: string;
