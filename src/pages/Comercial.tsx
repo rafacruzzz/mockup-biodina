@@ -7,7 +7,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import SidebarLayout from "@/components/SidebarLayout";
-import OportunidadeForm from "@/components/comercial/OportunidadeForm";
 import OportunidadeAvancadaForm from "@/components/comercial/OportunidadeAvancadaForm";
 import PedidoModal from "@/components/comercial/PedidoModal";
 import PedidoForm from "@/components/comercial/PedidoForm";
@@ -33,7 +32,6 @@ const Comercial = () => {
   const [activeTab, setActiveTab] = useState('indicadores');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
-  const [showOportunidadeForm, setShowOportunidadeForm] = useState(false);
   const [showOportunidadeAvancadaForm, setShowOportunidadeAvancadaForm] = useState(false);
   const [editingOportunidade, setEditingOportunidade] = useState<any>();
   const [showPedidoModal, setShowPedidoModal] = useState(false);
@@ -404,7 +402,6 @@ const Comercial = () => {
 
   const handleSaveOportunidade = (formData: any) => {
     console.log('Salvando oportunidade:', formData);
-    setShowOportunidadeForm(false);
     setShowOportunidadeAvancadaForm(false);
     setShowContratacaoSimplesForm(false);
     setShowImportacaoDiretaForm(false);
@@ -1104,17 +1101,6 @@ const Comercial = () => {
         {activeModule === 'pos-venda' && activeSubModule && renderSubModule()}
         {activeModule === 'emprestimos' && renderEmprestimosModule()}
       </div>
-
-      {showOportunidadeForm && (
-        <OportunidadeForm
-          oportunidade={editingOportunidade}
-          onClose={() => {
-            setShowOportunidadeForm(false);
-            setEditingOportunidade(undefined);
-          }}
-          onSave={handleSaveOportunidade}
-        />
-      )}
 
       {showOportunidadeAvancadaForm && (
         <OportunidadeAvancadaForm
