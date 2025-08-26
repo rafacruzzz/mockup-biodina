@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import LicitacaoValidationModal from "./LicitacaoValidationModal";
 import ConcorrenteModal from "./ConcorrenteModal";
 import ChatInterno from "./ChatInterno";
@@ -42,8 +43,20 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   
   // Estados para dados
   const [concorrentes, setConcorrentes] = useState([
-    { id: 1, nome: 'MedTech SA' },
-    { id: 2, nome: 'Global Diagnóstico' }
+    { 
+      id: 1, 
+      nome: 'MedTech SA',
+      marcaModelo: 'ABL800 Flex',
+      comparativo: 'Equipamento com boa precisão, porém com custo operacional mais alto devido aos reagentes.',
+      atendeEdital: 'sim'
+    },
+    { 
+      id: 2, 
+      nome: 'Global Diagnóstico',
+      marcaModelo: 'GEM Premier 4000',
+      comparativo: 'Solução robusta mas com interface menos intuitiva comparada ao nosso produto.',
+      atendeEdital: 'nao'
+    }
   ]);
 
   const [pedidos, setPedidos] = useState([
@@ -177,6 +190,11 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     };
     setPedidos([...pedidos, novoPedido]);
     setShowPedidoForm(false);
+  };
+
+  const truncateText = (text: string, maxLength: number = 50) => {
+    if (!text || text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
   };
 
   const renderDadosGerais = () => (
@@ -1043,38 +1061,69 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             <CardTitle>Concorrentes Cadastrados</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Concorrente</TableHead>
-                  {!isReadOnlyMode() && <TableHead>Ações</TableHead>}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {concorrentes.map((concorrente) => (
-                  <TableRow key={concorrente.id}>
-                    <TableCell className="font-medium">{concorrente.nome}</TableCell>
-                    {!isReadOnlyMode() && (
-                      <TableCell>
-                        <Button size="sm" variant="outline">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))}
-                {concorrentes.length === 0 && (
+            <TooltipProvider>
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={isReadOnlyMode() ? 1 : 2} className="text-center text-gray-500 py-4">
-                      <div className="flex items-center justify-center gap-2">
-                        <AlertTriangle className="h-4 w-4 text-red-500" />
-                        Nenhum concorrente cadastrado - Alarme diário até preenchimento
-                      </div>
-                    </TableCell>
+                    <TableHead>Concorrente</TableHead>
+                    <TableHead>Marca/Modelo</TableHead>
+                    <TableHead>Comparativo</TableHead>
+                    <TableHead>Atende ao Edital?</TableHead>
+                    {!isReadOnlyMode() && <TableHead>Ações</TableHead>}
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {concorrentes.map((concorrente) => (
+                    <TableRow key={concorrente.id}>
+                      <TableCell className="font-medium">{concorrente.nome}</TableCell>
+                      <TableCell>{concorrente.marcaModelo || '-'}</TableCell>
+                      <TableCell>
+                        {concorrente.comparativo ? (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="cursor-help">
+                                {truncateText(concorrente.comparativo)}
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="max-w-sm">{concorrente.comparativo}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        ) : (
+                          '-'
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {concorrente.atendeEdital ? (
+                          <Badge className={concorrente.atendeEdital === 'sim' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                            {concorrente.atendeEdital === 'sim' ? 'SIM' : 'NÃO'}
+                          </Badge>
+                        ) : (
+                          '-'
+                        )}
+                      </TableCell>
+                      {!isReadOnlyMode() && (
+                        <TableCell>
+                          <Button size="sm" variant="outline">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  ))}
+                  {concorrentes.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={isReadOnlyMode() ? 4 : 5} className="text-center text-gray-500 py-4">
+                        <div className="flex items-center justify-center gap-2">
+                          <AlertTriangle className="h-4 w-4 text-red-500" />
+                          Nenhum concorrente cadastrado - Alarme diário até preenchimento
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TooltipProvider>
           </CardContent>
         </Card>
       </div>

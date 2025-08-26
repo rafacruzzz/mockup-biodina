@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { X, Save, Users } from "lucide-react";
 
 interface ConcorrenteModalProps {
@@ -13,7 +15,10 @@ interface ConcorrenteModalProps {
 
 const ConcorrenteModal = ({ onClose, onSave }: ConcorrenteModalProps) => {
   const [formData, setFormData] = useState({
-    nome: ''
+    nome: '',
+    marcaModelo: '',
+    comparativo: '',
+    atendeEdital: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -46,6 +51,43 @@ const ConcorrenteModal = ({ onClose, onSave }: ConcorrenteModalProps) => {
                 required
                 placeholder="Ex: Empresa ABC Ltda"
               />
+            </div>
+
+            <div>
+              <Label htmlFor="marcaModelo">Marca/Modelo</Label>
+              <Input
+                id="marcaModelo"
+                value={formData.marcaModelo}
+                onChange={(e) => setFormData({...formData, marcaModelo: e.target.value})}
+                placeholder="Ex: ABL800 Flex"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="comparativo">Comparativo</Label>
+              <Textarea
+                id="comparativo"
+                value={formData.comparativo}
+                onChange={(e) => setFormData({...formData, comparativo: e.target.value})}
+                placeholder="Descreva o comparativo técnico..."
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="atendeEdital">Atende ao Edital?</Label>
+              <Select 
+                value={formData.atendeEdital} 
+                onValueChange={(value) => setFormData({...formData, atendeEdital: value})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="sim">Sim</SelectItem>
+                  <SelectItem value="nao">Não</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex justify-end gap-2 pt-4">
