@@ -574,6 +574,10 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               <RadioGroupItem value="nao" id="adesao-nao" />
               <Label htmlFor="adesao-nao">Não</Label>
             </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="nao-menciona" id="adesao-nao-menciona" />
+              <Label htmlFor="adesao-nao-menciona">Não menciona</Label>
+            </div>
           </RadioGroup>
         </div>
 
@@ -646,7 +650,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         </div>
 
         <div>
-          <Label>Havia Contrato Anterior?</Label>
+          <Label htmlFor="haviaContratoAnterior">Havia Contrato Anterior?</Label>
           <RadioGroup 
             value={formData.haviaContratoAnterior} 
             onValueChange={(value) => setFormData({...formData, haviaContratoAnterior: value})}
