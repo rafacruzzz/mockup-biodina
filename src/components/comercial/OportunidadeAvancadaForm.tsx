@@ -650,7 +650,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         </div>
 
         <div>
-          <Label htmlFor="haviaContratoAnterior">Havia Contrato Anterior?</Label>
+          <Label htmlFor="haviaContratoAnterior">Fornecedor anterior?</Label>
           <RadioGroup 
             value={formData.haviaContratoAnterior} 
             onValueChange={(value) => setFormData({...formData, haviaContratoAnterior: value})}
@@ -670,12 +670,12 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
         {formData.haviaContratoAnterior === 'sim' && (
           <div>
-            <Label htmlFor="marcaModeloAnterior">Qual Marca/Modelo do Contrato Anterior?</Label>
+            <Label htmlFor="marcaModeloAnterior">Qual o Fornecedor Anterior?</Label>
             <Input
               id="marcaModeloAnterior"
               value={formData.marcaModeloAnterior}
               onChange={(e) => setFormData({...formData, marcaModeloAnterior: e.target.value})}
-              placeholder="Ex: Siemens RAPIDPoint 500"
+              placeholder="Ex: Empresa XYZ Ltda"
               disabled={isReadOnlyMode()}
             />
           </div>
