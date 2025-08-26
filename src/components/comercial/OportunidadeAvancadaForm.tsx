@@ -42,8 +42,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   
   // Estados para dados
   const [concorrentes, setConcorrentes] = useState([
-    { id: 1, nome: 'MedTech SA', produto: 'Kit diagnóstico rápido', preco: 4200 },
-    { id: 2, nome: 'Global Diagnóstico', produto: 'Serviço de instalação', preco: 1200 }
+    { id: 1, nome: 'MedTech SA' },
+    { id: 2, nome: 'Global Diagnóstico' }
   ]);
 
   const [pedidos, setPedidos] = useState([
@@ -179,7 +179,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     setShowPedidoForm(false);
   };
 
-  // Renderização dos conteúdos das ferramentas
   const renderDadosGerais = () => (
     <div className="space-y-6">
       {/* Dados do Cliente */}
@@ -1048,9 +1047,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               <TableHeader>
                 <TableRow>
                   <TableHead>Concorrente</TableHead>
-                  <TableHead>Produto/Serviço</TableHead>
-                  <TableHead>Preço</TableHead>
-                  <TableHead>Comparação</TableHead>
                   {!isReadOnlyMode() && <TableHead>Ações</TableHead>}
                 </TableRow>
               </TableHeader>
@@ -1058,13 +1054,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                 {concorrentes.map((concorrente) => (
                   <TableRow key={concorrente.id}>
                     <TableCell className="font-medium">{concorrente.nome}</TableCell>
-                    <TableCell>{concorrente.produto}</TableCell>
-                    <TableCell>{formatCurrency(concorrente.preco)}</TableCell>
-                    <TableCell>
-                      <Badge className={concorrente.preco > formData.valorNegocio ? "bg-red-500" : "bg-green-500"}>
-                        {concorrente.preco > formData.valorNegocio ? "Acima do nosso valor" : "Abaixo do nosso valor"}
-                      </Badge>
-                    </TableCell>
                     {!isReadOnlyMode() && (
                       <TableCell>
                         <Button size="sm" variant="outline">
@@ -1076,7 +1065,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                 ))}
                 {concorrentes.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={isReadOnlyMode() ? 4 : 5} className="text-center text-gray-500 py-4">
+                    <TableCell colSpan={isReadOnlyMode() ? 1 : 2} className="text-center text-gray-500 py-4">
                       <div className="flex items-center justify-center gap-2">
                         <AlertTriangle className="h-4 w-4 text-red-500" />
                         Nenhum concorrente cadastrado - Alarme diário até preenchimento
@@ -1211,7 +1200,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           onSave={(concorrente) => {
             setConcorrentes([...concorrentes, { ...concorrente, id: Date.now() }]);
           }}
-          valorReferencia={formData.valorNegocio}
         />
       )}
 
