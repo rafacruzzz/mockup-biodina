@@ -1,4 +1,3 @@
-
 import { UnidadeVenda } from '@/types/comercial';
 
 export const concorrentes = [
@@ -13,40 +12,40 @@ export const licitantes = [
     empresa: 'EMPRESA ALPHA LTDA',
     marca: 'Siemens',
     modelo: 'RAPIDPoint 500',
-    valorEntrada: 150000.00,
     valorFinal: 145000.00,
     unidade: 'un',
-    ranking: 1
+    ranking: 1,
+    atendeEdital: true
   },
   {
     id: 2,
     empresa: 'BETA SOLUÇÕES EMPRESARIAIS',  
     marca: 'Abbott',
     modelo: 'i-STAT Alinity',
-    valorEntrada: 160000.00,
     valorFinal: 148000.00,
     unidade: 'un',
-    ranking: 2
+    ranking: 2,
+    atendeEdital: false
   },
   {
     id: 3,
     empresa: 'GAMMA TECNOLOGIA E SERVIÇOS',
     marca: 'Roche',
     modelo: 'cobas b 123',
-    valorEntrada: 170000.00,
     valorFinal: 155000.00,
     unidade: 'un', 
-    ranking: 3
+    ranking: 3,
+    atendeEdital: true
   },
   {
     id: 4,
     empresa: 'DELTA COMERCIAL LTDA',
     marca: 'Nova Biomedical',
     modelo: 'StatSensor',
-    valorEntrada: 180000.00,
     valorFinal: 160000.00,
     unidade: 'un',
-    ranking: 4
+    ranking: 4,
+    atendeEdital: false
   }
 ];
 

@@ -19,7 +19,7 @@ import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
 import CustomAlertModal from "./components/CustomAlertModal";
 import { concorrentes as mockConcorrentes, licitantes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
-import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getUnidadeColor } from "@/lib/utils";
+import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getUnidadeColor, getAtendeEditalBadge } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { PedidoCompleto } from "@/types/comercial";
 
@@ -822,9 +822,9 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                   <TableHead>Empresa</TableHead>
                   <TableHead>Marca</TableHead>
                   <TableHead>Modelo</TableHead>
-                  <TableHead>Valor de Entrada</TableHead>
                   <TableHead>Valor Final</TableHead>
-                  <TableHead>Unidade</TableHead>
+                  <TableHead>Qnt Unidade</TableHead>
+                  <TableHead>Atende ao Edital?</TableHead>
                   <TableHead>Ranking</TableHead>
                 </TableRow>
               </TableHeader>
@@ -834,11 +834,15 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                     <TableCell className="font-medium">{licitante.empresa}</TableCell>
                     <TableCell>{licitante.marca}</TableCell>
                     <TableCell>{licitante.modelo}</TableCell>
-                    <TableCell>{formatCurrency(licitante.valorEntrada)}</TableCell>
                     <TableCell>{formatCurrency(licitante.valorFinal)}</TableCell>
                     <TableCell>
                       <Badge className={getUnidadeColor(licitante.unidade)}>
                         {licitante.unidade}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getAtendeEditalBadge(licitante.atendeEdital)}>
+                        {licitante.atendeEdital ? 'SIM' : 'NÃO'}
                       </Badge>
                     </TableCell>
                     <TableCell>
