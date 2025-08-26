@@ -4,43 +4,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { X, Save, Users } from "lucide-react";
 
 interface ConcorrenteModalProps {
   onClose: () => void;
   onSave: (concorrente: any) => void;
-  valorReferencia: number;
+  valorReferencia?: number;
 }
 
-const ConcorrenteModal = ({ onClose, onSave, valorReferencia }: ConcorrenteModalProps) => {
+const ConcorrenteModal = ({ onClose, onSave }: ConcorrenteModalProps) => {
   const [formData, setFormData] = useState({
     nome: '',
-    produto: '',
-    preco: 0
+    marca: '',
+    modelo: '',
+    comparativo: '',
+    atendeEdital: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
     onClose();
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
-
-  const getComparacao = () => {
-    if (formData.preco === 0) return null;
-    return formData.preco > valorReferencia ? 'Maior' : 'Menor';
-  };
-
-  const getComparacaoColor = () => {
-    if (formData.preco === 0) return '';
-    return formData.preco > valorReferencia ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
   };
 
   return (
@@ -70,48 +56,50 @@ const ConcorrenteModal = ({ onClose, onSave, valorReferencia }: ConcorrenteModal
             </div>
 
             <div>
-              <Label htmlFor="produto">Produto/Serviço Concorrente</Label>
+              <Label htmlFor="marca">Marca</Label>
               <Input
-                id="produto"
-                value={formData.produto}
-                onChange={(e) => setFormData({...formData, produto: e.target.value})}
+                id="marca"
+                value={formData.marca}
+                onChange={(e) => setFormData({...formData, marca: e.target.value})}
                 required
-                placeholder="Ex: Gasômetro modelo XYZ"
+                placeholder="Ex: Siemens"
               />
             </div>
 
             <div>
-              <Label htmlFor="preco">Preço Concorrente (R$)</Label>
+              <Label htmlFor="modelo">Modelo</Label>
               <Input
-                id="preco"
-                type="number"
-                value={formData.preco}
-                onChange={(e) => setFormData({...formData, preco: Number(e.target.value)})}
+                id="modelo"
+                value={formData.modelo}
+                onChange={(e) => setFormData({...formData, modelo: e.target.value})}
                 required
-                placeholder="0,00"
+                placeholder="Ex: RAPIDPoint 500"
               />
             </div>
 
-            {formData.preco > 0 && (
-              <div className="p-3 bg-gray-50 rounded-lg">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Valor de Referência:</span>
-                  <span className="font-medium">{formatCurrency(valorReferencia)}</span>
-                </div>
-                <div className="flex justify-between items-center mt-1">
-                  <span className="text-sm text-gray-600">Preço Concorrente:</span>
-                  <span className="font-medium">{formatCurrency(formData.preco)}</span>
-                </div>
-                <div className="flex justify-between items-center mt-2">
-                  <span className="text-sm text-gray-600">Comparação:</span>
-                  {getComparacao() && (
-                    <Badge className={getComparacaoColor()}>
-                      {getComparacao()} que nossa proposta
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            )}
+            <div>
+              <Label htmlFor="comparativo">Comparativo</Label>
+              <Textarea
+                id="comparativo"
+                value={formData.comparativo}
+                onChange={(e) => setFormData({...formData, comparativo: e.target.value})}
+                placeholder="Descreva o comparativo técnico ou anexe informações relevantes"
+                rows={4}
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="atendeEdital">Atende ao Edital?</Label>
+              <Select value={formData.atendeEdital} onValueChange={(value) => setFormData({...formData, atendeEdital: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="sim">Sim</SelectItem>
+                  <SelectItem value="nao">Não</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={onClose}>
