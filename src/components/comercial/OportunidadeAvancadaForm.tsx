@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,14 +10,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, DollarSign, Users, Building, MapPin, Phone, Mail, Globe, Tag, FileCheck, AlertCircle, TrendingUp, Target, Briefcase, CheckCircle, XCircle, Pause, Play } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Users, Calculator } from 'lucide-react';
 import { PedidoCompleto } from '@/types/comercial';
 import { Chamado, StatusChamado } from '@/types/chamado';
-import { licitacoesDetalhadas } from '@/data/licitacaoMockData';
+import { licitacoesGanhasDetalhadas } from '@/data/licitacaoMockData';
 import ChatInterno from './ChatInterno';
 import PedidoModal from './PedidoModal';
 import ChamadosTab from './ChamadosTab';
-import { MoneyInput } from '@/components/ui/money-input';
 
 interface OportunidadeAvancadaFormProps {
   isOpen: boolean;
@@ -28,12 +27,12 @@ interface OportunidadeAvancadaFormProps {
 
 const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: OportunidadeAvancadaFormProps) => {
   const [activeTab, setActiveTab] = useState('dados-gerais');
-  const [pedidos, setPedidos] = useState<PedidoCompleto[]>([]);
+  const [pedidos, setPedidos] = useState<PedidoCompleto[]>(oportunidade?.pedidos || []);
   const [chamados, setChamados] = useState<Chamado[]>(oportunidade?.chamados || []);
   const [isPedidoModalOpen, setIsPedidoModalOpen] = useState(false);
-  const [licitacaoVinculada, setLicitacaoVinculada] = useState<string>('');
-  const [documentosLicitacao, setDocumentosLicitacao] = useState<any[]>([]);
-  const [historicoLicitacao, setHistoricoLicitacao] = useState<any[]>([]);
+  const [licitacaoVinculada, setLicitacaoVinculada] = useState<string>(oportunidade?.licitacaoVinculada || '');
+  const [documentosLicitacao, setDocumentosLicitacao] = useState<any[]>(oportunidade?.documentosLicitacao || []);
+  const [historicoLicitacao, setHistoricoLicitacao] = useState<any[]>(oportunidade?.historicoLicitacao || []);
   
   const [formData, setFormData] = useState({
     // Dados do Cliente
@@ -45,7 +44,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     email: oportunidade?.email || '',
     telefone: oportunidade?.telefone || '',
     website: oportunidade?.website || '',
-    ativo: oportunidade?.ativo || true,
+    ativo: oportunidade?.ativo ?? true,
     
     // Dados da Oportunidade
     fonteLead: oportunidade?.fonteLead || '',
@@ -75,34 +74,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     analiseTecnica: oportunidade?.analiseTecnica || '',
     
     // Modalidade
-    modalidade: 'licitacao',
-    
-    // Campos específicos de licitação
-    numeroProcesso: oportunidade?.numeroProcesso || '',
-    orgaoLicitante: oportunidade?.orgaoLicitante || '',
-    modalidadeLicitacao: oportunidade?.modalidadeLicitacao || '',
-    tipoLicitacao: oportunidade?.tipoLicitacao || '',
-    objetoLicitacao: oportunidade?.objetoLicitacao || '',
-    dataAbertura: oportunidade?.dataAbertura || '',
-    dataEntregaProposta: oportunidade?.dataEntregaProposta || '',
-    localEntregaProposta: oportunidade?.localEntregaProposta || '',
-    valorEstimado: oportunidade?.valorEstimado || '',
-    criterioJulgamento: oportunidade?.criterioJulgamento || '',
-    linkEdital: oportunidade?.linkEdital || '',
-    
-    // Estratégia Comercial
-    estrategiaValorMinimo: oportunidade?.estrategiaValorMinimo || '',
-    estrategiaValorMaximo: oportunidade?.estrategiaValorMaximo || '',
-    valorMinimoFinal: oportunidade?.valorMinimoFinal || '',
-    manifestacaoInteresseRecorrer: oportunidade?.manifestacaoInteresseRecorrer || '',
-    
-    // Acompanhamento
-    statusLicitacao: oportunidade?.statusLicitacao || 'em_andamento',
-    resultadoFinal: oportunidade?.resultadoFinal || '',
-    posicaoClassificacao: oportunidade?.posicaoClassificacao || '',
-    valorVencedor: oportunidade?.valorVencedor || '',
-    empresaVencedora: oportunidade?.empresaVencedora || '',
-    observacoesFinais: oportunidade?.observacoesFinais || ''
+    modalidade: 'avancada'
   });
 
   const [concorrentes, setConcorrentes] = useState(oportunidade?.concorrentes || []);
@@ -119,17 +91,19 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
       setLicitacaoVinculada('');
       setDocumentosLicitacao([]);
       setHistoricoLicitacao([]);
+      setPedidos([]);
       return;
     }
 
-    const licitacao = licitacoesDetalhadas.find(l => l.id.toString() === licitacaoId);
+    const licitacao = licitacoesGanhasDetalhadas.find(l => l.id.toString() === licitacaoId);
     if (!licitacao) return;
 
     setLicitacaoVinculada(licitacaoId);
     setDocumentosLicitacao(licitacao.documentos);
     setHistoricoLicitacao(licitacao.historico);
+    setPedidos(licitacao.pedidos);
 
-    // Preencher automaticamente os campos da licitação
+    // Preencher automaticamente os campos da oportunidade
     setFormData(prev => ({
       ...prev,
       cpfCnpj: licitacao.cnpj,
@@ -139,33 +113,13 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
       uf: licitacao.uf,
       website: licitacao.linkEdital || '',
       fonteLead: 'licitacao',
-      valorNegocio: licitacao.valorEstimado,
+      valorNegocio: licitacao.estrategiaValorFinal,
       tags: licitacao.palavraChave,
       caracteristicas: licitacao.objetoLicitacao,
-      fluxoTrabalho: `Licitação ${licitacao.numeroPregao}`,
-      status: licitacao.status === 'ganha' ? 'ganha' : 'em_acompanhamento',
+      fluxoTrabalho: `Contrato derivado da licitação ${licitacao.numeroPregao}`,
+      status: 'ganha',
       descricao: licitacao.resumoEdital,
-      analiseTecnica: licitacao.analiseTecnica,
-      numeroProcesso: licitacao.numeroProcesso,
-      orgaoLicitante: licitacao.nomeInstituicao,
-      modalidadeLicitacao: licitacao.modalidade,
-      tipoLicitacao: licitacao.tipo,
-      objetoLicitacao: licitacao.objetoLicitacao,
-      dataAbertura: licitacao.dataAbertura,
-      dataEntregaProposta: licitacao.dataLimiteEntrega,
-      localEntregaProposta: licitacao.localEntrega,
-      valorEstimado: licitacao.valorEstimado.toString(),
-      criterioJulgamento: licitacao.criterioJulgamento,
-      linkEdital: licitacao.linkEdital,
-      estrategiaValorMinimo: licitacao.estrategiaValorMinimo?.toString() || '',
-      estrategiaValorMaximo: licitacao.estrategiaValorMaximo?.toString() || '',
-      valorMinimoFinal: licitacao.estrategiaValorFinal?.toString() || '',
-      statusLicitacao: licitacao.status,
-      resultadoFinal: licitacao.resultadoFinal || '',
-      posicaoClassificacao: licitacao.posicaoClassificacao?.toString() || '',
-      valorVencedor: licitacao.valorVencedor?.toString() || '',
-      empresaVencedora: licitacao.empresaVencedora || '',
-      observacoesFinais: licitacao.observacoesFinais || ''
+      analiseTecnica: licitacao.analiseTecnica
     }));
   };
 
@@ -242,54 +196,22 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     }
   };
 
-  const getStatusLicitacaoColor = (status: string) => {
-    switch (status) {
-      case 'em_andamento': return 'bg-blue-500';
-      case 'ganha': return 'bg-green-500';
-      case 'perdida': return 'bg-red-500';
-      case 'cancelada': return 'bg-gray-500';
-      case 'suspensa': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getStatusLicitacaoIcon = (status: string) => {
-    switch (status) {
-      case 'em_andamento': return <Play className="h-4 w-4" />;
-      case 'ganha': return <CheckCircle className="h-4 w-4" />;
-      case 'perdida': return <XCircle className="h-4 w-4" />;
-      case 'cancelada': return <XCircle className="h-4 w-4" />;
-      case 'suspensa': return <Pause className="h-4 w-4" />;
-      default: return <AlertCircle className="h-4 w-4" />;
-    }
-  };
-
-  const isReadOnlyMode = () => {
-    return formData.statusLicitacao === 'ganha' || formData.statusLicitacao === 'perdida' || formData.statusLicitacao === 'cancelada';
-  };
-
-  const licitacaoVinculadaData = licitacoesDetalhadas.find(l => l.id.toString() === licitacaoVinculada);
+  const licitacaoVinculadaData = licitacoesGanhasDetalhadas.find(l => l.id.toString() === licitacaoVinculada);
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-7xl max-h-[95vh] overflow-y-auto">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span>
-                  {oportunidade ? 'Editar' : 'Nova'} Oportunidade - Licitação
+                  {oportunidade ? 'Editar' : 'Nova'} Oportunidade - Avançada
                 </span>
                 {licitacaoVinculadaData && (
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                    <Link2 className="h-3 w-3 mr-1" />
+                  <Badge variant="secondary" className="bg-green-100 text-green-800">
+                    <Users className="h-3 w-3 mr-1" />
                     Vinculada à {licitacaoVinculadaData.numeroPregao}
-                  </Badge>
-                )}
-                {formData.statusLicitacao && (
-                  <Badge className={`${getStatusLicitacaoColor(formData.statusLicitacao)} text-white`}>
-                    {getStatusLicitacaoIcon(formData.statusLicitacao)}
-                    <span className="ml-1">{formData.statusLicitacao.replace('_', ' ').toUpperCase()}</span>
                   </Badge>
                 )}
               </div>
@@ -300,33 +222,29 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </DialogHeader>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-7">
-              <TabsTrigger value="dados-gerais" className="flex items-center gap-2 text-xs">
-                <Building className="h-3 w-3" />
+            <TabsList className="grid w-full grid-cols-6">
+              <TabsTrigger value="dados-gerais" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
                 Dados Gerais
               </TabsTrigger>
-              <TabsTrigger value="licitacao" className="flex items-center gap-2 text-xs">
-                <FileCheck className="h-3 w-3" />
-                Licitação
+              <TabsTrigger value="analise-tecnica" className="flex items-center gap-2">
+                <Calculator className="h-4 w-4" />
+                Análise Técnica
               </TabsTrigger>
-              <TabsTrigger value="estrategia" className="flex items-center gap-2 text-xs">
-                <Target className="h-3 w-3" />
-                Estratégia
-              </TabsTrigger>
-              <TabsTrigger value="acompanhamento" className="flex items-center gap-2 text-xs">
-                <TrendingUp className="h-3 w-3" />
-                Acompanhamento
-              </TabsTrigger>
-              <TabsTrigger value="historico-chat" className="flex items-center gap-2 text-xs">
-                <MessageSquare className="h-3 w-3" />
+              <TabsTrigger value="historico-chat" className="flex items-center gap-2">
+                <MessageSquare className="h-4 w-4" />
                 Histórico/Chat
               </TabsTrigger>
-              <TabsTrigger value="pedidos" className="flex items-center gap-2 text-xs">
-                <Package className="h-3 w-3" />
+              <TabsTrigger value="documentos" className="flex items-center gap-2">
+                <Upload className="h-4 w-4" />
+                Documentos
+              </TabsTrigger>
+              <TabsTrigger value="pedidos" className="flex items-center gap-2">
+                <Package className="h-4 w-4" />
                 Pedidos
               </TabsTrigger>
-              <TabsTrigger value="chamados" className="flex items-center gap-2 text-xs">
-                <Headphones className="h-3 w-3" />
+              <TabsTrigger value="chamados" className="flex items-center gap-2">
+                <Headphones className="h-4 w-4" />
                 Chamados
               </TabsTrigger>
             </TabsList>
@@ -336,8 +254,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Link2 className="h-5 w-5" />
-                    Vincular Licitação Existente
+                    <Users className="h-5 w-5" />
+                    Vincular Licitação Ganha
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -346,27 +264,27 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                       <Label htmlFor="licitacao">Selecionar Licitação</Label>
                       <Select value={licitacaoVinculada} onValueChange={handleVincularLicitacao}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione uma licitação para vincular" />
+                          <SelectValue placeholder="Selecione uma licitação ganha para vincular" />
                         </SelectTrigger>
                         <SelectContent>
-                          {licitacoesDetalhadas.map((licitacao) => (
+                          {licitacoesGanhasDetalhadas.map((licitacao) => (
                             <SelectItem key={licitacao.id} value={licitacao.id.toString()}>
-                              {licitacao.numeroPregao} - {licitacao.nomeInstituicao} ({formatCurrency(licitacao.valorEstimado)})
+                              {licitacao.numeroPregao} - {licitacao.nomeInstituicao} ({formatCurrency(licitacao.estrategiaValorFinal)})
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
                     {licitacaoVinculadaData && (
-                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm text-blue-800">
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-sm text-green-800">
                           <strong>Licitação Vinculada:</strong> {licitacaoVinculadaData.numeroPregao}
                         </p>
-                        <p className="text-sm text-blue-600">
+                        <p className="text-sm text-green-600">
                           {licitacaoVinculadaData.objetoLicitacao}
                         </p>
-                        <p className="text-xs text-blue-600 mt-1">
-                          Os dados do cliente, documentos, histórico e informações da licitação foram importados automaticamente.
+                        <p className="text-xs text-green-600 mt-1">
+                          Os dados do cliente, documentos, histórico e pedidos foram importados automaticamente.
                         </p>
                       </div>
                     )}
@@ -378,10 +296,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                 {/* Dados do Cliente */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Building className="h-5 w-5" />
-                      Dados do Cliente
-                    </CardTitle>
+                    <CardTitle>Dados do Cliente</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
@@ -392,7 +307,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                           value={formData.cpfCnpj}
                           onChange={(e) => handleInputChange('cpfCnpj', e.target.value)}
                           placeholder="Digite o CPF ou CNPJ"
-                          disabled={isReadOnlyMode()}
                         />
                       </div>
                       <div>
@@ -402,7 +316,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                           value={formData.nomeFantasia}
                           onChange={(e) => handleInputChange('nomeFantasia', e.target.value)}
                           placeholder="Digite o nome"
-                          disabled={isReadOnlyMode()}
                         />
                       </div>
                     </div>
@@ -414,58 +327,32 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                         value={formData.razaoSocial}
                         onChange={(e) => handleInputChange('razaoSocial', e.target.value)}
                         placeholder="Digite a razão social"
-                        disabled={isReadOnlyMode()}
                       />
                     </div>
 
                     <div className="grid grid-cols-3 gap-4">
                       <div className="col-span-2">
-                        <Label htmlFor="endereco" className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4" />
-                          Endereço do Cliente
-                        </Label>
+                        <Label htmlFor="endereco">Endereço do Cliente</Label>
                         <Input
                           id="endereco"
                           value={formData.endereco}
                           onChange={(e) => handleInputChange('endereco', e.target.value)}
                           placeholder="Digite o endereço"
-                          disabled={isReadOnlyMode()}
                         />
                       </div>
                       <div>
                         <Label htmlFor="uf">UF</Label>
-                        <Select value={formData.uf} onValueChange={(value) => handleInputChange('uf', value)} disabled={isReadOnlyMode()}>
+                        <Select value={formData.uf} onValueChange={(value) => handleInputChange('uf', value)}>
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="AC">AC</SelectItem>
-                            <SelectItem value="AL">AL</SelectItem>
-                            <SelectItem value="AP">AP</SelectItem>
-                            <SelectItem value="AM">AM</SelectItem>
-                            <SelectItem value="BA">BA</SelectItem>
-                            <SelectItem value="CE">CE</SelectItem>
-                            <SelectItem value="DF">DF</SelectItem>
-                            <SelectItem value="ES">ES</SelectItem>
-                            <SelectItem value="GO">GO</SelectItem>
-                            <SelectItem value="MA">MA</SelectItem>
-                            <SelectItem value="MT">MT</SelectItem>
-                            <SelectItem value="MS">MS</SelectItem>
-                            <SelectItem value="MG">MG</SelectItem>
-                            <SelectItem value="PA">PA</SelectItem>
-                            <SelectItem value="PB">PB</SelectItem>
-                            <SelectItem value="PR">PR</SelectItem>
-                            <SelectItem value="PE">PE</SelectItem>
-                            <SelectItem value="PI">PI</SelectItem>
-                            <SelectItem value="RJ">RJ</SelectItem>
-                            <SelectItem value="RN">RN</SelectItem>
-                            <SelectItem value="RS">RS</SelectItem>
-                            <SelectItem value="RO">RO</SelectItem>
-                            <SelectItem value="RR">RR</SelectItem>
-                            <SelectItem value="SC">SC</SelectItem>
                             <SelectItem value="SP">SP</SelectItem>
-                            <SelectItem value="SE">SE</SelectItem>
-                            <SelectItem value="TO">TO</SelectItem>
+                            <SelectItem value="RJ">RJ</SelectItem>
+                            <SelectItem value="MG">MG</SelectItem>
+                            <SelectItem value="RS">RS</SelectItem>
+                            <SelectItem value="PR">PR</SelectItem>
+                            <SelectItem value="SC">SC</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -473,45 +360,33 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="email" className="flex items-center gap-2">
-                          <Mail className="h-4 w-4" />
-                          E-mail
-                        </Label>
+                        <Label htmlFor="email">E-mail</Label>
                         <Input
                           id="email"
                           type="email"
                           value={formData.email}
                           onChange={(e) => handleInputChange('email', e.target.value)}
                           placeholder="Digite o e-mail"
-                          disabled={isReadOnlyMode()}
                         />
                       </div>
                       <div>
-                        <Label htmlFor="telefone" className="flex items-center gap-2">
-                          <Phone className="h-4 w-4" />
-                          Telefone
-                        </Label>
+                        <Label htmlFor="telefone">Telefone</Label>
                         <Input
                           id="telefone"
                           value={formData.telefone}
                           onChange={(e) => handleInputChange('telefone', e.target.value)}
                           placeholder="Digite o telefone"
-                          disabled={isReadOnlyMode()}
                         />
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="website" className="flex items-center gap-2">
-                        <Globe className="h-4 w-4" />
-                        Website
-                      </Label>
+                      <Label htmlFor="website">Website</Label>
                       <Input
                         id="website"
                         value={formData.website}
                         onChange={(e) => handleInputChange('website', e.target.value)}
                         placeholder="Digite o website"
-                        disabled={isReadOnlyMode()}
                       />
                     </div>
 
@@ -520,7 +395,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                         id="ativo"
                         checked={formData.ativo}
                         onCheckedChange={(checked) => handleInputChange('ativo', checked)}
-                        disabled={isReadOnlyMode()}
                       />
                       <Label htmlFor="ativo">Cliente Ativo</Label>
                     </div>
@@ -530,16 +404,13 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                 {/* Dados da Oportunidade */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Briefcase className="h-5 w-5" />
-                      Dados da Oportunidade
-                    </CardTitle>
+                    <CardTitle>Dados da Oportunidade</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="fonteLead">Fonte do Lead</Label>
-                        <Select value={formData.fonteLead} onValueChange={(value) => handleInputChange('fonteLead', value)} disabled={isReadOnlyMode()}>
+                        <Select value={formData.fonteLead} onValueChange={(value) => handleInputChange('fonteLead', value)}>
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione" />
                           </SelectTrigger>
@@ -549,23 +420,17 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                             <SelectItem value="cold_call">Cold Call</SelectItem>
                             <SelectItem value="licitacao">Licitação</SelectItem>
                             <SelectItem value="referencia">Referência</SelectItem>
-                            <SelectItem value="portal_compras">Portal de Compras</SelectItem>
-                            <SelectItem value="evento">Evento</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div>
-                        <Label htmlFor="valorNegocio" className="flex items-center gap-2">
-                          <DollarSign className="h-4 w-4" />
-                          Valor do Negócio *
-                        </Label>
+                        <Label htmlFor="valorNegocio">Valor do Negócio *</Label>
                         <Input
                           id="valorNegocio"
                           type="number"
                           value={formData.valorNegocio}
                           onChange={(e) => handleInputChange('valorNegocio', parseFloat(e.target.value) || 0)}
                           placeholder="Digite o valor"
-                          disabled={isReadOnlyMode()}
                         />
                       </div>
                     </div>
@@ -573,7 +438,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="metodoContato">Método de Contato</Label>
-                        <Select value={formData.metodoContato} onValueChange={(value) => handleInputChange('metodoContato', value)} disabled={isReadOnlyMode()}>
+                        <Select value={formData.metodoContato} onValueChange={(value) => handleInputChange('metodoContato', value)}>
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione" />
                           </SelectTrigger>
@@ -582,13 +447,12 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                             <SelectItem value="email">E-mail</SelectItem>
                             <SelectItem value="presencial">Presencial</SelectItem>
                             <SelectItem value="video_call">Video Call</SelectItem>
-                            <SelectItem value="portal_fornecedor">Portal do Fornecedor</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div>
                         <Label htmlFor="segmentoLead">Segmento do Lead</Label>
-                        <Select value={formData.segmentoLead} onValueChange={(value) => handleInputChange('segmentoLead', value)} disabled={isReadOnlyMode()}>
+                        <Select value={formData.segmentoLead} onValueChange={(value) => handleInputChange('segmentoLead', value)}>
                           <SelectTrigger>
                             <SelectValue placeholder="Selecione" />
                           </SelectTrigger>
@@ -598,24 +462,18 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                             <SelectItem value="publico">Público</SelectItem>
                             <SelectItem value="privado">Privado</SelectItem>
                             <SelectItem value="municipal">Municipal</SelectItem>
-                            <SelectItem value="estadual">Estadual</SelectItem>
-                            <SelectItem value="federal">Federal</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="colaboradoresResponsaveis" className="flex items-center gap-2">
-                        <Users className="h-4 w-4" />
-                        Colaboradores Responsáveis
-                      </Label>
+                      <Label htmlFor="colaboradoresResponsaveis">Colaboradores Responsáveis</Label>
                       <Input
                         id="colaboradoresResponsaveis"
                         value={formData.colaboradoresResponsaveis}
                         onChange={(e) => handleInputChange('colaboradoresResponsaveis', e.target.value)}
                         placeholder="Digite os responsáveis"
-                        disabled={isReadOnlyMode()}
                       />
                     </div>
 
@@ -626,13 +484,54 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                         value={formData.procurandoPor}
                         onChange={(e) => handleInputChange('procurandoPor', e.target.value)}
                         placeholder="Digite os contatos"
-                        disabled={isReadOnlyMode()}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Organização */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Organização</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="tags">Tags</Label>
+                      <Input
+                        id="tags"
+                        value={formData.tags}
+                        onChange={(e) => handleInputChange('tags', e.target.value)}
+                        placeholder="Digite as tags separadas por vírgula"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="status">Status da Oportunidade</Label>
-                      <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)} disabled={isReadOnlyMode()}>
+                      <Label htmlFor="caracteristicas">Características</Label>
+                      <Textarea
+                        id="caracteristicas"
+                        value={formData.caracteristicas}
+                        onChange={(e) => handleInputChange('caracteristicas', e.target.value)}
+                        placeholder="Descreva as características"
+                        rows={3}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="fluxoTrabalho">Fluxo de Trabalho</Label>
+                      <Textarea
+                        id="fluxoTrabalho"
+                        value={formData.fluxoTrabalho}
+                        onChange={(e) => handleInputChange('fluxoTrabalho', e.target.value)}
+                        placeholder="Descreva o fluxo de trabalho"
+                        rows={3}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="status">Status</Label>
+                      <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o status" />
                         </SelectTrigger>
@@ -655,7 +554,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                           onChange={(e) => handleInputChange('motivoGanho', e.target.value)}
                           placeholder="Descreva o motivo do ganho"
                           rows={3}
-                          disabled={isReadOnlyMode()}
                         />
                       </div>
                     )}
@@ -669,58 +567,9 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                           onChange={(e) => handleInputChange('motivoPerda', e.target.value)}
                           placeholder="Descreva o motivo da perda"
                           rows={3}
-                          disabled={isReadOnlyMode()}
                         />
                       </div>
                     )}
-                  </CardContent>
-                </Card>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Organização */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Tag className="h-5 w-5" />
-                      Organização
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <Label htmlFor="tags">Tags</Label>
-                      <Input
-                        id="tags"
-                        value={formData.tags}
-                        onChange={(e) => handleInputChange('tags', e.target.value)}
-                        placeholder="Digite as tags separadas por vírgula"
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="caracteristicas">Características</Label>
-                      <Textarea
-                        id="caracteristicas"
-                        value={formData.caracteristicas}
-                        onChange={(e) => handleInputChange('caracteristicas', e.target.value)}
-                        placeholder="Descreva as características"
-                        rows={3}
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="fluxoTrabalho">Fluxo de Trabalho</Label>
-                      <Textarea
-                        id="fluxoTrabalho"
-                        value={formData.fluxoTrabalho}
-                        onChange={(e) => handleInputChange('fluxoTrabalho', e.target.value)}
-                        placeholder="Descreva o fluxo de trabalho"
-                        rows={3}
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
 
                     <div>
                       <Label htmlFor="descricao">Descrição</Label>
@@ -730,19 +579,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                         onChange={(e) => handleInputChange('descricao', e.target.value)}
                         placeholder="Descrição geral da oportunidade"
                         rows={4}
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="analiseTecnica">Análise Técnica-Científica</Label>
-                      <Textarea
-                        id="analiseTecnica"
-                        value={formData.analiseTecnica}
-                        onChange={(e) => handleInputChange('analiseTecnica', e.target.value)}
-                        placeholder="Digite a análise técnica-científica..."
-                        rows={6}
-                        disabled={isReadOnlyMode()}
                       />
                     </div>
                   </CardContent>
@@ -764,7 +600,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                               variant="ghost"
                               size="sm"
                               onClick={() => removerConcorrente(index)}
-                              disabled={isReadOnlyMode()}
                             >
                               <X className="h-4 w-4" />
                             </Button>
@@ -774,20 +609,17 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                               placeholder="Nome do concorrente"
                               value={concorrente.nome}
                               onChange={(e) => atualizarConcorrente(index, 'nome', e.target.value)}
-                              disabled={isReadOnlyMode()}
                             />
                             <Input
                               placeholder="Produto do concorrente"
                               value={concorrente.produto}
                               onChange={(e) => atualizarConcorrente(index, 'produto', e.target.value)}
-                              disabled={isReadOnlyMode()}
                             />
                             <Input
                               type="number"
                               placeholder="Preço praticado"
                               value={concorrente.preco}
                               onChange={(e) => atualizarConcorrente(index, 'preco', parseFloat(e.target.value) || 0)}
-                              disabled={isReadOnlyMode()}
                             />
                           </div>
                         </div>
@@ -798,7 +630,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                         variant="outline"
                         onClick={adicionarConcorrente}
                         className="w-full"
-                        disabled={isReadOnlyMode()}
                       >
                         <Plus className="h-4 w-4 mr-2" />
                         Adicionar Concorrente
@@ -807,16 +638,12 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
                     <div className="space-y-4 mt-6">
                       <div>
-                        <Label htmlFor="dataVisita" className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4" />
-                          Data da Visita
-                        </Label>
+                        <Label htmlFor="dataVisita">Data da Visita</Label>
                         <Input
                           id="dataVisita"
                           type="date"
                           value={formData.dataVisita}
                           onChange={(e) => handleInputChange('dataVisita', e.target.value)}
-                          disabled={isReadOnlyMode()}
                         />
                       </div>
 
@@ -825,7 +652,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                           id="propostaNegociacao"
                           checked={formData.propostaNegociacao}
                           onCheckedChange={(checked) => handleInputChange('propostaNegociacao', checked)}
-                          disabled={isReadOnlyMode()}
                         />
                         <Label htmlFor="propostaNegociacao">Proposta em Negociação</Label>
                       </div>
@@ -844,7 +670,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                             value={formData.termometro}
                             onChange={(e) => handleInputChange('termometro', parseInt(e.target.value))}
                             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                            disabled={isReadOnlyMode()}
                           />
                           <div className="flex justify-between text-xs text-gray-500 mt-1">
                             <span>0°</span>
@@ -870,317 +695,19 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               </div>
             </TabsContent>
 
-            <TabsContent value="licitacao" className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Informações Básicas da Licitação */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <FileCheck className="h-5 w-5" />
-                      Informações Básicas
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <Label htmlFor="numeroProcesso">Número do Processo *</Label>
-                      <Input
-                        id="numeroProcesso"
-                        value={formData.numeroProcesso}
-                        onChange={(e) => handleInputChange('numeroProcesso', e.target.value)}
-                        placeholder="Ex: 001/2024"
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="orgaoLicitante">Órgão Licitante *</Label>
-                      <Input
-                        id="orgaoLicitante"
-                        value={formData.orgaoLicitante}
-                        onChange={(e) => handleInputChange('orgaoLicitante', e.target.value)}
-                        placeholder="Nome do órgão licitante"
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="modalidadeLicitacao">Modalidade *</Label>
-                        <Select value={formData.modalidadeLicitacao} onValueChange={(value) => handleInputChange('modalidadeLicitacao', value)} disabled={isReadOnlyMode()}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pregao_eletronico">Pregão Eletrônico</SelectItem>
-                            <SelectItem value="pregao_presencial">Pregão Presencial</SelectItem>
-                            <SelectItem value="concorrencia">Concorrência</SelectItem>
-                            <SelectItem value="tomada_precos">Tomada de Preços</SelectItem>
-                            <SelectItem value="convite">Convite</SelectItem>
-                            <SelectItem value="concurso">Concurso</SelectItem>
-                            <SelectItem value="leilao">Leilão</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="tipoLicitacao">Tipo</Label>
-                        <Select value={formData.tipoLicitacao} onValueChange={(value) => handleInputChange('tipoLicitacao', value)} disabled={isReadOnlyMode()}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="menor_preco">Menor Preço</SelectItem>
-                            <SelectItem value="melhor_tecnica">Melhor Técnica</SelectItem>
-                            <SelectItem value="tecnica_preco">Técnica e Preço</SelectItem>
-                            <SelectItem value="maior_lance">Maior Lance</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="objetoLicitacao">Objeto da Licitação *</Label>
-                      <Textarea
-                        id="objetoLicitacao"
-                        value={formData.objetoLicitacao}
-                        onChange={(e) => handleInputChange('objetoLicitacao', e.target.value)}
-                        placeholder="Descreva o objeto da licitação"
-                        rows={4}
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="criterioJulgamento">Critério de Julgamento</Label>
-                      <Select value={formData.criterioJulgamento} onValueChange={(value) => handleInputChange('criterioJulgamento', value)} disabled={isReadOnlyMode()}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="menor_preco">Menor Preço</SelectItem>
-                          <SelectItem value="melhor_tecnica">Melhor Técnica</SelectItem>
-                          <SelectItem value="tecnica_preco">Técnica e Preço</SelectItem>
-                          <SelectItem value="maior_desconto">Maior Desconto</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Prazos e Valores */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Calendar className="h-5 w-5" />
-                      Prazos e Valores
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <Label htmlFor="dataAbertura">Data de Abertura *</Label>
-                      <Input
-                        id="dataAbertura"
-                        type="datetime-local"
-                        value={formData.dataAbertura}
-                        onChange={(e) => handleInputChange('dataAbertura', e.target.value)}
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="dataEntregaProposta">Data Limite para Entrega de Proposta *</Label>
-                      <Input
-                        id="dataEntregaProposta"
-                        type="datetime-local"
-                        value={formData.dataEntregaProposta}
-                        onChange={(e) => handleInputChange('dataEntregaProposta', e.target.value)}
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="localEntregaProposta">Local de Entrega da Proposta</Label>
-                      <Textarea
-                        id="localEntregaProposta"
-                        value={formData.localEntregaProposta}
-                        onChange={(e) => handleInputChange('localEntregaProposta', e.target.value)}
-                        placeholder="Endereço ou plataforma para entrega"
-                        rows={3}
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="valorEstimado" className="flex items-center gap-2">
-                        <DollarSign className="h-4 w-4" />
-                        Valor Estimado (R$)
-                      </Label>
-                      <Input
-                        id="valorEstimado"
-                        type="number"
-                        step="0.01"
-                        value={formData.valorEstimado}
-                        onChange={(e) => handleInputChange('valorEstimado', e.target.value)}
-                        placeholder="0,00"
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="linkEdital" className="flex items-center gap-2">
-                        <Link2 className="h-4 w-4" />
-                        Link do Edital
-                      </Label>
-                      <Input
-                        id="linkEdital"
-                        type="url"
-                        value={formData.linkEdital}
-                        onChange={(e) => handleInputChange('linkEdital', e.target.value)}
-                        placeholder="https://..."
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="estrategia" className="space-y-6">
+            <TabsContent value="analise-tecnica" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Target className="h-5 w-5" />
-                    Estratégia Comercial
-                  </CardTitle>
+                  <CardTitle>Análise Técnica-Científica</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    <div>
-                      <Label htmlFor="estrategiaValorMinimo">Valor Mínimo Estratégico (R$)</Label>
-                      <MoneyInput
-                        id="estrategiaValorMinimo"
-                        value={formData.estrategiaValorMinimo}
-                        onChange={(value) => handleInputChange('estrategiaValorMinimo', value)}
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="estrategiaValorMaximo">Valor Máximo Estratégico (R$)</Label>
-                      <MoneyInput
-                        id="estrategiaValorMaximo"
-                        value={formData.estrategiaValorMaximo}
-                        onChange={(value) => handleInputChange('estrategiaValorMaximo', value)}
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="valorMinimoFinal">Valor mínimo Final (R$)</Label>
-                      <MoneyInput
-                        id="valorMinimoFinal"
-                        value={formData.valorMinimoFinal}
-                        onChange={(value) => handleInputChange('valorMinimoFinal', value)}
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="manifestacaoInteresseRecorrer">Razões para Recurso</Label>
-                    <Textarea
-                      id="manifestacaoInteresseRecorrer"
-                      value={formData.manifestacaoInteresseRecorrer}
-                      onChange={(e) => handleInputChange('manifestacaoInteresseRecorrer', e.target.value)}
-                      placeholder="Descreva as razões para recurso se necessário..."
-                      rows={4}
-                      disabled={isReadOnlyMode()}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="acompanhamento" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5" />
-                    Acompanhamento da Licitação
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="statusLicitacao">Status da Licitação</Label>
-                    <Select value={formData.statusLicitacao} onValueChange={(value) => handleInputChange('statusLicitacao', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="em_andamento">Em Andamento</SelectItem>
-                        <SelectItem value="ganha">Ganha</SelectItem>
-                        <SelectItem value="perdida">Perdida</SelectItem>
-                        <SelectItem value="cancelada">Cancelada</SelectItem>
-                        <SelectItem value="suspensa">Suspensa</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {(formData.statusLicitacao === 'ganha' || formData.statusLicitacao === 'perdida') && (
-                    <>
-                      <div>
-                        <Label htmlFor="resultadoFinal">Resultado Final</Label>
-                        <Textarea
-                          id="resultadoFinal"
-                          value={formData.resultadoFinal}
-                          onChange={(e) => handleInputChange('resultadoFinal', e.target.value)}
-                          placeholder="Descreva o resultado final da licitação"
-                          rows={3}
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="posicaoClassificacao">Posição na Classificação</Label>
-                          <Input
-                            id="posicaoClassificacao"
-                            type="number"
-                            value={formData.posicaoClassificacao}
-                            onChange={(e) => handleInputChange('posicaoClassificacao', e.target.value)}
-                            placeholder="Ex: 1, 2, 3..."
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="valorVencedor">Valor Vencedor (R$)</Label>
-                          <MoneyInput
-                            id="valorVencedor"
-                            value={formData.valorVencedor}
-                            onChange={(value) => handleInputChange('valorVencedor', value)}
-                          />
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="empresaVencedora">Empresa Vencedora</Label>
-                        <Input
-                          id="empresaVencedora"
-                          value={formData.empresaVencedora}
-                          onChange={(e) => handleInputChange('empresaVencedora', e.target.value)}
-                          placeholder="Nome da empresa vencedora"
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  <div>
-                    <Label htmlFor="observacoesFinais">Observações Finais</Label>
-                    <Textarea
-                      id="observacoesFinais"
-                      value={formData.observacoesFinais}
-                      onChange={(e) => handleInputChange('observacoesFinais', e.target.value)}
-                      placeholder="Observações gerais sobre o acompanhamento"
-                      rows={4}
-                    />
-                  </div>
+                <CardContent>
+                  <Textarea
+                    value={formData.analiseTecnica}
+                    onChange={(e) => handleInputChange('analiseTecnica', e.target.value)}
+                    placeholder="Digite a análise técnica-científica da oportunidade..."
+                    rows={15}
+                    className="w-full"
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -1191,7 +718,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Clock className="h-5 w-5" />
+                      <Calculator className="h-5 w-5" />
                       Histórico Importado da Licitação
                     </CardTitle>
                   </CardHeader>
@@ -1237,6 +764,55 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               </Card>
             </TabsContent>
 
+            <TabsContent value="documentos" className="space-y-4">
+              {/* Documentos importados da licitação */}
+              {documentosLicitacao.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Documentos Importados da Licitação
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {documentosLicitacao.map((doc, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <FileText className="h-5 w-5 text-blue-500" />
+                            <div>
+                              <p className="font-medium text-sm">{doc.nome}</p>
+                              <p className="text-xs text-gray-500">
+                                {doc.tipo} • {new Date(doc.data).toLocaleDateString('pt-BR')}
+                              </p>
+                            </div>
+                          </div>
+                          <Button variant="ghost" size="sm">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Adicionar Novos Documentos</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600 mb-4">Arraste e solte arquivos aqui ou clique para selecionar</p>
+                    <Button variant="outline">
+                      Selecionar Arquivos
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             <TabsContent value="pedidos" className="space-y-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
@@ -1244,7 +820,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                   <Button 
                     onClick={() => setIsPedidoModalOpen(true)}
                     className="bg-biodina-gold hover:bg-biodina-gold/90"
-                    disabled={isReadOnlyMode()}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Criar Novo Pedido
@@ -1256,10 +831,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                       <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                       <p className="text-gray-600 mb-4">Nenhum pedido associado a esta oportunidade</p>
                       <p className="text-sm text-gray-500">
-                        {isReadOnlyMode() 
-                          ? 'Esta licitação está finalizada e não permite novos pedidos'
-                          : 'Clique em "Criar Novo Pedido" para começar a adicionar produtos'
-                        }
+                        Clique em "Criar Novo Pedido" para começar a adicionar produtos
                       </p>
                     </div>
                   ) : (
@@ -1322,7 +894,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               <ChamadosTab 
                 chamados={chamados}
                 onAdicionarChamado={handleAdicionarChamado}
-                readOnly={isReadOnlyMode()}
               />
             </TabsContent>
           </Tabs>
@@ -1331,11 +902,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button 
-              onClick={handleSave} 
-              className="bg-biodina-gold hover:bg-biodina-gold/90"
-              disabled={isReadOnlyMode()}
-            >
+            <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
               {oportunidade ? 'Atualizar' : 'Salvar'} Oportunidade
             </Button>
           </div>
