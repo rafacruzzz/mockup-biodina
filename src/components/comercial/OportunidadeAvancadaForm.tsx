@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import {
   Form,
@@ -11,6 +10,8 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Select,
   SelectContent,
@@ -45,6 +46,10 @@ const OportunidadeAvancadaForm: React.FC<OportunidadeAvancadaFormProps> = ({ isO
     numeroPregao: oportunidade?.numeroPregao || '',
     objetoLicitacao: oportunidade?.objetoLicitacao || '',
     linkEdital: oportunidade?.linkEdital || '',
+    resumoEdital: oportunidade?.resumoEdital || '',
+    solicitarAnaliseTecnica: oportunidade?.solicitarAnaliseTecnica || false,
+    dataLimiteResposta: oportunidade?.dataLimiteResposta || undefined,
+    analiseTecnica: oportunidade?.analiseTecnica || '',
     dataAbertura: oportunidade?.dataAbertura || undefined,
     estrategiaPreco: oportunidade?.estrategiaPreco || '',
     estrategiaValorInicial: oportunidade?.estrategiaValorInicial || 0,
@@ -65,6 +70,10 @@ const OportunidadeAvancadaForm: React.FC<OportunidadeAvancadaFormProps> = ({ isO
         numeroPregao: oportunidade.numeroPregao || '',
         objetoLicitacao: oportunidade.objetoLicitacao || '',
         linkEdital: oportunidade.linkEdital || '',
+        resumoEdital: oportunidade.resumoEdital || '',
+        solicitarAnaliseTecnica: oportunidade.solicitarAnaliseTecnica || false,
+        dataLimiteResposta: oportunidade.dataLimiteResposta ? new Date(oportunidade.dataLimiteResposta) : undefined,
+        analiseTecnica: oportunidade.analiseTecnica || '',
         dataAbertura: oportunidade.dataAbertura ? new Date(oportunidade.dataAbertura) : undefined,
         estrategiaPreco: oportunidade.estrategiaPreco || '',
         estrategiaValorInicial: oportunidade.estrategiaValorInicial || 0,
@@ -83,6 +92,10 @@ const OportunidadeAvancadaForm: React.FC<OportunidadeAvancadaFormProps> = ({ isO
         numeroPregao: '',
         objetoLicitacao: '',
         linkEdital: '',
+        resumoEdital: '',
+        solicitarAnaliseTecnica: false,
+        dataLimiteResposta: undefined,
+        analiseTecnica: '',
         dataAbertura: undefined,
         estrategiaPreco: '',
         estrategiaValorInicial: 0,
@@ -178,6 +191,71 @@ const OportunidadeAvancadaForm: React.FC<OportunidadeAvancadaFormProps> = ({ isO
               onChange={(e) => setFormData({ ...formData, linkEdital: e.target.value })}
             />
           </div>
+
+          <div>
+            <Label htmlFor="resumoEdital">Resumo do Edital</Label>
+            <Textarea
+              id="resumoEdital"
+              placeholder="Digite o resumo do edital..."
+              value={formData.resumoEdital}
+              onChange={(e) => setFormData({ ...formData, resumoEdital: e.target.value })}
+              className="min-h-[100px]"
+            />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="solicitarAnaliseTecnica"
+              checked={formData.solicitarAnaliseTecnica}
+              onCheckedChange={(checked) => setFormData({ ...formData, solicitarAnaliseTecnica: !!checked })}
+            />
+            <Label htmlFor="solicitarAnaliseTecnica">Solicitar análise técnica</Label>
+          </div>
+
+          {formData.solicitarAnaliseTecnica && (
+            <div>
+              <Label htmlFor="dataLimiteResposta">Data limite de resposta</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-[240px] justify-start text-left font-normal",
+                      !formData.dataLimiteResposta && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {formData.dataLimiteResposta ? (
+                      new Date(formData.dataLimiteResposta).toLocaleDateString()
+                    ) : (
+                      <span>Escolher Data</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.dataLimiteResposta}
+                    onSelect={(date) => setFormData({ ...formData, dataLimiteResposta: date })}
+                    initialFocus
+                    className="p-3 pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          )}
+
+          <div>
+            <Label htmlFor="analiseTecnica">Análise Técnica</Label>
+            <Textarea
+              id="analiseTecnica"
+              placeholder="Digite a análise técnica..."
+              value={formData.analiseTecnica}
+              onChange={(e) => setFormData({ ...formData, analiseTecnica: e.target.value })}
+              className="min-h-[100px]"
+            />
+          </div>
+
           <div>
             <Label htmlFor="dataAbertura">Data de Abertura</Label>
             <Popover>
@@ -219,7 +297,6 @@ const OportunidadeAvancadaForm: React.FC<OportunidadeAvancadaFormProps> = ({ isO
               <SelectContent>
                 <SelectItem value="menor_preco">Menor Preço</SelectItem>
                 <SelectItem value="melhor_tecnica">Melhor Técnica</SelectItem>
-                {/* Adicione mais estratégias conforme necessário */}
               </SelectContent>
             </Select>
           </div>
@@ -295,7 +372,6 @@ const OportunidadeAvancadaForm: React.FC<OportunidadeAvancadaFormProps> = ({ isO
                 <SelectItem value="pendente">Pendente</SelectItem>
                 <SelectItem value="em_andamento">Em Andamento</SelectItem>
                 <SelectItem value="concluida">Concluída</SelectItem>
-                {/* Adicione mais status conforme necessário */}
               </SelectContent>
             </Select>
           </div>
@@ -370,4 +446,3 @@ const OportunidadeAvancadaForm: React.FC<OportunidadeAvancadaFormProps> = ({ isO
 };
 
 export default OportunidadeAvancadaForm;
-
