@@ -52,8 +52,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     metodoContato: oportunidade?.metodoContato || '',
     segmentoLead: oportunidade?.segmentoLead || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || '',
-    dataInicio: oportunidade?.dataInicio || '',
-    dataLimite: oportunidade?.dataLimite || '',
     procurandoPor: oportunidade?.procurandoPor || '',
     
     // Organização
@@ -120,8 +118,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       fluxoTrabalho: `Contrato derivado da licitação ${licitacao.numeroPregao}`,
       status: 'ganha',
       descricao: licitacao.resumoEdital,
-      analiseTecnica: licitacao.analiseTecnica,
-      dataInicio: licitacao.dataAbertura
+      analiseTecnica: licitacao.analiseTecnica
     }));
   };
 
@@ -477,27 +474,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                         onChange={(e) => handleInputChange('colaboradoresResponsaveis', e.target.value)}
                         placeholder="Digite os responsáveis"
                       />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="dataInicio">Data de Início</Label>
-                        <Input
-                          id="dataInicio"
-                          type="date"
-                          value={formData.dataInicio}
-                          onChange={(e) => handleInputChange('dataInicio', e.target.value)}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="dataLimite">Data Limite</Label>
-                        <Input
-                          id="dataLimite"
-                          type="date"
-                          value={formData.dataLimite}
-                          onChange={(e) => handleInputChange('dataLimite', e.target.value)}
-                        />
-                      </div>
                     </div>
 
                     <div>
