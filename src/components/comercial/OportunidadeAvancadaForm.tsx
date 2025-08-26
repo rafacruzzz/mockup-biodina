@@ -90,7 +90,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     dataLicitacao: oportunidade?.dataLicitacao || '',
     resumoEdital: oportunidade?.resumoEdital || '',
     impugnacaoEdital: oportunidade?.impugnacaoEdital || '',
-    valorEntrada: oportunidade?.valorEntrada || 0,
     valorMinimoFinal: oportunidade?.valorMinimoFinal || 0,
     participantes: oportunidade?.participantes || [],
     
@@ -776,31 +775,17 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="valorEntrada">Valor para Entrada (R$)</Label>
-            <Input
-              id="valorEntrada"
-              type="number"
-              step="0.01"
-              value={formData.valorEntrada}
-              onChange={(e) => handleInputChange('valorEntrada', parseFloat(e.target.value) || 0)}
-              placeholder="0,00"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="valorMinimoFinal">Valor mínimo Final (R$)</Label>
-            <Input
-              id="valorMinimoFinal"
-              type="number"
-              step="0.01"
-              value={formData.valorMinimoFinal}
-              onChange={(e) => handleInputChange('valorMinimoFinal', parseFloat(e.target.value) || 0)}
-              placeholder="0,00"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
+        <div>
+          <Label htmlFor="valorMinimoFinal">Valor mínimo Final (R$)</Label>
+          <Input
+            id="valorMinimoFinal"
+            type="number"
+            step="0.01"
+            value={formData.valorMinimoFinal}
+            onChange={(e) => handleInputChange('valorMinimoFinal', parseFloat(e.target.value) || 0)}
+            placeholder="0,00"
+            disabled={isReadOnlyMode()}
+          />
         </div>
 
         <div>
@@ -816,12 +801,12 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         </div>
 
         <div>
-          <Label htmlFor="manifestacaoRecorrer">Manifestação de Interesse em Recorrer</Label>
+          <Label htmlFor="manifestacaoRecorrer">Razões para Recurso</Label>
           <Textarea
             id="manifestacaoRecorrer"
             value={formData.manifestacaoRecorrer}
             onChange={(e) => setFormData({...formData, manifestacaoRecorrer: e.target.value})}
-            placeholder="Manifestação sobre interesse em recorrer"
+            placeholder="Descreva as razões para recurso, se aplicável"
             rows={3}
             disabled={isReadOnlyMode()}
           />
