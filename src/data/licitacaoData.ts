@@ -1,5 +1,4 @@
 
-
 import { Licitacao } from "@/types/licitacao";
 
 export const licitacoes: Licitacao[] = [
@@ -15,7 +14,7 @@ export const licitacoes: Licitacao[] = [
     empresaConcorrente: "DroneTech Ltda",
     palavraChave: "drone, agricultura, sensoriamento",
     status: "triagem",
-    situacaoPregao: "etapa_lances",
+    situacaoPregao: "aberto",
     statusLicitacao: "em_andamento",
     haviaContratoAnterior: false,
     resumoEdital: "Edital para aquisição de 15 drones profissionais com especificações técnicas avançadas para pesquisa agrícola. Inclui câmeras multiespectrais, GPS RTK e software de processamento de dados. Prazo de entrega de 45 dias após assinatura do contrato.",
@@ -42,7 +41,7 @@ export const licitacoes: Licitacao[] = [
     numeroItem: "02",
     palavraChave: "RTK, topografia, GPS",
     status: "acompanhamento",
-    situacaoPregao: "aceitacao_propostas",
+    situacaoPregao: "aberto",
     statusLicitacao: "fase_proposta",
     haviaContratoAnterior: true,
     resumoEdital: "Fornecimento de sistema RTK completo para levantamentos topográficos de alta precisão em áreas rurais. Deve incluir base, rover, controlador e software de processamento. Garantia mínima de 2 anos e suporte técnico local.",
@@ -69,7 +68,7 @@ export const licitacoes: Licitacao[] = [
     objetoLicitacao: "Sensores IoT para monitoramento ambiental em minas",
     numeroItem: "01-05",
     status: "convertida",
-    situacaoPregao: "ata_contrato",
+    situacaoPregao: "homologado",
     statusLicitacao: "contratacao",
     haviaContratoAnterior: false,
     resumoEdital: "Rede de sensores IoT para monitoramento contínuo de parâmetros ambientais em áreas de mineração. Inclui sensores de qualidade do ar, ruído, vibração e poeira. Sistema deve ter conectividade 4G/5G e dashboard web para visualização.",
@@ -97,7 +96,7 @@ export const licitacoes: Licitacao[] = [
     objetoLicitacao: "Software de mapeamento e análise de dados agrícolas",
     numeroItem: "03",
     status: "finalizada",
-    situacaoPregao: "recursos",
+    situacaoPregao: "fracassado",
     statusLicitacao: "finalizado",
     haviaContratoAnterior: false,
     resumoEdital: "Plataforma de software para processamento e análise de dados agrícolas obtidos via sensoriamento remoto. Deve incluir algoritmos de IA para detecção de pragas, estimativa de produtividade e otimização de recursos.",
@@ -117,4 +116,3 @@ export const licitacoes: Licitacao[] = [
     alteradoPor: "Pedro Lima"
   }
 ];
-
