@@ -62,44 +62,9 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     numeroProjeto: '',
     numeroPedido: '',
     numeroContrato: '',
-    publicoPrivado: '',
     naturezaOperacao: '',
     tipoContrato: '',
-    situacao: '',
     previsaoFechamento: '',
-    gerarExpedicao: false,
-    nfConsumoFinal: false,
-    localEstoque: '',
-    
-    // Dados Financeiros
-    emailNotasFiscais: '',
-    formaPagamento: '',
-    dadosBancarios: '',
-    parcelas: '',
-    prazoPagamento: '',
-    documentacaoNF: '',
-    destacarIR: false,
-    saldoEmpenho: '',
-    saldoAta: '',
-    programacaoFaturamento: '',
-    
-    // Informações de Frete
-    fretePagar: '',
-    freteRetirar: '',
-    prazoEntrega: '',
-    entregarRetirar: '',
-    dadosRecebedor: '',
-    horariosPermitidos: '',
-    locaisEntrega: '',
-    informacoesEntrega: '',
-    
-    // Campos Adicionais
-    urgente: false,
-    justificativaUrgencia: '',
-    autorizadoPor: '',
-    dataAutorizacao: '',
-    termometro: 85, // Fixado como "CONQUISTADO/QUENTE"
-    motivoGanho: '',
     
     // Análise Técnica
     analiseTecnica: '',
