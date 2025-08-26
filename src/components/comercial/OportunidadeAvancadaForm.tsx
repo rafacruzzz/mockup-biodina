@@ -698,7 +698,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               <SelectItem value="aceitacao_propostas">Aceitação de Propostas</SelectItem>
               <SelectItem value="habilitacao_fornecedores">Habilitação de Fornecedores</SelectItem>
               <SelectItem value="negociacao_preco">Negociação de Preço</SelectItem>
-              <SelectItem value="recursos">Recursos</SelectItem>
               <SelectItem value="suspenso">Suspenso</SelectItem>
               <SelectItem value="adjudicacao">Adjudicação</SelectItem>
               <SelectItem value="homologacao">Homologação</SelectItem>
@@ -923,7 +922,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         </div>
 
         <div>
-          <Label htmlFor="resultadoOportunidade">Status da Licitação</Label>
+          <Label htmlFor="resultadoOportunidade">Resultado da Licitação</Label>
           <Select 
             value={formData.resultadoOportunidade} 
             onValueChange={(value) => setFormData({...formData, resultadoOportunidade: value})}
@@ -936,9 +935,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               <SelectItem value="em_andamento">Em Andamento</SelectItem>
               <SelectItem value="ganho">Ganho</SelectItem>
               <SelectItem value="perda">Perda</SelectItem>
-              <SelectItem value="recursos">Recursos</SelectItem>
               <SelectItem value="fracassado">Fracassado</SelectItem>
-              <SelectItem value="suspenso">Suspenso</SelectItem>
               <SelectItem value="cancelado">Cancelado</SelectItem>
             </SelectContent>
           </Select>
