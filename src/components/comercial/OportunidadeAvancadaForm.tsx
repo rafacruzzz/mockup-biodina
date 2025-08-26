@@ -731,6 +731,23 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           />
         </div>
 
+        <div className="flex items-start space-x-2">
+          <Checkbox 
+            id="solicitarAnaliseTecnica"
+            checked={formData.solicitarAnaliseTecnica}
+            onCheckedChange={handleSolicitarAnaliseTecnica}
+            disabled={isReadOnlyMode()}
+          />
+          <div className="grid gap-1.5 leading-none">
+            <Label htmlFor="solicitarAnaliseTecnica" className="text-sm font-medium">
+              Solicitar análise técnica
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              Enviar notificação para responsáveis pela análise técnica preencherem os campos necessários
+            </p>
+          </div>
+        </div>
+
         <div>
           <Label htmlFor="analiseTecnicaLicitacao">Análise Técnica</Label>
           <Textarea
@@ -745,24 +762,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           <p className="text-sm text-gray-500 mt-1">
             Campo somente leitura - Para editar, use o campo "Análise Técnica-Científica" na aba "Análise Técnica"
           </p>
-          
-          {/* Checkbox para solicitação de análise técnica */}
-          <div className="flex items-start space-x-2 mt-3">
-            <Checkbox 
-              id="solicitarAnaliseTecnica"
-              checked={formData.solicitarAnaliseTecnica}
-              onCheckedChange={handleSolicitarAnaliseTecnica}
-              disabled={isReadOnlyMode()}
-            />
-            <div className="grid gap-1.5 leading-none">
-              <Label htmlFor="solicitarAnaliseTecnica" className="text-sm font-medium">
-                Solicitar análise técnica
-              </Label>
-              <p className="text-xs text-muted-foreground">
-                Enviar notificação para responsáveis pela análise técnica preencherem os campos necessários
-              </p>
-            </div>
-          </div>
         </div>
 
         <div>
