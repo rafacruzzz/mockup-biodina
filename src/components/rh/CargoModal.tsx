@@ -4,27 +4,28 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { X, Save } from "lucide-react";
-import { Funcao } from "@/types/funcao";
+import { Cargo } from "@/types/cargo";
 
-interface FuncaoModalProps {
+interface CargoModalProps {
   isOpen: boolean;
   onClose: () => void;
-  funcao?: Funcao | null;
+  cargo?: Cargo | null;
 }
 
-const FuncaoModal = ({ isOpen, onClose, funcao }: FuncaoModalProps) => {
-  const [formData, setFormData] = useState<Funcao>({
-    nome: funcao?.nome || "",
+const CargoModal = ({ isOpen, onClose, cargo }: CargoModalProps) => {
+  const [formData, setFormData] = useState<Cargo>({
+    nome: cargo?.nome || "",
+    cbo: cargo?.cbo || "",
   });
 
   if (!isOpen) return null;
 
-  const handleInputChange = (field: keyof Funcao, value: string) => {
+  const handleInputChange = (field: keyof Cargo, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
-    console.log("Salvando função:", formData);
+    console.log("Salvando cargo:", formData);
     onClose();
   };
 
@@ -40,10 +41,10 @@ const FuncaoModal = ({ isOpen, onClose, funcao }: FuncaoModalProps) => {
             </div>
             <div>
               <h2 className="text-xl font-bold text-biodina-blue">
-                {funcao ? "Editar Função" : "Nova Função"}
+                {cargo ? "Editar Cargo" : "Novo Cargo"}
               </h2>
               <p className="text-gray-600 text-sm">
-                {funcao ? "Edite as informações da função" : "Cadastre uma nova função"}
+                {cargo ? "Edite as informações do cargo" : "Cadastre um novo cargo"}
               </p>
             </div>
           </div>
@@ -60,7 +61,17 @@ const FuncaoModal = ({ isOpen, onClose, funcao }: FuncaoModalProps) => {
                 id="nome"
                 value={formData.nome}
                 onChange={(e) => handleInputChange("nome", e.target.value)}
-                placeholder="Digite o nome da função"
+                placeholder="Digite o nome do cargo"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="cbo">CBO *</Label>
+              <Input
+                id="cbo"
+                value={formData.cbo}
+                onChange={(e) => handleInputChange("cbo", e.target.value)}
+                placeholder="Ex.: 2524-05"
               />
             </div>
           </div>
@@ -80,4 +91,4 @@ const FuncaoModal = ({ isOpen, onClose, funcao }: FuncaoModalProps) => {
   );
 };
 
-export default FuncaoModal;
+export default CargoModal;

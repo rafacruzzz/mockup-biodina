@@ -16,6 +16,7 @@ import ProcessosSeletivosTable from "@/components/rh/ProcessosSeletivosTable";
 import BancoCurriculos from "@/components/rh/BancoCurriculos";
 import EtapasSelecao from "@/components/rh/EtapasSelecao";
 import Admissao from "@/components/rh/Admissao";
+import CargoModal from "@/components/rh/CargoModal";
 import { ProcessoSeletivoProvider } from "@/contexts/ProcessoSeletivoContext";
 import { modules } from "@/data/rhModules";
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,7 @@ const RH = () => {
   const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
   const [isDepartamentoModalOpen, setIsDepartamentoModalOpen] = useState(false);
   const [isExpedienteModalOpen, setIsExpedienteModalOpen] = useState(false);
-  const [isFuncaoModalOpen, setIsFuncaoModalOpen] = useState(false);
+  const [isCargoModalOpen, setIsCargoModalOpen] = useState(false);
   
   // Estados dos modais de Planos de Carreira
   const [isPlanoCarreiraModalOpen, setIsPlanoCarreiraModalOpen] = useState(false);
@@ -86,8 +87,8 @@ const RH = () => {
     if (activeModule === 'departamentos') {
       if (activeSubModule === 'setores') {
         setIsDepartamentoModalOpen(true);
-      } else if (activeSubModule === 'funcoes') {
-        setIsFuncaoModalOpen(true);
+      } else if (activeSubModule === 'cargos') {
+        setIsCargoModalOpen(true);
       }
     } else if (activeModule === 'expedientes') {
       setIsExpedienteModalOpen(true);
@@ -243,7 +244,7 @@ const RH = () => {
   const getButtonText = () => {
     if (activeModule === 'departamentos') {
       if (activeSubModule === 'setores') return "Novo Setor";
-      if (activeSubModule === 'funcoes') return "Nova Função";
+      if (activeSubModule === 'cargos') return "Novo Cargo";
     }
     if (activeModule === 'expedientes') return "Novo Expediente";
     if (activeModule === 'planosCarreira') {
@@ -362,7 +363,7 @@ const RH = () => {
         />
         
         <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={() => setIsDepartamentoModalOpen(false)} />
-        <FuncaoModal isOpen={isFuncaoModalOpen} onClose={() => setIsFuncaoModalOpen(false)} />
+        <CargoModal isOpen={isCargoModalOpen} onClose={() => setIsCargoModalOpen(false)} />
         <ExpedienteModal isOpen={isExpedienteModalOpen} onClose={() => setIsExpedienteModalOpen(false)} />
         
         <PlanoCarreiraModal isOpen={isPlanoCarreiraModalOpen} onClose={() => setIsPlanoCarreiraModalOpen(false)} />

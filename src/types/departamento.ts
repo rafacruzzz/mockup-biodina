@@ -4,5 +4,5 @@ export interface Departamento {
   nome: string;
   responsavel: string;
   observacoes: string;
-  funcoes?: number[]; // IDs das funções vinculadas ao setor
+  cargos?: number[]; // IDs dos cargos vinculados ao setor
 }

@@ -20,23 +20,23 @@ const DepartamentoModal = ({ isOpen, onClose, departamento }: DepartamentoModalP
     nome: departamento?.nome || "",
     responsavel: departamento?.responsavel || "",
     observacoes: departamento?.observacoes || "",
-    funcoes: departamento?.funcoes || [],
+    cargos: departamento?.cargos || [],
   });
 
   if (!isOpen) return null;
 
-  const funcoesList = modules.departamentos.subModules.funcoes.data;
+  const cargosList = modules.departamentos.subModules.cargos.data;
 
   const handleInputChange = (field: keyof Departamento, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleFuncaoToggle = (funcaoId: number) => {
+  const handleCargoToggle = (cargoId: number) => {
     setFormData(prev => ({
       ...prev,
-      funcoes: prev.funcoes?.includes(funcaoId)
-        ? prev.funcoes.filter(id => id !== funcaoId)
-        : [...(prev.funcoes || []), funcaoId]
+      cargos: prev.cargos?.includes(cargoId)
+        ? prev.cargos.filter(id => id !== cargoId)
+        : [...(prev.cargos || []), cargoId]
     }));
   };
 
@@ -104,23 +104,23 @@ const DepartamentoModal = ({ isOpen, onClose, departamento }: DepartamentoModalP
               </div>
 
               <div>
-                <Label>Funções do Setor</Label>
+                <Label>Cargos do Setor</Label>
                 <div className="mt-2 space-y-2 max-h-40 overflow-y-auto border rounded-md p-3">
-                  {funcoesList.map((funcao) => (
-                    <div key={funcao.id} className="flex items-center space-x-2">
+                  {cargosList.map((cargo) => (
+                    <div key={cargo.id} className="flex items-center space-x-2">
                       <Checkbox
-                        id={`funcao-${funcao.id}`}
-                        checked={formData.funcoes?.includes(funcao.id!) || false}
-                        onCheckedChange={() => handleFuncaoToggle(funcao.id!)}
+                        id={`cargo-${cargo.id}`}
+                        checked={formData.cargos?.includes(cargo.id!) || false}
+                        onCheckedChange={() => handleCargoToggle(cargo.id!)}
                       />
-                      <Label htmlFor={`funcao-${funcao.id}`} className="text-sm">
-                        {funcao.nome}
+                      <Label htmlFor={`cargo-${cargo.id}`} className="text-sm">
+                        {cargo.nome}
                       </Label>
                     </div>
                   ))}
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  Selecione as funções que pertencem a este setor
+                  Selecione os cargos que pertencem a este setor
                 </p>
               </div>
             </div>

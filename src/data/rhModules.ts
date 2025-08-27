@@ -1,3 +1,4 @@
+
 import { UserCheck, Building2, Clock, Trophy, Users } from "lucide-react";
 
 export const modules = {
@@ -106,55 +107,55 @@ export const modules = {
             nome: "Tecnologia",
             responsavel: "João Silva Santos",
             observacoes: "Setor responsável por sistemas e infraestrutura",
-            funcoes: [1, 2, 3] // Analista de Sistemas, Desenvolvedor, Arquiteto de Software
+            cargos: [1, 2, 3] // Analista de Sistemas, Desenvolvedor, Arquiteto de Software
           },
           {
             id: 2,
             nome: "Comercial",
             responsavel: "Maria Oliveira Costa",
             observacoes: "Setor de vendas e relacionamento com clientes",
-            funcoes: [4, 5, 6] // Vendedor, Gerente de Vendas, Coordenador Comercial
+            cargos: [4, 5, 6] // Vendedor, Gerente de Vendas, Coordenador Comercial
           },
           {
             id: 3,
             nome: "Financeiro",
             responsavel: "Pedro Almeida Lima",
             observacoes: "Setor de controladoria e contabilidade",
-            funcoes: [7, 8, 9] // Contador, Analista Financeiro, Gerente Financeiro
+            cargos: [7, 8, 9] // Contador, Analista Financeiro, Gerente Financeiro
           },
           {
             id: 4,
             nome: "Recursos Humanos",
             responsavel: "Ana Paula Ferreira",
             observacoes: "Setor de gestão de pessoas",
-            funcoes: [10, 11] // Analista de RH, Coordenador de RH
+            cargos: [10, 11] // Analista de RH, Coordenador de RH
           },
           {
             id: 5,
             nome: "Produção",
             responsavel: "Carlos Eduardo Souza",
             observacoes: "Setor operacional de produção",
-            funcoes: [12, 13, 14] // Operador de Produção, Supervisor de Produção, Gerente de Produção
+            cargos: [12, 13, 14] // Operador de Produção, Supervisor de Produção, Gerente de Produção
           }
         ]
       },
-      funcoes: {
-        name: "Funções",
+      cargos: {
+        name: "Cargos",
         data: [
-          { id: 1, nome: "Analista de Sistemas" },
-          { id: 2, nome: "Desenvolvedor" },
-          { id: 3, nome: "Arquiteto de Software" },
-          { id: 4, nome: "Vendedor" },
-          { id: 5, nome: "Gerente de Vendas" },
-          { id: 6, nome: "Coordenador Comercial" },
-          { id: 7, nome: "Contador" },
-          { id: 8, nome: "Analista Financeiro" },
-          { id: 9, nome: "Gerente Financeiro" },
-          { id: 10, nome: "Analista de RH" },
-          { id: 11, nome: "Coordenador de RH" },
-          { id: 12, nome: "Operador de Produção" },
-          { id: 13, nome: "Supervisor de Produção" },
-          { id: 14, nome: "Gerente de Produção" }
+          { id: 1, nome: "Analista de Sistemas", cbo: "2124-05" },
+          { id: 2, nome: "Desenvolvedor", cbo: "2124-10" },
+          { id: 3, nome: "Arquiteto de Software", cbo: "2124-15" },
+          { id: 4, nome: "Vendedor", cbo: "5211-05" },
+          { id: 5, nome: "Gerente de Vendas", cbo: "1423-10" },
+          { id: 6, nome: "Coordenador Comercial", cbo: "1423-05" },
+          { id: 7, nome: "Contador", cbo: "2522-05" },
+          { id: 8, nome: "Analista Financeiro", cbo: "2524-05" },
+          { id: 9, nome: "Gerente Financeiro", cbo: "1421-10" },
+          { id: 10, nome: "Analista de RH", cbo: "2524-15" },
+          { id: 11, nome: "Coordenador de RH", cbo: "1425-10" },
+          { id: 12, nome: "Operador de Produção", cbo: "8414-05" },
+          { id: 13, nome: "Supervisor de Produção", cbo: "9102-05" },
+          { id: 14, nome: "Gerente de Produção", cbo: "1421-15" }
         ]
       }
     }
