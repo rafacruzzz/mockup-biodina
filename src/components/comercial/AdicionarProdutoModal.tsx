@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -62,14 +61,13 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
 
   const produtosFiltrados = aplicarFiltros(mockProdutosCatalogo);
 
-  const handleAdicionarProduto = (codigo: string, quantidade: number, unidade: UnidadeVenda, desconto: number, observacoes: string) => {
+  const handleAdicionarProduto = (codigo: string, quantidade: number, unidade: UnidadeVenda, preco: number, descritivoItem: string, validadeMinimaExigida?: string) => {
     const produtoCatalogo = mockProdutosCatalogo.find(p => p.codigo === codigo);
     const estoqueInfo = mockProdutosEstoque[codigo];
     
     if (!produtoCatalogo || !estoqueInfo) return;
 
-    const precoUnitario = estoqueInfo.precoSugerido;
-    const precoComDesconto = precoUnitario * (1 - desconto / 100);
+    const precoFinal = preco * quantidade;
     
     const produto: ProdutoPedido = {
       id: Date.now(),
@@ -77,10 +75,10 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
       descricao: produtoCatalogo.descricao,
       quantidade,
       unidade,
-      precoUnitario,
-      desconto,
-      precoFinal: precoComDesconto * quantidade,
-      observacoes,
+      preco, // Usando a nova propriedade 'preco' com 4 casas decimais
+      precoFinal,
+      descritivoItem,
+      validadeMinimaExigida,
       estoqueDisponivel: estoqueInfo
     };
 
@@ -101,10 +99,9 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
       descricao: produtoCatalogo.descricao,
       quantidade,
       unidade: UnidadeVenda.UNIDADE,
-      precoUnitario: estoqueInfo.precoSugerido,
-      desconto: 0,
+      preco: estoqueInfo.precoSugerido, // Usando 'preco' ao invés de 'precoUnitario'
       precoFinal: estoqueInfo.precoSugerido * quantidade,
-      observacoes: '',
+      descritivoItem: '', // Usando 'descritivoItem' ao invés de 'observacoes'
       estoqueDisponivel: estoqueInfo
     };
 
