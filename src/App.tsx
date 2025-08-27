@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -15,6 +14,7 @@ import Compras from "./pages/Compras";
 import Estoque from "./pages/Estoque";
 import Financeiro from "./pages/Financeiro";
 import RH from "./pages/RH";
+import Solicitacoes from "./pages/Solicitacoes";
 import EditarPerfil from "./pages/EditarPerfil";
 import CandidaturaPublica from "./pages/CandidaturaPublica";
 import PersonalizarNavegacao from "./pages/PersonalizarNavegacao";
@@ -49,6 +49,7 @@ const App: React.FC = () => {
               <Route path="/estoque" element={<Estoque />} />
               <Route path="/financeiro" element={<Financeiro />} />
               <Route path="/rh" element={<RH />} />
+              <Route path="/solicitacoes" element={<Solicitacoes />} />
               <Route path="/editar-perfil" element={<EditarPerfil />} />
               <Route path="/personalizar-navegacao" element={<PersonalizarNavegacao />} />
               {/* Rota pública para candidatura */}
