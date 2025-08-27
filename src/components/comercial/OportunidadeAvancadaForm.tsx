@@ -72,14 +72,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
   const [formData, setFormData] = useState({
     cpfCnpj: oportunidade?.cpfCnpj || '',
-    nome: oportunidade?.nome || '',
-    nomeFantasia: oportunidade?.nomeFantasia || '',
-    razaoSocial: oportunidade?.razaoSocial || '',
-    endereco: oportunidade?.endereco || '',
-    uf: oportunidade?.uf || '',
-    email: oportunidade?.email || '',
-    telefone: oportunidade?.telefone || '',
-    website: oportunidade?.website || '',
     ativo: oportunidade?.ativo || true,
     fonteLead: oportunidade?.fonteLead || '',
     segmentoLead: oportunidade?.segmentoLead || '',
@@ -210,84 +202,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               value={formData.cpfCnpj}
               onChange={(e) => setFormData({...formData, cpfCnpj: e.target.value})}
               placeholder="000.000.000-00"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="nome">Nome / Nome Fantasia *</Label>
-            <Input
-              id="nome"
-              value={formData.nome}
-              onChange={(e) => setFormData({...formData, nome: e.target.value})}
-              placeholder="Nome do cliente"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="razaoSocial">Razão Social</Label>
-            <Input
-              id="razaoSocial"
-              value={formData.razaoSocial}
-              onChange={(e) => setFormData({...formData, razaoSocial: e.target.value})}
-              placeholder="Razão social"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="endereco">Endereço do Cliente</Label>
-            <Input
-              id="endereco"
-              value={formData.endereco}
-              onChange={(e) => setFormData({...formData, endereco: e.target.value})}
-              placeholder="Endereço completo"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="uf">UF</Label>
-            <Select 
-              value={formData.uf} 
-              onValueChange={(value) => setFormData({...formData, uf: value})}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="SP">São Paulo</SelectItem>
-                <SelectItem value="RJ">Rio de Janeiro</SelectItem>
-                <SelectItem value="MG">Minas Gerais</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="email">E-mail</Label>
-            <Input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-              placeholder="email@exemplo.com"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="telefone">Telefone</Label>
-            <Input
-              id="telefone"
-              value={formData.telefone}
-              onChange={(e) => setFormData({...formData, telefone: e.target.value})}
-              placeholder="(11) 99999-9999"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="website">Website</Label>
-            <Input
-              id="website"
-              value={formData.website}
-              onChange={(e) => setFormData({...formData, website: e.target.value})}
-              placeholder="https://website.com"
               disabled={isReadOnlyMode()}
             />
           </div>
