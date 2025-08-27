@@ -63,8 +63,8 @@ const Comercial = () => {
     setSearchQuery(e.target.value);
   };
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilterStatus(e.target.value);
+  const handleFilterChange = (value: string) => {
+    setFilterStatus(value);
   };
 
   const handleOpenOportunidadeModal = () => {
@@ -160,7 +160,7 @@ const Comercial = () => {
             <SelectValue placeholder="Filtrar por status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos os status</SelectItem>
+            <SelectItem value="all">Todos os status</SelectItem>
             <SelectItem value="Em Andamento">Em Andamento</SelectItem>
             <SelectItem value="Proposta Enviada">Proposta Enviada</SelectItem>
             <SelectItem value="Negociação">Negociação</SelectItem>
