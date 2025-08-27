@@ -1,9 +1,10 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, Package, Eye, Building, Plus, ShoppingCart } from "lucide-react";
+import { Search, Package, Eye, Building, Plus, ShoppingCart, Calendar, AlertTriangle } from "lucide-react";
 import { ProdutoPedido, UnidadeVenda } from "@/types/comercial";
 import { mockProdutosCatalogo, mockProdutosEstoque } from "@/data/comercialEstoque";
 import DetalhesEstoqueProduto from "./DetalhesEstoqueProduto";
@@ -20,9 +21,8 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
   const [produtoSelecionado, setProdutoSelecionado] = useState<string | null>(null);
   const [quantidades, setQuantidades] = useState<Record<string, number>>({});
   const [filtros, setFiltros] = useState<FiltrosState>({
-    cnpjs: [],
-    tipoEstoque: [],
-    validadeMinima: '',
+    linhasProdutos: [],
+    fornecedores: [],
     categoria: ''
   });
 
@@ -39,37 +39,21 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
 
       if (!matchBusca) return false;
 
-      // Filtro de CNPJ
-      if (filtros.cnpjs.length > 0) {
-        const temEstoqueNoCnpj = estoque.estoquesPorCnpj.some(e => 
-          filtros.cnpjs.includes(e.cnpj) && e.quantidade > 0
-        );
-        if (!temEstoqueNoCnpj) return false;
-      }
-
-      // Filtro de tipo de estoque
-      if (filtros.tipoEstoque.length > 0) {
-        const temTipoEstoque = estoque.tiposEstoque.some(t => 
-          filtros.tipoEstoque.includes(t.tipo) && t.quantidade > 0
-        );
-        if (!temTipoEstoque) return false;
-      }
-
       // Filtro de categoria
       if (filtros.categoria && filtros.categoria !== 'todas' && produto.categoria !== filtros.categoria) {
         return false;
       }
 
-      // Filtro de validade mínima (simplificado - apenas verifica se há filtro)
-      if (filtros.validadeMinima) {
-        const temValidadeOk = estoque.lotes.some(lote => {
-          if (!lote.dataValidade) return true;
-          const diasVencimento = Math.ceil(
-            (new Date(lote.dataValidade).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-          );
-          return diasVencimento >= 180; // 6 meses aproximadamente
-        });
-        if (!temValidadeOk) return false;
+      // Filtro de linha de produtos (usando categoria como proxy)
+      if (filtros.linhasProdutos.length > 0) {
+        const temLinhaProduto = filtros.linhasProdutos.includes(produto.categoria);
+        if (!temLinhaProduto) return false;
+      }
+
+      // Filtro de fornecedor
+      if (filtros.fornecedores.length > 0) {
+        const temFornecedor = filtros.fornecedores.includes(produto.fabricante);
+        if (!temFornecedor) return false;
       }
 
       return true;
@@ -159,6 +143,19 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
     return Math.ceil((validade.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
   };
 
+  const getIndicadorValidade = (estoque: any) => {
+    const loteProximoVencimento = estoque.lotes.find((lote: any) => lote.alertaValidade && lote.dataValidade);
+    if (!loteProximoVencimento) return null;
+    
+    const diasVencimento = calcularDiasVencimento(loteProximoVencimento.dataValidade);
+    if (diasVencimento <= 30) {
+      return { dias: diasVencimento, severidade: 'alta' as const };
+    } else if (diasVencimento <= 90) {
+      return { dias: diasVencimento, severidade: 'media' as const };
+    }
+    return null;
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -199,6 +196,7 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
                 const estoque = mockProdutosEstoque[produto.codigo];
                 const statusEstoque = getEstoqueStatus(estoque.totalDisponivel);
                 const quantidadeAtual = getQuantidadeProduto(produto.codigo);
+                const indicadorValidade = getIndicadorValidade(estoque);
                 
                 return (
                   <div key={produto.codigo} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
@@ -217,6 +215,19 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
                               {estoque.totalDisponivel} un
                             </Badge>
                           </div>
+                          {/* Indicador de Validade */}
+                          {indicadorValidade && (
+                            <Badge 
+                              variant="outline" 
+                              className={`text-xs flex items-center gap-1 ${
+                                indicadorValidade.severidade === 'alta' ? 'border-red-300 text-red-700 bg-red-50' :
+                                'border-orange-300 text-orange-700 bg-orange-50'
+                              }`}
+                            >
+                              <Calendar className="h-3 w-3" />
+                              {indicadorValidade.dias} dias
+                            </Badge>
+                          )}
                         </div>
 
                         {/* Descrição */}
@@ -262,11 +273,7 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
                               let icon = '⚠️';
                               let label = 'Alerta';
                               
-                              if (alerta.tipo === 'validade_proxima') {
-                                icon = '📅';
-                                const loteVencimento = estoque.lotes.find(l => l.alertaValidade);
-                                label = loteVencimento ? `${calcularDiasVencimento(loteVencimento.dataValidade!)} dias` : 'Validade';
-                              } else if (alerta.tipo === 'multiplos_lotes') {
+                              if (alerta.tipo === 'multiplos_lotes') {
                                 icon = '📦';
                                 label = `${estoque.lotes.length} lotes`;
                               } else if (alerta.tipo === 'estoque_baixo') {

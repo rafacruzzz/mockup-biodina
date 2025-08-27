@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,9 +13,8 @@ interface FiltrosAvancadosProps {
 }
 
 export interface FiltrosState {
-  cnpjs: string[];
-  tipoEstoque: string[];
-  validadeMinima: string;
+  linhasProdutos: string[];
+  fornecedores: string[];
   categoria: string;
 }
 
@@ -24,16 +22,26 @@ const FiltrosAvancados = ({ onFiltrosChange, filtrosAtivos }: FiltrosAvancadosPr
   const [filtros, setFiltros] = useState<FiltrosState>(filtrosAtivos);
   const [isOpen, setIsOpen] = useState(false);
 
-  const cnpjsDisponiveis = [
-    { id: '12.345.678/0001-90', nome: 'WebMED RJ' },
-    { id: '98.765.432/0001-10', nome: 'Distrib. SP' },
-    { id: '11.222.333/0001-44', nome: 'WebMED JF' }
+  const linhasProdutos = [
+    { id: 'Cardiologia', nome: 'Cardiologia' },
+    { id: 'Ortopedia', nome: 'Ortopedia' },
+    { id: 'Radiologia', nome: 'Radiologia' },
+    { id: 'Laboratório', nome: 'Laboratório' },
+    { id: 'UTI', nome: 'UTI' },
+    { id: 'Centro Cirúrgico', nome: 'Centro Cirúrgico' },
+    { id: 'Diagnóstico por Imagem', nome: 'Diagnóstico por Imagem' },
+    { id: 'Anestesia', nome: 'Anestesia' }
   ];
 
-  const tiposEstoque = [
-    { id: 'Nacional', nome: 'Nacional' },
-    { id: 'Importação Direta', nome: 'Importação Direta' },
-    { id: 'Consignado', nome: 'Consignado' }
+  const fornecedores = [
+    { id: 'Johnson & Johnson', nome: 'Johnson & Johnson' },
+    { id: 'Medtronic', nome: 'Medtronic' },
+    { id: 'Abbott', nome: 'Abbott' },
+    { id: 'Boston Scientific', nome: 'Boston Scientific' },
+    { id: 'Philips', nome: 'Philips' },
+    { id: 'Siemens', nome: 'Siemens' },
+    { id: 'B. Braun', nome: 'B. Braun' },
+    { id: 'Baxter', nome: 'Baxter' }
   ];
 
   const categorias = [
@@ -44,28 +52,22 @@ const FiltrosAvancados = ({ onFiltrosChange, filtrosAtivos }: FiltrosAvancadosPr
     'Reagentes'
   ];
 
-  const handleCnpjChange = (cnpj: string, checked: boolean) => {
-    const novosCnpjs = checked 
-      ? [...filtros.cnpjs, cnpj]
-      : filtros.cnpjs.filter(c => c !== cnpj);
+  const handleLinhaProdutoChange = (linha: string, checked: boolean) => {
+    const novasLinhas = checked 
+      ? [...filtros.linhasProdutos, linha]
+      : filtros.linhasProdutos.filter(l => l !== linha);
     
-    const novosFiltros = { ...filtros, cnpjs: novosCnpjs };
+    const novosFiltros = { ...filtros, linhasProdutos: novasLinhas };
     setFiltros(novosFiltros);
     onFiltrosChange(novosFiltros);
   };
 
-  const handleTipoEstoqueChange = (tipo: string, checked: boolean) => {
-    const novosTipos = checked 
-      ? [...filtros.tipoEstoque, tipo]
-      : filtros.tipoEstoque.filter(t => t !== tipo);
+  const handleFornecedorChange = (fornecedor: string, checked: boolean) => {
+    const novosFornecedores = checked 
+      ? [...filtros.fornecedores, fornecedor]
+      : filtros.fornecedores.filter(f => f !== fornecedor);
     
-    const novosFiltros = { ...filtros, tipoEstoque: novosTipos };
-    setFiltros(novosFiltros);
-    onFiltrosChange(novosFiltros);
-  };
-
-  const handleValidadeChange = (validade: string) => {
-    const novosFiltros = { ...filtros, validadeMinima: validade };
+    const novosFiltros = { ...filtros, fornecedores: novosFornecedores };
     setFiltros(novosFiltros);
     onFiltrosChange(novosFiltros);
   };
@@ -78,17 +80,16 @@ const FiltrosAvancados = ({ onFiltrosChange, filtrosAtivos }: FiltrosAvancadosPr
 
   const limparFiltros = () => {
     const filtrosLimpos = {
-      cnpjs: [],
-      tipoEstoque: [],
-      validadeMinima: '',
+      linhasProdutos: [],
+      fornecedores: [],
       categoria: ''
     };
     setFiltros(filtrosLimpos);
     onFiltrosChange(filtrosLimpos);
   };
 
-  const contadorFiltros = filtros.cnpjs.length + filtros.tipoEstoque.length + 
-    (filtros.validadeMinima ? 1 : 0) + (filtros.categoria ? 1 : 0);
+  const contadorFiltros = filtros.linhasProdutos.length + filtros.fornecedores.length + 
+    (filtros.categoria ? 1 : 0);
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -115,58 +116,6 @@ const FiltrosAvancados = ({ onFiltrosChange, filtrosAtivos }: FiltrosAvancadosPr
         </SheetHeader>
         
         <div className="space-y-6 mt-6">
-          {/* CNPJ/Filial */}
-          <div>
-            <Label className="text-sm font-medium">CNPJ/Filial</Label>
-            <div className="space-y-2 mt-2">
-              {cnpjsDisponiveis.map((cnpj) => (
-                <div key={cnpj.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={cnpj.id}
-                    checked={filtros.cnpjs.includes(cnpj.id)}
-                    onCheckedChange={(checked) => handleCnpjChange(cnpj.id, !!checked)}
-                  />
-                  <Label htmlFor={cnpj.id} className="text-sm">
-                    {cnpj.nome}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Tipo de Estoque */}
-          <div>
-            <Label className="text-sm font-medium">Tipo de Estoque</Label>
-            <div className="space-y-2 mt-2">
-              {tiposEstoque.map((tipo) => (
-                <div key={tipo.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={tipo.id}
-                    checked={filtros.tipoEstoque.includes(tipo.id)}
-                    onCheckedChange={(checked) => handleTipoEstoqueChange(tipo.id, !!checked)}
-                  />
-                  <Label htmlFor={tipo.id} className="text-sm">
-                    {tipo.nome}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Validade Mínima */}
-          <div>
-            <Label htmlFor="validade" className="text-sm font-medium">
-              Validade Mínima
-            </Label>
-            <Input
-              id="validade"
-              placeholder="Ex: 6 meses"
-              value={filtros.validadeMinima}
-              onChange={(e) => handleValidadeChange(e.target.value)}
-              className="mt-2"
-            />
-          </div>
-
           {/* Categoria */}
           <div>
             <Label className="text-sm font-medium">Categoria</Label>
@@ -183,6 +132,44 @@ const FiltrosAvancados = ({ onFiltrosChange, filtrosAtivos }: FiltrosAvancadosPr
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Linhas de Produtos */}
+          <div>
+            <Label className="text-sm font-medium">Linhas de Produtos</Label>
+            <div className="space-y-2 mt-2">
+              {linhasProdutos.map((linha) => (
+                <div key={linha.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={linha.id}
+                    checked={filtros.linhasProdutos.includes(linha.id)}
+                    onCheckedChange={(checked) => handleLinhaProdutoChange(linha.id, !!checked)}
+                  />
+                  <Label htmlFor={linha.id} className="text-sm">
+                    {linha.nome}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Fornecedores */}
+          <div>
+            <Label className="text-sm font-medium">Fornecedor</Label>
+            <div className="space-y-2 mt-2">
+              {fornecedores.map((fornecedor) => (
+                <div key={fornecedor.id} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={fornecedor.id}
+                    checked={filtros.fornecedores.includes(fornecedor.id)}
+                    onCheckedChange={(checked) => handleFornecedorChange(fornecedor.id, !!checked)}
+                  />
+                  <Label htmlFor={fornecedor.id} className="text-sm">
+                    {fornecedor.nome}
+                  </Label>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </SheetContent>
