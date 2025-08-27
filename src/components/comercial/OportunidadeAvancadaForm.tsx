@@ -175,7 +175,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     const novoPedido = {
       id: Date.now(),
       codigo: `PED-${String(pedidos.length + 1).padStart(3, '0')}`,
-      cliente: formData.nome,
+      cliente: 'Cliente',
       dataGeracao: new Date().toISOString().split('T')[0],
       situacao: 'Em Aberto',
       valor: pedidoData.produtos?.reduce((sum: number, prod: any) => sum + (prod.valorTotal || 0), 0) || 0
@@ -1173,7 +1173,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             const novoPedido = {
               id: Date.now(),
               codigo: `PED-${String(pedidos.length + 1).padStart(3, '0')}`,
-              cliente: formData.nome,
+              cliente: 'Cliente',
               dataGeracao: new Date().toISOString().split('T')[0],
               situacao: 'Em Aberto',
               valor: pedidoData.produtos?.reduce((sum: number, prod: any) => sum + (prod.valorTotal || 0), 0) || 0
