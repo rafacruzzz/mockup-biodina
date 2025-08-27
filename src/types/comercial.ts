@@ -1,14 +1,15 @@
 
+
 export interface ProdutoPedido {
   id: number;
   codigo: string;
   descricao: string;
   quantidade: number;
   unidade: UnidadeVenda;
-  precoUnitario: number;
-  desconto: number;
+  preco: number; // Alterado de precoUnitario para preco com 4 casas decimais
   precoFinal: number;
-  observacoes?: string;
+  descritivoItem?: string; // Novo campo - vai para NF abaixo da descrição oficial
+  validadeMinimaExigida?: string; // Novo campo - validade mínima por item
   estoqueDisponivel: EstoqueVendivel;
 }
 
@@ -88,4 +89,27 @@ export interface PedidoCompleto {
   produtos: ProdutoPedido[];
   valorTotal: number;
   observacoesGerais?: string;
+  
+  // Novos campos
+  informacoesComplementaresNF?: string;
+  condicoesPagamento?: string;
+  informacoesFreteConhecimento?: string;
+  
+  // Informações de frete expandidas
+  freteAPagarPor?: 'cliente' | 'representante' | 'empresa';
+  freteARetirarPor?: 'cliente' | 'representante' | 'portador_interno' | 'destino_final';
+  prazoEntrega?: number;
+  entregarRetirarAosCuidadosDe?: string;
+  dadosRecebedorNome?: string;
+  dadosRecebedorCpf?: string;
+  dadosRecebedorTelefone?: string;
+  dadosRecebedorEmail?: string;
+  horariosPermitidosEntrega?: string;
+  locaisEntrega?: string;
+  maisInformacoesEntrega?: string;
+  eUrgente?: boolean;
+  justificativaUrgencia?: string;
+  autorizadoPor?: string;
+  dataAutorizacao?: string;
 }
+
