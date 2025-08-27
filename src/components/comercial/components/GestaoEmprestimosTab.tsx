@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -32,24 +31,34 @@ const GestaoEmprestimosTab = ({ importacaoId }: GestaoEmprestimosTabProps) => {
     }
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(value);
+  const formatCurrency = (value: number, currency: 'BRL' | 'USD') => {
+    if (currency === 'BRL') {
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format(value);
+    } else {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(value);
+    }
   };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR');
   };
 
-  // Calcular estatísticas
+  // Calcular estatísticas considerando múltiplas moedas
   const stats = {
     total: emprestimos.length,
     emprestados: emprestimos.filter(emp => emp.status === 'emprestado').length,
     devolvidos: emprestimos.filter(emp => emp.status === 'devolvido').length,
     vencidos: emprestimos.filter(emp => emp.status === 'vencido').length,
-    valorTotal: emprestimos.reduce((sum, emp) => sum + emp.valorEmprestimoDolar, 0)
+    valorTotalBRL: emprestimos.filter(emp => emp.moeda === 'BRL').reduce((sum, emp) => sum + emp.valorEmprestimo, 0),
+    valorTotalUSD: emprestimos.filter(emp => emp.moeda === 'USD').reduce((sum, emp) => sum + emp.valorEmprestimo, 0),
+    totalBRL: emprestimos.filter(emp => emp.moeda === 'BRL').length,
+    totalUSD: emprestimos.filter(emp => emp.moeda === 'USD').length
   };
 
   if (!importacaoId) {
@@ -97,7 +106,7 @@ const GestaoEmprestimosTab = ({ importacaoId }: GestaoEmprestimosTabProps) => {
       </div>
 
       {/* Cards de Resumo */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
@@ -149,10 +158,22 @@ const GestaoEmprestimosTab = ({ importacaoId }: GestaoEmprestimosTabProps) => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-yellow-600" />
+              <DollarSign className="h-4 w-4 text-green-600" />
               <div>
-                <div className="text-2xl font-bold text-yellow-600">{formatCurrency(stats.valorTotal)}</div>
-                <div className="text-sm text-gray-600">Valor Total</div>
+                <div className="text-lg font-bold text-green-600">{formatCurrency(stats.valorTotalBRL, 'BRL')}</div>
+                <div className="text-sm text-gray-600">BRL ({stats.totalBRL})</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4 text-blue-600" />
+              <div>
+                <div className="text-lg font-bold text-blue-600">{formatCurrency(stats.valorTotalUSD, 'USD')}</div>
+                <div className="text-sm text-gray-600">USD ({stats.totalUSD})</div>
               </div>
             </div>
           </CardContent>
@@ -173,7 +194,8 @@ const GestaoEmprestimosTab = ({ importacaoId }: GestaoEmprestimosTabProps) => {
                   <TableHead>Cliente</TableHead>
                   <TableHead>CNPJ</TableHead>
                   <TableHead>Produto Emprestado</TableHead>
-                  <TableHead>Valor (USD)</TableHead>
+                  <TableHead>Valor</TableHead>
+                  <TableHead>Moeda</TableHead>
                   <TableHead>Data Empréstimo</TableHead>
                   <TableHead>Data Retorno</TableHead>
                   <TableHead>Status</TableHead>
@@ -191,7 +213,12 @@ const GestaoEmprestimosTab = ({ importacaoId }: GestaoEmprestimosTabProps) => {
                         <div className="text-sm text-gray-500">{emprestimo.descricaoProdutoEmprestado}</div>
                       </div>
                     </TableCell>
-                    <TableCell>{formatCurrency(emprestimo.valorEmprestimoDolar)}</TableCell>
+                    <TableCell>{formatCurrency(emprestimo.valorEmprestimo, emprestimo.moeda)}</TableCell>
+                    <TableCell>
+                      <Badge variant={emprestimo.moeda === 'BRL' ? 'default' : 'secondary'}>
+                        {emprestimo.moeda}
+                      </Badge>
+                    </TableCell>
                     <TableCell>{formatDate(emprestimo.dataEmprestimo)}</TableCell>
                     <TableCell>
                       {emprestimo.dataRetorno ? formatDate(emprestimo.dataRetorno) : '-'}

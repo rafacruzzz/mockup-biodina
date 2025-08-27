@@ -13,6 +13,7 @@ const EmprestimosTable = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [clienteFilter, setClienteFilter] = useState('todos');
+  const [moedaFilter, setMoedaFilter] = useState('todos');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Usar dados centralizados
@@ -38,11 +39,18 @@ const EmprestimosTable = () => {
     }
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(value);
+  const formatCurrency = (value: number, currency: 'BRL' | 'USD') => {
+    if (currency === 'BRL') {
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format(value);
+    } else {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(value);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -58,18 +66,35 @@ const EmprestimosTable = () => {
     
     const matchesStatus = statusFilter === 'todos' || emprestimo.status === statusFilter;
     const matchesCliente = clienteFilter === 'todos' || emprestimo.nomeCliente === clienteFilter;
+    const matchesMoeda = moedaFilter === 'todos' || emprestimo.moeda === moedaFilter;
     
-    return matchesSearch && matchesStatus && matchesCliente;
+    return matchesSearch && matchesStatus && matchesCliente && matchesMoeda;
   });
 
   const uniqueClientes = [...new Set(emprestimos.map(emp => emp.nomeCliente))];
 
-  const stats = {
+  // Calcular estatísticas separadas por moeda
+  const statsBRL = {
+    total: emprestimos.filter(emp => emp.moeda === 'BRL').length,
+    emprestados: emprestimos.filter(emp => emp.status === 'emprestado' && emp.moeda === 'BRL').length,
+    devolvidos: emprestimos.filter(emp => emp.status === 'devolvido' && emp.moeda === 'BRL').length,
+    vencidos: emprestimos.filter(emp => emp.status === 'vencido' && emp.moeda === 'BRL').length,
+    valorTotal: emprestimos.filter(emp => emp.moeda === 'BRL').reduce((sum, emp) => sum + emp.valorEmprestimo, 0)
+  };
+
+  const statsUSD = {
+    total: emprestimos.filter(emp => emp.moeda === 'USD').length,
+    emprestados: emprestimos.filter(emp => emp.status === 'emprestado' && emp.moeda === 'USD').length,
+    devolvidos: emprestimos.filter(emp => emp.status === 'devolvido' && emp.moeda === 'USD').length,
+    vencidos: emprestimos.filter(emp => emp.status === 'vencido' && emp.moeda === 'USD').length,
+    valorTotal: emprestimos.filter(emp => emp.moeda === 'USD').reduce((sum, emp) => sum + emp.valorEmprestimo, 0)
+  };
+
+  const statsGeral = {
     total: emprestimos.length,
     emprestados: emprestimos.filter(emp => emp.status === 'emprestado').length,
     devolvidos: emprestimos.filter(emp => emp.status === 'devolvido').length,
-    vencidos: emprestimos.filter(emp => emp.status === 'vencido').length,
-    valorTotal: emprestimos.reduce((sum, emp) => sum + emp.valorEmprestimoDolar, 0)
+    vencidos: emprestimos.filter(emp => emp.status === 'vencido').length
   };
 
   return (
@@ -96,35 +121,47 @@ const EmprestimosTable = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-biodina-blue">{stats.total}</div>
-            <div className="text-sm text-gray-600">Total de Empréstimos</div>
+            <div className="text-2xl font-bold text-biodina-blue">{statsGeral.total}</div>
+            <div className="text-sm text-gray-600">Total Geral</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-blue-600">{stats.emprestados}</div>
+            <div className="text-2xl font-bold text-blue-600">{statsGeral.emprestados}</div>
             <div className="text-sm text-gray-600">Em Empréstimo</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-green-600">{stats.devolvidos}</div>
+            <div className="text-2xl font-bold text-green-600">{statsGeral.devolvidos}</div>
             <div className="text-sm text-gray-600">Devolvidos</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-red-600">{stats.vencidos}</div>
+            <div className="text-2xl font-bold text-red-600">{statsGeral.vencidos}</div>
             <div className="text-sm text-gray-600">Vencidos</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-biodina-gold">{formatCurrency(stats.valorTotal)}</div>
-            <div className="text-sm text-gray-600">Valor Total</div>
+            <div className="text-lg font-bold text-green-700">{formatCurrency(statsBRL.valorTotal, 'BRL')}</div>
+            <div className="text-sm text-gray-600">Total BRL ({statsBRL.total})</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-lg font-bold text-blue-700">{formatCurrency(statsUSD.valorTotal, 'USD')}</div>
+            <div className="text-sm text-gray-600">Total USD ({statsUSD.total})</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-sm font-bold text-biodina-gold">Multi-Moeda</div>
+            <div className="text-xs text-gray-600">R$ + USD</div>
           </CardContent>
         </Card>
       </div>
@@ -161,6 +198,18 @@ const EmprestimosTable = () => {
               </Select>
             </div>
             <div className="flex items-center gap-2">
+              <Select value={moedaFilter} onValueChange={setMoedaFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Moeda" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todas</SelectItem>
+                  <SelectItem value="BRL">BRL</SelectItem>
+                  <SelectItem value="USD">USD</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-2">
               <Select value={clienteFilter} onValueChange={setClienteFilter}>
                 <SelectTrigger className="w-64">
                   <SelectValue placeholder="Cliente" />
@@ -188,7 +237,8 @@ const EmprestimosTable = () => {
                   <TableHead>Cliente</TableHead>
                   <TableHead>CNPJ</TableHead>
                   <TableHead>Produto Emprestado</TableHead>
-                  <TableHead>Valor (USD)</TableHead>
+                  <TableHead>Valor</TableHead>
+                  <TableHead>Moeda</TableHead>
                   <TableHead>Data Empréstimo</TableHead>
                   <TableHead>Data Retorno</TableHead>
                   <TableHead>Status</TableHead>
@@ -207,7 +257,12 @@ const EmprestimosTable = () => {
                         <div className="text-sm text-gray-500">{emprestimo.descricaoProdutoEmprestado}</div>
                       </div>
                     </TableCell>
-                    <TableCell>{formatCurrency(emprestimo.valorEmprestimoDolar)}</TableCell>
+                    <TableCell>{formatCurrency(emprestimo.valorEmprestimo, emprestimo.moeda)}</TableCell>
+                    <TableCell>
+                      <Badge variant={emprestimo.moeda === 'BRL' ? 'default' : 'secondary'}>
+                        {emprestimo.moeda}
+                      </Badge>
+                    </TableCell>
                     <TableCell>{formatDate(emprestimo.dataEmprestimo)}</TableCell>
                     <TableCell>
                       {emprestimo.dataRetorno ? formatDate(emprestimo.dataRetorno) : '-'}
