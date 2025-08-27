@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,27 +39,22 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
     tabelaPreco: '',
     tags: '',
     
-    // Novos campos
-    informacoesComplementaresNF: '',
-    condicoesPagamento: '',
-    informacoesFreteConhecimento: '',
-    
     // Departamentos
     departamentos: [{ departamento: '', tipo: '', valorDistribuicao: 0 }],
     
     // Vendedores
     vendedores: [''],
     
-    // Produtos - campos atualizados
+    // Produtos
     produtos: [{
       localEstoque: '',
       produto: '',
       etiqueta: '',
       quantidade: 1,
-      preco: 0, // Alterado de valorUnitario para preco
+      valorUnitario: 0,
+      tipoDesconto: 'percentual',
+      desconto: 0,
       valorTotal: 0,
-      descritivoItem: '', // Novo campo
-      validadeMinimaExigida: '', // Novo campo
       utilizadoServico: '',
       largura: 0,
       altura: 0,
@@ -123,7 +117,7 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
     informacoesNotaFiscal: '',
     termosCondicoes: '',
     
-    // Informações de Frete - campos expandidos
+    // Informações de Frete
     tipoFrete: '',
     frete: '',
     aprovado: false,
@@ -142,24 +136,7 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
     tipoVolume: '',
     marcaVolume: '',
     numeroVolume: '',
-    codigosRastreio: '',
-    
-    // Novos campos de frete
-    freteAPagarPor: '',
-    freteARetirarPor: '',
-    prazoEntrega: 0,
-    entregarRetirarAosCuidadosDe: '',
-    dadosRecebedorNome: '',
-    dadosRecebedorCpf: '',
-    dadosRecebedorTelefone: '',
-    dadosRecebedorEmail: '',
-    horariosPermitidosEntrega: '',
-    locaisEntrega: '',
-    maisInformacoesEntrega: '',
-    eUrgente: false,
-    justificativaUrgencia: '',
-    autorizadoPor: '',
-    dataAutorizacao: ''
+    codigosRastreio: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -169,15 +146,14 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
 
   const addItem = (section: string) => {
     const newItem = section === 'produtos' ? {
-      localEstoque: '', produto: '', etiqueta: '', quantidade: 1, preco: 0,
-      valorTotal: 0, descritivoItem: '', validadeMinimaExigida: '',
-      utilizadoServico: '', largura: 0, altura: 0, comprimento: 0, 
-      previsaoCompra: '', tabelaPreco: '', descricao: '', receitaDespesa: 'receita', 
-      operacaoFiscal: '', cenarioFiscal: '', icms: 0, comissaoVendedor: 0, 
-      comissaoPercentual: 0, comissaoTotal: 0, seguro: 0, outrasDespesas: 0,
-      codigoCFOP: '', ordemCompra: '', statusOrdemCompra: '', deposito: '',
-      dataInsercao: new Date().toISOString().split('T')[0], dataEstimadaEntrega: '',
-      categoriaVendas: ''
+      localEstoque: '', produto: '', etiqueta: '', quantidade: 1, valorUnitario: 0,
+      tipoDesconto: 'percentual', desconto: 0, valorTotal: 0, utilizadoServico: '',
+      largura: 0, altura: 0, comprimento: 0, previsaoCompra: '', tabelaPreco: '',
+      descricao: '', receitaDespesa: 'receita', operacaoFiscal: '', cenarioFiscal: '',
+      icms: 0, comissaoVendedor: 0, comissaoPercentual: 0, comissaoTotal: 0,
+      seguro: 0, outrasDespesas: 0, codigoCFOP: '', ordemCompra: '',
+      statusOrdemCompra: '', deposito: '', dataInsercao: new Date().toISOString().split('T')[0],
+      dataEstimadaEntrega: '', categoriaVendas: ''
     } : section === 'servicos' ? {
       servico: '', quantidade: 1, valorUnitario: 0, tipoDesconto: 'percentual',
       desconto: 0, valorTotal: 0, descricao: ''
@@ -217,13 +193,12 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
         <CardContent className="p-6">
           <form onSubmit={handleSubmit}>
             <Tabs defaultValue="geral" className="w-full">
-              <TabsList className="grid w-full grid-cols-7">
+              <TabsList className="grid w-full grid-cols-6">
                 <TabsTrigger value="geral">Geral</TabsTrigger>
                 <TabsTrigger value="produtos">Produtos</TabsTrigger>
                 <TabsTrigger value="servicos">Serviços</TabsTrigger>
                 <TabsTrigger value="kits">Kits</TabsTrigger>
                 <TabsTrigger value="adicionais">Adicionais</TabsTrigger>
-                <TabsTrigger value="informacoes-nf">Informações NF</TabsTrigger>
                 <TabsTrigger value="frete">Frete</TabsTrigger>
               </TabsList>
 
@@ -489,50 +464,20 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                       </div>
                       
                       <div>
-                        <Label>Preço</Label>
+                        <Label>Valor Unitário</Label>
                         <Input
                           type="number"
-                          step="0.0001"
-                          value={produto.preco}
+                          step="0.01"
+                          value={produto.valorUnitario}
                           onChange={(e) => {
                             const newProdutos = [...formData.produtos];
-                            newProdutos[index].preco = Number(e.target.value);
-                            setFormData({...formData, produtos: newProdutos});
-                          }}
-                          placeholder="0,0000"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Validade Mínima Exigida</Label>
-                        <Input
-                          type="date"
-                          value={produto.validadeMinimaExigida}
-                          onChange={(e) => {
-                            const newProdutos = [...formData.produtos];
-                            newProdutos[index].validadeMinimaExigida = e.target.value;
+                            newProdutos[index].valorUnitario = Number(e.target.value);
                             setFormData({...formData, produtos: newProdutos});
                           }}
                         />
                       </div>
                     </div>
                     
-                    <div>
-                      <Label>Descritivo do Item</Label>
-                      <Textarea
-                        value={produto.descritivoItem}
-                        onChange={(e) => {
-                          const newProdutos = [...formData.produtos];
-                          newProdutos[index].descritivoItem = e.target.value;
-                          setFormData({...formData, produtos: newProdutos});
-                        }}
-                        placeholder="Descrição que aparecerá na NF abaixo da descrição oficial"
-                        rows={2}
-                      />
-                    </div>
-
                     <div>
                       <Label>Descrição</Label>
                       <Textarea
@@ -719,281 +664,85 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                 </div>
               </TabsContent>
 
-              <TabsContent value="informacoes-nf" className="space-y-6 mt-6">
-                <div>
-                  <Label htmlFor="informacoesComplementaresNF">Informações Complementares da NF</Label>
-                  <Textarea
-                    id="informacoesComplementaresNF"
-                    value={formData.informacoesComplementaresNF}
-                    onChange={(e) => setFormData({...formData, informacoesComplementaresNF: e.target.value})}
-                    rows={4}
-                    placeholder="Informações complementares que aparecerão na nota fiscal..."
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="condicoesPagamento">Condições de Pagamento</Label>
-                  <Textarea
-                    id="condicoesPagamento"
-                    value={formData.condicoesPagamento}
-                    onChange={(e) => setFormData({...formData, condicoesPagamento: e.target.value})}
-                    rows={3}
-                    placeholder="Condições de pagamento (vai para NF)..."
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="informacoesFreteConhecimento">Informações de Frete-Conhecimento</Label>
-                  <Textarea
-                    id="informacoesFreteConhecimento"
-                    value={formData.informacoesFreteConhecimento}
-                    onChange={(e) => setFormData({...formData, informacoesFreteConhecimento: e.target.value})}
-                    rows={3}
-                    placeholder="Controle de canhotos do estoque..."
-                  />
-                </div>
-              </TabsContent>
-
               <TabsContent value="frete" className="space-y-6 mt-6">
-                <div className="space-y-6">
-                  <h3 className="text-lg font-semibold text-gray-900">Informações de Negociação</h3>
-                  
-                  <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="freteAPagarPor">Frete a Pagar Por</Label>
-                      <Select value={formData.freteAPagarPor} onValueChange={(value) => setFormData({...formData, freteAPagarPor: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="cliente">Cliente</SelectItem>
-                          <SelectItem value="representante">Representante</SelectItem>
-                          <SelectItem value="empresa">Empresa</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="freteARetirarPor">Frete a Retirar Por</Label>
-                      <Select value={formData.freteARetirarPor} onValueChange={(value) => setFormData({...formData, freteARetirarPor: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="cliente">Cliente</SelectItem>
-                          <SelectItem value="representante">Representante</SelectItem>
-                          <SelectItem value="portador_interno">Portador Interno</SelectItem>
-                          <SelectItem value="destino_final">Destino Final</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="prazoEntrega">Prazo de Entrega (dias)</Label>
-                      <Input
-                        id="prazoEntrega"
-                        type="number"
-                        value={formData.prazoEntrega}
-                        onChange={(e) => setFormData({...formData, prazoEntrega: Number(e.target.value)})}
-                        placeholder="Ex: 5"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="entregarRetirarAosCuidadosDe">Entregar/Retirar aos Cuidados de</Label>
-                      <Input
-                        id="entregarRetirarAosCuidadosDe"
-                        value={formData.entregarRetirarAosCuidadosDe}
-                        onChange={(e) => setFormData({...formData, entregarRetirarAosCuidadosDe: e.target.value})}
-                        placeholder="Nome da pessoa responsável"
-                      />
-                    </div>
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="tipoFrete">Tipo de Frete</Label>
+                    <Select value={formData.tipoFrete} onValueChange={(value) => setFormData({...formData, tipoFrete: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cif">CIF</SelectItem>
+                        <SelectItem value="fob">FOB</SelectItem>
+                        <SelectItem value="por_conta">Por Conta</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
-                  <div className="space-y-4">
-                    <h4 className="text-md font-medium text-gray-800">Dados do Recebedor</h4>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="dadosRecebedorNome">Nome Completo</Label>
-                        <Input
-                          id="dadosRecebedorNome"
-                          value={formData.dadosRecebedorNome}
-                          onChange={(e) => setFormData({...formData, dadosRecebedorNome: e.target.value})}
-                          placeholder="Nome completo do recebedor"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="dadosRecebedorCpf">CPF</Label>
-                        <Input
-                          id="dadosRecebedorCpf"
-                          value={formData.dadosRecebedorCpf}
-                          onChange={(e) => setFormData({...formData, dadosRecebedorCpf: e.target.value})}
-                          placeholder="000.000.000-00"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="dadosRecebedorTelefone">Telefone</Label>
-                        <Input
-                          id="dadosRecebedorTelefone"
-                          value={formData.dadosRecebedorTelefone}
-                          onChange={(e) => setFormData({...formData, dadosRecebedorTelefone: e.target.value})}
-                          placeholder="(00) 00000-0000"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="dadosRecebedorEmail">E-mail</Label>
-                        <Input
-                          id="dadosRecebedorEmail"
-                          type="email"
-                          value={formData.dadosRecebedorEmail}
-                          onChange={(e) => setFormData({...formData, dadosRecebedorEmail: e.target.value})}
-                          placeholder="email@exemplo.com"
-                        />
-                      </div>
-                    </div>
+                  <div>
+                    <Label htmlFor="transportadora">Transportadora</Label>
+                    <Select value={formData.transportadora} onValueChange={(value) => setFormData({...formData, transportadora: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="correios">Correios</SelectItem>
+                        <SelectItem value="transportadora1">Transportadora 1</SelectItem>
+                        <SelectItem value="transportadora2">Transportadora 2</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-4">
-                    <div>
-                      <Label htmlFor="horariosPermitidosEntrega">Horários Permitidos para Entrega</Label>
-                      <Textarea
-                        id="horariosPermitidosEntrega"
-                        value={formData.horariosPermitidosEntrega}
-                        onChange={(e) => setFormData({...formData, horariosPermitidosEntrega: e.target.value})}
-                        rows={2}
-                        placeholder="Ex: Segunda a Sexta: 8h às 17h, Sábado: 8h às 12h"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="locaisEntrega">Locais de Entrega</Label>
-                      <Textarea
-                        id="locaisEntrega"
-                        value={formData.locaisEntrega}
-                        onChange={(e) => setFormData({...formData, locaisEntrega: e.target.value})}
-                        rows={2}
-                        placeholder="Endereço completo e pontos de referência"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="maisInformacoesEntrega">Mais Informações sobre a Entrega</Label>
-                      <Textarea
-                        id="maisInformacoesEntrega"
-                        value={formData.maisInformacoesEntrega}
-                        onChange={(e) => setFormData({...formData, maisInformacoesEntrega: e.target.value})}
-                        rows={3}
-                        placeholder="Há alguma dificuldade? Informações especiais..."
-                      />
-                    </div>
+                  <div>
+                    <Label htmlFor="diasEntrega">Dias para Entrega</Label>
+                    <Input
+                      id="diasEntrega"
+                      type="number"
+                      value={formData.diasEntrega}
+                      onChange={(e) => setFormData({...formData, diasEntrega: Number(e.target.value)})}
+                    />
                   </div>
 
-                  <div className="space-y-4 border-t pt-4">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="eUrgente" 
-                        checked={formData.eUrgente}
-                        onCheckedChange={(checked) => setFormData({...formData, eUrgente: checked as boolean})}
-                      />
-                      <Label htmlFor="eUrgente" className="text-red-600 font-medium">É Urgente?</Label>
-                    </div>
-
-                    {formData.eUrgente && (
-                      <div>
-                        <Label htmlFor="justificativaUrgencia">Justificativa da Urgência</Label>
-                        <Textarea
-                          id="justificativaUrgencia"
-                          value={formData.justificativaUrgencia}
-                          onChange={(e) => setFormData({...formData, justificativaUrgencia: e.target.value})}
-                          rows={3}
-                          placeholder="Justifique o motivo da urgência..."
-                        />
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="autorizadoPor">Autorizado Por</Label>
-                        <Input
-                          id="autorizadoPor"
-                          value={formData.autorizadoPor}
-                          onChange={(e) => setFormData({...formData, autorizadoPor: e.target.value})}
-                          placeholder="Nome do responsável pela autorização"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="dataAutorizacao">Data da Autorização</Label>
-                        <Input
-                          id="dataAutorizacao"
-                          type="date"
-                          value={formData.dataAutorizacao}
-                          onChange={(e) => setFormData({...formData, dataAutorizacao: e.target.value})}
-                        />
-                      </div>
-                    </div>
+                  <div>
+                    <Label htmlFor="dataEntrega">Data de Entrega</Label>
+                    <Input
+                      id="dataEntrega"
+                      type="date"
+                      value={formData.dataEntrega}
+                      onChange={(e) => setFormData({...formData, dataEntrega: e.target.value})}
+                    />
                   </div>
 
-                  <div className="space-y-4 border-t pt-4">
-                    <h4 className="text-md font-medium text-gray-800">Informações de Expedição (Visualização)</h4>
-                    <p className="text-sm text-gray-600">
-                      As informações abaixo são relacionadas à expedição e devem constar apenas como campo de visualização.
-                    </p>
-                    
-                    <div className="grid grid-cols-2 gap-6 bg-gray-50 p-4 rounded">
-                      <div>
-                        <Label htmlFor="tipoFrete">Tipo de Frete</Label>
-                        <Select value={formData.tipoFrete} onValueChange={(value) => setFormData({...formData, tipoFrete: value})} disabled>
-                          <SelectTrigger className="bg-gray-100">
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="cif">CIF</SelectItem>
-                            <SelectItem value="fob">FOB</SelectItem>
-                            <SelectItem value="por_conta">Por Conta</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="transportadora">Transportadora</Label>
-                        <Select value={formData.transportadora} onValueChange={(value) => setFormData({...formData, transportadora: value})} disabled>
-                          <SelectTrigger className="bg-gray-100">
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="correios">Correios</SelectItem>
-                            <SelectItem value="transportadora1">Transportadora 1</SelectItem>
-                            <SelectItem value="transportadora2">Transportadora 2</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="valorSeguro">Valor do Seguro</Label>
-                        <Input
-                          id="valorSeguro"
-                          type="number"
-                          step="0.01"
-                          value={formData.valorSeguro}
-                          onChange={(e) => setFormData({...formData, valorSeguro: Number(e.target.value)})}
-                          className="bg-gray-100"
-                          disabled
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="placaVeiculo">Placa do Veículo</Label>
-                        <Input
-                          id="placaVeiculo"
-                          value={formData.placaVeiculo}
-                          onChange={(e) => setFormData({...formData, placaVeiculo: e.target.value})}
-                          placeholder="ABC-1234"
-                          className="bg-gray-100"
-                          disabled
-                        />
-                      </div>
-                    </div>
+                  <div>
+                    <Label htmlFor="valorSeguro">Valor do Seguro</Label>
+                    <Input
+                      id="valorSeguro"
+                      type="number"
+                      step="0.01"
+                      value={formData.valorSeguro}
+                      onChange={(e) => setFormData({...formData, valorSeguro: Number(e.target.value)})}
+                    />
                   </div>
+
+                  <div>
+                    <Label htmlFor="placaVeiculo">Placa do Veículo</Label>
+                    <Input
+                      id="placaVeiculo"
+                      value={formData.placaVeiculo}
+                      onChange={(e) => setFormData({...formData, placaVeiculo: e.target.value})}
+                      placeholder="ABC-1234"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="aprovado" 
+                    checked={formData.aprovado}
+                    onCheckedChange={(checked) => setFormData({...formData, aprovado: checked as boolean})}
+                  />
+                  <Label htmlFor="aprovado">Aprovado</Label>
                 </div>
               </TabsContent>
             </Tabs>
@@ -1015,4 +764,3 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
 };
 
 export default PedidoForm;
-

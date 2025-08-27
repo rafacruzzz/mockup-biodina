@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -61,13 +62,14 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
 
   const produtosFiltrados = aplicarFiltros(mockProdutosCatalogo);
 
-  const handleAdicionarProduto = (codigo: string, quantidade: number, unidade: UnidadeVenda, preco: number, descritivoItem: string, validadeMinimaExigida?: string) => {
+  const handleAdicionarProduto = (codigo: string, quantidade: number, unidade: UnidadeVenda, desconto: number, observacoes: string) => {
     const produtoCatalogo = mockProdutosCatalogo.find(p => p.codigo === codigo);
     const estoqueInfo = mockProdutosEstoque[codigo];
     
     if (!produtoCatalogo || !estoqueInfo) return;
 
-    const precoFinal = preco * quantidade;
+    const precoUnitario = estoqueInfo.precoSugerido;
+    const precoComDesconto = precoUnitario * (1 - desconto / 100);
     
     const produto: ProdutoPedido = {
       id: Date.now(),
@@ -75,10 +77,10 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
       descricao: produtoCatalogo.descricao,
       quantidade,
       unidade,
-      preco, // Usando a nova propriedade 'preco' com 4 casas decimais
-      precoFinal,
-      descritivoItem,
-      validadeMinimaExigida,
+      precoUnitario,
+      desconto,
+      precoFinal: precoComDesconto * quantidade,
+      observacoes,
       estoqueDisponivel: estoqueInfo
     };
 
@@ -99,9 +101,10 @@ const AdicionarProdutoModal = ({ isOpen, onClose, onAdicionarProduto }: Adiciona
       descricao: produtoCatalogo.descricao,
       quantidade,
       unidade: UnidadeVenda.UNIDADE,
-      preco: estoqueInfo.precoSugerido, // Usando 'preco' ao invés de 'precoUnitario'
+      precoUnitario: estoqueInfo.precoSugerido,
+      desconto: 0,
       precoFinal: estoqueInfo.precoSugerido * quantidade,
-      descritivoItem: '', // Usando 'descritivoItem' ao invés de 'observacoes'
+      observacoes: '',
       estoqueDisponivel: estoqueInfo
     };
 

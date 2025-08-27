@@ -39,33 +39,27 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
         ? { 
             ...p, 
             quantidade, 
-            precoFinal: p.preco * quantidade // Usando 'preco' ao invés de 'precoUnitario'
+            precoFinal: (p.precoUnitario * (1 - p.desconto / 100)) * quantidade 
           } 
         : p
     ));
   };
 
-  const handleAtualizarPreco = (id: number, preco: number) => {
+  const handleAtualizarDesconto = (id: number, desconto: number) => {
     setProdutos(prev => prev.map(p => 
       p.id === id 
         ? { 
             ...p, 
-            preco, // Usando 'preco' ao invés de 'precoUnitario'
-            precoFinal: preco * p.quantidade 
+            desconto, 
+            precoFinal: (p.precoUnitario * (1 - desconto / 100)) * p.quantidade 
           } 
         : p
     ));
   };
 
-  const handleAtualizarDescritivoItem = (id: number, descritivoItem: string) => {
+  const handleAtualizarObservacoes = (id: number, observacoes: string) => {
     setProdutos(prev => prev.map(p => 
-      p.id === id ? { ...p, descritivoItem } : p // Usando 'descritivoItem' ao invés de 'observacoes'
-    ));
-  };
-
-  const handleAtualizarValidadeMinima = (id: number, validadeMinimaExigida: string) => {
-    setProdutos(prev => prev.map(p => 
-      p.id === id ? { ...p, validadeMinimaExigida } : p
+      p.id === id ? { ...p, observacoes } : p
     ));
   };
 
@@ -167,10 +161,10 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                           <TableHead>Estoque</TableHead>
                           <TableHead>Quantidade</TableHead>
                           <TableHead>Unidade</TableHead>
-                          <TableHead>Preço</TableHead>
+                          <TableHead>Preço Unit.</TableHead>
+                          <TableHead>Desconto %</TableHead>
                           <TableHead>Total</TableHead>
-                          <TableHead>Descritivo Item</TableHead>
-                          <TableHead>Validade Mín.</TableHead>
+                          <TableHead>Observações</TableHead>
                           <TableHead className="w-20">Ações</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -221,14 +215,16 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                                 {getUnidadeLabel(produto.unidade)}
                               </Badge>
                             </TableCell>
+                            <TableCell>{formatCurrency(produto.precoUnitario)}</TableCell>
                             <TableCell>
                               <Input
                                 type="number"
-                                value={produto.preco} // Usando 'preco' ao invés de 'precoUnitario'
-                                onChange={(e) => handleAtualizarPreco(produto.id, Number(e.target.value))}
-                                className="w-24"
+                                value={produto.desconto}
+                                onChange={(e) => handleAtualizarDesconto(produto.id, Number(e.target.value))}
+                                className="w-16"
                                 min="0"
-                                step="0.0001" // 4 casas decimais
+                                max="100"
+                                step="0.1"
                               />
                             </TableCell>
                             <TableCell className="font-medium">
@@ -236,17 +232,9 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                             </TableCell>
                             <TableCell>
                               <Input
-                                value={produto.descritivoItem || ''} // Usando 'descritivoItem' ao invés de 'observacoes'
-                                onChange={(e) => handleAtualizarDescritivoItem(produto.id, e.target.value)}
-                                placeholder="Descritivo para NF"
-                                className="w-32"
-                              />
-                            </TableCell>
-                            <TableCell>
-                              <Input
-                                type="date"
-                                value={produto.validadeMinimaExigida || ''}
-                                onChange={(e) => handleAtualizarValidadeMinima(produto.id, e.target.value)}
+                                value={produto.observacoes || ''}
+                                onChange={(e) => handleAtualizarObservacoes(produto.id, e.target.value)}
+                                placeholder="Obs. específicas"
                                 className="w-32"
                               />
                             </TableCell>
