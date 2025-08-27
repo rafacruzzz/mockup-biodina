@@ -45,23 +45,21 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
     // Vendedores
     vendedores: [''],
     
-    // Produtos
+    // Produtos - campos atualizados
     produtos: [{
       localEstoque: '',
       produto: '',
       etiqueta: '',
       quantidade: 1,
       valorUnitario: 0,
-      tipoDesconto: 'percentual',
-      desconto: 0,
-      valorTotal: 0,
+      validadeMinima: '', // Novo campo
+      descritivoItemNF: '', // Renomeado de descricao
       utilizadoServico: '',
       largura: 0,
       altura: 0,
       comprimento: 0,
       previsaoCompra: '',
       tabelaPreco: '',
-      descricao: '',
       receitaDespesa: 'receita',
       operacaoFiscal: '',
       cenarioFiscal: '',
@@ -112,12 +110,36 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
       descricao: ''
     }],
     
-    // Informações Adicionais
-    notas: '',
-    informacoesNotaFiscal: '',
-    termosCondicoes: '',
+    // Novos campos - Informações NF
+    informacoesComplementaresNF: '',
+    condicoesPagamento: '',
     
-    // Informações de Frete
+    // Campos de Frete expandidos
+    informacoesFrete: '',
+    fretePagarPor: '',
+    freteRetirarPor: '',
+    prazoEntrega: '',
+    cuidadosEntrega: '',
+    
+    // Dados do Recebedor
+    dadosRecebedor: {
+      nomeCompleto: '',
+      cpf: '',
+      telefone: '',
+      email: ''
+    },
+    
+    horariosPermitidos: '',
+    locaisEntrega: '',
+    informacoesAdicionaisEntrega: '',
+    
+    // Campos de Autorização
+    eUrgente: false,
+    justificativaUrgencia: '',
+    autorizadoPor: '',
+    dataAutorizacao: '',
+    
+    // Campos existentes de frete
     tipoFrete: '',
     frete: '',
     aprovado: false,
@@ -136,7 +158,12 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
     tipoVolume: '',
     marcaVolume: '',
     numeroVolume: '',
-    codigosRastreio: ''
+    codigosRastreio: '',
+    
+    // Campo de observações gerais
+    notas: '',
+    informacoesNotaFiscal: '',
+    termosCondicoes: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -144,12 +171,17 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
     onSave(formData);
   };
 
+  const formatPrice = (value: string) => {
+    const numValue = parseFloat(value);
+    return isNaN(numValue) ? '0.0000' : numValue.toFixed(4);
+  };
+
   const addItem = (section: string) => {
     const newItem = section === 'produtos' ? {
       localEstoque: '', produto: '', etiqueta: '', quantidade: 1, valorUnitario: 0,
-      tipoDesconto: 'percentual', desconto: 0, valorTotal: 0, utilizadoServico: '',
+      validadeMinima: '', descritivoItemNF: '', utilizadoServico: '',
       largura: 0, altura: 0, comprimento: 0, previsaoCompra: '', tabelaPreco: '',
-      descricao: '', receitaDespesa: 'receita', operacaoFiscal: '', cenarioFiscal: '',
+      receitaDespesa: 'receita', operacaoFiscal: '', cenarioFiscal: '',
       icms: 0, comissaoVendedor: 0, comissaoPercentual: 0, comissaoTotal: 0,
       seguro: 0, outrasDespesas: 0, codigoCFOP: '', ordemCompra: '',
       statusOrdemCompra: '', deposito: '', dataInsercao: new Date().toISOString().split('T')[0],
@@ -193,13 +225,15 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
         <CardContent className="p-6">
           <form onSubmit={handleSubmit}>
             <Tabs defaultValue="geral" className="w-full">
-              <TabsList className="grid w-full grid-cols-6">
+              <TabsList className="grid w-full grid-cols-8">
                 <TabsTrigger value="geral">Geral</TabsTrigger>
                 <TabsTrigger value="produtos">Produtos</TabsTrigger>
                 <TabsTrigger value="servicos">Serviços</TabsTrigger>
                 <TabsTrigger value="kits">Kits</TabsTrigger>
-                <TabsTrigger value="adicionais">Adicionais</TabsTrigger>
+                <TabsTrigger value="informacoes-nf">Informações NF</TabsTrigger>
                 <TabsTrigger value="frete">Frete</TabsTrigger>
+                <TabsTrigger value="autorizacao">Autorização</TabsTrigger>
+                <TabsTrigger value="adicionais">Adicionais</TabsTrigger>
               </TabsList>
 
               <TabsContent value="geral" className="space-y-6 mt-6">
@@ -464,30 +498,55 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                       </div>
                       
                       <div>
-                        <Label>Valor Unitário</Label>
+                        <Label>Preço Final (R$)</Label>
                         <Input
                           type="number"
-                          step="0.01"
+                          step="0.0001"
                           value={produto.valorUnitario}
                           onChange={(e) => {
                             const newProdutos = [...formData.produtos];
                             newProdutos[index].valorUnitario = Number(e.target.value);
                             setFormData({...formData, produtos: newProdutos});
                           }}
+                          onBlur={(e) => {
+                            const newProdutos = [...formData.produtos];
+                            newProdutos[index].valorUnitario = parseFloat(formatPrice(e.target.value));
+                            setFormData({...formData, produtos: newProdutos});
+                          }}
+                          placeholder="0.0000"
                         />
+                        <p className="text-xs text-gray-500 mt-1">Formato: 4 casas decimais (ex: 12.3400)</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Validade Mínima Exigida</Label>
+                        <Input
+                          type="date"
+                          value={produto.validadeMinima}
+                          onChange={(e) => {
+                            const newProdutos = [...formData.produtos];
+                            newProdutos[index].validadeMinima = e.target.value;
+                            setFormData({...formData, produtos: newProdutos});
+                          }}
+                          min={new Date().toISOString().split('T')[0]}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">Data futura obrigatória</p>
                       </div>
                     </div>
                     
                     <div>
-                      <Label>Descrição</Label>
+                      <Label>Descritivo do Item (para NF)</Label>
                       <Textarea
-                        value={produto.descricao}
+                        value={produto.descritivoItemNF}
                         onChange={(e) => {
                           const newProdutos = [...formData.produtos];
-                          newProdutos[index].descricao = e.target.value;
+                          newProdutos[index].descritivoItemNF = e.target.value;
                           setFormData({...formData, produtos: newProdutos});
                         }}
                         rows={2}
+                        placeholder="Descrição que aparecerá na Nota Fiscal..."
                       />
                     </div>
                   </div>
@@ -629,43 +688,45 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                 ))}
               </TabsContent>
 
-              <TabsContent value="adicionais" className="space-y-6 mt-6">
-                <div>
-                  <Label htmlFor="notas">Notas</Label>
-                  <Textarea
-                    id="notas"
-                    value={formData.notas}
-                    onChange={(e) => setFormData({...formData, notas: e.target.value})}
-                    rows={3}
-                    placeholder="Observações gerais..."
-                  />
-                </div>
+              <TabsContent value="informacoes-nf" className="space-y-6 mt-6">
+                <div className="space-y-6">
+                  <div>
+                    <Label htmlFor="informacoesComplementaresNF">Informações Complementares da NF</Label>
+                    <Textarea
+                      id="informacoesComplementaresNF"
+                      value={formData.informacoesComplementaresNF}
+                      onChange={(e) => setFormData({...formData, informacoesComplementaresNF: e.target.value})}
+                      rows={4}
+                      placeholder="Informações adicionais para a Nota Fiscal..."
+                    />
+                  </div>
 
-                <div>
-                  <Label htmlFor="informacoesNotaFiscal">Informações de Nota Fiscal</Label>
-                  <Textarea
-                    id="informacoesNotaFiscal"
-                    value={formData.informacoesNotaFiscal}
-                    onChange={(e) => setFormData({...formData, informacoesNotaFiscal: e.target.value})}
-                    rows={3}
-                    placeholder="Informações para nota fiscal..."
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="termosCondicoes">Termos & Condições</Label>
-                  <Textarea
-                    id="termosCondicoes"
-                    value={formData.termosCondicoes}
-                    onChange={(e) => setFormData({...formData, termosCondicoes: e.target.value})}
-                    rows={4}
-                    placeholder="Termos e condições do pedido..."
-                  />
+                  <div>
+                    <Label htmlFor="condicoesPagamento">Condições de Pagamento</Label>
+                    <Input
+                      id="condicoesPagamento"
+                      value={formData.condicoesPagamento}
+                      onChange={(e) => setFormData({...formData, condicoesPagamento: e.target.value})}
+                      placeholder="Ex: 30/60/90 dias, À vista, etc."
+                    />
+                  </div>
                 </div>
               </TabsContent>
 
               <TabsContent value="frete" className="space-y-6 mt-6">
                 <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="informacoesFrete">Informações de Frete - Conhecimento</Label>
+                    <Input
+                      id="informacoesFrete"
+                      value={formData.informacoesFrete}
+                      onChange={(e) => setFormData({...formData, informacoesFrete: e.target.value})}
+                      placeholder="Devolutiva do conhecimento (somente leitura)"
+                      readOnly
+                      className="bg-gray-100"
+                    />
+                  </div>
+
                   <div>
                     <Label htmlFor="tipoFrete">Tipo de Frete</Label>
                     <Select value={formData.tipoFrete} onValueChange={(value) => setFormData({...formData, tipoFrete: value})}>
@@ -678,6 +739,55 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                         <SelectItem value="por_conta">Por Conta</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="fretePagarPor">Frete a Pagar Por</Label>
+                    <Select value={formData.fretePagarPor} onValueChange={(value) => setFormData({...formData, fretePagarPor: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cliente">Cliente</SelectItem>
+                        <SelectItem value="representante">Representante</SelectItem>
+                        <SelectItem value="empresa">Empresa</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="freteRetirarPor">Frete a Retirar Por</Label>
+                    <Select value={formData.freteRetirarPor} onValueChange={(value) => setFormData({...formData, freteRetirarPor: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cliente">Cliente</SelectItem>
+                        <SelectItem value="representante">Representante</SelectItem>
+                        <SelectItem value="portador_interno">Portador Interno</SelectItem>
+                        <SelectItem value="destino_final">Destino Final</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="prazoEntrega">Prazo de Entrega</Label>
+                    <Input
+                      id="prazoEntrega"
+                      value={formData.prazoEntrega}
+                      onChange={(e) => setFormData({...formData, prazoEntrega: e.target.value})}
+                      placeholder="Ex: 5 dias úteis"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="cuidadosEntrega">Entregar ou Retirar aos Cuidados de Quem?</Label>
+                    <Input
+                      id="cuidadosEntrega"
+                      value={formData.cuidadosEntrega}
+                      onChange={(e) => setFormData({...formData, cuidadosEntrega: e.target.value})}
+                      placeholder="Nome do responsável"
+                    />
                   </div>
 
                   <div>
@@ -695,16 +805,6 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                   </div>
 
                   <div>
-                    <Label htmlFor="diasEntrega">Dias para Entrega</Label>
-                    <Input
-                      id="diasEntrega"
-                      type="number"
-                      value={formData.diasEntrega}
-                      onChange={(e) => setFormData({...formData, diasEntrega: Number(e.target.value)})}
-                    />
-                  </div>
-
-                  <div>
                     <Label htmlFor="dataEntrega">Data de Entrega</Label>
                     <Input
                       id="dataEntrega"
@@ -713,25 +813,99 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                       onChange={(e) => setFormData({...formData, dataEntrega: e.target.value})}
                     />
                   </div>
+                </div>
 
+                {/* Dados do Recebedor */}
+                <Card className="p-4">
+                  <h4 className="font-semibold mb-4">Dados do Recebedor</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="nomeCompleto">Nome Completo</Label>
+                      <Input
+                        id="nomeCompleto"
+                        value={formData.dadosRecebedor.nomeCompleto}
+                        onChange={(e) => setFormData({
+                          ...formData, 
+                          dadosRecebedor: {...formData.dadosRecebedor, nomeCompleto: e.target.value}
+                        })}
+                        placeholder="Nome completo do recebedor"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="cpfRecebedor">CPF</Label>
+                      <Input
+                        id="cpfRecebedor"
+                        value={formData.dadosRecebedor.cpf}
+                        onChange={(e) => setFormData({
+                          ...formData, 
+                          dadosRecebedor: {...formData.dadosRecebedor, cpf: e.target.value}
+                        })}
+                        placeholder="000.000.000-00"
+                        maxLength={14}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="telefoneRecebedor">Telefone</Label>
+                      <Input
+                        id="telefoneRecebedor"
+                        value={formData.dadosRecebedor.telefone}
+                        onChange={(e) => setFormData({
+                          ...formData, 
+                          dadosRecebedor: {...formData.dadosRecebedor, telefone: e.target.value}
+                        })}
+                        placeholder="(11) 99999-9999"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="emailRecebedor">Email</Label>
+                      <Input
+                        id="emailRecebedor"
+                        type="email"
+                        value={formData.dadosRecebedor.email}
+                        onChange={(e) => setFormData({
+                          ...formData, 
+                          dadosRecebedor: {...formData.dadosRecebedor, email: e.target.value}
+                        })}
+                        placeholder="email@exemplo.com"
+                      />
+                    </div>
+                  </div>
+                </Card>
+
+                <div className="grid grid-cols-1 gap-6">
                   <div>
-                    <Label htmlFor="valorSeguro">Valor do Seguro</Label>
-                    <Input
-                      id="valorSeguro"
-                      type="number"
-                      step="0.01"
-                      value={formData.valorSeguro}
-                      onChange={(e) => setFormData({...formData, valorSeguro: Number(e.target.value)})}
+                    <Label htmlFor="horariosPermitidos">Quais Horários Permitidos para Entrega</Label>
+                    <Textarea
+                      id="horariosPermitidos"
+                      value={formData.horariosPermitidos}
+                      onChange={(e) => setFormData({...formData, horariosPermitidos: e.target.value})}
+                      rows={2}
+                      placeholder="Ex: Segunda a sexta das 8h às 17h"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="placaVeiculo">Placa do Veículo</Label>
-                    <Input
-                      id="placaVeiculo"
-                      value={formData.placaVeiculo}
-                      onChange={(e) => setFormData({...formData, placaVeiculo: e.target.value})}
-                      placeholder="ABC-1234"
+                    <Label htmlFor="locaisEntrega">Locais de Entrega</Label>
+                    <Textarea
+                      id="locaisEntrega"
+                      value={formData.locaisEntrega}
+                      onChange={(e) => setFormData({...formData, locaisEntrega: e.target.value})}
+                      rows={2}
+                      placeholder="Endereços ou locais específicos para entrega"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="informacoesAdicionaisEntrega">Mais Informações sobre a Entrega (Há alguma dificuldade?)</Label>
+                    <Textarea
+                      id="informacoesAdicionaisEntrega"
+                      value={formData.informacoesAdicionaisEntrega}
+                      onChange={(e) => setFormData({...formData, informacoesAdicionaisEntrega: e.target.value})}
+                      rows={3}
+                      placeholder="Observações especiais, dificuldades de acesso, etc."
                     />
                   </div>
                 </div>
@@ -743,6 +917,81 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                     onCheckedChange={(checked) => setFormData({...formData, aprovado: checked as boolean})}
                   />
                   <Label htmlFor="aprovado">Aprovado</Label>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="autorizacao" className="space-y-6 mt-6">
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="eUrgente" 
+                        checked={formData.eUrgente}
+                        onCheckedChange={(checked) => setFormData({...formData, eUrgente: checked as boolean})}
+                      />
+                      <Label htmlFor="eUrgente">É Urgente?</Label>
+                    </div>
+
+                    {formData.eUrgente && (
+                      <div>
+                        <Label htmlFor="justificativaUrgencia">Justificar *</Label>
+                        <Textarea
+                          id="justificativaUrgencia"
+                          value={formData.justificativaUrgencia}
+                          onChange={(e) => setFormData({...formData, justificativaUrgencia: e.target.value})}
+                          rows={3}
+                          placeholder="Justifique por que este pedido é urgente..."
+                          required={formData.eUrgente}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <Label htmlFor="autorizadoPor">Autorizado Por</Label>
+                      <Input
+                        id="autorizadoPor"
+                        value={formData.autorizadoPor}
+                        onChange={(e) => setFormData({...formData, autorizadoPor: e.target.value})}
+                        placeholder="Nome da pessoa que autorizou"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="dataAutorizacao">Data da Autorização</Label>
+                      <Input
+                        id="dataAutorizacao"
+                        type="date"
+                        value={formData.dataAutorizacao}
+                        onChange={(e) => setFormData({...formData, dataAutorizacao: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="adicionais" className="space-y-6 mt-6">
+                <div>
+                  <Label htmlFor="notas">Observações Gerais</Label>
+                  <Textarea
+                    id="notas"
+                    value={formData.notas}
+                    onChange={(e) => setFormData({...formData, notas: e.target.value})}
+                    rows={3}
+                    placeholder="Observações gerais do pedido..."
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="termosCondicoes">Termos & Condições</Label>
+                  <Textarea
+                    id="termosCondicoes"
+                    value={formData.termosCondicoes}
+                    onChange={(e) => setFormData({...formData, termosCondicoes: e.target.value})}
+                    rows={4}
+                    placeholder="Termos e condições do pedido..."
+                  />
                 </div>
               </TabsContent>
             </Tabs>
