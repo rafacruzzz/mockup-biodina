@@ -10,10 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar } from 'lucide-react';
 import { PedidoCompleto } from '@/types/comercial';
 import { Chamado, StatusChamado } from '@/types/chamado';
 import { licitacoesGanhasDetalhadas } from '@/data/licitacaoMockData';
+import { useColaboradores } from '@/hooks/useColaboradores';
 import ChatInterno from './ChatInterno';
 import PedidoModal from './PedidoModal';
 import ChamadosTab from './ChamadosTab';
@@ -25,6 +26,13 @@ interface ContratacaoSimplesFormProps {
   oportunidade?: any;
 }
 
+interface HistoricoVisita {
+  id: string;
+  colaborador: string;
+  data: string;
+  observacao: string;
+}
+
 const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: ContratacaoSimplesFormProps) => {
   const [activeTab, setActiveTab] = useState('dados-gerais');
   const [pedidos, setPedidos] = useState<PedidoCompleto[]>([]);
@@ -33,6 +41,15 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [licitacaoVinculada, setLicitacaoVinculada] = useState<string>('');
   const [documentosLicitacao, setDocumentosLicitacao] = useState<any[]>([]);
   const [historicoLicitacao, setHistoricoLicitacao] = useState<any[]>([]);
+  const [historicoVisitas, setHistoricoVisitas] = useState<HistoricoVisita[]>(oportunidade?.historicoVisitas || []);
+  const [modalHistoricoOpen, setModalHistoricoOpen] = useState(false);
+  const [novaVisita, setNovaVisita] = useState({
+    colaborador: '',
+    data: '',
+    observacao: ''
+  });
+
+  const { colaboradores } = useColaboradores();
   
   const [formData, setFormData] = useState({
     // Dados do Cliente
@@ -62,7 +79,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     
     // Organização
     tags: oportunidade?.tags || '',
-    caracteristicas: oportunidade?.caracteristicas || '',
     fluxoTrabalho: oportunidade?.fluxoTrabalho || '',
     status: oportunidade?.status || 'em_triagem',
     descricao: oportunidade?.descricao || '',
@@ -106,7 +122,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     setLicitacaoVinculada(licitacaoId);
     setDocumentosLicitacao(licitacao.documentos);
     setHistoricoLicitacao(licitacao.historico);
-    // Removida a linha: setPedidos(licitacao.pedidos);
 
     // Preencher automaticamente os campos da contratação
     setFormData(prev => ({
@@ -120,7 +135,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       fonteLead: 'licitacao',
       valorNegocio: licitacao.estrategiaValorFinal,
       tags: licitacao.palavraChave,
-      caracteristicas: licitacao.objetoLicitacao,
       fluxoTrabalho: `Contrato derivado da licitação ${licitacao.numeroPregao}`,
       status: 'ganha',
       descricao: licitacao.resumoEdital,
@@ -139,12 +153,30 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     setChamados(prev => [...prev, chamado]);
   };
 
+  const handleAdicionarVisita = () => {
+    if (!novaVisita.colaborador || !novaVisita.data || !novaVisita.observacao) {
+      return;
+    }
+
+    const visita: HistoricoVisita = {
+      id: `visita_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      colaborador: novaVisita.colaborador,
+      data: novaVisita.data,
+      observacao: novaVisita.observacao
+    };
+
+    setHistoricoVisitas(prev => [...prev, visita]);
+    setNovaVisita({ colaborador: '', data: '', observacao: '' });
+    setModalHistoricoOpen(false);
+  };
+
   const handleSave = () => {
     const dataToSave = {
       ...formData,
       concorrentes,
       pedidos,
       chamados,
+      historicoVisitas,
       licitacaoVinculada,
       documentosLicitacao,
       historicoLicitacao,
@@ -558,17 +590,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                     </div>
 
                     <div>
-                      <Label htmlFor="caracteristicas">Características</Label>
-                      <Textarea
-                        id="caracteristicas"
-                        value={formData.caracteristicas}
-                        onChange={(e) => handleInputChange('caracteristicas', e.target.value)}
-                        placeholder="Descreva as características"
-                        rows={3}
-                      />
-                    </div>
-
-                    <div>
                       <Label htmlFor="fluxoTrabalho">Fluxo de Trabalho</Label>
                       <Textarea
                         id="fluxoTrabalho"
@@ -738,6 +759,59 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                              formData.termometro < 80 ? 'Quente' : 'Muito Quente'}
                           </span>
                         </div>
+                      </div>
+
+                      {/* Histórico de Visitas */}
+                      <div className="mt-6 pt-4 border-t border-gray-200">
+                        <div className="flex items-center justify-between mb-4">
+                          <h4 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                            <Calendar className="h-5 w-5" />
+                            Histórico de Visitas
+                          </h4>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setModalHistoricoOpen(true)}
+                          >
+                            <Plus className="h-4 w-4 mr-2" />
+                            Adicionar Histórico
+                          </Button>
+                        </div>
+                        
+                        {historicoVisitas.length === 0 ? (
+                          <div className="text-center py-6 text-gray-500">
+                            <Calendar className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                            <p className="text-sm">Nenhuma visita registrada</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Data</TableHead>
+                                  <TableHead>Colaborador</TableHead>
+                                  <TableHead>Observação</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {historicoVisitas
+                                  .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
+                                  .map((visita) => (
+                                  <TableRow key={visita.id}>
+                                    <TableCell className="font-medium">
+                                      {new Date(visita.data).toLocaleDateString('pt-BR')}
+                                    </TableCell>
+                                    <TableCell>{visita.colaborador}</TableCell>
+                                    <TableCell className="text-sm text-gray-600">
+                                      {visita.observacao}
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>
@@ -954,6 +1028,68 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             </Button>
             <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
               {oportunidade ? 'Atualizar' : 'Salvar'} Oportunidade
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Adicionar Histórico de Visitas */}
+      <Dialog open={modalHistoricoOpen} onOpenChange={setModalHistoricoOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Adicionar Histórico de Visita</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="colaboradorVisita">Colaborador</Label>
+              <Select 
+                value={novaVisita.colaborador} 
+                onValueChange={(value) => setNovaVisita(prev => ({ ...prev, colaborador: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o colaborador" />
+                </SelectTrigger>
+                <SelectContent>
+                  {colaboradores.map((colaborador) => (
+                    <SelectItem key={colaborador.id} value={colaborador.nome}>
+                      {colaborador.nome} - {colaborador.cargo}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label htmlFor="dataVisita">Data da Visita</Label>
+              <Input
+                id="dataVisita"
+                type="date"
+                value={novaVisita.data}
+                onChange={(e) => setNovaVisita(prev => ({ ...prev, data: e.target.value }))}
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="observacaoVisita">Observações</Label>
+              <Textarea
+                id="observacaoVisita"
+                value={novaVisita.observacao}
+                onChange={(e) => setNovaVisita(prev => ({ ...prev, observacao: e.target.value }))}
+                placeholder="Descreva os detalhes da visita..."
+                rows={4}
+              />
+            </div>
+          </div>
+          
+          <div className="flex justify-end gap-2 mt-4">
+            <Button variant="outline" onClick={() => setModalHistoricoOpen(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleAdicionarVisita}
+              disabled={!novaVisita.colaborador || !novaVisita.data || !novaVisita.observacao}
+            >
+              Adicionar
             </Button>
           </div>
         </DialogContent>
