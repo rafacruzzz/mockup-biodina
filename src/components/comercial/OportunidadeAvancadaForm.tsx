@@ -96,7 +96,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     ativo: oportunidade?.ativo || true,
     fonteLead: oportunidade?.fonteLead || '',
     segmentoLead: oportunidade?.segmentoLead || '',
-    metodoContato: oportunidade?.metodoContato || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || [],
     valorNegocio: oportunidade?.valorNegocio || 0,
     tags: oportunidade?.tags || '',
@@ -320,6 +319,10 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                 <SelectItem value="cold_call">Cold Call</SelectItem>
                 <SelectItem value="licitacao">Licitação</SelectItem>
                 <SelectItem value="referencia">Referência</SelectItem>
+                <SelectItem value="telefone">Telefone</SelectItem>
+                <SelectItem value="email">E-mail</SelectItem>
+                <SelectItem value="presencial">Presencial</SelectItem>
+                <SelectItem value="video_chamada">Videochamada</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -354,24 +357,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                 </Button>
               )}
             </div>
-          </div>
-          <div>
-            <Label htmlFor="metodoContato">Método de Contato</Label>
-            <Select 
-              value={formData.metodoContato} 
-              onValueChange={(value) => setFormData({...formData, metodoContato: value})}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="telefone">Telefone</SelectItem>
-                <SelectItem value="email">E-mail</SelectItem>
-                <SelectItem value="presencial">Presencial</SelectItem>
-                <SelectItem value="video_chamada">Videochamada</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           <div>
             <Label htmlFor="valorNegocio">Valor do Negócio *</Label>
