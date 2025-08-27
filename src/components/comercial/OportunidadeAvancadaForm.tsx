@@ -312,8 +312,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                         </SelectTrigger>
                         <SelectContent>
                           {segmentos.map((segmento) => (
-                            <SelectItem key={segmento.id} value={segmento.nome}>
-                              {segmento.nome}
+                            <SelectItem key={segmento.id} value={segmento.label}>
+                              {segmento.label}
                             </SelectItem>
                           ))}
                         </SelectContent>
