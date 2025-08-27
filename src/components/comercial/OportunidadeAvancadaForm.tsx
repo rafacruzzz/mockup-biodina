@@ -336,13 +336,14 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                 <SelectItem value="privado_laboratorio">PRIVADO - LABORATÓRIO</SelectItem>
                 <SelectItem value="privado_universidade">PRIVADO - UNIVERSIDADE</SelectItem>
                 <SelectItem value="privado_veterinario">PRIVADO - VETERINÁRIO</SelectItem>
+                <SelectItem value="privado_hospital_os">PRIVADO - HOSPITAL - OS</SelectItem>
+                <SelectItem value="privado_laboratorio_os">PRIVADO - LABORATÓRIO - OS</SelectItem>
                 <SelectItem value="publico_hospital_aeronautica">PÚBLICO - HOSPITAL - AERONÁUTICA</SelectItem>
                 <SelectItem value="publico_hospital_estadual">PÚBLICO - HOSPITAL - ESTADUAL</SelectItem>
                 <SelectItem value="publico_hospital_exercito">PÚBLICO - HOSPITAL - EXÉRCITO</SelectItem>
                 <SelectItem value="publico_hospital_federal">PÚBLICO - HOSPITAL - FEDERAL</SelectItem>
                 <SelectItem value="publico_hospital_marinha">PÚBLICO - HOSPITAL - MARINHA</SelectItem>
                 <SelectItem value="publico_hospital_municipal">PÚBLICO - HOSPITAL - MUNICIPAL</SelectItem>
-                <SelectItem value="publico_hospital_os">PÚBLICO - HOSPITAL - OS</SelectItem>
                 <SelectItem value="publico_hospital_secretaria_saude">PÚBLICO - HOSPITAL - SECRETARIA DA SAÚDE</SelectItem>
                 <SelectItem value="publico_hospital_universidade">PÚBLICO - HOSPITAL - UNIVERSIDADE</SelectItem>
                 <SelectItem value="publico_hospital_upa">PÚBLICO - HOSPITAL - UPA</SelectItem>
@@ -353,11 +354,11 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                 <SelectItem value="publico_laboratorio_federal">PÚBLICO - LABORATÓRIO - FEDERAL</SelectItem>
                 <SelectItem value="publico_laboratorio_marinha">PÚBLICO - LABORATÓRIO - MARINHA</SelectItem>
                 <SelectItem value="publico_laboratorio_municipal">PÚBLICO - LABORATÓRIO - MUNICIPAL</SelectItem>
-                <SelectItem value="publico_laboratorio_os">PÚBLICO - LABORATÓRIO - OS</SelectItem>
                 <SelectItem value="publico_laboratorio_secretaria_saude">PÚBLICO - LABORATÓRIO - SECRETARIA DA SAÚDE</SelectItem>
                 <SelectItem value="publico_laboratorio_universidade">PÚBLICO - LABORATÓRIO - UNIVERSIDADE</SelectItem>
                 <SelectItem value="publico_laboratorio_upa">PÚBLICO - LABORATÓRIO - UPA</SelectItem>
                 <SelectItem value="publico_laboratorio_veterinario">PÚBLICO - LABORATÓRIO - VETERINÁRIO</SelectItem>
+                <SelectItem value="publico_direito_privado">PÚBLICO – DIREITO PRIVADO</SelectItem>
               </SelectContent>
             </Select>
           </div>
