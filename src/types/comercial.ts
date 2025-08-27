@@ -1,4 +1,3 @@
-
 export interface ProdutoPedido {
   id: number;
   codigo: string;
@@ -10,6 +9,8 @@ export interface ProdutoPedido {
   precoFinal: number;
   observacoes?: string;
   estoqueDisponivel: EstoqueVendivel;
+  validadeMinima?: string;
+  descritivoNF?: string;
 }
 
 export interface EstoqueVendivel {
@@ -88,4 +89,17 @@ export interface PedidoCompleto {
   produtos: ProdutoPedido[];
   valorTotal: number;
   observacoesGerais?: string;
+  informacoesComplementares?: string;
+  condicoesPagamento?: string;
+  valorFrete?: number;
+  responsavelFrete?: string;
+  transportadora?: string;
+  prazoEntrega?: string;
+  enderecoEntrega?: string;
+  observacoesFrete?: string;
+  urgente?: boolean;
+  justificativaUrgencia?: string;
+  cpfAutorizador?: string;
+  emailAutorizador?: string;
+  observacoesAutorizacao?: string;
 }
