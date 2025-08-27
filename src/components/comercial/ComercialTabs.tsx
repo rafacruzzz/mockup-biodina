@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Plus, Edit, Trash2, Search, FileText, CheckCircle, AlertTriangle, Package, Truck } from "lucide-react";
+import { Plus, Edit, Trash2, Search, FileText, CheckCircle, AlertTriangle, Package, Truck, X } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -24,7 +25,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { ptBR } from 'date-fns/locale';
-import { CalendarIcon } from "@radix-ui/react-icons"
+import { CalendarIcon } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import PedidoForm from "./PedidoForm";
 
@@ -218,7 +219,7 @@ const ComercialTabs = () => {
                           <Badge variant="destructive">Negociação</Badge>
                         )}
                         {oportunidade.status === "Fechado" && (
-                          <Badge variant="success">Fechado</Badge>
+                          <Badge variant="default">Fechado</Badge>
                         )}
                       </TableCell>
                       <TableCell>{oportunidade.valorEstimado}</TableCell>
@@ -411,7 +412,6 @@ const ComercialTabs = () => {
         </div>
       )}
       
-      {/* Substituir PedidoModal por PedidoForm */}
       {isPedidoFormOpen && selectedOportunidade && (
         <PedidoForm
           onClose={() => {

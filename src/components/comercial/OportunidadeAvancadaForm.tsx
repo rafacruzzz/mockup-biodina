@@ -10,13 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, X, Save, Trash2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Calendar } from "@/components/ui/calendar"
-import { CalendarIcon } from "@radix-ui/react-icons"
+import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 import { DateRange } from "react-day-picker"
 import { useToast } from "@/components/ui/use-toast"
-import { Text } from "@radix-ui/react-slot";
 import PedidoForm from "./PedidoForm";
 
 interface OportunidadeAvancadaFormProps {
@@ -431,7 +430,6 @@ const OportunidadeAvancadaForm = ({ onClose, onSave, oportunidade }: Oportunidad
         </Button>
       </div>
 
-      {/* Substituir PedidoModal por PedidoForm */}
       {isPedidoFormOpen && (
         <PedidoForm
           onClose={() => setIsPedidoFormOpen(false)}
