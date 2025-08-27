@@ -84,7 +84,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     descricao: oportunidade?.descricao || '',
     
     // Outros
-    dataVisita: oportunidade?.dataVisita || '',
     propostaNegociacao: oportunidade?.propostaNegociacao || false,
     termometro: oportunidade?.termometro || 50,
     
@@ -708,16 +707,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                     </div>
 
                     <div className="space-y-4 mt-6">
-                      <div>
-                        <Label htmlFor="dataVisita">Data da Visita</Label>
-                        <Input
-                          id="dataVisita"
-                          type="date"
-                          value={formData.dataVisita}
-                          onChange={(e) => handleInputChange('dataVisita', e.target.value)}
-                        />
-                      </div>
-
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="propostaNegociacao"
