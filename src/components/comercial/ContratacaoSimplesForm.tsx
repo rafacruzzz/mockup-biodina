@@ -193,8 +193,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const adicionarConcorrente = () => {
     setConcorrentes([...concorrentes, { 
       nome: '', 
-      produto: '', 
-      preco: 0 
+      marca: '', 
+      modelo: '', 
+      quantidade: 0,
+      quantidadeExamesMes: 0
     }]);
   };
 
@@ -654,7 +656,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                   </CardContent>
                 </Card>
 
-                {/* Análise da Concorrência e Outros */}
+                {/* Análise da Concorrência */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Análise da Concorrência</CardTitle>
@@ -680,17 +682,32 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                               value={concorrente.nome}
                               onChange={(e) => atualizarConcorrente(index, 'nome', e.target.value)}
                             />
-                            <Input
-                              placeholder="Produto do concorrente"
-                              value={concorrente.produto}
-                              onChange={(e) => atualizarConcorrente(index, 'produto', e.target.value)}
-                            />
-                            <Input
-                              type="number"
-                              placeholder="Preço praticado"
-                              value={concorrente.preco}
-                              onChange={(e) => atualizarConcorrente(index, 'preco', parseFloat(e.target.value) || 0)}
-                            />
+                            <div className="grid grid-cols-2 gap-2">
+                              <Input
+                                placeholder="Marca do concorrente"
+                                value={concorrente.marca}
+                                onChange={(e) => atualizarConcorrente(index, 'marca', e.target.value)}
+                              />
+                              <Input
+                                placeholder="Modelo do concorrente"
+                                value={concorrente.modelo}
+                                onChange={(e) => atualizarConcorrente(index, 'modelo', e.target.value)}
+                              />
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <Input
+                                type="number"
+                                placeholder="Quantidade"
+                                value={concorrente.quantidade}
+                                onChange={(e) => atualizarConcorrente(index, 'quantidade', parseFloat(e.target.value) || 0)}
+                              />
+                              <Input
+                                type="number"
+                                placeholder="Quantidade de exames/mês"
+                                value={concorrente.quantidadeExamesMes}
+                                onChange={(e) => atualizarConcorrente(index, 'quantidadeExamesMes', parseFloat(e.target.value) || 0)}
+                              />
+                            </div>
                           </div>
                         </div>
                       ))}
