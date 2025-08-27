@@ -1,4 +1,3 @@
-
 export interface SolicitacaoGenerica {
   id_solicitacao: string;
   id_usuario_solicitante: string;
@@ -113,4 +112,23 @@ export interface FeriasFields {
   segunda_parcela_inicio?: string; // Para quando escolher 15 dias
   venda_um_terco: boolean;
   observacoes: string;
+}
+
+export type StatusSolicitacaoAlteracao = 'pendente' | 'em-analise' | 'aprovada' | 'rejeitada';
+
+export interface SolicitacaoAlteracao {
+  id: string;
+  protocolo: string;
+  colaboradorId: string;
+  aba: string;
+  campo: string;
+  tipoSolicitacao: string;
+  valorAtual: string;
+  valorSolicitado: string;
+  motivo: string;
+  observacoesRH?: string;
+  status: StatusSolicitacaoAlteracao;
+  dataSolicitacao: string;
+  dataProcessamento?: string;
+  processadoPor?: string;
 }

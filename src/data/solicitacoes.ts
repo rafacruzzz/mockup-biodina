@@ -1,5 +1,4 @@
-
-import { SolicitacaoGenerica, Setor, TipoSolicitacao, Responsavel } from '@/types/solicitacao';
+import { SolicitacaoGenerica, Setor, TipoSolicitacao, Responsavel, SolicitacaoAlteracao } from '@/types/solicitacao';
 
 export const responsaveis: Responsavel[] = [
   { id: '1', nome: 'Maria Silva', email: 'maria.silva@biodina.com', cargo: 'Gerente de RH' },
@@ -243,8 +242,70 @@ export const solicitacoesMock: SolicitacaoGenerica[] = [
   }
 ];
 
-export const getStatusColor = (status: SolicitacaoGenerica['status']) => {
+// Mocks para Solicitações de Alteração (usadas no RH > SolicitaçõesTab)
+export const solicitacoesAlteracaoMock: SolicitacaoAlteracao[] = [
+  {
+    id: 'alt-1',
+    protocolo: '2025-0001',
+    colaboradorId: '1',
+    aba: 'Informações Pessoais',
+    campo: 'Endereço',
+    tipoSolicitacao: 'Alteração de Endereço',
+    valorAtual: 'Rua A, 123 - Centro',
+    valorSolicitado: 'Rua B, 456 - Jardim',
+    motivo: 'Mudança de residência',
+    status: 'pendente',
+    dataSolicitacao: new Date().toISOString(),
+  },
+  {
+    id: 'alt-2',
+    protocolo: '2025-0002',
+    colaboradorId: '1',
+    aba: 'Dados Profissionais',
+    campo: 'Cargo',
+    tipoSolicitacao: 'Promoção',
+    valorAtual: 'Analista Pleno',
+    valorSolicitado: 'Analista Sênior',
+    motivo: 'Desempenho acima do esperado',
+    observacoesRH: 'Em avaliação pelo gestor',
+    status: 'em-analise',
+    dataSolicitacao: new Date().toISOString(),
+  },
+  {
+    id: 'alt-3',
+    protocolo: '2025-0003',
+    colaboradorId: '2',
+    aba: 'Benefícios',
+    campo: 'Plano de Saúde',
+    tipoSolicitacao: 'Inclusão de Dependente — Plano de Saúde',
+    valorAtual: 'Sem dependentes',
+    valorSolicitado: 'Incluir 1 dependente',
+    motivo: 'Nascimento de filho',
+    status: 'aprovada',
+    dataSolicitacao: new Date().toISOString(),
+    dataProcessamento: new Date().toISOString().split('T')[0],
+    processadoPor: 'Sistema RH',
+    observacoesRH: 'Aprovado. Enviar documentos comprobatórios.',
+  },
+];
+
+// Função para buscar solicitações de alteração por colaborador
+export const getSolicitacoesByColaborador = (colaboradorId: string): SolicitacaoAlteracao[] => {
+  console.log('[solicitacoes] getSolicitacoesByColaborador', { colaboradorId });
+  return solicitacoesAlteracaoMock.filter((s) => s.colaboradorId === colaboradorId);
+};
+
+// Ampliar mapeamento de status para suportar ambos os domínios: genérico e alteração
+type StatusGenericoOuAlteracao =
+  | SolicitacaoGenerica['status']
+  | 'pendente'
+  | 'em-analise'
+  | 'aprovada';
+
+// Ajuste: aceitar também os status de alteração
+export const getStatusColor = (status: StatusGenericoOuAlteracao) => {
   switch (status) {
+    // Status genéricos
     case 'aberta':
       return 'bg-blue-100 text-blue-700 border-blue-200';
     case 'em-andamento':
@@ -253,13 +314,22 @@ export const getStatusColor = (status: SolicitacaoGenerica['status']) => {
       return 'bg-green-100 text-green-700 border-green-200';
     case 'rejeitada':
       return 'bg-red-100 text-red-700 border-red-200';
+    // Status de alteração (RH)
+    case 'pendente':
+      return 'bg-blue-100 text-blue-700 border-blue-200';
+    case 'em-analise':
+      return 'bg-yellow-100 text-yellow-700 border-yellow-200';
+    case 'aprovada':
+      return 'bg-green-100 text-green-700 border-green-200';
     default:
       return 'bg-gray-100 text-gray-700 border-gray-200';
   }
 };
 
-export const getStatusText = (status: SolicitacaoGenerica['status']) => {
+// Ajuste: aceitar também os status de alteração
+export const getStatusText = (status: StatusGenericoOuAlteracao) => {
   switch (status) {
+    // Status genéricos
     case 'aberta':
       return 'Aberta';
     case 'em-andamento':
@@ -268,6 +338,13 @@ export const getStatusText = (status: SolicitacaoGenerica['status']) => {
       return 'Concluída';
     case 'rejeitada':
       return 'Rejeitada';
+    // Status de alteração (RH)
+    case 'pendente':
+      return 'Pendente';
+    case 'em-analise':
+      return 'Em Análise';
+    case 'aprovada':
+      return 'Aprovada';
     default:
       return 'Desconhecido';
   }
