@@ -54,6 +54,12 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || '',
     procurandoPor: oportunidade?.procurandoPor || '',
     
+    // Contato Comercial
+    contatoComercialNome: oportunidade?.contatoComercialNome || '',
+    contatoComercialSetor: oportunidade?.contatoComercialSetor || '',
+    contatoComercialTelefone: oportunidade?.contatoComercialTelefone || '',
+    contatoComercialEmail: oportunidade?.contatoComercialEmail || '',
+    
     // Organização
     tags: oportunidade?.tags || '',
     caracteristicas: oportunidade?.caracteristicas || '',
@@ -484,6 +490,51 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                         onChange={(e) => handleInputChange('procurandoPor', e.target.value)}
                         placeholder="Digite os contatos"
                       />
+                    </div>
+
+                    {/* Seção Contato Comercial */}
+                    <div className="mt-6 pt-4 border-t border-gray-200">
+                      <h4 className="text-lg font-medium text-gray-900 mb-4">Contato Comercial</h4>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="contatoComercialNome">Nome do Contato Comercial</Label>
+                          <Input
+                            id="contatoComercialNome"
+                            value={formData.contatoComercialNome}
+                            onChange={(e) => handleInputChange('contatoComercialNome', e.target.value)}
+                            placeholder="Digite o nome do contato"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="contatoComercialSetor">Setor do Contato Comercial</Label>
+                          <Input
+                            id="contatoComercialSetor"
+                            value={formData.contatoComercialSetor}
+                            onChange={(e) => handleInputChange('contatoComercialSetor', e.target.value)}
+                            placeholder="Digite o setor"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="contatoComercialTelefone">Telefone do Contato Comercial</Label>
+                          <Input
+                            id="contatoComercialTelefone"
+                            type="tel"
+                            value={formData.contatoComercialTelefone}
+                            onChange={(e) => handleInputChange('contatoComercialTelefone', e.target.value)}
+                            placeholder="Digite o telefone"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="contatoComercialEmail">E-mail do Contato Comercial</Label>
+                          <Input
+                            id="contatoComercialEmail"
+                            type="email"
+                            value={formData.contatoComercialEmail}
+                            onChange={(e) => handleInputChange('contatoComercialEmail', e.target.value)}
+                            placeholder="Digite o e-mail"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
