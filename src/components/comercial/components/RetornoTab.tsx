@@ -60,12 +60,6 @@ const RetornoTab = ({ formData, onInputChange }: RetornoTabProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="text-center p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm text-blue-700">
-          <strong>Seção Opcional:</strong> Preencha apenas quando houver dados de retorno/devolução disponíveis.
-        </p>
-      </div>
-      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Número da DANFE de Retorno</Label>

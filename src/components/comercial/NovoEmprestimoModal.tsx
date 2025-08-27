@@ -37,6 +37,7 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
     numeroProcesso: `EMP-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
     cnpjCliente: "",
     nomeCliente: "",
+    observacoes: "",
     numeroDanfeEmprestimo: "",
     referenciaProdutoEmprestado: "",
     descricaoProdutoEmprestado: "",
@@ -118,7 +119,7 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
             <CheckCircle className="h-3 w-3" />
           </Badge>
         )}
-        {status === "optional" && value !== "danfe" && (
+        {status === "optional" && value !== "danfe" && value !== "retorno" && (
           <Badge variant="outline" className="ml-2 text-xs">
             Opcional
           </Badge>

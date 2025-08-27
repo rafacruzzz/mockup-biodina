@@ -1,6 +1,7 @@
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -56,60 +57,72 @@ const DadosGeraisTab = ({ formData, onInputChange }: DadosGeraisTabProps) => {
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label>Número do Processo *</Label>
-          <Input
-            value={formData.numeroProcesso}
-            onChange={(e) => onInputChange('numeroProcesso', e.target.value)}
-            placeholder="Gerado automaticamente"
-            disabled
-            className="bg-gray-50"
-          />
-          <p className="text-xs text-gray-500">Gerado automaticamente pelo sistema</p>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>Número do Processo *</Label>
+            <Input
+              value={formData.numeroProcesso}
+              onChange={(e) => onInputChange('numeroProcesso', e.target.value)}
+              placeholder="Gerado automaticamente"
+              disabled
+              className="bg-gray-50"
+            />
+            <p className="text-xs text-gray-500">Gerado automaticamente pelo sistema</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>CNPJ do Cliente *</Label>
+            <Input
+              value={formData.cnpjCliente}
+              onChange={(e) => onInputChange('cnpjCliente', e.target.value)}
+              placeholder="00.000.000/0000-00"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Nome do Cliente *</Label>
+            <Input
+              value={formData.nomeCliente}
+              onChange={(e) => onInputChange('nomeCliente', e.target.value)}
+              placeholder="Nome completo do cliente"
+            />
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <Label>CNPJ do Cliente *</Label>
-          <Input
-            value={formData.cnpjCliente}
-            onChange={(e) => onInputChange('cnpjCliente', e.target.value)}
-            placeholder="00.000.000/0000-00"
-          />
-        </div>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>Moeda *</Label>
+            <RadioGroup
+              value={formData.moeda}
+              onValueChange={(value) => onInputChange('moeda', value)}
+              className="flex gap-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="BRL" id="brl" />
+                <Label htmlFor="brl">Real (R$)</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="USD" id="usd" />
+                <Label htmlFor="usd">Dólar (USD)</Label>
+              </div>
+            </RadioGroup>
+          </div>
 
-        <div className="space-y-2">
-          <Label>Nome do Cliente *</Label>
-          <Input
-            value={formData.nomeCliente}
-            onChange={(e) => onInputChange('nomeCliente', e.target.value)}
-            placeholder="Nome completo do cliente"
-          />
+          <DatePicker label="Data de Empréstimo" field="dataEmprestimo" required />
+          <DatePicker label="Data de Saída" field="dataSaida" required />
         </div>
       </div>
 
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label>Moeda *</Label>
-          <RadioGroup
-            value={formData.moeda}
-            onValueChange={(value) => onInputChange('moeda', value)}
-            className="flex gap-4"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="BRL" id="brl" />
-              <Label htmlFor="brl">Real (R$)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="USD" id="usd" />
-              <Label htmlFor="usd">Dólar (USD)</Label>
-            </div>
-          </RadioGroup>
-        </div>
-
-        <DatePicker label="Data de Empréstimo" field="dataEmprestimo" required />
-        <DatePicker label="Data de Saída" field="dataSaida" required />
+      <div className="space-y-2">
+        <Label>Observações</Label>
+        <Textarea
+          value={formData.observacoes}
+          onChange={(e) => onInputChange('observacoes', e.target.value)}
+          placeholder="Observações gerais sobre o empréstimo..."
+          rows={3}
+        />
       </div>
     </div>
   );
