@@ -10,15 +10,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle } from "lucide-react";
+import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle, UserPlus } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import LicitacaoValidationModal from "./LicitacaoValidationModal";
 import ConcorrenteModal from "./ConcorrenteModal";
 import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
 import CustomAlertModal from "./components/CustomAlertModal";
+import SolicitacaoCadastroModal from "./SolicitacaoCadastroModal";
 import { concorrentes as mockConcorrentes, licitantes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
 import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getUnidadeColor, getAtendeEditalBadge } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -31,10 +34,21 @@ interface OportunidadeAvancadaFormProps {
   oportunidade?: any;
 }
 
+// Mock data para clientes
+const mockClientes = [
+  { id: 1, nome: "Associação das Pioneiras Sociais", cpfCnpj: "12.345.678/0001-90" },
+  { id: 2, nome: "Hospital São Francisco", cpfCnpj: "98.765.432/0001-10" },
+  { id: 3, nome: "Laboratório Central LTDA", cpfCnpj: "11.222.333/0001-44" },
+  { id: 4, nome: "Clínica Med Center", cpfCnpj: "55.666.777/0001-88" },
+  { id: 5, nome: "Instituto de Pesquisas Médicas", cpfCnpj: "33.444.555/0001-22" },
+];
+
 const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: OportunidadeAvancadaFormProps) => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('dados-gerais');
   const [showEmprestimoAlert, setShowEmprestimoAlert] = useState(false);
+  const [showSolicitacaoCadastro, setShowSolicitacaoCadastro] = useState(false);
+  const [clienteDropdownOpen, setClienteDropdownOpen] = useState(false);
   
   // Estados para modais
   const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
@@ -71,6 +85,9 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   ]);
 
   const [formData, setFormData] = useState({
+    // Novos campos para cliente
+    cliente: oportunidade?.cliente || '',
+    clienteId: oportunidade?.clienteId || '',
     cpfCnpj: oportunidade?.cpfCnpj || '',
     ativo: oportunidade?.ativo || true,
     fonteLead: oportunidade?.fonteLead || '',
@@ -127,6 +144,16 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     solicitarAnaliseTecnica: oportunidade?.solicitarAnaliseTecnica || false,
   });
 
+  const handleClienteSelect = (cliente: any) => {
+    setFormData({
+      ...formData,
+      cliente: cliente.nome,
+      clienteId: cliente.id,
+      cpfCnpj: cliente.cpfCnpj
+    });
+    setClienteDropdownOpen(false);
+  };
+
   const isStatusPerdida = () => {
     return formData.resultadoOportunidade === 'perda';
   };
@@ -175,7 +202,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     const novoPedido = {
       id: Date.now(),
       codigo: `PED-${String(pedidos.length + 1).padStart(3, '0')}`,
-      cliente: 'Cliente',
+      cliente: formData.cliente || 'Cliente',
       dataGeracao: new Date().toISOString().split('T')[0],
       situacao: 'Em Aberto',
       valor: pedidoData.produtos?.reduce((sum: number, prod: any) => sum + (prod.valorTotal || 0), 0) || 0
@@ -196,13 +223,65 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         <h3 className="text-lg font-semibold text-gray-800">Dados do Cliente</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="cpfCnpj">CPF/CNPJ *</Label>
+            <Label htmlFor="cliente">Cliente *</Label>
+            <Popover open={clienteDropdownOpen} onOpenChange={setClienteDropdownOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={clienteDropdownOpen}
+                  className="w-full justify-between"
+                  disabled={isReadOnlyMode()}
+                >
+                  {formData.cliente || "Selecione um cliente..."}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0" align="start">
+                <Command>
+                  <CommandInput placeholder="Buscar cliente..." />
+                  <CommandList>
+                    <CommandEmpty>Nenhum cliente encontrado.</CommandEmpty>
+                    <CommandGroup>
+                      {mockClientes.map((cliente) => (
+                        <CommandItem
+                          key={cliente.id}
+                          value={cliente.nome}
+                          onSelect={() => handleClienteSelect(cliente)}
+                        >
+                          <div className="flex flex-col">
+                            <span className="font-medium">{cliente.nome}</span>
+                            <span className="text-sm text-gray-500">{cliente.cpfCnpj}</span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+            
+            {!isReadOnlyMode() && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-2 text-blue-600 border-blue-600 hover:bg-blue-50"
+                onClick={() => setShowSolicitacaoCadastro(true)}
+              >
+                <UserPlus className="h-4 w-4 mr-2" />
+                Solicitação de cadastro
+              </Button>
+            )}
+          </div>
+          
+          <div>
+            <Label htmlFor="cpfCnpj">CPF/CNPJ</Label>
             <Input
               id="cpfCnpj"
               value={formData.cpfCnpj}
-              onChange={(e) => setFormData({...formData, cpfCnpj: e.target.value})}
-              placeholder="000.000.000-00"
-              disabled={isReadOnlyMode()}
+              placeholder="Selecione um cliente"
+              disabled={true}
+              className="bg-gray-50"
             />
           </div>
         </div>
@@ -1173,7 +1252,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             const novoPedido = {
               id: Date.now(),
               codigo: `PED-${String(pedidos.length + 1).padStart(3, '0')}`,
-              cliente: 'Cliente',
+              cliente: formData.cliente || 'Cliente',
               dataGeracao: new Date().toISOString().split('T')[0],
               situacao: 'Em Aberto',
               valor: pedidoData.produtos?.reduce((sum: number, prod: any) => sum + (prod.valorTotal || 0), 0) || 0
@@ -1190,6 +1269,11 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         title="Operação EMPRÉSTIMO Selecionada"
         message="A natureza da operação foi alterada para EMPRÉSTIMO. Esta operação pode requerer aprovação especial dependendo das políticas da empresa."
         onConfirm={() => setShowEmprestimoAlert(false)}
+      />
+
+      <SolicitacaoCadastroModal
+        isOpen={showSolicitacaoCadastro}
+        onClose={() => setShowSolicitacaoCadastro(false)}
       />
     </div>
   );
