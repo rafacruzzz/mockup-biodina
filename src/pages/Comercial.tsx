@@ -1104,7 +1104,6 @@ const Comercial = () => {
 
       {showOportunidadeAvancadaForm && (
         <OportunidadeAvancadaForm
-          isOpen={showOportunidadeAvancadaForm}
           oportunidade={editingOportunidade}
           onClose={() => {
             setShowOportunidadeAvancadaForm(false);
