@@ -225,15 +225,15 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
         <CardContent className="p-6">
           <form onSubmit={handleSubmit}>
             <Tabs defaultValue="geral" className="w-full">
-              <TabsList className="grid w-full grid-cols-8">
-                <TabsTrigger value="geral">Geral</TabsTrigger>
-                <TabsTrigger value="produtos">Produtos</TabsTrigger>
-                <TabsTrigger value="servicos">Serviços</TabsTrigger>
-                <TabsTrigger value="kits">Kits</TabsTrigger>
-                <TabsTrigger value="informacoes-nf">Informações NF</TabsTrigger>
-                <TabsTrigger value="frete">Frete</TabsTrigger>
-                <TabsTrigger value="autorizacao">Autorização</TabsTrigger>
-                <TabsTrigger value="adicionais">Adicionais</TabsTrigger>
+              <TabsList className="flex w-full overflow-x-auto mb-6">
+                <TabsTrigger value="geral" className="min-w-fit whitespace-nowrap">Geral</TabsTrigger>
+                <TabsTrigger value="produtos" className="min-w-fit whitespace-nowrap">Produtos</TabsTrigger>
+                <TabsTrigger value="servicos" className="min-w-fit whitespace-nowrap">Serviços</TabsTrigger>
+                <TabsTrigger value="kits" className="min-w-fit whitespace-nowrap">Kits</TabsTrigger>
+                <TabsTrigger value="informacoes-nf" className="min-w-fit whitespace-nowrap">Informações NF</TabsTrigger>
+                <TabsTrigger value="frete" className="min-w-fit whitespace-nowrap">Frete</TabsTrigger>
+                <TabsTrigger value="autorizacao" className="min-w-fit whitespace-nowrap">Autorização</TabsTrigger>
+                <TabsTrigger value="adicionais" className="min-w-fit whitespace-nowrap">Adicionais</TabsTrigger>
               </TabsList>
 
               <TabsContent value="geral" className="space-y-6 mt-6">
