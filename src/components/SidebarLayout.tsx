@@ -37,6 +37,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
     { name: "Contabilidade", path: "/contabilidade", icon: <Calculator size={20} />, id: "contabilidade" },
     { name: "RH", path: "/rh", icon: <UserCheck size={20} />, id: "rh" },
     { name: "TI", path: "/ti", icon: <Cpu size={20} />, id: "ti" },
+    { name: "Solicitações", path: "/solicitacoes", icon: <FileText size={20} />, id: "solicitacoes" },
     { name: "Personalizar Navegação", path: "/personalizar-navegacao", icon: <Settings size={20} />, id: "personalizar-navegacao" },
   ];
 
@@ -44,13 +45,16 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
   const getMenuItems = () => {
     if (!navOverrides) return defaultMenuItems;
 
-    // Keep "Aplicativos" at the top and "Personalizar Navegação" at the bottom
+    // Keep "Aplicativos", "Solicitações" and "Personalizar Navegação" as fixed items
     const aplicativos = defaultMenuItems.find(item => item.id === "aplicativos");
+    const solicitacoes = defaultMenuItems.find(item => item.id === "solicitacoes");
     const personalizar = defaultMenuItems.find(item => item.id === "personalizar-navegacao");
     
     // Get the module items (excluding fixed items)
     const moduleItems = defaultMenuItems.filter(item => 
-      item.id !== "aplicativos" && item.id !== "personalizar-navegacao"
+      item.id !== "aplicativos" && 
+      item.id !== "solicitacoes" && 
+      item.id !== "personalizar-navegacao"
     );
 
     // Reorder according to navOverrides.order if provided
@@ -72,6 +76,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
     return [
       aplicativos!,
       ...orderedModuleItems,
+      solicitacoes!,
       personalizar!
     ];
   };
