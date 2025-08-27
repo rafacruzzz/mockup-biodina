@@ -72,6 +72,7 @@ export interface MovimentacaoEstoque {
   nf_vinculada?: string;
   pedido_vinculado?: string;
   produtos_adicionais?: number;
+  emprestimo_vinculado?: string;
 }
 
 export enum StatusMovimentacao {

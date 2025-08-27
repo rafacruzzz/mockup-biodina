@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,8 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Search, Filter, Plus, Download } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Search, Filter, Plus, Download, Package, Truck } from "lucide-react";
 import NovoEmprestimoModal from "./NovoEmprestimoModal";
+import ControleRetornosTab from "./components/ControleRetornosTab";
 import { emprestimosMock, Emprestimo } from "@/data/emprestimos";
 
 const EmprestimosTable = () => {
@@ -22,9 +25,12 @@ const EmprestimosTable = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'emprestado': return 'bg-blue-500';
-      case 'devolvido': return 'bg-green-500';
+      case 'devolvido': return 'bg-orange-500';
+      case 'devolvido_nf': return 'bg-yellow-500';
+      case 'retorno_efetivado': return 'bg-green-500';
+      case 'retorno_parcial': return 'bg-blue-600';
       case 'vencido': return 'bg-red-500';
-      case 'parcial': return 'bg-yellow-500';
+      case 'parcial': return 'bg-purple-500';
       default: return 'bg-gray-500';
     }
   };
@@ -33,6 +39,9 @@ const EmprestimosTable = () => {
     switch (status) {
       case 'emprestado': return 'Emprestado';
       case 'devolvido': return 'Devolvido';
+      case 'devolvido_nf': return 'DANFE Registrada';
+      case 'retorno_efetivado': return 'Retorno Efetivado';
+      case 'retorno_parcial': return 'Retorno Parcial';
       case 'vencido': return 'Vencido';
       case 'parcial': return 'Devolução Parcial';
       default: return status;
@@ -77,7 +86,7 @@ const EmprestimosTable = () => {
   const statsBRL = {
     total: emprestimos.filter(emp => emp.moeda === 'BRL').length,
     emprestados: emprestimos.filter(emp => emp.status === 'emprestado' && emp.moeda === 'BRL').length,
-    devolvidos: emprestimos.filter(emp => emp.status === 'devolvido' && emp.moeda === 'BRL').length,
+    devolvidos: emprestimos.filter(emp => (emp.status === 'devolvido' || emp.status === 'retorno_efetivado') && emp.moeda === 'BRL').length,
     vencidos: emprestimos.filter(emp => emp.status === 'vencido' && emp.moeda === 'BRL').length,
     valorTotal: emprestimos.filter(emp => emp.moeda === 'BRL').reduce((sum, emp) => sum + emp.valorEmprestimo, 0)
   };
@@ -85,7 +94,7 @@ const EmprestimosTable = () => {
   const statsUSD = {
     total: emprestimos.filter(emp => emp.moeda === 'USD').length,
     emprestados: emprestimos.filter(emp => emp.status === 'emprestado' && emp.moeda === 'USD').length,
-    devolvidos: emprestimos.filter(emp => emp.status === 'devolvido' && emp.moeda === 'USD').length,
+    devolvidos: emprestimos.filter(emp => (emp.status === 'devolvido' || emp.status === 'retorno_efetivado') && emp.moeda === 'USD').length,
     vencidos: emprestimos.filter(emp => emp.status === 'vencido' && emp.moeda === 'USD').length,
     valorTotal: emprestimos.filter(emp => emp.moeda === 'USD').reduce((sum, emp) => sum + emp.valorEmprestimo, 0)
   };
@@ -93,8 +102,9 @@ const EmprestimosTable = () => {
   const statsGeral = {
     total: emprestimos.length,
     emprestados: emprestimos.filter(emp => emp.status === 'emprestado').length,
-    devolvidos: emprestimos.filter(emp => emp.status === 'devolvido').length,
-    vencidos: emprestimos.filter(emp => emp.status === 'vencido').length
+    devolvidos: emprestimos.filter(emp => emp.status === 'devolvido' || emp.status === 'retorno_efetivado').length,
+    vencidos: emprestimos.filter(emp => emp.status === 'vencido').length,
+    pendentesRetorno: emprestimos.filter(emp => emp.status === 'devolvido_nf').length
   };
 
   return (
@@ -121,7 +131,7 @@ const EmprestimosTable = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-7 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-8 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-biodina-blue">{statsGeral.total}</div>
@@ -137,7 +147,13 @@ const EmprestimosTable = () => {
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold text-green-600">{statsGeral.devolvidos}</div>
-            <div className="text-sm text-gray-600">Devolvidos</div>
+            <div className="text-sm text-gray-600">Efetivados</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-yellow-600">{statsGeral.pendentesRetorno}</div>
+            <div className="text-sm text-gray-600">Pend. Retorno</div>
           </CardContent>
         </Card>
         <Card>
@@ -166,124 +182,154 @@ const EmprestimosTable = () => {
         </Card>
       </div>
 
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Filtros</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4 flex-wrap">
-            <div className="relative flex-1 min-w-64">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input 
-                placeholder="Pesquisar por processo, cliente, CNPJ ou produto..." 
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-gray-400" />
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos os Status</SelectItem>
-                  <SelectItem value="emprestado">Emprestado</SelectItem>
-                  <SelectItem value="devolvido">Devolvido</SelectItem>
-                  <SelectItem value="vencido">Vencido</SelectItem>
-                  <SelectItem value="parcial">Devolução Parcial</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center gap-2">
-              <Select value={moedaFilter} onValueChange={setMoedaFilter}>
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder="Moeda" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todas</SelectItem>
-                  <SelectItem value="BRL">BRL</SelectItem>
-                  <SelectItem value="USD">USD</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center gap-2">
-              <Select value={clienteFilter} onValueChange={setClienteFilter}>
-                <SelectTrigger className="w-64">
-                  <SelectValue placeholder="Cliente" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos os Clientes</SelectItem>
-                  {uniqueClientes.map((cliente) => (
-                    <SelectItem key={cliente} value={cliente}>{cliente}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Tabs para diferentes views */}
+      <Tabs defaultValue="emprestimos" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="emprestimos" className="flex items-center gap-2">
+            <Package className="h-4 w-4" />
+            Todos os Empréstimos
+          </TabsTrigger>
+          <TabsTrigger value="controle-retornos" className="flex items-center gap-2">
+            <Truck className="h-4 w-4" />
+            Controle de Retornos
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Table */}
-      <Card>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nº Processo</TableHead>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead>CNPJ</TableHead>
-                  <TableHead>Produto Emprestado</TableHead>
-                  <TableHead>Valor</TableHead>
-                  <TableHead>Moeda</TableHead>
-                  <TableHead>Data Empréstimo</TableHead>
-                  <TableHead>Data Retorno</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredEmprestimos.map((emprestimo) => (
-                  <TableRow key={emprestimo.numeroProcesso}>
-                    <TableCell className="font-medium">{emprestimo.numeroProcesso}</TableCell>
-                    <TableCell>{emprestimo.nomeCliente}</TableCell>
-                    <TableCell>{emprestimo.cnpjCliente}</TableCell>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{emprestimo.referenciaProdutoEmprestado}</div>
-                        <div className="text-sm text-gray-500">{emprestimo.descricaoProdutoEmprestado}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{formatCurrency(emprestimo.valorEmprestimo, emprestimo.moeda)}</TableCell>
-                    <TableCell>
-                      <Badge variant={emprestimo.moeda === 'BRL' ? 'default' : 'secondary'}>
-                        {emprestimo.moeda}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{formatDate(emprestimo.dataEmprestimo)}</TableCell>
-                    <TableCell>
-                      {emprestimo.dataRetorno ? formatDate(emprestimo.dataRetorno) : '-'}
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={`${getStatusColor(emprestimo.status)} text-white`}>
-                        {getStatusLabel(emprestimo.status)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Button size="sm" variant="outline">
-                        Detalhes
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+        <TabsContent value="emprestimos" className="space-y-4">
+          {/* Filters */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Filtros</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex gap-4 flex-wrap">
+                <div className="relative flex-1 min-w-64">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input 
+                    placeholder="Pesquisar por processo, cliente, CNPJ ou produto..." 
+                    className="pl-10"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4 text-gray-400" />
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todos">Todos os Status</SelectItem>
+                      <SelectItem value="emprestado">Emprestado</SelectItem>
+                      <SelectItem value="devolvido">Devolvido</SelectItem>
+                      <SelectItem value="devolvido_nf">DANFE Registrada</SelectItem>
+                      <SelectItem value="retorno_efetivado">Retorno Efetivado</SelectItem>
+                      <SelectItem value="retorno_parcial">Retorno Parcial</SelectItem>
+                      <SelectItem value="vencido">Vencido</SelectItem>
+                      <SelectItem value="parcial">Devolução Parcial</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Select value={moedaFilter} onValueChange={setMoedaFilter}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue placeholder="Moeda" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todos">Todas</SelectItem>
+                      <SelectItem value="BRL">BRL</SelectItem>
+                      <SelectItem value="USD">USD</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Select value={clienteFilter} onValueChange={setClienteFilter}>
+                    <SelectTrigger className="w-64">
+                      <SelectValue placeholder="Cliente" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todos">Todos os Clientes</SelectItem>
+                      {uniqueClientes.map((cliente) => (
+                        <SelectItem key={cliente} value={cliente}>{cliente}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Table */}
+          <Card>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nº Processo</TableHead>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>CNPJ</TableHead>
+                      <TableHead>Produto Emprestado</TableHead>
+                      <TableHead>Valor</TableHead>
+                      <TableHead>Moeda</TableHead>
+                      <TableHead>Data Empréstimo</TableHead>
+                      <TableHead>Data Retorno</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredEmprestimos.map((emprestimo) => (
+                      <TableRow key={emprestimo.numeroProcesso}>
+                        <TableCell className="font-medium">{emprestimo.numeroProcesso}</TableCell>
+                        <TableCell>{emprestimo.nomeCliente}</TableCell>
+                        <TableCell>{emprestimo.cnpjCliente}</TableCell>
+                        <TableCell>
+                          <div>
+                            <div className="font-medium">{emprestimo.referenciaProdutoEmprestado}</div>
+                            <div className="text-sm text-gray-500">{emprestimo.descricaoProdutoEmprestado}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{formatCurrency(emprestimo.valorEmprestimo, emprestimo.moeda)}</TableCell>
+                        <TableCell>
+                          <Badge variant={emprestimo.moeda === 'BRL' ? 'default' : 'secondary'}>
+                            {emprestimo.moeda}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{formatDate(emprestimo.dataEmprestimo)}</TableCell>
+                        <TableCell>
+                          <div>
+                            {emprestimo.dataRetorno ? formatDate(emprestimo.dataRetorno) : '-'}
+                            {emprestimo.data_entrada_fisica && (
+                              <div className="text-xs text-green-600">
+                                Estoque: {formatDate(emprestimo.data_entrada_fisica)}
+                              </div>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge className={`${getStatusColor(emprestimo.status)} text-white`}>
+                            {getStatusLabel(emprestimo.status)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Button size="sm" variant="outline">
+                            Detalhes
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="controle-retornos">
+          <ControleRetornosTab />
+        </TabsContent>
+      </Tabs>
 
       <NovoEmprestimoModal 
         isOpen={isModalOpen}

@@ -1,4 +1,3 @@
-
 export interface Emprestimo {
   numeroProcesso: string;
   cnpjCliente: string;
@@ -17,7 +16,11 @@ export interface Emprestimo {
   dataBaixa?: string;
   valorRetornado?: number;
   idImportacaoDireta?: string;
-  status: 'emprestado' | 'devolvido' | 'vencido' | 'parcial';
+  status: 'emprestado' | 'devolvido' | 'vencido' | 'parcial' | 'devolvido_nf' | 'retorno_efetivado' | 'retorno_parcial';
+  // Novos campos para integração com estoque
+  id_movimentacao_retorno?: string;
+  data_entrada_fisica?: string;
+  observacoes_retorno?: string;
 }
 
 export const emprestimosMock: Emprestimo[] = [
@@ -40,7 +43,10 @@ export const emprestimosMock: Emprestimo[] = [
     dataBaixa: "2024-03-16",
     valorRetornado: 85000.00,
     idImportacaoDireta: "IMP-2024-001",
-    status: 'devolvido'
+    status: 'retorno_efetivado',
+    id_movimentacao_retorno: "MOV-2024-0156",
+    data_entrada_fisica: "2024-03-16",
+    observacoes_retorno: "Material recebido em perfeitas condições"
   },
   {
     numeroProcesso: "EMP-2024-004",
@@ -59,7 +65,8 @@ export const emprestimosMock: Emprestimo[] = [
     dataRetorno: "2024-03-20",
     valorRetornado: 50000.00,
     idImportacaoDireta: "IMP-2024-001",
-    status: 'parcial'
+    status: 'devolvido_nf',
+    observacoes_retorno: "Aguardando recebimento físico da versão atualizada"
   },
   {
     numeroProcesso: "EMP-2024-008",
@@ -153,7 +160,10 @@ export const emprestimosMock: Emprestimo[] = [
     dataBaixa: "2024-02-16",
     valorRetornado: 3500.00,
     idImportacaoDireta: "IMP-2024-003",
-    status: 'devolvido'
+    status: 'retorno_efetivado',
+    id_movimentacao_retorno: "MOV-2024-0089",
+    data_entrada_fisica: "2024-02-16",
+    observacoes_retorno: "Material recebido conforme especificado"
   },
 
   // Empréstimos pontuais (sem vinculação com importação direta) - BRL
@@ -187,7 +197,10 @@ export const emprestimosMock: Emprestimo[] = [
     dataRetorno: "2024-03-25",
     dataBaixa: "2024-03-26",
     valorRetornado: 78500.00,
-    status: 'devolvido'
+    status: 'retorno_efetivado',
+    id_movimentacao_retorno: "MOV-2024-0201",
+    data_entrada_fisica: "2024-03-26",
+    observacoes_retorno: "Equipamento recebido em ótimo estado de conservação"
   },
 
   // Empréstimos sem vinculação (para mostrar na tabela geral)
@@ -221,10 +234,55 @@ export const emprestimosMock: Emprestimo[] = [
     dataRetorno: "2024-03-18",
     dataBaixa: "2024-03-19",
     valorRetornado: 5800.00,
-    status: 'devolvido'
+    status: 'devolvido_nf',
+    observacoes_retorno: "DANFE registrada, aguardando chegada física no estoque"
+  },
+
+  // Novos casos para demonstrar diferentes status
+  {
+    numeroProcesso: "EMP-2024-013",
+    cnpjCliente: "12.345.678/0001-99",
+    nomeCliente: "Hospital Albert Einstein",
+    numeroDanfeEmprestimo: "55240112345678000199550010000000131123456805",
+    referenciaProdutoEmprestado: "ANALYZER-PORTABLE",
+    descricaoProdutoEmprestado: "Analisador Portátil de Laboratório",
+    valorEmprestimo: 32000.00,
+    moeda: 'USD',
+    dataEmprestimo: "2024-01-10",
+    dataSaida: "2024-01-12",
+    numeroDanfeRetorno: "55240112345678000199550010000000141123456806",
+    referenciaProdutoRecebido: "ANALYZER-PORTABLE-USED",
+    descricaoProdutoRecebido: "Analisador Portátil - Usado (avariado)",
+    dataRetorno: "2024-03-20",
+    dataBaixa: "2024-03-20",
+    valorRetornado: 18000.00,
+    status: 'retorno_parcial',
+    id_movimentacao_retorno: "MOV-2024-0287",
+    data_entrada_fisica: "2024-03-25",
+    observacoes_retorno: "Material recebido com avarias. Valor reduzido devido ao estado."
   }
 ];
 
 export const getEmprestimosByImportacaoId = (importacaoId: string): Emprestimo[] => {
   return emprestimosMock.filter(emprestimo => emprestimo.idImportacaoDireta === importacaoId);
+};
+
+// Nova função para buscar empréstimos por status de retorno
+export const getEmprestimosPendentesRetorno = (): Emprestimo[] => {
+  return emprestimosMock.filter(emprestimo => 
+    emprestimo.status === 'devolvido_nf' || 
+    (emprestimo.status === 'devolvido' && !emprestimo.data_entrada_fisica)
+  );
+};
+
+// Nova função para calcular dias desde a devolução sem recebimento físico
+export const calcularDiasRetornoPendente = (emprestimo: Emprestimo): number => {
+  if (!emprestimo.dataRetorno) return 0;
+  
+  const dataRetorno = new Date(emprestimo.dataRetorno);
+  const hoje = new Date();
+  const diffTime = Math.abs(hoje.getTime() - dataRetorno.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  return diffDays;
 };
