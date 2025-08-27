@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle, UserPlus } from "lucide-react";
+import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle, UserPlus, Settings } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -22,9 +22,11 @@ import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
 import CustomAlertModal from "./components/CustomAlertModal";
 import SolicitacaoCadastroModal from "./SolicitacaoCadastroModal";
+import GerenciarSegmentosModal from "./GerenciarSegmentosModal";
 import { concorrentes as mockConcorrentes, licitantes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
 import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getUnidadeColor, getAtendeEditalBadge } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useSegmentoLeadManager } from "@/hooks/useSegmentoLeadManager";
 import { PedidoCompleto } from "@/types/comercial";
 
 interface OportunidadeAvancadaFormProps {
@@ -45,9 +47,11 @@ const mockClientes = [
 
 const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: OportunidadeAvancadaFormProps) => {
   const { toast } = useToast();
+  const { segmentos } = useSegmentoLeadManager();
   const [activeTab, setActiveTab] = useState('dados-gerais');
   const [showEmprestimoAlert, setShowEmprestimoAlert] = useState(false);
   const [showSolicitacaoCadastro, setShowSolicitacaoCadastro] = useState(false);
+  const [showGerenciarSegmentos, setShowGerenciarSegmentos] = useState(false);
   const [clienteDropdownOpen, setClienteDropdownOpen] = useState(false);
   
   // Estados para modais
@@ -321,46 +325,35 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </div>
           <div>
             <Label htmlFor="segmentoLead">Segmento do Lead</Label>
-            <Select 
-              value={formData.segmentoLead} 
-              onValueChange={(value) => setFormData({...formData, segmentoLead: value})}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="filantropico">FILANTRÓPICO</SelectItem>
-                <SelectItem value="privado_estetica">PRIVADO - ESTÉTICA</SelectItem>
-                <SelectItem value="privado_hospital">PRIVADO - HOSPITAL</SelectItem>
-                <SelectItem value="privado_laboratorio">PRIVADO - LABORATÓRIO</SelectItem>
-                <SelectItem value="privado_universidade">PRIVADO - UNIVERSIDADE</SelectItem>
-                <SelectItem value="privado_veterinario">PRIVADO - VETERINÁRIO</SelectItem>
-                <SelectItem value="privado_hospital_os">PRIVADO - HOSPITAL - OS</SelectItem>
-                <SelectItem value="privado_laboratorio_os">PRIVADO - LABORATÓRIO - OS</SelectItem>
-                <SelectItem value="publico_hospital_aeronautica">PÚBLICO - HOSPITAL - AERONÁUTICA</SelectItem>
-                <SelectItem value="publico_hospital_estadual">PÚBLICO - HOSPITAL - ESTADUAL</SelectItem>
-                <SelectItem value="publico_hospital_exercito">PÚBLICO - HOSPITAL - EXÉRCITO</SelectItem>
-                <SelectItem value="publico_hospital_federal">PÚBLICO - HOSPITAL - FEDERAL</SelectItem>
-                <SelectItem value="publico_hospital_marinha">PÚBLICO - HOSPITAL - MARINHA</SelectItem>
-                <SelectItem value="publico_hospital_municipal">PÚBLICO - HOSPITAL - MUNICIPAL</SelectItem>
-                <SelectItem value="publico_hospital_secretaria_saude">PÚBLICO - HOSPITAL - SECRETARIA DA SAÚDE</SelectItem>
-                <SelectItem value="publico_hospital_universidade">PÚBLICO - HOSPITAL - UNIVERSIDADE</SelectItem>
-                <SelectItem value="publico_hospital_upa">PÚBLICO - HOSPITAL - UPA</SelectItem>
-                <SelectItem value="publico_hospital_veterinario">PÚBLICO - HOSPITAL - VETERINÁRIO</SelectItem>
-                <SelectItem value="publico_laboratorio_aeronautica">PÚBLICO - LABORATÓRIO - AERONÁUTICA</SelectItem>
-                <SelectItem value="publico_laboratorio_estadual">PÚBLICO - LABORATÓRIO - ESTADUAL</SelectItem>
-                <SelectItem value="publico_laboratorio_exercito">PÚBLICO - LABORATÓRIO - EXÉRCITO</SelectItem>
-                <SelectItem value="publico_laboratorio_federal">PÚBLICO - LABORATÓRIO - FEDERAL</SelectItem>
-                <SelectItem value="publico_laboratorio_marinha">PÚBLICO - LABORATÓRIO - MARINHA</SelectItem>
-                <SelectItem value="publico_laboratorio_municipal">PÚBLICO - LABORATÓRIO - MUNICIPAL</SelectItem>
-                <SelectItem value="publico_laboratorio_secretaria_saude">PÚBLICO - LABORATÓRIO - SECRETARIA DA SAÚDE</SelectItem>
-                <SelectItem value="publico_laboratorio_universidade">PÚBLICO - LABORATÓRIO - UNIVERSIDADE</SelectItem>
-                <SelectItem value="publico_laboratorio_upa">PÚBLICO - LABORATÓRIO - UPA</SelectItem>
-                <SelectItem value="publico_laboratorio_veterinario">PÚBLICO - LABORATÓRIO - VETERINÁRIO</SelectItem>
-                <SelectItem value="publico_direito_privado">PÚBLICO – DIREITO PRIVADO</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2">
+              <Select 
+                value={formData.segmentoLead} 
+                onValueChange={(value) => setFormData({...formData, segmentoLead: value})}
+                disabled={isReadOnlyMode()}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  {segmentos.map((segmento) => (
+                    <SelectItem key={segmento.id} value={segmento.value}>
+                      {segmento.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {!isReadOnlyMode() && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowGerenciarSegmentos(true)}
+                  className="shrink-0"
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
           </div>
           <div>
             <Label htmlFor="metodoContato">Método de Contato</Label>
@@ -1262,6 +1255,13 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             setShowPedidoForm(false);
           }}
           oportunidade={formData}
+        />
+      )}
+
+      {showGerenciarSegmentos && (
+        <GerenciarSegmentosModal
+          isOpen={showGerenciarSegmentos}
+          onClose={() => setShowGerenciarSegmentos(false)}
         />
       )}
 
