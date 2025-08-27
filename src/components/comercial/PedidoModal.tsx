@@ -142,6 +142,11 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
     }
   };
 
+  // Handler para o checkbox urgente
+  const handleUrgenteChange = (checked: boolean | "indeterminate") => {
+    setUrgente(checked === true);
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -231,8 +236,8 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                               <TableHead>Unidade</TableHead>
                               <TableHead>Preço Unit.</TableHead>
                               <TableHead>Total</TableHead>
-                              <TableHead>Validade Mín.</TableHead>
-                              <TableHead>Descritivo Item (NF)</TableHead>
+                              <TableHead>Validade Mín. Exigida</TableHead>
+                              <TableHead>Descritivo do Item (para NF)</TableHead>
                               <TableHead className="w-20">Ações</TableHead>
                             </TableRow>
                           </TableHeader>
@@ -288,9 +293,10 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                                     type="number"
                                     value={produto.precoUnitario}
                                     onChange={(e) => handleAtualizarPreco(produto.id, Number(e.target.value))}
-                                    className="w-24"
+                                    className="w-28"
                                     step="0.0001"
                                     min="0"
+                                    placeholder="0.0000"
                                   />
                                 </TableCell>
                                 <TableCell className="font-medium">
@@ -301,7 +307,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                                     type="date"
                                     value={produto.validadeMinima || ''}
                                     onChange={(e) => handleAtualizarValidadeMinima(produto.id, e.target.value)}
-                                    className="w-32"
+                                    className="w-36"
                                     min={new Date().toISOString().split('T')[0]}
                                   />
                                 </TableCell>
@@ -310,7 +316,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                                     value={produto.descritivoNF || ''}
                                     onChange={(e) => handleAtualizarDescritivoNF(produto.id, e.target.value)}
                                     placeholder="Descritivo para NF"
-                                    className="w-32"
+                                    className="w-40"
                                   />
                                 </TableCell>
                                 <TableCell>
@@ -466,7 +472,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                       <Checkbox 
                         id="urgente" 
                         checked={urgente}
-                        onCheckedChange={setUrgente}
+                        onCheckedChange={handleUrgenteChange}
                       />
                       <Label htmlFor="urgente">Este pedido é urgente</Label>
                     </div>
