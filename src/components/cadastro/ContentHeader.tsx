@@ -12,6 +12,7 @@ interface ContentHeaderProps {
   buttonText?: string;
   showExcelButton?: boolean;
   onExcelClick?: () => void;
+  showNewButton?: boolean;
 }
 
 const ContentHeader = ({ 
@@ -22,7 +23,8 @@ const ContentHeader = ({
   onNewRecord,
   buttonText = "Novo Registro",
   showExcelButton = false,
-  onExcelClick
+  onExcelClick,
+  showNewButton = true
 }: ContentHeaderProps) => {
   return (
     <div className="bg-white border-b border-gray-200/80 p-6">
@@ -42,13 +44,15 @@ const ContentHeader = ({
               Mov. por Excel
             </Button>
           )}
-          <Button 
-            onClick={onNewRecord}
-            className="bg-gradient-to-r from-biodina-gold to-biodina-gold/90 hover:from-biodina-gold/90 hover:to-biodina-gold text-white shadow-lg hover:shadow-xl transition-all duration-200"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            {buttonText}
-          </Button>
+          {showNewButton && (
+            <Button 
+              onClick={onNewRecord}
+              className="bg-gradient-to-r from-biodina-gold to-biodina-gold/90 hover:from-biodina-gold/90 hover:to-biodina-gold text-white shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {buttonText}
+            </Button>
+          )}
         </div>
       </div>
 

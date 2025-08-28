@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import CadastroSidebar from "@/components/cadastro/CadastroSidebar";
@@ -71,7 +70,9 @@ const Cadastro = () => {
     } else if (activeModule === 'usuarios' && activeSubModule === 'usuarios') {
       setIsUserModalOpen(true);
     } else if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') {
-      setIsColaboradorModalOpen(true);
+      // Comentado temporariamente - não abrir modal de colaborador
+      // setIsColaboradorModalOpen(true);
+      return;
     } else if (activeModule === 'servicos') {
       setIsServiceModalOpen(true);
     } else if (activeModule === 'contas_bancarias') {
@@ -194,6 +195,15 @@ const Cadastro = () => {
     return "Novo Registro";
   };
 
+  // Verificar se deve mostrar o botão de novo registro
+  const shouldShowNewButton = () => {
+    // Esconder o botão para colaboradores temporariamente
+    if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') {
+      return false;
+    }
+    return true;
+  };
+
   // Adicionar listener para eventos de edição
   React.useEffect(() => {
     const handleEditEvent = (event: any) => {
@@ -226,6 +236,7 @@ const Cadastro = () => {
                 onSearchChange={setSearchTerm}
                 onNewRecord={handleNewRecord}
                 buttonText={getButtonText()}
+                showNewButton={shouldShowNewButton()}
               />
 
               <div className="flex-1 p-6 min-h-0">
