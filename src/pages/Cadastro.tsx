@@ -1,356 +1,385 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Edit, Plus, Search, Filter, MoreHorizontal, Users, Building2, UserCheck, Settings } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import CadastroSidebar from '@/components/cadastro/CadastroSidebar';
-import UserModal from '@/components/cadastro/UserModal';
-import { useUsers } from '@/hooks/useUsers';
-import { UserData } from '@/types/user';
+import { useState, useEffect } from "react";
+import SidebarLayout from "@/components/SidebarLayout";
+import CadastroSidebar from "@/components/cadastro/CadastroSidebar";
+import ContentHeader from "@/components/cadastro/ContentHeader";
+import DataTable from "@/components/cadastro/DataTable";
+import EmptyState from "@/components/cadastro/EmptyState";
+import ServiceModal from "@/components/cadastro/ServiceModal";
+import UserModal from "@/components/cadastro/UserModal";
+import GenericModal from "@/components/cadastro/GenericModal";
+import EntidadeModal from "@/components/cadastro/EntidadeModal";
+import ContaBancariaModal from "@/components/cadastro/ContaBancariaModal";
+import ProductRegistrationForm from "@/components/product/ProductRegistrationForm";
+import ProductListingTable from "@/components/product/ProductListingTable";
+import { ProductRegistrationData } from "@/types/product";
+import { modules } from "@/data/cadastroModules";
+import { toast } from "@/components/ui/use-toast";
 
 const Cadastro = () => {
-  const { users } = useUsers();
-  const [selectedModule, setSelectedModule] = useState('usuarios');
-  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
-  const [editMode, setEditMode] = useState(false);
+  const [activeModule, setActiveModule] = useState('');
+  const [activeSubModule, setActiveSubModule] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [expandedModules, setExpandedModules] = useState<string[]>([]);
+  
+  // Product-specific states
+  const [showProductForm, setShowProductForm] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ProductRegistrationData | null>(null);
+  const [products, setProducts] = useState<ProductRegistrationData[]>([]);
+  
+  // Other modal states
+  const [showServiceModal, setShowServiceModal] = useState(false);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [showGenericModal, setShowGenericModal] = useState(false);
+  const [showEntidadeModal, setShowEntidadeModal] = useState(false);
+  const [showContaBancariaModal, setShowContaBancariaModal] = useState(false);
+  const [genericModalConfig, setGenericModalConfig] = useState<any>(null);
 
-  const handleEditUser = (user: UserData) => {
-    setSelectedUser(user);
-    setEditMode(true);
-    setIsUserModalOpen(true);
-  };
+  // Initialize products from modules data
+  useEffect(() => {
+    const productData = modules.produtos?.subModules.produtos?.data || [];
+    const formattedProducts: ProductRegistrationData[] = productData.map((item: any) => ({
+      // Dados Gerais
+      codigo: item.codigo || '',
+      familiaProduto: item.familiaProduto || '',
+      marca: item.marca || '',
+      modelo: item.modelo || '',
+      descricao: item.descricao || '',
+      vendidoPorUnidade: item.vendidoPorUnidade || true,
+      nomeMarketing: item.nomeMarketing || '',
+      descritivoBreve: item.descritivoBreve || '',
+      descritivoCompleto: item.descritivoCompleto || '',
+      tags: item.tags || [],
+      fabricanteId: item.fabricanteId || '',
+      codigoProdutoFabricante: item.codigoProdutoFabricante || '',
+      nomeProdutoFabricante: item.nomeProdutoFabricante || '',
 
-  const handleCloseModal = () => {
-    setIsUserModalOpen(false);
-    setSelectedUser(null);
-    setEditMode(false);
-  };
+      // Regulamentação ANVISA
+      detentorRegistroId: item.detentorRegistroId || '',
+      nomeEmpresaDetentora: item.nomeEmpresaDetentora || '',
+      cnpjDetentor: item.cnpjDetentor || '',
+      autorizacaoFuncionamento: item.autorizacaoFuncionamento || '',
+      nomeDispositivoMedico: item.nomeDispositivoMedico || '',
+      nomeTecnicoDispositivo: item.nomeTecnicoDispositivo || '',
+      numeroNotificacaoRegistro: item.numeroNotificacaoRegistro || '',
+      situacaoNotificacaoRegistro: item.situacaoNotificacaoRegistro || '',
+      processoNotificacaoRegistro: item.processoNotificacaoRegistro || '',
+      classificacaoRisco: item.classificacaoRisco || '',
+      dataInicioVigencia: item.dataInicioVigencia || null,
+      dataVencimento: item.dataVencimento || null,
+      linkConsultaAnvisa: item.linkConsultaAnvisa || '',
 
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      'Ativo': { variant: 'default', color: 'bg-green-100 text-green-800' },
-      'Inativo': { variant: 'secondary', color: 'bg-gray-100 text-gray-800' },
-      'Novo': { variant: 'outline', color: 'bg-blue-100 text-blue-800' },
-      'Desligado': { variant: 'destructive', color: 'bg-red-100 text-red-800' }
-    };
-    
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig['Inativo'];
-    
-    return (
-      <Badge className={config.color}>
-        {status}
-      </Badge>
-    );
-  };
+      // Apresentações
+      apresentacaoPrimaria: item.apresentacaoPrimaria || '',
+      apresentacaoSecundaria: item.apresentacaoSecundaria || '',
+      apresentacaoEmbarque: item.apresentacaoEmbarque || '',
+      componentes: item.componentes || '',
+      referenciasComercializadas: item.referenciasComercializadas || [],
 
-  const renderUsuarios = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold text-biodina-blue">Usuários</h2>
-          <p className="text-gray-600">Gerencie os usuários do sistema</p>
-        </div>
-      </div>
+      // Códigos Fiscais
+      codigoNCM: item.codigoNCM || '',
+      cest: item.cest || '',
+      codigoEANPrimaria: item.codigoEANPrimaria || '',
+      codigoEANSecundaria: item.codigoEANSecundaria || '',
+      codigoEANEmbarque: item.codigoEANEmbarque || '',
 
-      <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-6">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Nome</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Usuário</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Email</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Cargo</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Tipo</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-3 px-4">
-                      <div className="font-medium text-gray-900">{user.dadosPessoais.nome}</div>
-                    </td>
-                    <td className="py-3 px-4 text-gray-600">{user.credentials.username}</td>
-                    <td className="py-3 px-4 text-gray-600">{user.dadosPessoais.email}</td>
-                    <td className="py-3 px-4 text-gray-600">{user.dadosProfissionais.cargo}</td>
-                    <td className="py-3 px-4">{getStatusBadge(user.status)}</td>
-                    <td className="py-3 px-4">
-                      <Badge variant="outline">
-                        {user.credentials.userType}
-                      </Badge>
-                    </td>
-                    <td className="py-3 px-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditUser(user)}
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        Editar
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+      // Preço e Estoque
+      precoUnitarioVenda: item.precoUnitarioVenda || 0,
+      estoqueFisico: item.estoqueFisico || 0,
+      reservado: item.reservado || 0,
+      estoqueDisponivel: item.estoqueDisponivel || 0,
 
-  const renderPerfis = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold text-biodina-blue">Perfis de Acesso</h2>
-          <p className="text-gray-600">Configure perfis de permissões para diferentes tipos de usuários</p>
-        </div>
-        <Button className="bg-biodina-gold hover:bg-biodina-gold/90">
-          <Plus className="h-4 w-4 mr-2" />
-          Novo Perfil
-        </Button>
-      </div>
+      // Dimensões e Peso
+      pesoLiquido: item.pesoLiquido || 0,
+      pesoBruto: item.pesoBruto || 0,
+      altura: item.altura || 0,
+      largura: item.largura || 0,
+      profundidade: item.profundidade || 0,
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5 text-red-600" />
-              Administrador
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 mb-4">Acesso completo a todos os módulos e funcionalidades do sistema</p>
-            <div className="flex items-center justify-between">
-              <Badge className="bg-red-100 text-red-800">Sistema</Badge>
-              <Button variant="outline" size="sm">
-                <Edit className="h-4 w-4 mr-1" />
-                Editar
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      // Documentação e Links
+      documentacaoLinks: item.documentacaoLinks || {
+        linksDocumentacao: [],
+        arquivosLocais: []
+      },
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-blue-600" />
-              Gerente
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 mb-4">Acesso a módulos de gestão e relatórios gerenciais</p>
-            <div className="flex items-center justify-between">
-              <Badge className="bg-blue-100 text-blue-800">Personalizado</Badge>
-              <Button variant="outline" size="sm">
-                <Edit className="h-4 w-4 mr-1" />
-                Editar
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      // Logística e Comercial
+      diasGarantia: item.diasGarantia || 0,
+      leadtimeRessuprimento: item.leadtimeRessuprimento || 0,
+      diasCrossdocking: item.diasCrossdocking || 0,
+      cupomFiscalPDV: item.cupomFiscalPDV || false,
+      marketplace: item.marketplace || false,
+      tipoItemBlocoK: item.tipoItemBlocoK || '',
+      origemMercadoria: item.origemMercadoria || '',
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <UserCheck className="h-5 w-5 text-green-600" />
-              Usuário
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-gray-600 mb-4">Acesso básico aos módulos operacionais</p>
-            <div className="flex items-center justify-between">
-              <Badge className="bg-green-100 text-green-800">Padrão</Badge>
-              <Button variant="outline" size="sm">
-                <Edit className="h-4 w-4 mr-1" />
-                Editar
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
+      // Auditoria
+      inclusao: item.inclusao || new Date(),
+      ultimaAlteracao: item.ultimaAlteracao || new Date(),
+      incluidoPor: item.incluidoPor || 'Sistema',
+      alteradoPor: item.alteradoPor || 'Sistema'
+    }));
+    setProducts(formattedProducts);
+  }, []);
 
-  const renderEmpresas = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold text-biodina-blue">Empresas</h2>
-          <p className="text-gray-600">Gerencie as empresas do grupo</p>
-        </div>
-        <Button className="bg-biodina-gold hover:bg-biodina-gold/90">
-          <Plus className="h-4 w-4 mr-2" />
-          Nova Empresa
-        </Button>
-      </div>
+  // Reset state when no module is selected
+  useEffect(() => {
+    if (!activeModule) {
+      setActiveSubModule('');
+      setSearchTerm('');
+    }
+  }, [activeModule]);
 
-      <div className="bg-white rounded-lg shadow-sm border">
-        <div className="p-6">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Buscar empresas..."
-                className="pl-10"
-              />
-            </div>
-            <Select defaultValue="todas">
-              <SelectTrigger className="w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todas">Todas as empresas</SelectItem>
-                <SelectItem value="ativas">Ativas</SelectItem>
-                <SelectItem value="inativas">Inativas</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-biodina-gold" />
-                    Biodina Matriz
-                  </CardTitle>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem>Editar</DropdownMenuItem>
-                      <DropdownMenuItem>Configurações</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">Desativar</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-sm">
-                  <p><strong>CNPJ:</strong> 12.345.678/0001-90</p>
-                  <p><strong>Endereço:</strong> São Paulo - SP</p>
-                  <p><strong>Funcionários:</strong> 150</p>
-                </div>
-                <div className="mt-4">
-                  <Badge className="bg-green-100 text-green-800">Ativa</Badge>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-biodina-gold" />
-                    Biodina Filial RJ
-                  </CardTitle>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem>Editar</DropdownMenuItem>
-                      <DropdownMenuItem>Configurações</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">Desativar</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-sm">
-                  <p><strong>CNPJ:</strong> 12.345.678/0002-71</p>
-                  <p><strong>Endereço:</strong> Rio de Janeiro - RJ</p>
-                  <p><strong>Funcionários:</strong> 85</p>
-                </div>
-                <div className="mt-4">
-                  <Badge className="bg-green-100 text-green-800">Ativa</Badge>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-biodina-gold" />
-                    Biodina Filial DF
-                  </CardTitle>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem>Editar</DropdownMenuItem>
-                      <DropdownMenuItem>Configurações</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">Desativar</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 text-sm">
-                  <p><strong>CNPJ:</strong> 12.345.678/0003-52</p>
-                  <p><strong>Endereço:</strong> Brasília - DF</p>
-                  <p><strong>Funcionários:</strong> 45</p>
-                </div>
-                <div className="mt-4">
-                  <Badge className="bg-green-100 text-green-800">Ativa</Badge>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderContent = () => {
-    switch (selectedModule) {
-      case 'usuarios':
-        return renderUsuarios();
-      case 'perfis':
-        return renderPerfis();
-      case 'empresas':
-        return renderEmpresas();
-      default:
-        return renderUsuarios();
+  const toggleModule = (module: string) => {
+    if (expandedModules.includes(module)) {
+      setExpandedModules(expandedModules.filter(m => m !== module));
+      // Only reset selection if we're collapsing the currently active module
+      if (activeModule === module && !activeSubModule) {
+        setActiveModule('');
+        setActiveSubModule('');
+      }
+    } else {
+      setExpandedModules([...expandedModules, module]);
     }
   };
 
-  return (
-    <div className="flex h-screen bg-gray-50">
-      <CadastroSidebar 
-        selectedModule={selectedModule}
-        onModuleChange={setSelectedModule}
-      />
-      
-      <main className="flex-1 overflow-y-auto p-8">
-        {renderContent()}
-      </main>
+  const handleModuleSelect = (module: string, subModule: string) => {
+    setActiveModule(module);
+    setActiveSubModule(subModule);
+    setSearchTerm(''); // Reset search when changing modules
+  };
 
-      <UserModal
-        isOpen={isUserModalOpen}
-        onClose={handleCloseModal}
-        userData={selectedUser || undefined}
-        editMode={editMode}
+  const handleCloseSidebar = () => {
+    setActiveModule('');
+    setActiveSubModule('');
+    setExpandedModules([]);
+    setSearchTerm('');
+  };
+
+  const getModalFields = (module: string, subModule: string) => {
+    const configs: Record<string, any> = {
+      'categorias-categorias': {
+        title: 'Cadastro de Categoria',
+        fields: [
+          { key: 'nome', label: 'Nome', type: 'text', required: true },
+          { key: 'descricao', label: 'Descrição', type: 'textarea' },
+          { key: 'tipo', label: 'Tipo', type: 'select', options: [
+            { value: 'produtos', label: 'Produtos' },
+            { value: 'servicos', label: 'Serviços' }
+          ]},
+          { key: 'ativo', label: 'Ativo', type: 'select', options: [
+            { value: 'true', label: 'Sim' },
+            { value: 'false', label: 'Não' }
+          ]}
+        ]
+      },
+      'prazos_pagamento-prazos_pagamento': {
+        title: 'Cadastro de Prazo de Pagamento',
+        fields: [
+          { key: 'nome', label: 'Nome', type: 'text', required: true },
+          { key: 'dias', label: 'Dias', type: 'number', required: true },
+          { key: 'descricao', label: 'Descrição', type: 'textarea' },
+          { key: 'ativo', label: 'Ativo', type: 'select', options: [
+            { value: 'true', label: 'Sim' },
+            { value: 'false', label: 'Não' }
+          ]}
+        ]
+      },
+      'produtos-tabela_preco': {
+        title: 'Cadastro de Tabela de Preço',
+        fields: [
+          { key: 'nome', label: 'Nome', type: 'text', required: true },
+          { key: 'descricao', label: 'Descrição', type: 'textarea' },
+          { key: 'margem', label: 'Margem (%)', type: 'text' },
+          { key: 'ativa', label: 'Ativa', type: 'select', options: [
+            { value: 'true', label: 'Sim' },
+            { value: 'false', label: 'Não' }
+          ]}
+        ]
+      },
+      'produtos-kits': {
+        title: 'Cadastro de Kit',
+        fields: [
+          { key: 'nome', label: 'Nome', type: 'text', required: true },
+          { key: 'codigo', label: 'Código', type: 'text', required: true },
+          { key: 'produtos_inclusos', label: 'Produtos Inclusos', type: 'number' },
+          { key: 'valor_total', label: 'Valor Total', type: 'number' }
+        ]
+      },
+      'estoque-estoque': {
+        title: 'Cadastro de Local de Estoque',
+        fields: [
+          { key: 'empresa_id', label: 'CNPJ da Empresa', type: 'text', required: true },
+          { key: 'nome_fantasia', label: 'Nome da Unidade', type: 'text', required: true },
+          { key: 'deposito_id', label: 'ID do Depósito', type: 'text', required: true },
+          { key: 'local_fisico', label: 'Local Físico', type: 'text', required: true }
+        ]
+      }
+    };
+
+    return configs[`${module}-${subModule}`];
+  };
+
+  const handleNewRecord = () => {
+    if (activeModule === 'produtos' && activeSubModule === 'produtos') {
+      setEditingProduct(null);
+      setShowProductForm(true);
+    } else if (activeModule === 'servicos' && activeSubModule === 'servicos') {
+      setShowServiceModal(true);
+    } else if (activeModule === 'usuarios' && activeSubModule === 'usuarios') {
+      setShowUserModal(true);
+    } else if (activeModule === 'entidades' && activeSubModule === 'entidades') {
+      setShowEntidadeModal(true);
+    } else if (activeModule === 'contas_bancarias' && activeSubModule === 'contas_bancarias') {
+      setShowContaBancariaModal(true);
+    } else {
+      const config = getModalFields(activeModule, activeSubModule);
+      if (config) {
+        setGenericModalConfig(config);
+        setShowGenericModal(true);
+      }
+    }
+  };
+
+  const handleGetStarted = () => {
+    setActiveModule('produtos');
+    setActiveSubModule('produtos');
+    setExpandedModules(['produtos']);
+  };
+
+  // Product-specific handlers
+  const handleSaveProduct = (productData: ProductRegistrationData) => {
+    if (editingProduct) {
+      // Update existing product
+      setProducts(prev => prev.map(p => 
+        p.codigo === editingProduct.codigo ? productData : p
+      ));
+      toast({
+        title: "Produto atualizado",
+        description: `O produto ${productData.codigo} foi atualizado com sucesso.`,
+      });
+    } else {
+      // Add new product
+      setProducts(prev => [...prev, productData]);
+      toast({
+        title: "Produto cadastrado",
+        description: `O produto ${productData.codigo} foi cadastrado com sucesso.`,
+      });
+    }
+    setShowProductForm(false);
+    setEditingProduct(null);
+  };
+
+  const handleEditProduct = (product: ProductRegistrationData) => {
+    setEditingProduct(product);
+    setShowProductForm(true);
+  };
+
+  const handleViewProduct = (product: ProductRegistrationData) => {
+    // For now, just edit the product (can be extended to a view-only modal later)
+    handleEditProduct(product);
+  };
+
+  const handleDeleteProduct = (productCode: string) => {
+    setProducts(prev => prev.filter(p => p.codigo !== productCode));
+    toast({
+      title: "Produto removido",
+      description: `O produto ${productCode} foi removido com sucesso.`,
+    });
+  };
+
+  const currentSubModule = activeModule && activeSubModule ? 
+    modules[activeModule as keyof typeof modules]?.subModules[activeSubModule] : null;
+
+  // Filter products based on search term
+  const filteredProducts = products.filter(product => 
+    product.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    product.marca.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <SidebarLayout>
+      <div className="flex h-full bg-gray-50/50">
+        <CadastroSidebar
+          activeModule={activeModule}
+          activeSubModule={activeSubModule}
+          expandedModules={expandedModules}
+          onModuleToggle={toggleModule}
+          onModuleSelect={handleModuleSelect}
+          onClose={handleCloseSidebar}
+        />
+
+        <div className="flex-1 flex flex-col min-h-0">
+          {activeSubModule && currentSubModule ? (
+            <>
+              <ContentHeader
+                title={currentSubModule.name}
+                description={`Gerencie os registros de ${currentSubModule.name.toLowerCase()}`}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                onNewRecord={handleNewRecord}
+              />
+
+              <div className="flex-1 p-6 min-h-0">
+                {/* Show custom product table for products module */}
+                {activeModule === 'produtos' && activeSubModule === 'produtos' ? (
+                  <ProductListingTable 
+                    products={filteredProducts}
+                    onEdit={handleEditProduct}
+                    onView={handleViewProduct}
+                    onDelete={handleDeleteProduct}
+                  />
+                ) : (
+                  <DataTable 
+                    data={currentSubModule.data} 
+                    moduleName={currentSubModule.name}
+                  />
+                )}
+              </div>
+            </>
+          ) : (
+            <EmptyState onGetStarted={handleGetStarted} />
+          )}
+        </div>
+      </div>
+
+      {/* Product Registration Form */}
+      <ProductRegistrationForm
+        isOpen={showProductForm}
+        product={editingProduct}
+        onClose={() => {
+          setShowProductForm(false);
+          setEditingProduct(null);
+        }}
+        onSave={handleSaveProduct}
       />
-    </div>
+
+      {showServiceModal && (
+        <ServiceModal onClose={() => setShowServiceModal(false)} />
+      )}
+
+      <UserModal 
+        isOpen={showUserModal}
+        onClose={() => setShowUserModal(false)} 
+      />
+
+      {showEntidadeModal && (
+        <EntidadeModal onClose={() => setShowEntidadeModal(false)} />
+      )}
+
+      {showContaBancariaModal && (
+        <ContaBancariaModal onClose={() => setShowContaBancariaModal(false)} />
+      )}
+
+      {showGenericModal && genericModalConfig && (
+        <GenericModal 
+          title={genericModalConfig.title}
+          fields={genericModalConfig.fields}
+          onClose={() => {
+            setShowGenericModal(false);
+            setGenericModalConfig(null);
+          }} 
+        />
+      )}
+    </SidebarLayout>
   );
 };
 
