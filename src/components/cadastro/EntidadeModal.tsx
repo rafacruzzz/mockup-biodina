@@ -7,10 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { X, Save } from "lucide-react";
 
 interface EntidadeModalProps {
+  isOpen: boolean;
   onClose: () => void;
 }
 
-const EntidadeModal = ({ onClose }: EntidadeModalProps) => {
+const EntidadeModal = ({ isOpen, onClose }: EntidadeModalProps) => {
   const [formData, setFormData] = useState({
     tipo: "",
     nome_razao_social: "",
@@ -265,6 +266,8 @@ const EntidadeModal = ({ onClose }: EntidadeModalProps) => {
       </div>
     </>
   );
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">

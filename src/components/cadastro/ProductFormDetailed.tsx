@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,10 +9,11 @@ import { Switch } from "@/components/ui/switch";
 import { X, Save, Upload } from "lucide-react";
 
 interface ProductFormDetailedProps {
+  isOpen: boolean;
   onClose: () => void;
 }
 
-const ProductFormDetailed = ({ onClose }: ProductFormDetailedProps) => {
+const ProductFormDetailed = ({ isOpen, onClose }: ProductFormDetailedProps) => {
   const [formData, setFormData] = useState({
     // Aba Geral
     nome: "",
@@ -43,6 +43,8 @@ const ProductFormDetailed = ({ onClose }: ProductFormDetailedProps) => {
     console.log("Salvando produto:", formData);
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">

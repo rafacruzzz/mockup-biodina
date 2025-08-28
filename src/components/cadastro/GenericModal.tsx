@@ -8,9 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { X, Save } from "lucide-react";
 
 interface GenericModalProps {
+  isOpen: boolean;
   onClose: () => void;
   title: string;
-  fields: Array<{
+  moduleName: string;
+  fields?: Array<{
     key: string;
     label: string;
     type: 'text' | 'email' | 'select' | 'textarea' | 'number';
@@ -19,7 +21,7 @@ interface GenericModalProps {
   }>;
 }
 
-const GenericModal = ({ onClose, title, fields }: GenericModalProps) => {
+const GenericModal = ({ isOpen, onClose, title, moduleName, fields = [] }: GenericModalProps) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
 
   const handleInputChange = (field: string, value: string) => {
@@ -67,6 +69,8 @@ const GenericModal = ({ onClose, title, fields }: GenericModalProps) => {
     }
   };
 
+  if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
@@ -78,16 +82,23 @@ const GenericModal = ({ onClose, title, fields }: GenericModalProps) => {
         </div>
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {fields.map((field) => (
-              <div key={field.key} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
-                <Label htmlFor={field.key}>
-                  {field.label} {field.required && '*'}
-                </Label>
-                {renderField(field)}
-              </div>
-            ))}
-          </div>
+          {fields.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {fields.map((field) => (
+                <div key={field.key} className={field.type === 'textarea' ? 'md:col-span-2' : ''}>
+                  <Label htmlFor={field.key}>
+                    {field.label} {field.required && '*'}
+                  </Label>
+                  {renderField(field)}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Formulário genérico para {moduleName}</p>
+              <p className="text-sm text-gray-400 mt-2">Configure os campos específicos para este módulo</p>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end gap-4 p-6 border-t">

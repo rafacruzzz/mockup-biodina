@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,10 +7,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { X, Save } from "lucide-react";
 
 interface ContaBancariaModalProps {
+  isOpen: boolean;
   onClose: () => void;
 }
 
-const ContaBancariaModal = ({ onClose }: ContaBancariaModalProps) => {
+const ContaBancariaModal = ({ isOpen, onClose }: ContaBancariaModalProps) => {
   const [formData, setFormData] = useState({
     situacao: "",
     nome_conta: "",
@@ -29,7 +29,7 @@ const ContaBancariaModal = ({ onClose }: ContaBancariaModalProps) => {
 
   const bancos = [
     "Banco do Brasil",
-    "Itaú Unibanco",
+    "Itaú Unibanco", 
     "Bradesco",
     "Santander",
     "Caixa Econômica Federal",
@@ -45,7 +45,7 @@ const ContaBancariaModal = ({ onClose }: ContaBancariaModalProps) => {
   const tiposConta = [
     "Conta Corrente",
     "Conta Poupança",
-    "Conta Salário",
+    "Conta Salário", 
     "Conta Investimento"
   ];
 
@@ -69,7 +69,7 @@ const ContaBancariaModal = ({ onClose }: ContaBancariaModalProps) => {
 
   const handleSave = () => {
     const currentDate = new Date().toLocaleDateString('pt-BR');
-    const currentUser = "Usuário Atual"; // Em um sistema real, viria do contexto de autenticação
+    const currentUser = "Usuário Atual";
     
     const finalData = {
       ...formData,
@@ -81,6 +81,8 @@ const ContaBancariaModal = ({ onClose }: ContaBancariaModalProps) => {
     console.log("Salvando Conta Bancária:", finalData);
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
