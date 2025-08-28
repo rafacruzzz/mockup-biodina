@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Save, User, Bell, UserMinus, AlertTriangle, Monitor } from "lucide-react";
+import { Save, User, Bell, UserMinus, AlertTriangle, Monitor, Shield } from "lucide-react";
 import { ColaboradorData } from "@/types/colaborador";
+import { ModuleAccess } from "@/types/permissions";
 import { getSolicitacoesByColaborador } from "@/data/solicitacoes";
 import { useColaboradores } from "@/hooks/useColaboradores";
 import DadosPessoaisTab from "./tabs/DadosPessoaisTab";
@@ -18,6 +19,8 @@ import SolicitacoesTab from "./tabs/SolicitacoesTab";
 import DesligamentoTab from "./tabs/DesligamentoTab";
 import DesligarColaboradorModal from "./DesligarColaboradorModal";
 import TITab from "./tabs/TITab";
+import AccessProfileSelector from "../cadastro/AccessProfileSelector";
+import ModuleAccessTree from "../cadastro/ModuleAccessTree";
 
 interface ColaboradorModalProps {
   isOpen: boolean;
@@ -42,6 +45,12 @@ const ColaboradorModal = ({
     planoCarreira?: string;
     sugestaoSalario?: string;
     breakdownSalarial?: string;
+    username?: string;
+    password?: string;
+    confirmPassword?: string;
+    userType?: string;
+    isActive?: boolean;
+    moduleAccess?: ModuleAccess[];
   }>({
     dadosPessoais: {
       nome: colaboradorData?.dadosPessoais?.nome || '',
@@ -165,7 +174,13 @@ const ColaboradorModal = ({
       processadoPor: '',
       observacoes: '',
       itensDesligamento: []
-    }
+    },
+    username: '',
+    password: '',
+    confirmPassword: '',
+    userType: '',
+    isActive: true,
+    moduleAccess: []
   });
 
   const handleInputChange = (section: keyof ColaboradorData | string, field: string, value: any) => {
@@ -206,6 +221,20 @@ const ColaboradorModal = ({
         }
       }));
     }
+  };
+
+  const handleUserInputChange = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleModuleAccessChange = (modules: ModuleAccess[]) => {
+    setFormData(prev => ({
+      ...prev,
+      moduleAccess: modules
+    }));
   };
 
   const handleDesligarColaborador = (motivo: string, data: string) => {
@@ -262,15 +291,15 @@ const ColaboradorModal = ({
   const solicitacoesPendentes = editMode && colaboradorId ? 
     getSolicitacoesByColaborador(colaboradorId).filter(s => s.status === 'pendente').length : 0;
 
-  const totalTabs = editMode ? (colaboradorDesligado ? 10 : 9) : 7;
+  const totalTabs = editMode ? (colaboradorDesligado ? 12 : 11) : 9;
 
   const getTabsGridClass = (totalTabs: number) => {
     switch (totalTabs) {
-      case 7: return 'grid grid-cols-7';
-      case 8: return 'grid grid-cols-8';
       case 9: return 'grid grid-cols-9';
       case 10: return 'grid grid-cols-10';
-      default: return 'grid grid-cols-7';
+      case 11: return 'grid grid-cols-11';
+      case 12: return 'grid grid-cols-12';
+      default: return 'grid grid-cols-9';
     }
   };
 
@@ -313,8 +342,16 @@ const ColaboradorModal = ({
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto">
-            <Tabs defaultValue="dados-pessoais" className="h-full flex flex-col">
+            <Tabs defaultValue="usuario" className="h-full flex flex-col">
               <TabsList className={`${getTabsGridClass(totalTabs)} w-full mb-4`}>
+                <TabsTrigger value="usuario" className="text-xs">
+                  <User className="h-4 w-4 mr-1" />
+                  Usuário
+                </TabsTrigger>
+                <TabsTrigger value="controle-sistema" className="text-xs">
+                  <Shield className="h-4 w-4 mr-1" />
+                  Controle Sistema
+                </TabsTrigger>
                 <TabsTrigger value="dados-pessoais" className="text-xs">
                   Dados Pessoais
                 </TabsTrigger>
@@ -365,6 +402,125 @@ const ColaboradorModal = ({
               </TabsList>
 
               <div className="flex-1 overflow-y-auto px-1">
+                <TabsContent value="usuario" className="mt-0">
+                  <div className="space-y-6 pb-4">
+                    {/* Credenciais de Acesso */}
+                    <div className="space-y-4">
+                      <h3 className="font-semibold text-gray-900 border-b pb-2">
+                        Credenciais de Acesso
+                      </h3>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <label htmlFor="username" className="block text-sm font-medium text-gray-700">Nome de Usuário *</label>
+                          <input
+                            id="username"
+                            type="text"
+                            value={formData.username || ''}
+                            onChange={(e) => handleUserInputChange('username', e.target.value)}
+                            placeholder="Digite o nome de usuário"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-biodina-gold focus:border-transparent"
+                            required
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="userType" className="block text-sm font-medium text-gray-700">Tipo de Usuário *</label>
+                          <select
+                            id="userType"
+                            value={formData.userType || ''}
+                            onChange={(e) => handleUserInputChange('userType', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-biodina-gold focus:border-transparent"
+                          >
+                            <option value="">Selecione o tipo</option>
+                            <option value="admin">Administrador</option>
+                            <option value="gerente">Gerente</option>
+                            <option value="usuario">Usuário</option>
+                            <option value="visitante">Visitante</option>
+                          </select>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="password" className="block text-sm font-medium text-gray-700">Senha *</label>
+                          <input
+                            id="password"
+                            type="password"
+                            value={formData.password || ''}
+                            onChange={(e) => handleUserInputChange('password', e.target.value)}
+                            placeholder="Digite a senha"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-biodina-gold focus:border-transparent"
+                            required
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirmar Senha *</label>
+                          <input
+                            id="confirmPassword"
+                            type="password"
+                            value={formData.confirmPassword || ''}
+                            onChange={(e) => handleUserInputChange('confirmPassword', e.target.value)}
+                            placeholder="Confirme a senha"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-biodina-gold focus:border-transparent"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Status */}
+                    <div className="space-y-4">
+                      <h3 className="font-semibold text-gray-900 border-b pb-2">
+                        Status
+                      </h3>
+                      
+                      <div className="flex items-center space-x-2">
+                        <input
+                          id="isActive"
+                          type="checkbox"
+                          checked={formData.isActive || false}
+                          onChange={(e) => handleUserInputChange('isActive', e.target.checked)}
+                          className="h-4 w-4 text-biodina-gold focus:ring-biodina-gold border-gray-300 rounded"
+                        />
+                        <label htmlFor="isActive" className="text-sm font-medium text-gray-700">Usuário ativo</label>
+                        <Badge variant={formData.isActive ? "default" : "secondary"}>
+                          {formData.isActive ? "Ativo" : "Inativo"}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="controle-sistema" className="mt-0">
+                  <div className="space-y-6 pb-4">
+                    <div>
+                      <h3 className="font-semibold text-gray-900 mb-4">Permissões e Controles de Sistema</h3>
+                      <p className="text-sm text-gray-600 mb-6">
+                        Configure as permissões de acesso aos módulos do sistema. Você pode aplicar um perfil pré-definido ou configurar as permissões individualmente.
+                      </p>
+                    </div>
+
+                    {/* Seletor de Perfil */}
+                    <div className="space-y-4">
+                      <AccessProfileSelector onProfileSelect={handleModuleAccessChange} />
+                    </div>
+
+                    {/* Árvore de Permissões */}
+                    <div className="space-y-4">
+                      <div className="border-t pt-6">
+                        <h4 className="font-medium text-gray-900 mb-4">Permissões Detalhadas</h4>
+                        <p className="text-sm text-gray-600 mb-4">
+                          Configure permissões específicas para cada módulo e funcionalidade
+                        </p>
+                        <ModuleAccessTree 
+                          modules={formData.moduleAccess || []}
+                          onModuleChange={handleModuleAccessChange}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+
                 <TabsContent value="dados-pessoais" className="mt-0">
                   <DadosPessoaisTab 
                     formData={formData.dadosPessoais}
