@@ -1,95 +1,119 @@
 
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { rhModules } from '@/data/rhModules';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { modules } from "@/data/rhModules";
 
 interface RHSidebarProps {
   activeModule: string;
-  onModuleChange: (moduleId: string) => void;
+  activeSubModule: string;
+  expandedModules: string[];
+  onModuleToggle: (module: string) => void;
+  onModuleSelect: (module: string, subModule: string) => void;
+  onClose: () => void;
 }
 
-const RHSidebar = ({ activeModule, onModuleChange }: RHSidebarProps) => {
-  const [openModules, setOpenModules] = React.useState<string[]>([]);
-
-  const toggleModule = (moduleId: string) => {
-    setOpenModules(prev => 
-      prev.includes(moduleId)
-        ? prev.filter(id => id !== moduleId)
-        : [...prev, moduleId]
-    );
+const RHSidebar = ({
+  activeModule,
+  activeSubModule,
+  expandedModules,
+  onModuleToggle,
+  onModuleSelect,
+  onClose
+}: RHSidebarProps) => {
+  const handleCollapseModule = (moduleKey: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    onModuleToggle(moduleKey);
   };
 
-  const isModuleOpen = (moduleId: string) => openModules.includes(moduleId);
+  const handleSubModuleSelect = (module: string, subModule: string) => {
+    onModuleSelect(module, subModule);
+  };
 
   return (
-    <div className="w-64 bg-white shadow-lg h-full border-r">
-      <div className="p-4 border-b">
-        <h2 className="text-lg font-semibold text-biodina-blue">Recursos Humanos</h2>
+    <div className="w-80 bg-white border-r border-gray-200/80 overflow-y-auto shadow-sm">
+      <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-biodina-blue mb-2">Recursos Humanos</h2>
+          <p className="text-gray-600 text-sm">Gerencie colaboradores e avaliações</p>
+        </div>
+        <button
+          onClick={onClose}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          title="Fechar recursos humanos"
+        >
+          <X className="h-5 w-5 text-gray-500" />
+        </button>
       </div>
       
-      <nav className="p-4 space-y-2">
-        {rhModules.map((module: any) => {
-          const IconComponent = module.icon;
-          const hasSubModules = module.subModules && module.subModules.length > 0;
-          
-          return (
-            <div key={module.id}>
-              {hasSubModules ? (
-                <Collapsible
-                  open={isModuleOpen(module.id)}
-                  onOpenChange={() => toggleModule(module.id)}
-                >
-                  <CollapsibleTrigger className="w-full">
-                    <div className={`flex items-center justify-between w-full p-3 rounded-lg transition-colors ${
-                      activeModule === module.id ? 'bg-biodina-gold text-white' : 'hover:bg-gray-100'
-                    }`}>
-                      <div className="flex items-center space-x-3">
-                        <IconComponent className="h-5 w-5" />
-                        <span className="font-medium">{module.name}</span>
-                      </div>
-                      {isModuleOpen(module.id) ? (
-                        <ChevronDown className="h-4 w-4" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4" />
-                      )}
-                    </div>
-                  </CollapsibleTrigger>
-                  
-                  {module.subModules && (
-                    <CollapsibleContent className="ml-4 mt-2 space-y-1">
-                      {module.subModules.map((subModule: any) => (
-                        <button
-                          key={subModule.id}
-                          onClick={() => onModuleChange(subModule.id)}
-                          className={`w-full text-left p-2 rounded-lg transition-colors ${
-                            activeModule === subModule.id 
-                              ? 'bg-biodina-gold/20 text-biodina-blue' 
-                              : 'hover:bg-gray-50'
-                          }`}
-                        >
-                          <span className="text-sm">{subModule.name}</span>
-                        </button>
-                      ))}
-                    </CollapsibleContent>
-                  )}
-                </Collapsible>
-              ) : (
-                <button
-                  onClick={() => onModuleChange(module.id)}
-                  className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
-                    activeModule === module.id ? 'bg-biodina-gold text-white' : 'hover:bg-gray-100'
-                  }`}
-                >
-                  <IconComponent className="h-5 w-5" />
-                  <span className="font-medium">{module.name}</span>
-                </button>
+      <div className="p-4 space-y-2">
+        {Object.entries(modules).map(([key, module]) => (
+          <div key={key} className="space-y-1">
+            <button
+              onClick={() => onModuleToggle(key)}
+              className={cn(
+                "w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200",
+                activeModule === key 
+                  ? 'bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md' 
+                  : 'hover:bg-gray-50 text-gray-700 hover:shadow-sm'
               )}
-            </div>
-          );
-        })}
-      </nav>
+            >
+              <div className="flex items-center gap-3">
+                <div className={cn(
+                  "p-2 rounded-lg",
+                  activeModule === key ? 'bg-white/20' : 'bg-biodina-gold/10'
+                )}>
+                  <module.icon className={cn(
+                    "h-5 w-5",
+                    activeModule === key ? 'text-white' : 'text-biodina-gold'
+                  )} />
+                </div>
+                <span className="font-medium">{module.name}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                {expandedModules.includes(key) && (
+                  <button
+                    onClick={(e) => handleCollapseModule(key, e)}
+                    className="p-1 rounded-md hover:bg-white/20 transition-colors"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
+                {expandedModules.includes(key) ? 
+                  <ChevronDown className="h-4 w-4" /> : 
+                  <ChevronRight className="h-4 w-4" />
+                }
+              </div>
+            </button>
+            
+            {expandedModules.includes(key) && module.subModules && (
+              <div className="ml-4 space-y-1 animate-fade-in">
+                {Object.entries(module.subModules).map(([subKey, subModule]) => (
+                  <button
+                    key={subKey}
+                    onClick={() => handleSubModuleSelect(key, subKey)}
+                    className={cn(
+                      "w-full text-left p-3 rounded-lg text-sm transition-all duration-200",
+                      activeModule === key && activeSubModule === subKey
+                        ? 'bg-biodina-gold text-white shadow-sm'
+                        : 'hover:bg-gray-50 text-gray-600'
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className={cn(
+                        "w-2 h-2 rounded-full",
+                        activeModule === key && activeSubModule === subKey
+                          ? 'bg-white'
+                          : 'bg-biodina-gold/60'
+                      )} />
+                      {subModule.name}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
