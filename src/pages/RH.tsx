@@ -1,10 +1,10 @@
+
 import React, { useState } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import RHSidebar from "@/components/rh/RHSidebar";
 import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
 import EmptyState from "@/components/cadastro/EmptyState";
-import ColaboradorModal from "@/components/rh/ColaboradorModal";
 import DepartamentoModal from "@/components/rh/DepartamentoModal";
 import ExpedienteModal from "@/components/rh/ExpedienteModal";
 import CargoModal from "@/components/rh/CargoModal";
@@ -32,7 +32,6 @@ const RH = () => {
   const [selectedProcessoId, setSelectedProcessoId] = useState<string | null>(null);
   
   // Estados dos modais existentes
-  const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
   const [isDepartamentoModalOpen, setIsDepartamentoModalOpen] = useState(false);
   const [isExpedienteModalOpen, setIsExpedienteModalOpen] = useState(false);
   const [isCargoModalOpen, setIsCargoModalOpen] = useState(false);
@@ -41,11 +40,6 @@ const RH = () => {
   const [isPlanoCarreiraModalOpen, setIsPlanoCarreiraModalOpen] = useState(false);
   const [isCargoPlanoModalOpen, setIsCargoPlanoModalOpen] = useState(false);
   const [isNiveisProgressaoModalOpen, setIsNiveisProgressaoModalOpen] = useState(false);
-
-  // Estados para modo edição
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editingColaboradorId, setEditingColaboradorId] = useState<string | null>(null);
-  const [editingColaboradorData, setEditingColaboradorData] = useState<any>(null);
 
   // Reset state when no module is selected
   const resetSelection = () => {
@@ -79,10 +73,6 @@ const RH = () => {
   };
 
   const handleNewRecord = () => {
-    setIsEditMode(false);
-    setEditingColaboradorId(null);
-    setEditingColaboradorData(null);
-    
     if (activeModule === 'departamentos') {
       if (activeSubModule === 'setores') {
         setIsDepartamentoModalOpen(true);
@@ -102,96 +92,10 @@ const RH = () => {
     }
   };
 
-  const handleEditItem = (item: any, moduleName: string) => {
-    if (activeModule === 'colaboradores' && moduleName === 'Colaboradores') {
-      setIsEditMode(true);
-      setEditingColaboradorId(String(item.id));
-      
-      const colaboradorCompleto = {
-        dadosPessoais: {
-          nome: item.nome || '',
-          cpf: item.cpf || '',
-          pis: item.pis || '',
-          idade: item.idade || '',
-          dataNascimento: item.dataNascimento || '',
-          genero: item.genero || '',
-          etnia: item.etnia || '',
-          rg: item.rg || '',
-          orgaoExpedidorRg: item.orgaoExpedidorRg || '',
-          ufEmissorRg: item.ufEmissorRg || '',
-          dataExpedicaoRg: item.dataExpedicaoRg || '',
-          naturalidade: item.naturalidade || '',
-          nomeMae: item.nomeMae || '',
-          nomePai: item.nomePai || '',
-          cid: item.cid || '',
-          email: item.email || '',
-          telefone: item.telefone || '',
-          endereco: item.endereco || '',
-          bairro: item.bairro || '',
-          observacoes: item.observacoes || ''
-        },
-        dadosProfissionais: {
-          empresa: item.empresa || '',
-          uf: item.uf || '',
-          setor: item.setor || '',
-          funcao: item.funcao || '',
-          cargo: item.cargo || '',
-          nivel: item.nivel || '',
-          cbo: item.cbo || '',
-          compativelFuncao: item.compativelFuncao || false,
-          funcoesDesempenhadas: item.funcoesDesempenhadas || '',
-          dataAdmissao: item.dataAdmissao || '',
-          dataCadastro: item.dataCadastro || '',
-          tempoCasa: item.tempoCasa || '',
-          ultimaPromocao: item.ultimaPromocao || '',
-          previsaoFerias: item.previsaoFerias || ''
-        },
-        dadosFinanceiros: {
-          salarioBase: item.salarioBase || '',
-          adicionalNivel: item.adicionalNivel || '',
-          insalubridade: item.insalubridade || '',
-          sobreaviso: item.sobreaviso || '',
-          salarioBruto: item.salarioBruto || '',
-          valorHoraTrabalhada: item.valorHoraTrabalhada || '',
-          pisoSalarial: item.pisoSalarial || '',
-          mediaSalarial: item.mediaSalarial || '',
-          dependentesIR: item.dependentesIR || ''
-        },
-        dadosBancarios: {
-          banco: item.banco || '',
-          tipoConta: item.tipoConta || '',
-          agencia: item.agencia || '',
-          conta: item.conta || ''
-        },
-        formacaoEscolaridade: {
-          escolaridade: item.escolaridade || '',
-          possuiDiploma: item.possuiDiploma || false
-        },
-        beneficios: {
-          tipoPlano: item.tipoPlano || '',
-          quantidadeDependentesPlano: item.quantidadeDependentesPlano || ''
-        },
-        documentacao: {
-          anexos: item.anexos || []
-        }
-      };
-      
-      setEditingColaboradorData(colaboradorCompleto);
-      setIsColaboradorModalOpen(true);
-    }
-  };
-
-  const handleCloseColaboradorModal = () => {
-    setIsColaboradorModalOpen(false);
-    setIsEditMode(false);
-    setEditingColaboradorId(null);
-    setEditingColaboradorData(null);
-  };
-
   const handleGetStarted = () => {
-    setActiveModule('colaboradores');
-    setActiveSubModule('colaboradores');
-    setExpandedModules(['colaboradores']);
+    setActiveModule('processoSeletivo');
+    setActiveSubModule('visaoGeral');
+    setExpandedModules(['processoSeletivo']);
   };
 
   // Handlers para navegação do processo seletivo
@@ -254,21 +158,6 @@ const RH = () => {
     return "Novo Registro";
   };
 
-  // Verifica se deve mostrar o botão de novo registro (não mostrar para colaboradores)
-  const shouldShowNewRecordButton = () => {
-    return activeModule !== 'colaboradores';
-  };
-
-  // Adicionar listener para eventos de edição
-  React.useEffect(() => {
-    const handleEditEvent = (event: any) => {
-      handleEditItem(event.detail.item, event.detail.moduleName);
-    };
-
-    window.addEventListener('editItem', handleEditEvent);
-    return () => window.removeEventListener('editItem', handleEditEvent);
-  }, [activeModule]);
-
   return (
     <ProcessoSeletivoProvider>
       <SidebarLayout>
@@ -291,51 +180,14 @@ const RH = () => {
                   </div>
                 ) : (
                   <>
-                    {shouldShowNewRecordButton() && (
-                      <ContentHeader
-                        title={currentSubModule?.name || ''}
-                        description={`Gerencie os registros de ${currentSubModule?.name?.toLowerCase() || ''}`}
-                        searchTerm={searchTerm}
-                        onSearchChange={setSearchTerm}
-                        onNewRecord={handleNewRecord}
-                        buttonText={getButtonText()}
-                      />
-                    )}
-
-                    {!shouldShowNewRecordButton() && (
-                      <div className="bg-white border-b border-gray-200/80 p-6">
-                        <div className="flex justify-between items-start mb-4">
-                          <div>
-                            <h1 className="text-3xl font-bold text-biodina-blue mb-2">{currentSubModule?.name || ''}</h1>
-                            <p className="text-gray-600">{`Gerencie os registros de ${currentSubModule?.name?.toLowerCase() || ''}`}</p>
-                          </div>
-                        </div>
-
-                        <div className="flex gap-4 items-center">
-                          <div className="relative flex-1 max-w-md">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                            <Input
-                              placeholder="Pesquisar registros..."
-                              value={searchTerm}
-                              onChange={(e) => setSearchTerm(e.target.value)}
-                              className="pl-10 border-gray-200 focus:border-biodina-gold rounded-xl"
-                            />
-                          </div>
-                          <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50 rounded-xl">
-                            <Filter className="h-4 w-4 mr-2" />
-                            Filtros
-                          </Button>
-                          <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50 rounded-xl">
-                            <Download className="h-4 w-4 mr-2" />
-                            Exportar
-                          </Button>
-                          <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50 rounded-xl">
-                            <Upload className="h-4 w-4 mr-2" />
-                            Importar
-                          </Button>
-                        </div>
-                      </div>
-                    )}
+                    <ContentHeader
+                      title={currentSubModule?.name || ''}
+                      description={`Gerencie os registros de ${currentSubModule?.name?.toLowerCase() || ''}`}
+                      searchTerm={searchTerm}
+                      onSearchChange={setSearchTerm}
+                      onNewRecord={handleNewRecord}
+                      buttonText={getButtonText()}
+                    />
 
                     <div className="flex-1 p-6 min-h-0">
                       <DataTable 
@@ -353,14 +205,6 @@ const RH = () => {
         </div>
 
         {/* Modais existentes */}
-        <ColaboradorModal 
-          isOpen={isColaboradorModalOpen} 
-          onClose={handleCloseColaboradorModal}
-          editMode={isEditMode}
-          colaboradorId={editingColaboradorId || undefined}
-          colaboradorData={editingColaboradorData}
-        />
-        
         <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={() => setIsDepartamentoModalOpen(false)} />
         <CargoModal isOpen={isCargoModalOpen} onClose={() => setIsCargoModalOpen(false)} />
         <ExpedienteModal isOpen={isExpedienteModalOpen} onClose={() => setIsExpedienteModalOpen(false)} />
