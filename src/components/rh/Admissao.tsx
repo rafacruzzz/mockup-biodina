@@ -1,399 +1,821 @@
-
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "@/components/ui/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Plus, UserPlus, CheckCircle, AlertTriangle } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import { useUsers } from "@/hooks/useUsers";
-import { UserData } from "@/types/user";
-import UserModal from "@/components/cadastro/UserModal";
+import { Label } from "@/components/ui/label";
+import { useColaboradores } from "@/hooks/useColaboradores";
+import { Checkbox } from "@/components/ui/checkbox";
 
-interface AdmissaoProps {
-  isOpen: boolean;
-  onClose: () => void;
-  userData?: UserData;
-  editMode?: boolean;
-  showCredentials?: boolean;
-}
+import * as z from "zod";
 
-const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials = false }: AdmissaoProps) => {
-  const { toast } = useToast();
-  const { adicionarUser } = useUsers();
+const formSchema = z.object({
+  dadosPessoais: z.object({
+    nome: z.string().min(2, {
+      message: "Nome must be at least 2 characters.",
+    }),
+    email: z.string().email({
+      message: "Invalid email address.",
+    }),
+    telefone: z.string().min(10, {
+      message: "Telefone must be at least 10 characters.",
+    }),
+    dataNascimento: z.date(),
+    estadoCivil: z.string().optional(),
+    nacionalidade: z.string().optional(),
+    naturalidade: z.string().optional(),
+    genero: z.string().optional(),
+    raca: z.string().optional(),
+    endereco: z.string().optional(),
+    numero: z.string().optional(),
+    complemento: z.string().optional(),
+    bairro: z.string().optional(),
+    cidade: z.string().optional(),
+    uf: z.string().optional(),
+    cep: z.string().optional(),
+  }),
+  documentacao: z.object({
+    cpf: z.string().optional(),
+    rg: z.string().optional(),
+    pis: z.string().optional(),
+    ctps: z.string().optional(),
+    tituloEleitoral: z.string().optional(),
+    reservista: z.string().optional(),
+    cnh: z.string().optional(),
+    anexos: z.array(z.any()).optional(),
+  }),
+  dadosProfissionais: z.object({
+    cargo: z.string().optional(),
+    departamento: z.string().optional(),
+    salario: z.string().optional(),
+    dataAdmissao: z.date(),
+    tipoContrato: z.string().optional(),
+    cargaHoraria: z.string().optional(),
+    gestorImediato: z.string().optional(),
+    observacoes: z.string().optional(),
+  }),
+  dependentes: z.array(
+    z.object({
+      nome: z.string().optional(),
+      dataNascimento: z.date().optional(),
+      cpf: z.string().optional(),
+      grauParentesco: z.string().optional(),
+    })
+  ),
+  planoSaude: z.object({
+    possuiPlano: z.boolean().optional(),
+    tipoPlano: z.string().optional(),
+    numeroCarteira: z.string().optional(),
+    validadeCarteira: z.date().optional(),
+  }),
+  contatosEmergencia: z.array(
+    z.object({
+      nome: z.string().optional(),
+      telefone: z.string().optional(),
+      email: z.string().optional(),
+      grauParentesco: z.string().optional(),
+    })
+  ),
+});
 
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<Partial<UserData>>({
-    dadosPessoais: {
-      nome: userData?.nome || '',
-      cpf: userData?.cpf || '',
-      pis: '',
-      idade: '',
-      dataNascimento: '',
-      estadoCivil: '',
-      nacionalidade: 'Brasileira',
-      genero: '',
-      etnia: '',
-      rg: '',
-      orgaoExpedidorRg: '',
-      ufEmissorRg: '',
-      dataExpedicaoRg: '',
-      naturalidade: '',
-      nomeMae: '',
-      nomePai: '',
-      cep: '',
-      endereco: '',
-      numeroResidencia: '',
-      complemento: '',
-      bairro: '',
-      pcd: '',
-      doencaPreExistente: '',
-      email: userData?.email || '',
-      telefone: userData?.telefone || '',
-      observacoes: ''
-    },
-    dadosProfissionais: {
-      empresa: '',
-      uf: '',
-      setor: '',
-      funcao: '',
-      cargo: '',
-      nivel: '',
-      cbo: '',
-      compativelFuncao: false,
-      funcoesDesempenhadas: '',
-      dataAdmissao: '',
-      dataCadastro: '',
-      tempoCasa: '',
-      ultimaPromocao: '',
-      previsaoFerias: '',
-      tipoUsuario: '',
-      sindicatoVinculado: '',
-      regimeTrabalho: '',
-      horarioTrabalho: '',
-      cargaHorariaSemanal: '',
-      origemContratacao: ''
-    },
-    dadosFinanceiros: {
-      salarioBase: '',
-      adicionalNivel: '',
-      insalubridade: '',
-      sobreaviso: '',
-      salarioBruto: '',
-      valorHoraTrabalhada: '',
-      pisoSalarial: '',
-      mediaSalarial: '',
-      dependentesIR: [],
-      adiantamentoSalarial: false
-    },
-    dadosBancarios: {
-      banco: '',
-      tipoConta: '',
-      agencia: '',
-      conta: ''
-    },
-    formacaoEscolaridade: {
-      escolaridade: '',
-      possuiDiploma: false,
-      comprovantesEscolaridade: []
-    },
-    beneficios: {
-      tipoPlano: '',
-      quantidadeDependentesPlano: '',
-      valeTransporte: {
-        modalidade: '',
-        dataSolicitacaoCartao: '',
-        dataPagamento: ''
+const Admissao = () => {
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const { adicionarColaborador } = useColaboradores();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      dadosPessoais: {
+        nome: "",
+        email: "",
+        telefone: "",
+        dataNascimento: new Date(),
+        estadoCivil: "",
+        nacionalidade: "",
+        naturalidade: "",
+        genero: "",
+        raca: "",
+        endereco: "",
+        numero: "",
+        complemento: "",
+        bairro: "",
+        cidade: "",
+        uf: "",
+        cep: "",
       },
-      valeAlimentacao: {
-        dataSolicitacaoCartao: '',
-        dataPagamento: ''
+      documentacao: {
+        cpf: "",
+        rg: "",
+        pis: "",
+        ctps: "",
+        tituloEleitoral: "",
+        reservista: "",
+        cnh: "",
+        anexos: [],
       },
+      dadosProfissionais: {
+        cargo: "",
+        departamento: "",
+        salario: "",
+        dataAdmissao: new Date(),
+        tipoContrato: "",
+        cargaHoraria: "",
+        gestorImediato: "",
+        observacoes: "",
+      },
+      dependentes: [],
       planoSaude: {
-        operadora: '',
-        dataSolicitacao: '',
-        vigenciaInicio: '',
-        tipoPlano: '',
-        possuiDependentes: false,
-        dependentes: []
-      }
+        possuiPlano: false,
+        tipoPlano: "",
+        numeroCarteira: "",
+        validadeCarteira: new Date(),
+      },
+      contatosEmergencia: [],
     },
-    documentacao: {
-      anexos: [],
-      solicitadoParaDPEm: '',
-      solicitadoPor: '',
-      motivoContratacao: '',
-      observacoesGerais: '',
-      exameAdmissional: {
-        data: '',
-        local: '',
-        horario: ''
-      }
-    },
-    dadosTI: {
-      servidorAcesso: '',
-      permissoesNecessarias: '',
-      restricoes: '',
-      pastasAcesso: '',
-      emailCorporativo: '',
-      ramal: ''
-    }
   });
 
-  const [anexos, setAnexos] = useState<File[]>([]);
-  const [observacoes, setObservacoes] = useState('');
-  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-  const [modalData, setModalData] = useState<UserData | null>(null);
+  const [formData, setFormData] = useState(form.getValues());
 
-  const handleInputChange = (section: keyof UserData, field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value
-      }
-    }));
-  };
-
-  const handleNext = () => {
-    if (step < 3) {
-      setStep(step + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (step > 1) {
-      setStep(step - 1);
-    }
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const userData: Omit<UserData, 'id'> = {
-        nome: formData.dadosPessoais?.nome || '',
-        email: formData.dadosPessoais?.email || '',
-        cpf: formData.dadosPessoais?.cpf || '',
-        telefone: formData.dadosPessoais?.telefone || '',
-        isActive: true,
-        userType: 'colaborador',
-        status: 'Ativo',
-        moduleAccess: [],
-        dadosPessoais: formData.dadosPessoais!,
-        dadosProfissionais: formData.dadosProfissionais!,
-        dadosFinanceiros: formData.dadosFinanceiros!,
-        dadosBancarios: formData.dadosBancarios!,
-        formacaoEscolaridade: formData.formacaoEscolaridade!,
-        beneficios: formData.beneficios!,
-        documentacao: {
-          ...formData.documentacao!,
-          anexos: anexos.map(file => ({
-            id: Date.now().toString(),
-            nome: file.name,
-            tamanho: file.size,
-            tipo: file.type,
-            dataUpload: new Date().toLocaleDateString(),
-            categoria: 'admissao',
-            arquivo: file,
-            validadeIndeterminada: true
-          })),
-          observacoesGerais: observacoes
-        },
-        dadosTI: formData.dadosTI
-      };
-
-      adicionarUser(userData);
-
-      toast({
-        title: "Usuário Adicionado!",
-        description: "O usuário foi adicionado com sucesso.",
-        action: <CheckCircle className="h-4 w-4 text-green-500" />,
-      });
-
-      onClose();
-    } catch (error) {
-      console.error("Erro ao adicionar usuário:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro!",
-        description: "Houve um erro ao adicionar o usuário.",
-        action: <AlertTriangle className="h-4 w-4 text-red-500" />,
-      });
-    }
-  };
-
-  const openUserModal = () => {
-    setModalData(userData || null);
+  const handleOpenUserModal = () => {
     setIsUserModalOpen(true);
+    setFormData(form.getValues());
+  };
+
+  const handleCloseUserModal = () => {
+    setIsUserModalOpen(false);
+  };
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    console.log(values);
+    toast({
+      title: "Sucesso",
+      description: "Formulário submetido com sucesso!",
+    });
+  };
+
+  const handleSaveColaborador = () => {
+    const novoColaborador = {
+      nome: formData.dadosPessoais.nome || '',
+      email: formData.dadosPessoais.email || '',
+      telefone: formData.dadosPessoais.telefone || '',
+      cargo: formData.dadosProfissionais.cargo || '',
+      departamento: formData.dadosProfissionais.departamento || '',
+      dataAdmissao: formData.dadosProfissionais.dataAdmissao || '',
+      status: 'Novo' as const,
+      documentos: formData.documentacao?.anexos || []
+    };
+
+    adicionarColaborador(novoColaborador);
+    setIsUserModalOpen(false);
+    toast({
+      title: "Sucesso",
+      description: "Colaborador adicionado com sucesso!",
+    });
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black/20">
-      <div className="relative m-auto h-fit w-[80%] rounded-lg bg-white p-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-          {editMode ? "Editar Admissão" : "Nova Admissão"}
-        </h2>
-        <p className="text-gray-500 mb-6">Preencha os dados do novo colaborador.</p>
+    <Dialog open={isUserModalOpen} onOpenChange={setIsUserModalOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" onClick={handleOpenUserModal}>
+          Admitir Colaborador
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Admissão de Colaborador</DialogTitle>
+          <DialogDescription>
+            Preencha os dados do colaborador para realizar a admissão.
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            {/* Dados Pessoais */}
+            <div>
+              <h3 className="text-lg font-medium">Dados Pessoais</h3>
+              <Separator className="my-2" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.nome"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome Completo</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Nome Completo" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.telefone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Telefone</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Telefone" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.dataNascimento"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Data de Nascimento</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-[240px] pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="w-auto p-0"
+                          align="start"
+                          side="bottom"
+                        >
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.estadoCivil"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Estado Civil</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Estado Civil" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.nacionalidade"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nacionalidade</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Nacionalidade" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.naturalidade"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Naturalidade</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Naturalidade" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.genero"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gênero</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Gênero" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.raca"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Raça</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Raça" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.endereco"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Endereço</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Endereço" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.numero"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Número</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Número" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.complemento"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Complemento</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Complemento" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.bairro"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Bairro</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Bairro" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.cidade"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cidade</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Cidade" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.uf"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>UF</FormLabel>
+                      <FormControl>
+                        <Input placeholder="UF" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosPessoais.cep"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CEP</FormLabel>
+                      <FormControl>
+                        <Input placeholder="CEP" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
 
-        {/* Progress Indicator */}
-        <div className="flex justify-between text-sm font-medium text-gray-500 mb-6">
-          <span className={step >= 1 ? "text-blue-600" : ""}>Dados Pessoais</span>
-          <span className={step >= 2 ? "text-blue-600" : ""}>Dados Profissionais</span>
-          <span className={step >= 3 ? "text-blue-600" : ""}>Documentação</span>
-        </div>
-        <Separator className="mb-4" />
+            {/* Documentação */}
+            <div>
+              <h3 className="text-lg font-medium">Documentação</h3>
+              <Separator className="my-2" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="documentacao.cpf"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CPF</FormLabel>
+                      <FormControl>
+                        <Input placeholder="CPF" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="documentacao.rg"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>RG</FormLabel>
+                      <FormControl>
+                        <Input placeholder="RG" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="documentacao.pis"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>PIS</FormLabel>
+                      <FormControl>
+                        <Input placeholder="PIS" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="documentacao.ctps"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CTPS</FormLabel>
+                      <FormControl>
+                        <Input placeholder="CTPS" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="documentacao.tituloEleitoral"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Título Eleitoral</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Título Eleitoral" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="documentacao.reservista"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Reservista</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Reservista" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="documentacao.cnh"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CNH</FormLabel>
+                      <FormControl>
+                        <Input placeholder="CNH" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
 
-        {/* Step 1: Dados Pessoais */}
-        {step === 1 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Dados Pessoais</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="nome">Nome Completo</Label>
-                <Input
-                  type="text"
-                  id="nome"
-                  value={formData.dadosPessoais?.nome || ''}
-                  onChange={(e) => handleInputChange('dadosPessoais', 'nome', e.target.value)}
+            {/* Dados Profissionais */}
+            <div>
+              <h3 className="text-lg font-medium">Dados Profissionais</h3>
+              <Separator className="my-2" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="dadosProfissionais.cargo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cargo</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Cargo" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosProfissionais.departamento"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Departamento</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Departamento" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosProfissionais.salario"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Salário</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Salário" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosProfissionais.dataAdmissao"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Data de Admissão</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-[240px] pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="w-auto p-0"
+                          align="start"
+                          side="bottom"
+                        >
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) => date > new Date()}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosProfissionais.tipoContrato"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo de Contrato</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Tipo de Contrato" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosProfissionais.cargaHoraria"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Carga Horária</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Carga Horária" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosProfissionais.gestorImediato"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gestor Imediato</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Gestor Imediato" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="dadosProfissionais.observacoes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Observações</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Observações"
+                          className="resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-              <div>
-                <Label htmlFor="cpf">CPF</Label>
-                <Input
-                  type="text"
-                  id="cpf"
-                  value={formData.dadosPessoais?.cpf || ''}
-                  onChange={(e) => handleInputChange('dadosPessoais', 'cpf', e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  type="email"
-                  id="email"
-                  value={formData.dadosPessoais?.email || ''}
-                  onChange={(e) => handleInputChange('dadosPessoais', 'email', e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="telefone">Telefone</Label>
-                <Input
-                  type="tel"
-                  id="telefone"
-                  value={formData.dadosPessoais?.telefone || ''}
-                  onChange={(e) => handleInputChange('dadosPessoais', 'telefone', e.target.value)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
 
-        {/* Step 2: Dados Profissionais */}
-        {step === 2 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Dados Profissionais</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="cargo">Cargo</Label>
-                <Input
-                  type="text"
-                  id="cargo"
-                  value={formData.dadosProfissionais?.cargo || ''}
-                  onChange={(e) => handleInputChange('dadosProfissionais', 'cargo', e.target.value)}
+            {/* Plano de Saúde */}
+            <div>
+              <h3 className="text-lg font-medium">Plano de Saúde</h3>
+              <Separator className="my-2" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="planoSaude.possuiPlano"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormLabel>Possui Plano de Saúde?</FormLabel>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="planoSaude.tipoPlano"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo de Plano</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Tipo de Plano" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="planoSaude.numeroCarteira"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Número da Carteira</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Número da Carteira" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="planoSaude.validadeCarteira"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Validade da Carteira</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-[240px] pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="w-auto p-0"
+                          align="start"
+                          side="bottom"
+                        >
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) => date < new Date()}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-              <div>
-                <Label htmlFor="setor">Setor</Label>
-                <Input
-                  type="text"
-                  id="setor"
-                  value={formData.dadosProfissionais?.setor || ''}
-                  onChange={(e) => handleInputChange('dadosProfissionais', 'setor', e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="dataAdmissao">Data de Admissão</Label>
-                <Input
-                  type="date"
-                  id="dataAdmissao"
-                  value={formData.dadosProfissionais?.dataAdmissao || ''}
-                  onChange={(e) => handleInputChange('dadosProfissionais', 'dataAdmissao', e.target.value)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
 
-        {/* Step 3: Documentação */}
-        {step === 3 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Documentação</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-4">
-                <Label htmlFor="anexos">Anexos</Label>
-                <Input
-                  type="file"
-                  id="anexos"
-                  multiple
-                  onChange={(e: any) => setAnexos(Array.from(e.target.files))}
-                />
-              </div>
-              <div>
-                <Label htmlFor="observacoes">Observações</Label>
-                <Textarea
-                  id="observacoes"
-                  value={observacoes}
-                  onChange={(e) => setObservacoes(e.target.value)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        )}
+            <Button type="submit">Submit</Button>
+          </form>
+        </Form>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between mt-6">
-          <Button variant="outline" onClick={onClose}>
+        <div className="flex justify-end gap-2 mt-4">
+          <Button variant="secondary" onClick={handleCloseUserModal}>
             Cancelar
           </Button>
-          <div>
-            {step > 1 && (
-              <Button variant="secondary" onClick={handleBack} className="mr-2">
-                Voltar
-              </Button>
-            )}
-            {step < 3 ? (
-              <Button onClick={handleNext}>Próximo</Button>
-            ) : (
-              <Button onClick={handleSubmit}>Concluir</Button>
-            )}
-          </div>
+          <Button onClick={handleSaveColaborador}>Salvar</Button>
         </div>
-
-        {userData && (
-          <div className="absolute top-4 right-4">
-            <Button variant="ghost" onClick={openUserModal}>
-              <UserPlus className="h-4 w-4 mr-2" />
-              Ver Usuário
-            </Button>
-          </div>
-        )}
-      </div>
-
-      {modalData && (
-        <UserModal
-          isOpen={isUserModalOpen}
-          onClose={() => setIsUserModalOpen(false)}
-          user={modalData}
-        />
-      )}
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
