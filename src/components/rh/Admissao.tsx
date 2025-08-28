@@ -1,386 +1,507 @@
-import React, { useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Progress } from '@/components/ui/progress';
-import { UserCheck, FileText, Calendar, Clock, Search, User, Mail, Phone, CheckCircle, AlertCircle, FileX, UserPlus } from 'lucide-react';
-import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
-import { useColaboradores } from '@/hooks/useColaboradores';
-import { useToast } from '@/hooks/use-toast';
-import { CandidatoProcesso, Curriculo } from '@/types/processoSeletivo';
-import AdmissaoDetailsModal from './AdmissaoDetailsModal';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Plus, FileText, User } from 'lucide-react';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
-interface CandidatoAdmissao {
-  candidato: CandidatoProcesso;
-  curriculo: Curriculo;
-  processo: string;
-  dataAprovacao: string;
-  statusAdmissao: 'documentos-pendentes' | 'documentos-completos' | 'aguardando-assinatura' | 'admitido';
-  documentosRecebidos: number;
-  totalDocumentos: number;
-  salarioDefinitivo?: string;
-  cargoDefinitivo?: string;
+import { useToast } from "@/components/ui/use-toast"
+import { Separator } from "@/components/ui/separator"
+import { DocumentoAnexo } from '@/types/colaborador';
+import { useUsers } from '@/hooks/useUsers';
+import UserModal from '@/components/cadastro/UserModal';
+
+interface Candidato {
+  id: string;
+  nome: string;
+  email: string;
+  telefone: string;
+  vaga: string;
+  idade?: number;
+  escolaridade?: string;
+  curriculo?: DocumentoAnexo;
+  documentos?: DocumentoAnexo[];
 }
 
 const Admissao = () => {
-  const { processosSeletivos, curriculos, atualizarStatusAdmissao, obterStatusAdmissao } = useProcessoSeletivo();
-  const { adicionarColaborador } = useColaboradores();
+  const [candidatos, setCandidatos] = useState<Candidato[]>([
+    {
+      id: '1',
+      nome: 'Candidato A',
+      email: 'candidatoa@email.com',
+      telefone: '(11) 99999-9999',
+      vaga: 'Analista de Sistemas',
+      idade: 25,
+      escolaridade: 'superior-completo'
+    },
+    {
+      id: '2',
+      nome: 'Candidato B',
+      email: 'candidatob@email.com',
+      telefone: '(11) 88888-8888',
+      vaga: 'Coordenador Comercial',
+      idade: 30,
+      escolaridade: 'pos-graduacao'
+    }
+  ]);
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [vaga, setVaga] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
-  const [busca, setBusca] = useState('');
-  const [filtroStatus, setFiltroStatus] = useState('all');
-  const [candidatoSelecionado, setCandidatoSelecionado] = useState<CandidatoAdmissao | null>(null);
-  const [modalDetalhes, setModalDetalhes] = useState(false);
+  
+  const { adicionarUser } = useUsers();
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [newUserData, setNewUserData] = useState(null);
 
-  // Candidatos em processo de admissão usando status real do contexto
-  const candidatosAdmissao: CandidatoAdmissao[] = useMemo(() => {
-    const candidatosAprovados: CandidatoAdmissao[] = [];
+  const handleAddCandidato = () => {
+    if (!nome || !email || !telefone || !vaga) {
+      toast({
+        title: "Erro ao adicionar candidato",
+        description: "Preencha todos os campos para adicionar um candidato.",
+        variant: "destructive",
+      })
+      return;
+    }
 
-    processosSeletivos.forEach(processo => {
-      processo.candidatos.forEach(candidato => {
-        if (candidato.status === 'aprovado') {
-          const curriculo = curriculos.find(c => c.id === candidato.curriculoId);
-          if (curriculo) {
-            // Usar status real do contexto ao invés de gerar aleatoriamente
-            const statusAdmissao = obterStatusAdmissao(candidato.id) as CandidatoAdmissao['statusAdmissao'];
-            const totalDocumentos = 8;
-            const documentosRecebidos = statusAdmissao === 'admitido' ? totalDocumentos : 
-              statusAdmissao === 'aguardando-assinatura' ? totalDocumentos :
-              statusAdmissao === 'documentos-completos' ? totalDocumentos :
-              Math.floor(Math.random() * totalDocumentos);
-
-            candidatosAprovados.push({
-              candidato,
-              curriculo,
-              processo: processo.titulo,
-              dataAprovacao: candidato.dataUltimaAtualizacao,
-              statusAdmissao,
-              documentosRecebidos,
-              totalDocumentos,
-              salarioDefinitivo: processo.salario?.split(' - ')[0],
-              cargoDefinitivo: processo.cargo
-            });
-          }
-        }
-      });
-    });
-
-    return candidatosAprovados;
-  }, [processosSeletivos, curriculos, obterStatusAdmissao]);
-
-  const candidatosFiltrados = useMemo(() => {
-    return candidatosAdmissao.filter(item => {
-      const matchBusca = !busca || 
-        item.curriculo.nome.toLowerCase().includes(busca.toLowerCase()) ||
-        item.curriculo.email.toLowerCase().includes(busca.toLowerCase()) ||
-        item.processo.toLowerCase().includes(busca.toLowerCase()) ||
-        item.curriculo.cargoDesejado.toLowerCase().includes(busca.toLowerCase());
-      
-      const matchStatus = filtroStatus === 'all' || item.statusAdmissao === filtroStatus;
-      
-      return matchBusca && matchStatus;
-    });
-  }, [candidatosAdmissao, busca, filtroStatus]);
-
-  const estatisticas = useMemo(() => {
-    return {
-      total: candidatosAdmissao.length,
-      documentosPendentes: candidatosAdmissao.filter(c => c.statusAdmissao === 'documentos-pendentes').length,
-      documentosCompletos: candidatosAdmissao.filter(c => c.statusAdmissao === 'documentos-completos').length,
-      aguardandoAssinatura: candidatosAdmissao.filter(c => c.statusAdmissao === 'aguardando-assinatura').length,
-      admitidos: candidatosAdmissao.filter(c => c.statusAdmissao === 'admitido').length
+    const novoCandidato: Candidato = {
+      id: Date.now().toString(),
+      nome,
+      email,
+      telefone,
+      vaga
     };
-  }, [candidatosAdmissao]);
+    setCandidatos(prev => [...prev, novoCandidato]);
+    setNome('');
+    setEmail('');
+    setTelefone('');
+    setVaga('');
+    setIsModalOpen(false);
 
-  const getStatusColor = (status: CandidatoAdmissao['statusAdmissao']) => {
-    switch (status) {
-      case 'documentos-pendentes': return 'bg-red-100 text-red-700 border-red-200';
-      case 'documentos-completos': return 'bg-blue-100 text-blue-700 border-blue-200';
-      case 'aguardando-assinatura': return 'bg-yellow-100 text-yellow-700 border-yellow-200';
-      case 'admitido': return 'bg-green-100 text-green-700 border-green-200';
-      default: return 'bg-gray-100 text-gray-700 border-gray-200';
-    }
-  };
-
-  const getStatusIcon = (status: CandidatoAdmissao['statusAdmissao']) => {
-    switch (status) {
-      case 'documentos-pendentes': return <FileX className="h-4 w-4" />;
-      case 'documentos-completos': return <FileText className="h-4 w-4" />;
-      case 'aguardando-assinatura': return <AlertCircle className="h-4 w-4" />;
-      case 'admitido': return <CheckCircle className="h-4 w-4" />;
-      default: return <FileText className="h-4 w-4" />;
-    }
-  };
-
-  const getStatusText = (status: CandidatoAdmissao['statusAdmissao']) => {
-    switch (status) {
-      case 'documentos-pendentes': return 'Documentos Pendentes';
-      case 'documentos-completos': return 'Documentos Completos';
-      case 'aguardando-assinatura': return 'Aguardando Assinatura';
-      case 'admitido': return 'Admitido';
-      default: return status;
-    }
-  };
-
-  const handleVerDetalhes = (candidato: CandidatoAdmissao) => {
-    setCandidatoSelecionado(candidato);
-    setModalDetalhes(true);
-  };
-
-  const handleCadastrarColaborador = (item: CandidatoAdmissao) => {
-    console.log('Iniciando cadastro de colaborador da tabela...');
-    
-    // Atualizar status da admissão para "admitido"
-    atualizarStatusAdmissao(item.candidato.id, 'admitido');
-    console.log('Status de admissão atualizado para admitido');
-    
-    // Adicionar colaborador na tabela
-    const novoColaborador = {
-      nome: item.curriculo.nome,
-      cargo: item.cargoDefinitivo || item.curriculo.cargoDesejado,
-      departamento: item.curriculo.departamento,
-      email: item.curriculo.email,
-      telefone: item.curriculo.telefone,
-      dataAdmissao: new Date().toISOString(),
-      status: 'Novo' as const
-    };
-    
-    adicionarColaborador(novoColaborador);
-    console.log('Colaborador adicionado:', novoColaborador);
-    
-    // Mostrar toast de sucesso
     toast({
-      title: "Colaborador cadastrado com sucesso!",
-      description: `${item.curriculo.nome} foi adicionado ao módulo de colaboradores.`,
-    });
+      title: "Candidato adicionado",
+      description: "Candidato adicionado com sucesso.",
+    })
   };
 
-  const calcularProgressoDocumentos = (recebidos: number, total: number) => {
-    return Math.round((recebidos / total) * 100);
+  const handleCurriculoUpload = (candidatoId: string, file: File) => {
+    const documento: DocumentoAnexo = {
+      id: Date.now().toString(),
+      nome: file.name,
+      tipo: file.type,
+      tamanho: file.size,
+      dataUpload: new Date().toISOString(),
+      categoria: 'curriculo',
+      arquivo: file,
+      validadeIndeterminada: true
+    };
+
+    setCandidatos(prev =>
+      prev.map(candidato =>
+        candidato.id === candidatoId ? { ...candidato, curriculo: documento } : candidato
+      )
+    );
+  };
+
+  const handleDocumentoUpload = (candidatoId: string, file: File) => {
+    const documento: DocumentoAnexo = {
+      id: Date.now().toString(),
+      nome: file.name,
+      tipo: file.type,
+      tamanho: file.size,
+      dataUpload: new Date().toISOString(),
+      categoria: 'documento',
+      arquivo: file,
+      validadeIndeterminada: true
+    };
+
+    setCandidatos(prev =>
+      prev.map(candidato => {
+        if (candidato.id === candidatoId) {
+          const documentos = candidato.documentos ? [...candidato.documentos, documento] : [documento];
+          return { ...candidato, documentos: documentos };
+        }
+        return candidato;
+      })
+    );
+  };
+
+  const handleCadastrarColaborador = (candidatoId: string) => {
+    const candidato = candidatos.find(c => c.id === candidatoId);
+    if (!candidato) return;
+
+    // Criar dados do usuário baseado no candidato
+    const novoUserData = {
+      nome: candidato.nome,
+      email: candidato.email,
+      cpf: candidato.telefone,
+      telefone: candidato.telefone,
+      isActive: true,
+      userType: 'usuario',
+      status: 'Novo' as const,
+      moduleAccess: [],
+      dadosPessoais: {
+        nome: candidato.nome,
+        cpf: candidato.telefone,
+        pis: '',
+        idade: candidato.idade?.toString() || '',
+        dataNascimento: '',
+        estadoCivil: '',
+        nacionalidade: 'Brasileira',
+        genero: '',
+        etnia: '',
+        rg: '',
+        orgaoExpedidorRg: '',
+        ufEmissorRg: '',
+        dataExpedicaoRg: '',
+        naturalidade: '',
+        nomeMae: '',
+        nomePai: '',
+        cep: '',
+        endereco: '',
+        numeroResidencia: '',
+        complemento: '',
+        bairro: '',
+        pcd: '',
+        doencaPreExistente: '',
+        email: candidato.email,
+        telefone: candidato.telefone,
+        observacoes: ''
+      },
+      dadosProfissionais: {
+        empresa: 'Biodina',
+        uf: 'SP',
+        setor: '',
+        funcao: '',
+        cargo: '',
+        nivel: '',
+        cbo: '',
+        compativelFuncao: false,
+        funcoesDesempenhadas: '',
+        dataAdmissao: new Date().toISOString().split('T')[0],
+        dataCadastro: new Date().toISOString().split('T')[0],
+        tempoCasa: '',
+        ultimaPromocao: '',
+        previsaoFerias: '',
+        tipoUsuario: '',
+        sindicatoVinculado: '',
+        regimeTrabalho: '',
+        horarioTrabalho: '',
+        cargaHorariaSemanal: '',
+        origemContratacao: 'Processo Seletivo'
+      },
+      dadosFinanceiros: {
+        salarioBase: '',
+        adicionalNivel: '',
+        insalubridade: '',
+        sobreaviso: '',
+        salarioBruto: '',
+        valorHoraTrabalhada: '',
+        pisoSalarial: '',
+        mediaSalarial: '',
+        dependentesIR: [],
+        adiantamentoSalarial: false
+      },
+      dadosBancarios: {
+        banco: '',
+        tipoConta: '',
+        agencia: '',
+        conta: ''
+      },
+      formacaoEscolaridade: {
+        escolaridade: candidato.escolaridade || '',
+        possuiDiploma: false,
+        curriculo: candidato.curriculo,
+        comprovantesEscolaridade: []
+      },
+      beneficios: {
+        tipoPlano: '',
+        quantidadeDependentesPlano: '',
+        valeTransporte: {
+          modalidade: '',
+          dataSolicitacaoCartao: '',
+          dataPagamento: ''
+        },
+        valeAlimentacao: {
+          dataSolicitacaoCartao: '',
+          dataPagamento: ''
+        },
+        planoSaude: {
+          operadora: '',
+          dataSolicitacao: '',
+          vigenciaInicio: '',
+          tipoPlano: '',
+          possuiDependentes: false,
+          dependentes: []
+        }
+      },
+      documentacao: {
+        anexos: candidato.documentos || [],
+        solicitadoParaDPEm: new Date().toISOString().split('T')[0],
+        solicitadoPor: 'RH - Processo Seletivo',
+        motivoContratacao: 'Aprovação em Processo Seletivo',
+        observacoesGerais: `Candidato aprovado no processo seletivo para a vaga: ${candidato.vaga}`,
+        exameAdmissional: {
+          data: '',
+          local: '',
+          horario: ''
+        }
+      },
+      dadosTI: {
+        servidorAcesso: '',
+        permissoesNecessarias: '',
+        restricoes: '',
+        pastasAcesso: '',
+        emailCorporativo: '',
+        ramal: ''
+      }
+    };
+
+    setNewUserData(novoUserData);
+    setIsUserModalOpen(true);
+  };
+
+  const handleCloseUserModal = () => {
+    setIsUserModalOpen(false);
+    setNewUserData(null);
+  };
+
+  const handleSaveUser = () => {
+    if (newUserData) {
+      adicionarUser(newUserData);
+      setIsUserModalOpen(false);
+      setNewUserData(null);
+      
+      // Mostrar mensagem de sucesso
+      console.log('Usuário cadastrado com sucesso!');
+    }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Processo de Admissão</h2>
-          <p className="text-gray-600">Gerencie a documentação e formalização da contratação dos candidatos aprovados</p>
+    <>
+      <div className="container py-8">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Processo de Admissão</h1>
+          <Button onClick={() => setIsModalOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Adicionar Candidato
+          </Button>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center">
-              <UserCheck className="h-8 w-8 text-biodina-blue" />
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Total</p>
-                <p className="text-2xl font-bold text-gray-900">{estatisticas.total}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <Separator className="my-4" />
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center">
-              <FileX className="h-8 w-8 text-red-600" />
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Doc. Pendentes</p>
-                <p className="text-2xl font-bold text-gray-900">{estatisticas.documentosPendentes}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center">
-              <FileText className="h-8 w-8 text-blue-600" />
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Doc. Completos</p>
-                <p className="text-2xl font-bold text-gray-900">{estatisticas.documentosCompletos}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center">
-              <AlertCircle className="h-8 w-8 text-yellow-600" />
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Ag. Assinatura</p>
-                <p className="text-2xl font-bold text-gray-900">{estatisticas.aguardandoAssinatura}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center">
-              <CheckCircle className="h-8 w-8 text-green-600" />
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Admitidos</p>
-                <p className="text-2xl font-bold text-gray-900">{estatisticas.admitidos}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="flex gap-4 items-center bg-white p-4 rounded-lg border">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Buscar por nome, email, processo ou cargo..."
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        
-        <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-          <SelectTrigger className="w-64">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos os status</SelectItem>
-            <SelectItem value="documentos-pendentes">Documentos Pendentes</SelectItem>
-            <SelectItem value="documentos-completos">Documentos Completos</SelectItem>
-            <SelectItem value="aguardando-assinatura">Aguardando Assinatura</SelectItem>
-            <SelectItem value="admitido">Admitido</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="space-y-4">
-        {candidatosFiltrados.length === 0 ? (
-          <div className="text-center py-12">
-            <UserCheck className="h-12 w-12 mx-auto text-gray-300 mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {busca || filtroStatus !== 'all' ? 'Nenhum candidato encontrado' : 'Nenhum candidato em processo de admissão'}
-            </h3>
-            <p className="text-gray-500">
-              {busca || filtroStatus !== 'all' 
-                ? 'Tente ajustar os filtros para encontrar o que procura'
-                : 'Os candidatos aprovados nos processos seletivos aparecerão aqui'
-              }
-            </p>
-          </div>
-        ) : (
-          candidatosFiltrados.map((item, index) => (
-            <Card key={`${item.candidato.id}-${index}`} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-start gap-4">
-                      <div className="p-2 rounded-full bg-biodina-blue/10">
-                        <User className="h-6 w-6 text-biodina-blue" />
-                      </div>
-                      
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{item.curriculo.nome}</h3>
-                          <Badge className={getStatusColor(item.statusAdmissao)}>
-                            <div className="flex items-center gap-1">
-                              {getStatusIcon(item.statusAdmissao)}
-                              <span>{getStatusText(item.statusAdmissao)}</span>
-                            </div>
-                          </Badge>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <Mail className="h-4 w-4" />
-                              <span>{item.curriculo.email}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <Phone className="h-4 w-4" />
-                              <span>{item.curriculo.telefone}</span>
-                            </div>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <FileText className="h-4 w-4" />
-                              <span><strong>Processo:</strong> {item.processo}</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <Calendar className="h-4 w-4" />
-                              <span><strong>Aprovado em:</strong> {new Date(item.dataAprovacao).toLocaleDateString()}</span>
-                            </div>
+        <Table>
+          <TableCaption>Lista de candidatos aprovados no processo seletivo.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[200px]">Nome</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Telefone</TableHead>
+              <TableHead>Vaga</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {candidatos.map((candidato) => (
+              <TableRow key={candidato.id}>
+                <TableCell className="font-medium">{candidato.nome}</TableCell>
+                <TableCell>{candidato.email}</TableCell>
+                <TableCell>{candidato.telefone}</TableCell>
+                <TableCell>{candidato.vaga}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <FileText className="h-4 w-4 mr-2" />
+                          Currículo
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Currículo do Candidato</DialogTitle>
+                          <DialogDescription>
+                            Anexe o currículo do candidato para facilitar o processo de admissão.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="nome" className="text-right">
+                              Currículo
+                            </Label>
+                            <Input
+                              type="file"
+                              id="curriculo"
+                              className="col-span-3"
+                              onChange={(e) => {
+                                const file = (e.target as HTMLInputElement).files?.[0];
+                                if (file) handleCurriculoUpload(candidato.id, file);
+                              }}
+                            />
                           </div>
                         </div>
-                        
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="font-medium text-gray-700">Documentos</span>
-                            <span className="text-gray-600">
-                              {item.documentosRecebidos}/{item.totalDocumentos} recebidos
-                            </span>
+                      </DialogContent>
+                    </Dialog>
+
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <FileText className="h-4 w-4 mr-2" />
+                          Documentos
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>Documentos do Candidato</DialogTitle>
+                          <DialogDescription>
+                            Anexe os documentos do candidato para facilitar o processo de admissão.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="nome" className="text-right">
+                              Documento
+                            </Label>
+                            <Input
+                              type="file"
+                              id="documento"
+                              className="col-span-3"
+                              onChange={(e) => {
+                                const file = (e.target as HTMLInputElement).files?.[0];
+                                if (file) handleDocumentoUpload(candidato.id, file);
+                              }}
+                            />
                           </div>
-                          <Progress 
-                            value={calcularProgressoDocumentos(item.documentosRecebidos, item.totalDocumentos)} 
-                            className="h-2"
-                          />
                         </div>
-                        
-                        {(item.cargoDefinitivo || item.salarioDefinitivo) && (
-                          <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                            <div className="flex items-center gap-4 text-sm">
-                              {item.cargoDefinitivo && (
-                                <span><strong>Cargo:</strong> {item.cargoDefinitivo}</span>
-                              )}
-                              {item.salarioDefinitivo && (
-                                <span><strong>Salário:</strong> {item.salarioDefinitivo}</span>
-                              )}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-col gap-2 ml-4">
-                    <Button 
-                      size="sm" 
-                      onClick={() => handleVerDetalhes(item)}
-                    >
-                      Ver Detalhes
+                      </DialogContent>
+                    </Dialog>
+
+                    <Button variant="default" size="sm" onClick={() => handleCadastrarColaborador(candidato.id)}>
+                      <User className="h-4 w-4 mr-2" />
+                      Cadastrar
                     </Button>
-                    
-                    {(item.statusAdmissao === 'documentos-completos' || item.statusAdmissao === 'admitido') && (
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => handleCadastrarColaborador(item)}
-                        disabled={item.statusAdmissao === 'admitido'}
-                      >
-                        <UserPlus className="h-4 w-4 mr-1" />
-                        {item.statusAdmissao === 'admitido' ? 'Cadastrado' : 'Cadastrar Colaborador'}
-                      </Button>
-                    )}
                   </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan={5}>
+                <div className="flex justify-end space-x-2">
+                  <div>Total de candidatos:</div>
+                  <Badge variant="secondary">{candidatos.length}</Badge>
                 </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
       </div>
 
-      <AdmissaoDetailsModal
-        isOpen={modalDetalhes}
-        onClose={() => {
-          setModalDetalhes(false);
-          setCandidatoSelecionado(null);
-        }}
-        candidatoAdmissao={candidatoSelecionado}
+      <Dialog open={isModalOpen} onOpenChange={() => setIsModalOpen(false)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Adicionar Candidato</DialogTitle>
+            <DialogDescription>
+              Adicione um novo candidato para o processo de admissão.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="nome" className="text-right">
+                Nome
+              </Label>
+              <Input
+                type="text"
+                id="nome"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Email
+              </Label>
+              <Input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="telefone" className="text-right">
+                Telefone
+              </Label>
+              <Input
+                type="tel"
+                id="telefone"
+                value={telefone}
+                onChange={(e) => setTelefone(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="vaga" className="text-right">
+                Vaga
+              </Label>
+              <Select onValueChange={(value) => setVaga(value)}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Selecione a vaga" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Analista de Sistemas">Analista de Sistemas</SelectItem>
+                  <SelectItem value="Coordenador Comercial">Coordenador Comercial</SelectItem>
+                  <SelectItem value="Assistente de RH">Assistente de RH</SelectItem>
+                  <SelectItem value="Operador de Estoque">Operador de Estoque</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <Button type="submit" onClick={handleAddCandidato}>
+            Adicionar Candidato
+          </Button>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Modal do Usuário */}
+      <UserModal
+        isOpen={isUserModalOpen}
+        onClose={handleCloseUserModal}
+        userData={newUserData}
+        editMode={false}
+        showCredentials={false} // Não mostrar credenciais na admissão inicial
       />
-    </div>
+    </>
   );
 };
 
