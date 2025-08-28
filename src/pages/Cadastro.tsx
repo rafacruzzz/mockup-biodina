@@ -12,7 +12,7 @@ import ContaBancariaModal from "@/components/cadastro/ContaBancariaModal";
 import ProductRegistrationForm from "@/components/product/ProductRegistrationForm";
 import ProductListingTable from "@/components/product/ProductListingTable";
 import { ProductRegistrationData } from "@/types/product";
-import { modules } from "@/data/cadastroModules";
+import { cadastroModules } from "@/data/cadastroModules";
 import { toast } from "@/components/ui/use-toast";
 
 const Cadastro = () => {
@@ -36,7 +36,7 @@ const Cadastro = () => {
 
   // Initialize products from modules data
   useEffect(() => {
-    const productData = modules.produtos?.subModules.produtos?.data || [];
+    const productData = cadastroModules.produtos?.subModules.produtos?.data || [];
     const formattedProducts: ProductRegistrationData[] = productData.map((item: any) => ({
       // Dados Gerais
       codigo: item.codigo || '',
@@ -286,7 +286,7 @@ const Cadastro = () => {
   };
 
   const currentSubModule = activeModule && activeSubModule ? 
-    modules[activeModule as keyof typeof modules]?.subModules[activeSubModule] : null;
+    cadastroModules[activeModule as keyof typeof cadastroModules]?.subModules[activeSubModule] : null;
 
   // Filter products based on search term
   const filteredProducts = products.filter(product => 

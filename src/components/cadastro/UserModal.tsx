@@ -1,472 +1,345 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Save, User, Shield, UserMinus, AlertTriangle, Monitor, Bell } from "lucide-react";
+import { Save, X, User } from "lucide-react";
+import { toast } from "sonner";
 import { UserData } from "@/types/user";
-import { ModuleAccess } from "@/types/permissions";
-import AccessProfileSelector from "./AccessProfileSelector";
-import ModuleAccessTree from "./ModuleAccessTree";
+import { useUsers } from "@/hooks/useUsers";
 
-// Importar todas as abas do colaborador
-import DadosPessoaisTab from "../rh/tabs/DadosPessoaisTab";
-import DadosProfissionaisTab from "../rh/tabs/DadosProfissionaisTab";
-import DadosFinanceirosTab from "../rh/tabs/DadosFinanceirosTab";
-import DadosBancariosTab from "../rh/tabs/DadosBancariosTab";
-import FormacaoEscolaridadeTab from "../rh/tabs/FormacaoEscolaridadeTab";
-import BeneficiosTab from "../rh/tabs/BeneficiosTab";
-import DocumentacaoTab from "../rh/tabs/DocumentacaoTab";
-import TITab from "../rh/tabs/TITab";
-import DesligamentoTab from "../rh/tabs/DesligamentoTab";
-import SolicitacoesTab from "../rh/tabs/SolicitacoesTab";
-import CredenciaisTab from "./CredenciaisTab";
+// Import all tab components
+import DadosPessoaisTab from "@/components/rh/tabs/DadosPessoaisTab";
+import DadosProfissionaisTab from "@/components/rh/tabs/DadosProfissionaisTab";
+import DadosFinanceirosTab from "@/components/rh/tabs/DadosFinanceirosTab";
+import DadosBancariosTab from "@/components/rh/tabs/DadosBancariosTab";
+import FormacaoEscolaridadeTab from "@/components/rh/tabs/FormacaoEscolaridadeTab";
+import BeneficiosTab from "@/components/rh/tabs/BeneficiosTab";
+import DocumentacaoTab from "@/components/rh/tabs/DocumentacaoTab";
+import TITab from "@/components/rh/tabs/TITab";
+import DesligamentoTab from "@/components/rh/tabs/DesligamentoTab";
+import CredenciaisTab from "@/components/cadastro/CredenciaisTab";
 
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  userData?: UserData;
-  editMode?: boolean;
-  showCredentials?: boolean; // Controla se mostra abas de credenciais
+  user?: UserData | null;
 }
 
-const UserModal = ({ 
-  isOpen, 
-  onClose, 
-  userData, 
-  editMode = false,
-  showCredentials = true 
-}: UserModalProps) => {
-  const [userDesligado, setUserDesligado] = useState(!!userData?.desligamento);
-  
+const UserModal = ({ isOpen, onClose, user }: UserModalProps) => {
+  const { addUser, updateUser } = useUsers();
+  const [activeTab, setActiveTab] = useState("dados-pessoais");
   const [formData, setFormData] = useState<UserData>({
-    id: userData?.id || '',
-    nome: userData?.nome || '',
-    email: userData?.email || '',
-    cpf: userData?.cpf || '',
-    telefone: userData?.telefone || '',
-    username: userData?.username || '',
-    password: userData?.password || '',
-    confirmPassword: userData?.confirmPassword || '',
-    isActive: userData?.isActive ?? true,
-    userType: userData?.userType || '',
-    status: userData?.status || 'Novo',
-    moduleAccess: userData?.moduleAccess || [],
-    dadosPessoais: userData?.dadosPessoais || {
-      nome: '',
-      cpf: '',
-      pis: '',
-      idade: '',
-      dataNascimento: '',
-      estadoCivil: '',
-      nacionalidade: '',
-      genero: '',
-      etnia: '',
-      rg: '',
-      orgaoExpedidorRg: '',
-      ufEmissorRg: '',
-      dataExpedicaoRg: '',
-      naturalidade: '',
-      nomeMae: '',
-      nomePai: '',
-      cep: '',
-      endereco: '',
-      numeroResidencia: '',
-      complemento: '',
-      bairro: '',
-      pcd: '',
-      doencaPreExistente: '',
-      email: '',
-      telefone: '',
-      observacoes: ''
-    },
-    dadosProfissionais: userData?.dadosProfissionais || {
-      empresa: '',
-      uf: '',
-      setor: '',
-      funcao: '',
-      cargo: '',
-      nivel: '',
-      cbo: '',
-      compativelFuncao: false,
-      funcoesDesempenhadas: '',
-      dataAdmissao: '',
-      dataCadastro: '',
-      tempoCasa: '',
-      ultimaPromocao: '',
-      previsaoFerias: '',
-      tipoUsuario: '',
-      sindicatoVinculado: '',
-      regimeTrabalho: '',
-      horarioTrabalho: '',
-      cargaHorariaSemanal: '',
-      origemContratacao: ''
-    },
-    dadosFinanceiros: userData?.dadosFinanceiros || {
-      salarioBase: '',
-      adicionalNivel: '',
-      insalubridade: '',
-      sobreaviso: '',
-      salarioBruto: '',
-      valorHoraTrabalhada: '',
-      pisoSalarial: '',
-      mediaSalarial: '',
-      dependentesIR: [],
-      adiantamentoSalarial: false
-    },
-    dadosBancarios: userData?.dadosBancarios || {
-      banco: '',
-      tipoConta: '',
-      agencia: '',
-      conta: ''
-    },
-    formacaoEscolaridade: userData?.formacaoEscolaridade || {
-      escolaridade: '',
-      possuiDiploma: false,
-      comprovantesEscolaridade: []
-    },
-    beneficios: userData?.beneficios || {
-      tipoPlano: '',
-      quantidadeDependentesPlano: '',
-      valeTransporte: {
-        modalidade: '',
-        dataSolicitacaoCartao: '',
-        dataPagamento: ''
-      },
-      valeAlimentacao: {
-        dataSolicitacaoCartao: '',
-        dataPagamento: ''
-      },
-      planoSaude: {
-        operadora: '',
-        dataSolicitacao: '',
-        vigenciaInicio: '',
-        tipoPlano: '',
-        possuiDependentes: false,
-        dependentes: []
+    id: user?.id || crypto.randomUUID(),
+    nome: user?.nome || "",
+    email: user?.email || "",
+    cpf: user?.cpf || "",
+    telefone: user?.telefone || "",
+    username: user?.username || "",
+    password: user?.password || "",
+    confirmPassword: user?.confirmPassword || "",
+    isActive: user?.isActive ?? true,
+    userType: user?.userType || "colaborador",
+    status: user?.status || "Novo",
+    moduleAccess: user?.moduleAccess || [],
+    
+    // Initialize all collaborator data sections
+    dadosPessoais: user?.dadosPessoais || {
+      nomeCompleto: "",
+      cpf: "",
+      rg: "",
+      orgaoExpedidor: "",
+      estadoCivil: "",
+      dataNascimento: "",
+      naturalidade: "",
+      nacionalidade: "Brasileira",
+      nomePai: "",
+      nomeMae: "",
+      telefone: "",
+      celular: "",
+      email: "",
+      endereco: {
+        cep: "",
+        logradouro: "",
+        numero: "",
+        complemento: "",
+        bairro: "",
+        cidade: "",
+        estado: "",
+        pais: "Brasil"
       }
     },
-    documentacao: userData?.documentacao || {
-      anexos: [],
-      solicitadoParaDPEm: '',
-      solicitadoPor: '',
-      motivoContratacao: '',
-      observacoesGerais: '',
-      exameAdmissional: {
-        data: '',
-        local: '',
-        horario: ''
-      }
+    dadosProfissionais: user?.dadosProfissionais || {
+      matricula: "",
+      dataAdmissao: "",
+      cargo: "",
+      departamento: "",
+      centroCusto: "",
+      nivelHierarquico: "",
+      supervisor: "",
+      tipoContrato: "",
+      regimeContratacao: "",
+      jornadaTrabalho: "",
+      localTrabalho: "",
+      observacoes: ""
     },
-    dadosTI: userData?.dadosTI || {
-      servidorAcesso: '',
-      permissoesNecessarias: '',
-      restricoes: '',
-      pastasAcesso: '',
-      emailCorporativo: '',
-      ramal: ''
+    dadosFinanceiros: user?.dadosFinanceiros || {
+      salarioBase: 0,
+      vale: 0,
+      auxilioAlimentacao: 0,
+      auxilioTransporte: 0,
+      auxilioSaude: 0,
+      auxilioEducacao: 0,
+      outrosBeneficios: 0,
+      descontos: {
+        inss: 0,
+        irrf: 0,
+        valeTransporte: 0,
+        planoSaude: 0,
+        outros: 0
+      },
+      salarioLiquido: 0
     },
-    desligamento: userData?.desligamento,
-    planoCarreira: userData?.planoCarreira || '',
-    sugestaoSalario: userData?.sugestaoSalario || '',
-    breakdownSalarial: userData?.breakdownSalarial || ''
+    dadosBancarios: user?.dadosBancarios || {
+      banco: "",
+      agencia: "",
+      conta: "",
+      tipoConta: "",
+      operacao: "",
+      pix: ""
+    },
+    formacaoEscolaridade: user?.formacaoEscolaridade || {
+      escolaridade: "",
+      instituicao: "",
+      curso: "",
+      anoInicio: "",
+      anoFormatura: "",
+      situacao: "",
+      cursos: [],
+      certificacoes: []
+    },
+    beneficios: user?.beneficios || {
+      valeTransporte: false,
+      valeRefeicao: false,
+      valeAlimentacao: false,
+      auxilioSaude: false,
+      auxilioEducacao: false,
+      seguroVida: false,
+      previdenciaPrivada: false,
+      outros: []
+    },
+    documentacao: user?.documentacao || {
+      cpf: "",
+      rg: "",
+      ctps: "",
+      pis: "",
+      tituloEleitor: "",
+      certificadoMilitar: "",
+      cnh: "",
+      passaporte: "",
+      outros: []
+    },
+    dadosTI: user?.dadosTI || {
+      email: "",
+      usuario: "",
+      grupos: [],
+      permissoes: [],
+      sistemas: []
+    },
+    desligamento: user?.desligamento || {
+      dataDesligamento: "",
+      motivoDesligamento: "",
+      observacoes: "",
+      entregaEquipamentos: false,
+      entregaCracha: false,
+      entregaDocumentos: false
+    }
   });
 
-  const handleInputChange = (section: keyof UserData | string, field: string, value: any) => {
-    if (section === 'planoCarreira' || section === 'sugestaoSalario' || section === 'breakdownSalarial') {
-      setFormData(prev => ({
-        ...prev,
-        [section]: value
-      }));
-    } else if (section === 'beneficios') {
-      if (field === 'valeTransporte' || field === 'valeAlimentacao' || field === 'planoSaude') {
-        try {
-          const parsedValue = typeof value === 'string' ? JSON.parse(value) : value;
-          setFormData(prev => ({
-            ...prev,
-            beneficios: {
-              ...prev.beneficios,
-              [field]: parsedValue
-            }
-          }));
-        } catch (e) {
-          console.error('Error parsing nested benefit data:', e);
-        }
-      } else {
-        setFormData(prev => ({
-          ...prev,
-          beneficios: {
-            ...prev.beneficios,
-            [field]: value
-          }
-        }));
+  useEffect(() => {
+    if (user) {
+      setFormData({ ...user });
+    }
+  }, [user]);
+
+  const handleSave = () => {
+    try {
+      // Basic validation
+      if (!formData.dadosPessoais.nomeCompleto) {
+        toast.error("Nome completo é obrigatório");
+        setActiveTab("dados-pessoais");
+        return;
       }
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [section]: {
-          ...prev[section as keyof UserData],
-          [field]: value
-        }
-      }));
+
+      if (!formData.dadosPessoais.cpf) {
+        toast.error("CPF é obrigatório");
+        setActiveTab("dados-pessoais");
+        return;
+      }
+
+      // Update basic fields from personal data
+      const updatedFormData = {
+        ...formData,
+        nome: formData.dadosPessoais.nomeCompleto,
+        email: formData.dadosPessoais.email,
+        cpf: formData.dadosPessoais.cpf,
+        telefone: formData.dadosPessoais.telefone
+      };
+
+      if (user) {
+        updateUser(updatedFormData);
+        toast.success("Usuário atualizado com sucesso!");
+      } else {
+        addUser(updatedFormData);
+        toast.success("Usuário cadastrado com sucesso!");
+      }
+
+      onClose();
+    } catch (error) {
+      console.error('Erro ao salvar usuário:', error);
+      toast.error("Erro ao salvar usuário");
     }
   };
 
-  const handleModuleAccessChange = (modules: ModuleAccess[]) => {
+  const handleFieldChange = (section: keyof UserData, field: string, value: any) => {
     setFormData(prev => ({
       ...prev,
-      moduleAccess: modules
+      [section]: {
+        ...(prev[section] as object),
+        [field]: value
+      }
     }));
   };
 
-  const handleDesligarUser = (motivo: string, data: string) => {
-    const dadosDesligamento = {
-      motivoDesligamento: motivo,
-      dataDesligamento: data,
-      processadoPor: 'Administrador',
-      observacoes: '',
-      itensDesligamento: [
-        { id: '1', nome: 'Crachá hospital', necessario: false, dataEntrega: '', entregue: false },
-        { id: '2', nome: 'Crachá empresa', necessario: false, dataEntrega: '', entregue: false },
-        // ... keep existing code (lista completa de itens)
-      ]
-    };
-
-    setFormData(prev => ({
-      ...prev,
-      desligamento: dadosDesligamento,
-      status: 'Desligado',
-      isActive: false
-    }));
-
-    setUserDesligado(true);
-  };
-
-  const handleSave = () => {
-    console.log('Salvando usuário:', formData);
-    onClose();
-  };
-
-  const dadosProfissionaisWithSuggestion = {
-    ...formData.dadosProfissionais,
-    planoCarreira: formData.planoCarreira,
-    sugestaoSalario: formData.sugestaoSalario,
-    breakdownSalarial: formData.breakdownSalarial
-  };
-
-  const dadosFinanceirosWithSuggestion = {
-    ...formData.dadosFinanceiros,
-    planoCarreira: formData.planoCarreira,
-    sugestaoSalario: formData.sugestaoSalario,
-    breakdownSalarial: formData.breakdownSalarial
-  };
-
-  // Determinar quantas abas temos baseado no modo e se tem credenciais
-  const baseTabsCount = 7; // Dados pessoais até documentação
-  const credentialsTabsCount = showCredentials ? 1 : 0;
-  const editTabsCount = editMode ? 2 : 0; // Solicitações + TI
-  const desligamentoTabsCount = userDesligado ? 1 : 0;
-  const totalTabs = baseTabsCount + credentialsTabsCount + editTabsCount + desligamentoTabsCount;
-
-  const getTabsGridClass = (totalTabs: number) => {
-    if (totalTabs <= 7) return 'grid grid-cols-7';
-    if (totalTabs <= 8) return 'grid grid-cols-8';
-    if (totalTabs <= 9) return 'grid grid-cols-9';
-    return 'grid grid-cols-10';
-  };
+  const tabs = [
+    { id: "dados-pessoais", label: "Dados Pessoais", icon: User },
+    { id: "dados-profissionais", label: "Dados Profissionais", icon: User },
+    { id: "dados-financeiros", label: "Dados Financeiros", icon: User },
+    { id: "dados-bancarios", label: "Dados Bancários", icon: User },
+    { id: "formacao", label: "Formação", icon: User },
+    { id: "beneficios", label: "Benefícios", icon: User },
+    { id: "documentacao", label: "Documentação", icon: User },
+    { id: "ti", label: "TI", icon: User },
+    { id: "credenciais", label: "Credenciais e Sistema", icon: User },
+    { id: "desligamento", label: "Desligamento", icon: User }
+  ];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
         <DialogHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-biodina-gold/10 rounded-lg">
-                <User className="h-6 w-6 text-biodina-gold" />
-              </div>
-              <div>
-                <DialogTitle className="text-2xl font-bold text-biodina-blue flex items-center gap-2">
-                  {editMode ? `Editar Usuário - ${formData.nome}` : 'Novo Usuário'}
-                  {userDesligado && (
-                    <Badge variant="destructive" className="ml-2">
-                      Desligado
-                    </Badge>
-                  )}
-                </DialogTitle>
-                <p className="text-gray-600">
-                  {editMode ? 'Edite as informações do usuário' : 'Cadastre um novo usuário no sistema'}
-                </p>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-biodina-blue/10 rounded-lg">
+              <User className="h-6 w-6 text-biodina-blue" />
             </div>
-            
-            {editMode && !userDesligado && (
-              <Button
-                variant="outline"
-                onClick={() => handleDesligarUser('', '')}
-                className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
-              >
-                <UserMinus className="h-4 w-4 mr-2" />
-                Desligar Usuário
-              </Button>
-            )}
+            <div>
+              <DialogTitle className="text-2xl font-bold text-biodina-blue">
+                {user ? "Editar Usuário" : "Novo Usuário"}
+              </DialogTitle>
+              <p className="text-gray-600">
+                {user ? "Atualize as informações do usuário" : "Cadastre um novo usuário no sistema"}
+              </p>
+            </div>
           </div>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto">
-          <Tabs defaultValue="dados-pessoais" className="h-full flex flex-col">
-            <TabsList className={`${getTabsGridClass(totalTabs)} w-full mb-4`}>
-              <TabsTrigger value="dados-pessoais" className="text-xs">
-                Dados Pessoais
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
+          <TabsList className="w-full justify-start overflow-x-auto flex-shrink-0">
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab.id} value={tab.id} className="whitespace-nowrap">
+                {tab.label}
               </TabsTrigger>
-              <TabsTrigger value="dados-profissionais" className="text-xs">
-                Dados Profissionais
-              </TabsTrigger>
-              <TabsTrigger value="dados-financeiros" className="text-xs">
-                Dados Financeiros
-              </TabsTrigger>
-              <TabsTrigger value="dados-bancarios" className="text-xs">
-                Dados Bancários
-              </TabsTrigger>
-              <TabsTrigger value="formacao-escolaridade" className="text-xs">
-                Formação
-              </TabsTrigger>
-              <TabsTrigger value="beneficios" className="text-xs">
-                Benefícios
-              </TabsTrigger>
-              <TabsTrigger value="documentacao" className="text-xs">
-                Documentação
-              </TabsTrigger>
-              
-              {showCredentials && (
-                <TabsTrigger value="credenciais-sistema" className="text-xs">
-                  <Shield className="h-4 w-4 mr-1" />
-                  Sistema
-                </TabsTrigger>
-              )}
-              
-              {editMode && (
-                <TabsTrigger value="solicitacoes" className="text-xs">
-                  <Bell className="h-4 w-4 mr-1" />
-                  Solicitações
-                </TabsTrigger>
-              )}
-              
-              {editMode && (
-                <TabsTrigger value="ti" className="text-xs">
-                  <Monitor className="h-4 w-4 mr-1" />
-                  TI
-                </TabsTrigger>
-              )}
-              
-              {userDesligado && (
-                <TabsTrigger value="desligamento" className="text-xs">
-                  <AlertTriangle className="h-4 w-4 mr-1" />
-                  Desligamento
-                </TabsTrigger>
-              )}
-            </TabsList>
+            ))}
+          </TabsList>
 
-            <div className="flex-1 overflow-y-auto px-1">
-              <TabsContent value="dados-pessoais" className="mt-0">
-                <DadosPessoaisTab 
-                  formData={formData.dadosPessoais}
-                  onInputChange={(field, value) => handleInputChange('dadosPessoais', field, value)}
-                />
-              </TabsContent>
+          <div className="flex-1 overflow-y-auto mt-4">
+            <TabsContent value="dados-pessoais" className="mt-0">
+              <DadosPessoaisTab
+                data={formData.dadosPessoais}
+                onChange={(field, value) => handleFieldChange('dadosPessoais', field, value)}
+              />
+            </TabsContent>
 
-              <TabsContent value="dados-profissionais" className="mt-0">
-                <DadosProfissionaisTab 
-                  formData={dadosProfissionaisWithSuggestion}
-                  onInputChange={(field, value) => {
-                    if (field === 'planoCarreira' || field === 'sugestaoSalario' || field === 'breakdownSalarial') {
-                      handleInputChange(field, '', value);
-                    } else {
-                      handleInputChange('dadosProfissionais', field, value);
-                    }
-                  }}
-                />
-              </TabsContent>
+            <TabsContent value="dados-profissionais" className="mt-0">
+              <DadosProfissionaisTab
+                data={formData.dadosProfissionais}
+                onChange={(field, value) => handleFieldChange('dadosProfissionais', field, value)}
+              />
+            </TabsContent>
 
-              <TabsContent value="dados-financeiros" className="mt-0">
-                <DadosFinanceirosTab 
-                  formData={dadosFinanceirosWithSuggestion}
-                  onInputChange={(field, value) => handleInputChange('dadosFinanceiros', field, value)}
-                />
-              </TabsContent>
+            <TabsContent value="dados-financeiros" className="mt-0">
+              <DadosFinanceirosTab
+                data={formData.dadosFinanceiros}
+                onChange={(field, value) => handleFieldChange('dadosFinanceiros', field, value)}
+              />
+            </TabsContent>
 
-              <TabsContent value="dados-bancarios" className="mt-0">
-                <DadosBancariosTab 
-                  formData={formData.dadosBancarios}
-                  onInputChange={(field, value) => handleInputChange('dadosBancarios', field, value)}
-                />
-              </TabsContent>
+            <TabsContent value="dados-bancarios" className="mt-0">
+              <DadosBancariosTab
+                data={formData.dadosBancarios}
+                onChange={(field, value) => handleFieldChange('dadosBancarios', field, value)}
+              />
+            </TabsContent>
 
-              <TabsContent value="formacao-escolaridade" className="mt-0">
-                <FormacaoEscolaridadeTab 
-                  formData={formData.formacaoEscolaridade}
-                  onInputChange={(field, value) => handleInputChange('formacaoEscolaridade', field, value)}
-                />
-              </TabsContent>
+            <TabsContent value="formacao" className="mt-0">
+              <FormacaoEscolaridadeTab
+                data={formData.formacaoEscolaridade}
+                onChange={(field, value) => handleFieldChange('formacaoEscolaridade', field, value)}
+              />
+            </TabsContent>
 
-              <TabsContent value="beneficios" className="mt-0">
-                <BeneficiosTab 
-                  formData={formData.beneficios}
-                  onInputChange={(field, value) => handleInputChange('beneficios', field, value)}
-                />
-              </TabsContent>
+            <TabsContent value="beneficios" className="mt-0">
+              <BeneficiosTab
+                data={formData.beneficios}
+                onChange={(field, value) => handleFieldChange('beneficios', field, value)}
+              />
+            </TabsContent>
 
-              <TabsContent value="documentacao" className="mt-0">
-                <DocumentacaoTab 
-                  formData={formData.documentacao}
-                  onInputChange={(field, value) => handleInputChange('documentacao', field, value)}
-                  colaboradorData={formData}
-                />
-              </TabsContent>
+            <TabsContent value="documentacao" className="mt-0">
+              <DocumentacaoTab
+                data={formData.documentacao}
+                onChange={(field, value) => handleFieldChange('documentacao', field, value)}
+              />
+            </TabsContent>
 
-              {showCredentials && (
-                <TabsContent value="credenciais-sistema" className="mt-0">
-                  <CredenciaisTab 
-                    formData={formData}
-                    onInputChange={handleInputChange}
-                    onModuleAccessChange={handleModuleAccessChange}
-                  />
-                </TabsContent>
-              )}
+            <TabsContent value="ti" className="mt-0">
+              <TITab
+                data={formData.dadosTI}
+                onChange={(field, value) => handleFieldChange('dadosTI', field, value)}
+              />
+            </TabsContent>
 
-              {editMode && formData.id && (
-                <TabsContent value="solicitacoes" className="mt-0">
-                  <SolicitacoesTab colaboradorId={formData.id} />
-                </TabsContent>
-              )}
+            <TabsContent value="credenciais" className="mt-0">
+              <CredenciaisTab
+                data={{
+                  username: formData.username || "",
+                  password: formData.password || "",
+                  confirmPassword: formData.confirmPassword || "",
+                  isActive: formData.isActive,
+                  userType: formData.userType,
+                  moduleAccess: formData.moduleAccess
+                }}
+                onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
+              />
+            </TabsContent>
 
-              {editMode && (
-                <TabsContent value="ti" className="mt-0">
-                  <TITab 
-                    formData={formData.dadosTI!}
-                    onInputChange={(field, value) => handleInputChange('dadosTI', field, value)}
-                  />
-                </TabsContent>
-              )}
+            <TabsContent value="desligamento" className="mt-0">
+              <DesligamentoTab
+                data={formData.desligamento}
+                onChange={(field, value) => handleFieldChange('desligamento', field, value)}
+              />
+            </TabsContent>
+          </div>
+        </Tabs>
 
-              {userDesligado && formData.desligamento && (
-                <TabsContent value="desligamento" className="mt-0">
-                  <DesligamentoTab 
-                    formData={formData.desligamento}
-                    onInputChange={(field, value) => handleInputChange('desligamento', field, value)}
-                  />
-                </TabsContent>
-              )}
-            </div>
-          </Tabs>
-        </div>
-
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4 border-t flex-shrink-0">
           <Button variant="outline" onClick={onClose}>
+            <X className="h-4 w-4 mr-2" />
             Cancelar
           </Button>
           <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
             <Save className="h-4 w-4 mr-2" />
-            {editMode ? 'Salvar Alterações' : 'Salvar Usuário'}
+            {user ? "Atualizar" : "Cadastrar"}
           </Button>
         </div>
       </DialogContent>

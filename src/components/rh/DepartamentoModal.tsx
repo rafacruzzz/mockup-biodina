@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { X, Save } from "lucide-react";
 import { Departamento } from "@/types/departamento";
-import { modules } from "@/data/rhModules";
+import { rhModules } from "@/data/rhModules";
 
 interface DepartamentoModalProps {
   isOpen: boolean;
@@ -25,7 +24,7 @@ const DepartamentoModal = ({ isOpen, onClose, departamento }: DepartamentoModalP
 
   if (!isOpen) return null;
 
-  const cargosList = modules.departamentos.subModules.cargos.data;
+  const cargosList = rhModules.departamentos.subModules.cargos?.data || [];
 
   const handleInputChange = (field: keyof Departamento, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
