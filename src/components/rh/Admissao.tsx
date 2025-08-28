@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,8 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Plus, UserPlus, CheckCircle, AlertTriangle } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { useColaboradores } from "@/hooks/useColaboradores";
-import { ColaboradorData } from "@/types/colaborador";
+import { useUsers } from "@/hooks/useUsers";
 import { UserData } from "@/types/user";
 import UserModal from "@/components/cadastro/UserModal";
 
@@ -22,10 +22,10 @@ interface AdmissaoProps {
 
 const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials = false }: AdmissaoProps) => {
   const { toast } = useToast();
-  const { adicionarColaborador } = useColaboradores();
+  const { adicionarUser } = useUsers();
 
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<ColaboradorData>({
+  const [formData, setFormData] = useState<Partial<UserData>>({
     dadosPessoais: {
       nome: userData?.nome || '',
       cpf: userData?.cpf || '',
@@ -33,7 +33,7 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
       idade: '',
       dataNascimento: '',
       estadoCivil: '',
-      nacionalidade: '',
+      nacionalidade: 'Brasileira',
       genero: '',
       etnia: '',
       rg: '',
@@ -69,11 +69,12 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
       tempoCasa: '',
       ultimaPromocao: '',
       previsaoFerias: '',
-	  tipoUsuario: '',
-	  regimeTrabalho: '',
-	  horarioTrabalho: '',
-	  cargaHorariaSemanal: '',
-	  origemContratacao: ''
+      tipoUsuario: '',
+      sindicatoVinculado: '',
+      regimeTrabalho: '',
+      horarioTrabalho: '',
+      cargaHorariaSemanal: '',
+      origemContratacao: ''
     },
     dadosFinanceiros: {
       salarioBase: '',
@@ -121,20 +122,24 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
     },
     documentacao: {
       anexos: [],
+      solicitadoParaDPEm: '',
+      solicitadoPor: '',
+      motivoContratacao: '',
+      observacoesGerais: '',
       exameAdmissional: {
         data: '',
         local: '',
         horario: ''
       }
     },
-	dadosTI: {
-		servidorAcesso: '',
-		permissoesNecessarias: '',
-		restricoes: '',
-		pastasAcesso: '',
-		emailCorporativo: '',
-		ramal: ''
-	}
+    dadosTI: {
+      servidorAcesso: '',
+      permissoesNecessarias: '',
+      restricoes: '',
+      pastasAcesso: '',
+      emailCorporativo: '',
+      ramal: ''
+    }
   });
 
   const [anexos, setAnexos] = useState<File[]>([]);
@@ -142,7 +147,7 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [modalData, setModalData] = useState<UserData | null>(null);
 
-  const handleInputChange = (section: keyof ColaboradorData, field: string, value: any) => {
+  const handleInputChange = (section: keyof UserData, field: string, value: any) => {
     setFormData(prev => ({
       ...prev,
       [section]: {
@@ -166,10 +171,23 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
 
   const handleSubmit = async () => {
     try {
-      const colaboradorData = {
-        ...formData,
+      const userData: Omit<UserData, 'id'> = {
+        nome: formData.dadosPessoais?.nome || '',
+        email: formData.dadosPessoais?.email || '',
+        cpf: formData.dadosPessoais?.cpf || '',
+        telefone: formData.dadosPessoais?.telefone || '',
+        isActive: true,
+        userType: 'colaborador',
+        status: 'Ativo',
+        moduleAccess: [],
+        dadosPessoais: formData.dadosPessoais!,
+        dadosProfissionais: formData.dadosProfissionais!,
+        dadosFinanceiros: formData.dadosFinanceiros!,
+        dadosBancarios: formData.dadosBancarios!,
+        formacaoEscolaridade: formData.formacaoEscolaridade!,
+        beneficios: formData.beneficios!,
         documentacao: {
-          ...formData.documentacao,
+          ...formData.documentacao!,
           anexos: anexos.map(file => ({
             id: Date.now().toString(),
             nome: file.name,
@@ -181,24 +199,25 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
             validadeIndeterminada: true
           })),
           observacoesGerais: observacoes
-        }
+        },
+        dadosTI: formData.dadosTI
       };
 
-      adicionarColaborador(colaboradorData);
+      adicionarUser(userData);
 
       toast({
-        title: "Colaborador Adicionado!",
-        description: "O colaborador foi adicionado com sucesso.",
+        title: "Usuário Adicionado!",
+        description: "O usuário foi adicionado com sucesso.",
         action: <CheckCircle className="h-4 w-4 text-green-500" />,
       });
 
       onClose();
     } catch (error) {
-      console.error("Erro ao adicionar colaborador:", error);
+      console.error("Erro ao adicionar usuário:", error);
       toast({
         variant: "destructive",
         title: "Erro!",
-        description: "Houve um erro ao adicionar o colaborador.",
+        description: "Houve um erro ao adicionar o usuário.",
         action: <AlertTriangle className="h-4 w-4 text-red-500" />,
       });
     }
@@ -237,7 +256,7 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
                 <Input
                   type="text"
                   id="nome"
-                  value={formData.dadosPessoais.nome}
+                  value={formData.dadosPessoais?.nome || ''}
                   onChange={(e) => handleInputChange('dadosPessoais', 'nome', e.target.value)}
                 />
               </div>
@@ -246,7 +265,7 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
                 <Input
                   type="text"
                   id="cpf"
-                  value={formData.dadosPessoais.cpf}
+                  value={formData.dadosPessoais?.cpf || ''}
                   onChange={(e) => handleInputChange('dadosPessoais', 'cpf', e.target.value)}
                 />
               </div>
@@ -255,7 +274,7 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
                 <Input
                   type="email"
                   id="email"
-                  value={formData.dadosPessoais.email}
+                  value={formData.dadosPessoais?.email || ''}
                   onChange={(e) => handleInputChange('dadosPessoais', 'email', e.target.value)}
                 />
               </div>
@@ -264,7 +283,7 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
                 <Input
                   type="tel"
                   id="telefone"
-                  value={formData.dadosPessoais.telefone}
+                  value={formData.dadosPessoais?.telefone || ''}
                   onChange={(e) => handleInputChange('dadosPessoais', 'telefone', e.target.value)}
                 />
               </div>
@@ -284,7 +303,7 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
                 <Input
                   type="text"
                   id="cargo"
-                  value={formData.dadosProfissionais.cargo}
+                  value={formData.dadosProfissionais?.cargo || ''}
                   onChange={(e) => handleInputChange('dadosProfissionais', 'cargo', e.target.value)}
                 />
               </div>
@@ -293,7 +312,7 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
                 <Input
                   type="text"
                   id="setor"
-                  value={formData.dadosProfissionais.setor}
+                  value={formData.dadosProfissionais?.setor || ''}
                   onChange={(e) => handleInputChange('dadosProfissionais', 'setor', e.target.value)}
                 />
               </div>
@@ -302,7 +321,7 @@ const Admissao = ({ isOpen, onClose, userData, editMode = false, showCredentials
                 <Input
                   type="date"
                   id="dataAdmissao"
-                  value={formData.dadosProfissionais.dataAdmissao}
+                  value={formData.dadosProfissionais?.dataAdmissao || ''}
                   onChange={(e) => handleInputChange('dadosProfissionais', 'dataAdmissao', e.target.value)}
                 />
               </div>
