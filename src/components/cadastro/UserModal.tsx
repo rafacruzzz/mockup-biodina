@@ -1,345 +1,306 @@
-
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Save, User, Shield, UserCheck, Building2, DollarSign, CreditCard, GraduationCap, Heart, FileText, MessageSquare, Monitor } from "lucide-react";
+import { DadosPessoaisTab } from "@/components/rh/tabs/DadosPessoaisTab";
+import { DadosProfissionaisTab } from "@/components/rh/tabs/DadosProfissionaisTab";
+import { DadosFinanceirosTab } from "@/components/rh/tabs/DadosFinanceirosTab";
+import { DadosBancariosTab } from "@/components/rh/tabs/DadosBancariosTab";
+import { FormacaoEscolaridadeTab } from "@/components/rh/tabs/FormacaoEscolaridadeTab";
+import { BeneficiosTab } from "@/components/rh/tabs/BeneficiosTab";
+import { DocumentacaoTab } from "@/components/rh/tabs/DocumentacaoTab";
+import { SolicitacoesTab } from "@/components/rh/tabs/SolicitacoesTab";
+import { TITab } from "@/components/rh/tabs/TITab";
+import { UserCredentialsTab } from "./UserCredentialsTab";
+import { useToast } from "@/hooks/use-toast";
 import { UserData } from "@/types/user";
-import { DadosTI } from "@/types/colaborador";
-import { useUsers } from "@/hooks/useUsers";
-
-// Import all the colaborador tabs
-import DadosPessoaisTab from "@/components/rh/tabs/DadosPessoaisTab";
-import DadosProfissionaisTab from "@/components/rh/tabs/DadosProfissionaisTab";
-import DadosFinanceirosTab from "@/components/rh/tabs/DadosFinanceirosTab";
-import DadosBancariosTab from "@/components/rh/tabs/DadosBancariosTab";
-import FormacaoEscolaridadeTab from "@/components/rh/tabs/FormacaoEscolaridadeTab";
-import BeneficiosTab from "@/components/rh/tabs/BeneficiosTab";
-import DocumentacaoTab from "@/components/rh/tabs/DocumentacaoTab";
-import SolicitacoesTab from "@/components/rh/tabs/SolicitacoesTab";
-import TITab from "@/components/rh/tabs/TITab";
-import UserCredentialsTab from "./UserCredentialsTab";
 
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  userId?: string;
-  editMode?: boolean;
+  userData?: UserData;
+  onSave: (data: UserData) => void;
 }
 
-const UserModal = ({ isOpen, onClose, userId, editMode = false }: UserModalProps) => {
-  const { users, atualizarUser } = useUsers();
-  const user = userId ? users.find(u => u.id === userId) : null;
+const UserModal = ({ isOpen, onClose, userData, onSave }: UserModalProps) => {
+  const { toast } = useToast();
   
-  const defaultUserData: UserData = {
-    id: '',
-    nome: '',
-    email: '',
-    telefone: '',
-    status: 'Novo',
-    dadosPessoais: {
+  // Initialize form data with proper defaults
+  const [formData, setFormData] = useState<UserData>(() => {
+    if (userData) {
+      return userData;
+    }
+    
+    // Default initialization for new user
+    return {
+      id: '',
       nome: '',
-      cpf: '',
-      pis: '',
-      idade: '',
-      dataNascimento: '',
-      estadoCivil: '',
-      nacionalidade: '',
-      genero: '',
-      etnia: '',
-      rg: '',
-      orgaoExpedidorRg: '',
-      ufEmissorRg: '',
-      dataExpedicaoRg: '',
-      naturalidade: '',
-      nomeMae: '',
-      nomePai: '',
-      cep: '',
-      endereco: '',
-      numeroResidencia: '',
-      complemento: '',
-      bairro: '',
-      pcd: '',
-      doencaPreExistente: '',
       email: '',
       telefone: '',
-      observacoes: ''
-    },
-    dadosProfissionais: {
-      empresa: '',
-      uf: '',
-      setor: '',
-      funcao: '',
-      cargo: '',
-      nivel: '',
-      cbo: '',
-      compativelFuncao: false,
-      funcoesDesempenhadas: '',
-      dataAdmissao: '',
-      dataCadastro: '',
-      tempoCasa: '',
-      ultimaPromocao: '',
-      previsaoFerias: '',
-      tipoUsuario: '',
-      regimeTrabalho: '',
-      horarioTrabalho: '',
-      cargaHorariaSemanal: '',
-      origemContratacao: ''
-    },
-    dadosFinanceiros: {
-      salarioBase: '',
-      adicionalNivel: '',
-      insalubridade: '',
-      sobreaviso: '',
-      salarioBruto: '',
-      valorHoraTrabalhada: '',
-      pisoSalarial: '',
-      mediaSalarial: '',
-      dependentesIR: [],
-      adiantamentoSalarial: false
-    },
-    dadosBancarios: {
-      banco: '',
-      tipoConta: '',
-      agencia: '',
-      conta: ''
-    },
-    formacaoEscolaridade: {
-      escolaridade: '',
-      possuiDiploma: false,
-      comprovantesEscolaridade: []
-    },
-    beneficios: {
-      tipoPlano: '',
-      quantidadeDependentesPlano: '',
-      valeTransporte: {
-        modalidade: '',
-        dataSolicitacaoCartao: '',
-        dataPagamento: ''
+      status: 'Novo',
+      dadosPessoais: {
+        nome: '',
+        cpf: '',
+        pis: '',
+        idade: '',
+        dataNascimento: '',
+        estadoCivil: '',
+        nacionalidade: 'brasileira',
+        genero: '',
+        etnia: '',
+        rg: '',
+        orgaoExpedidorRg: '',
+        ufEmissorRg: '',
+        dataExpedicaoRg: '',
+        naturalidade: '',
+        nomeMae: '',
+        nomePai: '',
+        cep: '',
+        endereco: '',
+        numeroResidencia: '',
+        complemento: '',
+        bairro: '',
+        pcd: 'nao',
+        doencaPreExistente: 'nao',
+        email: '',
+        telefone: '',
+        observacoes: ''
       },
-      valeAlimentacao: {
-        dataSolicitacaoCartao: '',
-        dataPagamento: ''
+      dadosProfissionais: {
+        empresa: '',
+        uf: '',
+        setor: '',
+        funcao: '',
+        cargo: '',
+        nivel: '',
+        cbo: '',
+        compativelFuncao: false,
+        funcoesDesempenhadas: '',
+        dataAdmissao: '',
+        dataCadastro: '',
+        tempoCasa: '',
+        ultimaPromocao: '',
+        previsaoFerias: '',
+        tipoUsuario: '',
+        regimeTrabalho: '',
+        horarioTrabalho: '',
+        cargaHorariaSemanal: '',
+        origemContratacao: ''
       },
-      planoSaude: {
-        operadora: '',
-        dataSolicitacao: '',
-        vigenciaInicio: '',
+      dadosFinanceiros: {
+        salarioBase: '',
+        adicionalNivel: '',
+        insalubridade: '',
+        sobreaviso: '',
+        salarioBruto: '',
+        valorHoraTrabalhada: '',
+        pisoSalarial: '',
+        mediaSalarial: '',
+        dependentesIR: [],
+        adiantamentoSalarial: false
+      },
+      dadosBancarios: {
+        banco: '',
+        tipoConta: '',
+        agencia: '',
+        conta: ''
+      },
+      formacaoEscolaridade: {
+        escolaridade: '',
+        possuiDiploma: false,
+        comprovantesEscolaridade: []
+      },
+      beneficios: {
         tipoPlano: '',
-        possuiDependentes: false,
-        dependentes: []
+        quantidadeDependentesPlano: '',
+        valeTransporte: {
+          modalidade: '',
+          dataSolicitacaoCartao: '',
+          dataPagamento: ''
+        },
+        valeAlimentacao: {
+          dataSolicitacaoCartao: '',
+          dataPagamento: ''
+        },
+        planoSaude: {
+          operadora: '',
+          dataSolicitacao: '',
+          vigenciaInicio: '',
+          tipoPlano: '',
+          possuiDependentes: false,
+          dependentes: []
+        }
+      },
+      documentacao: { anexos: [] },
+      dadosTI: {
+        servidorAcesso: '',
+        permissoesNecessarias: '',
+        restricoes: '',
+        pastasAcesso: '',
+        emailCorporativo: '',
+        ramal: ''
+      },
+      credentials: {
+        isActive: false,
+        userType: 'usuario',
+        moduleAccess: []
       }
-    },
-    documentacao: {
-      anexos: []
-    },
-    dadosTI: {
-      servidorAcesso: '',
-      permissoesNecessarias: '',
-      restricoes: '',
-      pastasAcesso: '',
-      emailCorporativo: '',
-      ramal: ''
-    },
-    credentials: {
-      isActive: true,
-      moduleAccess: []
-    }
+    };
+  });
+
+  const [activeTab, setActiveTab] = useState<string>('dados-pessoais');
+
+  const handleInputChange = (field: keyof UserData, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
-  const [formData, setFormData] = useState<UserData>(user?.dados || defaultUserData);
-
-  const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => {
-      // Handle nested field updates
-      const fieldParts = field.split('.');
-      if (fieldParts.length > 1) {
-        const [section, subField] = fieldParts;
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section as keyof UserData],
-            [subField]: value
-          }
-        };
-      }
-      return {
-        ...prev,
+  const handleNestedInputChange = (section: keyof UserData, field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...(prev[section] as any),
         [field]: value
-      };
-    });
+      }
+    }));
   };
 
   const handleSave = () => {
-    if (userId) {
-      atualizarUser(userId, formData);
+    if (formData.nome && formData.email && formData.telefone) {
+      onSave(formData);
+      onClose();
+      toast({
+        title: "Dados salvos com sucesso!",
+        description: `${formData.nome} foi atualizado no sistema.`,
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Erro ao salvar",
+        description: "Por favor, preencha todos os campos obrigatórios.",
+      });
     }
-    onClose();
   };
 
-  const dadosTI: DadosTI = formData.dadosTI || {
-    servidorAcesso: '',
-    permissoesNecessarias: '',
-    restricoes: '',
-    pastasAcesso: '',
-    emailCorporativo: '',
-    ramal: ''
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'dados-pessoais':
+        return (
+          <DadosPessoaisTab
+            formData={formData.dadosPessoais}
+            onInputChange={(field, value) => handleNestedInputChange('dadosPessoais', field, value)}
+          />
+        );
+      case 'dados-profissionais':
+        return (
+          <DadosProfissionaisTab
+            formData={formData.dadosProfissionais}
+            onInputChange={(field, value) => handleNestedInputChange('dadosProfissionais', field, value)}
+          />
+        );
+      case 'dados-financeiros':
+        return (
+          <DadosFinanceirosTab
+            formData={formData.dadosFinanceiros}
+            onInputChange={(field, value) => handleNestedInputChange('dadosFinanceiros', field, value)}
+          />
+        );
+      case 'dados-bancarios':
+        return (
+          <DadosBancariosTab
+            formData={formData.dadosBancarios}
+            onInputChange={(field, value) => handleNestedInputChange('dadosBancarios', field, value)}
+          />
+        );
+      case 'formacao':
+        return (
+          <FormacaoEscolaridadeTab
+            formData={formData.formacaoEscolaridade}
+            onInputChange={(field, value) => handleNestedInputChange('formacaoEscolaridade', field, value)}
+          />
+        );
+      case 'beneficios':
+        return (
+          <BeneficiosTab
+            formData={formData.beneficios}
+            onInputChange={(field, value) => handleNestedInputChange('beneficios', field, value)}
+          />
+        );
+      case 'documentacao':
+        return (
+          <DocumentacaoTab
+            formData={formData.documentacao}
+            onInputChange={(field, value) => handleNestedInputChange('documentacao', field, value)}
+          />
+        );
+      case 'solicitacoes':
+        return userData ? (
+          <SolicitacoesTab colaboradorId={userData.id} />
+        ) : null;
+      case 'ti':
+        return (
+          <TITab
+            formData={formData.dadosTI}
+            onInputChange={(field, value) => handleNestedInputChange('dadosTI', field, value)}
+          />
+        );
+      case 'credenciais':
+        return (
+          <UserCredentialsTab
+            formData={formData.credentials || { isActive: false, userType: 'usuario', moduleAccess: [] }}
+            onInputChange={(field, value) => handleNestedInputChange('credentials', field, value)}
+          />
+        );
+      default:
+        return null;
+    }
   };
+
+  const tabs = [
+    { id: 'dados-pessoais', label: 'Dados Pessoais' },
+    { id: 'dados-profissionais', label: 'Dados Profissionais' },
+    { id: 'dados-financeiros', label: 'Dados Financeiros' },
+    { id: 'dados-bancarios', label: 'Dados Bancários' },
+    { id: 'formacao', label: 'Formação' },
+    { id: 'beneficios', label: 'Benefícios' },
+    { id: 'documentacao', label: 'Documentação' },
+    { id: 'solicitacoes', label: 'Solicitações' },
+    { id: 'ti', label: 'TI' },
+    { id: 'credenciais', label: 'Credenciais' }
+  ];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
-        <DialogHeader className="pb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-biodina-gold/10 rounded-lg">
-              <User className="h-6 w-6 text-biodina-gold" />
-            </div>
-            <div>
-              <DialogTitle className="text-2xl font-bold text-biodina-blue">
-                {editMode ? `${formData.nome || 'Usuário'}` : 'Novo Usuário'}
-              </DialogTitle>
-              <p className="text-gray-600">
-                {editMode ? 'Edite as informações do usuário' : 'Cadastre um novo usuário no sistema'}
-              </p>
-            </div>
-          </div>
+      <DialogContent className="max-w-4xl">
+        <DialogHeader>
+          <DialogTitle>{userData ? 'Editar Cadastro' : 'Novo Cadastro'}</DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto">
-          <Tabs defaultValue="dados-pessoais" className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-5 mb-4">
-              <TabsTrigger value="dados-pessoais">
-                <UserCheck className="h-4 w-4 mr-2" />
-                Dados Pessoais
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList>
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab.id} value={tab.id}>
+                {tab.label}
               </TabsTrigger>
-              <TabsTrigger value="dados-profissionais">
-                <Building2 className="h-4 w-4 mr-2" />
-                Dados Profissionais
-              </TabsTrigger>
-              <TabsTrigger value="dados-financeiros">
-                <DollarSign className="h-4 w-4 mr-2" />
-                Dados Financeiros
-              </TabsTrigger>
-              <TabsTrigger value="dados-bancarios">
-                <CreditCard className="h-4 w-4 mr-2" />
-                Dados Bancários
-              </TabsTrigger>
-              <TabsTrigger value="formacao">
-                <GraduationCap className="h-4 w-4 mr-2" />
-                Formação
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsList className="grid w-full grid-cols-5 mb-4">
-              <TabsTrigger value="beneficios">
-                <Heart className="h-4 w-4 mr-2" />
-                Benefícios
-              </TabsTrigger>
-              <TabsTrigger value="documentacao">
-                <FileText className="h-4 w-4 mr-2" />
-                Documentação
-              </TabsTrigger>
-              {editMode && (
-                <TabsTrigger value="solicitacoes">
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  Solicitações
-                </TabsTrigger>
-              )}
-              {editMode && (
-                <TabsTrigger value="ti">
-                  <Monitor className="h-4 w-4 mr-2" />
-                  TI
-                </TabsTrigger>
-              )}
-              <TabsTrigger value="credentials">
-                <Shield className="h-4 w-4 mr-2" />
-                Credenciais
-              </TabsTrigger>
-            </TabsList>
+            ))}
+          </TabsList>
+          
+          {/* Renderiza o conteúdo da aba ativa */}
+          <TabsContent value={activeTab}>
+            {renderTabContent()}
+          </TabsContent>
+        </Tabs>
 
-            <TabsContent value="dados-pessoais" className="mt-0">
-              <DadosPessoaisTab 
-                formData={formData.dadosPessoais}
-                onInputChange={(field, value) => handleInputChange(`dadosPessoais.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="dados-profissionais" className="mt-0">
-              <DadosProfissionaisTab 
-                formData={formData.dadosProfissionais}
-                onInputChange={(field, value) => handleInputChange(`dadosProfissionais.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="dados-financeiros" className="mt-0">
-              <DadosFinanceirosTab 
-                formData={formData.dadosFinanceiros}
-                onInputChange={(field, value) => handleInputChange(`dadosFinanceiros.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="dados-bancarios" className="mt-0">
-              <DadosBancariosTab 
-                formData={formData.dadosBancarios}
-                onInputChange={(field, value) => handleInputChange(`dadosBancarios.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="formacao" className="mt-0">
-              <FormacaoEscolaridadeTab 
-                formData={formData.formacaoEscolaridade}
-                onInputChange={(field, value) => handleInputChange(`formacaoEscolaridade.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="beneficios" className="mt-0">
-              <BeneficiosTab 
-                formData={formData.beneficios}
-                onInputChange={(field, value) => handleInputChange(`beneficios.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="documentacao" className="mt-0">
-              <DocumentacaoTab 
-                formData={formData.documentacao}
-                onInputChange={(field, value) => handleInputChange(`documentacao.${field}`, value)}
-              />
-            </TabsContent>
-
-            {editMode && (
-              <TabsContent value="solicitacoes" className="mt-0">
-                <SolicitacoesTab colaboradorId={userId || ''} />
-              </TabsContent>
-            )}
-
-            {editMode && (
-              <TabsContent value="ti" className="mt-0">
-                <TITab 
-                  formData={dadosTI}
-                  onInputChange={(field, value) => handleInputChange(`dadosTI.${field}`, value)}
-                />
-              </TabsContent>
-            )}
-
-            <TabsContent value="credentials" className="mt-0">
-              <UserCredentialsTab 
-                formData={formData.credentials || { isActive: true, moduleAccess: [] }}
-                onInputChange={(field, value) => handleInputChange(`credentials.${field}`, value)}
-                userData={formData}
-              />
-            </TabsContent>
-          </Tabs>
-        </div>
-
-        <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button variant="outline" onClick={onClose}>
+        <DialogFooter>
+          <Button type="button" variant="secondary" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
-            <Save className="h-4 w-4 mr-2" />
-            {editMode ? 'Salvar Alterações' : 'Salvar Usuário'}
+          <Button type="button" onClick={handleSave}>
+            Salvar
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

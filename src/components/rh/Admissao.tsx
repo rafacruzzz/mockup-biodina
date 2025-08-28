@@ -1,346 +1,476 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useState } from 'react';
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Save, User, Building2, DollarSign, CreditCard, GraduationCap, Heart, FileText, Monitor } from "lucide-react";
-import { DadosPessoais, DadosProfissionais, DadosFinanceiros, DadosBancarios, FormacaoEscolaridade, Beneficios, Documentacao, DadosTI } from "@/types/colaborador";
-import { useColaboradores } from "@/hooks/useColaboradores";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-
-// Import all the colaborador tabs
-import DadosPessoaisTab from "@/components/rh/tabs/DadosPessoaisTab";
-import DadosProfissionaisTab from "@/components/rh/tabs/DadosProfissionaisTab";
-import DadosFinanceirosTab from "@/components/rh/tabs/DadosFinanceirosTab";
-import DadosBancariosTab from "@/components/rh/tabs/DadosBancariosTab";
-import FormacaoEscolaridadeTab from "@/components/rh/tabs/FormacaoEscolaridadeTab";
-import BeneficiosTab from "@/components/rh/tabs/BeneficiosTab";
-import DocumentacaoTab from "@/components/rh/tabs/DocumentacaoTab";
+import { useUsers } from "@/hooks/useUsers";
+import { DadosPessoais, DadosProfissionais, DadosFinanceiros, DadosBancarios, FormacaoEscolaridade, Beneficios, Documentacao, DadosTI } from "@/types/colaborador";
+import { Candidato } from "@/types/candidato";
+import DadosPessoaisTab from "./tabs/DadosPessoaisTab";
+import DadosProfissionaisTab from "./tabs/DadosProfissionaisTab";
+import DadosFinanceirosTab from "./tabs/DadosFinanceirosTab";
+import DadosBancariosTab from "./tabs/DadosBancariosTab";
+import FormacaoEscolaridadeTab from "./tabs/FormacaoEscolaridadeTab";
+import BeneficiosTab from "./tabs/BeneficiosTab";
+import DocumentacaoTab from "./tabs/DocumentacaoTab";
+import { TITab } from './tabs/TITab';
 
 interface AdmissaoProps {
-  isOpen: boolean;
-  onClose: () => void;
-  candidatoId?: string;
-  candidatoData?: {
-    dadosPessoais: DadosPessoais;
-    dadosProfissionais: DadosProfissionais;
-    dadosFinanceiros: DadosFinanceiros;
-    dadosBancarios: DadosBancarios;
-    formacaoEscolaridade: FormacaoEscolaridade;
-    beneficios: Beneficios;
-    documentacao?: Documentacao;
-    dadosTI?: DadosTI;
-  };
-  onDataChange?: (data: any) => void;
+  candidato?: Candidato;
 }
 
 const Admissao = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [candidatoId, setCandidatoId] = useState<string | undefined>(undefined);
-  const [candidatoData, setCandidatoData] = useState<{
-    dadosPessoais: DadosPessoais;
-    dadosProfissionais: DadosProfissionais;
-    dadosFinanceiros: DadosFinanceiros;
-    dadosBancarios: DadosBancarios;
-    formacaoEscolaridade: FormacaoEscolaridade;
-    beneficios: Beneficios;
-    documentacao?: Documentacao;
-    dadosTI?: DadosTI;
-  } | null>(null);
-  const [anexosCandidato, setAnexosCandidato] = useState<any[]>([]);
-
-  const { adicionarColaborador } = useColaboradores();
   const { toast } = useToast();
+  const { adicionarUser } = useUsers();
 
-  const handleInputChange = (field: string, value: any) => {
-    setCandidatoData(prev => {
-      if (!prev) return prev;
+  const [activeTab, setActiveTab] = useState('dados-pessoais');
+  const [selectedCandidato, setSelectedCandidato] = useState<Candidato | null>(null);
 
-      const fieldParts = field.split('.');
-      if (fieldParts.length > 1) {
-        const [section, subField] = fieldParts;
-        return {
-          ...prev,
-          [section]: {
-            ...prev[section as keyof typeof prev],
-            [subField]: value
-          }
-        };
-      }
-      return {
-        ...prev,
-        [field]: value
-      };
-    });
-  };
+  const [dadosPessoais, setDadosPessoais] = useState<DadosPessoais>({
+    nome: '',
+    cpf: '',
+    pis: '',
+    idade: '',
+    dataNascimento: '',
+    estadoCivil: '',
+    nacionalidade: 'brasileira',
+    genero: '',
+    etnia: '',
+    rg: '',
+    orgaoExpedidorRg: '',
+    ufEmissorRg: '',
+    dataExpedicaoRg: '',
+    naturalidade: '',
+    nomeMae: '',
+    nomePai: '',
+    cep: '',
+    endereco: '',
+    numeroResidencia: '',
+    complemento: '',
+    bairro: '',
+    pcd: 'nao',
+    doencaPreExistente: 'nao',
+    email: '',
+    telefone: '',
+    observacoes: ''
+  });
 
-  const onClose = () => {
-    setIsOpen(false);
-  };
+  const [dadosProfissionais, setDadosProfissionais] = useState<DadosProfissionais>({
+    empresa: '',
+    uf: '',
+    setor: '',
+    funcao: '',
+    cargo: '',
+    nivel: '',
+    cbo: '',
+    compativelFuncao: true,
+    funcoesDesempenhadas: '',
+    dataAdmissao: '',
+    dataCadastro: '',
+    tempoCasa: '',
+    ultimaPromocao: '',
+    previsaoFerias: '',
+    tipoUsuario: '',
+    regimeTrabalho: '',
+    horarioTrabalho: '',
+    cargaHorariaSemanal: '',
+    origemContratacao: ''
+  });
+
+  const [dadosFinanceiros, setDadosFinanceiros] = useState<DadosFinanceiros>({
+    salarioBase: '',
+    adicionalNivel: '',
+    insalubridade: '',
+    sobreaviso: '',
+    salarioBruto: '',
+    valorHoraTrabalhada: '',
+    pisoSalarial: '',
+    mediaSalarial: '',
+    dependentesIR: [],
+    adiantamentoSalarial: false
+  });
+
+  const [dadosBancarios, setDadosBancarios] = useState<DadosBancarios>({
+    banco: '',
+    tipoConta: '',
+    agencia: '',
+    conta: ''
+  });
+
+  const [formacaoEscolaridade, setFormacaoEscolaridade] = useState<FormacaoEscolaridade>({
+    escolaridade: '',
+    possuiDiploma: false,
+    comprovantesEscolaridade: []
+  });
+
+  const [beneficios, setBeneficios] = useState<Beneficios>({
+    tipoPlano: '',
+    quantidadeDependentesPlano: '',
+    valeTransporte: {
+      modalidade: '',
+      dataSolicitacaoCartao: '',
+      dataPagamento: ''
+    },
+    valeAlimentacao: {
+      dataSolicitacaoCartao: '',
+      dataPagamento: ''
+    },
+    planoSaude: {
+      operadora: '',
+      dataSolicitacao: '',
+      vigenciaInicio: '',
+      tipoPlano: '',
+      possuiDependentes: false,
+      dependentes: []
+    }
+  });
+
+  const [documentacao, setDocumentacao] = useState<Documentacao>({
+    anexos: []
+  });
+
+  const [dadosTI, setDadosTI] = useState<DadosTI>({
+    servidorAcesso: '',
+    permissoesNecessarias: '',
+    restricoes: '',
+    pastasAcesso: '',
+    emailCorporativo: '',
+    ramal: ''
+  });
 
   const handleCadastrarColaborador = () => {
-    if (!candidatoData) return;
-
     const novoUser = {
-      nome: candidatoData.dadosPessoais.nome,
-      email: candidatoData.dadosPessoais.email,
-      telefone: candidatoData.dadosPessoais.telefone,
+      nome: dadosPessoais.nome,
+      email: dadosPessoais.email,
+      telefone: dadosPessoais.telefone,
       status: 'Novo' as const,
-      dadosPessoais: candidatoData.dadosPessoais,
-      dadosProfissionais: candidatoData.dadosProfissionais,
-      dadosFinanceiros: candidatoData.dadosFinanceiros,
-      dadosBancarios: candidatoData.dadosBancarios,
-      formacaoEscolaridade: candidatoData.formacaoEscolaridade,
-      beneficios: candidatoData.beneficios,
-      documentacao: {
-        anexos: anexosCandidato,
-        solicitadoParaDPEm: candidatoData.documentacao?.solicitadoParaDPEm,
-        solicitadoPor: candidatoData.documentacao?.solicitadoPor,
-        motivoContratacao: candidatoData.documentacao?.motivoContratacao,
-        observacoesGerais: candidatoData.documentacao?.observacoesGerais,
-        exameAdmissional: candidatoData.documentacao?.exameAdmissional
+      dadosPessoais,
+      dadosProfissionais: {
+        ...dadosProfissionais,
+        cargo: dadosProfissionais.cargo,
+        dataAdmissao: dadosProfissionais.dataAdmissao
       },
-      dadosTI: candidatoData.dadosTI || {
-        servidorAcesso: '',
-        permissoesNecessarias: '',
-        restricoes: '',
-        pastasAcesso: '',
-        emailCorporativo: '',
-        ramal: ''
+      dadosFinanceiros,
+      dadosBancarios,
+      formacaoEscolaridade,
+      beneficios,
+      documentacao: { anexos: [] },
+      dadosTI,
+      credentials: {
+        isActive: false,
+        userType: 'usuario' as const,
+        moduleAccess: []
       }
     };
 
-    adicionarColaborador(novoUser);
+    const userCriado = adicionarUser(novoUser);
     
     toast({
       title: "Usuário cadastrado com sucesso!",
-      description: `${candidatoData.dadosPessoais.nome} foi adicionado ao sistema como usuário.`,
+      description: `${userCriado.nome} foi adicionado ao sistema como usuário.`,
     });
 
-    onClose();
+    // Reset forms
+    setDadosPessoais({
+      nome: '',
+      cpf: '',
+      pis: '',
+      idade: '',
+      dataNascimento: '',
+      estadoCivil: '',
+      nacionalidade: 'brasileira',
+      genero: '',
+      etnia: '',
+      rg: '',
+      orgaoExpedidorRg: '',
+      ufEmissorRg: '',
+      dataExpedicaoRg: '',
+      naturalidade: '',
+      nomeMae: '',
+      nomePai: '',
+      cep: '',
+      endereco: '',
+      numeroResidencia: '',
+      complemento: '',
+      bairro: '',
+      pcd: 'nao',
+      doencaPreExistente: 'nao',
+      email: '',
+      telefone: '',
+      observacoes: ''
+    });
+
+    setDadosProfissionais({
+      empresa: '',
+      uf: '',
+      setor: '',
+      funcao: '',
+      cargo: '',
+      nivel: '',
+      cbo: '',
+      compativelFuncao: true,
+      funcoesDesempenhadas: '',
+      dataAdmissao: '',
+      dataCadastro: '',
+      tempoCasa: '',
+      ultimaPromocao: '',
+      previsaoFerias: '',
+      tipoUsuario: '',
+      regimeTrabalho: '',
+      horarioTrabalho: '',
+      cargaHorariaSemanal: '',
+      origemContratacao: ''
+    });
+
+    setDadosFinanceiros({
+      salarioBase: '',
+      adicionalNivel: '',
+      insalubridade: '',
+      sobreaviso: '',
+      salarioBruto: '',
+      valorHoraTrabalhada: '',
+      pisoSalarial: '',
+      mediaSalarial: '',
+      dependentesIR: [],
+      adiantamentoSalarial: false
+    });
+
+    setDadosBancarios({
+      banco: '',
+      tipoConta: '',
+      agencia: '',
+      conta: ''
+    });
+
+    setFormacaoEscolaridade({
+      escolaridade: '',
+      possuiDiploma: false,
+      comprovantesEscolaridade: []
+    });
+
+    setBeneficios({
+      tipoPlano: '',
+      quantidadeDependentesPlano: '',
+      valeTransporte: {
+        modalidade: '',
+        dataSolicitacaoCartao: '',
+        dataPagamento: ''
+      },
+      valeAlimentacao: {
+        dataSolicitacaoCartao: '',
+        dataPagamento: ''
+      },
+      planoSaude: {
+        operadora: '',
+        dataSolicitacao: '',
+        vigenciaInicio: '',
+        tipoPlano: '',
+        possuiDependentes: false,
+        dependentes: []
+      }
+    });
+
+    setDocumentacao({
+      anexos: []
+    });
+
+    setDadosTI({
+      servidorAcesso: '',
+      permissoesNecessarias: '',
+      restricoes: '',
+      pastasAcesso: '',
+      emailCorporativo: '',
+      ramal: ''
+    });
+
+    setActiveTab('dados-pessoais');
+    setSelectedCandidato(null);
+  };
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'dados-pessoais':
+        return (
+          <DadosPessoaisTab
+            formData={dadosPessoais}
+            onInputChange={(field, value) =>
+              setDadosPessoais(prev => ({ ...prev, [field]: value }))
+            }
+          />
+        );
+      case 'dados-profissionais':
+        return (
+          <DadosProfissionaisTab
+            formData={dadosProfissionais}
+            onInputChange={(field, value) =>
+              setDadosProfissionais(prev => ({ ...prev, [field]: value }))
+            }
+          />
+        );
+      case 'dados-financeiros':
+        return (
+          <DadosFinanceirosTab
+            formData={dadosFinanceiros}
+            onInputChange={(field, value) =>
+              setDadosFinanceiros(prev => ({ ...prev, [field]: value }))
+            }
+          />
+        );
+      case 'dados-bancarios':
+        return (
+          <DadosBancariosTab
+            formData={dadosBancarios}
+            onInputChange={(field, value) =>
+              setDadosBancarios(prev => ({ ...prev, [field]: value }))
+            }
+          />
+        );
+      case 'formacao':
+        return (
+          <FormacaoEscolaridadeTab
+            formData={formacaoEscolaridade}
+            onInputChange={(field, value) =>
+              setFormacaoEscolaridade(prev => ({ ...prev, [field]: value }))
+            }
+          />
+        );
+      case 'beneficios':
+        return (
+          <BeneficiosTab
+            formData={beneficios}
+            onInputChange={(field, value) =>
+              setBeneficios(prev => ({ ...prev, [field]: value }))
+            }
+          />
+        );
+      case 'ti':
+        return (
+          <TITab
+            formData={dadosTI}
+            onInputChange={(field, value) => 
+              setDadosTI(prev => ({ ...prev, [field]: value }))
+            }
+          />
+        );
+      case 'documentacao':
+        return (
+          <DocumentacaoTab
+            formData={documentacao}
+            onInputChange={(field, value) => 
+              setDocumentacao(prev => ({ ...prev, [field]: value }))
+            }
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
-        <DialogHeader className="pb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-biodina-gold/10 rounded-lg">
-              <User className="h-6 w-6 text-biodina-gold" />
-            </div>
-            <div>
-              <DialogTitle className="text-2xl font-bold text-biodina-blue">
-                Admissão de Candidato
-              </DialogTitle>
-              <p className="text-gray-600">
-                Preencha os dados do candidato para efetuar a admissão
-              </p>
-            </div>
-          </div>
-        </DialogHeader>
+    <div className="container mx-auto py-8">
+      <h1 className="text-2xl font-bold mb-4 text-biodina-blue">Admissão de Colaborador</h1>
+      <p className="text-gray-600 mb-6">Preencha os dados do novo colaborador para efetuar a admissão no sistema.</p>
 
-        <div className="flex-1 overflow-y-auto">
-          <Tabs defaultValue="dados-pessoais" className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-5 mb-4">
-              <TabsTrigger value="dados-pessoais">
-                <User className="h-4 w-4 mr-2" />
+      <div className="md:flex gap-8">
+        {/* Tabs */}
+        <div className="w-full md:w-1/4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Informações</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-1">
+              <Button
+                variant="ghost"
+                className={`w-full justify-start ${activeTab === 'dados-pessoais' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
+                onClick={() => setActiveTab('dados-pessoais')}
+              >
                 Dados Pessoais
-              </TabsTrigger>
-              <TabsTrigger value="dados-profissionais">
-                <Building2 className="h-4 w-4 mr-2" />
+              </Button>
+              <Button
+                variant="ghost"
+                className={`w-full justify-start ${activeTab === 'dados-profissionais' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
+                onClick={() => setActiveTab('dados-profissionais')}
+              >
                 Dados Profissionais
-              </TabsTrigger>
-              <TabsTrigger value="dados-financeiros">
-                <DollarSign className="h-4 w-4 mr-2" />
+              </Button>
+              <Button
+                variant="ghost"
+                className={`w-full justify-start ${activeTab === 'dados-financeiros' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
+                onClick={() => setActiveTab('dados-financeiros')}
+              >
                 Dados Financeiros
-              </TabsTrigger>
-              <TabsTrigger value="dados-bancarios">
-                <CreditCard className="h-4 w-4 mr-2" />
+              </Button>
+              <Button
+                variant="ghost"
+                className={`w-full justify-start ${activeTab === 'dados-bancarios' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
+                onClick={() => setActiveTab('dados-bancarios')}
+              >
                 Dados Bancários
-              </TabsTrigger>
-              <TabsTrigger value="formacao">
-                <GraduationCap className="h-4 w-4 mr-2" />
-                Formação
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsList className="grid w-full grid-cols-5 mb-4">
-              <TabsTrigger value="beneficios">
-                <Heart className="h-4 w-4 mr-2" />
+              </Button>
+              <Button
+                variant="ghost"
+                className={`w-full justify-start ${activeTab === 'formacao' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
+                onClick={() => setActiveTab('formacao')}
+              >
+                Formação e Escolaridade
+              </Button>
+              <Button
+                variant="ghost"
+                className={`w-full justify-start ${activeTab === 'beneficios' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
+                onClick={() => setActiveTab('beneficios')}
+              >
                 Benefícios
-              </TabsTrigger>
-              <TabsTrigger value="documentacao">
-                <FileText className="h-4 w-4 mr-2" />
+              </Button>
+              <Button
+                variant="ghost"
+                className={`w-full justify-start ${activeTab === 'ti' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
+                onClick={() => setActiveTab('ti')}
+              >
+                Dados de TI
+              </Button>
+              <Button
+                variant="ghost"
+                className={`w-full justify-start ${activeTab === 'documentacao' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
+                onClick={() => setActiveTab('documentacao')}
+              >
                 Documentação
-              </TabsTrigger>
-              <TabsTrigger value="ti">
-                <Monitor className="h-4 w-4 mr-2" />
-                TI
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="dados-pessoais" className="mt-0">
-              <DadosPessoaisTab 
-                formData={candidatoData?.dadosPessoais || {
-                  nome: '',
-                  cpf: '',
-                  pis: '',
-                  idade: '',
-                  dataNascimento: '',
-                  estadoCivil: '',
-                  nacionalidade: '',
-                  genero: '',
-                  etnia: '',
-                  rg: '',
-                  orgaoExpedidorRg: '',
-                  ufEmissorRg: '',
-                  dataExpedicaoRg: '',
-                  naturalidade: '',
-                  nomeMae: '',
-                  nomePai: '',
-                  cep: '',
-                  endereco: '',
-                  numeroResidencia: '',
-                  complemento: '',
-                  bairro: '',
-                  pcd: '',
-                  doencaPreExistente: '',
-                  email: '',
-                  telefone: '',
-                  observacoes: ''
-                }}
-                onInputChange={(field, value) => handleInputChange(`dadosPessoais.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="dados-profissionais" className="mt-0">
-              <DadosProfissionaisTab 
-                formData={candidatoData?.dadosProfissionais || {
-                  empresa: '',
-                  uf: '',
-                  setor: '',
-                  funcao: '',
-                  cargo: '',
-                  nivel: '',
-                  cbo: '',
-                  compativelFuncao: false,
-                  funcoesDesempenhadas: '',
-                  dataAdmissao: '',
-                  dataCadastro: '',
-                  tempoCasa: '',
-                  ultimaPromocao: '',
-                  previsaoFerias: '',
-                  tipoUsuario: '',
-                  regimeTrabalho: '',
-                  horarioTrabalho: '',
-                  cargaHorariaSemanal: '',
-                  origemContratacao: ''
-                }}
-                onInputChange={(field, value) => handleInputChange(`dadosProfissionais.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="dados-financeiros" className="mt-0">
-              <DadosFinanceirosTab 
-                formData={candidatoData?.dadosFinanceiros || {
-                  salarioBase: '',
-                  adicionalNivel: '',
-                  insalubridade: '',
-                  sobreaviso: '',
-                  salarioBruto: '',
-                  valorHoraTrabalhada: '',
-                  pisoSalarial: '',
-                  mediaSalarial: '',
-                  dependentesIR: [],
-                  adiantamentoSalarial: false
-                }}
-                onInputChange={(field, value) => handleInputChange(`dadosFinanceiros.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="dados-bancarios" className="mt-0">
-              <DadosBancariosTab 
-                formData={candidatoData?.dadosBancarios || {
-                  banco: '',
-                  tipoConta: '',
-                  agencia: '',
-                  conta: ''
-                }}
-                onInputChange={(field, value) => handleInputChange(`dadosBancarios.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="formacao" className="mt-0">
-              <FormacaoEscolaridadeTab 
-                formData={candidatoData?.formacaoEscolaridade || {
-                  escolaridade: '',
-                  possuiDiploma: false,
-                  comprovantesEscolaridade: []
-                }}
-                onInputChange={(field, value) => handleInputChange(`formacaoEscolaridade.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="beneficios" className="mt-0">
-              <BeneficiosTab 
-                formData={candidatoData?.beneficios || {
-                  tipoPlano: '',
-                  quantidadeDependentesPlano: '',
-                  valeTransporte: {
-                    modalidade: '',
-                    dataSolicitacaoCartao: '',
-                    dataPagamento: ''
-                  },
-                  valeAlimentacao: {
-                    dataSolicitacaoCartao: '',
-                    dataPagamento: ''
-                  },
-                  planoSaude: {
-                    operadora: '',
-                    dataSolicitacao: '',
-                    vigenciaInicio: '',
-                    tipoPlano: '',
-                    possuiDependentes: false,
-                    dependentes: []
-                  }
-                }}
-                onInputChange={(field, value) => handleInputChange(`beneficios.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="documentacao" className="mt-0">
-              <DocumentacaoTab 
-                formData={candidatoData?.documentacao || { anexos: [] }}
-                onInputChange={(field, value) => handleInputChange(`documentacao.${field}`, value)}
-              />
-            </TabsContent>
-
-            <TabsContent value="ti" className="mt-0">
-              <TITab 
-                formData={candidatoData?.dadosTI || {
-                  servidorAcesso: '',
-                  permissoesNecessarias: '',
-                  restricoes: '',
-                  pastasAcesso: '',
-                  emailCorporativo: '',
-                  ramal: ''
-                }}
-                onInputChange={(field, value) => handleInputChange(`dadosTI.${field}`, value)}
-              />
-            </TabsContent>
-          </Tabs>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button variant="outline" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button onClick={handleCadastrarColaborador} className="bg-biodina-gold hover:bg-biodina-gold/90">
-            <Save className="h-4 w-4 mr-2" />
-            Admitir Candidato
-          </Button>
+        {/* Form Content */}
+        <div className="w-full md:w-3/4">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {activeTab === 'dados-pessoais' && 'Dados Pessoais'}
+                {activeTab === 'dados-profissionais' && 'Dados Profissionais'}
+                {activeTab === 'dados-financeiros' && 'Dados Financeiros'}
+                {activeTab === 'dados-bancarios' && 'Dados Bancários'}
+                {activeTab === 'formacao' && 'Formação e Escolaridade'}
+                {activeTab === 'beneficios' && 'Benefícios'}
+                {activeTab === 'ti' && 'Dados de TI'}
+                {activeTab === 'documentacao' && 'Documentação'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {renderTabContent()}
+            </CardContent>
+          </Card>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+
+      <Separator className="my-6" />
+
+      <div className="flex justify-end">
+        <Button onClick={handleCadastrarColaborador}>Cadastrar Colaborador</Button>
+      </div>
+    </div>
   );
 };
 

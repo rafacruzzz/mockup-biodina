@@ -1,21 +1,22 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Save, TrendingUp, Edit } from "lucide-react";
-import { toast } from "sonner";
-import { rhModules } from '@/data/rhModules';
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { rhModules } from "@/data/rhModules";
+import { TrendingUp, DollarSign, Plus, Trash2, Edit } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-interface NivelEdicao {
-  id: number;
-  cargoId: number;
-  cargo: string;
-  nivel: number;
-  valorMinimo: string;
-  valorMaximo: string;
-  requisitos?: string;
+interface NivelProgressao {
+  id: string;
+  nome: string;
+  salarioMinimo: number;
+  salarioMaximo: number;
+  requisitos: string[];
+  tempoMinimo: number;
 }
 
 interface NiveisProgressaoModalProps {
@@ -24,215 +25,167 @@ interface NiveisProgressaoModalProps {
 }
 
 const NiveisProgressaoModal = ({ isOpen, onClose }: NiveisProgressaoModalProps) => {
-  const [cargoSelecionado, setCargoSelecionado] = useState('');
-  const [niveisEdicao, setNiveisEdicao] = useState<NivelEdicao[]>([]);
+  const { toast } = useToast();
+  const [niveis, setNiveis] = useState<NivelProgressao[]>([
+    { id: '1', nome: 'Júnior', salarioMinimo: 3000, salarioMaximo: 5000, requisitos: ['Formação superior', '0-2 anos experiência'], tempoMinimo: 12 },
+    { id: '2', nome: 'Pleno', salarioMinimo: 5000, salarioMaximo: 8000, requisitos: ['Formação superior', '2-5 anos experiência'], tempoMinimo: 24 }
+  ]);
 
-  const cargosDisponiveis = rhModules.planosCarreira.subModules.cargos.data;
-  const todosNiveis = rhModules.planosCarreira.subModules.niveis.data;
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingNivelId, setEditingNivelId] = useState<string | null>(null);
+  const [nome, setNome] = useState('');
+  const [salarioMinimo, setSalarioMinimo] = useState<number>(0);
+  const [salarioMaximo, setSalarioMaximo] = useState<number>(0);
+  const [requisitos, setRequisitos] = useState<string[]>([]);
+  const [tempoMinimo, setTempoMinimo] = useState<number>(0);
 
-  useEffect(() => {
-    if (cargoSelecionado) {
-      const cargoId = parseInt(cargoSelecionado);
-      const niveisCargo = todosNiveis
-        .filter(nivel => nivel.cargoId === cargoId)
-        .map(nivel => ({
-          ...nivel,
-          valorMinimo: nivel.valorMinimo.toString(),
-          valorMaximo: nivel.valorMaximo.toString(),
-          requisitos: nivel.requisitos || ''
-        }));
-      
-      setNiveisEdicao(niveisCargo);
-    } else {
-      setNiveisEdicao([]);
-    }
-  }, [cargoSelecionado]);
-
-  const handleNivelChange = (index: number, field: keyof NivelEdicao, value: string) => {
-    setNiveisEdicao(prev => prev.map((nivel, i) => 
-      i === index ? { ...nivel, [field]: value } : nivel
-    ));
+  const handleOpenModal = () => {
+    setIsEditing(false);
+    setEditingNivelId(null);
+    setNome('');
+    setSalarioMinimo(0);
+    setSalarioMaximo(0);
+    setRequisitos([]);
+    setTempoMinimo(0);
   };
 
-  const handleSave = () => {
-    if (!cargoSelecionado) {
-      toast.error("Selecione um cargo para gerenciar os níveis");
-      return;
+  const handleEditNivel = (nivel: NivelProgressao) => {
+    setIsEditing(true);
+    setEditingNivelId(nivel.id);
+    setNome(nivel.nome);
+    setSalarioMinimo(nivel.salarioMinimo);
+    setSalarioMaximo(nivel.salarioMaximo);
+    setRequisitos(nivel.requisitos);
+    setTempoMinimo(nivel.tempoMinimo);
+  };
+
+  const handleSaveNivel = () => {
+    if (isEditing && editingNivelId) {
+      const updatedNiveis = niveis.map(nivel =>
+        nivel.id === editingNivelId ? {
+          ...nivel,
+          nome,
+          salarioMinimo,
+          salarioMaximo,
+          requisitos,
+          tempoMinimo
+        } : nivel
+      );
+      setNiveis(updatedNiveis);
+      toast({
+        title: "Nível atualizado com sucesso!",
+        description: `O nível ${nome} foi atualizado.`,
+      });
+    } else {
+      const novoNivel = {
+        id: Date.now().toString(),
+        nome,
+        salarioMinimo,
+        salarioMaximo,
+        requisitos,
+        tempoMinimo
+      };
+      setNiveis([...niveis, novoNivel]);
+      toast({
+        title: "Nível adicionado com sucesso!",
+        description: `O nível ${nome} foi adicionado.`,
+      });
     }
-
-    // Validar valores
-    const niveisInvalidos = niveisEdicao.filter(nivel => 
-      !nivel.valorMinimo || !nivel.valorMaximo || 
-      parseFloat(nivel.valorMinimo) > parseFloat(nivel.valorMaximo)
-    );
-
-    if (niveisInvalidos.length > 0) {
-      toast.error("Verifique os valores dos níveis. Valor mínimo deve ser menor que o máximo");
-      return;
-    }
-
-    console.log('Salvando níveis:', niveisEdicao);
-    toast.success("Níveis de progressão atualizados com sucesso!");
-    
     onClose();
   };
 
-  const cargoInfo = cargosDisponiveis.find(c => c.id.toString() === cargoSelecionado);
+  const handleDeleteNivel = (id: string) => {
+    setNiveis(niveis.filter(nivel => nivel.id !== id));
+    toast({
+      title: "Nível removido com sucesso!",
+      description: `O nível foi removido.`,
+    });
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="pb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-biodina-gold/10 rounded-lg">
-              <TrendingUp className="h-6 w-6 text-biodina-gold" />
-            </div>
-            <div>
-              <DialogTitle className="text-2xl font-bold text-biodina-blue">
-                Gerenciar Níveis de Progressão
-              </DialogTitle>
-              <p className="text-gray-600">Edite os valores e requisitos dos níveis</p>
-            </div>
-          </div>
+      <DialogContent className="max-w-4xl">
+        <DialogHeader>
+          <DialogTitle>Níveis de Progressão</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Seleção do cargo */}
-          <div className="space-y-2">
-            <Label htmlFor="cargo">Cargo</Label>
-            <Select value={cargoSelecionado} onValueChange={setCargoSelecionado}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione um cargo para gerenciar os níveis" />
-              </SelectTrigger>
-              <SelectContent>
-                {cargosDisponiveis.map((cargo) => (
-                  <SelectItem key={cargo.id} value={cargo.id.toString()}>
-                    {cargo.cargo} - {cargo.planoCarreira}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Lista de Níveis */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Níveis Cadastrados</h3>
+              <Button variant="outline" size="sm" onClick={handleOpenModal}>
+                <Plus className="h-4 w-4 mr-2" />
+                Adicionar Nível
+              </Button>
+            </div>
+
+            <div className="space-y-3">
+              {niveis.map((nivel) => (
+                <Card key={nivel.id} className="shadow-sm">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">{nivel.nome}</CardTitle>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" onClick={() => handleEditNivel(nivel)}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-red-500" onClick={() => handleDeleteNivel(nivel.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      <DollarSign className="inline-block h-4 w-4 mr-1" />
+                      {nivel.salarioMinimo} - {nivel.salarioMaximo}
+                    </p>
+                    <Badge variant="secondary" className="mt-2">Tempo Mínimo: {nivel.tempoMinimo} meses</Badge>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
 
-          {/* Informações do cargo selecionado */}
-          {cargoInfo && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-semibold text-blue-800 mb-2">Informações do Cargo</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div>
-                  <span className="text-blue-600">Cargo:</span>
-                  <p className="font-medium">{cargoInfo.cargo}</p>
+          {/* Formulário de Nível */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">{isEditing ? 'Editar Nível' : 'Adicionar Nível'}</h3>
+            <div className="grid gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="nome">Nome do Nível</Label>
+                  <Input id="nome" value={nome} onChange={(e) => setNome(e.target.value)} />
                 </div>
-                <div>
-                  <span className="text-blue-600">Plano:</span>
-                  <p className="font-medium">{cargoInfo.planoCarreira}</p>
-                </div>
-                <div>
-                  <span className="text-blue-600">Salário Base:</span>
-                  <p className="font-medium">
-                    R$ {cargoInfo.salarioBase.toLocaleString('pt-BR', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2
-                    })}
-                  </p>
+                <div className="space-y-2">
+                  <Label htmlFor="tempoMinimo">Tempo Mínimo (meses)</Label>
+                  <Input id="tempoMinimo" type="number" value={tempoMinimo} onChange={(e) => setTempoMinimo(Number(e.target.value))} />
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* Tabela de níveis */}
-          {niveisEdicao.length > 0 && (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Edit className="h-5 w-5 text-biodina-gold" />
-                <h3 className="text-lg font-semibold">Níveis de Progressão</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="salarioMinimo">Salário Mínimo</Label>
+                  <Input id="salarioMinimo" type="number" value={salarioMinimo} onChange={(e) => setSalarioMinimo(Number(e.target.value))} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="salarioMaximo">Salário Máximo</Label>
+                  <Input id="salarioMaximo" type="number" value={salarioMaximo} onChange={(e) => setSalarioMaximo(Number(e.target.value))} />
+                </div>
               </div>
 
-              <div className="space-y-3">
-                {niveisEdicao.map((nivel, index) => (
-                  <div key={nivel.id} className="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 border rounded-lg bg-gray-50">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Nível</Label>
-                      <div className="bg-white p-2 rounded border text-center font-semibold text-biodina-blue">
-                        {nivel.nivel}
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label className="text-sm">Valor Mínimo *</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={nivel.valorMinimo}
-                        onChange={(e) => handleNivelChange(index, 'valorMinimo', e.target.value)}
-                        placeholder="R$ 0,00"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label className="text-sm">Valor Máximo *</Label>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={nivel.valorMaximo}
-                        onChange={(e) => handleNivelChange(index, 'valorMaximo', e.target.value)}
-                        placeholder="R$ 0,00"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label className="text-sm">Faixa Calculada</Label>
-                      <div className="bg-green-50 p-2 rounded border text-center text-sm">
-                        {nivel.valorMinimo && nivel.valorMaximo ? 
-                          `R$ ${((parseFloat(nivel.valorMinimo) + parseFloat(nivel.valorMaximo)) / 2).toLocaleString('pt-BR', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                          })}` 
-                          : 'R$ 0,00'
-                        }
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label className="text-sm">Requisitos</Label>
-                      <Input
-                        value={nivel.requisitos}
-                        onChange={(e) => handleNivelChange(index, 'requisitos', e.target.value)}
-                        placeholder="Ex: 6 meses de experiência"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                <p className="text-sm text-yellow-800">
-                  💡 <strong>Dica:</strong> Os valores são usados para calcular a sugestão salarial no cadastro de colaboradores. 
-                  O sistema utiliza a média entre valor mínimo e máximo de cada nível.
-                </p>
+              <div className="space-y-2">
+                <Label htmlFor="requisitos">Requisitos</Label>
+                <Textarea id="requisitos" value={requisitos.join('\n')} onChange={(e) => setRequisitos(e.target.value.split('\n'))} />
               </div>
             </div>
-          )}
-
-          {niveisEdicao.length === 0 && cargoSelecionado && (
-            <div className="text-center py-8 text-gray-500">
-              <TrendingUp className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-              <p>Nenhum nível encontrado para este cargo</p>
-            </div>
-          )}
+          </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t">
-          <Button variant="outline" onClick={onClose}>
+        <div className="flex justify-end mt-6">
+          <Button type="button" variant="secondary" onClick={onClose}>
             Cancelar
           </Button>
-          <Button 
-            onClick={handleSave} 
-            className="bg-biodina-gold hover:bg-biodina-gold/90"
-            disabled={niveisEdicao.length === 0}
-          >
-            <Save className="h-4 w-4 mr-2" />
-            Salvar Alterações
+          <Button onClick={handleSaveNivel} className="ml-2">
+            {isEditing ? 'Atualizar Nível' : 'Salvar Nível'}
           </Button>
         </div>
       </DialogContent>

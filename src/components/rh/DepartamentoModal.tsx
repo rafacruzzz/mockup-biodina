@@ -1,142 +1,217 @@
 import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { X, Save } from "lucide-react";
-import { Departamento } from "@/types/departamento";
-import { rhModules } from '@/data/rhModules';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { rhModules } from "@/data/rhModules";
+import { Building2, Users, Plus, Trash2, Edit } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+interface Departamento {
+  id: string;
+  nome: string;
+  descricao: string;
+  responsavel: string;
+  funcionarios: number;
+}
 
 interface DepartamentoModalProps {
   isOpen: boolean;
   onClose: () => void;
-  departamento?: Departamento | null;
 }
 
-const DepartamentoModal = ({ isOpen, onClose, departamento }: DepartamentoModalProps) => {
-  const [formData, setFormData] = useState<Departamento>({
-    nome: departamento?.nome || "",
-    responsavel: departamento?.responsavel || "",
-    observacoes: departamento?.observacoes || "",
-    cargos: departamento?.cargos || [],
-  });
+const DepartamentoModal = ({ isOpen, onClose }: DepartamentoModalProps) => {
+  const { toast } = useToast();
+  const [departamentos, setDepartamentos] = useState<Departamento[]>([
+    { id: '1', nome: 'Tecnologia da Informação', descricao: 'Desenvolvimento e infraestrutura', responsavel: 'João Silva', funcionarios: 8 },
+    { id: '2', nome: 'Comercial', descricao: 'Vendas e relacionamento com clientes', responsavel: 'Maria Santos', funcionarios: 12 },
+    { id: '3', nome: 'Recursos Humanos', descricao: 'Gestão de pessoas e processos', responsavel: 'Ana Costa', funcionarios: 4 }
+  ]);
 
-  if (!isOpen) return null;
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [nome, setNome] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [responsavel, setResponsavel] = useState('');
+  const [funcionarios, setFuncionarios] = useState(0);
 
-  const cargosList = rhModules.departamentos.subModules.cargos.data;
-
-  const handleInputChange = (field: keyof Departamento, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleAddDepartamento = () => {
+    const novoDepartamento = {
+      id: Date.now().toString(),
+      nome,
+      descricao,
+      responsavel,
+      funcionarios
+    };
+    setDepartamentos([...departamentos, novoDepartamento]);
+    setNome('');
+    setDescricao('');
+    setResponsavel('');
+    setFuncionarios(0);
+    toast({
+      title: "Departamento adicionado",
+      description: `O departamento ${nome} foi adicionado com sucesso.`,
+    });
   };
 
-  const handleCargoToggle = (cargoId: number) => {
-    setFormData(prev => ({
-      ...prev,
-      cargos: prev.cargos?.includes(cargoId)
-        ? prev.cargos.filter(id => id !== cargoId)
-        : [...(prev.cargos || []), cargoId]
-    }));
+  const handleEditDepartamento = (id: string) => {
+    const departamento = departamentos.find(dep => dep.id === id);
+    if (departamento) {
+      setIsEditing(true);
+      setEditingId(id);
+      setNome(departamento.nome);
+      setDescricao(departamento.descricao);
+      setResponsavel(departamento.responsavel);
+      setFuncionarios(departamento.funcionarios);
+    }
   };
 
-  const handleSave = () => {
-    console.log("Salvando setor:", formData);
-    onClose();
+  const handleUpdateDepartamento = () => {
+    if (editingId) {
+      const updatedDepartamentos = departamentos.map(dep =>
+        dep.id === editingId ? { ...dep, nome, descricao, responsavel, funcionarios } : dep
+      );
+      setDepartamentos(updatedDepartamentos);
+      setIsEditing(false);
+      setEditingId(null);
+      setNome('');
+      setDescricao('');
+      setResponsavel('');
+      setFuncionarios(0);
+      toast({
+        title: "Departamento atualizado",
+        description: `O departamento foi atualizado com sucesso.`,
+      });
+    }
+  };
+
+  const handleDeleteDepartamento = (id: string) => {
+    setDepartamentos(departamentos.filter(dep => dep.id !== id));
+    toast({
+      title: "Departamento removido",
+      description: `O departamento foi removido com sucesso.`,
+    });
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-biodina-blue/10 rounded-lg">
-              <svg className="h-6 w-6 text-biodina-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-biodina-blue">
-                {departamento ? "Editar Setor" : "Novo Setor"}
-              </h2>
-              <p className="text-gray-600 text-sm">
-                {departamento ? "Edite as informações do setor" : "Cadastre um novo setor"}
-              </p>
-            </div>
-          </div>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Building2 className="h-5 w-5" />
+            Gerenciar Departamentos
+          </DialogTitle>
+        </DialogHeader>
 
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="nome">Nome *</Label>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Formulário de Adição/Edição */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">
+                {isEditing ? 'Editar Departamento' : 'Adicionar Departamento'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="nome">Nome do Departamento</Label>
                 <Input
                   id="nome"
-                  value={formData.nome}
-                  onChange={(e) => handleInputChange("nome", e.target.value)}
-                  placeholder="Digite o nome do setor"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  placeholder="Ex: Tecnologia da Informação"
                 />
               </div>
-
-              <div>
+              <div className="space-y-2">
+                <Label htmlFor="descricao">Descrição</Label>
+                <Textarea
+                  id="descricao"
+                  value={descricao}
+                  onChange={(e) => setDescricao(e.target.value)}
+                  placeholder="Ex: Desenvolvimento e infraestrutura"
+                />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="responsavel">Responsável</Label>
                 <Input
                   id="responsavel"
-                  value={formData.responsavel}
-                  onChange={(e) => handleInputChange("responsavel", e.target.value)}
-                  placeholder="Digite o nome do responsável"
+                  value={responsavel}
+                  onChange={(e) => setResponsavel(e.target.value)}
+                  placeholder="Ex: João Silva"
                 />
               </div>
-
-              <div>
-                <Label htmlFor="observacoes">Observações</Label>
-                <Textarea
-                  id="observacoes"
-                  value={formData.observacoes}
-                  onChange={(e) => handleInputChange("observacoes", e.target.value)}
-                  placeholder="Digite observações sobre o setor"
-                  rows={4}
+              <div className="space-y-2">
+                <Label htmlFor="funcionarios">Número de Funcionários</Label>
+                <Input
+                  id="funcionarios"
+                  type="number"
+                  value={funcionarios}
+                  onChange={(e) => setFuncionarios(Number(e.target.value))}
+                  placeholder="Ex: 8"
                 />
               </div>
+              <Button onClick={isEditing ? handleUpdateDepartamento : handleAddDepartamento}>
+                {isEditing ? 'Atualizar Departamento' : 'Adicionar Departamento'}
+              </Button>
+            </CardContent>
+          </Card>
 
-              <div>
-                <Label>Cargos do Setor</Label>
-                <div className="mt-2 space-y-2 max-h-40 overflow-y-auto border rounded-md p-3">
-                  {cargosList.map((cargo) => (
-                    <div key={cargo.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`cargo-${cargo.id}`}
-                        checked={formData.cargos?.includes(cargo.id!) || false}
-                        onCheckedChange={() => handleCargoToggle(cargo.id!)}
-                      />
-                      <Label htmlFor={`cargo-${cargo.id}`} className="text-sm">
-                        {cargo.nome}
-                      </Label>
-                    </div>
+          {/* Lista de Departamentos */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Departamentos Existentes
+                <Badge variant="secondary" className="ml-2">
+                  {departamentos.length}
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {departamentos.length === 0 ? (
+                <p className="text-center text-gray-500">Nenhum departamento cadastrado.</p>
+              ) : (
+                <div className="space-y-3">
+                  {departamentos.map((departamento) => (
+                    <Card key={departamento.id} className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <CardTitle className="text-sm font-medium">{departamento.nome}</CardTitle>
+                          <p className="text-xs text-gray-500">{departamento.descricao}</p>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Badge variant="outline">
+                            <Users className="h-3 w-3 mr-1" />
+                            {departamento.funcionarios}
+                          </Badge>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditDepartamento(departamento.id)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                            onClick={() => handleDeleteDepartamento(departamento.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
                   ))}
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Selecione os cargos que pertencem a este setor
-                </p>
-              </div>
-            </div>
-          </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
-
-        <div className="flex justify-end gap-4 p-6 border-t">
-          <Button variant="outline" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
-            <Save className="h-4 w-4 mr-2" />
-            Salvar
-          </Button>
-        </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

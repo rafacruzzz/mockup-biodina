@@ -1,37 +1,39 @@
 
-import { Users, Calendar, Building2, BarChart3, FileUser, UserCheck } from "lucide-react";
+import { Users, Calendar, Building2, TrendingUp } from "lucide-react";
 
 export const rhModules = [
   {
     id: 'processo-seletivo',
     name: 'Processo Seletivo',
-    description: 'Gerenciar vagas, candidatos e processos de seleção',
-    icon: UserCheck,
+    description: 'Gerencie processos seletivos e candidatos',
+    icon: Users,
     color: 'bg-blue-100 text-blue-600',
-    href: '/rh/processo-seletivo'
+    href: '/rh'
   },
   {
     id: 'departamentos',
     name: 'Departamentos',
-    description: 'Estrutura organizacional e departamentos',
+    description: 'Organize a estrutura departamental',
     icon: Building2,
-    color: 'bg-purple-100 text-purple-600',
-    href: '/rh/departamentos'
+    color: 'bg-green-100 text-green-600',
+    href: '/rh',
+    departamentos: [] // Add empty array for compatibility
   },
   {
     id: 'expedientes',
     name: 'Expedientes',
-    description: 'Horários de trabalho e escalas',
+    description: 'Configure horários e expedientes',
     icon: Calendar,
-    color: 'bg-green-100 text-green-600',
-    href: '/rh/expedientes'
+    color: 'bg-purple-100 text-purple-600',
+    href: '/rh'
   },
   {
     id: 'planos-carreira',
     name: 'Planos de Carreira',
-    description: 'Níveis, cargos e progressão profissional',
-    icon: BarChart3,
-    color: 'bg-yellow-100 text-yellow-600',
-    href: '/rh/planos-carreira'
+    description: 'Defina progressões e níveis',
+    icon: TrendingUp,
+    color: 'bg-orange-100 text-orange-600',
+    href: '/rh',
+    planosCarreira: [] // Add empty array for compatibility
   }
 ];
