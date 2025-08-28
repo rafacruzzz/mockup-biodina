@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,10 +8,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { X, Save } from "lucide-react";
 
 interface ServiceModalProps {
+  isOpen: boolean;
   onClose: () => void;
 }
 
-const ServiceModal = ({ onClose }: ServiceModalProps) => {
+const ServiceModal = ({ isOpen, onClose }: ServiceModalProps) => {
   const [formData, setFormData] = useState({
     // Informações Básicas
     codigo: "",
@@ -71,6 +71,8 @@ const ServiceModal = ({ onClose }: ServiceModalProps) => {
     console.log("Salvando serviço:", formData);
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
