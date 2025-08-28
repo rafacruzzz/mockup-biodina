@@ -23,7 +23,7 @@ export interface ModuleAccess {
 }
 
 export interface UserData extends ColaboradorData {
-  // User identification
+  // User identification - these are required
   id: string;
   nome: string;
   email: string;

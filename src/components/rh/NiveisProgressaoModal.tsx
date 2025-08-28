@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -7,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Save, TrendingUp, Edit } from "lucide-react";
 import { toast } from "sonner";
-import { modules } from "@/data/rhModules";
+import { rhModules } from '@/data/rhModules';
 
 interface NivelEdicao {
   id: number;
@@ -28,8 +27,8 @@ const NiveisProgressaoModal = ({ isOpen, onClose }: NiveisProgressaoModalProps) 
   const [cargoSelecionado, setCargoSelecionado] = useState('');
   const [niveisEdicao, setNiveisEdicao] = useState<NivelEdicao[]>([]);
 
-  const cargosDisponiveis = modules.planosCarreira.subModules.cargos.data;
-  const todosNiveis = modules.planosCarreira.subModules.niveis.data;
+  const cargosDisponiveis = rhModules.planosCarreira.subModules.cargos.data;
+  const todosNiveis = rhModules.planosCarreira.subModules.niveis.data;
 
   useEffect(() => {
     if (cargoSelecionado) {

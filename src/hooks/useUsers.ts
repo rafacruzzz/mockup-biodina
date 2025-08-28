@@ -15,6 +15,11 @@ const initialUsers: User[] = [
     dataAdmissao: '2023-01-15',
     status: 'Ativo',
     dados: {
+      id: '1',
+      nome: 'Maria Silva Santos',
+      email: 'maria.santos@biodina.com.br',
+      telefone: '(11) 98765-4321',
+      status: 'Ativo',
       dadosPessoais: {
         nome: 'Maria Silva Santos',
         cpf: '123.456.789-01',
@@ -118,13 +123,13 @@ const initialUsers: User[] = [
         pastasAcesso: '',
         emailCorporativo: '',
         ramal: ''
-      } as DadosTI
-    },
-    credentials: {
-      username: 'maria.santos',
-      isActive: true,
-      userType: 'usuario',
-      moduleAccess: []
+      } as DadosTI,
+      credentials: {
+        username: 'maria.santos',
+        isActive: true,
+        userType: 'usuario',
+        moduleAccess: []
+      }
     }
   },
   {
@@ -137,6 +142,11 @@ const initialUsers: User[] = [
     dataAdmissao: '2022-08-20',
     status: 'Ativo',
     dados: {
+      id: '2',
+      nome: 'João Pedro Oliveira',
+      email: 'joao.oliveira@biodina.com.br',
+      telefone: '(11) 97654-3210',
+      status: 'Ativo',
       dadosPessoais: {
         nome: 'João Pedro Oliveira',
         cpf: '987.654.321-09',
@@ -240,13 +250,13 @@ const initialUsers: User[] = [
         pastasAcesso: '',
         emailCorporativo: '',
         ramal: ''
-      } as DadosTI
-    },
-    credentials: {
-      username: 'joao.oliveira',
-      isActive: true,
-      userType: 'gerente',
-      moduleAccess: []
+      } as DadosTI,
+      credentials: {
+        username: 'joao.oliveira',
+        isActive: true,
+        userType: 'gerente',
+        moduleAccess: []
+      }
     }
   }
 ];
@@ -257,20 +267,16 @@ export const useUsers = () => {
   const adicionarUser = useCallback((novoUserData: Omit<UserData, 'id'>) => {
     const user: User = {
       id: Date.now().toString(),
-      nome: novoUserData.dadosPessoais.nome,
-      email: novoUserData.dadosPessoais.email,
-      telefone: novoUserData.dadosPessoais.telefone,
+      nome: novoUserData.nome,
+      email: novoUserData.email,
+      telefone: novoUserData.telefone,
       cargo: novoUserData.dadosProfissionais.cargo,
       departamento: novoUserData.dadosProfissionais.setor,
       dataAdmissao: novoUserData.dadosProfissionais.dataAdmissao,
       status: 'Novo',
       dados: {
         ...novoUserData,
-        id: Date.now().toString(),
-        nome: novoUserData.dadosPessoais.nome,
-        email: novoUserData.dadosPessoais.email,
-        telefone: novoUserData.dadosPessoais.telefone,
-        status: 'Novo'
+        id: Date.now().toString()
       }
     };
     setUsers(prev => [...prev, user]);
@@ -294,9 +300,9 @@ export const useUsers = () => {
           ? {
               ...user,
               dados: { ...user.dados, ...dadosAtualizados },
-              nome: dadosAtualizados.dadosPessoais?.nome || user.nome,
-              email: dadosAtualizados.dadosPessoais?.email || user.email,
-              telefone: dadosAtualizados.dadosPessoais?.telefone || user.telefone,
+              nome: dadosAtualizados.nome || user.nome,
+              email: dadosAtualizados.email || user.email,
+              telefone: dadosAtualizados.telefone || user.telefone,
               cargo: dadosAtualizados.dadosProfissionais?.cargo || user.cargo,
               departamento: dadosAtualizados.dadosProfissionais?.setor || user.departamento
             }

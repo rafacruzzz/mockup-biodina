@@ -1,9 +1,11 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Save, User, Shield, UserCheck, Building2, DollarSign, CreditCard, GraduationCap, Heart, FileText, MessageSquare, Monitor } from "lucide-react";
 import { UserData } from "@/types/user";
+import { DadosTI } from "@/types/colaborador";
 import { useUsers } from "@/hooks/useUsers";
 
 // Import all the colaborador tabs
@@ -28,7 +30,13 @@ interface UserModalProps {
 const UserModal = ({ isOpen, onClose, userId, editMode = false }: UserModalProps) => {
   const { users, atualizarUser } = useUsers();
   const user = userId ? users.find(u => u.id === userId) : null;
-  const [formData, setFormData] = useState<UserData>(user?.dados || {
+  
+  const defaultUserData: UserData = {
+    id: '',
+    nome: '',
+    email: '',
+    telefone: '',
+    status: 'Novo',
     dadosPessoais: {
       nome: '',
       cpf: '',
@@ -124,8 +132,22 @@ const UserModal = ({ isOpen, onClose, userId, editMode = false }: UserModalProps
     },
     documentacao: {
       anexos: []
+    },
+    dadosTI: {
+      servidorAcesso: '',
+      permissoesNecessarias: '',
+      restricoes: '',
+      pastasAcesso: '',
+      emailCorporativo: '',
+      ramal: ''
+    },
+    credentials: {
+      isActive: true,
+      moduleAccess: []
     }
-  } as UserData);
+  };
+
+  const [formData, setFormData] = useState<UserData>(user?.dados || defaultUserData);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => {
@@ -153,6 +175,15 @@ const UserModal = ({ isOpen, onClose, userId, editMode = false }: UserModalProps
       atualizarUser(userId, formData);
     }
     onClose();
+  };
+
+  const dadosTI: DadosTI = formData.dadosTI || {
+    servidorAcesso: '',
+    permissoesNecessarias: '',
+    restricoes: '',
+    pastasAcesso: '',
+    emailCorporativo: '',
+    ramal: ''
   };
 
   return (
@@ -284,7 +315,7 @@ const UserModal = ({ isOpen, onClose, userId, editMode = false }: UserModalProps
             {editMode && (
               <TabsContent value="ti" className="mt-0">
                 <TITab 
-                  formData={formData.dadosTI || {}}
+                  formData={dadosTI}
                   onInputChange={(field, value) => handleInputChange(`dadosTI.${field}`, value)}
                 />
               </TabsContent>
