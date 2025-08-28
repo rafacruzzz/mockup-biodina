@@ -145,7 +145,7 @@ export const modules: ModulesConfig = {
       //   ]
       // },
       colaboradores: {
-        name: "Colaboradores",
+        name: "Usuários",
         data: [
           {
             id: 1,
