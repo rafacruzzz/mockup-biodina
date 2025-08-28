@@ -11,16 +11,21 @@ import ContentHeader from '@/components/ui/ContentHeader';
 const Cadastro = () => {
   const [activeModule, setActiveModule] = useState('usuarios');
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState<string>();
+  const [selectedUserData, setSelectedUserData] = useState();
 
-  const handleEditUser = (userId: string) => {
-    setSelectedUserId(userId);
+  const handleEditUser = (userData: any) => {
+    setSelectedUserData(userData);
     setIsUserModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsUserModalOpen(false);
-    setSelectedUserId(undefined);
+    setSelectedUserData(undefined);
+  };
+
+  const handleSaveUser = (userData: any) => {
+    // Handle save logic here
+    console.log('Saving user:', userData);
   };
 
   const renderModuleContent = () => {
@@ -33,7 +38,6 @@ const Cadastro = () => {
                 <h2 className="text-2xl font-bold text-biodina-blue">Usuários</h2>
                 <p className="text-gray-600">Gerencie todos os usuários do sistema</p>
               </div>
-              {/* Removido o botão "Novo Registro" - usuários vêm do processo seletivo */}
             </div>
             <UsersTable onEditUser={handleEditUser} />
           </div>
@@ -120,8 +124,8 @@ const Cadastro = () => {
       <UserModal
         isOpen={isUserModalOpen}
         onClose={handleCloseModal}
-        userId={selectedUserId}
-        editMode={!!selectedUserId}
+        userData={selectedUserData}
+        onSave={handleSaveUser}
       />
     </div>
   );

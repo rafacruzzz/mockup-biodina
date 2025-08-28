@@ -1,17 +1,18 @@
+
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { DadosPessoaisTab } from "@/components/rh/tabs/DadosPessoaisTab";
-import { DadosProfissionaisTab } from "@/components/rh/tabs/DadosProfissionaisTab";
-import { DadosFinanceirosTab } from "@/components/rh/tabs/DadosFinanceirosTab";
-import { DadosBancariosTab } from "@/components/rh/tabs/DadosBancariosTab";
-import { FormacaoEscolaridadeTab } from "@/components/rh/tabs/FormacaoEscolaridadeTab";
-import { BeneficiosTab } from "@/components/rh/tabs/BeneficiosTab";
-import { DocumentacaoTab } from "@/components/rh/tabs/DocumentacaoTab";
-import { SolicitacoesTab } from "@/components/rh/tabs/SolicitacoesTab";
-import { TITab } from "@/components/rh/tabs/TITab";
-import { UserCredentialsTab } from "./UserCredentialsTab";
+import DadosPessoaisTab from "@/components/rh/tabs/DadosPessoaisTab";
+import DadosProfissionaisTab from "@/components/rh/tabs/DadosProfissionaisTab";
+import DadosFinanceirosTab from "@/components/rh/tabs/DadosFinanceirosTab";
+import DadosBancariosTab from "@/components/rh/tabs/DadosBancariosTab";
+import FormacaoEscolaridadeTab from "@/components/rh/tabs/FormacaoEscolaridadeTab";
+import BeneficiosTab from "@/components/rh/tabs/BeneficiosTab";
+import DocumentacaoTab from "@/components/rh/tabs/DocumentacaoTab";
+import SolicitacoesTab from "@/components/rh/tabs/SolicitacoesTab";
+import TITab from "@/components/rh/tabs/TITab";
+import UserCredentialsTab from "./UserCredentialsTab";
 import { useToast } from "@/hooks/use-toast";
 import { UserData } from "@/types/user";
 
@@ -158,13 +159,19 @@ const UserModal = ({ isOpen, onClose, userData, onSave }: UserModalProps) => {
   };
 
   const handleNestedInputChange = (section: keyof UserData, field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [section]: {
-        ...(prev[section] as any),
-        [field]: value
+    setFormData(prev => {
+      const currentSection = prev[section];
+      if (typeof currentSection === 'object' && currentSection !== null) {
+        return {
+          ...prev,
+          [section]: {
+            ...currentSection,
+            [field]: value
+          }
+        };
       }
-    }));
+      return prev;
+    });
   };
 
   const handleSave = () => {

@@ -1,181 +1,56 @@
-import { useState } from 'react';
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
-import { useUsers } from "@/hooks/useUsers";
-import { DadosPessoais, DadosProfissionais, DadosFinanceiros, DadosBancarios, FormacaoEscolaridade, Beneficios, Documentacao, DadosTI } from "@/types/colaborador";
-import { Candidato } from "@/types/candidato";
-import DadosPessoaisTab from "./tabs/DadosPessoaisTab";
-import DadosProfissionaisTab from "./tabs/DadosProfissionaisTab";
-import DadosFinanceirosTab from "./tabs/DadosFinanceirosTab";
-import DadosBancariosTab from "./tabs/DadosBancariosTab";
-import FormacaoEscolaridadeTab from "./tabs/FormacaoEscolaridadeTab";
-import BeneficiosTab from "./tabs/BeneficiosTab";
-import DocumentacaoTab from "./tabs/DocumentacaoTab";
-import { TITab } from './tabs/TITab';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Users, Calendar, CheckCircle, Clock, UserPlus } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import DadosPessoaisTab from './tabs/DadosPessoaisTab';
+import DadosProfissionaisTab from './tabs/DadosProfissionaisTab';
+import DadosFinanceirosTab from './tabs/DadosFinanceirosTab';
+import DadosBancariosTab from './tabs/DadosBancariosTab';
+import FormacaoEscolaridadeTab from './tabs/FormacaoEscolaridadeTab';
+import BeneficiosTab from './tabs/BeneficiosTab';
+import DocumentacaoTab from './tabs/DocumentacaoTab';
+import TITab from './tabs/TITab';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { useUsers } from '@/hooks/useUsers';
+import { UserData } from '@/types/user';
+import { DadosPessoais, DadosProfissionais, DadosFinanceiros, DadosBancarios, FormacaoEscolaridade, Beneficios, Documentacao, DadosTI } from '@/types/colaborador';
 
-interface AdmissaoProps {
-  candidato?: Candidato;
+interface AdmissaoData {
+  dadosPessoais: DadosPessoais;
+  dadosProfissionais: DadosProfissionais;
+  dadosFinanceiros: DadosFinanceiros;
+  dadosBancarios: DadosBancarios;
+  formacaoEscolaridade: FormacaoEscolaridade;
+  beneficios: Beneficios;
+  documentacao: Documentacao;
+  dadosTI: DadosTI;
 }
 
 const Admissao = () => {
   const { toast } = useToast();
-  const { adicionarUser } = useUsers();
-
+  const { users, addUser } = useUsers();
   const [activeTab, setActiveTab] = useState('dados-pessoais');
-  const [selectedCandidato, setSelectedCandidato] = useState<Candidato | null>(null);
+  const [isAdmissaoModalOpen, setIsAdmissaoModalOpen] = useState(false);
+  
+  const [candidatos, setCandidatos] = useState([
+    { id: '1', nome: 'João Silva', processo: 'Vendas - Estágio', status: 'Aprovado' },
+    { id: '2', nome: 'Maria Oliveira', processo: 'Marketing - Analista Jr', status: 'Aprovado' },
+    { id: '3', nome: 'Carlos Pereira', processo: 'TI - Desenvolvedor Pl', status: 'Aprovado' }
+  ]);
 
-  const [dadosPessoais, setDadosPessoais] = useState<DadosPessoais>({
-    nome: '',
-    cpf: '',
-    pis: '',
-    idade: '',
-    dataNascimento: '',
-    estadoCivil: '',
-    nacionalidade: 'brasileira',
-    genero: '',
-    etnia: '',
-    rg: '',
-    orgaoExpedidorRg: '',
-    ufEmissorRg: '',
-    dataExpedicaoRg: '',
-    naturalidade: '',
-    nomeMae: '',
-    nomePai: '',
-    cep: '',
-    endereco: '',
-    numeroResidencia: '',
-    complemento: '',
-    bairro: '',
-    pcd: 'nao',
-    doencaPreExistente: 'nao',
-    email: '',
-    telefone: '',
-    observacoes: ''
-  });
+  const [processos, setProcessos] = useState([
+    { id: 'vendas-estagio', nome: 'Vendas - Estágio', dataAbertura: '2024-01-15', status: 'Em andamento' },
+    { id: 'marketing-analista-jr', nome: 'Marketing - Analista Jr', dataAbertura: '2024-02-01', status: 'Concluído' },
+    { id: 'ti-desenvolvedor-pl', nome: 'TI - Desenvolvedor Pl', dataAbertura: '2024-02-10', status: 'Em andamento' }
+  ]);
 
-  const [dadosProfissionais, setDadosProfissionais] = useState<DadosProfissionais>({
-    empresa: '',
-    uf: '',
-    setor: '',
-    funcao: '',
-    cargo: '',
-    nivel: '',
-    cbo: '',
-    compativelFuncao: true,
-    funcoesDesempenhadas: '',
-    dataAdmissao: '',
-    dataCadastro: '',
-    tempoCasa: '',
-    ultimaPromocao: '',
-    previsaoFerias: '',
-    tipoUsuario: '',
-    regimeTrabalho: '',
-    horarioTrabalho: '',
-    cargaHorariaSemanal: '',
-    origemContratacao: ''
-  });
-
-  const [dadosFinanceiros, setDadosFinanceiros] = useState<DadosFinanceiros>({
-    salarioBase: '',
-    adicionalNivel: '',
-    insalubridade: '',
-    sobreaviso: '',
-    salarioBruto: '',
-    valorHoraTrabalhada: '',
-    pisoSalarial: '',
-    mediaSalarial: '',
-    dependentesIR: [],
-    adiantamentoSalarial: false
-  });
-
-  const [dadosBancarios, setDadosBancarios] = useState<DadosBancarios>({
-    banco: '',
-    tipoConta: '',
-    agencia: '',
-    conta: ''
-  });
-
-  const [formacaoEscolaridade, setFormacaoEscolaridade] = useState<FormacaoEscolaridade>({
-    escolaridade: '',
-    possuiDiploma: false,
-    comprovantesEscolaridade: []
-  });
-
-  const [beneficios, setBeneficios] = useState<Beneficios>({
-    tipoPlano: '',
-    quantidadeDependentesPlano: '',
-    valeTransporte: {
-      modalidade: '',
-      dataSolicitacaoCartao: '',
-      dataPagamento: ''
-    },
-    valeAlimentacao: {
-      dataSolicitacaoCartao: '',
-      dataPagamento: ''
-    },
-    planoSaude: {
-      operadora: '',
-      dataSolicitacao: '',
-      vigenciaInicio: '',
-      tipoPlano: '',
-      possuiDependentes: false,
-      dependentes: []
-    }
-  });
-
-  const [documentacao, setDocumentacao] = useState<Documentacao>({
-    anexos: []
-  });
-
-  const [dadosTI, setDadosTI] = useState<DadosTI>({
-    servidorAcesso: '',
-    permissoesNecessarias: '',
-    restricoes: '',
-    pastasAcesso: '',
-    emailCorporativo: '',
-    ramal: ''
-  });
-
-  const handleCadastrarColaborador = () => {
-    const novoUser = {
-      nome: dadosPessoais.nome,
-      email: dadosPessoais.email,
-      telefone: dadosPessoais.telefone,
-      status: 'Novo' as const,
-      dadosPessoais,
-      dadosProfissionais: {
-        ...dadosProfissionais,
-        cargo: dadosProfissionais.cargo,
-        dataAdmissao: dadosProfissionais.dataAdmissao
-      },
-      dadosFinanceiros,
-      dadosBancarios,
-      formacaoEscolaridade,
-      beneficios,
-      documentacao: { anexos: [] },
-      dadosTI,
-      credentials: {
-        isActive: false,
-        userType: 'usuario' as const,
-        moduleAccess: []
-      }
-    };
-
-    const userCriado = adicionarUser(novoUser);
-    
-    toast({
-      title: "Usuário cadastrado com sucesso!",
-      description: `${userCriado.nome} foi adicionado ao sistema como usuário.`,
-    });
-
-    // Reset forms
-    setDadosPessoais({
+  const [selectedCandidato, setSelectedCandidato] = useState(null);
+  
+  const [formData, setFormData] = useState<AdmissaoData>({
+    dadosPessoais: {
       nome: '',
       cpf: '',
       pis: '',
@@ -202,9 +77,8 @@ const Admissao = () => {
       email: '',
       telefone: '',
       observacoes: ''
-    });
-
-    setDadosProfissionais({
+    },
+    dadosProfissionais: {
       empresa: '',
       uf: '',
       setor: '',
@@ -212,7 +86,7 @@ const Admissao = () => {
       cargo: '',
       nivel: '',
       cbo: '',
-      compativelFuncao: true,
+      compativelFuncao: false,
       funcoesDesempenhadas: '',
       dataAdmissao: '',
       dataCadastro: '',
@@ -224,9 +98,8 @@ const Admissao = () => {
       horarioTrabalho: '',
       cargaHorariaSemanal: '',
       origemContratacao: ''
-    });
-
-    setDadosFinanceiros({
+    },
+    dadosFinanceiros: {
       salarioBase: '',
       adicionalNivel: '',
       insalubridade: '',
@@ -237,22 +110,19 @@ const Admissao = () => {
       mediaSalarial: '',
       dependentesIR: [],
       adiantamentoSalarial: false
-    });
-
-    setDadosBancarios({
+    },
+    dadosBancarios: {
       banco: '',
       tipoConta: '',
       agencia: '',
       conta: ''
-    });
-
-    setFormacaoEscolaridade({
+    },
+    formacaoEscolaridade: {
       escolaridade: '',
       possuiDiploma: false,
       comprovantesEscolaridade: []
-    });
-
-    setBeneficios({
+    },
+    beneficios: {
       tipoPlano: '',
       quantidadeDependentesPlano: '',
       valeTransporte: {
@@ -272,23 +142,158 @@ const Admissao = () => {
         possuiDependentes: false,
         dependentes: []
       }
-    });
-
-    setDocumentacao({
-      anexos: []
-    });
-
-    setDadosTI({
+    },
+    documentacao: { anexos: [] },
+    dadosTI: {
       servidorAcesso: '',
       permissoesNecessarias: '',
       restricoes: '',
       pastasAcesso: '',
       emailCorporativo: '',
       ramal: ''
+    }
+  });
+
+  const handleInputChange = (section: keyof AdmissaoData, field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleFinalizeAdmissao = () => {
+    // Create user with unified structure
+    const newUser: Omit<UserData, 'id'> = {
+      nome: formData.dadosPessoais.nome,
+      email: formData.dadosPessoais.email,
+      telefone: formData.dadosPessoais.telefone,
+      status: 'Novo',
+      ...formData,
+      credentials: {
+        isActive: false,
+        userType: 'usuario',
+        moduleAccess: []
+      }
+    };
+
+    addUser(newUser);
+    
+    toast({
+      title: "Admissão finalizada com sucesso!",
+      description: `${formData.dadosPessoais.nome} foi admitido e está disponível no módulo de Cadastro.`,
     });
 
+    // Reset form
+    setFormData({
+      dadosPessoais: {
+        nome: '',
+        cpf: '',
+        pis: '',
+        idade: '',
+        dataNascimento: '',
+        estadoCivil: '',
+        nacionalidade: 'brasileira',
+        genero: '',
+        etnia: '',
+        rg: '',
+        orgaoExpedidorRg: '',
+        ufEmissorRg: '',
+        dataExpedicaoRg: '',
+        naturalidade: '',
+        nomeMae: '',
+        nomePai: '',
+        cep: '',
+        endereco: '',
+        numeroResidencia: '',
+        complemento: '',
+        bairro: '',
+        pcd: 'nao',
+        doencaPreExistente: 'nao',
+        email: '',
+        telefone: '',
+        observacoes: ''
+      },
+      dadosProfissionais: {
+        empresa: '',
+        uf: '',
+        setor: '',
+        funcao: '',
+        cargo: '',
+        nivel: '',
+        cbo: '',
+        compativelFuncao: false,
+        funcoesDesempenhadas: '',
+        dataAdmissao: '',
+        dataCadastro: '',
+        tempoCasa: '',
+        ultimaPromocao: '',
+        previsaoFerias: '',
+        tipoUsuario: '',
+        regimeTrabalho: '',
+        horarioTrabalho: '',
+        cargaHorariaSemanal: '',
+        origemContratacao: ''
+      },
+      dadosFinanceiros: {
+        salarioBase: '',
+        adicionalNivel: '',
+        insalubridade: '',
+        sobreaviso: '',
+        salarioBruto: '',
+        valorHoraTrabalhada: '',
+        pisoSalarial: '',
+        mediaSalarial: '',
+        dependentesIR: [],
+        adiantamentoSalarial: false
+      },
+      dadosBancarios: {
+        banco: '',
+        tipoConta: '',
+        agencia: '',
+        conta: ''
+      },
+      formacaoEscolaridade: {
+        escolaridade: '',
+        possuiDiploma: false,
+        comprovantesEscolaridade: []
+      },
+      beneficios: {
+        tipoPlano: '',
+        quantidadeDependentesPlano: '',
+        valeTransporte: {
+          modalidade: '',
+          dataSolicitacaoCartao: '',
+          dataPagamento: ''
+        },
+        valeAlimentacao: {
+          dataSolicitacaoCartao: '',
+          dataPagamento: ''
+        },
+        planoSaude: {
+          operadora: '',
+          dataSolicitacao: '',
+          vigenciaInicio: '',
+          tipoPlano: '',
+          possuiDependentes: false,
+          dependentes: []
+        }
+      },
+      documentacao: { anexos: [] },
+      dadosTI: {
+        servidorAcesso: '',
+        permissoesNecessarias: '',
+        restricoes: '',
+        pastasAcesso: '',
+        emailCorporativo: '',
+        ramal: ''
+      }
+    });
+    
+    setIsAdmissaoModalOpen(false);
     setActiveTab('dados-pessoais');
-    setSelectedCandidato(null);
   };
 
   const renderTabContent = () => {
@@ -296,73 +301,57 @@ const Admissao = () => {
       case 'dados-pessoais':
         return (
           <DadosPessoaisTab
-            formData={dadosPessoais}
-            onInputChange={(field, value) =>
-              setDadosPessoais(prev => ({ ...prev, [field]: value }))
-            }
+            formData={formData.dadosPessoais}
+            onInputChange={(field, value) => handleInputChange('dadosPessoais', field, value)}
           />
         );
       case 'dados-profissionais':
         return (
           <DadosProfissionaisTab
-            formData={dadosProfissionais}
-            onInputChange={(field, value) =>
-              setDadosProfissionais(prev => ({ ...prev, [field]: value }))
-            }
+            formData={formData.dadosProfissionais}
+            onInputChange={(field, value) => handleInputChange('dadosProfissionais', field, value)}
           />
         );
       case 'dados-financeiros':
         return (
           <DadosFinanceirosTab
-            formData={dadosFinanceiros}
-            onInputChange={(field, value) =>
-              setDadosFinanceiros(prev => ({ ...prev, [field]: value }))
-            }
+            formData={formData.dadosFinanceiros}
+            onInputChange={(field, value) => handleInputChange('dadosFinanceiros', field, value)}
           />
         );
       case 'dados-bancarios':
         return (
           <DadosBancariosTab
-            formData={dadosBancarios}
-            onInputChange={(field, value) =>
-              setDadosBancarios(prev => ({ ...prev, [field]: value }))
-            }
+            formData={formData.dadosBancarios}
+            onInputChange={(field, value) => handleInputChange('dadosBancarios', field, value)}
           />
         );
       case 'formacao':
         return (
           <FormacaoEscolaridadeTab
-            formData={formacaoEscolaridade}
-            onInputChange={(field, value) =>
-              setFormacaoEscolaridade(prev => ({ ...prev, [field]: value }))
-            }
+            formData={formData.formacaoEscolaridade}
+            onInputChange={(field, value) => handleInputChange('formacaoEscolaridade', field, value)}
           />
         );
       case 'beneficios':
         return (
           <BeneficiosTab
-            formData={beneficios}
-            onInputChange={(field, value) =>
-              setBeneficios(prev => ({ ...prev, [field]: value }))
-            }
-          />
-        );
-      case 'ti':
-        return (
-          <TITab
-            formData={dadosTI}
-            onInputChange={(field, value) => 
-              setDadosTI(prev => ({ ...prev, [field]: value }))
-            }
+            formData={formData.beneficios}
+            onInputChange={(field, value) => handleInputChange('beneficios', field, value)}
           />
         );
       case 'documentacao':
         return (
           <DocumentacaoTab
-            formData={documentacao}
-            onInputChange={(field, value) => 
-              setDocumentacao(prev => ({ ...prev, [field]: value }))
-            }
+            formData={formData.documentacao}
+            onInputChange={(field, value) => handleInputChange('documentacao', field, value)}
+          />
+        );
+      case 'ti':
+        return (
+          <TITab
+            formData={formData.dadosTI}
+            onInputChange={(field, value) => handleInputChange('dadosTI', field, value)}
           />
         );
       default:
@@ -370,106 +359,103 @@ const Admissao = () => {
     }
   };
 
+  const handleOpenAdmissaoModal = (candidato) => {
+    setSelectedCandidato(candidato);
+    setIsAdmissaoModalOpen(true);
+  };
+
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-4 text-biodina-blue">Admissão de Colaborador</h1>
-      <p className="text-gray-600 mb-6">Preencha os dados do novo colaborador para efetuar a admissão no sistema.</p>
-
-      <div className="md:flex gap-8">
-        {/* Tabs */}
-        <div className="w-full md:w-1/4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Informações</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-1">
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${activeTab === 'dados-pessoais' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
-                onClick={() => setActiveTab('dados-pessoais')}
-              >
-                Dados Pessoais
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${activeTab === 'dados-profissionais' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
-                onClick={() => setActiveTab('dados-profissionais')}
-              >
-                Dados Profissionais
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${activeTab === 'dados-financeiros' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
-                onClick={() => setActiveTab('dados-financeiros')}
-              >
-                Dados Financeiros
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${activeTab === 'dados-bancarios' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
-                onClick={() => setActiveTab('dados-bancarios')}
-              >
-                Dados Bancários
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${activeTab === 'formacao' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
-                onClick={() => setActiveTab('formacao')}
-              >
-                Formação e Escolaridade
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${activeTab === 'beneficios' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
-                onClick={() => setActiveTab('beneficios')}
-              >
-                Benefícios
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${activeTab === 'ti' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
-                onClick={() => setActiveTab('ti')}
-              >
-                Dados de TI
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${activeTab === 'documentacao' ? 'text-biodina-gold' : 'hover:bg-gray-100'}`}
-                onClick={() => setActiveTab('documentacao')}
-              >
-                Documentação
-              </Button>
-            </CardContent>
-          </Card>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-biodina-blue">Admissão</h2>
+          <p className="text-gray-600">Adicione novos colaboradores ao sistema</p>
         </div>
+        <Button onClick={() => handleOpenAdmissaoModal(null)} className="bg-biodina-gold hover:bg-biodina-gold/90">
+          <Plus className="h-4 w-4 mr-2" />
+          Nova Admissão
+        </Button>
+      </div>
 
-        {/* Form Content */}
-        <div className="w-full md:w-3/4">
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {activeTab === 'dados-pessoais' && 'Dados Pessoais'}
-                {activeTab === 'dados-profissionais' && 'Dados Profissionais'}
-                {activeTab === 'dados-financeiros' && 'Dados Financeiros'}
-                {activeTab === 'dados-bancarios' && 'Dados Bancários'}
-                {activeTab === 'formacao' && 'Formação e Escolaridade'}
-                {activeTab === 'beneficios' && 'Benefícios'}
-                {activeTab === 'ti' && 'Dados de TI'}
-                {activeTab === 'documentacao' && 'Documentação'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+      {/* Candidatos Aprovados */}
+      <Card>
+        <CardHeader className="flex items-center justify-between">
+          <CardTitle className="text-xl font-semibold">Candidatos Aprovados</CardTitle>
+          <Badge variant="secondary">
+            <Users className="h-4 w-4 mr-2" />
+            {candidatos.length}
+          </Badge>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {candidatos.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Nenhum candidato aprovado encontrado.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {candidatos.map((candidato) => (
+                <Card key={candidato.id} className="shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <CardHeader className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <CardTitle className="text-lg font-medium">{candidato.nome}</CardTitle>
+                      <p className="text-sm text-gray-500">{candidato.processo}</p>
+                    </div>
+                    <Badge variant="outline" className="bg-green-100 text-green-600">
+                      <CheckCircle className="h-3 w-3 mr-1" />
+                      {candidato.status}
+                    </Badge>
+                  </CardHeader>
+                  <CardContent>
+                    <Button onClick={() => handleOpenAdmissaoModal(candidato)} className="w-full justify-center bg-biodina-gold hover:bg-biodina-gold/90">
+                      <Calendar className="h-4 w-4 mr-2" />
+                      Admitir
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Admissão Modal */}
+      <Dialog open={isAdmissaoModalOpen} onOpenChange={setIsAdmissaoModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="h-5 w-5 text-biodina-gold" />
+              Nova Admissão
+            </DialogTitle>
+          </DialogHeader>
+
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+            <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
+              <TabsTrigger value="dados-pessoais" className="text-xs">Pessoais</TabsTrigger>
+              <TabsTrigger value="dados-profissionais" className="text-xs">Profissionais</TabsTrigger>
+              <TabsTrigger value="dados-financeiros" className="text-xs">Financeiros</TabsTrigger>
+              <TabsTrigger value="dados-bancarios" className="text-xs">Bancários</TabsTrigger>
+              <TabsTrigger value="formacao" className="text-xs">Formação</TabsTrigger>
+              <TabsTrigger value="beneficios" className="text-xs">Benefícios</TabsTrigger>
+              <TabsTrigger value="documentacao" className="text-xs">Documentos</TabsTrigger>
+              <TabsTrigger value="ti" className="text-xs">TI</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value={activeTab} className="mt-4">
               {renderTabContent()}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            </TabsContent>
+          </Tabs>
 
-      <Separator className="my-6" />
-
-      <div className="flex justify-end">
-        <Button onClick={handleCadastrarColaborador}>Cadastrar Colaborador</Button>
-      </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAdmissaoModalOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleFinalizeAdmissao} className="bg-biodina-gold hover:bg-biodina-gold/90">
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Finalizar Admissão
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

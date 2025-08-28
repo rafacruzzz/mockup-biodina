@@ -37,8 +37,6 @@ const CadastroSidebar = ({ selectedModule, onModuleSelect }: CadastroSidebarProp
         <div className="p-2">
           {cadastroModules.map((module, index) => {
             const IconComponent = module.icon;
-            const hasSubModules = module.subModules && module.subModules.length > 0;
-            const isExpanded = isModuleExpanded(module.id);
             const isActive = isModuleActive(module.id);
 
             return (
@@ -48,51 +46,18 @@ const CadastroSidebar = ({ selectedModule, onModuleSelect }: CadastroSidebarProp
                   className={`w-full justify-start p-3 h-auto ${
                     isActive ? "bg-biodina-gold/10 text-biodina-gold" : "hover:bg-gray-50"
                   }`}
-                  onClick={() => {
-                    if (hasSubModules) {
-                      toggleModule(module.id);
-                    } else {
-                      onModuleSelect(module.id);
-                    }
-                  }}
+                  onClick={() => onModuleSelect(module.id)}
                 >
-                  <div className="flex items-center justify-between w-full">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${module.color}`}>
-                        <IconComponent className="h-4 w-4" />
-                      </div>
-                      <div className="text-left">
-                        <div className="font-medium text-sm">{module.name}</div>
-                        <div className="text-xs text-gray-500">{module.description}</div>
-                      </div>
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg ${module.color}`}>
+                      <IconComponent className="h-4 w-4" />
                     </div>
-                    {hasSubModules && (
-                      <div className="ml-2">
-                        {isExpanded ? (
-                          <ChevronDown className="h-4 w-4" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4" />
-                        )}
-                      </div>
-                    )}
+                    <div className="text-left">
+                      <div className="font-medium text-sm">{module.name}</div>
+                      <div className="text-xs text-gray-500">{module.description}</div>
+                    </div>
                   </div>
                 </Button>
-
-                {hasSubModules && isExpanded && (
-                  <div className="ml-4 mt-1 space-y-1">
-                    {module.subModules?.map((subModule) => (
-                      <Button
-                        key={subModule.id}
-                        variant="ghost"
-                        size="sm"
-                        className="w-full justify-start text-sm hover:bg-gray-50"
-                        onClick={() => onModuleSelect(subModule.id)}
-                      >
-                        {subModule.name}
-                      </Button>
-                    ))}
-                  </div>
-                )}
               </div>
             );
           })}
