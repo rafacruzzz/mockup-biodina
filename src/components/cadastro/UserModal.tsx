@@ -27,7 +27,7 @@ interface UserModalProps {
 }
 
 const UserModal = ({ isOpen, onClose, user }: UserModalProps) => {
-  const { addUser, updateUser } = useUsers();
+  const { adicionarUser, atualizarUser } = useUsers();
   const [activeTab, setActiveTab] = useState("dados-pessoais");
   const [formData, setFormData] = useState<UserData>({
     id: user?.id || crypto.randomUUID(),
@@ -45,114 +45,125 @@ const UserModal = ({ isOpen, onClose, user }: UserModalProps) => {
     
     // Initialize all collaborator data sections
     dadosPessoais: user?.dadosPessoais || {
-      nomeCompleto: "",
+      nome: "",
       cpf: "",
-      rg: "",
-      orgaoExpedidor: "",
-      estadoCivil: "",
+      pis: "",
+      idade: "",
       dataNascimento: "",
-      naturalidade: "",
+      estadoCivil: "",
       nacionalidade: "Brasileira",
-      nomePai: "",
+      genero: "",
+      etnia: "",
+      rg: "",
+      orgaoExpedidorRg: "",
+      ufEmissorRg: "",
+      dataExpedicaoRg: "",
+      naturalidade: "",
       nomeMae: "",
-      telefone: "",
-      celular: "",
+      nomePai: "",
+      cep: "",
+      endereco: "",
+      numeroResidencia: "",
+      complemento: "",
+      bairro: "",
+      pcd: "",
+      doencaPreExistente: "",
       email: "",
-      endereco: {
-        cep: "",
-        logradouro: "",
-        numero: "",
-        complemento: "",
-        bairro: "",
-        cidade: "",
-        estado: "",
-        pais: "Brasil"
-      }
-    },
-    dadosProfissionais: user?.dadosProfissionais || {
-      matricula: "",
-      dataAdmissao: "",
-      cargo: "",
-      departamento: "",
-      centroCusto: "",
-      nivelHierarquico: "",
-      supervisor: "",
-      tipoContrato: "",
-      regimeContratacao: "",
-      jornadaTrabalho: "",
-      localTrabalho: "",
+      telefone: "",
       observacoes: ""
     },
+    dadosProfissionais: user?.dadosProfissionais || {
+      empresa: "",
+      uf: "",
+      setor: "",
+      funcao: "",
+      cargo: "",
+      nivel: "",
+      cbo: "",
+      compativelFuncao: false,
+      funcoesDesempenhadas: "",
+      dataAdmissao: "",
+      dataCadastro: "",
+      tempoCasa: "",
+      ultimaPromocao: "",
+      previsaoFerias: "",
+      tipoUsuario: "",
+      sindicatoVinculado: "",
+      regimeTrabalho: "",
+      horarioTrabalho: "",
+      cargaHorariaSemanal: "",
+      origemContratacao: ""
+    },
     dadosFinanceiros: user?.dadosFinanceiros || {
-      salarioBase: 0,
-      vale: 0,
-      auxilioAlimentacao: 0,
-      auxilioTransporte: 0,
-      auxilioSaude: 0,
-      auxilioEducacao: 0,
-      outrosBeneficios: 0,
-      descontos: {
-        inss: 0,
-        irrf: 0,
-        valeTransporte: 0,
-        planoSaude: 0,
-        outros: 0
-      },
-      salarioLiquido: 0
+      salarioBase: "",
+      adicionalNivel: "",
+      insalubridade: "",
+      sobreaviso: "",
+      salarioBruto: "",
+      valorHoraTrabalhada: "",
+      pisoSalarial: "",
+      mediaSalarial: "",
+      dependentesIR: [],
+      adiantamentoSalarial: false
     },
     dadosBancarios: user?.dadosBancarios || {
       banco: "",
-      agencia: "",
-      conta: "",
       tipoConta: "",
-      operacao: "",
-      pix: ""
+      agencia: "",
+      conta: ""
     },
     formacaoEscolaridade: user?.formacaoEscolaridade || {
       escolaridade: "",
-      instituicao: "",
-      curso: "",
-      anoInicio: "",
-      anoFormatura: "",
-      situacao: "",
-      cursos: [],
-      certificacoes: []
+      possuiDiploma: false,
+      comprovantesEscolaridade: []
     },
     beneficios: user?.beneficios || {
-      valeTransporte: false,
-      valeRefeicao: false,
-      valeAlimentacao: false,
-      auxilioSaude: false,
-      auxilioEducacao: false,
-      seguroVida: false,
-      previdenciaPrivada: false,
-      outros: []
+      tipoPlano: "",
+      quantidadeDependentesPlano: "",
+      valeTransporte: {
+        modalidade: "",
+        dataSolicitacaoCartao: "",
+        dataPagamento: ""
+      },
+      valeAlimentacao: {
+        dataSolicitacaoCartao: "",
+        dataPagamento: ""
+      },
+      planoSaude: {
+        operadora: "",
+        dataSolicitacao: "",
+        vigenciaInicio: "",
+        tipoPlano: "",
+        possuiDependentes: false,
+        dependentes: []
+      }
     },
     documentacao: user?.documentacao || {
-      cpf: "",
-      rg: "",
-      ctps: "",
-      pis: "",
-      tituloEleitor: "",
-      certificadoMilitar: "",
-      cnh: "",
-      passaporte: "",
-      outros: []
+      anexos: [],
+      solicitadoParaDPEm: "",
+      solicitadoPor: "",
+      motivoContratacao: "",
+      observacoesGerais: "",
+      exameAdmissional: {
+        data: "",
+        local: "",
+        horario: ""
+      }
     },
     dadosTI: user?.dadosTI || {
-      email: "",
-      usuario: "",
-      grupos: [],
-      permissoes: [],
-      sistemas: []
+      servidorAcesso: "",
+      permissoesNecessarias: "",
+      restricoes: "",
+      pastasAcesso: "",
+      emailCorporativo: "",
+      ramal: ""
     },
     desligamento: user?.desligamento || {
-      dataDesligamento: "",
       motivoDesligamento: "",
+      dataDesligamento: "",
+      processadoPor: "",
       observacoes: "",
-      entregaEquipamentos: false,
-      entregaCracha: false,
-      entregaDocumentos: false
+      itensDesligamento: []
     }
   });
 
@@ -165,7 +176,7 @@ const UserModal = ({ isOpen, onClose, user }: UserModalProps) => {
   const handleSave = () => {
     try {
       // Basic validation
-      if (!formData.dadosPessoais.nomeCompleto) {
+      if (!formData.dadosPessoais.nome) {
         toast.error("Nome completo é obrigatório");
         setActiveTab("dados-pessoais");
         return;
@@ -180,17 +191,17 @@ const UserModal = ({ isOpen, onClose, user }: UserModalProps) => {
       // Update basic fields from personal data
       const updatedFormData = {
         ...formData,
-        nome: formData.dadosPessoais.nomeCompleto,
+        nome: formData.dadosPessoais.nome,
         email: formData.dadosPessoais.email,
         cpf: formData.dadosPessoais.cpf,
         telefone: formData.dadosPessoais.telefone
       };
 
       if (user) {
-        updateUser(updatedFormData);
+        atualizarUser(updatedFormData.id, updatedFormData);
         toast.success("Usuário atualizado com sucesso!");
       } else {
-        addUser(updatedFormData);
+        adicionarUser(updatedFormData);
         toast.success("Usuário cadastrado com sucesso!");
       }
 
@@ -255,78 +266,73 @@ const UserModal = ({ isOpen, onClose, user }: UserModalProps) => {
           <div className="flex-1 overflow-y-auto mt-4">
             <TabsContent value="dados-pessoais" className="mt-0">
               <DadosPessoaisTab
-                data={formData.dadosPessoais}
-                onChange={(field, value) => handleFieldChange('dadosPessoais', field, value)}
+                formData={formData.dadosPessoais}
+                onInputChange={(field, value) => handleFieldChange('dadosPessoais', field, value)}
               />
             </TabsContent>
 
             <TabsContent value="dados-profissionais" className="mt-0">
               <DadosProfissionaisTab
-                data={formData.dadosProfissionais}
-                onChange={(field, value) => handleFieldChange('dadosProfissionais', field, value)}
+                formData={formData.dadosProfissionais}
+                onInputChange={(field, value) => handleFieldChange('dadosProfissionais', field, value)}
               />
             </TabsContent>
 
             <TabsContent value="dados-financeiros" className="mt-0">
               <DadosFinanceirosTab
-                data={formData.dadosFinanceiros}
-                onChange={(field, value) => handleFieldChange('dadosFinanceiros', field, value)}
+                formData={formData.dadosFinanceiros}
+                onInputChange={(field, value) => handleFieldChange('dadosFinanceiros', field, value)}
               />
             </TabsContent>
 
             <TabsContent value="dados-bancarios" className="mt-0">
               <DadosBancariosTab
-                data={formData.dadosBancarios}
-                onChange={(field, value) => handleFieldChange('dadosBancarios', field, value)}
+                formData={formData.dadosBancarios}
+                onInputChange={(field, value) => handleFieldChange('dadosBancarios', field, value)}
               />
             </TabsContent>
 
             <TabsContent value="formacao" className="mt-0">
               <FormacaoEscolaridadeTab
-                data={formData.formacaoEscolaridade}
-                onChange={(field, value) => handleFieldChange('formacaoEscolaridade', field, value)}
+                formData={formData.formacaoEscolaridade}
+                onInputChange={(field, value) => handleFieldChange('formacaoEscolaridade', field, value)}
               />
             </TabsContent>
 
             <TabsContent value="beneficios" className="mt-0">
               <BeneficiosTab
-                data={formData.beneficios}
-                onChange={(field, value) => handleFieldChange('beneficios', field, value)}
+                formData={formData.beneficios}
+                onInputChange={(field, value) => handleFieldChange('beneficios', field, value)}
               />
             </TabsContent>
 
             <TabsContent value="documentacao" className="mt-0">
               <DocumentacaoTab
-                data={formData.documentacao}
-                onChange={(field, value) => handleFieldChange('documentacao', field, value)}
+                formData={formData.documentacao}
+                onInputChange={(field, value) => handleFieldChange('documentacao', field, value)}
+                colaboradorData={formData}
               />
             </TabsContent>
 
             <TabsContent value="ti" className="mt-0">
               <TITab
-                data={formData.dadosTI}
-                onChange={(field, value) => handleFieldChange('dadosTI', field, value)}
+                formData={formData.dadosTI}
+                onInputChange={(field, value) => handleFieldChange('dadosTI', field, value)}
               />
             </TabsContent>
 
             <TabsContent value="credenciais" className="mt-0">
               <CredenciaisTab
-                data={{
-                  username: formData.username || "",
-                  password: formData.password || "",
-                  confirmPassword: formData.confirmPassword || "",
-                  isActive: formData.isActive,
-                  userType: formData.userType,
-                  moduleAccess: formData.moduleAccess
-                }}
-                onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
+                formData={formData}
+                onInputChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
+                onModuleAccessChange={(modules) => setFormData(prev => ({ ...prev, moduleAccess: modules }))}
               />
             </TabsContent>
 
             <TabsContent value="desligamento" className="mt-0">
               <DesligamentoTab
-                data={formData.desligamento}
-                onChange={(field, value) => handleFieldChange('desligamento', field, value)}
+                formData={formData.desligamento}
+                onInputChange={(field, value) => handleFieldChange('desligamento', field, value)}
               />
             </TabsContent>
           </div>

@@ -1,200 +1,117 @@
-import { useState } from "react";
-import SidebarLayout from "@/components/SidebarLayout";
-import RHSidebar from "@/components/rh/RHSidebar";
+import { useState } from 'react';
+import { Plus } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+
+import ColaboradoresTable from "@/components/rh/ColaboradoresTable";
 import ProcessosSeletivosTable from "@/components/rh/ProcessosSeletivosTable";
-import BancoCurriculos from "@/components/rh/BancoCurriculos";
-import DataTable from "@/components/cadastro/DataTable";
-import ContentHeader from "@/components/cadastro/ContentHeader";
-import EmptyState from "@/components/cadastro/EmptyState";
-import PlanoCarreiraModal from "@/components/rh/PlanoCarreiraModal";
-import CargoModal from "@/components/rh/CargoModal";
-import NiveisProgressaoModal from "@/components/rh/NiveisProgressaoModal";
+import DepartamentosTable from "@/components/rh/DepartamentosTable";
+import CargosTable from "@/components/rh/CargosTable";
+import ExpedientesTable from "@/components/rh/ExpedientesTable";
+import PlanosCarreiraTable from "@/components/rh/PlanosCarreiraTable";
+
+import NovoProcessoModal from "@/components/rh/NovoProcessoModal";
 import DepartamentoModal from "@/components/rh/DepartamentoModal";
+import CargoModal from "@/components/rh/CargoModal";
 import ExpedienteModal from "@/components/rh/ExpedienteModal";
-import AdicionarCurriculoModal from "@/components/rh/AdicionarCurriculoModal";
-import ConfigurarEtapasModal from "@/components/rh/ConfigurarEtapasModal";
-import EtapasSelecao from "@/components/rh/EtapasSelecao";
-import ProcessoSeletivoKanban from "@/components/rh/ProcessoSeletivoKanban";
-import { rhModules } from "@/data/rhModules";
+import PlanoCarreiraModal from "@/components/rh/PlanoCarreiraModal";
+
+import { ContentHeader } from "@/components/ui/ContentHeader";
 
 const RH = () => {
-  const [activeModule, setActiveModule] = useState('');
-  const [activeSubModule, setActiveSubModule] = useState('');
+  const [activeTab, setActiveTab] = useState('colaboradores');
   const [searchTerm, setSearchTerm] = useState('');
-  const [expandedModules, setExpandedModules] = useState<string[]>([]);
-  
-  // Modal states
-  const [showPlanoCarreiraModal, setShowPlanoCarreiraModal] = useState(false);
-  const [showCargoModal, setShowCargoModal] = useState(false); 
-  const [showNiveisProgressaoModal, setShowNiveisProgressaoModal] = useState(false);
-  const [showDepartamentoModal, setShowDepartamentoModal] = useState(false);
-  const [showExpedienteModal, setShowExpedienteModal] = useState(false);
-  const [showAdicionarCurriculoModal, setShowAdicionarCurriculoModal] = useState(false);
-  const [showConfigurarEtapasModal, setShowConfigurarEtapasModal] = useState(false);
-
-  const toggleModule = (module: string) => {
-    if (expandedModules.includes(module)) {
-      setExpandedModules(expandedModules.filter(m => m !== module));
-      if (activeModule === module && !activeSubModule) {
-        setActiveModule('');
-        setActiveSubModule('');
-      }
-    } else {
-      setExpandedModules([...expandedModules, module]);
-    }
-  };
-
-  const handleModuleSelect = (module: string, subModule: string) => {
-    setActiveModule(module);
-    setActiveSubModule(subModule);
-    setSearchTerm('');
-  };
-
-  const handleCloseSidebar = () => {
-    setActiveModule('');
-    setActiveSubModule('');
-    setExpandedModules([]);
-    setSearchTerm('');
-  };
-
-  const handleNewRecord = () => {
-    if (activeModule === 'planos-carreira') {
-      if (activeSubModule === 'planos') {
-        setShowPlanoCarreiraModal(true);
-      } else if (activeSubModule === 'cargos') {
-        setShowCargoModal(true);
-      } else if (activeSubModule === 'niveis') {
-        setShowNiveisProgressaoModal(true);
-      }
-    } else if (activeModule === 'departamentos' && activeSubModule === 'departamentos') {
-      setShowDepartamentoModal(true);
-    } else if (activeModule === 'expedientes' && activeSubModule === 'expedientes') {
-      setShowExpedienteModal(true);
-    } else if (activeModule === 'processo-seletivo' && activeSubModule === 'banco-curriculos') {
-      setShowAdicionarCurriculoModal(true);
-    }
-  };
-
-  const handleGetStarted = () => {
-    setActiveModule('processo-seletivo');
-    setActiveSubModule('processos');
-    setExpandedModules(['processo-seletivo']);
-  };
-
-  const currentSubModule = activeModule && activeSubModule ? 
-    rhModules[activeModule as keyof typeof rhModules]?.subModules[activeSubModule] : null;
-
-  const renderContent = () => {
-    if (!activeModule || !activeSubModule) {
-      return <EmptyState onGetStarted={handleGetStarted} />;
-    }
-
-    // Processo Seletivo
-    if (activeModule === 'processo-seletivo') {
-      if (activeSubModule === 'processos') {
-        return <ProcessosSeletivosTable />;
-      } else if (activeSubModule === 'banco-curriculos') {
-        return <BancoCurriculos />;
-      }
-    }
-
-    // Etapas do processo (quando selecionado um processo específico)
-    if (activeModule === 'etapas-processo') {
-      return <EtapasSelecao />;
-    }
-
-    // Kanban do processo seletivo
-    if (activeModule === 'kanban-processo') {
-      return <ProcessoSeletivoKanban />;
-    }
-
-    // Default table view for other modules  
-    if (currentSubModule) {
-      return (
-        <DataTable 
-          data={currentSubModule.data} 
-          moduleName={currentSubModule.name}
-        />
-      );
-    }
-
-    return null;
-  };
+  const [isNovoProcessoModalOpen, setIsNovoProcessoModalOpen] = useState(false);
+  const [isDepartamentoModalOpen, setIsDepartamentoModalOpen] = useState(false);
+  const [isCargoModalOpen, setIsCargoModalOpen] = useState(false);
+  const [isExpedienteModalOpen, setIsExpedienteModalOpen] = useState(false);
+  const [isPlanoCarreiraModalOpen, setIsPlanoCarreiraModalOpen] = useState(false);
 
   return (
-    <SidebarLayout>
-      <div className="flex h-full bg-gray-50/50">
-        <RHSidebar
-          activeModule={activeModule}
-          activeSubModule={activeSubModule}
-          expandedModules={expandedModules}
-          onModuleToggle={toggleModule}
-          onModuleSelect={handleModuleSelect}
-          onClose={handleCloseSidebar}
-        />
-
-        <div className="flex-1 flex flex-col min-h-0">
-          {activeSubModule && currentSubModule && (
-            <ContentHeader
-              title={currentSubModule.name}
-              description={`Gerencie os registros de ${currentSubModule.name.toLowerCase()}`}
-              searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
-              onNewRecord={handleNewRecord}
-              additionalActions={
-                activeModule === 'processo-seletivo' && activeSubModule === 'processos' ? 
-                  <button
-                    onClick={() => setShowConfigurarEtapasModal(true)}
-                    className="bg-biodina-blue text-white px-4 py-2 rounded-lg hover:bg-biodina-blue/90 transition-colors"
-                  >
-                    Configurar Etapas
-                  </button> : undefined
-              }
+    <div className="flex-1 space-y-4 p-8">
+      <Tabs defaultValue="colaboradores" className="w-full">
+        <TabsList className="grid grid-cols-6 w-full">
+          <TabsTrigger value="colaboradores">Colaboradores</TabsTrigger>
+          <TabsTrigger value="processos-seletivos">Processos Seletivos</TabsTrigger>
+          <TabsTrigger value="departamentos">Departamentos</TabsTrigger>
+          <TabsTrigger value="cargos">Cargos</TabsTrigger>
+          <TabsTrigger value="expedientes">Expedientes</TabsTrigger>
+          <TabsTrigger value="planos-carreira">Planos de Carreira</TabsTrigger>
+        </TabsList>
+        <TabsContent value="colaboradores" className="mt-4">
+          <ColaboradoresTable searchTerm={searchTerm} />
+        </TabsContent>
+        <TabsContent value="processos-seletivos" className="mt-4">
+          <div className="space-y-6">
+            <ProcessosSeletivosTable 
+              onViewProcess={(processId) => {
+                console.log('Viewing process:', processId);
+                // TODO: Implement view process logic
+              }}
             />
-          )}
-
-          <div className="flex-1 p-6 min-h-0">
-            {renderContent()}
           </div>
-        </div>
-      </div>
+        </TabsContent>
+        <TabsContent value="departamentos" className="mt-4">
+          <DepartamentosTable searchTerm={searchTerm} />
+        </TabsContent>
+        <TabsContent value="cargos" className="mt-4">
+          <CargosTable searchTerm={searchTerm} />
+        </TabsContent>
+        <TabsContent value="expedientes" className="mt-4">
+          <ExpedientesTable searchTerm={searchTerm} />
+        </TabsContent>
+        <TabsContent value="planos-carreira" className="mt-4">
+          <PlanosCarreiraTable searchTerm={searchTerm} />
+        </TabsContent>
+      </Tabs>
 
-      {/* Modals */}
-      <PlanoCarreiraModal 
-        isOpen={showPlanoCarreiraModal}
-        onClose={() => setShowPlanoCarreiraModal(false)}
+      <NovoProcessoModal
+        isOpen={isNovoProcessoModalOpen}
+        onClose={() => setIsNovoProcessoModalOpen(false)}
       />
-      
-      <CargoModal 
-        isOpen={showCargoModal}
-        onClose={() => setShowCargoModal(false)}
+
+      <DepartamentoModal
+        isOpen={isDepartamentoModalOpen}
+        onClose={() => setIsDepartamentoModalOpen(false)}
       />
-      
-      <NiveisProgressaoModal 
-        isOpen={showNiveisProgressaoModal}
-        onClose={() => setShowNiveisProgressaoModal(false)}
+
+      <CargoModal
+        isOpen={isCargoModalOpen}
+        onClose={() => setIsCargoModalOpen(false)}
       />
-      
-      <DepartamentoModal 
-        isOpen={showDepartamentoModal}
-        onClose={() => setShowDepartamentoModal(false)}
+
+      <ExpedienteModal
+        isOpen={isExpedienteModalOpen}
+        onClose={() => setIsExpedienteModalOpen(false)}
       />
-      
-      <ExpedienteModal 
-        isOpen={showExpedienteModal}
-        onClose={() => setShowExpedienteModal(false)}
+
+      <PlanoCarreiraModal
+        isOpen={isPlanoCarreiraModalOpen}
+        onClose={() => setIsPlanoCarreiraModalOpen(false)}
       />
-      
-      <AdicionarCurriculoModal 
-        isOpen={showAdicionarCurriculoModal}
-        onClose={() => setShowAdicionarCurriculoModal(false)}
+
+      <ContentHeader
+        title="Recursos Humanos"
+        description="Gerencie colaboradores, processos seletivos e recursos humanos"
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        onNewRecord={() => {
+          if (activeTab === 'processos-seletivos') {
+            setIsNovoProcessoModalOpen(true);
+          } else if (activeTab === 'departamentos') {
+            setIsDepartamentoModalOpen(true);
+          } else if (activeTab === 'cargos') {
+            setIsCargoModalOpen(true);
+          } else if (activeTab === 'expedientes') {
+            setIsExpedienteModalOpen(true);
+          } else if (activeTab === 'planos-carreira') {
+            setIsPlanoCarreiraModalOpen(true);
+          }
+        }}
       />
-      
-      <ConfigurarEtapasModal 
-        isOpen={showConfigurarEtapasModal}
-        onClose={() => setShowConfigurarEtapasModal(false)}
-      />
-    </SidebarLayout>
+    </div>
   );
 };
 

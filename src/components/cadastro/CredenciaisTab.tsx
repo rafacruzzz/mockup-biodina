@@ -13,7 +13,7 @@ import ModuleAccessTree from "./ModuleAccessTree";
 
 interface CredenciaisTabProps {
   formData: UserData;
-  onInputChange: (section: keyof UserData | string, field: string, value: any) => void;
+  onInputChange: (field: string, value: any) => void;
   onModuleAccessChange: (modules: ModuleAccess[]) => void;
 }
 
@@ -45,7 +45,7 @@ const CredenciaisTab = ({ formData, onInputChange, onModuleAccessChange }: Crede
               <Input
                 id="username"
                 value={formData.username || ''}
-                onChange={(e) => onInputChange('username', '', e.target.value)}
+                onChange={(e) => onInputChange('username', e.target.value)}
                 placeholder="Digite o nome de usuário"
               />
               <p className="text-xs text-gray-500">
@@ -55,7 +55,7 @@ const CredenciaisTab = ({ formData, onInputChange, onModuleAccessChange }: Crede
 
             <div className="space-y-2">
               <Label htmlFor="userType">Tipo de Usuário</Label>
-              <Select value={formData.userType} onValueChange={(value) => onInputChange('userType', '', value)}>
+              <Select value={formData.userType} onValueChange={(value) => onInputChange('userType', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
@@ -74,7 +74,7 @@ const CredenciaisTab = ({ formData, onInputChange, onModuleAccessChange }: Crede
                 id="password"
                 type="password"
                 value={formData.password || ''}
-                onChange={(e) => onInputChange('password', '', e.target.value)}
+                onChange={(e) => onInputChange('password', e.target.value)}
                 placeholder="Digite a senha"
               />
             </div>
@@ -85,7 +85,7 @@ const CredenciaisTab = ({ formData, onInputChange, onModuleAccessChange }: Crede
                 id="confirmPassword"
                 type="password"
                 value={formData.confirmPassword || ''}
-                onChange={(e) => onInputChange('confirmPassword', '', e.target.value)}
+                onChange={(e) => onInputChange('confirmPassword', e.target.value)}
                 placeholder="Confirme a senha"
               />
             </div>
@@ -106,7 +106,7 @@ const CredenciaisTab = ({ formData, onInputChange, onModuleAccessChange }: Crede
             <Checkbox
               id="isActive"
               checked={formData.isActive}
-              onCheckedChange={(checked) => onInputChange('isActive', '', checked)}
+              onCheckedChange={(checked) => onInputChange('isActive', checked)}
             />
             <Label htmlFor="isActive">Usuário ativo</Label>
             <Badge variant={formData.isActive ? "default" : "secondary"}>
