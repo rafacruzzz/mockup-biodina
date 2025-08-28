@@ -2,335 +2,315 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { Save, User, Shield } from "lucide-react";
-import { useColaboradores } from "@/hooks/useColaboradores";
-import { ModuleAccess } from "@/types/permissions";
-import ColaboradorSelector from "./ColaboradorSelector";
-import UserColaboradorLink from "./UserColaboradorLink";
-import ColaboradorModal from "../rh/ColaboradorModal";
-import AccessProfileSelector from "./AccessProfileSelector";
-import ModuleAccessTree from "./ModuleAccessTree";
+import { Save, User, Shield, UserCheck, Building2, DollarSign, CreditCard, GraduationCap, Heart, FileText, MessageSquare, Monitor } from "lucide-react";
+import { UserData } from "@/types/user";
+import { useUsers } from "@/hooks/useUsers";
 
-interface UserData {
-  // Campos específicos do usuário
-  username: string;
-  password: string;
-  confirmPassword: string;
-  // Campos que serão auto-preenchidos do colaborador
-  nome: string;
-  email: string;
-  cpf: string;
-  telefone: string;
-  // Vinculação ao colaborador
-  colaboradorId: string;
-  // Controle de sistema
-  isActive: boolean;
-  userType: string;
-  moduleAccess: ModuleAccess[];
-}
+// Import all the colaborador tabs
+import DadosPessoaisTab from "@/components/rh/tabs/DadosPessoaisTab";
+import DadosProfissionaisTab from "@/components/rh/tabs/DadosProfissionaisTab";
+import DadosFinanceirosTab from "@/components/rh/tabs/DadosFinanceirosTab";
+import DadosBancariosTab from "@/components/rh/tabs/DadosBancariosTab";
+import FormacaoEscolaridadeTab from "@/components/rh/tabs/FormacaoEscolaridadeTab";
+import BeneficiosTab from "@/components/rh/tabs/BeneficiosTab";
+import DocumentacaoTab from "@/components/rh/tabs/DocumentacaoTab";
+import SolicitacoesTab from "@/components/rh/tabs/SolicitacoesTab";
+import TITab from "@/components/rh/tabs/TITab";
+import UserCredentialsTab from "./UserCredentialsTab";
 
 interface UserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  userData?: UserData;
+  userId?: string;
   editMode?: boolean;
 }
 
-const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalProps) => {
-  const { colaboradores } = useColaboradores();
-  const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
-  const [formData, setFormData] = useState<UserData>({
-    username: userData?.username || '',
-    password: userData?.password || '',
-    confirmPassword: userData?.confirmPassword || '',
-    nome: userData?.nome || '',
-    email: userData?.email || '',
-    cpf: userData?.cpf || '',
-    telefone: userData?.telefone || '',
-    colaboradorId: userData?.colaboradorId || '',
-    isActive: userData?.isActive ?? true,
-    userType: userData?.userType || '',
-    moduleAccess: userData?.moduleAccess || []
-  });
-
-  const handleColaboradorChange = (colaboradorId: string) => {
-    const colaborador = colaboradores.find(c => c.id === colaboradorId);
-    if (colaborador) {
-      setFormData(prev => ({
-        ...prev,
-        colaboradorId,
-        nome: colaborador.nome,
-        email: colaborador.email,
-        cpf: colaborador.telefone.replace(/\D/g, '').substring(0, 11), // Fallback para CPF
-        telefone: colaborador.telefone
-      }));
+const UserModal = ({ isOpen, onClose, userId, editMode = false }: UserModalProps) => {
+  const { users, atualizarUser } = useUsers();
+  const user = userId ? users.find(u => u.id === userId) : null;
+  const [formData, setFormData] = useState<UserData>(user?.dados || {
+    dadosPessoais: {
+      nome: '',
+      cpf: '',
+      pis: '',
+      idade: '',
+      dataNascimento: '',
+      estadoCivil: '',
+      nacionalidade: '',
+      genero: '',
+      etnia: '',
+      rg: '',
+      orgaoExpedidorRg: '',
+      ufEmissorRg: '',
+      dataExpedicaoRg: '',
+      naturalidade: '',
+      nomeMae: '',
+      nomePai: '',
+      cep: '',
+      endereco: '',
+      numeroResidencia: '',
+      complemento: '',
+      bairro: '',
+      pcd: '',
+      doencaPreExistente: '',
+      email: '',
+      telefone: '',
+      observacoes: ''
+    },
+    dadosProfissionais: {
+      empresa: '',
+      uf: '',
+      setor: '',
+      funcao: '',
+      cargo: '',
+      nivel: '',
+      cbo: '',
+      compativelFuncao: false,
+      funcoesDesempenhadas: '',
+      dataAdmissao: '',
+      dataCadastro: '',
+      tempoCasa: '',
+      ultimaPromocao: '',
+      previsaoFerias: '',
+      tipoUsuario: '',
+      regimeTrabalho: '',
+      horarioTrabalho: '',
+      cargaHorariaSemanal: '',
+      origemContratacao: ''
+    },
+    dadosFinanceiros: {
+      salarioBase: '',
+      adicionalNivel: '',
+      insalubridade: '',
+      sobreaviso: '',
+      salarioBruto: '',
+      valorHoraTrabalhada: '',
+      pisoSalarial: '',
+      mediaSalarial: '',
+      dependentesIR: [],
+      adiantamentoSalarial: false
+    },
+    dadosBancarios: {
+      banco: '',
+      tipoConta: '',
+      agencia: '',
+      conta: ''
+    },
+    formacaoEscolaridade: {
+      escolaridade: '',
+      possuiDiploma: false,
+      comprovantesEscolaridade: []
+    },
+    beneficios: {
+      tipoPlano: '',
+      quantidadeDependentesPlano: '',
+      valeTransporte: {
+        modalidade: '',
+        dataSolicitacaoCartao: '',
+        dataPagamento: ''
+      },
+      valeAlimentacao: {
+        dataSolicitacaoCartao: '',
+        dataPagamento: ''
+      },
+      planoSaude: {
+        operadora: '',
+        dataSolicitacao: '',
+        vigenciaInicio: '',
+        tipoPlano: '',
+        possuiDependentes: false,
+        dependentes: []
+      }
+    },
+    documentacao: {
+      anexos: []
     }
-  };
+  } as UserData);
 
-  const handleInputChange = (field: keyof UserData, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleModuleAccessChange = (modules: ModuleAccess[]) => {
-    setFormData(prev => ({
-      ...prev,
-      moduleAccess: modules
-    }));
+  const handleInputChange = (field: string, value: any) => {
+    setFormData(prev => {
+      // Handle nested field updates
+      const fieldParts = field.split('.');
+      if (fieldParts.length > 1) {
+        const [section, subField] = fieldParts;
+        return {
+          ...prev,
+          [section]: {
+            ...prev[section as keyof UserData],
+            [subField]: value
+          }
+        };
+      }
+      return {
+        ...prev,
+        [field]: value
+      };
+    });
   };
 
   const handleSave = () => {
-    console.log('Salvando usuário:', formData);
+    if (userId) {
+      atualizarUser(userId, formData);
+    }
     onClose();
   };
 
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
-          <DialogHeader className="pb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-biodina-gold/10 rounded-lg">
-                <User className="h-6 w-6 text-biodina-gold" />
-              </div>
-              <div>
-                <DialogTitle className="text-2xl font-bold text-biodina-blue">
-                  {editMode ? `Editar Usuário - ${formData.nome}` : 'Novo Usuário'}
-                </DialogTitle>
-                <p className="text-gray-600">
-                  {editMode ? 'Edite as informações do usuário' : 'Cadastre um novo usuário no sistema'}
-                </p>
-              </div>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
+        <DialogHeader className="pb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-biodina-gold/10 rounded-lg">
+              <User className="h-6 w-6 text-biodina-gold" />
             </div>
-          </DialogHeader>
-
-          <div className="flex-1 overflow-y-auto">
-            <Tabs defaultValue="usuario" className="h-full flex flex-col">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="usuario">
-                  <User className="h-4 w-4 mr-2" />
-                  Usuário
-                </TabsTrigger>
-                <TabsTrigger value="controle-sistema">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Controle de Sistema
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="usuario" className="mt-0">
-                <div className="space-y-6 pb-4">
-                  {/* Seleção do Colaborador */}
-                  <ColaboradorSelector
-                    value={formData.colaboradorId}
-                    onChange={handleColaboradorChange}
-                    onCreateNew={() => setIsColaboradorModalOpen(true)}
-                  />
-
-                  {/* Link para o Colaborador (se selecionado) */}
-                  {formData.colaboradorId && (
-                    <UserColaboradorLink
-                      colaboradorId={formData.colaboradorId}
-                      onViewColaborador={() => setIsColaboradorModalOpen(true)}
-                    />
-                  )}
-
-                  {/* Dados Básicos (Auto-preenchidos) */}
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900 border-b pb-2">
-                      Dados Básicos (auto-preenchidos do colaborador)
-                    </h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="nome">Nome Completo</Label>
-                        <Input
-                          id="nome"
-                          value={formData.nome}
-                          onChange={(e) => handleInputChange('nome', e.target.value)}
-                          placeholder="Nome será preenchido automaticamente"
-                          className="bg-gray-50"
-                          readOnly={!!formData.colaboradorId}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => handleInputChange('email', e.target.value)}
-                          placeholder="Email será preenchido automaticamente"
-                          className="bg-gray-50"
-                          readOnly={!!formData.colaboradorId}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="cpf">CPF</Label>
-                        <Input
-                          id="cpf"
-                          value={formData.cpf}
-                          onChange={(e) => handleInputChange('cpf', e.target.value)}
-                          placeholder="CPF será preenchido automaticamente"
-                          className="bg-gray-50"
-                          readOnly={!!formData.colaboradorId}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="telefone">Telefone</Label>
-                        <Input
-                          id="telefone"
-                          value={formData.telefone}
-                          onChange={(e) => handleInputChange('telefone', e.target.value)}
-                          placeholder="Telefone será preenchido automaticamente"
-                          className="bg-gray-50"
-                          readOnly={!!formData.colaboradorId}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Credenciais de Acesso */}
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900 border-b pb-2">
-                      Credenciais de Acesso
-                    </h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="username">Nome de Usuário *</Label>
-                        <Input
-                          id="username"
-                          value={formData.username}
-                          onChange={(e) => handleInputChange('username', e.target.value)}
-                          placeholder="Digite o nome de usuário"
-                          required
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="userType">Tipo de Usuário *</Label>
-                        <Select value={formData.userType} onValueChange={(value) => handleInputChange('userType', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o tipo" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="admin">Administrador</SelectItem>
-                            <SelectItem value="gerente">Gerente</SelectItem>
-                            <SelectItem value="usuario">Usuário</SelectItem>
-                            <SelectItem value="visitante">Visitante</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="password">Senha *</Label>
-                        <Input
-                          id="password"
-                          type="password"
-                          value={formData.password}
-                          onChange={(e) => handleInputChange('password', e.target.value)}
-                          placeholder="Digite a senha"
-                          required
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="confirmPassword">Confirmar Senha *</Label>
-                        <Input
-                          id="confirmPassword"
-                          type="password"
-                          value={formData.confirmPassword}
-                          onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                          placeholder="Confirme a senha"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Status */}
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900 border-b pb-2">
-                      Status
-                    </h3>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="isActive"
-                        checked={formData.isActive}
-                        onCheckedChange={(checked) => handleInputChange('isActive', checked)}
-                      />
-                      <Label htmlFor="isActive">Usuário ativo</Label>
-                      <Badge variant={formData.isActive ? "default" : "secondary"}>
-                        {formData.isActive ? "Ativo" : "Inativo"}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="controle-sistema" className="mt-0">
-                <div className="space-y-6 pb-4">
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-4">Permissões e Controles de Sistema</h3>
-                    <p className="text-sm text-gray-600 mb-6">
-                      Configure as permissões de acesso aos módulos do sistema. Você pode aplicar um perfil pré-definido ou configurar as permissões individualmente.
-                    </p>
-                  </div>
-
-                  {/* Seletor de Perfil */}
-                  <div className="space-y-4">
-                    <AccessProfileSelector onProfileSelect={handleModuleAccessChange} />
-                  </div>
-
-                  {/* Árvore de Permissões */}
-                  <div className="space-y-4">
-                    <div className="border-t pt-6">
-                      <h4 className="font-medium text-gray-900 mb-4">Permissões Detalhadas</h4>
-                      <p className="text-sm text-gray-600 mb-4">
-                        Configure permissões específicas para cada módulo e funcionalidade
-                      </p>
-                      <ModuleAccessTree 
-                        modules={formData.moduleAccess}
-                        onModuleChange={handleModuleAccessChange}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </TabsContent>
-            </Tabs>
+            <div>
+              <DialogTitle className="text-2xl font-bold text-biodina-blue">
+                {editMode ? `${formData.nome || 'Usuário'}` : 'Novo Usuário'}
+              </DialogTitle>
+              <p className="text-gray-600">
+                {editMode ? 'Edite as informações do usuário' : 'Cadastre um novo usuário no sistema'}
+              </p>
+            </div>
           </div>
+        </DialogHeader>
 
-          <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button variant="outline" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
-              <Save className="h-4 w-4 mr-2" />
-              {editMode ? 'Salvar Alterações' : 'Salvar Usuário'}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        <div className="flex-1 overflow-y-auto">
+          <Tabs defaultValue="dados-pessoais" className="h-full flex flex-col">
+            <TabsList className="grid w-full grid-cols-5 mb-4">
+              <TabsTrigger value="dados-pessoais">
+                <UserCheck className="h-4 w-4 mr-2" />
+                Dados Pessoais
+              </TabsTrigger>
+              <TabsTrigger value="dados-profissionais">
+                <Building2 className="h-4 w-4 mr-2" />
+                Dados Profissionais
+              </TabsTrigger>
+              <TabsTrigger value="dados-financeiros">
+                <DollarSign className="h-4 w-4 mr-2" />
+                Dados Financeiros
+              </TabsTrigger>
+              <TabsTrigger value="dados-bancarios">
+                <CreditCard className="h-4 w-4 mr-2" />
+                Dados Bancários
+              </TabsTrigger>
+              <TabsTrigger value="formacao">
+                <GraduationCap className="h-4 w-4 mr-2" />
+                Formação
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsList className="grid w-full grid-cols-5 mb-4">
+              <TabsTrigger value="beneficios">
+                <Heart className="h-4 w-4 mr-2" />
+                Benefícios
+              </TabsTrigger>
+              <TabsTrigger value="documentacao">
+                <FileText className="h-4 w-4 mr-2" />
+                Documentação
+              </TabsTrigger>
+              {editMode && (
+                <TabsTrigger value="solicitacoes">
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Solicitações
+                </TabsTrigger>
+              )}
+              {editMode && (
+                <TabsTrigger value="ti">
+                  <Monitor className="h-4 w-4 mr-2" />
+                  TI
+                </TabsTrigger>
+              )}
+              <TabsTrigger value="credentials">
+                <Shield className="h-4 w-4 mr-2" />
+                Credenciais
+              </TabsTrigger>
+            </TabsList>
 
-      {/* Modal do Colaborador */}
-      <ColaboradorModal
-        isOpen={isColaboradorModalOpen}
-        onClose={() => setIsColaboradorModalOpen(false)}
-        colaboradorId={formData.colaboradorId}
-        editMode={!!formData.colaboradorId}
-      />
-    </>
+            <TabsContent value="dados-pessoais" className="mt-0">
+              <DadosPessoaisTab 
+                formData={formData.dadosPessoais}
+                onInputChange={(field, value) => handleInputChange(`dadosPessoais.${field}`, value)}
+              />
+            </TabsContent>
+
+            <TabsContent value="dados-profissionais" className="mt-0">
+              <DadosProfissionaisTab 
+                formData={formData.dadosProfissionais}
+                onInputChange={(field, value) => handleInputChange(`dadosProfissionais.${field}`, value)}
+              />
+            </TabsContent>
+
+            <TabsContent value="dados-financeiros" className="mt-0">
+              <DadosFinanceirosTab 
+                formData={formData.dadosFinanceiros}
+                onInputChange={(field, value) => handleInputChange(`dadosFinanceiros.${field}`, value)}
+              />
+            </TabsContent>
+
+            <TabsContent value="dados-bancarios" className="mt-0">
+              <DadosBancariosTab 
+                formData={formData.dadosBancarios}
+                onInputChange={(field, value) => handleInputChange(`dadosBancarios.${field}`, value)}
+              />
+            </TabsContent>
+
+            <TabsContent value="formacao" className="mt-0">
+              <FormacaoEscolaridadeTab 
+                formData={formData.formacaoEscolaridade}
+                onInputChange={(field, value) => handleInputChange(`formacaoEscolaridade.${field}`, value)}
+              />
+            </TabsContent>
+
+            <TabsContent value="beneficios" className="mt-0">
+              <BeneficiosTab 
+                formData={formData.beneficios}
+                onInputChange={(field, value) => handleInputChange(`beneficios.${field}`, value)}
+              />
+            </TabsContent>
+
+            <TabsContent value="documentacao" className="mt-0">
+              <DocumentacaoTab 
+                formData={formData.documentacao}
+                onInputChange={(field, value) => handleInputChange(`documentacao.${field}`, value)}
+              />
+            </TabsContent>
+
+            {editMode && (
+              <TabsContent value="solicitacoes" className="mt-0">
+                <SolicitacoesTab colaboradorId={userId || ''} />
+              </TabsContent>
+            )}
+
+            {editMode && (
+              <TabsContent value="ti" className="mt-0">
+                <TITab 
+                  formData={formData.dadosTI || {}}
+                  onInputChange={(field, value) => handleInputChange(`dadosTI.${field}`, value)}
+                />
+              </TabsContent>
+            )}
+
+            <TabsContent value="credentials" className="mt-0">
+              <UserCredentialsTab 
+                formData={formData.credentials || { isActive: true, moduleAccess: [] }}
+                onInputChange={(field, value) => handleInputChange(`credentials.${field}`, value)}
+                userData={formData}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-4 border-t">
+          <Button variant="outline" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
+            <Save className="h-4 w-4 mr-2" />
+            {editMode ? 'Salvar Alterações' : 'Salvar Usuário'}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
