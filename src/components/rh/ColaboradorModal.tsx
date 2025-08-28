@@ -293,20 +293,10 @@ const ColaboradorModal = ({
 
   const totalTabs = editMode ? (colaboradorDesligado ? 12 : 11) : 9;
 
-  const getTabsGridClass = (totalTabs: number) => {
-    switch (totalTabs) {
-      case 9: return 'grid grid-cols-9';
-      case 10: return 'grid grid-cols-10';
-      case 11: return 'grid grid-cols-11';
-      case 12: return 'grid grid-cols-12';
-      default: return 'grid grid-cols-9';
-    }
-  };
-
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
+        <DialogContent className="max-w-7xl max-h-[95vh] flex flex-col">
           <DialogHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -341,65 +331,75 @@ const ColaboradorModal = ({
             </div>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-hidden">
             <Tabs defaultValue="usuario" className="h-full flex flex-col">
-              <TabsList className={`${getTabsGridClass(totalTabs)} w-full mb-4`}>
-                <TabsTrigger value="usuario" className="text-xs">
-                  <User className="h-4 w-4 mr-1" />
-                  Usuário
-                </TabsTrigger>
-                <TabsTrigger value="controle-sistema" className="text-xs">
-                  <Shield className="h-4 w-4 mr-1" />
-                  Controle Sistema
-                </TabsTrigger>
-                <TabsTrigger value="dados-pessoais" className="text-xs">
-                  Dados Pessoais
-                </TabsTrigger>
-                <TabsTrigger value="dados-profissionais" className="text-xs">
-                  Dados Profissionais
-                </TabsTrigger>
-                <TabsTrigger value="dados-financeiros" className="text-xs">
-                  Dados Financeiros
-                </TabsTrigger>
-                <TabsTrigger value="dados-bancarios" className="text-xs">
-                  Dados Bancários
-                </TabsTrigger>
-                <TabsTrigger value="formacao-escolaridade" className="text-xs">
-                  Formação
-                </TabsTrigger>
-                <TabsTrigger value="beneficios" className="text-xs">
-                  Benefícios
-                </TabsTrigger>
-                <TabsTrigger value="documentacao" className="text-xs">
-                  Documentação
-                </TabsTrigger>
-                {editMode && (
-                  <TabsTrigger value="solicitacoes" className="text-xs relative">
-                    <Bell className="h-4 w-4 mr-1" />
-                    Solicitações
-                    {solicitacoesPendentes > 0 && (
-                      <Badge 
-                        variant="destructive" 
-                        className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs flex items-center justify-center"
-                      >
-                        {solicitacoesPendentes}
-                      </Badge>
-                    )}
+              <div className="overflow-x-auto pb-2">
+                <TabsList className="inline-flex w-max min-w-full h-12 p-1 gap-1">
+                  <TabsTrigger value="usuario" className="flex items-center gap-2 px-3 py-2 text-xs whitespace-nowrap">
+                    <User className="h-4 w-4" />
+                    <span className="hidden sm:inline">Usuário</span>
                   </TabsTrigger>
-                )}
-                {editMode && (
-                  <TabsTrigger value="ti" className="text-xs">
-                    <Monitor className="h-4 w-4 mr-1" />
-                    TI
+                  <TabsTrigger value="controle-sistema" className="flex items-center gap-2 px-3 py-2 text-xs whitespace-nowrap">
+                    <Shield className="h-4 w-4" />
+                    <span className="hidden sm:inline">Controle Sistema</span>
                   </TabsTrigger>
-                )}
-                {colaboradorDesligado && (
-                  <TabsTrigger value="desligamento" className="text-xs">
-                    <AlertTriangle className="h-4 w-4 mr-1" />
-                    Desligamento
+                  <TabsTrigger value="dados-pessoais" className="px-3 py-2 text-xs whitespace-nowrap">
+                    <span className="hidden sm:inline">Dados Pessoais</span>
+                    <span className="sm:hidden">Pessoais</span>
                   </TabsTrigger>
-                )}
-              </TabsList>
+                  <TabsTrigger value="dados-profissionais" className="px-3 py-2 text-xs whitespace-nowrap">
+                    <span className="hidden sm:inline">Dados Profissionais</span>
+                    <span className="sm:hidden">Profissionais</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="dados-financeiros" className="px-3 py-2 text-xs whitespace-nowrap">
+                    <span className="hidden sm:inline">Dados Financeiros</span>
+                    <span className="sm:hidden">Financeiros</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="dados-bancarios" className="px-3 py-2 text-xs whitespace-nowrap">
+                    <span className="hidden sm:inline">Dados Bancários</span>
+                    <span className="sm:hidden">Bancários</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="formacao-escolaridade" className="px-3 py-2 text-xs whitespace-nowrap">
+                    <span className="hidden sm:inline">Formação</span>
+                    <span className="sm:hidden">Form.</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="beneficios" className="px-3 py-2 text-xs whitespace-nowrap">
+                    Benefícios
+                  </TabsTrigger>
+                  <TabsTrigger value="documentacao" className="px-3 py-2 text-xs whitespace-nowrap">
+                    <span className="hidden sm:inline">Documentação</span>
+                    <span className="sm:hidden">Docs</span>
+                  </TabsTrigger>
+                  {editMode && (
+                    <TabsTrigger value="solicitacoes" className="flex items-center gap-2 px-3 py-2 text-xs whitespace-nowrap relative">
+                      <Bell className="h-4 w-4" />
+                      <span className="hidden sm:inline">Solicitações</span>
+                      <span className="sm:hidden">Solic.</span>
+                      {solicitacoesPendentes > 0 && (
+                        <Badge 
+                          variant="destructive" 
+                          className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs flex items-center justify-center"
+                        >
+                          {solicitacoesPendentes}
+                        </Badge>
+                      )}
+                    </TabsTrigger>
+                  )}
+                  {editMode && (
+                    <TabsTrigger value="ti" className="flex items-center gap-2 px-3 py-2 text-xs whitespace-nowrap">
+                      <Monitor className="h-4 w-4" />
+                      <span>TI</span>
+                    </TabsTrigger>
+                  )}
+                  {colaboradorDesligado && (
+                    <TabsTrigger value="desligamento" className="flex items-center gap-2 px-3 py-2 text-xs whitespace-nowrap">
+                      <AlertTriangle className="h-4 w-4" />
+                      <span className="hidden sm:inline">Desligamento</span>
+                      <span className="sm:hidden">Deslig.</span>
+                    </TabsTrigger>
+                  )}
+                </TabsList>
+              </div>
 
               <div className="flex-1 overflow-y-auto px-1">
                 <TabsContent value="usuario" className="mt-0">
