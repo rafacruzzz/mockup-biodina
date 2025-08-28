@@ -1,7 +1,7 @@
 
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { cadastroModules } from "@/data/cadastroModules";
+import { modules } from "@/data/cadastroModules";
 
 interface CadastroSidebarProps {
   activeModule: string;
@@ -46,7 +46,7 @@ const CadastroSidebar = ({
       </div>
       
       <div className="p-4 space-y-2">
-        {Object.entries(cadastroModules).map(([key, module]) => (
+        {Object.entries(modules).map(([key, module]) => (
           <div key={key} className="space-y-1">
             <button
               onClick={() => onModuleToggle(key)}

@@ -1,7 +1,7 @@
 
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { rhModules } from "@/data/rhModules";
+import { modules } from "@/data/rhModules";
 
 interface RHSidebarProps {
   activeModule: string;
@@ -46,7 +46,7 @@ const RHSidebar = ({
       </div>
       
       <div className="p-4 space-y-2">
-        {Object.entries(rhModules).map(([key, module]) => (
+        {Object.entries(modules).map(([key, module]) => (
           <div key={key} className="space-y-1">
             <button
               onClick={() => onModuleToggle(key)}
