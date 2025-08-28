@@ -1,375 +1,437 @@
-import React, { useState } from "react";
-import SidebarLayout from "@/components/SidebarLayout";
-import RHSidebar from "@/components/rh/RHSidebar";
-import ContentHeader from "@/components/cadastro/ContentHeader";
-import DataTable from "@/components/cadastro/DataTable";
-import EmptyState from "@/components/cadastro/EmptyState";
-import ColaboradorModal from "@/components/rh/ColaboradorModal";
-import DepartamentoModal from "@/components/rh/DepartamentoModal";
-import ExpedienteModal from "@/components/rh/ExpedienteModal";
-import CargoModal from "@/components/rh/CargoModal";
-import PlanoCarreiraModal from "@/components/rh/PlanoCarreiraModal";
-import CargoPlanoModal from "@/components/rh/CargoPlanoModal";
-import NiveisProgressaoModal from "@/components/rh/NiveisProgressaoModal";
-import ProcessoSeletivoKanban from "@/components/rh/ProcessoSeletivoKanban";
-import ProcessosSeletivosTable from "@/components/rh/ProcessosSeletivosTable";
-import BancoCurriculos from "@/components/rh/BancoCurriculos";
-import EtapasSelecao from "@/components/rh/EtapasSelecao";
-import Admissao from "@/components/rh/Admissao";
-import { ProcessoSeletivoProvider } from "@/contexts/ProcessoSeletivoContext";
-import { modules } from "@/data/rhModules";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Filter, Download, Upload } from "lucide-react";
+import { Plus, Users, Calendar, Building2, TrendingUp, Clock, Search, Filter, Eye, Edit, Trash2 } from "lucide-react";
+import RHSidebar from "@/components/rh/RHSidebar";
+import Admissao from "@/components/rh/Admissao";
+import DepartamentoModal from "@/components/rh/DepartamentoModal";
+import NiveisProgressaoModal from "@/components/rh/NiveisProgressaoModal";
+import { rhModules } from "@/data/rhModules";
 
 const RH = () => {
-  const [activeModule, setActiveModule] = useState('');
-  const [activeSubModule, setActiveSubModule] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [expandedModules, setExpandedModules] = useState<string[]>([]);
-  
-  // Estado para controlar o processo seletivo específico no Kanban
-  const [selectedProcessoId, setSelectedProcessoId] = useState<string | null>(null);
-  
-  // Estados dos modais existentes
-  const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
+  const [selectedModule, setSelectedModule] = useState('processo-seletivo');
+  const [isAdmissaoOpen, setIsAdmissaoOpen] = useState(false);
   const [isDepartamentoModalOpen, setIsDepartamentoModalOpen] = useState(false);
-  const [isExpedienteModalOpen, setIsExpedienteModalOpen] = useState(false);
-  const [isCargoModalOpen, setIsCargoModalOpen] = useState(false);
-  
-  // Estados dos modais de Planos de Carreira
-  const [isPlanoCarreiraModalOpen, setIsPlanoCarreiraModalOpen] = useState(false);
-  const [isCargoPlanoModalOpen, setIsCargoPlanoModalOpen] = useState(false);
   const [isNiveisProgressaoModalOpen, setIsNiveisProgressaoModalOpen] = useState(false);
+  const [candidatoSelecionado, setCandidatoSelecionado] = useState(null);
 
-  // Estados para modo edição
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editingColaboradorId, setEditingColaboradorId] = useState<string | null>(null);
-  const [editingColaboradorData, setEditingColaboradorData] = useState<any>(null);
-
-  // Reset state when no module is selected
-  const resetSelection = () => {
-    setActiveModule('');
-    setActiveSubModule('');
-    setSearchTerm('');
-    setSelectedProcessoId(null);
-  };
-
-  const toggleModule = (module: string) => {
-    if (expandedModules.includes(module)) {
-      setExpandedModules(expandedModules.filter(m => m !== module));
-      if (activeModule === module && !activeSubModule) {
-        resetSelection();
-      }
-    } else {
-      setExpandedModules([...expandedModules, module]);
+  // Mock data for processo seletivo
+  const candidatos = [
+    {
+      id: '1',
+      nome: 'Ana Carolina Silva',
+      cargo: 'Analista de Marketing',
+      status: 'Em Análise',
+      dataAplicacao: '2024-01-15',
+      pontuacao: 85,
+      fase: 'Entrevista Final'
+    },
+    {
+      id: '2',
+      nome: 'Roberto Santos',
+      cargo: 'Desenvolvedor Frontend',
+      status: 'Aprovado',
+      dataAplicacao: '2024-01-10',
+      pontuacao: 92,
+      fase: 'Aprovado'
+    },
+    {
+      id: '3',
+      nome: 'Mariana Costa',
+      cargo: 'Assistente Administrativo',
+      status: 'Reprovado',
+      dataAplicacao: '2024-01-08',
+      pontuacao: 65,
+      fase: 'Prova Técnica'
     }
+  ];
+
+  const handleAdmitirCandidato = (candidato: any) => {
+    setCandidatoSelecionado(candidato);
+    setIsAdmissaoOpen(true);
   };
 
-  const handleModuleSelect = (module: string, subModule: string) => {
-    setActiveModule(module);
-    setActiveSubModule(subModule);
-    setSearchTerm('');
-    setSelectedProcessoId(null); // Reset selected process when changing modules
-  };
-
-  const handleCloseSidebar = () => {
-    setExpandedModules([]);
-    resetSelection();
-  };
-
-  const handleNewRecord = () => {
-    setIsEditMode(false);
-    setEditingColaboradorId(null);
-    setEditingColaboradorData(null);
-    
-    if (activeModule === 'departamentos') {
-      if (activeSubModule === 'setores') {
-        setIsDepartamentoModalOpen(true);
-      } else if (activeSubModule === 'cargos') {
-        setIsCargoModalOpen(true);
-      }
-    } else if (activeModule === 'expedientes') {
-      setIsExpedienteModalOpen(true);
-    } else if (activeModule === 'planosCarreira') {
-      if (activeSubModule === 'planos') {
-        setIsPlanoCarreiraModalOpen(true);
-      } else if (activeSubModule === 'cargos') {
-        setIsCargoPlanoModalOpen(true);
-      } else if (activeSubModule === 'niveis') {
-        setIsNiveisProgressaoModalOpen(true);
-      }
-    }
-  };
-
-  const handleEditItem = (item: any, moduleName: string) => {
-    if (activeModule === 'colaboradores' && moduleName === 'Colaboradores') {
-      setIsEditMode(true);
-      setEditingColaboradorId(String(item.id));
-      
-      const colaboradorCompleto = {
-        dadosPessoais: {
-          nome: item.nome || '',
-          cpf: item.cpf || '',
-          pis: item.pis || '',
-          idade: item.idade || '',
-          dataNascimento: item.dataNascimento || '',
-          genero: item.genero || '',
-          etnia: item.etnia || '',
-          rg: item.rg || '',
-          orgaoExpedidorRg: item.orgaoExpedidorRg || '',
-          ufEmissorRg: item.ufEmissorRg || '',
-          dataExpedicaoRg: item.dataExpedicaoRg || '',
-          naturalidade: item.naturalidade || '',
-          nomeMae: item.nomeMae || '',
-          nomePai: item.nomePai || '',
-          cid: item.cid || '',
-          email: item.email || '',
-          telefone: item.telefone || '',
-          endereco: item.endereco || '',
-          bairro: item.bairro || '',
-          observacoes: item.observacoes || ''
-        },
-        dadosProfissionais: {
-          empresa: item.empresa || '',
-          uf: item.uf || '',
-          setor: item.setor || '',
-          funcao: item.funcao || '',
-          cargo: item.cargo || '',
-          nivel: item.nivel || '',
-          cbo: item.cbo || '',
-          compativelFuncao: item.compativelFuncao || false,
-          funcoesDesempenhadas: item.funcoesDesempenhadas || '',
-          dataAdmissao: item.dataAdmissao || '',
-          dataCadastro: item.dataCadastro || '',
-          tempoCasa: item.tempoCasa || '',
-          ultimaPromocao: item.ultimaPromocao || '',
-          previsaoFerias: item.previsaoFerias || ''
-        },
-        dadosFinanceiros: {
-          salarioBase: item.salarioBase || '',
-          adicionalNivel: item.adicionalNivel || '',
-          insalubridade: item.insalubridade || '',
-          sobreaviso: item.sobreaviso || '',
-          salarioBruto: item.salarioBruto || '',
-          valorHoraTrabalhada: item.valorHoraTrabalhada || '',
-          pisoSalarial: item.pisoSalarial || '',
-          mediaSalarial: item.mediaSalarial || '',
-          dependentesIR: item.dependentesIR || ''
-        },
-        dadosBancarios: {
-          banco: item.banco || '',
-          tipoConta: item.tipoConta || '',
-          agencia: item.agencia || '',
-          conta: item.conta || ''
-        },
-        formacaoEscolaridade: {
-          escolaridade: item.escolaridade || '',
-          possuiDiploma: item.possuiDiploma || false
-        },
-        beneficios: {
-          tipoPlano: item.tipoPlano || '',
-          quantidadeDependentesPlano: item.quantidadeDependentesPlano || ''
-        },
-        documentacao: {
-          anexos: item.anexos || []
-        }
-      };
-      
-      setEditingColaboradorData(colaboradorCompleto);
-      setIsColaboradorModalOpen(true);
-    }
-  };
-
-  const handleCloseColaboradorModal = () => {
-    setIsColaboradorModalOpen(false);
-    setIsEditMode(false);
-    setEditingColaboradorId(null);
-    setEditingColaboradorData(null);
-  };
-
-  const handleGetStarted = () => {
-    setActiveModule('colaboradores');
-    setActiveSubModule('colaboradores');
-    setExpandedModules(['colaboradores']);
-  };
-
-  // Handlers para navegação do processo seletivo
-  const handleViewProcess = (processoId: string) => {
-    setSelectedProcessoId(processoId);
-  };
-
-  const handleVoltarParaTabela = () => {
-    setSelectedProcessoId(null);
-  };
-
-  // Renderizar componente específico do Processo Seletivo
-  const renderProcessoSeletivoContent = () => {
-    switch (activeSubModule) {
-      case 'visaoGeral':
-        // Se um processo específico foi selecionado, mostrar o Kanban
-        if (selectedProcessoId) {
-          return (
-            <ProcessoSeletivoKanban 
-              processoId={selectedProcessoId}
-              onVoltar={handleVoltarParaTabela}
-            />
-          );
-        }
-        // Caso contrário, mostrar a tabela de processos
-        return <ProcessosSeletivosTable onViewProcess={handleViewProcess} />;
-      case 'bancoCurriculos':
-        return <BancoCurriculos />;
-      case 'etapasSelecao':
-        return <EtapasSelecao />;
-      case 'admissao':
-        return <Admissao />;
-      default:
-        return null;
-    }
-  };
-
-  const currentSubModule = activeModule && activeSubModule && activeModule !== 'processoSeletivo' ? 
-    modules[activeModule as keyof typeof modules]?.subModules[activeSubModule] : null;
-
-  // Filter data based on search term for non-processo-seletivo modules
-  const filteredData = currentSubModule?.data?.filter((item: any) => 
-    Object.values(item).some(value => 
-      String(value).toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  ) || [];
-
-  // Get button text based on active module
-  const getButtonText = () => {
-    if (activeModule === 'departamentos') {
-      if (activeSubModule === 'setores') return "Novo Setor";
-      if (activeSubModule === 'cargos') return "Novo Cargo";
-    }
-    if (activeModule === 'expedientes') return "Novo Expediente";
-    if (activeModule === 'planosCarreira') {
-      if (activeSubModule === 'planos') return "Novo Plano de Carreira";
-      if (activeSubModule === 'cargos') return "Novo Cargo";
-      if (activeSubModule === 'niveis') return "Gerenciar Níveis";
-    }
-    return "Novo Registro";
-  };
-
-  // Verifica se deve mostrar o botão de novo registro (não mostrar para colaboradores)
-  const shouldShowNewRecordButton = () => {
-    return activeModule !== 'colaboradores';
-  };
-
-  // Adicionar listener para eventos de edição
-  React.useEffect(() => {
-    const handleEditEvent = (event: any) => {
-      handleEditItem(event.detail.item, event.detail.moduleName);
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      'Em Análise': { variant: 'outline', color: 'bg-yellow-100 text-yellow-800' },
+      'Aprovado': { variant: 'default', color: 'bg-green-100 text-green-800' },
+      'Reprovado': { variant: 'destructive', color: 'bg-red-100 text-red-800' }
     };
+    
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig['Em Análise'];
+    
+    return (
+      <Badge className={config.color}>
+        {status}
+      </Badge>
+    );
+  };
 
-    window.addEventListener('editItem', handleEditEvent);
-    return () => window.removeEventListener('editItem', handleEditEvent);
-  }, [activeModule]);
+  const renderProcessoSeletivo = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-biodina-blue">Processo Seletivo</h2>
+          <p className="text-gray-600">Gerencie candidatos e processos de recrutamento</p>
+        </div>
+        <Button className="bg-biodina-gold hover:bg-biodina-gold/90">
+          <Plus className="h-4 w-4 mr-2" />
+          Nova Vaga
+        </Button>
+      </div>
 
-  return (
-    <ProcessoSeletivoProvider>
-      <SidebarLayout>
-        <div className="flex h-full bg-gray-50/50">
-          <RHSidebar
-            activeModule={activeModule}
-            activeSubModule={activeSubModule}
-            expandedModules={expandedModules}
-            onModuleToggle={toggleModule}
-            onModuleSelect={handleModuleSelect}
-            onClose={handleCloseSidebar}
+      <div className="flex gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            placeholder="Buscar candidatos..."
+            className="pl-10"
           />
+        </div>
+        <Button variant="outline">
+          <Filter className="h-4 w-4 mr-2" />
+          Filtros
+        </Button>
+      </div>
 
-          <div className="flex-1 flex flex-col min-h-0">
-            {activeSubModule ? (
-              <>
-                {activeModule === 'processoSeletivo' ? (
-                  <div className="flex-1 p-6 min-h-0">
-                    {renderProcessoSeletivoContent()}
-                  </div>
-                ) : (
-                  <>
-                    {shouldShowNewRecordButton() && (
-                      <ContentHeader
-                        title={currentSubModule?.name || ''}
-                        description={`Gerencie os registros de ${currentSubModule?.name?.toLowerCase() || ''}`}
-                        searchTerm={searchTerm}
-                        onSearchChange={setSearchTerm}
-                        onNewRecord={handleNewRecord}
-                        buttonText={getButtonText()}
-                      />
-                    )}
-
-                    {!shouldShowNewRecordButton() && (
-                      <div className="bg-white border-b border-gray-200/80 p-6">
-                        <div className="flex justify-between items-start mb-4">
-                          <div>
-                            <h1 className="text-3xl font-bold text-biodina-blue mb-2">{currentSubModule?.name || ''}</h1>
-                            <p className="text-gray-600">{`Gerencie os registros de ${currentSubModule?.name?.toLowerCase() || ''}`}</p>
-                          </div>
-                        </div>
-
-                        <div className="flex gap-4 items-center">
-                          <div className="relative flex-1 max-w-md">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                            <Input
-                              placeholder="Pesquisar registros..."
-                              value={searchTerm}
-                              onChange={(e) => setSearchTerm(e.target.value)}
-                              className="pl-10 border-gray-200 focus:border-biodina-gold rounded-xl"
-                            />
-                          </div>
-                          <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50 rounded-xl">
-                            <Filter className="h-4 w-4 mr-2" />
-                            Filtros
-                          </Button>
-                          <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50 rounded-xl">
-                            <Download className="h-4 w-4 mr-2" />
-                            Exportar
-                          </Button>
-                          <Button variant="outline" size="sm" className="border-gray-200 hover:bg-gray-50 rounded-xl">
-                            <Upload className="h-4 w-4 mr-2" />
-                            Importar
-                          </Button>
-                        </div>
+      <div className="bg-white rounded-lg shadow-sm border">
+        <div className="p-6">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Candidato</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Cargo</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Fase</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Pontuação</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Data</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {candidatos.map((candidato) => (
+                  <tr key={candidato.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-4">
+                      <div className="font-medium text-gray-900">{candidato.nome}</div>
+                    </td>
+                    <td className="py-3 px-4 text-gray-600">{candidato.cargo}</td>
+                    <td className="py-3 px-4">{getStatusBadge(candidato.status)}</td>
+                    <td className="py-3 px-4 text-gray-600">{candidato.fase}</td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center">
+                        <span className="font-medium">{candidato.pontuacao}</span>
+                        <span className="text-gray-500 ml-1">/100</span>
                       </div>
-                    )}
-
-                    <div className="flex-1 p-6 min-h-0">
-                      <DataTable 
-                        data={filteredData} 
-                        moduleName={currentSubModule?.name || ''}
-                      />
-                    </div>
-                  </>
-                )}
-              </>
-            ) : (
-              <EmptyState onGetStarted={handleGetStarted} />
-            )}
+                    </td>
+                    <td className="py-3 px-4 text-gray-600">
+                      {new Date(candidato.dataAplicacao).toLocaleDateString('pt-BR')}
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        {candidato.status === 'Aprovado' && (
+                          <Button 
+                            size="sm" 
+                            className="bg-biodina-gold hover:bg-biodina-gold/90"
+                            onClick={() => handleAdmitirCandidato(candidato)}
+                          >
+                            Admitir
+                          </Button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
+      </div>
+    </div>
+  );
 
-        {/* Modais existentes */}
-        <ColaboradorModal 
-          isOpen={isColaboradorModalOpen} 
-          onClose={handleCloseColaboradorModal}
-          editMode={isEditMode}
-          colaboradorId={editingColaboradorId || undefined}
-          colaboradorData={editingColaboradorData}
-        />
-        
-        <DepartamentoModal isOpen={isDepartamentoModalOpen} onClose={() => setIsDepartamentoModalOpen(false)} />
-        <CargoModal isOpen={isCargoModalOpen} onClose={() => setIsCargoModalOpen(false)} />
-        <ExpedienteModal isOpen={isExpedienteModalOpen} onClose={() => setIsExpedienteModalOpen(false)} />
-        
-        <PlanoCarreiraModal isOpen={isPlanoCarreiraModalOpen} onClose={() => setIsPlanoCarreiraModalOpen(false)} />
-        <CargoPlanoModal isOpen={isCargoPlanoModalOpen} onClose={() => setIsCargoPlanoModalOpen(false)} />
-        <NiveisProgressaoModal isOpen={isNiveisProgressaoModalOpen} onClose={() => setIsNiveisProgressaoModalOpen(false)} />
-      </SidebarLayout>
-    </ProcessoSeletivoProvider>
+  const renderDepartamentos = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-biodina-blue">Departamentos</h2>
+          <p className="text-gray-600">Configure e gerencie os departamentos da empresa</p>
+        </div>
+        <Button 
+          className="bg-biodina-gold hover:bg-biodina-gold/90"
+          onClick={() => setIsDepartamentoModalOpen(true)}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Novo Departamento
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-biodina-gold" />
+              Tecnologia da Informação
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">Responsável: João Silva</p>
+              <p className="text-sm text-gray-600">Colaboradores: 8</p>
+              <div className="flex gap-2 mt-4">
+                <Button variant="outline" size="sm">
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-biodina-gold" />
+              Recursos Humanos
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">Responsável: Maria Santos</p>
+              <p className="text-sm text-gray-600">Colaboradores: 5</p>
+              <div className="flex gap-2 mt-4">
+                <Button variant="outline" size="sm">
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-biodina-gold" />
+              Comercial
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">Responsável: Carlos Lima</p>
+              <p className="text-sm text-gray-600">Colaboradores: 12</p>
+              <div className="flex gap-2 mt-4">
+                <Button variant="outline" size="sm">
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
+  const renderExpedientes = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-biodina-blue">Expedientes</h2>
+          <p className="text-gray-600">Controle de horários e jornadas de trabalho</p>
+        </div>
+        <Button className="bg-biodina-gold hover:bg-biodina-gold/90">
+          <Plus className="h-4 w-4 mr-2" />
+          Novo Expediente
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-biodina-gold" />
+              Expediente Padrão
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">Horário: 08:00 - 17:00</p>
+              <p className="text-sm text-gray-600">Intervalo: 12:00 - 13:00</p>
+              <p className="text-sm text-gray-600">Carga Horária: 40h semanais</p>
+              <p className="text-sm text-gray-600">Colaboradores: 25</p>
+              <div className="flex gap-2 mt-4">
+                <Button variant="outline" size="sm">
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-biodina-gold" />
+              Expediente Comercial
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">Horário: 08:00 - 18:00</p>
+              <p className="text-sm text-gray-600">Intervalo: 12:00 - 13:00</p>
+              <p className="text-sm text-gray-600">Carga Horária: 44h semanais</p>
+              <p className="text-sm text-gray-600">Colaboradores: 12</p>
+              <div className="flex gap-2 mt-4">
+                <Button variant="outline" size="sm">
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
+  const renderNiveisProgressao = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-biodina-blue">Níveis e Progressão</h2>
+          <p className="text-gray-600">Defina níveis hierárquicos e planos de carreira</p>
+        </div>
+        <Button 
+          className="bg-biodina-gold hover:bg-biodina-gold/90"
+          onClick={() => setIsNiveisProgressaoModalOpen(true)}
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Novo Plano
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-biodina-gold" />
+              Plano Técnico
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">Níveis: 5</p>
+              <p className="text-sm text-gray-600">Área: Tecnologia</p>
+              <p className="text-sm text-gray-600">Colaboradores: 15</p>
+              <div className="mt-3">
+                <div className="text-xs text-gray-500 mb-1">Progressão Salarial</div>
+                <div className="text-sm font-medium">R$ 3.000 - R$ 12.000</div>
+              </div>
+              <div className="flex gap-2 mt-4">
+                <Button variant="outline" size="sm">
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-biodina-gold" />
+              Plano Administrativo
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">Níveis: 4</p>
+              <p className="text-sm text-gray-600">Área: Administrativo</p>
+              <p className="text-sm text-gray-600">Colaboradores: 8</p>
+              <div className="mt-3">
+                <div className="text-xs text-gray-500 mb-1">Progressão Salarial</div>
+                <div className="text-sm font-medium">R$ 2.500 - R$ 8.000</div>
+              </div>
+              <div className="flex gap-2 mt-4">
+                <Button variant="outline" size="sm">
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
+  const renderContent = () => {
+    switch (selectedModule) {
+      case 'processo-seletivo':
+        return renderProcessoSeletivo();
+      case 'departamentos':
+        return renderDepartamentos();
+      case 'expedientes':
+        return renderExpedientes();
+      case 'niveis-progressao':
+        return renderNiveisProgressao();
+      default:
+        return renderProcessoSeletivo();
+    }
+  };
+
+  return (
+    <div className="flex h-screen bg-gray-50">
+      <RHSidebar 
+        selectedModule={selectedModule}
+        onModuleChange={setSelectedModule}
+      />
+      
+      <main className="flex-1 overflow-y-auto p-8">
+        {renderContent()}
+      </main>
+
+      <Admissao
+        isOpen={isAdmissaoOpen}
+        onClose={() => setIsAdmissaoOpen(false)}
+        candidatoSelecionado={candidatoSelecionado}
+      />
+
+      <DepartamentoModal
+        isOpen={isDepartamentoModalOpen}
+        onClose={() => setIsDepartamentoModalOpen(false)}
+      />
+
+      <NiveisProgressaoModal
+        isOpen={isNiveisProgressaoModalOpen}
+        onClose={() => setIsNiveisProgressaoModalOpen(false)}
+      />
+    </div>
   );
 };
 
