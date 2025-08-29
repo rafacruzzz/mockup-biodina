@@ -70,9 +70,7 @@ const Cadastro = () => {
     } else if (activeModule === 'usuarios' && activeSubModule === 'usuarios') {
       setIsUserModalOpen(true);
     } else if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') {
-      // Comentado temporariamente - não abrir modal de colaborador
-      // setIsColaboradorModalOpen(true);
-      return;
+      setIsUserModalOpen(true);
     } else if (activeModule === 'servicos') {
       setIsServiceModalOpen(true);
     } else if (activeModule === 'contas_bancarias') {
@@ -189,7 +187,7 @@ const Cadastro = () => {
     if (activeModule === 'produtos' && activeSubModule === 'produtos') return "Novo Produto";
     if (activeModule === 'entidades') return "Nova Entidade";
     if (activeModule === 'usuarios' && activeSubModule === 'usuarios') return "Novo Usuário";
-    if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') return "Novo Colaborador";
+    if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') return "Novo Usuário";
     if (activeModule === 'servicos') return "Novo Serviço";
     if (activeModule === 'contas_bancarias') return "Nova Conta";
     return "Novo Registro";
@@ -197,10 +195,6 @@ const Cadastro = () => {
 
   // Verificar se deve mostrar o botão de novo registro
   const shouldShowNewButton = () => {
-    // Esconder o botão para colaboradores temporariamente
-    if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') {
-      return false;
-    }
     return true;
   };
 
@@ -274,6 +268,7 @@ const Cadastro = () => {
         editMode={isEditMode}
         colaboradorId={editingColaboradorId || undefined}
         colaboradorData={editingColaboradorData}
+        context="usuario"
       />
       
       <ServiceModal 

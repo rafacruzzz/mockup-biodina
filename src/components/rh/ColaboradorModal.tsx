@@ -28,6 +28,7 @@ interface ColaboradorModalProps {
   colaboradorId?: string;
   editMode?: boolean;
   colaboradorData?: ColaboradorData;
+  context?: "colaborador" | "usuario";
 }
 
 const ColaboradorModal = ({ 
@@ -35,7 +36,8 @@ const ColaboradorModal = ({
   onClose, 
   colaboradorId, 
   editMode = false,
-  colaboradorData 
+  colaboradorData,
+  context = "colaborador"
 }: ColaboradorModalProps) => {
   const { desligarColaborador } = useColaboradores();
   const [isDesligarModalOpen, setIsDesligarModalOpen] = useState(false);
@@ -293,6 +295,24 @@ const ColaboradorModal = ({
 
   const totalTabs = editMode ? (colaboradorDesligado ? 12 : 11) : 9;
 
+  const getModalTitle = () => {
+    if (context === "usuario") {
+      return editMode ? `Editar Usuário - ${formData.dadosPessoais.nome}` : 'Novo Usuário';
+    }
+    return editMode ? `Editar Colaborador - ${formData.dadosPessoais.nome}` : 'Novo Colaborador';
+  };
+
+  const getModalDescription = () => {
+    if (context === "usuario") {
+      return editMode ? 'Edite as informações do usuário' : 'Cadastre um novo usuário no sistema';
+    }
+    return editMode ? 'Edite as informações do colaborador' : 'Cadastre um novo colaborador no sistema';
+  };
+
+  const getDesligarButtonText = () => {
+    return context === "usuario" ? "Desligar Usuário" : "Desligar Colaborador";
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -305,7 +325,7 @@ const ColaboradorModal = ({
                 </div>
                 <div>
                   <DialogTitle className="text-2xl font-bold text-biodina-blue flex items-center gap-2">
-                    {editMode ? `Editar Colaborador - ${formData.dadosPessoais.nome}` : 'Novo Colaborador'}
+                    {getModalTitle()}
                     {colaboradorDesligado && (
                       <Badge variant="destructive" className="ml-2">
                         Desligado
@@ -313,7 +333,7 @@ const ColaboradorModal = ({
                     )}
                   </DialogTitle>
                   <p className="text-gray-600">
-                    {editMode ? 'Edite as informações do colaborador' : 'Cadastre um novo colaborador no sistema'}
+                    {getModalDescription()}
                   </p>
                 </div>
               </div>
@@ -325,7 +345,7 @@ const ColaboradorModal = ({
                   className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
                 >
                   <UserMinus className="h-4 w-4 mr-2" />
-                  Desligar Colaborador
+                  {getDesligarButtonText()}
                 </Button>
               )}
             </div>
@@ -404,7 +424,6 @@ const ColaboradorModal = ({
               <div className="flex-1 overflow-y-auto px-1">
                 <TabsContent value="usuario" className="mt-0">
                   <div className="space-y-6 pb-4">
-                    {/* Credenciais de Acesso */}
                     <div className="space-y-4">
                       <h3 className="font-semibold text-gray-900 border-b pb-2">
                         Credenciais de Acesso
@@ -468,7 +487,6 @@ const ColaboradorModal = ({
                       </div>
                     </div>
 
-                    {/* Status */}
                     <div className="space-y-4">
                       <h3 className="font-semibold text-gray-900 border-b pb-2">
                         Status
@@ -500,12 +518,10 @@ const ColaboradorModal = ({
                       </p>
                     </div>
 
-                    {/* Seletor de Perfil */}
                     <div className="space-y-4">
                       <AccessProfileSelector onProfileSelect={handleModuleAccessChange} />
                     </div>
 
-                    {/* Árvore de Permissões */}
                     <div className="space-y-4">
                       <div className="border-t pt-6">
                         <h4 className="font-medium text-gray-900 mb-4">Permissões Detalhadas</h4>
@@ -610,7 +626,7 @@ const ColaboradorModal = ({
             </Button>
             <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
               <Save className="h-4 w-4 mr-2" />
-              {editMode ? 'Salvar Alterações' : 'Salvar Colaborador'}
+              {editMode ? 'Salvar Alterações' : `Salvar ${context === "usuario" ? "Usuário" : "Colaborador"}`}
             </Button>
           </div>
         </DialogContent>
