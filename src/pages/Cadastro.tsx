@@ -67,9 +67,13 @@ const Cadastro = () => {
       setIsProductModalOpen(true);
     } else if (activeModule === 'entidades') {
       setIsEntidadeModalOpen(true);
-    } else if (activeModule === 'usuarios' && activeSubModule === 'usuarios') {
-      setIsUserModalOpen(true);
     } else if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') {
+      // Open ColaboradorModal for new user creation
+      setIsEditMode(false);
+      setEditingColaboradorId(null);
+      setEditingColaboradorData(null);
+      setIsColaboradorModalOpen(true);
+    } else if (activeModule === 'usuarios' && activeSubModule === 'usuarios') {
       setIsUserModalOpen(true);
     } else if (activeModule === 'servicos') {
       setIsServiceModalOpen(true);
@@ -186,8 +190,8 @@ const Cadastro = () => {
   const getButtonText = () => {
     if (activeModule === 'produtos' && activeSubModule === 'produtos') return "Novo Produto";
     if (activeModule === 'entidades') return "Nova Entidade";
-    if (activeModule === 'usuarios' && activeSubModule === 'usuarios') return "Novo Usuário";
     if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') return "Novo Usuário";
+    if (activeModule === 'usuarios' && activeSubModule === 'usuarios') return "Novo Usuário";
     if (activeModule === 'servicos') return "Novo Serviço";
     if (activeModule === 'contas_bancarias') return "Nova Conta";
     return "Novo Registro";
