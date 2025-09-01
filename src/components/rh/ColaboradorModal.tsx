@@ -316,7 +316,7 @@ const ColaboradorModal = ({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-[95vw] w-full max-h-[95vh] flex flex-col">
+        <DialogContent className="max-w-[98vw] w-full max-h-[95vh] flex flex-col">
           <DialogHeader className="pb-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -429,7 +429,7 @@ const ColaboradorModal = ({
                         Credenciais de Acesso
                       </h3>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-w-[600px]">
+                      <div className="grid grid-cols-2 gap-4 min-w-[1000px]">
                         <div className="space-y-2">
                           <label htmlFor="username" className="block text-sm font-medium text-gray-700">Nome de Usuário *</label>
                           <input
@@ -518,7 +518,7 @@ const ColaboradorModal = ({
                       </p>
                     </div>
 
-                    <div className="space-y-4 min-w-[800px]">
+                    <div className="space-y-4 min-w-[1200px]">
                       <AccessProfileSelector onProfileSelect={handleModuleAccessChange} />
                     </div>
 
@@ -528,7 +528,7 @@ const ColaboradorModal = ({
                         <p className="text-sm text-gray-600 mb-4">
                           Configure permissões específicas para cada módulo e funcionalidade
                         </p>
-                        <div className="min-w-[800px]">
+                        <div className="min-w-[1200px]">
                           <ModuleAccessTree 
                             modules={formData.moduleAccess || []}
                             onModuleChange={handleModuleAccessChange}
@@ -541,7 +541,7 @@ const ColaboradorModal = ({
 
                 <TabsContent value="dados-pessoais" className="mt-0">
                   <div className="overflow-x-auto">
-                    <div className="min-w-[800px]">
+                    <div className="min-w-[1200px] pb-4">
                       <DadosPessoaisTab 
                         formData={formData.dadosPessoais}
                         onInputChange={(field, value) => handleInputChange('dadosPessoais', field, value)}
@@ -552,7 +552,7 @@ const ColaboradorModal = ({
 
                 <TabsContent value="dados-profissionais" className="mt-0">
                   <div className="overflow-x-auto">
-                    <div className="min-w-[900px]">
+                    <div className="min-w-[1300px] pb-4">
                       <DadosProfissionaisTab 
                         formData={dadosProfissionaisWithSuggestion}
                         onInputChange={(field, value) => {
@@ -569,7 +569,7 @@ const ColaboradorModal = ({
 
                 <TabsContent value="dados-financeiros" className="mt-0">
                   <div className="overflow-x-auto">
-                    <div className="min-w-[800px]">
+                    <div className="min-w-[1200px] pb-4">
                       <DadosFinanceirosTab 
                         formData={dadosFinanceirosWithSuggestion}
                         onInputChange={(field, value) => handleInputChange('dadosFinanceiros', field, value)}
@@ -579,15 +579,17 @@ const ColaboradorModal = ({
                 </TabsContent>
 
                 <TabsContent value="dados-bancarios" className="mt-0">
-                  <DadosBancariosTab 
-                    formData={formData.dadosBancarios}
-                    onInputChange={(field, value) => handleInputChange('dadosBancarios', field, value)}
-                  />
+                  <div className="pb-4">
+                    <DadosBancariosTab 
+                      formData={formData.dadosBancarios}
+                      onInputChange={(field, value) => handleInputChange('dadosBancarios', field, value)}
+                    />
+                  </div>
                 </TabsContent>
 
                 <TabsContent value="formacao-escolaridade" className="mt-0">
                   <div className="overflow-x-auto">
-                    <div className="min-w-[800px]">
+                    <div className="min-w-[1200px] pb-4">
                       <FormacaoEscolaridadeTab 
                         formData={formData.formacaoEscolaridade}
                         onInputChange={(field, value) => handleInputChange('formacaoEscolaridade', field, value)}
@@ -598,7 +600,7 @@ const ColaboradorModal = ({
 
                 <TabsContent value="beneficios" className="mt-0">
                   <div className="overflow-x-auto">
-                    <div className="min-w-[800px]">
+                    <div className="min-w-[1200px] pb-4">
                       <BeneficiosTab 
                         formData={formData.beneficios}
                         onInputChange={(field, value) => handleInputChange('beneficios', field, value)}
@@ -609,7 +611,7 @@ const ColaboradorModal = ({
 
                 <TabsContent value="documentacao" className="mt-0">
                   <div className="overflow-x-auto">
-                    <div className="min-w-[800px]">
+                    <div className="min-w-[1200px] pb-4">
                       <DocumentacaoTab 
                         formData={formData.documentacao}
                         onInputChange={(field, value) => handleInputChange('documentacao', field, value)}
@@ -622,7 +624,7 @@ const ColaboradorModal = ({
                 {editMode && colaboradorId && (
                   <TabsContent value="solicitacoes" className="mt-0">
                     <div className="overflow-x-auto">
-                      <div className="min-w-[800px]">
+                      <div className="min-w-[1200px] pb-4">
                         <SolicitacoesTab colaboradorId={colaboradorId} />
                       </div>
                     </div>
@@ -631,19 +633,23 @@ const ColaboradorModal = ({
 
                 {editMode && (
                   <TabsContent value="ti" className="mt-0">
-                    <TITab 
-                      formData={formData.dadosTI!}
-                      onInputChange={(field, value) => handleInputChange('dadosTI', field, value)}
-                    />
+                    <div className="pb-4">
+                      <TITab 
+                        formData={formData.dadosTI!}
+                        onInputChange={(field, value) => handleInputChange('dadosTI', field, value)}
+                      />
+                    </div>
                   </TabsContent>
                 )}
 
                 {colaboradorDesligado && formData.desligamento && (
                   <TabsContent value="desligamento" className="mt-0">
-                    <DesligamentoTab 
-                      formData={formData.desligamento}
-                      onInputChange={(field, value) => handleInputChange('desligamento', field, value)}
-                    />
+                    <div className="pb-4">
+                      <DesligamentoTab 
+                        formData={formData.desligamento}
+                        onInputChange={(field, value) => handleInputChange('desligamento', field, value)}
+                      />
+                    </div>
                   </TabsContent>
                 )}
               </div>
