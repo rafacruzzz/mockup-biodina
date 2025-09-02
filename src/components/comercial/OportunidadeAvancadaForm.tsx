@@ -100,8 +100,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     valorNegocio: oportunidade?.valorNegocio || 0,
     tags: oportunidade?.tags || '',
     caracteristicas: oportunidade?.caracteristicas || '',
-    dataInicio: oportunidade?.dataInicio || '',
-    dataLimite: oportunidade?.dataLimite || '',
     fluxoTrabalho: oportunidade?.fluxoTrabalho || '',
     descricao: oportunidade?.descricao || '',
     analiseTecnica: oportunidade?.analiseTecnica || '',
@@ -367,26 +365,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               value={formData.valorNegocio}
               onChange={(e) => setFormData({...formData, valorNegocio: Number(e.target.value)})}
               placeholder="0,00"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="dataInicio">Data de Início</Label>
-            <Input
-              id="dataInicio"
-              type="date"
-              value={formData.dataInicio}
-              onChange={(e) => setFormData({...formData, dataInicio: e.target.value})}
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="dataLimite">Data Limite</Label>
-            <Input
-              id="dataLimite"
-              type="date"
-              value={formData.dataLimite}
-              onChange={(e) => setFormData({...formData, dataLimite: e.target.value})}
               disabled={isReadOnlyMode()}
             />
           </div>
