@@ -695,18 +695,24 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                               />
                             </div>
                             <div className="grid grid-cols-2 gap-2">
-                              <Input
-                                type="number"
-                                placeholder="Quantidade"
-                                value={concorrente.quantidade}
-                                onChange={(e) => atualizarConcorrente(index, 'quantidade', parseFloat(e.target.value) || 0)}
-                              />
-                              <Input
-                                type="number"
-                                placeholder="Quantidade de exames/mês"
-                                value={concorrente.quantidadeExamesMes}
-                                onChange={(e) => atualizarConcorrente(index, 'quantidadeExamesMes', parseFloat(e.target.value) || 0)}
-                              />
+                              <div>
+                                <Label>Quantidade</Label>
+                                <Input
+                                  type="number"
+                                  placeholder="Quantidade"
+                                  value={concorrente.quantidade}
+                                  onChange={(e) => atualizarConcorrente(index, 'quantidade', parseFloat(e.target.value) || 0)}
+                                />
+                              </div>
+                              <div>
+                                <Label>Quantidade de exames/mês</Label>
+                                <Input
+                                  type="number"
+                                  placeholder="Quantidade de exames/mês"
+                                  value={concorrente.quantidadeExamesMes}
+                                  onChange={(e) => atualizarConcorrente(index, 'quantidadeExamesMes', parseFloat(e.target.value) || 0)}
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
