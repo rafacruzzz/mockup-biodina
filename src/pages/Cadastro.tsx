@@ -4,7 +4,7 @@ import CadastroSidebar from "@/components/cadastro/CadastroSidebar";
 import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
 import EmptyState from "@/components/cadastro/EmptyState";
-import ProductFormDetailed from "@/components/cadastro/ProductFormDetailed";
+import ProductRegistrationForm from "@/components/product/ProductRegistrationForm";
 import EntidadeModal from "@/components/cadastro/EntidadeModal";
 import UserModal from "@/components/cadastro/UserModal";
 import ColaboradorModal from "@/components/rh/ColaboradorModal";
@@ -170,6 +170,11 @@ const Cadastro = () => {
     setEditingColaboradorData(null);
   };
 
+  const handleProductSave = (productData: any) => {
+    console.log('Produto salvo:', productData);
+    // TODO: Implementar lógica de salvamento
+  };
+
   const handleGetStarted = () => {
     setActiveModule('entidades');
     setActiveSubModule('entidades');
@@ -251,9 +256,11 @@ const Cadastro = () => {
       </div>
 
       {/* Modais */}
-      <ProductFormDetailed 
+      <ProductRegistrationForm 
         isOpen={isProductModalOpen} 
-        onClose={() => setIsProductModalOpen(false)} 
+        product={null}
+        onClose={() => setIsProductModalOpen(false)}
+        onSave={handleProductSave}
       />
       
       <EntidadeModal 
