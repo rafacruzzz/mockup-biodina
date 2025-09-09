@@ -144,7 +144,7 @@ const Admissao = () => {
       email: item.curriculo.email,
       telefone: item.curriculo.telefone,
       dataAdmissao: new Date().toISOString(),
-      status: 'Novo' as const
+      status: 'Ativo' as const
     };
     
     adicionarColaborador(novoColaborador);

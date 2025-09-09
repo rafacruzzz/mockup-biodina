@@ -16,7 +16,7 @@ const ColaboradorSelector = ({ value, onChange, onCreateNew }: ColaboradorSelect
   const { colaboradores } = useColaboradores();
 
   const colaboradoresDisponiveis = colaboradores.filter(c => 
-    c.status === 'Ativo' || c.status === 'Novo'
+    c.status === 'Ativo'
   );
 
   return (

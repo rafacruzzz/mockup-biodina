@@ -10,7 +10,7 @@ export interface Colaborador {
   email: string;
   telefone: string;
   dataAdmissao: string;
-  status: 'Novo' | 'Ativo' | 'Inativo' | 'Desligado';
+  status: 'Ativo' | 'Desligado';
   documentos?: any[];
 }
 
@@ -58,7 +58,7 @@ const initialColaboradores: Colaborador[] = [
     email: 'carlos.lima@biodina.com.br',
     telefone: '(11) 95432-1098',
     dataAdmissao: '2023-06-05',
-    status: 'Novo'
+    status: 'Ativo'
   }
 ];
 

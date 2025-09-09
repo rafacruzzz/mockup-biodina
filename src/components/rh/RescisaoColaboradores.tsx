@@ -22,11 +22,8 @@ const RescisaoColaboradores = () => {
     return unique.sort();
   }, [colaboradores]);
 
-  // Get unique statuses for filter
-  const statuses = useMemo(() => {
-    const unique = [...new Set(colaboradores.map(c => c.status))];
-    return unique.sort();
-  }, [colaboradores]);
+  // Fixed status options
+  const statuses = ['Ativo', 'Desligado'];
 
   // Filter colaboradores based on search and filters
   const filteredColaboradores = useMemo(() => {
@@ -49,8 +46,6 @@ const RescisaoColaboradores = () => {
   const getStatusBadge = (status: string) => {
     const colors = {
       'Ativo': 'bg-green-100 text-green-800',
-      'Novo': 'bg-blue-100 text-blue-800',
-      'Inativo': 'bg-yellow-100 text-yellow-800',
       'Desligado': 'bg-red-100 text-red-800'
     };
     
