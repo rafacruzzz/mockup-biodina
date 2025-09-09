@@ -77,15 +77,15 @@ export interface Etapa3DevolucaoVerbas {
   itensParaDevolucao: ItemDevolucao[];
   verbasAdicionais: VerbaAdicional[];
   descontos: Desconto[];
+  solicitacaoDP: string;
+  conclusaoDP: string;
+  dataLimitePagamento: string;
+  comprovantesAnexados: File[];
   termoGerado: boolean;
   concluida: boolean;
 }
 
 export interface Etapa4Agendamentos {
-  solicitacaoDP: string;
-  conclusaoDP: string;
-  dataLimitePagamento: string;
-  comprovantesAnexados: File[];
   concluida: boolean;
 }
 

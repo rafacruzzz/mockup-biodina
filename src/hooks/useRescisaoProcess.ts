@@ -34,14 +34,14 @@ const createInitialProcess = (colaboradorId: string): ProcessoRescisao => ({
       itensParaDevolucao: ITENS_DEVOLUCAO_PADRAO.map(item => ({ ...item })),
       verbasAdicionais: [],
       descontos: [],
-      termoGerado: false,
-      concluida: false
-    },
-    etapa4: {
       solicitacaoDP: '',
       conclusaoDP: '',
       dataLimitePagamento: '',
       comprovantesAnexados: [],
+      termoGerado: false,
+      concluida: false
+    },
+    etapa4: {
       concluida: false
     },
     etapa5: {

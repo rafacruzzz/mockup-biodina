@@ -4,7 +4,10 @@ import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Trash2, Download } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Trash2, Download, Upload, AlertTriangle, Bell } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Etapa3DevolucaoVerbas as Etapa3Type, ItemDevolucao, VerbaAdicional, Desconto } from '@/types/rescisao';
 
 interface Props {
@@ -76,10 +79,38 @@ export function Etapa3DevolucaoVerbas({ dados, onSave, onNext }: Props) {
     setFormData(prev => ({ ...prev, descontos: newDescontos }));
   };
 
+  const updateField = (field: keyof Etapa3Type, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
   const gerarTermoPDF = () => {
     // Implementar geração de PDF
     console.log('Gerando termo de devolução PDF...');
     setFormData(prev => ({ ...prev, termoGerado: true }));
+  };
+
+  const isPaymentDeadlineUrgent = () => {
+    if (!formData.dataLimitePagamento) return false;
+    const today = new Date();
+    const deadline = new Date(formData.dataLimitePagamento);
+    const timeDiff = deadline.getTime() - today.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    return daysDiff <= 3 && daysDiff >= 0;
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setFormData(prev => ({
+      ...prev,
+      comprovantesAnexados: [...prev.comprovantesAnexados, ...files]
+    }));
+  };
+
+  const removeFile = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      comprovantesAnexados: prev.comprovantesAnexados.filter((_, i) => i !== index)
+    }));
   };
 
   const renderSubcampos = (item: ItemDevolucao, index: number) => {
@@ -235,6 +266,106 @@ export function Etapa3DevolucaoVerbas({ dados, onSave, onNext }: Props) {
                   </Button>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Seção Datas */}
+          <div className="space-y-4">
+            <Label className="text-base font-medium">Datas</Label>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="solicitacao-dp">Solicitação ao DP</Label>
+                <Input
+                  id="solicitacao-dp"
+                  type="date"
+                  value={formData.solicitacaoDP}
+                  onChange={(e) => updateField('solicitacaoDP', e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="conclusao-dp">Conclusão do DP</Label>
+                <Input
+                  id="conclusao-dp"
+                  type="date"
+                  value={formData.conclusaoDP}
+                  onChange={(e) => updateField('conclusaoDP', e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Label htmlFor="data-limite">Data limite para pagamento da rescisão e guia FGTS</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Bell className="h-4 w-4 text-amber-500" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Alerta será gerado 3 dias corridos antes do vencimento</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div className="space-y-2">
+                  <Input
+                    id="data-limite"
+                    type="date"
+                    value={formData.dataLimitePagamento}
+                    onChange={(e) => updateField('dataLimitePagamento', e.target.value)}
+                  />
+                  {isPaymentDeadlineUrgent() && (
+                    <Alert className="border-amber-500 bg-amber-50">
+                      <AlertTriangle className="h-4 w-4 text-amber-600" />
+                      <AlertDescription className="text-amber-800">
+                        <strong>Atenção!</strong> Faltam 3 dias ou menos para o vencimento do pagamento da rescisão.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Upload de Comprovantes */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium">Comprovantes de quitação</Label>
+              <div className="border-2 border-dashed border-muted rounded-lg p-6">
+                <div className="text-center">
+                  <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Anexar comprovantes (recibos, devolução de bens, termo de responsabilidade de TI)
+                  </p>
+                  <Input 
+                    type="file" 
+                    multiple 
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    onChange={handleFileUpload}
+                    className="max-w-xs mx-auto"
+                  />
+                </div>
+              </div>
+              
+              {/* Lista de arquivos anexados */}
+              {formData.comprovantesAnexados && formData.comprovantesAnexados.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-sm">Arquivos Anexados:</Label>
+                  <div className="space-y-1">
+                    {formData.comprovantesAnexados.map((arquivo, index) => (
+                      <div key={index} className="flex items-center justify-between bg-muted p-2 rounded">
+                        <span className="text-sm">{arquivo.name}</span>
+                        <Button 
+                          size="sm" 
+                          variant="ghost"
+                          onClick={() => removeFile(index)}
+                        >
+                          Remover
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
