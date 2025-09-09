@@ -16,6 +16,7 @@ import ProcessosSeletivosTable from "@/components/rh/ProcessosSeletivosTable";
 import BancoCurriculos from "@/components/rh/BancoCurriculos";
 import EtapasSelecao from "@/components/rh/EtapasSelecao";
 import Admissao from "@/components/rh/Admissao";
+import RescisaoColaboradores from "@/components/rh/RescisaoColaboradores";
 import { ProcessoSeletivoProvider } from "@/contexts/ProcessoSeletivoContext";
 import { modules } from "@/data/rhModules";
 import { Button } from "@/components/ui/button";
@@ -128,6 +129,8 @@ const RH = () => {
         return <EtapasSelecao />;
       case 'admissao':
         return <Admissao />;
+      case 'rescisao':
+        return <RescisaoColaboradores />;
       default:
         return null;
     }

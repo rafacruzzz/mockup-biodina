@@ -20,6 +20,10 @@ export const modules = {
       admissao: {
         name: "Admissão",
         data: []
+      },
+      rescisao: {
+        name: "Rescisão",
+        data: []
       }
     }
   },
