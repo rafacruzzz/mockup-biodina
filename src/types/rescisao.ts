@@ -16,6 +16,7 @@ export interface ProcessoRescisao {
 }
 
 export interface Etapa1NotificacaoDispensa {
+  solicitacaoPreviaCalculos: boolean;
   previaRescisao: boolean;
   arquivoPrevia?: File;
   desligamentoSolicitadoPor: string;

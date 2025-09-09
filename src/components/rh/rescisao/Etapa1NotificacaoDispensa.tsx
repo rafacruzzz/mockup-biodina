@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Etapa1NotificacaoDispensa as Etapa1Type, MOTIVOS_INICIATIVA_EMPRESA, MOTIVOS_INICIATIVA_COLABORADOR } from '@/types/rescisao';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface Props {
   dados: Etapa1Type;
@@ -46,10 +47,18 @@ export function Etapa1NotificacaoDispensa({ dados, onSave, onNext }: Props) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <h2 className="text-xl font-semibold">1. Notificação de Dispensa</h2>
+          <h2 className="text-xl font-semibold">1. Dados para Desligamento – notificação de dispensa</h2>
           <p className="text-sm text-muted-foreground">(Preenchidos pelo RH para envio ao DP Contratado Externo)</p>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Alerta para Solicitação de prévia de cálculos rescisórios */}
+          <Alert className="border-amber-200 bg-amber-50">
+            <Bell className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="text-amber-800">
+              <strong>Solicitação de prévia de cálculos rescisórios:</strong> Lembre-se de solicitar ao departamento pessoal contratado os cálculos preliminares da rescisão antes de prosseguir com o processo.
+            </AlertDescription>
+          </Alert>
+
           {/* Prévia de Rescisão */}
           <div className="space-y-3">
             <Label>Prévia de Rescisão?</Label>
@@ -106,7 +115,12 @@ export function Etapa1NotificacaoDispensa({ dados, onSave, onNext }: Props) {
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
-                <Calendar mode="single" />
+                <Calendar 
+                  mode="single"
+                  selected={formData.dataDesligamento ? new Date(formData.dataDesligamento) : undefined}
+                  onSelect={(date) => updateField('dataDesligamento', date ? format(date, 'yyyy-MM-dd') : '')}
+                  className="pointer-events-auto"
+                />
               </PopoverContent>
             </Popover>
           </div>
@@ -136,7 +150,12 @@ export function Etapa1NotificacaoDispensa({ dados, onSave, onNext }: Props) {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
-                      <Calendar mode="single" />
+                      <Calendar 
+                        mode="single"
+                        selected={formData.dataInicioAviso ? new Date(formData.dataInicioAviso) : undefined}
+                        onSelect={(date) => updateField('dataInicioAviso', date ? format(date, 'yyyy-MM-dd') : '')}
+                        className="pointer-events-auto"
+                      />
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -162,7 +181,12 @@ export function Etapa1NotificacaoDispensa({ dados, onSave, onNext }: Props) {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
-                      <Calendar mode="single" />
+                      <Calendar 
+                        mode="single"
+                        selected={formData.dataFimAviso ? new Date(formData.dataFimAviso) : undefined}
+                        onSelect={(date) => updateField('dataFimAviso', date ? format(date, 'yyyy-MM-dd') : '')}
+                        className="pointer-events-auto"
+                      />
                     </PopoverContent>
                   </Popover>
                 </div>

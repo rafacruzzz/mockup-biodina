@@ -10,6 +10,7 @@ const createInitialProcess = (colaboradorId: string): ProcessoRescisao => ({
   status: 'em_andamento',
   etapas: {
     etapa1: {
+      solicitacaoPreviaCalculos: false,
       previaRescisao: false,
       desligamentoSolicitadoPor: '',
       dataDesligamento: '',
