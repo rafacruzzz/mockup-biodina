@@ -174,7 +174,10 @@ const BibliotecaPoliticas = () => {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <pastaAtiva?.icon className={`h-5 w-5 ${pastaAtiva?.cor}`} />
+                  {pastaAtiva?.icon && (() => {
+                    const IconComponent = pastaAtiva.icon;
+                    return <IconComponent className={`h-5 w-5 ${pastaAtiva.cor}`} />;
+                  })()}
                   {pastaAtiva?.nome}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">
