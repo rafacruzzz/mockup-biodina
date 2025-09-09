@@ -14,6 +14,7 @@ import Compras from "./pages/Compras";
 import Estoque from "./pages/Estoque";
 import Financeiro from "./pages/Financeiro";
 import RH from "./pages/RH";
+import ProcessoRescisao from "./pages/ProcessoRescisao";
 import Solicitacoes from "./pages/Solicitacoes";
 import EditarPerfil from "./pages/EditarPerfil";
 import CandidaturaPublica from "./pages/CandidaturaPublica";

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useColaboradores } from "@/hooks/useColaboradores";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Search, Filter, Download, UserMinus } from "lucide-react";
 
 const RescisaoColaboradores = () => {
   const { colaboradores } = useColaboradores();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartamento, setSelectedDepartamento] = useState("todos");
   const [selectedStatus, setSelectedStatus] = useState("todos");
@@ -41,8 +43,7 @@ const RescisaoColaboradores = () => {
   }, [colaboradores, searchTerm, selectedDepartamento, selectedStatus]);
 
   const handleDesligarClick = (colaboradorId: string, colaboradorNome: string) => {
-    // Por enquanto não faz nada conforme solicitado
-    console.log(`Desligar colaborador: ${colaboradorNome} (ID: ${colaboradorId})`);
+    navigate(`/rh/rescisao/${colaboradorId}`);
   };
 
   const getStatusBadge = (status: string) => {
