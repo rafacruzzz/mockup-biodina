@@ -35,6 +35,12 @@ export interface Etapa1NotificacaoDispensa {
     telefone: string;
     email: string;
   };
+  dadosBancarios: {
+    banco: string;
+    agencia: string;
+    conta: string;
+    chavePix: string;
+  };
   concluida: boolean;
 }
 

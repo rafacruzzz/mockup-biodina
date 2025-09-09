@@ -6,6 +6,7 @@ export interface Colaborador {
   nome: string;
   cargo: string;
   departamento: string;
+  empresa: string;
   email: string;
   telefone: string;
   dataAdmissao: string;
@@ -20,6 +21,7 @@ const initialColaboradores: Colaborador[] = [
     nome: 'Maria Silva Santos',
     cargo: 'Analista de Sistemas',
     departamento: 'Tecnologia da Informação',
+    empresa: 'Biodina Indústria Farmacêutica',
     email: 'maria.santos@biodina.com.br',
     telefone: '(11) 98765-4321',
     dataAdmissao: '2023-01-15',
@@ -30,6 +32,7 @@ const initialColaboradores: Colaborador[] = [
     nome: 'João Pedro Oliveira',
     cargo: 'Coordenador Comercial',
     departamento: 'Comercial',
+    empresa: 'Biodina Indústria Farmacêutica',
     email: 'joao.oliveira@biodina.com.br',
     telefone: '(11) 97654-3210',
     dataAdmissao: '2022-08-20',
@@ -40,6 +43,7 @@ const initialColaboradores: Colaborador[] = [
     nome: 'Ana Carolina Ferreira',
     cargo: 'Assistente de RH',
     departamento: 'Recursos Humanos',
+    empresa: 'Biodina Indústria Farmacêutica',
     email: 'ana.ferreira@biodina.com.br',
     telefone: '(11) 96543-2109',
     dataAdmissao: '2023-03-10',
@@ -50,6 +54,7 @@ const initialColaboradores: Colaborador[] = [
     nome: 'Carlos Eduardo Lima',
     cargo: 'Operador de Estoque',
     departamento: 'Logística',
+    empresa: 'Biodina Indústria Farmacêutica',
     email: 'carlos.lima@biodina.com.br',
     telefone: '(11) 95432-1098',
     dataAdmissao: '2023-06-05',

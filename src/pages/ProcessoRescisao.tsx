@@ -148,6 +148,10 @@ export default function ProcessoRescisao() {
                 <p>{colaborador.departamento}</p>
               </div>
               <div>
+                <span className="font-medium">Empresa:</span>
+                <p>{colaborador.empresa}</p>
+              </div>
+              <div>
                 <span className="font-medium">Endereço:</span>
                 <p>Rua Exemplo, 123 - São Paulo/SP</p>
               </div>

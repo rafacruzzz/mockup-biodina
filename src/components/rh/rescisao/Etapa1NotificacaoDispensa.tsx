@@ -283,6 +283,45 @@ export function Etapa1NotificacaoDispensa({ dados, onSave, onNext }: Props) {
             </div>
           </div>
 
+          {/* Dados Bancários */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-medium">Dados Bancários</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Banco</Label>
+                <Input
+                  value={formData.dadosBancarios.banco}
+                  onChange={(e) => updateNestedField('dadosBancarios', 'banco', e.target.value)}
+                  placeholder="Nome do banco"
+                />
+              </div>
+              <div>
+                <Label>Agência</Label>
+                <Input
+                  value={formData.dadosBancarios.agencia}
+                  onChange={(e) => updateNestedField('dadosBancarios', 'agencia', e.target.value)}
+                  placeholder="0000-0"
+                />
+              </div>
+              <div>
+                <Label>Conta</Label>
+                <Input
+                  value={formData.dadosBancarios.conta}
+                  onChange={(e) => updateNestedField('dadosBancarios', 'conta', e.target.value)}
+                  placeholder="00000-0"
+                />
+              </div>
+              <div>
+                <Label>Chave PIX</Label>
+                <Input
+                  value={formData.dadosBancarios.chavePix}
+                  onChange={(e) => updateNestedField('dadosBancarios', 'chavePix', e.target.value)}
+                  placeholder="CPF, email ou telefone"
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="pt-4">
             <Button onClick={handleSave} className="w-full">
               Salvar e Continuar para Ações Imediatas

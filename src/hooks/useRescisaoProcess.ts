@@ -19,6 +19,7 @@ const createInitialProcess = (colaboradorId: string): ProcessoRescisao => ({
       motivoDesligamento: '',
       exameDemissional: { data: '', local: '', horario: '' },
       contatosPosEmpresa: { telefone: '', email: '' },
+      dadosBancarios: { banco: '', agencia: '', conta: '', chavePix: '' },
       concluida: false
     },
     etapa2: {
