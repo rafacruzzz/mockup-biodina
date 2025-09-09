@@ -147,3 +147,76 @@ export interface NormaConformidade {
   controles: ControleConformidade[];
   progressoImplementacao: number;
 }
+
+// Gestão de E-mails types
+export interface ContaEmail {
+  id: number;
+  endereco: string;
+  nomeUsuario: string;
+  departamento: string;
+  status: 'ativo' | 'bloqueado' | 'redirecionado';
+  redirecionadoPara?: string;
+  aliases?: string[];
+  dataUltimaAlteracao: string;
+  responsavel: string;
+}
+
+// Gestão de Usuários de Rede types
+export interface UsuarioRede {
+  id: number;
+  nomeUsuario: string;
+  nomeCompleto: string;
+  departamento: string;
+  gruposPermissao: string[];
+  status: 'ativo' | 'inativo';
+  dataUltimoLogin?: string;
+  dataUltimaAlteracaoSenha: string;
+  dataExpiracao?: string;
+  responsavel: string;
+}
+
+export interface GrupoPermissao {
+  id: string;
+  nome: string;
+  descricao: string;
+  permissoes: string[];
+  membros: number;
+}
+
+// Gestão de Telefonia types
+export interface RamalTelefone {
+  id: number;
+  numeroRamal: string;
+  usuarioAssociado?: string;
+  setor: string;
+  modeloAparelho: string;
+  status: 'operacional' | 'com_defeito' | 'em_manutencao';
+  localizacao: string;
+  dataInstalacao: string;
+  observacoes?: string;
+}
+
+// Interfaceamento types
+export interface SolicitacaoInterfaceamento {
+  id: number;
+  clienteNome: string;
+  oportunidadeId: string;
+  descricaoNecessidade: string;
+  sistemaCliente: string;
+  prazoDesejado: string;
+  status: 'aguardando_aprovacao' | 'aprovado' | 'em_analise' | 'em_desenvolvimento' | 'concluido' | 'cancelado';
+  responsavelExecucao?: 'ti_interno' | 'fornecedor_externo';
+  nomeFornecedor?: string;
+  solicitante: string;
+  departamentoSolicitante: string;
+  dataSolicitacao: string;
+  dataUltimaAtualizacao: string;
+  notasTecnicas?: string;
+  anexos?: string[];
+  histomicoStatus: {
+    status: string;
+    data: string;
+    responsavel: string;
+    observacoes?: string;
+  }[];
+}

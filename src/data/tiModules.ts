@@ -8,7 +8,11 @@ import {
   Activity,
   Database,
   Key,
-  BarChart3
+  BarChart3,
+  Mail,
+  Users,
+  Phone,
+  ArrowLeftRight
 } from "lucide-react";
 import type { TIModulesConfig } from "@/types/ti";
 
@@ -381,6 +385,212 @@ export const tiModules: TIModulesConfig = {
       softwares: {
         name: "Controle de Licenças",
         data: []
+      }
+    }
+  },
+  emails: {
+    name: "Gestão de E-mails",
+    icon: Mail,
+    subModules: {
+      contas: {
+        name: "Contas de E-mail",
+        data: [
+          {
+            id: 1,
+            endereco: "joao.silva@biodina.com.br",
+            nomeUsuario: "João Silva",
+            departamento: "Comercial",
+            status: "ativo",
+            dataUltimaAlteracao: "2024-01-10T14:30:00",
+            responsavel: "TI Admin"
+          },
+          {
+            id: 2,
+            endereco: "maria.santos@biodina.com.br",
+            nomeUsuario: "Maria Santos",
+            departamento: "RH",
+            status: "ativo",
+            dataUltimaAlteracao: "2024-01-08T09:15:00",
+            responsavel: "TI Admin"
+          },
+          {
+            id: 3,
+            endereco: "carlos.old@biodina.com.br",
+            nomeUsuario: "Carlos Antigo",
+            departamento: "Financeiro",
+            status: "redirecionado",
+            redirecionadoPara: "carlos.novo@biodina.com.br",
+            dataUltimaAlteracao: "2024-01-05T16:45:00",
+            responsavel: "Ana TI"
+          }
+        ]
+      }
+    }
+  },
+  usuarios_rede: {
+    name: "Usuários de Rede",
+    icon: Users,
+    subModules: {
+      usuarios: {
+        name: "Usuários de Rede",
+        data: [
+          {
+            id: 1,
+            nomeUsuario: "joao.silva",
+            nomeCompleto: "João Silva",
+            departamento: "Comercial",
+            gruposPermissao: ["Comercial_Total", "Usuarios_Padrao"],
+            status: "ativo",
+            dataUltimoLogin: "2024-01-15T08:30:00",
+            dataUltimaAlteracaoSenha: "2023-12-15T10:00:00",
+            responsavel: "TI Admin"
+          },
+          {
+            id: 2,
+            nomeUsuario: "maria.santos",
+            nomeCompleto: "Maria Santos",
+            departamento: "RH",
+            gruposPermissao: ["RH_Total", "Usuarios_Padrao"],
+            status: "ativo",
+            dataUltimoLogin: "2024-01-15T09:15:00",
+            dataUltimaAlteracaoSenha: "2024-01-01T14:20:00",
+            responsavel: "TI Admin"
+          },
+          {
+            id: 3,
+            nomeUsuario: "pedro.inativo",
+            nomeCompleto: "Pedro Desligado",
+            departamento: "Ex-Funcionário",
+            gruposPermissao: [],
+            status: "inativo",
+            dataUltimaAlteracaoSenha: "2023-11-30T17:00:00",
+            responsavel: "Ana TI"
+          }
+        ]
+      }
+    }
+  },
+  telefonia: {
+    name: "Telefonia e Ramais",
+    icon: Phone,
+    subModules: {
+      ramais: {
+        name: "Ramais",
+        data: [
+          {
+            id: 1,
+            numeroRamal: "2001",
+            usuarioAssociado: "João Silva",
+            setor: "Comercial",
+            modeloAparelho: "Cisco IP Phone 7940",
+            status: "operacional",
+            localizacao: "Sala 101 - Comercial",
+            dataInstalacao: "2023-06-15",
+            observacoes: "Aparelho principal do gerente comercial"
+          },
+          {
+            id: 2,
+            numeroRamal: "2002",
+            usuarioAssociado: "Maria Santos",
+            setor: "RH",
+            modeloAparelho: "Cisco IP Phone 7940",
+            status: "operacional",
+            localizacao: "Sala 205 - RH",
+            dataInstalacao: "2023-06-15"
+          },
+          {
+            id: 3,
+            numeroRamal: "2010",
+            setor: "Recepção",
+            modeloAparelho: "Cisco IP Phone 7962",
+            status: "com_defeito",
+            localizacao: "Recepção Principal",
+            dataInstalacao: "2023-05-20",
+            observacoes: "Display com defeito, necessita troca"
+          }
+        ]
+      }
+    }
+  },
+  interfaceamento: {
+    name: "Interfaceamento",
+    icon: ArrowLeftRight,
+    subModules: {
+      solicitacoes: {
+        name: "Solicitações",
+        data: [
+          {
+            id: 1,
+            clienteNome: "Empresa ABC Ltda",
+            oportunidadeId: "OPT-2024-001",
+            descricaoNecessidade: "Integração com sistema Aqure para troca de dados de produtos e estoque",
+            sistemaCliente: "Aqure",
+            prazoDesejado: "2024-02-15",
+            status: "em_desenvolvimento",
+            responsavelExecucao: "fornecedor_externo",
+            nomeFornecedor: "TechSoft Soluções",
+            solicitante: "João Silva",
+            departamentoSolicitante: "Comercial",
+            dataSolicitacao: "2024-01-10T10:30:00",
+            dataUltimaAtualizacao: "2024-01-14T16:20:00",
+            notasTecnicas: "Desenvolvendo módulo de sincronização de estoque",
+            anexos: ["especificacao-tecnica-v1.pdf", "layout-dados-aqure.xlsx"],
+            histomicoStatus: [
+              {
+                status: "aguardando_aprovacao",
+                data: "2024-01-10T10:30:00",
+                responsavel: "João Silva"
+              },
+              {
+                status: "aprovado",
+                data: "2024-01-10T14:15:00",
+                responsavel: "Gerente Comercial"
+              },
+              {
+                status: "em_analise",
+                data: "2024-01-11T09:00:00",
+                responsavel: "Equipe TI"
+              },
+              {
+                status: "em_desenvolvimento",
+                data: "2024-01-12T08:30:00",
+                responsavel: "TechSoft Soluções"
+              }
+            ]
+          },
+          {
+            id: 2,
+            clienteNome: "XYZ Distribuidora",
+            oportunidadeId: "OPT-2024-002",
+            descricaoNecessidade: "API para consulta de preços em tempo real",
+            sistemaCliente: "ERP Customizado",
+            prazoDesejado: "2024-01-30",
+            status: "em_analise",
+            responsavelExecucao: "ti_interno",
+            solicitante: "Maria Santos",
+            departamentoSolicitante: "Comercial",
+            dataSolicitacao: "2024-01-12T15:45:00",
+            dataUltimaAtualizacao: "2024-01-12T15:45:00",
+            anexos: ["requisitos-api-precos.pdf"],
+            histomicoStatus: [
+              {
+                status: "aguardando_aprovacao",
+                data: "2024-01-12T15:45:00",
+                responsavel: "Maria Santos"
+              },
+              {
+                status: "aprovado",
+                data: "2024-01-13T08:00:00",
+                responsavel: "Gerente Comercial"
+              },
+              {
+                status: "em_analise",
+                data: "2024-01-13T09:30:00",
+                responsavel: "Equipe TI"
+              }
+            ]
+          }
+        ]
       }
     }
   }
