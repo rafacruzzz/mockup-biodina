@@ -86,6 +86,13 @@ export interface Etapa3DevolucaoVerbas {
 }
 
 export interface Etapa4Agendamentos {
+  dataPagamentoRescisao: string;
+  dataPagamentoFGTS: string;
+  homologacao: {
+    data: string;
+    local: string;
+    horario: string;
+  };
   concluida: boolean;
 }
 

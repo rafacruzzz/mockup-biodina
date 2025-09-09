@@ -42,6 +42,13 @@ const createInitialProcess = (colaboradorId: string): ProcessoRescisao => ({
       concluida: false
     },
     etapa4: {
+      dataPagamentoRescisao: '',
+      dataPagamentoFGTS: '',
+      homologacao: {
+        data: '',
+        local: '',
+        horario: ''
+      },
       concluida: false
     },
     etapa5: {
@@ -95,7 +102,19 @@ export const useRescisaoProcess = (colaboradorId: string) => {
     // Check if previous step is completed
     const previousStep = stepNumber - 1;
     const previousEtapa = processo.etapas[`etapa${previousStep}` as keyof typeof processo.etapas];
+    
+    // Special validation for step 5: requires homologacao data from step 4
+    if (stepNumber === 5) {
+      const etapa4 = processo.etapas.etapa4;
+      const homologacaoComplete = !!(etapa4.homologacao.data && etapa4.homologacao.local && etapa4.homologacao.horario);
+      return (previousEtapa?.concluida || false) && homologacaoComplete;
+    }
+    
     return previousEtapa?.concluida || false;
+  };
+
+  const areSteps1And2Complete = (): boolean => {
+    return processo.etapas.etapa1.concluida && processo.etapas.etapa2.concluida;
   };
 
   const finalizeProcess = (colaboradorId: string) => {
@@ -110,6 +129,7 @@ export const useRescisaoProcess = (colaboradorId: string) => {
     processo,
     updateEtapa,
     canAdvanceToStep,
+    areSteps1And2Complete,
     finalizeProcess
   };
 };

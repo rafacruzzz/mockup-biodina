@@ -28,7 +28,7 @@ export default function ProcessoRescisao() {
   const { colaboradorId } = useParams<{ colaboradorId: string }>();
   const navigate = useNavigate();
   const { colaboradores } = useColaboradores();
-  const { processo, updateEtapa, canAdvanceToStep, finalizeProcess } = useRescisaoProcess(colaboradorId!);
+  const { processo, updateEtapa, canAdvanceToStep, areSteps1And2Complete, finalizeProcess } = useRescisaoProcess(colaboradorId!);
   const [etapaAtual, setEtapaAtual] = useState(1);
 
   const colaborador = colaboradores.find(c => c.id === colaboradorId);
@@ -74,7 +74,11 @@ export default function ProcessoRescisao() {
       case 3:
         return <Etapa3DevolucaoVerbas dados={processo.etapas.etapa3} {...commonProps} />;
       case 4:
-        return <Etapa4Agendamentos dados={processo.etapas.etapa4} {...commonProps} />;
+        return <Etapa4Agendamentos 
+          dados={processo.etapas.etapa4} 
+          {...commonProps} 
+          canProceed={areSteps1And2Complete()}
+        />;
       case 5:
         return <Etapa5Homologacao dados={processo.etapas.etapa5} {...commonProps} />;
       case 6:
