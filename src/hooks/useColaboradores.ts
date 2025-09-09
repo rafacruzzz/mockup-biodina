@@ -59,6 +59,28 @@ const initialColaboradores: Colaborador[] = [
     telefone: '(11) 95432-1098',
     dataAdmissao: '2023-06-05',
     status: 'Ativo'
+  },
+  {
+    id: '5',
+    nome: 'Roberto Silva Costa',
+    cargo: 'Assistente Comercial',
+    departamento: 'Comercial',
+    empresa: 'Biodina Indústria Farmacêutica',
+    email: 'roberto.costa@biodina.com.br',
+    telefone: '(11) 94321-0987',
+    dataAdmissao: '2022-02-10',
+    status: 'Desligado'
+  },
+  {
+    id: '6',
+    nome: 'Patricia Mendes Alves',
+    cargo: 'Analista Financeiro',
+    departamento: 'Financeiro',
+    empresa: 'Biodina Indústria Farmacêutica',
+    email: 'patricia.alves@biodina.com.br',
+    telefone: '(11) 93210-8765',
+    dataAdmissao: '2021-11-15',
+    status: 'Desligado'
   }
 ];
 
