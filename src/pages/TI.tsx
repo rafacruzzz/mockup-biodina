@@ -43,8 +43,8 @@ const ativosVencimento = [
 ];
 
 const TI: React.FC = () => {
-  const [activeModule, setActiveModule] = useState('');
-  const [activeSubModule, setActiveSubModule] = useState('');
+  const [activeModule, setActiveModule] = useState('dashboard');
+  const [activeSubModule, setActiveSubModule] = useState('dashboard');
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
 
   // Reset state when no module is selected
@@ -76,7 +76,8 @@ const TI: React.FC = () => {
 
   // Função para renderizar o conteúdo baseado no módulo ativo
   const renderContent = () => {
-    if (!activeModule || !activeSubModule) {
+    // Dashboard quando o módulo "Visão Geral" está selecionado
+    if (activeModule === 'dashboard' && activeSubModule === 'dashboard') {
       // Dashboard padrão quando nenhum submódulo está selecionado
       return (
         <div className="p-6 space-y-6">
