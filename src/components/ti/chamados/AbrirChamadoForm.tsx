@@ -6,8 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Upload, AlertCircle } from "lucide-react";
+import { Plus, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
+import FileUpload from "./FileUpload";
 
 const AbrirChamadoForm = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +21,9 @@ const AbrirChamadoForm = () => {
     departamento: '',
     anexos: []
   });
+  const [uploadedFiles, setUploadedFiles] = useState([]);
   const { toast } = useToast();
+  const { user } = useUser();
 
   const categorias = [
     { value: 'impressoras', label: 'Impressoras e Scanners' },
@@ -61,8 +65,11 @@ const AbrirChamadoForm = () => {
       ...formData,
       id: Math.floor(Math.random() * 1000),
       status: 'aberto',
-      solicitante: 'Usuário Atual', // Seria pego do contexto do usuário
-      dataAbertura: new Date().toISOString()
+      solicitante: user?.nome || 'Usuário Atual',
+      departamento: formData.departamento || user?.colaboradorData?.dadosProfissionais?.setor || '',
+      anexos: uploadedFiles.map((file: any) => file.name),
+      dataAbertura: new Date().toISOString(),
+      historico: []
     };
 
     console.log('Novo chamado criado:', novoChamado);
@@ -78,9 +85,10 @@ const AbrirChamadoForm = () => {
       categoria: '',
       prioridade: 'media',
       descricao: '',
-      departamento: '',
+      departamento: user?.colaboradorData?.dadosProfissionais?.setor || '',
       anexos: []
     });
+    setUploadedFiles([]);
     
     setIsOpen(false);
   };
@@ -159,7 +167,10 @@ const AbrirChamadoForm = () => {
                 
                 <div className="space-y-2">
                   <Label htmlFor="departamento">Departamento</Label>
-                  <Select value={formData.departamento} onValueChange={(value) => setFormData({ ...formData, departamento: value })}>
+                  <Select 
+                    value={formData.departamento || user?.colaboradorData?.dadosProfissionais?.setor || ''} 
+                    onValueChange={(value) => setFormData({ ...formData, departamento: value })}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione seu departamento" />
                     </SelectTrigger>
@@ -187,15 +198,12 @@ const AbrirChamadoForm = () => {
               
               <div className="space-y-2">
                 <Label>Anexos (Screenshots, documentos)</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                  <p className="text-sm text-gray-500">
-                    Clique para fazer upload ou arraste arquivos aqui
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    PNG, JPG, PDF até 10MB
-                  </p>
-                </div>
+                <FileUpload 
+                  onFilesChange={setUploadedFiles}
+                  maxFiles={3}
+                  maxSizeBytes={10 * 1024 * 1024}
+                  acceptedTypes={['image/png', 'image/jpeg', 'application/pdf']}
+                />
               </div>
               
               <div className="flex justify-end gap-3">

@@ -5,17 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Filter, Eye, User, CheckCircle, Clock, AlertTriangle } from "lucide-react";
+import { Search, Filter, Eye, User, CheckCircle, Clock, AlertTriangle, Settings, UserPlus } from "lucide-react";
 import { tiModules } from "@/data/tiModules";
+import DetalhesChamadoModal from "./DetalhesChamadoModal";
 
 const PainelChamados = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('todos');
   const [filterPrioridade, setFilterPrioridade] = useState('todos');
   const [filterCategoria, setFilterCategoria] = useState('todos');
+  const [selectedChamado, setSelectedChamado] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   // Dados dos chamados do módulo
-  const chamadosData = tiModules.chamados.subModules.painel.data || [];
+  const [chamadosData, setChamadosData] = useState(tiModules.chamados.subModules.painel.data || []);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -73,6 +76,43 @@ const PainelChamados = () => {
 
     return matchesSearch && matchesStatus && matchesPrioridade && matchesCategoria;
   });
+
+  // Funções para ações dos chamados
+  const handleViewChamado = (chamado: any) => {
+    setSelectedChamado(chamado);
+    setModalOpen(true);
+  };
+
+  const handleUpdateChamado = (chamadoId: number, updates: any) => {
+    setChamadosData(prev => 
+      prev.map(chamado => 
+        chamado.id === chamadoId ? { ...chamado, ...updates } : chamado
+      )
+    );
+  };
+
+  const handleAssignTechnician = (chamadoId: number) => {
+    const technicians = ['João Silva - Nível 1', 'Maria Santos - Nível 2', 'Pedro Costa - Nível 3'];
+    const randomTech = technicians[Math.floor(Math.random() * technicians.length)];
+    
+    handleUpdateChamado(chamadoId, { 
+      tecnicoResponsavel: randomTech,
+      status: 'em_andamento'
+    });
+  };
+
+  const handleResolve = (chamadoId: number) => {
+    handleUpdateChamado(chamadoId, { 
+      status: 'resolvido'
+    });
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setFilterStatus('todos');
+    setFilterPrioridade('todos');
+    setFilterCategoria('todos');
+  };
 
   // Estatísticas rápidas
   const stats = {
@@ -193,7 +233,7 @@ const PainelChamados = () => {
               </SelectContent>
             </Select>
             
-            <Button variant="outline">
+            <Button variant="outline" onClick={clearFilters}>
               <Filter className="h-4 w-4 mr-2" />
               Limpar
             </Button>
@@ -253,16 +293,35 @@ const PainelChamados = () => {
                     {formatDateTime(chamado.dataAbertura)}
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline">
+                    <div className="flex gap-1">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleViewChamado(chamado)}
+                        title="Ver detalhes"
+                      >
                         <Eye className="h-3 w-3" />
                       </Button>
-                      <Button size="sm" variant="outline">
-                        <User className="h-3 w-3" />
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        <CheckCircle className="h-3 w-3" />
-                      </Button>
+                      {!chamado.tecnicoResponsavel && (
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleAssignTechnician(chamado.id)}
+                          title="Atribuir técnico"
+                        >
+                          <UserPlus className="h-3 w-3" />
+                        </Button>
+                      )}
+                      {chamado.status !== 'resolvido' && chamado.status !== 'fechado' && (
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleResolve(chamado.id)}
+                          title="Marcar como resolvido"
+                        >
+                          <CheckCircle className="h-3 w-3" />
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -277,6 +336,14 @@ const PainelChamados = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Modal de Detalhes */}
+      <DetalhesChamadoModal
+        chamado={selectedChamado}
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onUpdate={handleUpdateChamado}
+      />
     </div>
   );
 };
