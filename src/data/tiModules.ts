@@ -517,6 +517,59 @@ export const tiModules: TIModulesConfig = {
             observacoes: "Política publicada no site e comunicada aos colaboradores"
           }
         ]
+      },
+      gdpr: {
+        name: "GDPR",
+        data: [
+          {
+            id: "GDPR.1",
+            idControle: "GDPR.1",
+            descricao: "Data Protection Officer (DPO)",
+            norma: "gdpr",
+            status: "implementado",
+            responsavel: "Ana Costa - Jurídico",
+            dataUltimaRevisao: "2024-01-08",
+            evidencias: ["nomeacao-dpo-v1.pdf"],
+            observacoes: "DPO nomeado e registrado conforme GDPR"
+          },
+          {
+            id: "GDPR.2",
+            idControle: "GDPR.2", 
+            descricao: "Consentimento para processamento de dados",
+            norma: "gdpr",
+            status: "em_andamento",
+            responsavel: "Carlos Santos - TI",
+            evidencias: [],
+            observacoes: "Implementando sistema de consentimento granular"
+          }
+        ]
+      },
+      pci_dss: {
+        name: "PCI-DSS",
+        data: [
+          {
+            id: "PCI.1",
+            idControle: "PCI.1",
+            descricao: "Firewall e configurações de roteador",
+            norma: "pci_dss",
+            status: "implementado",
+            responsavel: "João Silva - TI",
+            dataUltimaRevisao: "2024-01-12",
+            evidencias: ["config-firewall-v3.pdf"],
+            observacoes: "Configurações atualizadas conforme padrões PCI"
+          },
+          {
+            id: "PCI.2",
+            idControle: "PCI.2",
+            descricao: "Não usar senhas padrão do sistema",
+            norma: "pci_dss", 
+            status: "implementado",
+            responsavel: "Carlos Santos - TI",
+            dataUltimaRevisao: "2024-01-10",
+            evidencias: ["politica-senhas-v2.pdf"],
+            observacoes: "Política implementada em todos os sistemas"
+          }
+        ]
       }
     }
   },

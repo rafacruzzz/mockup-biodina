@@ -250,6 +250,8 @@ const TI: React.FC = () => {
         return <PainelSeguranca />;
       case 'conformidade.iso27001':
       case 'conformidade.lgpd':
+      case 'conformidade.gdpr':
+      case 'conformidade.pci_dss':
         return <GestaoConformidade />;
       case 'emails.gestao':
         return <GestaoEmails />;

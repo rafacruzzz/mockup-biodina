@@ -39,8 +39,11 @@ const GestaoConformidade = () => {
       return tiModules.conformidade.subModules.iso27001.data || [];
     } else if (normaSelecionada === 'lgpd') {
       return tiModules.conformidade.subModules.lgpd.data || [];
+    } else if (normaSelecionada === 'gdpr') {
+      return tiModules.conformidade.subModules.gdpr.data || [];
+    } else if (normaSelecionada === 'pci_dss') {
+      return tiModules.conformidade.subModules.pci_dss.data || [];
     }
-    // Retornar dados mock para outras normas
     return [];
   };
 
