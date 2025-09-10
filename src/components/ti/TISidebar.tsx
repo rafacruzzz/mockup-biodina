@@ -48,7 +48,14 @@ const TISidebar = ({
         {Object.entries(tiModules).map(([key, module]) => (
           <div key={key} className="space-y-1">
             <button
-              onClick={() => onModuleToggle(key)}
+              onClick={() => {
+                if (key === 'seguranca') {
+                  // Para módulo segurança, selecionar diretamente
+                  handleSubModuleSelect(key, 'main');
+                } else {
+                  onModuleToggle(key);
+                }
+              }}
               className={cn(
                 "w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200",
                 activeModule === key 
@@ -69,7 +76,7 @@ const TISidebar = ({
                 <span className="font-medium">{module.name}</span>
               </div>
               <div className="flex items-center gap-1">
-                {expandedModules.includes(key) && (
+                {module.subModules && expandedModules.includes(key) && (
                   <button
                     onClick={(e) => handleCollapseModule(key, e)}
                     className="p-1 rounded-md hover:bg-white/20 transition-colors"
@@ -77,14 +84,15 @@ const TISidebar = ({
                     <X className="h-3 w-3" />
                   </button>
                 )}
-                {expandedModules.includes(key) ? 
-                  <ChevronDown className="h-4 w-4" /> : 
-                  <ChevronRight className="h-4 w-4" />
-                }
+                {module.subModules && (
+                  expandedModules.includes(key) ? 
+                    <ChevronDown className="h-4 w-4" /> : 
+                    <ChevronRight className="h-4 w-4" />
+                )}
               </div>
             </button>
             
-            {expandedModules.includes(key) && (
+            {expandedModules.includes(key) && module.subModules && (
               <div className="ml-4 space-y-1 animate-fade-in">
                 {Object.entries(module.subModules).map(([subKey, subModule]) => (
                   <button

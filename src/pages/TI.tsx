@@ -66,6 +66,11 @@ const TI: React.FC = () => {
       }
     } else {
       setExpandedModules([...expandedModules, module]);
+      // Para módulos sem subModules (como segurança), ativar diretamente
+      if (module === 'seguranca') {
+        setActiveModule(module);
+        setActiveSubModule('main');
+      }
     }
   };
 
@@ -241,6 +246,7 @@ const TI: React.FC = () => {
       case 'seguranca.incidentes':
       case 'seguranca.auditoria':
       case 'seguranca.antivirus':
+      case 'seguranca.main':
         return <PainelSeguranca />;
       case 'conformidade.iso27001':
       case 'conformidade.lgpd':
