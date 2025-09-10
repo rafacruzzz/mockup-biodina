@@ -28,8 +28,8 @@ const chamadosData = {
 const inventarioData = [
   { name: 'Em Uso', value: 68, color: 'hsl(var(--primary))' },
   { name: 'Manutenção', value: 12, color: 'hsl(var(--destructive))' },
-  { name: 'Reserva', value: 15, color: 'hsl(var(--secondary))' },
-  { name: 'Descartado', value: 5, color: 'hsl(var(--muted))' }
+  { name: 'Reserva', value: 15, color: 'hsl(142, 76%, 36%)' },
+  { name: 'Descartado', value: 5, color: 'hsl(25, 95%, 53%)' }
 ];
 
 const alertasSeguranca = [
