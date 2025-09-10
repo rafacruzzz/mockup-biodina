@@ -5,9 +5,6 @@ import {
   FileText, 
   Shield, 
   CheckSquare,
-  Activity,
-  Database,
-  Key,
   BarChart3,
   Mail,
   Users,
@@ -570,36 +567,6 @@ export const tiModules: TIModulesConfig = {
             observacoes: "Política implementada em todos os sistemas"
           }
         ]
-      }
-    }
-  },
-  monitoramento: {
-    name: "Monitoramento",
-    icon: Activity,
-    subModules: {
-      rede: {
-        name: "Monitoramento de Rede",
-        data: []
-      }
-    }
-  },
-  backup: {
-    name: "Backup e Recuperação",
-    icon: Database,
-    subModules: {
-      politicas: {
-        name: "Políticas de Backup",
-        data: []
-      }
-    }
-  },
-  licencas: {
-    name: "Licenças de Software",
-    icon: Key,
-    subModules: {
-      softwares: {
-        name: "Controle de Licenças",
-        data: []
       }
     }
   },
