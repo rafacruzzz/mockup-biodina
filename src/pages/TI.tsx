@@ -253,7 +253,7 @@ const TI: React.FC = () => {
       case 'conformidade.gdpr':
       case 'conformidade.pci_dss':
         return <GestaoConformidade />;
-      case 'emails.gestao':
+      case 'emails.contas':
         return <GestaoEmails />;
       case 'usuarios.gestao':
         return <GestaoUsuarios />;
