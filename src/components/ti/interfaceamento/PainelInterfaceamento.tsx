@@ -6,11 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { tiModules } from "@/data/tiModules";
+import DetalhesInterfaceamentoModal from "./DetalhesInterfaceamentoModal";
 import type { SolicitacaoInterfaceamento } from "@/types/ti";
 
 const PainelInterfaceamento = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
+  const [selectedSolicitacao, setSelectedSolicitacao] = useState<SolicitacaoInterfaceamento | null>(null);
+  const [showDetalhesModal, setShowDetalhesModal] = useState(false);
 
   const solicitacoes = tiModules.interfaceamento.subModules.solicitacoes.data as SolicitacaoInterfaceamento[];
 
@@ -26,6 +29,18 @@ const PainelInterfaceamento = () => {
     
     const config = statusConfig[status];
     return <Badge className={config.className}>{config.label}</Badge>;
+  };
+
+  const handleViewDetails = (solicitacao: SolicitacaoInterfaceamento) => {
+    setSelectedSolicitacao(solicitacao);
+    setShowDetalhesModal(true);
+  };
+
+  const handleSaveSolicitacao = (updatedSolicitacao: SolicitacaoInterfaceamento) => {
+    // This would normally update the backend/context
+    console.log('Solicitação atualizada:', updatedSolicitacao);
+    setShowDetalhesModal(false);
+    setSelectedSolicitacao(null);
   };
 
   const statusColumns = [
@@ -85,13 +100,25 @@ const PainelInterfaceamento = () => {
               
               <div className="space-y-3 min-h-[400px]">
                 {columnSolicitacoes.map(solicitacao => (
-                  <Card key={solicitacao.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                  <Card 
+                    key={solicitacao.id} 
+                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => handleViewDetails(solicitacao)}
+                  >
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-sm font-medium truncate">
                           {solicitacao.clienteNome}
                         </CardTitle>
-                        <Button size="sm" variant="ghost" className="h-6 w-6 p-0">
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-6 w-6 p-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewDetails(solicitacao);
+                          }}
+                        >
                           <Eye className="h-3 w-3" />
                         </Button>
                       </div>
@@ -121,6 +148,19 @@ const PainelInterfaceamento = () => {
           );
         })}
       </div>
+
+      {/* Modal de Detalhes */}
+      {selectedSolicitacao && (
+        <DetalhesInterfaceamentoModal
+          isOpen={showDetalhesModal}
+          onClose={() => {
+            setShowDetalhesModal(false);
+            setSelectedSolicitacao(null);
+          }}
+          onSave={handleSaveSolicitacao}
+          solicitacao={selectedSolicitacao}
+        />
+      )}
     </div>
   );
 };

@@ -13,6 +13,10 @@ import MapeamentoRede from '@/components/ti/rede/MapeamentoRede';
 import BibliotecaPoliticas from '@/components/ti/politicas/BibliotecaPoliticas';
 import PainelSeguranca from '@/components/ti/seguranca/PainelSeguranca';
 import GestaoConformidade from '@/components/ti/conformidade/GestaoConformidade';
+import GestaoEmails from '@/components/ti/emails/GestaoEmails';
+import GestaoUsuarios from '@/components/ti/rede-usuarios/GestaoUsuarios';
+import GestaoTelefonia from '@/components/ti/telefonia/GestaoTelefonia';
+import PainelInterfaceamento from '@/components/ti/interfaceamento/PainelInterfaceamento';
 
 // Mock data for demonstration
 const chamadosData = {
@@ -240,6 +244,14 @@ const TI: React.FC = () => {
       case 'conformidade.iso27001':
       case 'conformidade.lgpd':
         return <GestaoConformidade />;
+      case 'emails.gestao':
+        return <GestaoEmails />;
+      case 'usuarios.gestao':
+        return <GestaoUsuarios />;
+      case 'telefonia.gestao':
+        return <GestaoTelefonia />;
+      case 'interfaceamento.solicitacoes':
+        return <PainelInterfaceamento />;
       default:
         return (
           <div className="p-6">

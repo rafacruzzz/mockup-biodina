@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { FileText, MessageSquare, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatInterno from '../ChatInterno';
+import InterfaceamentoTab from '../InterfaceamentoTab';
 
 interface ComercialTabsProps {
   activeTab: string;
@@ -22,7 +23,7 @@ interface ComercialTabsProps {
 const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportunidade }: ComercialTabsProps) => {
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-      <TabsList className="grid w-full grid-cols-4">
+      <TabsList className="grid w-full grid-cols-5">
         <TabsTrigger value="dados-gerais" className="flex items-center gap-2">
           <FileText className="h-4 w-4" />
           Dados Gerais
@@ -38,6 +39,10 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
         <TabsTrigger value="documentos" className="flex items-center gap-2">
           <Upload className="h-4 w-4" />
           Documentos
+        </TabsTrigger>
+        <TabsTrigger value="interfaceamento" className="flex items-center gap-2">
+          <FileText className="h-4 w-4" />
+          Interfaceamento TI
         </TabsTrigger>
       </TabsList>
 
@@ -416,6 +421,14 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
             </div>
           </CardContent>
         </Card>
+      </TabsContent>
+
+      <TabsContent value="interfaceamento" className="space-y-4 mt-4">
+        <InterfaceamentoTab
+          oportunidade={oportunidade}
+          formData={formData}
+          onInputChange={onInputChange}
+        />
       </TabsContent>
     </Tabs>
   );
