@@ -17,6 +17,7 @@ import GestaoEmails from '@/components/ti/emails/GestaoEmails';
 import GestaoUsuarios from '@/components/ti/rede-usuarios/GestaoUsuarios';
 import GestaoTelefonia from '@/components/ti/telefonia/GestaoTelefonia';
 import PainelInterfaceamento from '@/components/ti/interfaceamento/PainelInterfaceamento';
+import { InventarioAtivos } from '@/components/ti/inventario/InventarioAtivos';
 
 // Mock data for demonstration
 const chamadosData = {
@@ -252,6 +253,8 @@ const TI: React.FC = () => {
         return <GestaoTelefonia />;
       case 'interfaceamento.solicitacoes':
         return <PainelInterfaceamento />;
+      case 'inventario.ativos':
+        return <InventarioAtivos />;
       default:
         return (
           <div className="p-6">

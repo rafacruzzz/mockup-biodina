@@ -83,10 +83,14 @@ export const tiModules: TIModulesConfig = {
             status: "ativo",
             responsavel: "João Silva",
             departamento: "Comercial",
-            localizacao: "Sala 101",
+            localizacao: "Sala 101 - 1º Andar",
             dataAquisicao: "2024-01-10",
             dataGarantia: "2024-12-15",
-            valorAquisicao: 2500.00
+            valorAquisicao: 2500.00,
+            fornecedor: "Dell do Brasil",
+            numeroNF: "NF-2024-001",
+            centroCusto: "Comercial",
+            observacoes: "Notebook principal do gerente comercial"
           },
           {
             id: 2,
@@ -99,12 +103,115 @@ export const tiModules: TIModulesConfig = {
             status: "manutencao",
             responsavel: "Departamento TI",
             departamento: "TI",
-            localizacao: "Sala 205",
+            localizacao: "Sala 205 - 2º Andar",
             dataAquisicao: "2023-06-15",
             dataGarantia: "2024-12-20",
-            valorAquisicao: 1200.00
+            valorAquisicao: 1200.00,
+            fornecedor: "HP Brasil",
+            numeroNF: "NF-2023-045",
+            centroCusto: "TI",
+            observacoes: "Em manutenção preventiva"
+          },
+          {
+            id: 3,
+            numeroInventario: "DT-003",
+            equipamento: "Desktop Lenovo ThinkCentre",
+            tipo: "desktop",
+            marca: "Lenovo",
+            modelo: "ThinkCentre M70q",
+            numeroSerie: "LV2024003",
+            status: "ativo",
+            responsavel: "Maria Santos",
+            departamento: "RH",
+            localizacao: "Sala 203 - 2º Andar",
+            dataAquisicao: "2023-08-20",
+            dataGarantia: "2025-08-20",
+            valorAquisicao: 1800.00,
+            fornecedor: "Lenovo Brasil",
+            numeroNF: "NF-2023-078",
+            centroCusto: "RH"
+          },
+          {
+            id: 4,
+            numeroInventario: "SV-001",
+            equipamento: "Servidor Dell PowerEdge",
+            tipo: "servidor",
+            marca: "Dell",
+            modelo: "PowerEdge T340",
+            numeroSerie: "DPSV2023001",
+            status: "ativo",
+            responsavel: "Equipe TI",
+            departamento: "TI",
+            localizacao: "Rack Principal - Data Center",
+            dataAquisicao: "2023-03-10",
+            dataGarantia: "2026-03-10",
+            valorAquisicao: 8500.00,
+            fornecedor: "Dell do Brasil",
+            numeroNF: "NF-2023-025",
+            centroCusto: "TI"
+          },
+          {
+            id: 5,
+            numeroInventario: "NB-002",
+            equipamento: "Notebook Lenovo ThinkPad",
+            tipo: "notebook",
+            marca: "Lenovo",
+            modelo: "ThinkPad E14",
+            numeroSerie: "LV2024002",
+            status: "reserva",
+            responsavel: "Estoque TI",
+            departamento: "TI",
+            localizacao: "Almoxarifado TI",
+            dataAquisicao: "2024-02-15",
+            dataGarantia: "2025-02-15",
+            valorAquisicao: 2200.00,
+            fornecedor: "Lenovo Brasil",
+            numeroNF: "NF-2024-012",
+            centroCusto: "TI"
+          },
+          {
+            id: 6,
+            numeroInventario: "RT-001",
+            equipamento: "Roteador Cisco",
+            tipo: "roteador",
+            marca: "Cisco",
+            modelo: "ISR 4321",
+            numeroSerie: "CS2023001",
+            status: "ativo",
+            responsavel: "Equipe TI",
+            departamento: "TI",
+            localizacao: "Rack Principal - Data Center",
+            dataAquisicao: "2023-01-15",
+            dataGarantia: "2025-01-15",
+            valorAquisicao: 3200.00,
+            fornecedor: "Cisco do Brasil",
+            numeroNF: "NF-2023-008",
+            centroCusto: "TI"
           }
         ]
+      },
+      transferencias: {
+        name: "Transferências",
+        data: [
+          {
+            id: 1,
+            ativoId: 1,
+            numeroInventario: "NB-001",
+            equipamento: "Notebook Dell Vostro 15",
+            departamentoOrigem: "TI",
+            departamentoDestino: "Comercial",
+            responsavelOrigem: "Estoque TI",
+            responsavelDestino: "João Silva",
+            dataTransferencia: "2024-01-10",
+            motivo: "Alocação para novo colaborador",
+            aprovadoPor: "Carlos TI",
+            status: "concluida"
+          }
+        ]
+      },
+      relatorios: {
+        name: "Relatórios",
+        data: []
       }
     }
   },
