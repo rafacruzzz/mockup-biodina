@@ -328,94 +328,149 @@ export const tiModules: TIModulesConfig = {
   seguranca: {
     name: "Segurança",
     icon: Shield,
-    subModules: {
-      incidentes: {
-        name: "Registro de Incidentes",
-        data: [
-          {
-            id: 1,
-            dataHora: "2024-01-15T14:30:00",
-            tipo: "acesso_suspeito",
-            detalhes: "Login fora do horário - usuário joão.silva tentando acesso às 02:30",
-            status: "novo",
-            criticidade: "media"
-          },
-          {
-            id: 2,
-            dataHora: "2024-01-15T13:45:00",
-            tipo: "firewall",
-            detalhes: "Tentativa de acesso bloqueada do IP 203.45.67.89",
-            status: "investigando",
-            criticidade: "alta",
-            responsavel: "Carlos TI"
-          },
-          {
-            id: 3,
-            dataHora: "2024-01-15T12:15:00",
-            tipo: "malware",
-            detalhes: "Arquivo suspeito detectado na estação NB-045 - arquivo: documento.exe",
-            status: "resolvido",
-            criticidade: "alta",
-            responsavel: "Ana Security",
-            acoes: "Arquivo removido e sistema escaneado"
-          }
-        ]
+    data: [
+      // Incidentes de Segurança
+      {
+        id: 1,
+        tipo: "incidente",
+        dataHora: "2024-01-15T14:30:00",
+        tipoIncidente: "acesso_suspeito", 
+        detalhes: "Login fora do horário - usuário joão.silva tentando acesso às 02:30",
+        status: "novo",
+        criticidade: "critica"
       },
-      auditoria: {
-        name: "Auditoria de Acessos",
-        data: [
-          {
-            id: 1,
-            usuario: "joao.silva",
-            sistema: "ERP Biodina",
-            dataHora: "2024-01-15T08:30:00",
-            ip: "192.168.1.100",
-            status: "sucesso"
-          },
-          {
-            id: 2,
-            usuario: "maria.santos",
-            sistema: "Sistema RH",
-            dataHora: "2024-01-15T08:25:00",
-            ip: "192.168.1.105",
-            status: "sucesso"
-          },
-          {
-            id: 3,
-            usuario: "carlos.admin",
-            sistema: "Servidor Principal",
-            dataHora: "2024-01-15T08:00:00",
-            ip: "192.168.1.200",
-            status: "falha",
-            detalhes: "Senha incorreta - 3 tentativas"
-          }
-        ]
+      {
+        id: 2,
+        tipo: "incidente",
+        dataHora: "2024-01-15T13:45:00",
+        tipoIncidente: "firewall",
+        detalhes: "Tentativa de acesso bloqueada do IP 203.45.67.89",
+        status: "investigando",
+        criticidade: "alta",
+        responsavel: "Carlos TI"
       },
-      antivirus: {
-        name: "Status do Antivírus",
-        data: [
-          {
-            id: 1,
-            estacaoTrabalho: "NB-001",
-            usuario: "João Silva",
-            status: "atualizado",
-            versaoAntivirus: "2024.1.15",
-            ultimaVerificacao: "2024-01-15T06:00:00",
-            ameacasDetectadas: 0
-          },
-          {
-            id: 2,
-            estacaoTrabalho: "DT-005",
-            usuario: "Maria Santos",
-            status: "desatualizado",
-            versaoAntivirus: "2024.1.10",
-            ultimaVerificacao: "2024-01-12T18:30:00",
-            ameacasDetectadas: 1,
-            observacoes: "Definições desatualizadas há 3 dias"
-          }
-        ]
+      {
+        id: 3,
+        tipo: "incidente",
+        dataHora: "2024-01-15T12:15:00",
+        tipoIncidente: "malware",
+        detalhes: "Arquivo suspeito detectado na estação NB-045 - arquivo: documento.exe",
+        status: "resolvido",
+        criticidade: "alta",
+        responsavel: "Ana Security",
+        acoes: "Arquivo removido e sistema escaneado"
+      },
+      {
+        id: 4,
+        tipo: "incidente",
+        dataHora: "2024-01-15T11:20:00",
+        tipoIncidente: "phishing",
+        detalhes: "E-mail suspeito enviado para múltiplos usuários",
+        status: "novo",
+        criticidade: "critica"
+      },
+      // Auditoria de Acessos
+      {
+        id: 11,
+        tipo: "auditoria",
+        usuario: "joao.silva",
+        sistema: "ERP Biodina",
+        dataHora: "2024-01-15T08:30:00",
+        ip: "192.168.1.100",
+        status: "sucesso"
+      },
+      {
+        id: 12,
+        tipo: "auditoria",
+        usuario: "maria.santos",
+        sistema: "Sistema RH",
+        dataHora: "2024-01-15T08:25:00",
+        ip: "192.168.1.105",
+        status: "sucesso"
+      },
+      {
+        id: 13,
+        tipo: "auditoria",
+        usuario: "carlos.admin",
+        sistema: "Servidor Principal",
+        dataHora: "2024-01-15T08:00:00",
+        ip: "192.168.1.200",
+        status: "falha",
+        detalhes: "Senha incorreta - 3 tentativas"
+      },
+      {
+        id: 14,
+        tipo: "auditoria",
+        usuario: "ana.costa",
+        sistema: "Financeiro",
+        dataHora: "2024-01-15T07:45:00",
+        ip: "192.168.1.110",
+        status: "falha",
+        detalhes: "Acesso negado - usuário bloqueado"
+      },
+      // Status Antivírus
+      {
+        id: 21,
+        tipo: "antivirus",
+        estacaoTrabalho: "NB-001",
+        usuario: "João Silva",
+        status: "atualizado",
+        versaoAntivirus: "2024.1.15",
+        ultimaVerificacao: "2024-01-15T06:00:00",
+        ameacasDetectadas: 0
+      },
+      {
+        id: 22,
+        tipo: "antivirus",
+        estacaoTrabalho: "DT-005",
+        usuario: "Maria Santos",
+        status: "desatualizado",
+        versaoAntivirus: "2024.1.10",
+        ultimaVerificacao: "2024-01-12T18:30:00",
+        ameacasDetectadas: 1,
+        observacoes: "Definições desatualizadas há 3 dias"
+      },
+      {
+        id: 23,
+        tipo: "antivirus",
+        estacaoTrabalho: "NB-003",
+        usuario: "Carlos Admin",
+        status: "atualizado",
+        versaoAntivirus: "2024.1.15",
+        ultimaVerificacao: "2024-01-15T05:30:00",
+        ameacasDetectadas: 0
+      },
+      {
+        id: 24,
+        tipo: "antivirus",
+        estacaoTrabalho: "DT-008",
+        usuario: "Ana Costa",
+        status: "inativo",
+        versaoAntivirus: "2024.1.8",
+        ultimaVerificacao: "2024-01-10T14:00:00",
+        ameacasDetectadas: 3,
+        observacoes: "Antivírus desabilitado pelo usuário"
+      },
+      // Conformidade
+      {
+        id: 31,
+        tipo: "conformidade",
+        norma: "ISO 27001",
+        controle: "A.9.1.1",
+        status: "implementado",
+        descricao: "Política de controle de acesso",
+        responsavel: "João Silva - TI"
+      },
+      {
+        id: 32,
+        tipo: "conformidade",
+        norma: "LGPD",
+        controle: "LGPD.1",
+        status: "implementado", 
+        descricao: "Política de Privacidade de Dados",
+        responsavel: "Ana Costa - Jurídico"
       }
-    }
+    ]
   },
   conformidade: {
     name: "Conformidade",

@@ -4,9 +4,10 @@ import { LucideIcon } from "lucide-react";
 export interface TIModuleConfig {
   name: string;
   icon: LucideIcon;
-  subModules: {
+  subModules?: {
     [key: string]: TISubModule;
   };
+  data?: any[];
 }
 
 export interface TISubModule {
