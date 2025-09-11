@@ -255,7 +255,7 @@ const TI: React.FC = () => {
         return <GestaoConformidade />;
       case 'emails.contas':
         return <GestaoEmails />;
-      case 'usuarios.gestao':
+      case 'usuarios_rede.usuarios':
         return <GestaoUsuarios />;
       case 'telefonia.gestao':
         return <GestaoTelefonia />;
