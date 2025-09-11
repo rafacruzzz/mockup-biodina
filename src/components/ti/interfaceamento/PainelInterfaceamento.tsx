@@ -7,13 +7,34 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { tiModules } from "@/data/tiModules";
 import DetalhesInterfaceamentoModal from "./DetalhesInterfaceamentoModal";
+import InterfaceamentoDroppableColumn from "./InterfaceamentoDroppableColumn";
+import InterfaceamentoKanbanCard from "./InterfaceamentoKanbanCard";
 import type { SolicitacaoInterfaceamento } from "@/types/ti";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCorners,
+} from '@dnd-kit/core';
 
 const PainelInterfaceamento = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
   const [selectedSolicitacao, setSelectedSolicitacao] = useState<SolicitacaoInterfaceamento | null>(null);
   const [showDetalhesModal, setShowDetalhesModal] = useState(false);
+  const [activeSolicitacao, setActiveSolicitacao] = useState<SolicitacaoInterfaceamento | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
 
   const solicitacoes = tiModules.interfaceamento.subModules.solicitacoes.data as SolicitacaoInterfaceamento[];
 
@@ -43,7 +64,40 @@ const PainelInterfaceamento = () => {
     setSelectedSolicitacao(null);
   };
 
-  const statusColumns = [
+  const handleDragStart = (event: DragStartEvent) => {
+    const solicitacao = solicitacoes.find(s => String(s.id) === String(event.active.id));
+    setActiveSolicitacao(solicitacao || null);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    setActiveSolicitacao(null);
+
+    if (!over) return;
+
+    const solicitacaoId = String(active.id);
+    const newStatus = over.id as SolicitacaoInterfaceamento['status'];
+    
+    // Find the solicitacao and update its status
+    const solicitacao = solicitacoes.find(s => String(s.id) === solicitacaoId);
+    if (solicitacao && solicitacao.status !== newStatus) {
+      // This would normally update the backend/context
+      console.log(`Moving solicitacao ${solicitacaoId} from ${solicitacao.status} to ${newStatus}`);
+      
+      // Here you would update the actual data source
+      // For now, we'll just log the change
+      solicitacao.status = newStatus;
+    }
+  };
+
+  const filteredSolicitacoes = solicitacoes.filter(solicitacao => {
+    const matchesSearch = solicitacao.clienteNome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         solicitacao.oportunidadeId.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === "todos" || solicitacao.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  const statusColumns: Array<{key: SolicitacaoInterfaceamento['status'], title: string, color: string}> = [
     { key: 'aprovado', title: 'Aprovados', color: 'green' },
     { key: 'em_analise', title: 'Em Análise', color: 'blue' },
     { key: 'em_desenvolvimento', title: 'Em Desenvolvimento', color: 'purple' },
@@ -86,68 +140,38 @@ const PainelInterfaceamento = () => {
         </Select>
       </div>
 
-      {/* Kanban Board */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {statusColumns.map(column => {
-          const columnSolicitacoes = solicitacoes.filter(s => s.status === column.key);
-          
-          return (
-            <div key={column.key} className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-gray-900">{column.title}</h3>
-                <Badge variant="secondary">{columnSolicitacoes.length}</Badge>
-              </div>
-              
-              <div className="space-y-3 min-h-[400px]">
-                {columnSolicitacoes.map(solicitacao => (
-                  <Card 
-                    key={solicitacao.id} 
-                    className="cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => handleViewDetails(solicitacao)}
-                  >
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-sm font-medium truncate">
-                          {solicitacao.clienteNome}
-                        </CardTitle>
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          className="h-6 w-6 p-0"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewDetails(solicitacao);
-                          }}
-                        >
-                          <Eye className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="space-y-2 text-xs text-gray-600">
-                        <div><strong>OPT:</strong> {solicitacao.oportunidadeId}</div>
-                        <div><strong>Sistema:</strong> {solicitacao.sistemaCliente}</div>
-                        <div><strong>Prazo:</strong> {new Date(solicitacao.prazoDesejado).toLocaleDateString()}</div>
-                        {solicitacao.responsavelExecucao && (
-                          <div>
-                            <strong>Execução:</strong> {solicitacao.responsavelExecucao === 'ti_interno' ? 'TI Interno' : 'Fornecedor Externo'}
-                          </div>
-                        )}
-                        {solicitacao.nomeFornecedor && (
-                          <div><strong>Fornecedor:</strong> {solicitacao.nomeFornecedor}</div>
-                        )}
-                      </div>
-                      <div className="mt-3">
-                        {getStatusBadge(solicitacao.status)}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+      {/* Drag and Drop Kanban Board */}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {statusColumns.map(column => {
+            const columnSolicitacoes = filteredSolicitacoes.filter(s => s.status === column.key);
+            
+            return (
+              <InterfaceamentoDroppableColumn
+                key={column.key}
+                column={column}
+                solicitacoes={columnSolicitacoes}
+                onViewDetails={handleViewDetails}
+              />
+            );
+          })}
+        </div>
+        
+        <DragOverlay>
+          {activeSolicitacao && (
+            <InterfaceamentoKanbanCard
+              solicitacao={activeSolicitacao}
+              onViewDetails={handleViewDetails}
+              isDragOverlay
+            />
+          )}
+        </DragOverlay>
+      </DndContext>
 
       {/* Modal de Detalhes */}
       {selectedSolicitacao && (
