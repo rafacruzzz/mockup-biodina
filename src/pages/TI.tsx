@@ -257,7 +257,7 @@ const TI: React.FC = () => {
         return <GestaoEmails />;
       case 'usuarios_rede.usuarios':
         return <GestaoUsuarios />;
-      case 'telefonia.gestao':
+      case 'telefonia.ramais':
         return <GestaoTelefonia />;
       case 'interfaceamento.solicitacoes':
         return <PainelInterfaceamento />;
