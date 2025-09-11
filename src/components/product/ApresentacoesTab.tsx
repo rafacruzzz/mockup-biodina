@@ -86,20 +86,6 @@ const ApresentacoesTab = ({ formData, onInputChange }: ProductTabProps) => {
           <CardTitle className="text-biodina-blue">📋 Informações Complementares</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="componentes" className="text-sm font-semibold">Componentes (seguindo padrão ANVISA)</Label>
-            <Textarea
-              id="componentes"
-              value={formData.componentes}
-              onChange={(e) => onInputChange('componentes', e.target.value)}
-              placeholder="Ex: Princípio ativo: Paracetamol 500mg; Excipientes: Amido de milho, celulose microcristalina, estearato de magnésio..."
-              className="border-gray-300 min-h-[100px]"
-            />
-            <p className="text-xs text-gray-500">
-              Descreva os componentes conforme especificação da ANVISA
-            </p>
-          </div>
-
           <div className="space-y-4">
             <div className="space-y-2">
               <Label className="text-sm font-semibold">Referências Comercializadas</Label>

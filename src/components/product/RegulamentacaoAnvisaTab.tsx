@@ -101,28 +101,28 @@ const RegulamentacaoAnvisaTab = ({ formData, onInputChange }: ProductTabProps) =
           <CardTitle className="text-biodina-blue">🔬 Informações do Dispositivo Médico</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="nomeDispositivoMedico" className="text-sm font-semibold">Nome do Dispositivo Médico *</Label>
-              <Input
-                id="nomeDispositivoMedico"
-                value={formData.nomeDispositivoMedico}
-                onChange={(e) => onInputChange('nomeDispositivoMedico', e.target.value)}
-                placeholder="Nome comercial do dispositivo"
-                className="border-gray-300"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="areaAnvisa" className="text-sm font-semibold">Área da ANVISA *</Label>
+            <Select value={formData.areaAnvisa} onValueChange={(value) => onInputChange('areaAnvisa', value)}>
+              <SelectTrigger className="border-gray-300">
+                <SelectValue placeholder="Selecione a área" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="produtos_saude">Produtos para Saúde (Correlatos)</SelectItem>
+                <SelectItem value="diagnostico_vitro">Produtos para diagnóstico in vitro</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="nomeTecnicoDispositivo" className="text-sm font-semibold">Nome Técnico do Dispositivo</Label>
-              <Input
-                id="nomeTecnicoDispositivo"
-                value={formData.nomeTecnicoDispositivo}
-                onChange={(e) => onInputChange('nomeTecnicoDispositivo', e.target.value)}
-                placeholder="Nome técnico/científico"
-                className="border-gray-300"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="nomeTecnicoDispositivo" className="text-sm font-semibold">Nome Técnico do Dispositivo</Label>
+            <Input
+              id="nomeTecnicoDispositivo"
+              value={formData.nomeTecnicoDispositivo}
+              onChange={(e) => onInputChange('nomeTecnicoDispositivo', e.target.value)}
+              placeholder="Nome técnico/científico"
+              className="border-gray-300"
+            />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

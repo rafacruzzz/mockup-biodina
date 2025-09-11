@@ -36,7 +36,7 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
     nomeEmpresaDetentora: "",
     cnpjDetentor: "",
     autorizacaoFuncionamento: "",
-    nomeDispositivoMedico: "",
+    areaAnvisa: "",
     nomeTecnicoDispositivo: "",
     numeroNotificacaoRegistro: "",
     situacaoNotificacaoRegistro: "",

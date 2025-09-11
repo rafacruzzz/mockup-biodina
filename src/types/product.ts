@@ -16,6 +16,8 @@ export interface ProductRegistrationData {
   fabricanteId: string;
   codigoProdutoFabricante: string;
   nomeProdutoFabricante: string;
+  // Campo adicional para forma de venda
+  comoEVendido?: string;
 
   // Aba 2 - Regulamentação ANVISA (nova)
   // Detentor do Registro
@@ -24,7 +26,7 @@ export interface ProductRegistrationData {
   cnpjDetentor: string;
   autorizacaoFuncionamento: string;
   // Informações do Dispositivo
-  nomeDispositivoMedico: string;
+  areaAnvisa: string;
   nomeTecnicoDispositivo: string;
   numeroNotificacaoRegistro: string;
   situacaoNotificacaoRegistro: string;
