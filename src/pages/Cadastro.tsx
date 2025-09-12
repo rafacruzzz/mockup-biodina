@@ -11,6 +11,7 @@ import ColaboradorModal from "@/components/rh/ColaboradorModal";
 import ServiceModal from "@/components/cadastro/ServiceModal";
 import ContaBancariaModal from "@/components/cadastro/ContaBancariaModal";
 import GenericModal from "@/components/cadastro/GenericModal";
+import { RegistroAnvisaModal } from "@/components/cadastro/RegistroAnvisaModal";
 import { modules } from "@/data/cadastroModules";
 
 const Cadastro = () => {
@@ -27,6 +28,7 @@ const Cadastro = () => {
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [isContaBancariaModalOpen, setIsContaBancariaModalOpen] = useState(false);
   const [isGenericModalOpen, setIsGenericModalOpen] = useState(false);
+  const [isRegistroAnvisaModalOpen, setIsRegistroAnvisaModalOpen] = useState(false);
 
   // Estados para modo edição
   const [isEditMode, setIsEditMode] = useState(false);
@@ -79,6 +81,8 @@ const Cadastro = () => {
       setIsServiceModalOpen(true);
     } else if (activeModule === 'contas_bancarias') {
       setIsContaBancariaModalOpen(true);
+    } else if (activeModule === 'registros_anvisa') {
+      setIsRegistroAnvisaModalOpen(true);
     } else {
       setIsGenericModalOpen(true);
     }
@@ -199,6 +203,7 @@ const Cadastro = () => {
     if (activeModule === 'usuarios' && activeSubModule === 'usuarios') return "Novo Usuário";
     if (activeModule === 'servicos') return "Novo Serviço";
     if (activeModule === 'contas_bancarias') return "Nova Conta";
+    if (activeModule === 'registros_anvisa') return "Novo Registro ANVISA";
     return "Novo Registro";
   };
 
@@ -297,6 +302,15 @@ const Cadastro = () => {
         onClose={() => setIsGenericModalOpen(false)}
         title={`Novo ${currentSubModule?.name || 'Registro'}`}
         moduleName={currentSubModule?.name || ''}
+      />
+
+      <RegistroAnvisaModal
+        isOpen={isRegistroAnvisaModalOpen}
+        onClose={() => setIsRegistroAnvisaModalOpen(false)}
+        onSave={(registro) => {
+          console.log('Registro ANVISA salvo:', registro);
+          setIsRegistroAnvisaModalOpen(false);
+        }}
       />
     </SidebarLayout>
   );

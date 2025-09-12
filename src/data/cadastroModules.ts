@@ -7,7 +7,8 @@ import {
   Wrench,
   CreditCard,
   Tag,
-  Calendar
+  Calendar,
+  FileText
 } from "lucide-react";
 import type { ModulesConfig } from "@/types/cadastro";
 
@@ -252,6 +253,35 @@ export const modules: ModulesConfig = {
             dias: 60,
             descricao: "Pagamento em 60 dias",
             ativo: true
+          }
+        ]
+      }
+    }
+  },
+
+  registros_anvisa: {
+    name: "Registros ANVISA",
+    icon: FileText,
+    subModules: {
+      registros: {
+        name: "Controle de Registros",
+        data: [
+          { 
+            id: 1, 
+            nomeProduto: "Exemplo Produto 1", 
+            processo: "25351.123456/2024-12",
+            areaAnvisa: "produtos_saude",
+            status: "enviado",
+            dataEnvio: "2024-01-15" 
+          },
+          { 
+            id: 2, 
+            nomeProduto: "Exemplo Produto 2", 
+            processo: "25351.654321/2024-13",
+            areaAnvisa: "diagnostico_in_vitro",
+            status: "publicado",
+            dataEnvio: "2024-02-10",
+            publicacaoData: "2024-03-01"
           }
         ]
       }
