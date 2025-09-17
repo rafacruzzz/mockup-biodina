@@ -65,7 +65,7 @@ const AbrirChamadoForm = () => {
       ...formData,
       id: Math.floor(Math.random() * 1000),
       status: 'aberto',
-      solicitante: user?.nome || 'Usuário Atual',
+      solicitante: user?.name || 'Usuário Atual',
       departamento: formData.departamento || user?.colaboradorData?.dadosProfissionais?.setor || '',
       anexos: uploadedFiles.map((file: any) => file.name),
       dataAbertura: new Date().toISOString(),

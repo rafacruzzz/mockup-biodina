@@ -16,7 +16,7 @@ const InformacoesPessoaisTab = ({ onSave, onCancel }: InformacoesPessoaisTabProp
   const { user, updateUser } = useUser();
   
   const [formData, setFormData] = useState({
-    nome: user?.nome || '',
+    name: user?.name || '',
     email: user?.email || '',
     senhaAtual: '',
     novaSenha: '',
@@ -39,7 +39,7 @@ const InformacoesPessoaisTab = ({ onSave, onCancel }: InformacoesPessoaisTabProp
 
     // Atualizar dados do usuário
     updateUser({
-      nome: formData.nome,
+      name: formData.name,
       email: formData.email
     });
 
@@ -60,9 +60,9 @@ const InformacoesPessoaisTab = ({ onSave, onCancel }: InformacoesPessoaisTabProp
       {/* Foto de Perfil */}
       <div className="flex items-center gap-4">
         <Avatar className="h-20 w-20">
-          <AvatarImage src={user?.fotoPerfil} alt={user?.nome} />
+          <AvatarImage src={user?.profilePicture} alt={user?.name} />
           <AvatarFallback className="bg-biodina-blue text-white text-lg">
-            {user ? getInitials(user.nome) : 'U'}
+            {user ? getInitials(user.name) : 'U'}
           </AvatarFallback>
         </Avatar>
         <div className="space-y-2">
@@ -86,8 +86,8 @@ const InformacoesPessoaisTab = ({ onSave, onCancel }: InformacoesPessoaisTabProp
           <Label htmlFor="nome">Nome Completo</Label>
           <Input
             id="nome"
-            value={formData.nome}
-            onChange={(e) => handleInputChange('nome', e.target.value)}
+            value={formData.name}
+            onChange={(e) => handleInputChange('name', e.target.value)}
             placeholder="Digite seu nome completo"
           />
         </div>
@@ -107,7 +107,7 @@ const InformacoesPessoaisTab = ({ onSave, onCancel }: InformacoesPessoaisTabProp
       <div className="space-y-2">
         <Label>Nome de Usuário</Label>
         <Input
-          value={user?.nomeUsuario || ''}
+          value={user?.username || ''}
           disabled
           className="bg-gray-50"
         />

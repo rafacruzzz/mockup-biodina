@@ -154,7 +154,7 @@ const FormularioDinamico = ({ tipoSolicitacao, onSubmit }: FormularioDinamicoPro
             <Label htmlFor="nome-solicitante">Nome do Solicitante</Label>
             <Input
               id="nome-solicitante"
-              value={user?.nome || ''}
+              value={user?.name || ''}
               disabled
               className="bg-gray-50"
             />

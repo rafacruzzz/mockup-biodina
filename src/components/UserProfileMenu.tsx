@@ -40,9 +40,9 @@ const UserProfileMenu = () => {
       <PopoverTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={user.fotoPerfil} alt={user.nome} />
+            <AvatarImage src={user.profilePicture} alt={user.name} />
             <AvatarFallback className="bg-biodina-blue text-white">
-              {getInitials(user.nome)}
+              {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -51,15 +51,15 @@ const UserProfileMenu = () => {
         <div className="p-4">
           <div className="flex items-center gap-3 mb-4">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={user.fotoPerfil} alt={user.nome} />
+              <AvatarImage src={user.profilePicture} alt={user.name} />
               <AvatarFallback className="bg-biodina-blue text-white">
-                {getInitials(user.nome)}
+                {getInitials(user.name)}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
-              <h3 className="font-semibold text-sm text-gray-900">{user.nome}</h3>
+              <h3 className="font-semibold text-sm text-gray-900">{user.name}</h3>
               <p className="text-xs text-gray-600">{user.email}</p>
-              <p className="text-xs text-gray-500">{user.nomeUsuario}</p>
+              <p className="text-xs text-gray-500">{user.username}</p>
             </div>
           </div>
           
