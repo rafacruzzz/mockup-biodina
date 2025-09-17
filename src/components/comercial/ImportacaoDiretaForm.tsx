@@ -11,7 +11,7 @@ import OVCForm from './components/OVCForm';
 import ComercialTabs from './components/ComercialTabs';
 import SPIEnvioModal from './components/SPIEnvioModal';
 import GestaoEmprestimosTab from './components/GestaoEmprestimosTab';
-import { AOSOForm } from './components/AOSOForm';
+import { AnexosForm } from './components/AnexosForm';
 import { generateSPIPDF } from './utils/spiUtils';
 import { PIHistoryItem, PIStatus } from '@/types/piHistory';
 
@@ -182,11 +182,11 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     { id: 'spi', label: 'SPI' },
     { id: 'ovc', label: 'OVC' },
     { id: 'no', label: 'NO' },
-    { id: 'ao-so', label: 'AO/SO' },
     { id: 'instrucao-embarque', label: 'INSTRUÇÃO DE EMBARQUE' },
     { id: 'packing-list', label: 'PACKING LIST' },
     { id: 'ddr', label: 'DDR' },
-    { id: 'gestao-emprestimos', label: 'GESTÃO DE EMPRÉSTIMOS' }
+    { id: 'gestao-emprestimos', label: 'GESTÃO DE EMPRÉSTIMOS' },
+    { id: 'anexos', label: 'ANEXOS' }
   ];
 
   // Computar o ID da importação atual
@@ -315,9 +315,9 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
       );
     }
     
-    if (activeMasterTab === 'ao-so') {
+    if (activeMasterTab === 'anexos') {
       return (
-        <AOSOForm
+        <AnexosForm
           formData={formData}
           onInputChange={handleInputChange}
         />
