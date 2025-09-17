@@ -11,6 +11,7 @@ import OVCForm from './components/OVCForm';
 import ComercialTabs from './components/ComercialTabs';
 import SPIEnvioModal from './components/SPIEnvioModal';
 import GestaoEmprestimosTab from './components/GestaoEmprestimosTab';
+import { AOSOForm } from './components/AOSOForm';
 import { generateSPIPDF } from './utils/spiUtils';
 import { PIHistoryItem, PIStatus } from '@/types/piHistory';
 
@@ -181,6 +182,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     { id: 'spi', label: 'SPI' },
     { id: 'ovc', label: 'OVC' },
     { id: 'no', label: 'NO' },
+    { id: 'ao-so', label: 'AO/SO' },
     { id: 'instrucao-embarque', label: 'INSTRUÇÃO DE EMBARQUE' },
     { id: 'packing-list', label: 'PACKING LIST OU VALIDADES' },
     { id: 'ddr', label: 'DDR' },
@@ -307,6 +309,15 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     if (activeMasterTab === 'no') {
       return (
         <NOMainForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
+    
+    if (activeMasterTab === 'ao-so') {
+      return (
+        <AOSOForm
           formData={formData}
           onInputChange={handleInputChange}
         />
