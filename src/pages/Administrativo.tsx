@@ -406,13 +406,6 @@ const Administrativo = () => {
       });
     };
 
-    const handleDuplicateRegistro = (registro: any) => {
-      toast({
-        title: "Duplicar Registro",
-        description: `Criando cópia do registro: ${registro.nomeProduto}`,
-      });
-    };
-
     const handleViewHistory = (registro: any) => {
       setSelectedRegistroHistory(registro);
       setShowHistoryModal(true);
@@ -449,7 +442,6 @@ const Administrativo = () => {
           registros={registrosData}
           onEdit={handleEditRegistro}
           onDelete={handleDeleteRegistro}
-          onDuplicate={handleDuplicateRegistro}
           onViewHistory={handleViewHistory}
         />
       </div>

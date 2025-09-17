@@ -10,9 +10,7 @@ import {
   Filter, 
   Eye, 
   Edit, 
-  Copy, 
   Trash2, 
-  Download, 
   FileText,
   Calendar,
   Building,
@@ -26,7 +24,6 @@ interface RegistrosAnvisaTableProps {
   registros: any[];
   onEdit: (registro: any) => void;
   onDelete: (registroId: number) => void;
-  onDuplicate: (registro: any) => void;
   onViewHistory?: (registro: any) => void;
 }
 
@@ -34,7 +31,6 @@ export const RegistrosAnvisaTable = ({
   registros, 
   onEdit, 
   onDelete, 
-  onDuplicate,
   onViewHistory 
 }: RegistrosAnvisaTableProps) => {
   const [busca, setBusca] = useState('');
@@ -373,22 +369,6 @@ export const RegistrosAnvisaTable = ({
                           className="h-8 w-8 p-0"
                         >
                           <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onDuplicate(registro)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleGerarPDF(registro)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Download className="h-4 w-4" />
                         </Button>
                         {onViewHistory && (
                           <Button
