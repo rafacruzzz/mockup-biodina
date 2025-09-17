@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Send } from 'lucide-react';
+import { Send, Upload, FileText, X } from 'lucide-react';
 import { useState } from 'react';
 
 interface InstrucaoEmbarqueFormProps {
@@ -14,10 +14,27 @@ interface InstrucaoEmbarqueFormProps {
 
 const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFormProps) => {
   const [pagamentoPago, setPagamentoPago] = useState(false);
+  const [comprovantePagamento, setComprovantePagamento] = useState<File | null>(null);
 
-  const handleTogglePagamento = () => {
-    setPagamentoPago(!pagamentoPago);
-    console.log(`Status de pagamento alterado para: ${!pagamentoPago ? 'Pago' : 'Não Pago'}`);
+  const handleAnexarComprovante = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.jpg,.jpeg,.png,.doc,.docx';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        setComprovantePagamento(file);
+        setPagamentoPago(true);
+        console.log('Comprovante de pagamento anexado:', file.name);
+      }
+    };
+    input.click();
+  };
+
+  const handleRemoverComprovante = () => {
+    setComprovantePagamento(null);
+    setPagamentoPago(false);
+    console.log('Comprovante de pagamento removido');
   };
 
   const handleEnviarInstrucoes = () => {
@@ -298,20 +315,46 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-semibold mb-2">Status do Pagamento</h3>
-                <button
-                  onClick={handleTogglePagamento}
-                  className={`px-4 py-2 rounded font-medium transition-colors ${
-                    pagamentoPago
-                      ? 'bg-green-600 text-white hover:bg-green-700'
-                      : 'bg-red-600 text-white hover:bg-red-700'
-                  }`}
-                >
-                  {pagamentoPago ? 'Pago' : 'Não Pago'}
-                </button>
+                
+                {!comprovantePagamento ? (
+                  <Button
+                    onClick={handleAnexarComprovante}
+                    className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Anexar Comprovante de Pagamento
+                  </Button>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                      <div className="flex items-center space-x-3">
+                        <FileText className="h-5 w-5 text-green-600" />
+                        <div>
+                          <p className="text-sm font-medium text-green-900">{comprovantePagamento.name}</p>
+                          <p className="text-xs text-green-600">
+                            {(comprovantePagamento.size / 1024).toFixed(1)} KB
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleRemoverComprovante}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <span className="inline-block px-3 py-1 bg-green-600 text-white text-sm font-medium rounded">
+                      Pago
+                    </span>
+                  </div>
+                )}
+                
                 <p className="text-sm text-gray-600 mt-2">
                   {pagamentoPago 
                     ? 'Pagamento confirmado. Você pode enviar as instruções de embarque.'
-                    : 'Aguardando confirmação de pagamento para liberar o envio das instruções.'
+                    : 'Anexe o comprovante de pagamento para liberar o envio das instruções.'
                   }
                 </p>
               </div>
