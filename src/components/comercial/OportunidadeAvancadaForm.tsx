@@ -317,10 +317,12 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                 <SelectItem value="cold_call">Cold Call</SelectItem>
                 <SelectItem value="licitacao">Licitação</SelectItem>
                 <SelectItem value="referencia">Referência</SelectItem>
+                <SelectItem value="evento">Evento</SelectItem>
                 <SelectItem value="telefone">Telefone</SelectItem>
                 <SelectItem value="email">E-mail</SelectItem>
                 <SelectItem value="presencial">Presencial</SelectItem>
-                <SelectItem value="video_chamada">Videochamada</SelectItem>
+                <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                <SelectItem value="video_chamada">Vídeo Chamada</SelectItem>
               </SelectContent>
             </Select>
           </div>

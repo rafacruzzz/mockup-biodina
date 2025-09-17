@@ -66,7 +66,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     // Dados da Oportunidade
     fonteLead: oportunidade?.fonteLead || '',
     valorNegocio: oportunidade?.valorNegocio || 0,
-    metodoContato: oportunidade?.metodoContato || '',
     segmentoLead: oportunidade?.segmentoLead || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || '',
     procurandoPor: oportunidade?.procurandoPor || '',
@@ -458,6 +457,12 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                             <SelectItem value="cold_call">Cold Call</SelectItem>
                             <SelectItem value="licitacao">Licitação</SelectItem>
                             <SelectItem value="referencia">Referência</SelectItem>
+                            <SelectItem value="evento">Evento</SelectItem>
+                            <SelectItem value="telefone">Telefone</SelectItem>
+                            <SelectItem value="email">E-mail</SelectItem>
+                            <SelectItem value="presencial">Presencial</SelectItem>
+                            <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                            <SelectItem value="video_chamada">Vídeo Chamada</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -474,20 +479,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="metodoContato">Método de Contato</Label>
-                        <Select value={formData.metodoContato} onValueChange={(value) => handleInputChange('metodoContato', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="telefone">Telefone</SelectItem>
-                            <SelectItem value="email">E-mail</SelectItem>
-                            <SelectItem value="presencial">Presencial</SelectItem>
-                            <SelectItem value="video_call">Video Call</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
                       <div>
                         <Label htmlFor="segmentoLead">Segmento do Lead</Label>
                         <Select value={formData.segmentoLead} onValueChange={(value) => handleInputChange('segmentoLead', value)}>

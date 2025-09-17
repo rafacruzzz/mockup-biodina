@@ -135,10 +135,15 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
                 <SelectContent>
                   <SelectItem value="site">Site</SelectItem>
                   <SelectItem value="indicacao">Indicação</SelectItem>
-                  <SelectItem value="cold-call">Cold Call</SelectItem>
+                  <SelectItem value="cold_call">Cold Call</SelectItem>
                   <SelectItem value="licitacao">Licitação</SelectItem>
                   <SelectItem value="referencia">Referência</SelectItem>
                   <SelectItem value="evento">Evento</SelectItem>
+                  <SelectItem value="telefone">Telefone</SelectItem>
+                  <SelectItem value="email">E-mail</SelectItem>
+                  <SelectItem value="presencial">Presencial</SelectItem>
+                  <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                  <SelectItem value="video_chamada">Vídeo Chamada</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -195,21 +200,6 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
                 onChange={(e) => onInputChange('valorNegocio', e.target.value)}
                 placeholder="R$ 0,00"
               />
-            </div>
-            <div>
-              <Label htmlFor="metodoContato">Método de Contato</Label>
-              <Select value={formData.metodoContato} onValueChange={(value) => onInputChange('metodoContato', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o método" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="telefone">Telefone</SelectItem>
-                  <SelectItem value="email">E-mail</SelectItem>
-                  <SelectItem value="presencial">Presencial</SelectItem>
-                  <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                  <SelectItem value="video-chamada">Vídeo Chamada</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
             <div>
               <Label htmlFor="segmentoLead">Segmento do Lead</Label>
