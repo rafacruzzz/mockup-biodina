@@ -16,6 +16,8 @@ import {
 import { NovoRegistroAnvisaModal } from '@/components/administrativo/NovoRegistroAnvisaModal';
 import { RegistrosAnvisaTable } from '@/components/administrativo/components/RegistrosAnvisaTable';
 import { HistoricoRegistroModal } from '@/components/administrativo/components/HistoricoRegistroModal';
+import { AtualizacoesAnvisaTable } from '@/components/administrativo/components/AtualizacoesAnvisaTable';
+import { NovaAtualizacaoModal } from '@/components/administrativo/NovaAtualizacaoModal';
 import { modules } from '@/data/cadastroModules';
 import { toast } from '@/components/ui/use-toast';
 
@@ -25,6 +27,9 @@ const Administrativo = () => {
   const [showNovoRegistroModal, setShowNovoRegistroModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [selectedRegistroHistory, setSelectedRegistroHistory] = useState<any>(null);
+  const [showNovaAtualizacaoModal, setShowNovaAtualizacaoModal] = useState(false);
+  const [showAtualizacaoHistoryModal, setShowAtualizacaoHistoryModal] = useState(false);
+  const [selectedAtualizacaoHistory, setSelectedAtualizacaoHistory] = useState<any>(null);
 
   const renderMainModules = () => (
     <div className="space-y-6">
@@ -228,7 +233,7 @@ const Administrativo = () => {
       switch (activeTab) {
         case 'dashboard': return renderRegulatorioIndicadores();
         case 'registro-produtos': return renderRegistroProdutosTab();
-        case 'atualizacoes': return renderEmptyTab('ATUALIZAÇÕES DE PRODUTO', 'Controle de atualizações regulatórias');
+        case 'atualizacoes': return renderAtualizacoesTab();
         case 'due-diligence': return renderEmptyTab('DUE DILIGENCE - FORNECEDOR', 'Análise de conformidade de fornecedores');
         case 'rastreabilidade': return renderEmptyTab('RASTREABILIDADE', 'Sistema de rastreamento regulatório');
         case 'boas-praticas': return renderEmptyTab('BOAS PRÁTICAS', 'Gestão de boas práticas regulatórias');
@@ -448,6 +453,66 @@ const Administrativo = () => {
     );
   };
 
+  const renderAtualizacoesTab = () => {
+    const atualizacoesData = modules.atualizacoes_anvisa.subModules.atualizacoes.data;
+    
+    const handleEditAtualizacao = (atualizacao: any) => {
+      toast({
+        title: "Editar Atualização",
+        description: `Editando atualização: ${atualizacao.nomeArquivoPrincipal}`,
+      });
+    };
+
+    const handleDeleteAtualizacao = (atualizacaoId: number) => {
+      toast({
+        title: "Excluir Atualização",
+        description: "Atualização excluída com sucesso",
+        variant: "destructive",
+      });
+    };
+
+    const handleViewAtualizacaoHistory = (atualizacao: any) => {
+      setSelectedAtualizacaoHistory(atualizacao);
+      setShowAtualizacaoHistoryModal(true);
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold">ATUALIZAÇÕES DE PRODUTO</h2>
+            <p className="text-gray-600">Gerencie as atualizações regulatórias dos seus produtos</p>
+          </div>
+          <Button 
+            onClick={() => setShowNovaAtualizacaoModal(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Nova Atualização
+          </Button>
+        </div>
+
+        {/* Explicação do processo */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h4 className="font-medium text-blue-900 mb-2">Como funciona o processo:</h4>
+          <ol className="text-sm text-blue-800 space-y-1">
+            <li>1. Selecione um produto já registrado para atualização</li>
+            <li>2. Organize a documentação de alteração necessária</li>
+            <li>3. Preencha as informações do peticionamento junto à ANVISA</li>
+            <li>4. Gerencie a disponibilização da instrução de uso atualizada</li>
+          </ol>
+        </div>
+
+        <AtualizacoesAnvisaTable 
+          atualizacoes={atualizacoesData}
+          onEdit={handleEditAtualizacao}
+          onDelete={handleDeleteAtualizacao}
+          onViewHistory={handleViewAtualizacaoHistory}
+        />
+      </div>
+    );
+  };
+
   const renderEmptyTab = (titulo: string, descricao: string) => (
     <Card className="shadow-sm">
       <CardHeader>
@@ -617,6 +682,17 @@ const Administrativo = () => {
         isOpen={showHistoryModal}
         onClose={() => setShowHistoryModal(false)}
         registro={selectedRegistroHistory}
+      />
+
+      <NovaAtualizacaoModal 
+        isOpen={showNovaAtualizacaoModal}
+        onClose={() => setShowNovaAtualizacaoModal(false)}
+        onAtualizacaoSalva={(atualizacao) => {
+          toast({
+            title: "Atualização criada com sucesso!",
+            description: `${atualizacao.nomeArquivoPrincipal} foi registrada no sistema.`,
+          });
+        }}
       />
     </SidebarLayout>
   );
