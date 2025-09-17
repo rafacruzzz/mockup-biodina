@@ -17,11 +17,14 @@ interface NovoEmprestimoModalProps {
 }
 
 interface DANFEData {
+  id: string;
   numeroDanfe: string;
   cnpjCliente: string;
   nomeCliente: string;
   valorTotal: string;
   dataEmissao: Date;
+  dataUpload: Date;
+  tipoDanfe: 'entrada' | 'saida';
   produtos: Array<{
     referencia: string;
     descricao: string;
@@ -32,6 +35,7 @@ interface DANFEData {
 const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
   const [activeTab, setActiveTab] = useState("dados-gerais");
   const [extractedDANFE, setExtractedDANFE] = useState<DANFEData | null>(null);
+  const [historicoDANFEs, setHistoricoDANFEs] = useState<DANFEData[]>([]);
   
   const [formData, setFormData] = useState({
     numeroProcesso: `EMP-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
@@ -74,8 +78,13 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
     }));
   };
 
+  const handleHistoricoUpdate = (novoHistorico: DANFEData[]) => {
+    setHistoricoDANFEs(novoHistorico);
+  };
+
   const handleSave = () => {
     console.log("Salvando empréstimo:", formData);
+    console.log("Histórico de DANFEs:", historicoDANFEs);
     if (extractedDANFE) {
       console.log("Com dados da DANFE:", extractedDANFE);
     }
@@ -180,6 +189,8 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
               <DANFEUploadTab 
                 onDataExtracted={handleDANFEDataExtracted}
                 extractedData={extractedDANFE}
+                historicoDANFEs={historicoDANFEs}
+                onHistoricoUpdate={handleHistoricoUpdate}
               />
             </TabsContent>
 
