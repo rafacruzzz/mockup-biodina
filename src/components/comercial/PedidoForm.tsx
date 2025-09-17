@@ -827,12 +827,19 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
 
                     <div className="col-span-2">
                       <Label htmlFor="cuidadosEntrega">Entregar ou Retirar aos Cuidados de Quem?</Label>
-                      <Input
-                        id="cuidadosEntrega"
-                        value={formData.cuidadosEntrega}
-                        onChange={(e) => setFormData({...formData, cuidadosEntrega: e.target.value})}
-                        placeholder="Nome do responsável"
-                      />
+                      <Select value={formData.cuidadosEntrega} onValueChange={(value) => setFormData({...formData, cuidadosEntrega: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background border z-50">
+                          <SelectItem value="recepcao">Recepção</SelectItem>
+                          <SelectItem value="almoxarifado">Almoxarifado</SelectItem>
+                          <SelectItem value="gerencia">Gerência</SelectItem>
+                          <SelectItem value="responsavel_tecnico">Responsável Técnico</SelectItem>
+                          <SelectItem value="portaria">Portaria</SelectItem>
+                          <SelectItem value="outros">Outros</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </Card>
