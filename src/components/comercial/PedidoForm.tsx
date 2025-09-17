@@ -719,14 +719,14 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                   <h4 className="font-semibold mb-4">Informações Básicas de Frete</h4>
                   <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <Label htmlFor="informacoesFrete">Informações de Frete - Conhecimento</Label>
+                      <Label htmlFor="valorFrete">Valor do Frete</Label>
                       <Input
-                        id="informacoesFrete"
-                        value={formData.informacoesFrete}
-                        onChange={(e) => setFormData({...formData, informacoesFrete: e.target.value})}
-                        placeholder="Devolutiva do conhecimento (somente leitura)"
-                        readOnly
-                        className="bg-gray-100"
+                        id="valorFrete"
+                        type="number"
+                        step="0.01"
+                        value={formData.frete}
+                        onChange={(e) => setFormData({...formData, frete: e.target.value})}
+                        placeholder="0,00"
                       />
                     </div>
 
@@ -736,7 +736,7 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-background border z-50">
                           <SelectItem value="cif">CIF</SelectItem>
                           <SelectItem value="fob">FOB</SelectItem>
                           <SelectItem value="por_conta">Por Conta</SelectItem>
@@ -750,7 +750,7 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-background border z-50">
                           <SelectItem value="correios">Correios</SelectItem>
                           <SelectItem value="transportadora1">Transportadora 1</SelectItem>
                           <SelectItem value="transportadora2">Transportadora 2</SelectItem>
@@ -777,6 +777,18 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                         onChange={(e) => setFormData({...formData, dataEntrega: e.target.value})}
                       />
                     </div>
+
+                    <div>
+                      <Label htmlFor="informacoesFrete">Informações de Frete - Conhecimento</Label>
+                      <Input
+                        id="informacoesFrete"
+                        value={formData.informacoesFrete}
+                        onChange={(e) => setFormData({...formData, informacoesFrete: e.target.value})}
+                        placeholder="Devolutiva do conhecimento (somente leitura)"
+                        readOnly
+                        className="bg-muted"
+                      />
+                    </div>
                   </div>
                 </Card>
 
@@ -790,7 +802,7 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-background border z-50">
                           <SelectItem value="cliente">Cliente</SelectItem>
                           <SelectItem value="representante">Representante</SelectItem>
                           <SelectItem value="empresa">Empresa</SelectItem>
@@ -804,7 +816,7 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-background border z-50">
                           <SelectItem value="cliente">Cliente</SelectItem>
                           <SelectItem value="representante">Representante</SelectItem>
                           <SelectItem value="portador_interno">Portador Interno</SelectItem>
