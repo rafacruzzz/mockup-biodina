@@ -37,10 +37,64 @@ export const OrganizacaoDocumentosStep = ({
     }
 
     const registroData: RegistroAnvisaData = {
+      // Etapa 1: Produto Selecionado
       produtoSelecionado,
+      
+      // Etapa 2: Organização de Documentos
       nomeArquivoPrincipal,
       estruturaArquivos,
-      protocoloPeticionamento
+      protocoloPeticionamento,
+      
+      // Etapa 3: Informações Regulatórias (defaults)
+      areaAnvisa: '',
+      numeroProcessoAnvisa: '',
+      assunto: '',
+      motivoPeticionamento: '',
+      transacao: '',
+      expediente: '',
+      dataEnvio: '',
+      dataPublicacaoDOU: '',
+      numeroPublicacaoDOU: '',
+      numeroNotificacaoRegistro: '',
+      dataAlertaDisponibilizacao: '',
+      observacaoGeral: '',
+      
+      // Informações do Fabricante/Produto (defaults)
+      fabricante: '',
+      codigoProdutoFabricante: '',
+      nomeProdutoFabricante: '',
+      nomeDetentorNotificacao: '',
+      cnpjDetentor: '',
+      nomeProdutoBrasil: '',
+      nomeTecnicoAnvisa: '',
+      numeroRegistroAnvisa: '',
+      situacaoRegistro: '',
+      classificacaoRisco: '',
+      marca: '',
+      modelo: '',
+      linha: '',
+      apresentacaoPrimaria: '',
+      apresentacaoSecundaria: '',
+      apresentacaoTerciaria: '',
+      referenciasComercializadas: '',
+      nomeMarketing: '',
+      breveDescritivo: '',
+      descritivoCompleto: '',
+      tags: '',
+      linkConsultaAnvisa: '',
+      linkAnaliseConcorrencia: '',
+      linkFichaTecnica: '',
+      linkBancoImagens: '',
+      linkTreinamentoApresentacao: '',
+      linkTreinamentoCientifico: '',
+      linkTreinamentoManutencao: '',
+      
+      // Etapa 4: Disponibilização de Instrução de Uso (defaults)
+      disponibilizacaoInstrucaoUso: '',
+      transacaoInstrucao: '',
+      expedienteInstrucao: '',
+      dataEnvioInstrucao: '',
+      arquivoInstrucaoUso: undefined
     };
 
     onFinalizar(registroData);
