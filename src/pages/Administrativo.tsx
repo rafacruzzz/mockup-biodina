@@ -517,6 +517,49 @@ const Administrativo = () => {
     );
   };
 
+  const renderDueDiligenceTab = () => {
+    const triagensData = modules.due_diligence_fornecedor.subModules.triagens.data as any[];
+    
+    const handleViewTriagem = (triagem: any) => {
+      setSelectedTriagem(triagem);
+      setShowNovaTriagemModal(true);
+    };
+
+    const handleEditTriagem = (triagem: any) => {
+      setSelectedTriagem(triagem);
+      setShowNovaTriagemModal(true);
+    };
+
+    const handleDeleteTriagem = (id: number) => {
+      toast({
+        title: "Triagem excluída",
+        description: "A triagem foi excluída com sucesso.",
+      });
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold">Due Diligence - Fornecedor</h2>
+            <p className="text-muted-foreground">Gestão completa do processo de due diligence de fornecedores</p>
+          </div>
+          <Button onClick={() => setShowNovaTriagemModal(true)} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Nova Triagem
+          </Button>
+        </div>
+
+        <DueDiligenceTable
+          data={triagensData}
+          onView={handleViewTriagem}
+          onEdit={handleEditTriagem}
+          onDelete={handleDeleteTriagem}
+        />
+      </div>
+    );
+  };
+
   const renderEmptyTab = (titulo: string, descricao: string) => (
     <Card className="shadow-sm">
       <CardHeader>
@@ -697,6 +740,15 @@ const Administrativo = () => {
             description: `${atualizacao.nomeArquivoPrincipal} foi registrada no sistema.`,
           });
         }}
+      />
+
+      <NovaTriagemModal
+        open={showNovaTriagemModal}
+        onOpenChange={(open) => {
+          setShowNovaTriagemModal(open);
+          if (!open) setSelectedTriagem(null);
+        }}
+        editingData={selectedTriagem}
       />
     </SidebarLayout>
   );
