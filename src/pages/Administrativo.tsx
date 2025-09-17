@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import SidebarLayout from "@/components/SidebarLayout";
 import { 
   Shield, FileCheck, Building2, Scale, CheckCircle2, BookOpen, ArrowLeft,
-  BarChart3, FileText, RefreshCw, UserCheck, Route, Shield as ShieldIcon
+  BarChart3, FileText, RefreshCw, UserCheck, Route, Shield as ShieldIcon, Plus
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -13,10 +13,12 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
   PieChart, Pie, Cell, ResponsiveContainer 
 } from 'recharts';
+import { NovoRegistroAnvisaModal } from '@/components/administrativo/NovoRegistroAnvisaModal';
 
 const Administrativo = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'rt' | 'regulatorio' | 'institucional' | 'juridico' | 'compliance' | 'biblioteca'>('main');
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [showNovoRegistroModal, setShowNovoRegistroModal] = useState(false);
 
   const renderMainModules = () => (
     <div className="space-y-6">
@@ -219,7 +221,7 @@ const Administrativo = () => {
     const renderContent = () => {
       switch (activeTab) {
         case 'dashboard': return renderRegulatorioIndicadores();
-        case 'registro-produtos': return renderEmptyTab('REGISTRO DE PRODUTOS', 'Gestão de registros regulatórios de produtos');
+        case 'registro-produtos': return renderRegistroProdutosTab();
         case 'atualizacoes': return renderEmptyTab('ATUALIZAÇÕES DE PRODUTO', 'Controle de atualizações regulatórias');
         case 'due-diligence': return renderEmptyTab('DUE DILIGENCE - FORNECEDOR', 'Análise de conformidade de fornecedores');
         case 'rastreabilidade': return renderEmptyTab('RASTREABILIDADE', 'Sistema de rastreamento regulatório');
@@ -378,6 +380,48 @@ const Administrativo = () => {
         </CardContent>
       </Card>
     </div>
+  );
+
+  const renderRegistroProdutosTab = () => (
+    <Card className="shadow-sm">
+      <CardHeader>
+        <div className="flex justify-between items-center">
+          <CardTitle>REGISTRO DE PRODUTOS</CardTitle>
+          <Button 
+            onClick={() => setShowNovoRegistroModal(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Novo Registro
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {/* Explicação do processo */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h4 className="font-medium text-blue-900 mb-2">Como funciona o processo:</h4>
+            <ol className="text-sm text-blue-800 space-y-1">
+              <li>1. Selecione um produto cadastrado no sistema</li>
+              <li>2. Organize a documentação necessária para o registro</li>
+              <li>3. Anexe o protocolo de peticionamento obrigatório</li>
+              <li>4. Finalize e acompanhe o processo de registro</li>
+            </ol>
+          </div>
+
+          {/* Lista vazia por enquanto - será implementada futuramente */}
+          <div className="text-center py-8">
+            <div className="text-gray-400 mb-4">
+              <FileText className="h-16 w-16 mx-auto" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum registro iniciado</h3>
+            <p className="text-gray-600 max-w-md mx-auto">
+              Clique em "Novo Registro" para iniciar o processo de registro de um produto na ANVISA.
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 
   const renderEmptyTab = (titulo: string, descricao: string) => (
@@ -539,6 +583,11 @@ const Administrativo = () => {
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         {renderContent()}
       </div>
+      
+      <NovoRegistroAnvisaModal 
+        isOpen={showNovoRegistroModal}
+        onClose={() => setShowNovoRegistroModal(false)}
+      />
     </SidebarLayout>
   );
 };
