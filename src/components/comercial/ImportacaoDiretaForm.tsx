@@ -184,7 +184,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     { id: 'no', label: 'NO' },
     { id: 'ao-so', label: 'AO/SO' },
     { id: 'instrucao-embarque', label: 'INSTRUÇÃO DE EMBARQUE' },
-    { id: 'packing-list', label: 'PACKING LIST OU VALIDADES' },
+    { id: 'packing-list', label: 'PACKING LIST' },
     { id: 'ddr', label: 'DDR' },
     { id: 'gestao-emprestimos', label: 'GESTÃO DE EMPRÉSTIMOS' }
   ];

@@ -218,7 +218,7 @@ Documento gerado em: ${new Date().toLocaleString()}
                 Instrução de Embarque
               </TabsTrigger>
               <TabsTrigger value="packing-list" disabled={!pagamentoPago}>
-                Packing List ou Validades
+                Packing List
               </TabsTrigger>
               <TabsTrigger value="ddr" disabled={!liImportada}>
                 DDR
@@ -736,7 +736,7 @@ Documento gerado em: ${new Date().toLocaleString()}
 
             <TabsContent value="packing-list" className="space-y-6 mt-6">
               <div className="border p-4 rounded bg-purple-50">
-                <h3 className="font-bold mb-4 text-lg text-purple-700">Packing List ou Validades (Fábrica)</h3>
+                <h3 className="font-bold mb-4 text-lg text-purple-700">Packing List (Fábrica)</h3>
               </div>
 
               {/* Packing List Recebido */}

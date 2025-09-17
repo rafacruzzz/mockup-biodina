@@ -137,7 +137,7 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
 
   const handleReenviarPackingList = () => {
     setShowReenvioAlert(true);
-    console.log('Reenviando Packing List ou Validades (Fábrica)');
+    console.log('Reenviando Packing List (Fábrica)');
   };
 
   const handleReenvioAlertConfirm = () => {
@@ -149,7 +149,7 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
       data: new Date().toLocaleDateString('pt-BR'),
       hora: new Date().toLocaleTimeString('pt-BR'),
       usuario: 'Usuário Atual', // Em um sistema real, seria o usuário logado
-      acao: 'Reenvio de Packing List ou Validades (Fábrica)'
+      acao: 'Reenvio de Packing List (Fábrica)'
     };
     
     setHistoricoReenvios(prev => [novoHistorico, ...prev]);
@@ -164,20 +164,20 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
       <Card>
         <CardHeader className="text-center border-b">
           <CardTitle className="text-xl font-bold text-purple-600">
-            PACKING LIST OU VALIDADES
+            PACKING LIST
           </CardTitle>
         </CardHeader>
         
         <CardContent className="p-6">
           <Tabs defaultValue="principal" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="principal">PACKING LIST OU VALIDADES</TabsTrigger>
+              <TabsTrigger value="principal">PACKING LIST</TabsTrigger>
               <TabsTrigger value="historico">Histórico de PACKING List</TabsTrigger>
             </TabsList>
             
             <TabsContent value="principal" className="space-y-6 mt-6">
               <div className="border p-4 rounded bg-purple-50">
-                <h3 className="font-bold mb-4 text-lg text-purple-700">Packing List ou Validades (Fábrica)</h3>
+                <h3 className="font-bold mb-4 text-lg text-purple-700">Packing List (Fábrica)</h3>
               </div>
 
               {/* Packing List Recebido */}
@@ -355,7 +355,7 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
                                   className="bg-blue-600 text-white hover:bg-blue-700"
                                 >
                                   <RefreshCw className="h-4 w-4 mr-2" />
-                                  Reenviar Packing List ou Validades (Fábrica)
+                                  Reenviar Packing List (Fábrica)
                                 </Button>
                               </div>
                             )}
@@ -541,7 +541,7 @@ const PackingListForm = ({ formData, onInputChange }: PackingListFormProps) => {
       <CustomAlertModal
         isOpen={showReenvioAlert}
         title="Reenvio Confirmado"
-        message="Foi gerado um histórico da operação de reenvio do Packing List ou Validades (Fábrica)."
+        message="Foi gerado um histórico da operação de reenvio do Packing List (Fábrica)."
         onConfirm={handleReenvioAlertConfirm}
       />
     </div>
