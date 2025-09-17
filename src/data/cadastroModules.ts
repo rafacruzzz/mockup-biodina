@@ -325,20 +325,106 @@ export const modules: ModulesConfig = {
         data: [
           { 
             id: 1, 
-            nomeProduto: "Exemplo Produto 1", 
+            nomeProduto: "Analisador Bioquímico ABC-2000",
             processo: "25351.123456/2024-12",
             areaAnvisa: "produtos_saude",
-            status: "enviado",
-            dataEnvio: "2024-01-15" 
+            status: "aprovado",
+            dataEnvio: "2024-01-15",
+            dataPublicacaoDOU: "2024-03-10",
+            fabricante: "Abbott Laboratories",
+            nomeArquivoPrincipal: "Dossiê_ABC-2000.pdf"
           },
           { 
             id: 2, 
-            nomeProduto: "Exemplo Produto 2", 
+            nomeProduto: "Kit Teste Glicemia Pro",
             processo: "25351.654321/2024-13",
             areaAnvisa: "diagnostico_in_vitro",
             status: "publicado",
             dataEnvio: "2024-02-10",
-            publicacaoData: "2024-03-01"
+            dataPublicacaoDOU: "2024-03-01",
+            fabricante: "DiagnostiCorp",
+            nomeArquivoPrincipal: "Dossiê_Glicemia_Pro.pdf"
+          },
+          { 
+            id: 3, 
+            nomeProduto: "Monitor Cardíaco MC-500",
+            processo: "25351.789012/2024-14",
+            areaAnvisa: "produtos_saude",
+            status: "enviado",
+            dataEnvio: "2024-03-05",
+            fabricante: "CardioTech Medical",
+            nomeArquivoPrincipal: "Dossiê_MC-500.pdf"
+          },
+          { 
+            id: 4, 
+            nomeProduto: "Reagente Enzimático REZ-100",
+            processo: "25351.345678/2024-15",
+            areaAnvisa: "diagnostico_in_vitro",
+            status: "em_preparacao",
+            fabricante: "BioReagentes SA",
+            nomeArquivoPrincipal: "Dossiê_REZ-100.pdf"
+          },
+          { 
+            id: 5, 
+            nomeProduto: "Ventilador Pulmonar VP-2024",
+            processo: "25351.901234/2024-16",
+            areaAnvisa: "produtos_saude",
+            status: "rejeitado",
+            dataEnvio: "2024-01-20",
+            fabricante: "RespiraTech",
+            nomeArquivoPrincipal: "Dossiê_VP-2024.pdf"
+          },
+          { 
+            id: 6, 
+            nomeProduto: "Sistema de Imagem SI-X1",
+            processo: "25351.567890/2024-17",
+            areaAnvisa: "produtos_saude",
+            status: "aprovado",
+            dataEnvio: "2023-11-15",
+            dataPublicacaoDOU: "2024-02-05",
+            fabricante: "ImageMed Technologies",
+            nomeArquivoPrincipal: "Dossiê_SI-X1.pdf"
+          },
+          { 
+            id: 7, 
+            nomeProduto: "Kit Diagnóstico COVID-19",
+            processo: "25351.234567/2024-18",
+            areaAnvisa: "diagnostico_in_vitro",
+            status: "publicado",
+            dataEnvio: "2024-02-28",
+            dataPublicacaoDOU: "2024-04-15",
+            fabricante: "VirusDiag Corp",
+            nomeArquivoPrincipal: "Dossiê_COVID-19.pdf"
+          },
+          { 
+            id: 8, 
+            nomeProduto: "Desfibrilador Automático DEA-Pro",
+            processo: "25351.876543/2024-19",
+            areaAnvisa: "produtos_saude",
+            status: "enviado",
+            dataEnvio: "2024-03-12",
+            fabricante: "EmergencyMed Inc",
+            nomeArquivoPrincipal: "Dossiê_DEA-Pro.pdf"
+          },
+          { 
+            id: 9, 
+            nomeProduto: "Analisador Hematológico AH-3000",
+            processo: "25351.456789/2024-20",
+            areaAnvisa: "diagnostico_in_vitro",
+            status: "em_preparacao",
+            fabricante: "HematoLab Solutions",
+            nomeArquivoPrincipal: "Dossiê_AH-3000.pdf"
+          },
+          { 
+            id: 10, 
+            nomeProduto: "Mesa Cirúrgica Eletrônica MCE-2024",
+            processo: "25351.678901/2024-21",
+            areaAnvisa: "produtos_saude",
+            status: "aprovado",
+            dataEnvio: "2023-12-10",
+            dataPublicacaoDOU: "2024-01-25",
+            fabricante: "SurgiEquip Medical",
+            nomeArquivoPrincipal: "Dossiê_MCE-2024.pdf"
           }
         ]
       }

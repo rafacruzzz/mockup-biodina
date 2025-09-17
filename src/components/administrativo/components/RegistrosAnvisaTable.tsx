@@ -16,23 +16,26 @@ import {
   FileText,
   Calendar,
   Building,
-  AlertCircle 
+  AlertCircle,
+  Clock
 } from 'lucide-react';
 import { RegistroAnvisaCompleto } from '@/types/anvisaRegistro';
 import { toast } from 'sonner';
 
 interface RegistrosAnvisaTableProps {
-  registros: RegistroAnvisaCompleto[];
-  onEdit: (registro: RegistroAnvisaCompleto) => void;
-  onDelete: (id: string) => void;
-  onDuplicate: (registro: RegistroAnvisaCompleto) => void;
+  registros: any[];
+  onEdit: (registro: any) => void;
+  onDelete: (registroId: number) => void;
+  onDuplicate: (registro: any) => void;
+  onViewHistory?: (registro: any) => void;
 }
 
 export const RegistrosAnvisaTable = ({ 
   registros, 
   onEdit, 
   onDelete, 
-  onDuplicate 
+  onDuplicate,
+  onViewHistory 
 }: RegistrosAnvisaTableProps) => {
   const [busca, setBusca] = useState('');
   const [filtroStatus, setFiltroStatus] = useState('all');
@@ -387,6 +390,16 @@ export const RegistrosAnvisaTable = ({
                         >
                           <Download className="h-4 w-4" />
                         </Button>
+                        {onViewHistory && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onViewHistory(registro)}
+                            className="h-8 w-8 p-0"
+                          >
+                            <Clock className="h-4 w-4" />
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="sm"
