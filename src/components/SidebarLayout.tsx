@@ -29,7 +29,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
     { name: "Pessoal", path: "/pessoal", icon: <Users size={20} />, id: "pessoal" },
     { name: "BI", path: "/bi-geral", icon: <BarChart2 size={20} />, id: "bi" },
     { name: "Cadastro", path: "/cadastro", icon: <FileText size={20} />, id: "cadastro" },
-    { name: "Administrativo", path: "/controladoria", icon: <Database size={20} />, id: "administrativo" },
+    { name: "Administrativo", path: "/administrativo", icon: <Database size={20} />, id: "administrativo" },
     { name: "Comercial", path: "/comercial", icon: <Briefcase size={20} />, id: "comercial" },
     { name: "Estoque", path: "/estoque", icon: <Package size={20} />, id: "estoque" },
     { name: "Compras", path: "/compras", icon: <ShoppingCart size={20} />, id: "compras" },

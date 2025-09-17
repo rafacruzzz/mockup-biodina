@@ -15,6 +15,7 @@ import Estoque from "./pages/Estoque";
 import Financeiro from "./pages/Financeiro";
 import RH from "./pages/RH";
 import TI from "./pages/TI";
+import Administrativo from "./pages/Administrativo";
 import ProcessoRescisao from "./pages/ProcessoRescisao";
 import Solicitacoes from "./pages/Solicitacoes";
 import EditarPerfil from "./pages/EditarPerfil";
@@ -50,6 +51,7 @@ const App: React.FC = () => {
               <Route path="/compras" element={<Compras />} />
               <Route path="/estoque" element={<Estoque />} />
               <Route path="/financeiro" element={<Financeiro />} />
+              <Route path="/administrativo" element={<Administrativo />} />
         <Route path="/rh" element={<RH />} />
         <Route path="/ti" element={<TI />} />
         <Route path="/rh/rescisao/:colaboradorId" element={<ProcessoRescisao />} />
