@@ -3,11 +3,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import SidebarLayout from "@/components/SidebarLayout";
 import { 
-  Shield, FileCheck, Building2, Scale, CheckCircle2, BookOpen, ArrowLeft
+  Shield, FileCheck, Building2, Scale, CheckCircle2, BookOpen, ArrowLeft,
+  BarChart3, FileText, RefreshCw, UserCheck, Route, Shield as ShieldIcon
 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
+  PieChart, Pie, Cell, ResponsiveContainer 
+} from 'recharts';
 
 const Administrativo = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'rt' | 'regulatorio' | 'institucional' | 'juridico' | 'compliance' | 'biblioteca'>('main');
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   const renderMainModules = () => (
     <div className="space-y-6">
@@ -153,33 +162,241 @@ const Administrativo = () => {
     </div>
   );
 
-  const renderRegulatorioModule = () => (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <Button
-          variant="outline"
-          onClick={() => setActiveModule('main')}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Voltar
-        </Button>
-        <h2 className="text-2xl font-bold text-biodina-blue">Regulatório</h2>
+  // Dados mockados para o dashboard regulatório
+  const regulatorioData = {
+    indicadores: [
+      { label: 'Produtos Registrados', valor: 1247, variacao: '+12%', cor: 'text-green-600' },
+      { label: 'Conformidade Regulatória', valor: '94%', variacao: '+2%', cor: 'text-blue-600' },
+      { label: 'Pendências Ativas', valor: 23, variacao: '-8%', cor: 'text-orange-600' },
+      { label: 'Auditorias Realizadas', valor: 18, variacao: '+3%', cor: 'text-purple-600' }
+    ],
+    conformidadeData: [
+      { categoria: 'Registro ANVISA', conformes: 85, nao_conformes: 15 },
+      { categoria: 'Boas Práticas', conformes: 92, nao_conformes: 8 },
+      { categoria: 'Rastreabilidade', conformes: 88, nao_conformes: 12 },
+      { categoria: 'Qualidade', conformes: 95, nao_conformes: 5 },
+    ],
+    distribuicaoData: [
+      { name: 'Conformes', value: 75, fill: '#22c55e' },
+      { name: 'Pendentes', value: 18, fill: '#f59e0b' },
+      { name: 'Não Conformes', value: 7, fill: '#ef4444' }
+    ],
+    produtosPendentes: [
+      { produto: 'Equipamento Médico XYZ-100', registro: 'REG-2024-001', vencimento: '15/02/2025', dias: 25, status: 'Urgente' },
+      { produto: 'Dispositivo ABC-200', registro: 'REG-2024-002', vencimento: '28/03/2025', dias: 68, status: 'Atenção' },
+      { produto: 'Sistema Diagnóstico DEF-300', registro: 'REG-2024-003', vencimento: '10/04/2025', dias: 81, status: 'Normal' },
+      { produto: 'Analisador GHI-400', registro: 'REG-2024-004', vencimento: '22/05/2025', dias: 123, status: 'Normal' }
+    ]
+  };
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Urgente': return 'bg-red-500 text-white';
+      case 'Atenção': return 'bg-orange-500 text-white';
+      case 'Normal': return 'bg-green-500 text-white';
+      default: return 'bg-gray-500 text-white';
+    }
+  };
+
+  const renderRegulatorioModule = () => {
+    const tabs = [
+      { id: 'dashboard', label: 'DASHBOARD', icon: BarChart3 },
+      { id: 'registro-produtos', label: 'REGISTRO DE PRODUTOS', icon: FileText },
+      { id: 'atualizacoes', label: 'ATUALIZAÇÕES DE PRODUTO', icon: RefreshCw },
+      { id: 'due-diligence', label: 'DUE DILIGENCE - FORNECEDOR', icon: UserCheck },
+      { id: 'rastreabilidade', label: 'RASTREABILIDADE', icon: Route },
+      { id: 'boas-praticas', label: 'BOAS PRÁTICAS', icon: CheckCircle2 },
+      { id: 'controle-qualidade', label: 'CONTROLE DE QUALIDADE', icon: ShieldIcon },
+    ];
+
+    const renderContent = () => {
+      switch (activeTab) {
+        case 'dashboard': return renderRegulatorioIndicadores();
+        case 'registro-produtos': return renderEmptyTab('REGISTRO DE PRODUTOS', 'Gestão de registros regulatórios de produtos');
+        case 'atualizacoes': return renderEmptyTab('ATUALIZAÇÕES DE PRODUTO', 'Controle de atualizações regulatórias');
+        case 'due-diligence': return renderEmptyTab('DUE DILIGENCE - FORNECEDOR', 'Análise de conformidade de fornecedores');
+        case 'rastreabilidade': return renderEmptyTab('RASTREABILIDADE', 'Sistema de rastreamento regulatório');
+        case 'boas-praticas': return renderEmptyTab('BOAS PRÁTICAS', 'Gestão de boas práticas regulatórias');
+        case 'controle-qualidade': return renderEmptyTab('CONTROLE DE QUALIDADE', 'Controle e auditorias de qualidade');
+        default: return renderRegulatorioIndicadores();
+      }
+    };
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="outline" 
+            onClick={() => setActiveModule('main')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar
+          </Button>
+          <h1 className="text-2xl font-bold text-biodina-blue">Administrativo / Regulatório</h1>
+        </div>
+
+        <div className="border-b border-gray-200">
+          <nav className="flex space-x-8 overflow-x-auto">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm transition-colors whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? 'border-biodina-blue text-biodina-blue'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <tab.icon className="h-4 w-4" />
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+
+        <div className="space-y-4">
+          {renderContent()}
+        </div>
       </div>
-      
-      <Card>
+    );
+  };
+
+  const renderRegulatorioIndicadores = () => (
+    <div className="space-y-6">
+      {/* Cards de Indicadores */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {regulatorioData.indicadores.map((indicador, index) => (
+          <Card key={index} className="shadow-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between space-y-0 pb-2">
+                <h3 className="text-sm font-medium text-muted-foreground">{indicador.label}</h3>
+                <BarChart3 className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <div className="space-y-1">
+                <div className="text-2xl font-bold">{indicador.valor}</div>
+                <p className={`text-xs ${indicador.cor}`}>
+                  {indicador.variacao} em relação ao mês anterior
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Gráfico de Conformidade por Categoria */}
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle>Conformidade por Categoria</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={regulatorioData.conformidadeData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="categoria" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="conformes" fill="#22c55e" name="Conformes" />
+                <Bar dataKey="nao_conformes" fill="#ef4444" name="Não Conformes" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Gráfico de Distribuição Geral */}
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle>Distribuição de Situação Regulatória</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={regulatorioData.distribuicaoData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {regulatorioData.distribuicaoData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Tabela de Produtos com Vencimento Próximo */}
+      <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Módulo em Desenvolvimento</CardTitle>
+          <CardTitle>Produtos com Vencimento de Registro Próximo</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-600">
-            O módulo Regulatório está em desenvolvimento. 
-            Em breve você poderá gerenciar conformidade regulatória, 
-            documentação oficial e processos de aprovação.
-          </p>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-2 px-4 font-medium">Produto</th>
+                  <th className="text-left py-2 px-4 font-medium">Número do Registro</th>
+                  <th className="text-left py-2 px-4 font-medium">Data de Vencimento</th>
+                  <th className="text-left py-2 px-4 font-medium">Dias para Vencimento</th>
+                  <th className="text-left py-2 px-4 font-medium">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {regulatorioData.produtosPendentes.map((produto, index) => (
+                  <tr key={index} className="border-b hover:bg-gray-50">
+                    <td className="py-3 px-4">{produto.produto}</td>
+                    <td className="py-3 px-4 font-mono text-sm">{produto.registro}</td>
+                    <td className="py-3 px-4">{produto.vencimento}</td>
+                    <td className="py-3 px-4">{produto.dias} dias</td>
+                    <td className="py-3 px-4">
+                      <Badge className={getStatusColor(produto.status)}>
+                        {produto.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </CardContent>
       </Card>
     </div>
+  );
+
+  const renderEmptyTab = (titulo: string, descricao: string) => (
+    <Card className="shadow-sm">
+      <CardHeader>
+        <CardTitle>{titulo}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="text-center py-8">
+          <div className="text-gray-400 mb-4">
+            <FileCheck className="h-16 w-16 mx-auto" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{titulo}</h3>
+          <p className="text-gray-600 max-w-md mx-auto">
+            {descricao}. Esta funcionalidade está em desenvolvimento e em breve estará disponível.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 
   const renderInstitucionalModule = () => (
