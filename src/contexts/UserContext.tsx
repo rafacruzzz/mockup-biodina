@@ -5,12 +5,14 @@ import { ColaboradorData } from '@/types/colaborador';
 
 interface User {
   id: string;
-  nome: string;
+  name: string;
   email: string;
-  nomeUsuario: string;
-  fotoPerfil?: string;
+  username: string;
+  profilePicture?: string;
+  role: string;
   colaboradorId?: string;
-  colaboradorData: ColaboradorData;
+  fotoPerfil?: File;
+  colaboradorData?: ColaboradorData;
 }
 
 interface UserContextType {
@@ -33,32 +35,26 @@ interface UserProviderProps {
   children: ReactNode;
 }
 
-export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+export const UserProvider = ({ children }: UserProviderProps) => {
   const navigate = useNavigate();
-  
-  // Dados mockados completos do usuário logado
-  const [user, setUser] = useState<User>({
+  const [user, setUser] = useState<User | null>({
     id: '1',
-    nome: 'Danilo Silva',
+    name: 'Danilo Silva',
     email: 'danilo@tecnologiadc.com.br',
-    nomeUsuario: 'GERENCIADOR',
+    username: 'danilo.silva',
+    profilePicture: '/placeholder.svg',
+    role: 'Gerente de TI',
     colaboradorId: '1',
     fotoPerfil: undefined,
     colaboradorData: {
       dadosPessoais: {
         nome: 'Danilo Silva',
-        cpf: '123.456.789-00',
-        pis: '12345678901',
         idade: '35',
         dataNascimento: '1989-03-15',
         estadoCivil: 'Casado',
         nacionalidade: 'Brasileira',
         genero: 'masculino',
         etnia: 'branco',
-        rg: '1234567',
-        orgaoExpedidorRg: 'SSP',
-        ufEmissorRg: 'DF',
-        dataExpedicaoRg: '2010-01-15',
         naturalidade: 'Brasília-DF',
         nomeMae: 'Maria Silva Santos',
         nomePai: 'João Silva',
@@ -80,69 +76,63 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         funcao: 'Gerenciamento de TI',
         cargo: 'Gerente de TI',
         nivel: '4',
-        cbo: '142510',
+        cbo: '142115',
         compativelFuncao: true,
-        funcoesDesempenhadas: 'Gestão de equipe de desenvolvimento, planejamento de projetos de TI, supervisão de infraestrutura tecnológica, implementação de soluções de software.',
-        dataAdmissao: '2018-07-15',
-        dataCadastro: '2018-07-10',
-        tempoCasa: '6 anos e 5 meses',
-        ultimaPromocao: '2022-01-15',
+        funcoesDesempenhadas: 'Gestão completa da área de TI, incluindo infraestrutura, desenvolvimento e suporte',
+        dataAdmissao: '2020-01-15',
+        dataCadastro: '2020-01-15',
+        tempoCasa: '4 anos e 1 mês',
+        ultimaPromocao: '2022-06-15',
         previsaoFerias: '2024-12-15',
-        planoCarreira: 'Plano de Carreira - Gerência de TI',
-        sugestaoSalario: 'R$ 8.500,00',
-        breakdownSalarial: 'Salário base: R$ 7.000,00 + Nível 4: R$ 1.000,00 + Adicional gestão: R$ 500,00',
-        tipoUsuario: 'Funcionário',
-        sindicatoVinculado: 'SINTTEL-DF',
-        regimeTrabalho: 'Híbrido',
-        horarioTrabalho: '08:00 às 17:00',
-        cargaHorariaSemanal: '40',
-        origemContratacao: 'Indicação'
+        tipoUsuario: 'Gerente',
+        sindicatoVinculado: 'SINDPD',
+        regimeTrabalho: 'CLT',
+        horarioTrabalho: '8h às 17h',
+        cargaHorariaSemanal: '40h',
+        origemContratacao: 'Processo Seletivo'
       },
       dadosFinanceiros: {
-        salarioBase: '7000.00',
-        adicionalNivel: '1000.00',
+        salarioBase: '15000.00',
+        adicionalNivel: '1500.00',
         insalubridade: '0.00',
         sobreaviso: '500.00',
-        salarioBruto: '8500.00',
-        valorHoraTrabalhada: '48.30',
-        pisoSalarial: '6500.00',
-        mediaSalarial: '8200.00',
+        salarioBruto: '17000.00',
+        valorHoraTrabalhada: '96.15',
+        pisoSalarial: '12000.00',
+        mediaSalarial: '15500.00',
         dependentesIR: [
           {
             id: '1',
-            nome: 'Ana Silva',
+            nome: 'Ana Silva Santos',
             documento: '123.456.789-01',
-            idade: 8
+            idade: 9
           },
           {
             id: '2',
-            nome: 'Carlos Silva',
+            nome: 'Carlos Silva Santos',
             documento: '123.456.789-02',
-            idade: 12
+            idade: 13
           }
         ],
-        adiantamentoSalarial: true,
-        sugestaoSalario: 'R$ 8.500,00',
-        breakdownSalarial: 'Salário base: R$ 7.000,00 + Nível 4: R$ 1.000,00 + Adicional gestão: R$ 500,00',
-        planoCarreira: 'Plano de Carreira - Gerência de TI'
+        adiantamentoSalarial: true
       },
       dadosBancarios: {
-        banco: '001',
-        tipoConta: 'corrente',
-        agencia: '3285-4',
-        conta: '12345-6'
+        banco: '341 - Itaú',
+        tipoConta: 'Conta Corrente',
+        agencia: '1234',
+        conta: '56789-0'
       },
       formacaoEscolaridade: {
-        escolaridade: 'superior-completo',
+        escolaridade: 'Pós-graduação',
         possuiDiploma: true,
         curriculo: {
-          id: 'curriculo-1',
+          id: 'curr-1',
           nome: 'Curriculo_Danilo_Silva.pdf',
           tipo: 'application/pdf',
           tamanho: 2048000,
-          dataUpload: '2024-01-15',
+          dataUpload: '2024-01-10',
           categoria: 'curriculo',
-          observacoes: 'admissao',
+          observacoes: 'Currículo atualizado com últimas experiências',
           arquivo: null,
           validadeIndeterminada: true
         },
@@ -171,10 +161,22 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           }
         ]
       },
+      documentacao: {
+        cpf: '123.456.789-00',
+        pis: '12345678901',
+        rg: '1234567',
+        orgaoExpedidorRg: 'SSP',
+        ufEmissorRg: 'DF',
+        dataExpedicaoRg: '2010-01-15',
+        anexos: [],
+        solicitadoParaDPEm: '',
+        solicitadoPor: '',
+        motivoContratacao: '',
+        observacoesGerais: ''
+      },
       beneficios: {
         tipoPlano: 'premium',
         quantidadeDependentesPlano: '2',
-        
         valeTransporte: {
           modalidade: 'banco',
           dataSolicitacaoCartao: '2024-01-10',
@@ -206,48 +208,19 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           ]
         }
       },
-      documentacao: {
-        anexos: [
-          {
-            id: '1',
-            nome: 'RG_Frente_Verso.pdf',
-            tipo: 'application/pdf',
-            tamanho: 1024000,
-            dataUpload: '2024-01-15',
-            categoria: 'RG',
-            observacoes: 'RG válido em todo território nacional',
-            arquivo: null,
-            dataValidade: '2029-01-15',
-            validadeIndeterminada: false
-          },
-          {
-            id: '2',
-            nome: 'CPF.pdf',
-            tipo: 'application/pdf',
-            tamanho: 512000,
-            dataUpload: '2024-01-15',
-            categoria: 'CPF',
-            observacoes: 'Documento atualizado',
-            arquivo: null,
-            dataValidade: undefined,
-            validadeIndeterminada: true
-          }
-        ],
-        solicitadoParaDPEm: '2024-01-20',
-        solicitadoPor: 'Maria Silva Santos',
-        motivoContratacao: 'Contratação para suprir demanda crescente do setor',
-        observacoesGerais: 'Colaborador com experiência prévia na área',
-        exameAdmissional: {
-          data: '2024-01-25',
-          local: 'Clínica Ocupacional São Paulo',
-          horario: '14:00'
-        }
+      dadosTI: {
+        servidorAcesso: '',
+        permissoesNecessarias: '',
+        restricoes: '',
+        pastasAcesso: '',
+        emailCorporativo: 'danilo@tecnologiadc.com.br',
+        ramal: '2001'
       }
     }
   });
 
   const updateUser = (userData: Partial<User>) => {
-    setUser(prev => prev ? { ...prev, ...userData } : null);
+    setUser(prevUser => prevUser ? { ...prevUser, ...userData } : null);
     toast({
       title: "Perfil atualizado",
       description: "Suas informações foram atualizadas com sucesso.",
@@ -269,3 +242,5 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     </UserContext.Provider>
   );
 };
+
+export default UserProvider;

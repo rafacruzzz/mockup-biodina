@@ -56,18 +56,12 @@ const ColaboradorModal = ({
   }>({
     dadosPessoais: {
       nome: colaboradorData?.dadosPessoais?.nome || '',
-      cpf: colaboradorData?.dadosPessoais?.cpf || '',
-      pis: colaboradorData?.dadosPessoais?.pis || '',
       idade: colaboradorData?.dadosPessoais?.idade || '',
       dataNascimento: colaboradorData?.dadosPessoais?.dataNascimento || '',
       estadoCivil: colaboradorData?.dadosPessoais?.estadoCivil || '',
       nacionalidade: colaboradorData?.dadosPessoais?.nacionalidade || '',
       genero: colaboradorData?.dadosPessoais?.genero || '',
       etnia: colaboradorData?.dadosPessoais?.etnia || '',
-      rg: colaboradorData?.dadosPessoais?.rg || '',
-      orgaoExpedidorRg: colaboradorData?.dadosPessoais?.orgaoExpedidorRg || '',
-      ufEmissorRg: colaboradorData?.dadosPessoais?.ufEmissorRg || '',
-      dataExpedicaoRg: colaboradorData?.dadosPessoais?.dataExpedicaoRg || '',
       naturalidade: colaboradorData?.dadosPessoais?.naturalidade || '',
       nomeMae: colaboradorData?.dadosPessoais?.nomeMae || '',
       nomePai: colaboradorData?.dadosPessoais?.nomePai || '',
@@ -151,6 +145,12 @@ const ColaboradorModal = ({
       }
     },
     documentacao: {
+      cpf: colaboradorData?.documentacao?.cpf || '',
+      pis: colaboradorData?.documentacao?.pis || '',
+      rg: colaboradorData?.documentacao?.rg || '',
+      orgaoExpedidorRg: colaboradorData?.documentacao?.orgaoExpedidorRg || '',
+      ufEmissorRg: colaboradorData?.documentacao?.ufEmissorRg || '',
+      dataExpedicaoRg: colaboradorData?.documentacao?.dataExpedicaoRg || '',
       anexos: colaboradorData?.documentacao?.anexos || [],
       solicitadoParaDPEm: colaboradorData?.documentacao?.solicitadoParaDPEm || '',
       solicitadoPor: colaboradorData?.documentacao?.solicitadoPor || '',

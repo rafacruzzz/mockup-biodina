@@ -1,4 +1,3 @@
-
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -50,11 +49,6 @@ const DadosPessoaisTab = ({ formData, onInputChange }: DadosPessoaisTabProps) =>
     { value: 'nao-informado', label: 'Não informado' }
   ];
 
-  const ufs = [
-    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 
-    'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
-  ];
-
   // Calculate age automatically when date of birth changes
   useEffect(() => {
     if (formData.dataNascimento) {
@@ -100,26 +94,6 @@ const DadosPessoaisTab = ({ formData, onInputChange }: DadosPessoaisTabProps) =>
               value={formData.nome}
               onChange={(e) => onInputChange('nome', e.target.value)}
               placeholder="Digite o nome completo"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="cpf">CPF *</Label>
-            <Input
-              id="cpf"
-              value={formData.cpf}
-              onChange={(e) => onInputChange('cpf', e.target.value)}
-              placeholder="000.000.000-00"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="pis">PIS</Label>
-            <Input
-              id="pis"
-              value={formData.pis}
-              onChange={(e) => onInputChange('pis', e.target.value)}
-              placeholder="Digite o PIS"
             />
           </div>
 
@@ -202,59 +176,6 @@ const DadosPessoaisTab = ({ formData, onInputChange }: DadosPessoaisTabProps) =>
                 ))}
               </SelectContent>
             </Select>
-          </div>
-        </div>
-      </div>
-
-      {/* Documentação */}
-      <div className="space-y-4">
-        <h3 className="font-semibold text-gray-900 border-b pb-2">Documentação</h3>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="rg">RG</Label>
-            <Input
-              id="rg"
-              value={formData.rg}
-              onChange={(e) => onInputChange('rg', e.target.value)}
-              placeholder="Digite o RG"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="orgaoExpedidorRg">Órgão Expedidor do RG</Label>
-            <Input
-              id="orgaoExpedidorRg"
-              value={formData.orgaoExpedidorRg}
-              onChange={(e) => onInputChange('orgaoExpedidorRg', e.target.value)}
-              placeholder="Ex: SSP, PC, PM"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="ufEmissorRg">UF Emissor do RG</Label>
-            <Select value={formData.ufEmissorRg} onValueChange={(value) => onInputChange('ufEmissorRg', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione a UF" />
-              </SelectTrigger>
-              <SelectContent>
-                {ufs.map((uf) => (
-                  <SelectItem key={uf} value={uf}>
-                    {uf}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="dataExpedicaoRg">Data de Expedição do RG</Label>
-            <Input
-              id="dataExpedicaoRg"
-              type="date"
-              value={formData.dataExpedicaoRg}
-              onChange={(e) => onInputChange('dataExpedicaoRg', e.target.value)}
-            />
           </div>
 
           <div className="space-y-2">

@@ -154,8 +154,92 @@ const DocumentacaoTab = ({ formData, onInputChange, colaboradorData }: Documenta
                        formData.solicitadoPor && 
                        formData.motivoContratacao;
 
+  const ufs = [
+    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 
+    'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+  ];
+
   return (
     <div className="space-y-6">
+      {/* Dados Documentais */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Dados Documentais
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="cpf">CPF *</Label>
+              <Input
+                id="cpf"
+                value={formData.cpf || ''}
+                onChange={(e) => onInputChange('cpf', e.target.value)}
+                placeholder="000.000.000-00"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="pis">PIS</Label>
+              <Input
+                id="pis"
+                value={formData.pis || ''}
+                onChange={(e) => onInputChange('pis', e.target.value)}
+                placeholder="Digite o PIS"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="rg">RG</Label>
+              <Input
+                id="rg"
+                value={formData.rg || ''}
+                onChange={(e) => onInputChange('rg', e.target.value)}
+                placeholder="Digite o RG"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="orgaoExpedidorRg">Órgão Expedidor do RG</Label>
+              <Input
+                id="orgaoExpedidorRg"
+                value={formData.orgaoExpedidorRg || ''}
+                onChange={(e) => onInputChange('orgaoExpedidorRg', e.target.value)}
+                placeholder="Ex: SSP, PC, PM"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="ufEmissorRg">UF Emissor do RG</Label>
+              <Select value={formData.ufEmissorRg || ''} onValueChange={(value) => onInputChange('ufEmissorRg', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione a UF" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ufs.map((uf) => (
+                    <SelectItem key={uf} value={uf}>
+                      {uf}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="dataExpedicaoRg">Data de Expedição do RG</Label>
+              <Input
+                id="dataExpedicaoRg"
+                type="date"
+                value={formData.dataExpedicaoRg || ''}
+                onChange={(e) => onInputChange('dataExpedicaoRg', e.target.value)}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Informações para DP */}
       <Card>
         <CardHeader>

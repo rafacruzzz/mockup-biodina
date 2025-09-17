@@ -14,18 +14,12 @@ export interface DependentePlanoSaude {
 
 export interface DadosPessoais {
   nome: string;
-  cpf: string;
-  pis: string;
   idade: string;
   dataNascimento: string;
   estadoCivil: string;
   nacionalidade: string;
   genero: string;
   etnia: string;
-  rg: string;
-  orgaoExpedidorRg: string;
-  ufEmissorRg: string;
-  dataExpedicaoRg: string;
   naturalidade: string;
   nomeMae: string;
   nomePai: string;
@@ -152,6 +146,12 @@ export interface ExameAdmissional {
 }
 
 export interface Documentacao {
+  cpf?: string;
+  pis?: string;
+  rg?: string;
+  orgaoExpedidorRg?: string;
+  ufEmissorRg?: string;
+  dataExpedicaoRg?: string;
   anexos: DocumentoAnexo[];
   solicitadoParaDPEm?: string;
   solicitadoPor?: string;
