@@ -16,9 +16,9 @@ interface NovoRegistroAnvisaModalProps {
 export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaModalProps) => {
   const [busca, setBusca] = useState('');
   const [filtros, setFiltros] = useState({
-    familiaProduto: '',
-    marca: '',
-    areaAnvisa: ''
+    familiaProduto: 'all',
+    marca: 'all',
+    areaAnvisa: 'all'
   });
 
   // Obter dados dos produtos do cadastro
@@ -37,17 +37,17 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaM
       if (!matchBusca) return false;
 
       // Filtro de família de produto
-      if (filtros.familiaProduto && produto.familiaProduto !== filtros.familiaProduto) {
+      if (filtros.familiaProduto && filtros.familiaProduto !== 'all' && produto.familiaProduto !== filtros.familiaProduto) {
         return false;
       }
 
       // Filtro de marca
-      if (filtros.marca && produto.marca !== filtros.marca) {
+      if (filtros.marca && filtros.marca !== 'all' && produto.marca !== filtros.marca) {
         return false;
       }
 
       // Filtro de área ANVISA
-      if (filtros.areaAnvisa && produto.areaAnvisa !== filtros.areaAnvisa) {
+      if (filtros.areaAnvisa && filtros.areaAnvisa !== 'all' && produto.areaAnvisa !== filtros.areaAnvisa) {
         return false;
       }
 
@@ -71,9 +71,9 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaM
   const limparFiltros = () => {
     setBusca('');
     setFiltros({
-      familiaProduto: '',
-      marca: '',
-      areaAnvisa: ''
+      familiaProduto: 'all',
+      marca: 'all',
+      areaAnvisa: 'all'
     });
   };
 
@@ -132,7 +132,7 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaM
                   <SelectValue placeholder="Selecionar" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas as famílias</SelectItem>
+                  <SelectItem value="all">Todas as famílias</SelectItem>
                   {familiasProdutos.map(familia => (
                     <SelectItem key={familia} value={familia}>{familia}</SelectItem>
                   ))}
@@ -150,7 +150,7 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaM
                   <SelectValue placeholder="Selecionar" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas as marcas</SelectItem>
+                  <SelectItem value="all">Todas as marcas</SelectItem>
                   {marcas.map(marca => (
                     <SelectItem key={marca} value={marca}>{marca}</SelectItem>
                   ))}
@@ -168,7 +168,7 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaM
                   <SelectValue placeholder="Selecionar" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas as áreas</SelectItem>
+                  <SelectItem value="all">Todas as áreas</SelectItem>
                   <SelectItem value="produtos_saude">Produtos para Saúde</SelectItem>
                   <SelectItem value="diagnostico_in_vitro">Diagnóstico In Vitro</SelectItem>
                 </SelectContent>
