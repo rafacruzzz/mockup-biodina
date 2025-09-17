@@ -3,6 +3,9 @@ export interface DependenteIR {
   nome: string;
   documento: string;
   idade: number;
+  grauParentesco: string;
+  rg: string;
+  dataNascimento: string;
 }
 
 export interface DependentePlanoSaude {
@@ -88,6 +91,13 @@ export interface DadosBancarios {
   tipoConta: string;
   agencia: string;
   conta: string;
+  contaPF_PJ: string;
+  chavePix: string;
+  // Dados bancários secundários (opcional)
+  bancoSecundario?: string;
+  tipoContaSecundario?: string;
+  agenciaSecundario?: string;
+  contaSecundario?: string;
 }
 
 export interface FormacaoEscolaridade {

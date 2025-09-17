@@ -105,13 +105,19 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             id: '1',
             nome: 'Ana Silva Santos',
             documento: '123.456.789-01',
-            idade: 9
+            idade: 9,
+            grauParentesco: 'Filha',
+            rg: '12.345.678-9',
+            dataNascimento: '2015-03-15'
           },
           {
             id: '2',
             nome: 'Carlos Silva Santos',
             documento: '123.456.789-02',
-            idade: 13
+            idade: 13,
+            grauParentesco: 'Filho',
+            rg: '98.765.432-1',
+            dataNascimento: '2011-08-20'
           }
         ],
         adiantamentoSalarial: true
@@ -120,7 +126,13 @@ export const UserProvider = ({ children }: UserProviderProps) => {
         banco: '341 - Itaú',
         tipoConta: 'Conta Corrente',
         agencia: '1234',
-        conta: '56789-0'
+        conta: '56789-0',
+        contaPF_PJ: 'pf',
+        chavePix: 'danilo@email.com',
+        bancoSecundario: '',
+        tipoContaSecundario: '',
+        agenciaSecundario: '',
+        contaSecundario: ''
       },
       formacaoEscolaridade: {
         escolaridade: 'Pós-graduação',

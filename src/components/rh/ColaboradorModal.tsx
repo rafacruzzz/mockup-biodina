@@ -115,7 +115,13 @@ const ColaboradorModal = ({
       banco: colaboradorData?.dadosBancarios?.banco || '',
       tipoConta: colaboradorData?.dadosBancarios?.tipoConta || '',
       agencia: colaboradorData?.dadosBancarios?.agencia || '',
-      conta: colaboradorData?.dadosBancarios?.conta || ''
+      conta: colaboradorData?.dadosBancarios?.conta || '',
+      contaPF_PJ: colaboradorData?.dadosBancarios?.contaPF_PJ || '',
+      chavePix: colaboradorData?.dadosBancarios?.chavePix || '',
+      bancoSecundario: colaboradorData?.dadosBancarios?.bancoSecundario || '',
+      tipoContaSecundario: colaboradorData?.dadosBancarios?.tipoContaSecundario || '',
+      agenciaSecundario: colaboradorData?.dadosBancarios?.agenciaSecundario || '',
+      contaSecundario: colaboradorData?.dadosBancarios?.contaSecundario || ''
     },
     formacaoEscolaridade: {
       escolaridade: colaboradorData?.formacaoEscolaridade?.escolaridade || '',

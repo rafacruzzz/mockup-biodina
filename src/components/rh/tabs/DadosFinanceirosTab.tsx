@@ -22,7 +22,10 @@ const DadosFinanceirosTab = ({ formData, onInputChange }: DadosFinanceirosTabPro
       id: Date.now().toString(),
       nome: '',
       documento: '',
-      idade: 0
+      idade: 0,
+      grauParentesco: '',
+      rg: '',
+      dataNascimento: ''
     };
     const novosDependentes = [...formData.dependentesIR, novoDependente];
     onInputChange('dependentesIR', novosDependentes);
@@ -242,7 +245,7 @@ const DadosFinanceirosTab = ({ formData, onInputChange }: DadosFinanceirosTabPro
                     </Button>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     <div className="space-y-2">
                       <Label htmlFor={`nome-${dependente.id}`}>Nome Completo</Label>
                       <Input
@@ -254,12 +257,42 @@ const DadosFinanceirosTab = ({ formData, onInputChange }: DadosFinanceirosTabPro
                     </div>
                     
                     <div className="space-y-2">
+                      <Label htmlFor={`grauParentesco-${dependente.id}`}>Grau de Parentesco</Label>
+                      <Input
+                        id={`grauParentesco-${dependente.id}`}
+                        value={dependente.grauParentesco}
+                        onChange={(e) => handleDependenteChange(dependente.id, 'grauParentesco', e.target.value)}
+                        placeholder="Ex: Filho(a), Cônjuge"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
                       <Label htmlFor={`documento-${dependente.id}`}>CPF</Label>
                       <Input
                         id={`documento-${dependente.id}`}
                         value={dependente.documento}
                         onChange={(e) => handleDependenteChange(dependente.id, 'documento', e.target.value)}
                         placeholder="000.000.000-00"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor={`rg-${dependente.id}`}>RG</Label>
+                      <Input
+                        id={`rg-${dependente.id}`}
+                        value={dependente.rg}
+                        onChange={(e) => handleDependenteChange(dependente.id, 'rg', e.target.value)}
+                        placeholder="00.000.000-0"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor={`dataNascimento-${dependente.id}`}>Data de Nascimento</Label>
+                      <Input
+                        id={`dataNascimento-${dependente.id}`}
+                        type="date"
+                        value={dependente.dataNascimento}
+                        onChange={(e) => handleDependenteChange(dependente.id, 'dataNascimento', e.target.value)}
                       />
                     </div>
                     
