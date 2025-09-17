@@ -93,7 +93,7 @@ export interface AdmissaoFields {
   tipo_contratacao: 'CLT' | 'Estágio' | 'Jovem Aprendiz' | 'PJ' | 'Autônomo';
   modelo_trabalho: 'Presencial' | 'Híbrido' | 'Remoto';
   carga_horaria: string;
-  justificativa_vaga: 'substituição' | 'expansão' | 'outro';
+  justificativa_vaga: 'Substituição' | 'Expansão' | 'Outro';
   departamento: string;
   data_admissao: string;
   gestor_responsavel: string;

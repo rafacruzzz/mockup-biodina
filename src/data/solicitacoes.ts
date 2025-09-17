@@ -91,10 +91,20 @@ export const tiposSolicitacao: TipoSolicitacao[] = [
       { id: 'nome_candidato', label: 'Nome do Candidato', tipo: 'text', obrigatorio: true },
       { id: 'cargo', label: 'Cargo', tipo: 'text', obrigatorio: true },
       { id: 'salario', label: 'Salário', tipo: 'text', obrigatorio: true },
+      { id: 'nivel', label: 'Nível', tipo: 'select', obrigatorio: true, opcoes: ['Júnior', 'Pleno', 'Sênior', 'Especialista'] },
+      { id: 'beneficios', label: 'Benefícios', tipo: 'textarea', obrigatorio: true },
+      { id: 'tipo_contratacao', label: 'Tipo de Contratação', tipo: 'select', obrigatorio: true, opcoes: ['CLT', 'Estágio', 'Jovem Aprendiz', 'PJ', 'Autônomo'] },
+      { id: 'modelo_trabalho', label: 'Modelo de Trabalho', tipo: 'select', obrigatorio: true, opcoes: ['Presencial', 'Híbrido', 'Remoto'] },
+      { id: 'carga_horaria', label: 'Carga Horária', tipo: 'text', obrigatorio: true },
+      { id: 'justificativa_vaga', label: 'Justificativa da Vaga', tipo: 'select', obrigatorio: true, opcoes: ['Substituição', 'Expansão', 'Outro'] },
       { id: 'departamento', label: 'Departamento', tipo: 'select', obrigatorio: true, opcoes: ['TI', 'Comercial', 'Financeiro', 'Administrativo'] },
       { id: 'data_admissao', label: 'Data de Admissão', tipo: 'date', obrigatorio: true },
+      { id: 'gestor_responsavel', label: 'Gestor Responsável', tipo: 'text', obrigatorio: true },
+      { id: 'anexar_documentos', label: 'Anexar documentos recebidos do candidato?', tipo: 'checkbox', obrigatorio: false },
       { id: 'telefone_contato', label: 'Telefone para Contato', tipo: 'text', obrigatorio: true },
-      { id: 'email_contato', label: 'Email para Contato', tipo: 'text', obrigatorio: true }
+      { id: 'email_contato', label: 'Email para Contato', tipo: 'text', obrigatorio: true },
+      { id: 'aprovacao_gestor', label: 'Aprovação (Gestor/Diretoria)', tipo: 'checkbox', obrigatorio: true },
+      { id: 'observacoes', label: 'Observações Adicionais', tipo: 'textarea', obrigatorio: false }
     ]
   },
   {
