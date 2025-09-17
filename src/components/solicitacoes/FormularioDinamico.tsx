@@ -19,9 +19,7 @@ interface FormularioDinamicoProps {
 const FormularioDinamico = ({ tipoSolicitacao, onSubmit }: FormularioDinamicoProps) => {
   const { user } = useUser();
   const [dadosFormulario, setDadosFormulario] = useState<Record<string, any>>({
-    // Campos comuns
-    assunto: '',
-    descricao: '',
+    // Campo comum
     expectativa_conclusao: ''
   });
 
@@ -39,7 +37,7 @@ const FormularioDinamico = ({ tipoSolicitacao, onSubmit }: FormularioDinamicoPro
     const camposObrigatorios = tipoSolicitacao.campos.filter(c => c.obrigatorio);
     const camposFaltando = camposObrigatorios.filter(c => !dadosFormulario[c.id]);
     
-    if (camposFaltando.length > 0 || !dadosFormulario.assunto || !dadosFormulario.descricao) {
+    if (camposFaltando.length > 0) {
       alert('Por favor, preencha todos os campos obrigatórios');
       return;
     }
@@ -160,28 +158,6 @@ const FormularioDinamico = ({ tipoSolicitacao, onSubmit }: FormularioDinamicoPro
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="assunto">Assunto *</Label>
-            <Input
-              id="assunto"
-              value={dadosFormulario.assunto}
-              onChange={(e) => handleInputChange('assunto', e.target.value)}
-              placeholder="Resumo da sua solicitação"
-              required
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="descricao">Descrição da Solicitação *</Label>
-            <Textarea
-              id="descricao"
-              value={dadosFormulario.descricao}
-              onChange={(e) => handleInputChange('descricao', e.target.value)}
-              placeholder="Descreva detalhadamente sua solicitação"
-              rows={4}
-              required
-            />
-          </div>
 
           <div className="space-y-2">
             <Label htmlFor="expectativa">Expectativa de Conclusão</Label>

@@ -66,11 +66,18 @@ export const tiposSolicitacao: TipoSolicitacao[] = [
       { id: 'departamento_solicitante', label: 'Departamento Solicitante', tipo: 'select', obrigatorio: true, opcoes: ['TI', 'Comercial', 'Financeiro', 'Administrativo'] },
       { id: 'cargo_requisitado', label: 'Cargo Requisitado', tipo: 'text', obrigatorio: true },
       { id: 'salario', label: 'Salário', tipo: 'text', obrigatorio: true },
+      { id: 'nivel', label: 'Nível', tipo: 'select', obrigatorio: true, opcoes: ['Júnior', 'Pleno', 'Sênior', 'Especialista'] },
+      { id: 'beneficios', label: 'Benefícios', tipo: 'textarea', obrigatorio: true },
       { id: 'tipo_contratacao', label: 'Tipo de Contratação', tipo: 'select', obrigatorio: true, opcoes: ['CLT', 'Estágio', 'Jovem Aprendiz', 'PJ', 'Autônomo'] },
       { id: 'modelo_trabalho', label: 'Modelo de Trabalho', tipo: 'select', obrigatorio: true, opcoes: ['Presencial', 'Híbrido', 'Remoto'] },
+      { id: 'carga_horaria', label: 'Carga Horária', tipo: 'text', obrigatorio: true },
+      { id: 'justificativa_vaga', label: 'Justificativa da Vaga', tipo: 'select', obrigatorio: true, opcoes: ['Substituição', 'Expansão', 'Outro'] },
       { id: 'quantidade_vagas', label: 'Quantidade de Vagas', tipo: 'number', obrigatorio: true },
       { id: 'perfil_desejado', label: 'Perfil Desejado', tipo: 'textarea', obrigatorio: true },
-      { id: 'data_inicio_prevista', label: 'Data Prevista de Início', tipo: 'date', obrigatorio: true }
+      { id: 'responsavel_vaga', label: 'Responsável pela Vaga', tipo: 'text', obrigatorio: true },
+      { id: 'responsavel_area_entrevista', label: 'Responsável da Área pela Entrevista', tipo: 'text', obrigatorio: true },
+      { id: 'data_inicio_prevista', label: 'Data Prevista de Início', tipo: 'date', obrigatorio: true },
+      { id: 'aprovacao_gestor_diretoria', label: 'Aprovação (Gestor/Diretoria)', tipo: 'checkbox', obrigatorio: true }
     ]
   },
   {

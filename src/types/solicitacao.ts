@@ -75,13 +75,13 @@ export interface ProcessoSeletivoFields {
   tipo_contratacao: 'CLT' | 'Estágio' | 'Jovem Aprendiz' | 'PJ' | 'Autônomo';
   modelo_trabalho: 'Presencial' | 'Híbrido' | 'Remoto';
   carga_horaria: string;
-  justificativa_vaga: 'substituição' | 'expansão' | 'outro';
+  justificativa_vaga: 'Substituição' | 'Expansão' | 'Outro';
   quantidade_vagas: number;
   perfil_desejado: string;
   responsavel_vaga: string;
-  responsavel_entrevista: string;
+  responsavel_area_entrevista: string;
   data_inicio_prevista: string;
-  aprovacao_gestor: boolean;
+  aprovacao_gestor_diretoria: boolean;
 }
 
 export interface AdmissaoFields {
