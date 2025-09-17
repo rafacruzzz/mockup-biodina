@@ -124,6 +124,136 @@ export const tiposSolicitacao: TipoSolicitacao[] = [
       { id: 'observacoes', label: 'Observações', tipo: 'textarea', obrigatorio: false }
     ]
   },
+  {
+    id: 'promocao',
+    nome: 'Requisição de Promoção',
+    setorId: 'rh',
+    descricao: 'Solicitação de promoção de colaborador',
+    requer_aprovacao: true,
+    prazo_padrao_dias: 45,
+    campos: [
+      { id: 'nome_colaborador', label: 'Nome do Colaborador', tipo: 'text', obrigatorio: true },
+      { id: 'cargo_atual', label: 'Cargo Atual', tipo: 'text', obrigatorio: true },
+      { id: 'novo_cargo', label: 'Novo Cargo', tipo: 'text', obrigatorio: true },
+      { id: 'departamento_atual', label: 'Departamento Atual', tipo: 'select', obrigatorio: true, opcoes: ['Administrativo', 'Comercial', 'Financeiro', 'RH', 'TI', 'Operacional'] },
+      { id: 'novo_departamento', label: 'Novo Departamento', tipo: 'select', obrigatorio: true, opcoes: ['Administrativo', 'Comercial', 'Financeiro', 'RH', 'TI', 'Operacional'] },
+      { id: 'data_efetivacao_desejada', label: 'Data de Efetivação Desejada', tipo: 'date', obrigatorio: true },
+      { id: 'motivo_promocao', label: 'Motivo da Promoção', tipo: 'textarea', obrigatorio: true },
+      { id: 'novo_salario_nivel', label: 'Novo Salário/Incluir Nível', tipo: 'text', obrigatorio: true },
+      { id: 'aprovacao_diretoria', label: 'Aprovação da Diretoria', tipo: 'checkbox', obrigatorio: false },
+      { id: 'observacoes', label: 'Observações', tipo: 'textarea', obrigatorio: false }
+    ]
+  },
+  {
+    id: 'alteracao-endereco',
+    nome: 'Requisição para Alteração de Endereço',
+    setorId: 'rh',
+    descricao: 'Atualização de endereço do colaborador',
+    requer_aprovacao: false,
+    prazo_padrao_dias: 7,
+    campos: [
+      { id: 'nome_colaborador', label: 'Nome do Colaborador', tipo: 'text', obrigatorio: true },
+      { id: 'novo_endereco_completo', label: 'Novo Endereço Completo', tipo: 'textarea', obrigatorio: true },
+      { id: 'comprovante_residencia_anexo', label: 'Comprovante de Residência em Anexo', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] }
+    ]
+  },
+  {
+    id: 'licencas',
+    nome: 'Requisição Licenças (Maternidade/Paternidade/Afastamentos)',
+    setorId: 'rh',
+    descricao: 'Comunicação de licença',
+    requer_aprovacao: true,
+    prazo_padrao_dias: 15,
+    campos: [
+      { id: 'nome_colaborador', label: 'Nome do Colaborador', tipo: 'text', obrigatorio: true },
+      { id: 'tipo_licenca', label: 'Tipo de Licença', tipo: 'select', obrigatorio: true, opcoes: ['Maternidade', 'Paternidade', 'Saúde', 'Outros'] },
+      { id: 'data_inicio_prevista', label: 'Data de Início Prevista ou Afastamento Médico', tipo: 'date', obrigatorio: true },
+      { id: 'data_termino_estimado', label: 'Data de Término (se estimado)', tipo: 'date', obrigatorio: false },
+      { id: 'atestado_documento_anexo', label: 'Atestado / Documento Anexo', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] },
+      { id: 'atestado_sistema_ponto', label: 'Atestado / Documento Anexo no Sistema de Ponto', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] },
+      { id: 'observacoes', label: 'Observações', tipo: 'textarea', obrigatorio: false }
+    ]
+  },
+  {
+    id: 'inclusao-dependente-ir',
+    nome: 'Requisição Inclusão de Dependente — Imposto de Renda',
+    setorId: 'rh',
+    descricao: 'Inclusão de dependente no IR',
+    requer_aprovacao: false,
+    prazo_padrao_dias: 10,
+    campos: [
+      { id: 'nome_colaborador', label: 'Nome do Colaborador', tipo: 'text', obrigatorio: true },
+      { id: 'cpf_colaborador', label: 'CPF', tipo: 'text', obrigatorio: true },
+      { id: 'nome_dependente', label: 'Nome do Dependente', tipo: 'text', obrigatorio: true },
+      { id: 'parentesco', label: 'Parentesco', tipo: 'select', obrigatorio: true, opcoes: ['Filho(a)', 'Cônjuge', 'Companheiro(a)', 'Pai/Mãe', 'Outros'] },
+      { id: 'data_nascimento_dependente', label: 'Data de Nascimento', tipo: 'date', obrigatorio: true },
+      { id: 'documentos_enviados', label: 'Documentos Enviados (RG/CPF/Certidão)', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] }
+    ]
+  },
+  {
+    id: 'inclusao-dependente-plano',
+    nome: 'Requisição Inclusão de Dependente — Plano de Saúde',
+    setorId: 'rh',
+    descricao: 'Solicitação de inclusão de dependente no plano',
+    requer_aprovacao: true,
+    prazo_padrao_dias: 15,
+    campos: [
+      { id: 'nome_colaborador', label: 'Nome do Colaborador', tipo: 'text', obrigatorio: true },
+      { id: 'plano_atual', label: 'Plano Atual', tipo: 'text', obrigatorio: true },
+      { id: 'nome_dependente', label: 'Nome do Dependente', tipo: 'text', obrigatorio: true },
+      { id: 'grau_parentesco', label: 'Grau de Parentesco', tipo: 'select', obrigatorio: true, opcoes: ['Filho(a)', 'Cônjuge', 'Companheiro(a)', 'Pai/Mãe', 'Outros'] },
+      { id: 'data_nascimento_dependente', label: 'Data de Nascimento', tipo: 'date', obrigatorio: true },
+      { id: 'documentos_anexados', label: 'Documentos Necessários Anexados (RG/CPF/Certidão de Nascimento)', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] },
+      { id: 'tabela_valores_dependentes', label: 'Anexar Tabela de Valores dos Dependentes', tipo: 'file', obrigatorio: false },
+      { id: 'observacoes', label: 'Observações', tipo: 'textarea', obrigatorio: false }
+    ]
+  },
+  {
+    id: 'ponto-eletronico',
+    nome: 'Solicitações — Ponto Eletrônico',
+    setorId: 'rh',
+    descricao: 'Ajuste de ponto eletrônico',
+    requer_aprovacao: true,
+    prazo_padrao_dias: 7,
+    campos: [
+      { id: 'nome_colaborador', label: 'Nome do Colaborador', tipo: 'text', obrigatorio: true },
+      { id: 'matricula', label: 'Matrícula', tipo: 'text', obrigatorio: true },
+      { id: 'datas_referentes', label: 'Data(s) Referente(s)', tipo: 'text', obrigatorio: true },
+      { id: 'tipo_solicitacao', label: 'Tipo de Solicitação', tipo: 'checkbox', obrigatorio: true, opcoes: ['Atestado médico', 'Esquecimento de marcação', 'Compensação de horas', 'Erro no sistema', 'Ajuste banco de horas'] },
+      { id: 'descricao_justificativa', label: 'Descrição / Justificativa', tipo: 'textarea', obrigatorio: true },
+      { id: 'documento_comprobatorio', label: 'Documento Comprobatório Anexo (se houver)', tipo: 'radio', obrigatorio: false, opcoes: ['Sim', 'Não'] }
+    ]
+  },
+  {
+    id: 'solicitacoes-gerais',
+    nome: 'Demais Solicitações / Dúvidas / Sugestões ao RH',
+    setorId: 'rh',
+    descricao: 'Solicitação geral ao RH',
+    requer_aprovacao: false,
+    prazo_padrao_dias: 10,
+    campos: [
+      { id: 'nome_colaborador', label: 'Nome do Colaborador', tipo: 'text', obrigatorio: true },
+      { id: 'departamento', label: 'Departamento', tipo: 'select', obrigatorio: true, opcoes: ['Administrativo', 'Comercial', 'Financeiro', 'RH', 'TI', 'Operacional'] },
+      { id: 'tipo_solicitacao', label: 'Tipo de Solicitação', tipo: 'text', obrigatorio: true },
+      { id: 'descricao_detalhada', label: 'Descrição Detalhada', tipo: 'textarea', obrigatorio: true },
+      { id: 'data_solicitacao', label: 'Data', tipo: 'date', obrigatorio: true },
+      { id: 'anexos_necessarios', label: 'Anexos (se necessário)', tipo: 'radio', obrigatorio: false, opcoes: ['Sim', 'Não'] }
+    ]
+  },
+  {
+    id: 'evolucao',
+    nome: 'Requisição de Evolução',
+    setorId: 'rh',
+    descricao: 'Solicitação de evolução',
+    requer_aprovacao: true,
+    prazo_padrao_dias: 30,
+    campos: [
+      { id: 'nome_colaborador', label: 'Nome do Colaborador', tipo: 'text', obrigatorio: true },
+      { id: 'departamento_atual', label: 'Departamento Atual', tipo: 'select', obrigatorio: true, opcoes: ['Administrativo', 'Comercial', 'Financeiro', 'RH', 'TI', 'Operacional'] },
+      { id: 'motivo_solicitacao', label: 'Motivo da Solicitação', tipo: 'textarea', obrigatorio: true },
+      { id: 'periodo_evolucao', label: 'Período da Evolução', tipo: 'text', obrigatorio: true }
+    ]
+  },
   // TI
   {
     id: 'acesso-sistema',

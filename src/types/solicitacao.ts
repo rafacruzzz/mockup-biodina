@@ -114,6 +114,80 @@ export interface FeriasFields {
   observacoes: string;
 }
 
+export interface PromocaoFields {
+  nome_colaborador: string;
+  cargo_atual: string;
+  novo_cargo: string;
+  departamento_atual: string;
+  novo_departamento: string;
+  data_efetivacao_desejada: string;
+  motivo_promocao: string;
+  novo_salario_nivel: string;
+  aprovacao_diretoria: boolean;
+  observacoes: string;
+}
+
+export interface AlteracaoEnderecoFields {
+  nome_colaborador: string;
+  novo_endereco_completo: string;
+  comprovante_residencia_anexo: 'Sim' | 'Não';
+}
+
+export interface LicencasFields {
+  nome_colaborador: string;
+  tipo_licenca: 'Maternidade' | 'Paternidade' | 'Saúde' | 'Outros';
+  data_inicio_prevista: string;
+  data_termino_estimado?: string;
+  atestado_documento_anexo: 'Sim' | 'Não';
+  atestado_sistema_ponto: 'Sim' | 'Não';
+  observacoes: string;
+}
+
+export interface InclusaoDependenteIRFields {
+  nome_colaborador: string;
+  cpf_colaborador: string;
+  nome_dependente: string;
+  parentesco: string;
+  data_nascimento_dependente: string;
+  documentos_enviados: 'Sim' | 'Não';
+}
+
+export interface InclusaoDependentePlanoFields {
+  nome_colaborador: string;
+  plano_atual: string;
+  nome_dependente: string;
+  grau_parentesco: string;
+  data_nascimento_dependente: string;
+  documentos_anexados: 'Sim' | 'Não';
+  tabela_valores_dependentes?: string;
+  observacoes: string;
+}
+
+export interface PontoEletronicoFields {
+  nome_colaborador: string;
+  matricula: string;
+  datas_referentes: string;
+  tipo_solicitacao: string[]; // Array para múltiplos checkboxes
+  descricao_justificativa: string;
+  documento_comprobatorio?: 'Sim' | 'Não';
+}
+
+export interface SolicitacoesGeraisFields {
+  nome_colaborador: string;
+  departamento: string;
+  tipo_solicitacao: string;
+  descricao_detalhada: string;
+  data_solicitacao: string;
+  anexos_necessarios?: 'Sim' | 'Não';
+}
+
+export interface EvolucaoFields {
+  nome_colaborador: string;
+  departamento_atual: string;
+  motivo_solicitacao: string;
+  periodo_evolucao: string;
+}
+
 export type StatusSolicitacaoAlteracao = 'pendente' | 'em-analise' | 'aprovada' | 'rejeitada';
 
 export interface SolicitacaoAlteracao {

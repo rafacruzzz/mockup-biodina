@@ -103,6 +103,34 @@ const FormularioDinamico = ({ tipoSolicitacao, onSubmit }: FormularioDinamicoPro
         );
 
       case 'checkbox':
+        // Para campos com múltiplas opções (como tipo_solicitacao no ponto eletrônico)
+        if (campo.opcoes && campo.opcoes.length > 1) {
+          return (
+            <div className="space-y-2">
+              {campo.opcoes.map((opcao: string) => (
+                <div key={opcao} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`${campo.id}-${opcao}`}
+                    checked={Array.isArray(value) ? value.includes(opcao) : false}
+                    onCheckedChange={(checked) => {
+                      const currentArray = Array.isArray(value) ? value : [];
+                      if (checked) {
+                        handleInputChange(campo.id, [...currentArray, opcao]);
+                      } else {
+                        handleInputChange(campo.id, currentArray.filter(item => item !== opcao));
+                      }
+                    }}
+                  />
+                  <Label htmlFor={`${campo.id}-${opcao}`} className="text-sm font-normal">
+                    {opcao}
+                  </Label>
+                </div>
+              ))}
+            </div>
+          );
+        }
+        
+        // Para checkbox simples (boolean)
         return (
           <div className="flex items-center space-x-2">
             <Checkbox
