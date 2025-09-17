@@ -5,13 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { Search, Package, FileText, Building, CheckCircle, ArrowLeft } from "lucide-react";
+import { Search, Package, FileText, Building, CheckCircle, ArrowLeft, Plus } from "lucide-react";
 import { modules } from "@/data/cadastroModules";
 import { toast } from "sonner";
 import { EtapaRegistro, RegistroAnvisaData } from "@/types/anvisaRegistro";
+import { ProductRegistrationData } from "@/types/product";
 import { OrganizacaoDocumentosStep } from "./components/OrganizacaoDocumentosStep";
 import { InformacoesRegulatoriosStep } from "./components/InformacoesRegulatoriosStep";
 import { DisponibilizacaoInstrucaoStep } from "./components/DisponibilizacaoInstrucaoStep";
+import ProductRegistrationForm from "../product/ProductRegistrationForm";
 
 interface NovoRegistroAnvisaModalProps {
   isOpen: boolean;
@@ -29,9 +31,55 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose, onRegistroSalvo }: No
     marca: 'all',
     areaAnvisa: 'all'
   });
+  
+  // Estados para modal de produto
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [isProdutoRecemCriado, setIsProdutoRecemCriado] = useState<number | null>(null);
+  const [produtos, setProdutos] = useState(modules.produtos.subModules.produtos.data);
 
-  // Obter dados dos produtos do cadastro
-  const produtos = modules.produtos.subModules.produtos.data;
+  // Handlers para modal de produto
+  const handleAbrirCadastroProduto = () => {
+    setIsProductModalOpen(true);
+  };
+
+  const handleFecharModalProduto = () => {
+    setIsProductModalOpen(false);
+  };
+
+  const handleSalvarNovoProduto = (produto: ProductRegistrationData) => {
+    // Converter dados do produto para formato esperado pela lista ANVISA
+    const novoId = Math.max(...produtos.map(p => p.id)) + 1; // Próximo ID disponível
+    
+    const produtoFormatado = {
+      id: novoId,
+      codigo: produto.codigo,
+      referencia: produto.codigoProdutoFabricante || produto.codigo,
+      nome: produto.descritivoBreve || produto.descricao,
+      descricao: produto.descritivoCompleto || produto.descricao,
+      familiaProduto: produto.familiaProduto,
+      marca: produto.marca,
+      modelo: produto.modelo,
+      fabricante: produto.nomeProdutoFabricante || '',
+      areaAnvisa: produto.areaAnvisa || 'produtos_saude'
+    };
+
+    // Adicionar produto à lista
+    setProdutos(prev => [produtoFormatado, ...prev]);
+    
+    // Marcar como recém-criado
+    setIsProdutoRecemCriado(produtoFormatado.id);
+    
+    // Selecionar automaticamente
+    setProdutoSelecionado(produtoFormatado);
+    setRegistroData(prev => ({ ...prev, produtoSelecionado: produtoFormatado }));
+    
+    // Fechar modal e mostrar toast
+    setIsProductModalOpen(false);
+    toast.success(`Produto "${produtoFormatado.nome}" cadastrado e selecionado com sucesso!`);
+    
+    // Remover destaque após 5 segundos
+    setTimeout(() => setIsProdutoRecemCriado(null), 5000);
+  };
 
   const aplicarFiltros = () => {
     return produtos.filter(produto => {
@@ -129,6 +177,8 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose, onRegistroSalvo }: No
       marca: 'all',
       areaAnvisa: 'all'
     });
+    setIsProductModalOpen(false);
+    setIsProdutoRecemCriado(null);
     onClose();
   };
 
@@ -300,17 +350,33 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose, onRegistroSalvo }: No
               </div>
             </div>
 
-            {/* Contador de Resultados */}
+            {/* Contador de Resultados e Botão Cadastrar Produto */}
             <div className="flex justify-between items-center">
               <div className="text-sm text-gray-600">
                 {produtosFiltrados.length} produto{produtosFiltrados.length !== 1 ? 's' : ''} encontrado{produtosFiltrados.length !== 1 ? 's' : ''}
               </div>
+              <Button 
+                onClick={handleAbrirCadastroProduto}
+                className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Cadastrar Novo Produto
+              </Button>
             </div>
 
             {/* Lista de Produtos */}
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {produtosFiltrados.map((produto) => (
-                <div key={produto.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                <div 
+                  key={produto.id} 
+                  className={`border rounded-lg p-4 transition-colors ${
+                    isProdutoRecemCriado === produto.id 
+                      ? 'border-green-500 bg-green-50 shadow-lg' 
+                      : produtoSelecionado?.id === produto.id 
+                        ? 'border-blue-500 bg-blue-50' 
+                        : 'hover:bg-gray-50 border-gray-200'
+                  }`}
+                >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       {/* Header do Produto */}
@@ -324,6 +390,11 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose, onRegistroSalvo }: No
                         <Badge className={getAreaAnvisaBadgeColor(produto.areaAnvisa)}>
                           {getAreaAnvisaLabel(produto.areaAnvisa)}
                         </Badge>
+                        {isProdutoRecemCriado === produto.id && (
+                          <Badge className="bg-green-100 text-green-800 animate-pulse">
+                            NOVO
+                          </Badge>
+                        )}
                       </div>
 
                       {/* Nome e Descrição */}
@@ -395,6 +466,14 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose, onRegistroSalvo }: No
             onSalvarRegistro={handleSalvarRegistroFinal}
           />
         )}
+
+        {/* Modal de Cadastro de Produto */}
+        <ProductRegistrationForm
+          isOpen={isProductModalOpen}
+          product={null}
+          onClose={handleFecharModalProduto}
+          onSave={handleSalvarNovoProduto}
+        />
       </DialogContent>
     </Dialog>
   );
