@@ -161,16 +161,16 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
         {/* Conteúdo com scroll */}
         <div className="flex-1 overflow-y-auto p-6">
           <Tabs defaultValue="dados-gerais" className="w-full">
-            <TabsList className="grid w-full grid-cols-9 mb-6">
-              <TabsTrigger value="dados-gerais" className="text-xs">Dados Gerais</TabsTrigger>
-              <TabsTrigger value="regulamentacao-anvisa" className="text-xs">Regulamentação ANVISA</TabsTrigger>
-              <TabsTrigger value="apresentacoes" className="text-xs">Apresentações</TabsTrigger>
-              <TabsTrigger value="codigos-fiscais" className="text-xs">Códigos Fiscais</TabsTrigger>
-              <TabsTrigger value="preco-estoque" className="text-xs">Preço e Estoque</TabsTrigger>
-              <TabsTrigger value="dimensoes-peso" className="text-xs">Dimensões e Peso</TabsTrigger>
-              <TabsTrigger value="documentacao-links" className="text-xs">Documentação e Links</TabsTrigger>
-              <TabsTrigger value="logistica-comercial" className="text-xs">Logística e Comercial</TabsTrigger>
-              <TabsTrigger value="auditoria" className="text-xs">Auditoria</TabsTrigger>
+            <TabsList className="flex flex-wrap w-full gap-1 p-1 mb-6 h-auto">
+              <TabsTrigger value="dados-gerais" className="text-xs flex-1 min-w-fit px-2 py-1.5">Dados Gerais</TabsTrigger>
+              <TabsTrigger value="regulamentacao-anvisa" className="text-xs flex-1 min-w-fit px-2 py-1.5">Regulamentação ANVISA</TabsTrigger>
+              <TabsTrigger value="apresentacoes" className="text-xs flex-1 min-w-fit px-2 py-1.5">Apresentações</TabsTrigger>
+              <TabsTrigger value="codigos-fiscais" className="text-xs flex-1 min-w-fit px-2 py-1.5">Códigos Fiscais</TabsTrigger>
+              <TabsTrigger value="preco-estoque" className="text-xs flex-1 min-w-fit px-2 py-1.5">Preço e Estoque</TabsTrigger>
+              <TabsTrigger value="dimensoes-peso" className="text-xs flex-1 min-w-fit px-2 py-1.5">Dimensões e Peso</TabsTrigger>
+              <TabsTrigger value="documentacao-links" className="text-xs flex-1 min-w-fit px-2 py-1.5">Documentação e Links</TabsTrigger>
+              <TabsTrigger value="logistica-comercial" className="text-xs flex-1 min-w-fit px-2 py-1.5">Logística e Comercial</TabsTrigger>
+              <TabsTrigger value="auditoria" className="text-xs flex-1 min-w-fit px-2 py-1.5">Auditoria</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dados-gerais">
