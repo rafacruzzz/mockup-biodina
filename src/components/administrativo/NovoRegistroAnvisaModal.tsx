@@ -10,15 +10,19 @@ import { modules } from "@/data/cadastroModules";
 import { toast } from "sonner";
 import { EtapaRegistro, RegistroAnvisaData } from "@/types/anvisaRegistro";
 import { OrganizacaoDocumentosStep } from "./components/OrganizacaoDocumentosStep";
+import { InformacoesRegulatoriosStep } from "./components/InformacoesRegulatoriosStep";
+import { DisponibilizacaoInstrucaoStep } from "./components/DisponibilizacaoInstrucaoStep";
 
 interface NovoRegistroAnvisaModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onRegistroSalvo?: (registro: RegistroAnvisaData) => void;
 }
 
-export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaModalProps) => {
+export const NovoRegistroAnvisaModal = ({ isOpen, onClose, onRegistroSalvo }: NovoRegistroAnvisaModalProps) => {
   const [etapa, setEtapa] = useState<EtapaRegistro>('selecao_produto');
   const [produtoSelecionado, setProdutoSelecionado] = useState<any>(null);
+  const [registroData, setRegistroData] = useState<RegistroAnvisaData>({} as RegistroAnvisaData);
   const [busca, setBusca] = useState('');
   const [filtros, setFiltros] = useState({
     familiaProduto: 'all',
@@ -68,6 +72,7 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaM
 
   const handleSelecionarProduto = (produto: any) => {
     setProdutoSelecionado(produto);
+    setRegistroData(prev => ({ ...prev, produtoSelecionado: produto }));
     setEtapa('organizacao_documentos');
     toast.success(`Produto "${produto.nome}" selecionado para registro ANVISA`);
   };
@@ -75,32 +80,49 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaM
   const handleVoltarParaSelecao = () => {
     setEtapa('selecao_produto');
     setProdutoSelecionado(null);
+    setRegistroData({} as RegistroAnvisaData);
   };
 
-  const handleFinalizarRegistro = (data: RegistroAnvisaData) => {
-    // Aqui você pode processar os dados do registro
-    console.log('Registro ANVISA finalizado:', data);
+  const handleVoltarParaDocumentos = () => {
+    setEtapa('organizacao_documentos');
+  };
+
+  const handleVoltarParaRegulatorios = () => {
+    setEtapa('informacoes_regulatorias');
+  };
+
+  const handleFinalizarDocumentos = (data: RegistroAnvisaData) => {
+    setRegistroData(data);
+    setEtapa('informacoes_regulatorias');
+    toast.success('Documentos organizados com sucesso!');
+  };
+
+  const handleProximaEtapaRegulatorios = (data: RegistroAnvisaData) => {
+    setRegistroData(data);
+    setEtapa('disponibilizacao_instrucao');
+    toast.success('Informações regulatórias salvas!');
+  };
+
+  const handleSalvarRegistroFinal = (data: RegistroAnvisaData) => {
+    setRegistroData(data);
+    
+    // Callback para o componente pai
+    if (onRegistroSalvo) {
+      onRegistroSalvo(data);
+    }
     
     toast.success('Registro ANVISA criado com sucesso!', {
-      description: `${data.nomeArquivoPrincipal} - ${data.estruturaArquivos.length} pasta(s) organizadas`
+      description: `${data.nomeArquivoPrincipal} foi registrado e está disponível na tabela.`
     });
     
     // Reset do modal
-    setEtapa('selecao_produto');
-    setProdutoSelecionado(null);
-    setBusca('');
-    setFiltros({
-      familiaProduto: 'all',
-      marca: 'all',
-      areaAnvisa: 'all'
-    });
-    
-    onClose();
+    handleFecharModal();
   };
 
   const handleFecharModal = () => {
     setEtapa('selecao_produto');
     setProdutoSelecionado(null);
+    setRegistroData({} as RegistroAnvisaData);
     setBusca('');
     setFiltros({
       familiaProduto: 'all',
@@ -135,9 +157,19 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaM
     }
   };
 
+  const getBreadcrumbTitle = () => {
+    switch (etapa) {
+      case 'selecao_produto': return 'Novo Registro ANVISA - Selecionar Produto';
+      case 'organizacao_documentos': return 'Novo Registro ANVISA - Organizar Documentos';
+      case 'informacoes_regulatorias': return 'Novo Registro ANVISA - Informações Regulatórias';
+      case 'disponibilizacao_instrucao': return 'Novo Registro ANVISA - Disponibilização de Instrução de Uso';
+      default: return 'Novo Registro ANVISA';
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={handleFecharModal}>
-      <DialogContent className={`max-h-[90vh] overflow-y-auto ${etapa === 'organizacao_documentos' ? 'max-w-6xl' : 'max-w-5xl'}`}>
+      <DialogContent className={`max-h-[90vh] overflow-y-auto ${etapa !== 'selecao_produto' ? 'max-w-6xl' : 'max-w-5xl'}`}>
         <DialogHeader>
           <div className="space-y-3">
             {/* Breadcrumb Navigation */}
@@ -153,8 +185,28 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaM
                 </BreadcrumbItem>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
-                  <BreadcrumbPage className={etapa === 'organizacao_documentos' ? 'text-primary font-medium' : 'text-muted-foreground'}>
+                  <button 
+                    onClick={handleVoltarParaDocumentos}
+                    disabled={etapa === 'selecao_produto'}
+                    className={`hover:text-primary ${etapa === 'organizacao_documentos' ? 'text-primary font-medium' : 'text-muted-foreground'} disabled:cursor-not-allowed`}
+                  >
                     Organizar Documentos
+                  </button>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <button 
+                    onClick={handleVoltarParaRegulatorios}
+                    disabled={etapa === 'selecao_produto' || etapa === 'organizacao_documentos'}
+                    className={`hover:text-primary ${etapa === 'informacoes_regulatorias' ? 'text-primary font-medium' : 'text-muted-foreground'} disabled:cursor-not-allowed`}
+                  >
+                    Informações Regulatórias
+                  </button>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className={etapa === 'disponibilizacao_instrucao' ? 'text-primary font-medium' : 'text-muted-foreground'}>
+                    Disponibilização de Instrução
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
@@ -162,10 +214,7 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaM
 
             <DialogTitle className="flex items-center gap-2">
               <FileText className="h-5 w-5 text-blue-600" />
-              {etapa === 'selecao_produto' 
-                ? 'Novo Registro ANVISA - Selecionar Produto'
-                : 'Novo Registro ANVISA - Organizar Documentos'
-              }
+              {getBreadcrumbTitle()}
             </DialogTitle>
           </div>
         </DialogHeader>
@@ -325,11 +374,25 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose }: NovoRegistroAnvisaM
               )}
             </div>
           </div>
-        ) : (
+        ) : etapa === 'organizacao_documentos' ? (
           <OrganizacaoDocumentosStep
             produtoSelecionado={produtoSelecionado}
             onVoltar={handleVoltarParaSelecao}
-            onFinalizar={handleFinalizarRegistro}
+            onFinalizar={handleFinalizarDocumentos}
+          />
+        ) : etapa === 'informacoes_regulatorias' ? (
+          <InformacoesRegulatoriosStep
+            produtoSelecionado={produtoSelecionado}
+            registroData={registroData}
+            onVoltar={handleVoltarParaDocumentos}
+            onProximaEtapa={handleProximaEtapaRegulatorios}
+          />
+        ) : (
+          <DisponibilizacaoInstrucaoStep
+            produtoSelecionado={produtoSelecionado}
+            registroData={registroData}
+            onVoltar={handleVoltarParaRegulatorios}
+            onSalvarRegistro={handleSalvarRegistroFinal}
           />
         )}
       </DialogContent>
