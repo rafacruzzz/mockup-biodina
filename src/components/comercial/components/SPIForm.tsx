@@ -6,14 +6,21 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import SPIProductsTable from './SPIProductsTable';
+import PIHistorySection from './PIHistorySection';
 import { formatUSD, calcularSubtotal, calcularPacking, calcularTotal } from '../utils/spiUtils';
+import { PIHistoryItem, PIStatus } from '@/types/piHistory';
 
 interface SPIFormProps {
   formData: any;
   onInputChange: (field: string, value: any) => void;
+  piHistory: PIHistoryItem[];
+  piStatus: PIStatus;
+  onPIStatusChange: (historyId: string, newStatus: 'aceito' | 'rejeitado', observacoes?: string) => void;
 }
 
-const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
+const SPIForm = ({ formData, onInputChange, piHistory, piStatus, onPIStatusChange }: SPIFormProps) => {
+  const isFieldsLocked = piStatus === 'aceito' || piStatus === 'em_analise';
+  
   return (
     <div className="space-y-6">
       {/* Cabeçalho */}
@@ -39,6 +46,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiCliente', e.target.value)}
                 placeholder="Nome do cliente"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
             
@@ -50,6 +58,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiDadosProforma', e.target.value)}
                 placeholder="Dados da proforma"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
             
@@ -61,6 +70,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiEmNomeDe', e.target.value)}
                 placeholder="Em nome de"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
             
@@ -72,6 +82,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiCnpj', e.target.value)}
                 placeholder="XX.XXX.XXX/XXXX-XX"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
             
@@ -83,6 +94,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiEndereco', e.target.value)}
                 placeholder="Endereço completo"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
             
@@ -94,6 +106,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiInscricaoEstadual', e.target.value)}
                 placeholder="Inscrição estadual"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
           </div>
@@ -112,6 +125,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiNumero', e.target.value)}
                 placeholder="Gerado automaticamente"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
             
@@ -123,6 +137,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 value={formData.spiData}
                 onChange={(e) => onInputChange('spiData', e.target.value)}
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
             
@@ -134,6 +149,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiProposta', e.target.value)}
                 placeholder="Número da proposta"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
             
@@ -145,6 +161,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiEquipamento', e.target.value)}
                 placeholder="Nome do equipamento"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
             
@@ -156,6 +173,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiModelo', e.target.value)}
                 placeholder="Modelo do equipamento"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
             
@@ -168,6 +186,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiPacking', e.target.value)}
                 placeholder="0"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
           </div>
@@ -186,6 +205,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiFabricante', e.target.value)}
                 placeholder="Nome do fabricante"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
             
@@ -197,6 +217,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 onChange={(e) => onInputChange('spiFormaPagamento', e.target.value)}
                 placeholder="CAD"
                 className="w-full"
+                disabled={isFieldsLocked}
               />
             </div>
             
@@ -206,6 +227,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                   id="spiTemComissao" 
                   checked={formData.spiTemComissao}
                   onCheckedChange={(checked) => onInputChange('spiTemComissao', checked)}
+                  disabled={isFieldsLocked}
                 />
                 <Label htmlFor="spiTemComissao">Há comissão para o Representante?</Label>
               </div>
@@ -221,6 +243,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                       onChange={(e) => onInputChange('spiPercentualComissao', e.target.value)}
                       placeholder="0"
                       className="w-full"
+                      disabled={isFieldsLocked}
                     />
                   </div>
                   <div>
@@ -231,6 +254,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                       onChange={(e) => onInputChange('spiRepresentante', e.target.value)}
                       placeholder="Nome do representante"
                       className="w-full"
+                      disabled={isFieldsLocked}
                     />
                   </div>
                 </div>
@@ -287,6 +311,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
               placeholder="Proforma solicitada pelo cliente dia [data] as [hora], verificar o desconto de [%] na proforma geral e conforme e-mail [data] as [hora]."
               rows={4}
               className="w-full"
+              disabled={isFieldsLocked}
             />
           </div>
 
@@ -300,6 +325,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                   id="spiFaturamentoConfirmado" 
                   checked={formData.spiFaturamentoConfirmado}
                   onCheckedChange={(checked) => onInputChange('spiFaturamentoConfirmado', checked)}
+                  disabled={isFieldsLocked}
                 />
                 <Label htmlFor="spiFaturamentoConfirmado">FATURAMENTO: Está confirmado?</Label>
               </div>
@@ -349,6 +375,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                     value="licitacao"
                     checked={formData.spiFormaVenda === 'licitacao'}
                     onChange={(e) => onInputChange('spiFormaVenda', e.target.value)}
+                    disabled={isFieldsLocked}
                   />
                   <Label htmlFor="licitacao">Licitação</Label>
                 </div>
@@ -360,6 +387,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                     value="venda_direta"
                     checked={formData.spiFormaVenda === 'venda_direta'}
                     onChange={(e) => onInputChange('spiFormaVenda', e.target.value)}
+                    disabled={isFieldsLocked}
                   />
                   <Label htmlFor="vendaDireta">Venda Direta</Label>
                 </div>
@@ -371,6 +399,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                     value="outros"
                     checked={formData.spiFormaVenda === 'outros'}
                     onChange={(e) => onInputChange('spiFormaVenda', e.target.value)}
+                    disabled={isFieldsLocked}
                   />
                   <Label htmlFor="outros">Outros</Label>
                 </div>
@@ -434,6 +463,7 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
                 <Select
                   value={formData.spiClienteAprovacao}
                   onValueChange={(value) => onInputChange('spiClienteAprovacao', value)}
+                  disabled={isFieldsLocked}
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione uma opção" />
@@ -447,6 +477,12 @@ const SPIForm = ({ formData, onInputChange }: SPIFormProps) => {
               </div>
             </div>
           </div>
+
+          {/* Histórico de PI */}
+          <PIHistorySection 
+            piHistory={piHistory}
+            onPIStatusChange={onPIStatusChange}
+          />
         </CardContent>
       </Card>
     </div>

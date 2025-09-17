@@ -9,9 +9,10 @@ import PackingListForm from './components/PackingListForm';
 import DDRForm from './components/DDRForm';
 import OVCForm from './components/OVCForm';
 import ComercialTabs from './components/ComercialTabs';
-import SPIDownloadModal from './components/SPIDownloadModal';
+import SPIEnvioModal from './components/SPIEnvioModal';
 import GestaoEmprestimosTab from './components/GestaoEmprestimosTab';
 import { generateSPIPDF } from './utils/spiUtils';
+import { PIHistoryItem, PIStatus } from '@/types/piHistory';
 
 interface ImportacaoDiretaFormProps {
   isOpen: boolean;
@@ -23,7 +24,9 @@ interface ImportacaoDiretaFormProps {
 const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: ImportacaoDiretaFormProps) => {
   const [activeMasterTab, setActiveMasterTab] = useState('comercial');
   const [activeToolTab, setActiveToolTab] = useState('dados-gerais');
-  const [showSPIDownloadModal, setShowSPIDownloadModal] = useState(false);
+  const [showSPIEnvioModal, setShowSPIEnvioModal] = useState(false);
+  const [piHistory, setPiHistory] = useState<PIHistoryItem[]>([]);
+  const [piStatus, setPiStatus] = useState<PIStatus>('draft');
 
   const [formData, setFormData] = useState({
     // Informações Básicas do Cliente
@@ -110,6 +113,11 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     spiPrazo: '',
     spiDataConfirmacao: '',
     spiClienteAprovacao: '', // Novo campo para aprovação do cliente
+    
+    // Estados do PI
+    piStatus: 'draft' as PIStatus,
+    piHistory: [] as PIHistoryItem[],
+    isFieldsLocked: false,
     
     // Campos específicos do NO
     noDestinatario: '',
@@ -215,12 +223,57 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     onClose();
   };
 
-  const handleGenerateSPIPDF = () => {
-    setShowSPIDownloadModal(true);
+  const handleEnviarPI = () => {
+    setShowSPIEnvioModal(true);
   };
 
-  const handleDownloadWithCnpj = (selectedCnpj: string) => {
+  const handleEnviarComCnpj = (selectedCnpj: string) => {
+    // Criar novo item do histórico
+    const novoHistorico: PIHistoryItem = {
+      id: Date.now().toString(),
+      cnpjSelecionado: selectedCnpj,
+      dataEnvio: new Date(),
+      status: 'enviado'
+    };
+
+    // Adicionar ao histórico
+    const novoHistoricoCompleto = [...piHistory, novoHistorico];
+    setPiHistory(novoHistoricoCompleto);
+    
+    // Atualizar status para enviado/em análise
+    setPiStatus('em_analise');
+    
+    // Atualizar formData
+    setFormData(prev => ({
+      ...prev,
+      piStatus: 'em_analise',
+      piHistory: novoHistoricoCompleto,
+      isFieldsLocked: true
+    }));
+
+    // Gerar o PDF (mantém funcionalidade original)
     generateSPIPDF(formData, selectedCnpj);
+  };
+
+  const handlePIStatusChange = (historyId: string, newStatus: 'aceito' | 'rejeitado', observacoes?: string) => {
+    // Atualizar histórico
+    const historicoAtualizado = piHistory.map(item => 
+      item.id === historyId 
+        ? { ...item, status: newStatus, observacoes }
+        : item
+    );
+    setPiHistory(historicoAtualizado);
+    
+    // Atualizar status geral
+    setPiStatus(newStatus);
+    
+    // Atualizar formData
+    setFormData(prev => ({
+      ...prev,
+      piStatus: newStatus,
+      piHistory: historicoAtualizado,
+      isFieldsLocked: newStatus === 'aceito' // Só aceito trava os campos permanentemente
+    }));
   };
 
   const handleMasterTabChange = (tabId: string) => {
@@ -233,6 +286,9 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
         <SPIForm
           formData={formData}
           onInputChange={handleInputChange}
+          piHistory={piHistory}
+          piStatus={piStatus}
+          onPIStatusChange={handlePIStatusChange}
         />
       );
     }
@@ -355,12 +411,13 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
               </Button>
               {activeMasterTab === 'spi' && (
                 <Button 
-                  onClick={handleGenerateSPIPDF} 
+                  onClick={handleEnviarPI} 
                   variant="outline"
-                  className="bg-red-600 text-white hover:bg-red-700"
+                  className="bg-blue-600 text-white hover:bg-blue-700"
+                  disabled={piStatus === 'aceito' || piStatus === 'em_analise'}
                 >
                   <FileText className="h-4 w-4 mr-2" />
-                  Baixar SPI
+                  Enviar PI
                 </Button>
               )}
               <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
@@ -371,10 +428,10 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
         </DialogContent>
       </Dialog>
 
-      <SPIDownloadModal
-        isOpen={showSPIDownloadModal}
-        onClose={() => setShowSPIDownloadModal(false)}
-        onDownload={handleDownloadWithCnpj}
+      <SPIEnvioModal
+        isOpen={showSPIEnvioModal}
+        onClose={() => setShowSPIEnvioModal(false)}
+        onEnviar={handleEnviarComCnpj}
       />
     </>
   );

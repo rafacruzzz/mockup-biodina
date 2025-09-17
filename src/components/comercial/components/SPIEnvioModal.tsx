@@ -5,13 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-interface SPIDownloadModalProps {
+interface SPIEnvioModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onDownload: (selectedCnpj: string) => void;
+  onEnviar: (selectedCnpj: string) => void;
 }
 
-const SPIDownloadModal = ({ isOpen, onClose, onDownload }: SPIDownloadModalProps) => {
+const SPIEnvioModal = ({ isOpen, onClose, onEnviar }: SPIEnvioModalProps) => {
   const [selectedCnpj, setSelectedCnpj] = useState('');
 
   const cnpjOptions = [
@@ -21,9 +21,9 @@ const SPIDownloadModal = ({ isOpen, onClose, onDownload }: SPIDownloadModalProps
     { value: '55.666.777/0001-88', label: '55.666.777/0001-88 - Delta Importação Ltda' }
   ];
 
-  const handleDownload = () => {
+  const handleEnviar = () => {
     if (selectedCnpj) {
-      onDownload(selectedCnpj);
+      onEnviar(selectedCnpj);
       onClose();
       setSelectedCnpj('');
     }
@@ -39,7 +39,7 @@ const SPIDownloadModal = ({ isOpen, onClose, onDownload }: SPIDownloadModalProps
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold text-center">
-            Deseja baixar qual modelo de PI?
+            Deseja enviar qual modelo de PI?
           </DialogTitle>
         </DialogHeader>
 
@@ -68,11 +68,11 @@ const SPIDownloadModal = ({ isOpen, onClose, onDownload }: SPIDownloadModalProps
             Cancelar
           </Button>
           <Button 
-            onClick={handleDownload}
+            onClick={handleEnviar}
             disabled={!selectedCnpj}
-            className="bg-red-600 text-white hover:bg-red-700"
+            className="bg-blue-600 text-white hover:bg-blue-700"
           >
-            Baixar
+            Enviar
           </Button>
         </div>
       </DialogContent>
@@ -80,4 +80,4 @@ const SPIDownloadModal = ({ isOpen, onClose, onDownload }: SPIDownloadModalProps
   );
 };
 
-export default SPIDownloadModal;
+export default SPIEnvioModal;
