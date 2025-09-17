@@ -20,7 +20,8 @@ const BeneficiosTab = ({ formData, onInputChange }: BeneficiosTabProps) => {
     { value: 'banco', label: 'Banco' },
     { value: 'sptrans', label: 'SPTrans' },
     { value: 'top', label: 'TOP' },
-    { value: 'vale-combustivel', label: 'Vale Combustível' }
+    { value: 'vale-combustivel', label: 'Vale Combustível' },
+    { value: 'outros', label: 'Outros' }
   ];
 
   const operadorasPlanoSaude = [

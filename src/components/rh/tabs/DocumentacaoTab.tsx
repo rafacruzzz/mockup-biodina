@@ -23,7 +23,7 @@ const DocumentacaoTab = ({ formData, onInputChange, colaboradorData }: Documenta
   const [novoDocumento, setNovoDocumento] = useState<Partial<DocumentoAnexo>>({
     categoria: '',
     observacoes: '',
-    validadeIndeterminada: true
+    validadeIndeterminada: false
   });
 
   const categorias = [
@@ -109,7 +109,7 @@ const DocumentacaoTab = ({ formData, onInputChange, colaboradorData }: Documenta
     onInputChange('anexos', novosAnexos);
 
     // Reset form
-    setNovoDocumento({ categoria: '', observacoes: '', validadeIndeterminada: true });
+    setNovoDocumento({ categoria: '', observacoes: '', validadeIndeterminada: false });
     event.target.value = '';
   };
 
