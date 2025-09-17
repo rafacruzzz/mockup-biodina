@@ -119,7 +119,9 @@ export const tiposSolicitacao: TipoSolicitacao[] = [
       { id: 'periodo_aquisitivo', label: 'Período Aquisitivo', tipo: 'text', obrigatorio: true },
       { id: 'data_inicio_ferias', label: 'Data de Início das Férias', tipo: 'date', obrigatorio: true },
       { id: 'quantidade_dias', label: 'Quantidade de Dias', tipo: 'select', obrigatorio: true, opcoes: ['15', '20', '30'] },
-      { id: 'venda_um_terco', label: 'Venda de 1/3 (Abono Pecuniário)', tipo: 'checkbox', obrigatorio: false }
+      { id: 'segunda_parcela_inicio', label: 'Data de Início da Segunda Parcela', tipo: 'date', obrigatorio: false, dependente_de: 'quantidade_dias' },
+      { id: 'venda_um_terco', label: 'Venda de 1/3 (Abono Pecuniário)?', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] },
+      { id: 'observacoes', label: 'Observações', tipo: 'textarea', obrigatorio: false }
     ]
   },
   // TI

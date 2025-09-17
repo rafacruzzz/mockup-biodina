@@ -110,7 +110,7 @@ export interface FeriasFields {
   data_inicio_ferias: string;
   quantidade_dias: 15 | 20 | 30;
   segunda_parcela_inicio?: string; // Para quando escolher 15 dias
-  venda_um_terco: boolean;
+  venda_um_terco: 'Sim' | 'Não';
   observacoes: string;
 }
 

@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { TipoSolicitacao } from '@/types/solicitacao';
 import { useUser } from '@/contexts/UserContext';
@@ -115,6 +116,23 @@ const FormularioDinamico = ({ tipoSolicitacao, onSubmit }: FormularioDinamicoPro
           </div>
         );
 
+      case 'radio':
+        return (
+          <RadioGroup
+            value={value}
+            onValueChange={(newValue) => handleInputChange(campo.id, newValue)}
+          >
+            {campo.opcoes?.map((opcao: string) => (
+              <div key={opcao} className="flex items-center space-x-2">
+                <RadioGroupItem value={opcao} id={`${campo.id}-${opcao}`} />
+                <Label htmlFor={`${campo.id}-${opcao}`} className="text-sm font-normal">
+                  {opcao}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+        );
+
       case 'file':
         return (
           <Input
@@ -181,15 +199,28 @@ const FormularioDinamico = ({ tipoSolicitacao, onSubmit }: FormularioDinamicoPro
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {tipoSolicitacao.campos.map((campo) => (
-              <div key={campo.id} className="space-y-2">
-                <Label htmlFor={campo.id}>
-                  {campo.label}
-                  {campo.obrigatorio && <span className="text-red-500 ml-1">*</span>}
-                </Label>
-                {renderField(campo)}
-              </div>
-            ))}
+            {tipoSolicitacao.campos.map((campo) => {
+              // Verifica se o campo é dependente de outro
+              if (campo.dependente_de) {
+                const campoMestre = tipoSolicitacao.campos.find(c => c.id === campo.dependente_de);
+                const valorMestre = dadosFormulario[campo.dependente_de];
+                
+                // Para o caso específico da segunda parcela de férias
+                if (campo.id === 'segunda_parcela_inicio' && valorMestre !== '15') {
+                  return null; // Não renderiza se não for 15 dias
+                }
+              }
+
+              return (
+                <div key={campo.id} className="space-y-2">
+                  <Label htmlFor={campo.id}>
+                    {campo.label}
+                    {campo.obrigatorio && <span className="text-red-500 ml-1">*</span>}
+                  </Label>
+                  {renderField(campo)}
+                </div>
+              );
+            })}
           </CardContent>
         </Card>
       )}
