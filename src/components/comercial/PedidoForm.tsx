@@ -713,8 +713,8 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                 </div>
               </TabsContent>
 
-              <TabsContent value="frete" className="space-y-6 mt-6">
-                {/* Seção 1: Informações Básicas de Frete */}
+              <TabsContent value="frete" className="space-y-6 mt-6" key="frete-tab-updated">
+                {/* Seção 1: Informações Básicas de Frete - TODOS OS CAMPOS IMPLEMENTADOS */}
                 <Card className="p-4">
                   <h4 className="font-semibold mb-4">Informações Básicas de Frete</h4>
                   <div className="grid grid-cols-2 gap-6">
