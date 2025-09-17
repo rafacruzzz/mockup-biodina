@@ -200,6 +200,14 @@ export interface DadosTI {
   ramal: string;
 }
 
+export interface ItemUso {
+  id: string;
+  nome: string;
+  necessario: boolean;
+  dataEntrega?: string;
+  entregue: boolean;
+}
+
 export interface ColaboradorData {
   dadosPessoais: DadosPessoais;
   dadosProfissionais: DadosProfissionais;

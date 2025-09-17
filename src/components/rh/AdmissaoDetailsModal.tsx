@@ -25,12 +25,26 @@ import {
   HardHat,
   Monitor,
   FileCheck,
-  Users
+  Users,
+  IdCard,
+  Car,
+  Shirt,
+  Building,
+  Laptop,
+  CreditCard
 } from 'lucide-react';
 import { checklistDocumentosAdmissao } from '@/data/processoSeletivo';
 import { useProcessoSeletivo } from '@/contexts/ProcessoSeletivoContext';
 import { useColaboradores } from '@/hooks/useColaboradores';
 import { useToast } from '@/hooks/use-toast';
+
+interface ItemUso {
+  id: string;
+  nome: string;
+  necessario: boolean;
+  dataEntrega?: string;
+  entregue: boolean;
+}
 
 interface CandidatoAdmissao {
   candidato: any;
@@ -42,6 +56,7 @@ interface CandidatoAdmissao {
   totalDocumentos: number;
   salarioDefinitivo?: string;
   cargoDefinitivo?: string;
+  itensUso?: ItemUso[];
 }
 
 interface AdmissaoDetailsModalProps {
@@ -60,6 +75,20 @@ const AdmissaoDetailsModal = ({
   const [observacoes, setObservacoes] = useState('');
   const [salarioFinal, setSalarioFinal] = useState('');
   const [cargoFinal, setCargoFinal] = useState('');
+
+  // Estado para itens de uso
+  const [itensUso, setItensUso] = useState<ItemUso[]>([
+    { id: '1', nome: 'Crachá hospital', necessario: false, entregue: false },
+    { id: '2', nome: 'Crachá empresa', necessario: false, entregue: false },
+    { id: '3', nome: 'Cartão estacionamento empresa', necessario: false, entregue: false },
+    { id: '4', nome: 'Controle de estacionamento empresa', necessario: false, entregue: false },
+    { id: '5', nome: 'Jaleco', necessario: false, entregue: false },
+    { id: '6', nome: 'EPIs', necessario: false, entregue: false },
+    { id: '7', nome: 'Veículo frota', necessario: false, entregue: false },
+    { id: '8', nome: 'Cadastro Uber empresas', necessario: false, entregue: false },
+    { id: '9', nome: 'Cartão corporativo', necessario: false, entregue: false },
+    { id: '10', nome: 'Notebook e acessórios', necessario: false, entregue: false }
+  ]);
 
   // Use hooks with proper error handling
   let processoSeletivoContext: any = null;
@@ -198,6 +227,43 @@ const AdmissaoDetailsModal = ({
     atualizarTreinamento(candidato.id, treinamentoId, { dataRealizacao: data });
   };
 
+  // Handlers para itens de uso
+  const handleItemNecessario = (itemId: string, necessario: boolean) => {
+    setItensUso(prev => 
+      prev.map(item => 
+        item.id === itemId 
+          ? { ...item, necessario, dataEntrega: necessario ? item.dataEntrega : undefined }
+          : item
+      )
+    );
+  };
+
+  const handleDataEntrega = (itemId: string, data: string) => {
+    setItensUso(prev =>
+      prev.map(item =>
+        item.id === itemId
+          ? { ...item, dataEntrega: data, entregue: !!data }
+          : item
+      )
+    );
+  };
+
+  const getItemIcon = (nomeItem: string) => {
+    if (nomeItem.toLowerCase().includes('crachá')) return IdCard;
+    if (nomeItem.toLowerCase().includes('estacionamento') || nomeItem.toLowerCase().includes('controle')) return Car;
+    if (nomeItem.toLowerCase().includes('jaleco')) return Shirt;
+    if (nomeItem.toLowerCase().includes('epi')) return HardHat;
+    if (nomeItem.toLowerCase().includes('veículo') || nomeItem.toLowerCase().includes('uber')) return Car;
+    if (nomeItem.toLowerCase().includes('cartão corporativo')) return CreditCard;
+    if (nomeItem.toLowerCase().includes('notebook')) return Laptop;
+    return Building;
+  };
+
+  // Cálculos de progresso para itens de uso
+  const itensNecessarios = itensUso.filter(item => item.necessario);
+  const itensEntregues = itensNecessarios.filter(item => item.entregue);
+  const progressoItens = itensNecessarios.length > 0 ? Math.round((itensEntregues.length / itensNecessarios.length) * 100) : 100;
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -211,13 +277,16 @@ const AdmissaoDetailsModal = ({
         </DialogHeader>
 
         <Tabs defaultValue="geral" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="geral">Informações Gerais</TabsTrigger>
             <TabsTrigger value="documentos">
               Documentos ({documentosRecebidos}/{documentos.length})
             </TabsTrigger>
             <TabsTrigger value="treinamentos">
               Treinamentos ({treinamentosConcluidos}/{treinamentos.length})
+            </TabsTrigger>
+            <TabsTrigger value="itens">
+              Itens de uso ({itensEntregues.length}/{itensNecessarios.length})
             </TabsTrigger>
             <TabsTrigger value="aprovacao">Dados da Aprovação</TabsTrigger>
             <TabsTrigger value="finalizacao">Finalização</TabsTrigger>
@@ -261,7 +330,7 @@ const AdmissaoDetailsModal = ({
               </CardContent>
             </Card>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -303,6 +372,32 @@ const AdmissaoDetailsModal = ({
                     <Progress value={progressoTreinamentos} className="h-3" />
                     <p className="text-xs text-gray-500">
                       {progressoTreinamentos}% dos treinamentos foram concluídos
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Building className="h-5 w-5" />
+                    Progresso dos Itens
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Itens Entregues</span>
+                      <span className="text-sm text-gray-600">
+                        {itensEntregues.length} de {itensNecessarios.length || 'N/A'}
+                      </span>
+                    </div>
+                    <Progress value={progressoItens} className="h-3" />
+                    <p className="text-xs text-gray-500">
+                      {itensNecessarios.length === 0 
+                        ? 'Nenhum item necessário selecionado'
+                        : `${progressoItens}% dos itens necessários foram entregues`
+                      }
                     </p>
                   </div>
                 </CardContent>
@@ -431,6 +526,64 @@ const AdmissaoDetailsModal = ({
                               Ver ({treinamento.arquivos.length})
                             </Button>
                           )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="itens" className="space-y-4">
+            <div className="grid gap-4">
+              {itensUso.map((item) => {
+                const IconComponent = getItemIcon(item.nome);
+                return (
+                  <Card key={item.id} className={item.entregue ? 'border-green-200 bg-green-50' : 'border-gray-200'}>
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex items-start gap-3 flex-1">
+                          <div className={`p-2 rounded-full ${item.entregue ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
+                            <IconComponent className="h-4 w-4" />
+                          </div>
+                          <div className="flex-1 space-y-3">
+                            <div>
+                              <h4 className="font-medium text-sm">{item.nome}</h4>
+                            </div>
+                            
+                            <div className="flex items-center gap-4">
+                              <div className="flex items-center space-x-2">
+                                <Checkbox 
+                                  id={`item-necessario-${item.id}`}
+                                  checked={item.necessario}
+                                  onCheckedChange={(checked) => handleItemNecessario(item.id, checked as boolean)}
+                                />
+                                <Label htmlFor={`item-necessario-${item.id}`} className="text-sm">
+                                  Sim
+                                </Label>
+                              </div>
+                              
+                              {item.necessario && (
+                                <div className="flex items-center gap-2">
+                                  <Calendar className="h-4 w-4 text-gray-400" />
+                                  <Input
+                                    type="date"
+                                    value={item.dataEntrega || ''}
+                                    onChange={(e) => handleDataEntrega(item.id, e.target.value)}
+                                    className="w-auto text-xs"
+                                    placeholder="Data de entrega"
+                                  />
+                                </div>
+                              )}
+                            </div>
+
+                            {item.dataEntrega && (
+                              <p className="text-xs text-green-600">
+                                Entregue em: {new Date(item.dataEntrega).toLocaleDateString()}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </CardContent>
