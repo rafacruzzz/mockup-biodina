@@ -92,24 +92,6 @@ const DadosGeraisTab = ({ formData, onInputChange }: DadosGeraisTabProps) => {
         </div>
 
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Moeda *</Label>
-            <RadioGroup
-              value={formData.moeda}
-              onValueChange={(value) => onInputChange('moeda', value)}
-              className="flex gap-4"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="BRL" id="brl" />
-                <Label htmlFor="brl">Real (R$)</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="USD" id="usd" />
-                <Label htmlFor="usd">Dólar (USD)</Label>
-              </div>
-            </RadioGroup>
-          </div>
-
           <DatePicker label="Data de Empréstimo" field="dataEmprestimo" required />
           <DatePicker label="Data de Saída" field="dataSaida" required />
         </div>

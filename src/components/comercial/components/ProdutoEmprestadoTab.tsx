@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MoneyInput } from "@/components/ui/money-input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface ProdutoEmprestadoTabProps {
   formData: any;
@@ -17,6 +18,24 @@ const ProdutoEmprestadoTab = ({ formData, onInputChange }: ProdutoEmprestadoTabP
   return (
     <div className="space-y-6">
       <div className="space-y-4">
+        <div className="space-y-2">
+          <Label>Moeda *</Label>
+          <RadioGroup
+            value={formData.moeda}
+            onValueChange={(value) => onInputChange('moeda', value)}
+            className="flex gap-4"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="BRL" id="brl" />
+              <Label htmlFor="brl">Real (R$)</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="USD" id="usd" />
+              <Label htmlFor="usd">Dólar (USD)</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
         <div className="space-y-2">
           <Label>Número da DANFE de Empréstimo *</Label>
           <Input
