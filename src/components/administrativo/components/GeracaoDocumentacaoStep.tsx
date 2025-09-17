@@ -145,7 +145,7 @@ export const GeracaoDocumentacaoStep = ({
 
   const handleProximaEtapa = () => {
     // Validação dos campos obrigatórios
-    if (!nomeArquivePrincipal.trim()) {
+    if (!nomeArquivoPrincipal.trim()) {
       toast.error('Digite o nome do arquivo principal');
       return;
     }
@@ -431,7 +431,7 @@ export const GeracaoDocumentacaoStep = ({
         <Button 
           onClick={handleProximaEtapa} 
           className="bg-blue-600 hover:bg-blue-700 text-white"
-          disabled={!nomeArquivePrincipal.trim() || !protocoloPeticionamento || documentos.length === 0}
+          disabled={!nomeArquivoPrincipal.trim() || !protocoloPeticionamento || documentos.length === 0}
         >
           Próxima Etapa
         </Button>

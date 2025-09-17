@@ -19,51 +19,51 @@ export const SelecaoProdutoAtualizacaoStep = ({ onSelecionarProduto }: SelecaoPr
     numeroRegistroAnvisa: ''
   });
 
-  // Produtos que possuem registro ANVISA das atualizações
-  const registrosExistentes = modules.atualizacoes_anvisa.subModules.atualizacoes.data;
-  const produtosComRegistro = modules.produtos.subModules.produtos.data.filter(produto => 
-    registrosExistentes.some(registro => registro.produtoId === produto.id)
-  );
+  // Produtos que possuem registro ANVISA das atualizações  
+  const registrosExistentes = modules.atualizacoes_anvisa?.subModules?.atualizacoes?.data || [];
+  const produtosOriginais = modules.produtos?.subModules?.produtos?.data || [];
 
-  // Adicionar número de registro ANVISA aos produtos
-  const produtosComRegistroCompleto = produtosComRegistro.map(produto => {
-    const registro = registrosExistentes.find(r => r.produtoId === produto.id);
-    return {
-      ...produto,
-      numeroRegistroAnvisa: registro?.numeroRegistroAnvisa || ''
-    };
-  });
+  // Produtos que têm registro ANVISA (mantendo todas as propriedades originais)
+  const produtosComRegistroCompleto = produtosOriginais
+    .filter(produto => registrosExistentes.some(r => r.produtoId === produto?.id))
+    .map(produto => {
+      const registro = registrosExistentes.find(r => r.produtoId === produto?.id);
+      return {
+        ...produto,
+        numeroRegistroAnvisa: registro?.numeroRegistroAnvisa || ''
+      } as any; // Temporary fix for TypeScript
+    });
 
   const aplicarFiltros = () => {
     return produtosComRegistroCompleto.filter(produto => {
       // Filtro de busca
       const matchBusca = !busca || 
-        produto.codigo?.toLowerCase().includes(busca.toLowerCase()) ||
-        produto.referencia?.toLowerCase().includes(busca.toLowerCase()) ||
-        produto.nome?.toLowerCase().includes(busca.toLowerCase()) ||
-        produto.descricao?.toLowerCase().includes(busca.toLowerCase()) ||
-        produto.marca?.toLowerCase().includes(busca.toLowerCase()) ||
-        produto.numeroRegistroAnvisa?.toLowerCase().includes(busca.toLowerCase());
+        produto?.codigo?.toLowerCase().includes(busca.toLowerCase()) ||
+        produto?.referencia?.toLowerCase().includes(busca.toLowerCase()) ||
+        produto?.nome?.toLowerCase().includes(busca.toLowerCase()) ||
+        produto?.descricao?.toLowerCase().includes(busca.toLowerCase()) ||
+        produto?.marca?.toLowerCase().includes(busca.toLowerCase()) ||
+        produto?.numeroRegistroAnvisa?.toLowerCase().includes(busca.toLowerCase());
 
       if (!matchBusca) return false;
 
       // Filtro de família de produto
-      if (filtros.familiaProduto && filtros.familiaProduto !== 'all' && produto.familiaProduto !== filtros.familiaProduto) {
+      if (filtros.familiaProduto && filtros.familiaProduto !== 'all' && produto?.familiaProduto !== filtros.familiaProduto) {
         return false;
       }
 
       // Filtro de marca
-      if (filtros.marca && filtros.marca !== 'all' && produto.marca !== filtros.marca) {
+      if (filtros.marca && filtros.marca !== 'all' && produto?.marca !== filtros.marca) {
         return false;
       }
 
       // Filtro de área ANVISA
-      if (filtros.areaAnvisa && filtros.areaAnvisa !== 'all' && produto.areaAnvisa !== filtros.areaAnvisa) {
+      if (filtros.areaAnvisa && filtros.areaAnvisa !== 'all' && produto?.areaAnvisa !== filtros.areaAnvisa) {
         return false;
       }
 
       // Filtro de número de registro ANVISA
-      if (filtros.numeroRegistroAnvisa && !produto.numeroRegistroAnvisa?.toLowerCase().includes(filtros.numeroRegistroAnvisa.toLowerCase())) {
+      if (filtros.numeroRegistroAnvisa && !produto?.numeroRegistroAnvisa?.toLowerCase().includes(filtros.numeroRegistroAnvisa.toLowerCase())) {
         return false;
       }
 
@@ -74,8 +74,8 @@ export const SelecaoProdutoAtualizacaoStep = ({ onSelecionarProduto }: SelecaoPr
   const produtosFiltrados = aplicarFiltros();
 
   // Obter opções únicas para os filtros
-  const familiasProdutos = [...new Set(produtosComRegistroCompleto.map(p => p.familiaProduto).filter(Boolean))];
-  const marcas = [...new Set(produtosComRegistroCompleto.map(p => p.marca).filter(Boolean))];
+  const familiasProdutos = [...new Set(produtosComRegistroCompleto.map(p => p?.familiaProduto).filter(Boolean))];
+  const marcas = [...new Set(produtosComRegistroCompleto.map(p => p?.marca).filter(Boolean))];
 
   const limparFiltros = () => {
     setBusca('');
@@ -205,7 +205,7 @@ export const SelecaoProdutoAtualizacaoStep = ({ onSelecionarProduto }: SelecaoPr
       <div className="space-y-3 max-h-96 overflow-y-auto">
         {produtosFiltrados.map((produto) => (
           <div 
-            key={produto.id} 
+            key={produto?.id} 
             className="border rounded-lg p-4 hover:bg-gray-50 border-gray-200"
           >
             <div className="flex justify-between items-start">
@@ -213,40 +213,40 @@ export const SelecaoProdutoAtualizacaoStep = ({ onSelecionarProduto }: SelecaoPr
                 {/* Header do Produto */}
                 <div className="flex items-center gap-3 mb-3">
                   <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
-                    {produto.codigo}
+                    {produto?.codigo}
                   </span>
                   <span className="font-mono text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                    REF: {produto.referencia}
+                    REF: {produto?.referencia}
                   </span>
                   <Badge className="bg-green-100 text-green-800">
-                    ANVISA: {produto.numeroRegistroAnvisa}
+                    ANVISA: {produto?.numeroRegistroAnvisa}
                   </Badge>
-                  <Badge className={getAreaAnvisaBadgeColor(produto.areaAnvisa)}>
-                    {getAreaAnvisaLabel(produto.areaAnvisa)}
+                  <Badge className={getAreaAnvisaBadgeColor(produto?.areaAnvisa || '')}>
+                    {getAreaAnvisaLabel(produto?.areaAnvisa || '')}
                   </Badge>
                 </div>
 
                 {/* Nome e Descrição */}
-                <h3 className="font-semibold text-lg mb-1">{produto.nome}</h3>
-                <p className="text-gray-600 text-sm mb-3">{produto.descricao}</p>
+                <h3 className="font-semibold text-lg mb-1">{produto?.nome}</h3>
+                <p className="text-gray-600 text-sm mb-3">{produto?.descricao}</p>
                 
                 {/* Informações Organizadas */}
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-gray-500">Família:</span>
-                    <span className="ml-2 font-medium">{produto.familiaProduto}</span>
+                    <span className="ml-2 font-medium">{produto?.familiaProduto}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Marca:</span>
-                    <span className="ml-2 font-medium">{produto.marca}</span>
+                    <span className="ml-2 font-medium">{produto?.marca}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Modelo:</span>
-                    <span className="ml-2 font-medium">{produto.modelo}</span>
+                    <span className="ml-2 font-medium">{produto?.modelo}</span>
                   </div>
                   <div>
                     <span className="text-gray-500">Fabricante:</span>
-                    <span className="ml-2 font-medium">{produto.fabricante}</span>
+                    <span className="ml-2 font-medium">{produto?.fabricante}</span>
                   </div>
                 </div>
               </div>
@@ -254,7 +254,7 @@ export const SelecaoProdutoAtualizacaoStep = ({ onSelecionarProduto }: SelecaoPr
               {/* Botão de Seleção */}
               <div className="ml-4">
                 <Button
-                  onClick={() => onSelecionarProduto(produto, produto.numeroRegistroAnvisa)}
+                  onClick={() => onSelecionarProduto(produto, produto?.numeroRegistroAnvisa || '')}
                   className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
                 >
                   <Package className="h-4 w-4" />
