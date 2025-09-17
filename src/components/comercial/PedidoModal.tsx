@@ -31,12 +31,31 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   const [informacoesComplementares, setInformacoesComplementares] = useState('');
   const [condicoesPagamento, setCondicoesPagamento] = useState('');
   
-  // Frete
+  // Frete - Seção 1: Informações Básicas
   const [valorFrete, setValorFrete] = useState(0);
-  const [responsavelFrete, setResponsavelFrete] = useState('');
+  const [tipoFrete, setTipoFrete] = useState('');
   const [transportadora, setTransportadora] = useState('');
   const [prazoEntrega, setPrazoEntrega] = useState('');
+  const [dataEntrega, setDataEntrega] = useState('');
+  
+  // Frete - Seção 2: Responsabilidades
+  const [fretePagarPor, setFretePagarPor] = useState('');
+  const [freteRetirarPor, setFreteRetirarPor] = useState('');
+  const [entregarRetirarCuidados, setEntregarRetirarCuidados] = useState('');
+  
+  // Frete - Seção 3: Dados do Recebedor
+  const [nomeCompletoRecebedor, setNomeCompletoRecebedor] = useState('');
+  const [cpfRecebedor, setCpfRecebedor] = useState('');
+  const [telefoneRecebedor, setTelefoneRecebedor] = useState('');
+  const [emailRecebedor, setEmailRecebedor] = useState('');
+  
+  // Frete - Seção 4: Detalhes da Entrega
+  const [horariosPermitidos, setHorariosPermitidos] = useState('');
+  const [locaisEntrega, setLocaisEntrega] = useState('');
   const [enderecoEntrega, setEnderecoEntrega] = useState('');
+  const [maisInformacoesEntrega, setMaisInformacoesEntrega] = useState('');
+  
+  // Frete - Seção 5: Urgência (já existe mas melhorado)
   const [observacoesFrete, setObservacoesFrete] = useState('');
   
   // Autorização
@@ -110,10 +129,21 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       informacoesComplementares,
       condicoesPagamento,
       valorFrete,
-      responsavelFrete,
+      tipoFrete,
       transportadora,
       prazoEntrega,
+      dataEntrega,
+      fretePagarPor,
+      freteRetirarPor,
+      entregarRetirarCuidados,
+      nomeCompletoRecebedor,
+      cpfRecebedor,
+      telefoneRecebedor,
+      emailRecebedor,
+      horariosPermitidos,
+      locaisEntrega,
       enderecoEntrega,
+      maisInformacoesEntrega,
       observacoesFrete,
       urgente,
       justificativaUrgencia,
@@ -382,9 +412,10 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
 
               {/* Aba Frete */}
               <TabsContent value="frete" className="space-y-6">
+                {/* Seção 1: Informações Básicas de Frete */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Informações de Frete</CardTitle>
+                    <CardTitle>Informações Básicas de Frete</CardTitle>
                   </CardHeader>
                   <CardContent className="grid grid-cols-2 gap-4">
                     <div>
@@ -396,18 +427,20 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                         onChange={(e) => setValorFrete(Number(e.target.value))}
                         step="0.01"
                         min="0"
+                        placeholder="0,00"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="responsavelFrete">Responsável pelo Frete</Label>
-                      <Select value={responsavelFrete} onValueChange={setResponsavelFrete}>
+                      <Label htmlFor="tipoFrete">Tipo de Frete</Label>
+                      <Select value={tipoFrete} onValueChange={setTipoFrete}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione" />
+                          <SelectValue placeholder="Selecione o tipo" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="emitente">Emitente</SelectItem>
-                          <SelectItem value="destinatario">Destinatário</SelectItem>
+                          <SelectItem value="cif">CIF (Por conta do remetente)</SelectItem>
+                          <SelectItem value="fob">FOB (Por conta do destinatário)</SelectItem>
                           <SelectItem value="terceiros">Terceiros</SelectItem>
+                          <SelectItem value="sem_frete">Sem frete</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -429,34 +462,229 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                         placeholder="Ex: 5 dias úteis"
                       />
                     </div>
+                    <div>
+                      <Label htmlFor="dataEntrega">Data de Entrega</Label>
+                      <Input
+                        id="dataEntrega"
+                        type="date"
+                        value={dataEntrega}
+                        onChange={(e) => setDataEntrega(e.target.value)}
+                        min={new Date().toISOString().split('T')[0]}
+                      />
+                    </div>
                   </CardContent>
                 </Card>
 
+                {/* Seção 2: Responsabilidades */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Endereço de Entrega</CardTitle>
+                    <CardTitle>Responsabilidades</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <Textarea
-                      value={enderecoEntrega}
-                      onChange={(e) => setEnderecoEntrega(e.target.value)}
-                      placeholder="Endereço completo para entrega..."
-                      rows={3}
-                    />
+                  <CardContent className="grid grid-cols-1 gap-4">
+                    <div>
+                      <Label htmlFor="fretePagarPor">Frete a Pagar Por</Label>
+                      <Select value={fretePagarPor} onValueChange={setFretePagarPor}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione quem pagará o frete" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="emitente">Emitente</SelectItem>
+                          <SelectItem value="destinatario">Destinatário</SelectItem>
+                          <SelectItem value="terceiros">Terceiros</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="freteRetirarPor">Frete a Retirar Por</Label>
+                      <Select value={freteRetirarPor} onValueChange={setFreteRetirarPor}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione quem retirará" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="emitente">Emitente</SelectItem>
+                          <SelectItem value="destinatario">Destinatário</SelectItem>
+                          <SelectItem value="terceiros">Terceiros</SelectItem>
+                          <SelectItem value="transportadora">Transportadora</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="entregarRetirarCuidados">Entregar/Retirar aos Cuidados de Quem</Label>
+                      <Select value={entregarRetirarCuidados} onValueChange={setEntregarRetirarCuidados}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione aos cuidados de quem" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="responsavel_compras">Responsável pelas Compras</SelectItem>
+                          <SelectItem value="gerente_filial">Gerente da Filial</SelectItem>
+                          <SelectItem value="farmaceutico_responsavel">Farmacêutico Responsável</SelectItem>
+                          <SelectItem value="almoxarifado">Almoxarifado</SelectItem>
+                          <SelectItem value="recepcao">Recepção</SelectItem>
+                          <SelectItem value="outro">Outro</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </CardContent>
                 </Card>
 
+                {/* Seção 3: Dados do Recebedor */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Observações do Frete</CardTitle>
+                    <CardTitle>Dados do Recebedor</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <Textarea
-                      value={observacoesFrete}
-                      onChange={(e) => setObservacoesFrete(e.target.value)}
-                      placeholder="Observações específicas sobre o frete..."
-                      rows={3}
-                    />
+                  <CardContent className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="nomeCompletoRecebedor">Nome Completo</Label>
+                      <Input
+                        id="nomeCompletoRecebedor"
+                        value={nomeCompletoRecebedor}
+                        onChange={(e) => setNomeCompletoRecebedor(e.target.value)}
+                        placeholder="Nome completo do recebedor"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="cpfRecebedor">CPF</Label>
+                      <Input
+                        id="cpfRecebedor"
+                        value={cpfRecebedor}
+                        onChange={(e) => setCpfRecebedor(e.target.value)}
+                        placeholder="000.000.000-00"
+                        maxLength={14}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="telefoneRecebedor">Telefone</Label>
+                      <Input
+                        id="telefoneRecebedor"
+                        value={telefoneRecebedor}
+                        onChange={(e) => setTelefoneRecebedor(e.target.value)}
+                        placeholder="(00) 00000-0000"
+                        maxLength={15}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="emailRecebedor">Email</Label>
+                      <Input
+                        id="emailRecebedor"
+                        type="email"
+                        value={emailRecebedor}
+                        onChange={(e) => setEmailRecebedor(e.target.value)}
+                        placeholder="recebedor@empresa.com"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Seção 4: Detalhes da Entrega */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Detalhes da Entrega</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="horariosPermitidos">Horários Permitidos para Entrega</Label>
+                      <Input
+                        id="horariosPermitidos"
+                        value={horariosPermitidos}
+                        onChange={(e) => setHorariosPermitidos(e.target.value)}
+                        placeholder="Ex: Segunda a Sexta, 8h às 17h"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="locaisEntrega">Locais de Entrega Permitidos</Label>
+                      <Textarea
+                        id="locaisEntrega"
+                        value={locaisEntrega}
+                        onChange={(e) => setLocaisEntrega(e.target.value)}
+                        placeholder="Descreva os locais onde a entrega pode ser realizada (recepção, almoxarifado, etc.)"
+                        rows={2}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="enderecoEntrega">Endereço Completo de Entrega</Label>
+                      <Textarea
+                        value={enderecoEntrega}
+                        onChange={(e) => setEnderecoEntrega(e.target.value)}
+                        placeholder="Endereço completo para entrega (incluir pontos de referência se necessário)..."
+                        rows={3}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="maisInformacoesEntrega">Mais Informações sobre a Entrega</Label>
+                      <Textarea
+                        id="maisInformacoesEntrega"
+                        value={maisInformacoesEntrega}
+                        onChange={(e) => setMaisInformacoesEntrega(e.target.value)}
+                        placeholder="Informações adicionais importantes para a entrega..."
+                        rows={3}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Seção 5: Urgência e Autorização */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Urgência e Autorização</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="urgenteFreteTab" 
+                        checked={urgente}
+                        onCheckedChange={handleUrgenteChange}
+                      />
+                      <Label htmlFor="urgenteFreteTab">Esta entrega é urgente</Label>
+                    </div>
+
+                    {urgente && (
+                      <>
+                        <div>
+                          <Label htmlFor="justificativaUrgenciaFrete">Justificar a Urgência *</Label>
+                          <Textarea
+                            id="justificativaUrgenciaFrete"
+                            value={justificativaUrgencia}
+                            onChange={(e) => setJustificativaUrgencia(e.target.value)}
+                            placeholder="Por que esta entrega é urgente?"
+                            rows={3}
+                            required
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="cpfAutorizadorFrete">Autorizado Por (CPF)</Label>
+                            <Input
+                              id="cpfAutorizadorFrete"
+                              value={cpfAutorizador}
+                              onChange={(e) => setCpfAutorizador(e.target.value)}
+                              placeholder="000.000.000-00"
+                              maxLength={14}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="emailAutorizadorFrete">Email do Autorizador</Label>
+                            <Input
+                              id="emailAutorizadorFrete"
+                              type="email"
+                              value={emailAutorizador}
+                              onChange={(e) => setEmailAutorizador(e.target.value)}
+                              placeholder="autorizador@empresa.com"
+                            />
+                          </div>
+                        </div>
+                      </>
+                    )}
+                    
+                    <div>
+                      <Label htmlFor="observacoesFreteGeral">Observações Gerais do Frete</Label>
+                      <Textarea
+                        id="observacoesFreteGeral"
+                        value={observacoesFrete}
+                        onChange={(e) => setObservacoesFrete(e.target.value)}
+                        placeholder="Observações específicas sobre o frete e entrega..."
+                        rows={3}
+                      />
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
