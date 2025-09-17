@@ -7,7 +7,8 @@ import {
   CreditCard,
   Tag,
   Calendar,
-  FileText
+  FileText,
+  UserCheck
 } from "lucide-react";
 import type { ModulesConfig } from "@/types/cadastro";
 
@@ -289,6 +290,82 @@ export const modules: ModulesConfig = {
             dataEnvio: "2024-02-15",
             fabricante: "DEF Healthcare Solutions",
             nomeArquivoPrincipal: "Dossiê_DEF-300.pdf"
+          }
+        ]
+      }
+    }
+  },
+  due_diligence_fornecedor: {
+    name: "Due Diligence - Fornecedor",
+    icon: UserCheck,
+    subModules: {
+      triagens: {
+        name: "Triagens",
+        data: [
+          {
+            id: 1,
+            idTriagem: "DD-2024-001",
+            nomeFornecedor: "MedTech Solutions Ltd.",
+            dataCriacao: "2024-08-15",
+            statusAtual: "Em Análise Científica",
+            responsavel: "Dr. Maria Santos",
+            contatoPrincipal: "John Smith",
+            emailContato: "john.smith@medtech.com",
+            telefoneContato: "+55 11 98765-4321",
+            produtosInteresse: "Equipamentos de diagnóstico por imagem",
+            protocoloInterno: "PROT-DD-001-2024"
+          },
+          {
+            id: 2,
+            idTriagem: "DD-2024-002", 
+            nomeFornecedor: "BioInnovate Corp.",
+            dataCriacao: "2024-09-02",
+            statusAtual: "Checklist Documental",
+            responsavel: "Eng. Carlos Lima",
+            contatoPrincipal: "Sarah Johnson",
+            emailContato: "sarah@bioinnovate.com",
+            telefoneContato: "+55 21 99876-5432",
+            produtosInteresse: "Kits de diagnóstico molecular",
+            protocoloInterno: "PROT-DD-002-2024"
+          },
+          {
+            id: 3,
+            idTriagem: "DD-2024-003",
+            nomeFornecedor: "Advanced Medical Systems",
+            dataCriacao: "2024-09-10",
+            statusAtual: "Aprovado",
+            responsavel: "Dra. Ana Costa",
+            contatoPrincipal: "Michael Davis",
+            emailContato: "m.davis@advancedmed.com",
+            telefoneContato: "+55 11 97654-3210",
+            produtosInteresse: "Ventiladores pulmonares avançados",
+            protocoloInterno: "PROT-DD-003-2024"
+          },
+          {
+            id: 4,
+            idTriagem: "DD-2024-004",
+            nomeFornecedor: "EuroMed Devices SA",
+            dataCriacao: "2024-09-12",
+            statusAtual: "Rejeitada Preliminarmente",
+            responsavel: "Dr. Pedro Silva",
+            contatoPrincipal: "Hans Mueller",
+            emailContato: "h.mueller@euromed.eu",
+            telefoneContato: "+49 30 12345678",
+            produtosInteresse: "Equipamentos de esterilização",
+            protocoloInterno: "PROT-DD-004-2024"
+          },
+          {
+            id: 5,
+            idTriagem: "DD-2024-005",
+            nomeFornecedor: "AsianTech Medical Co.",
+            dataCriacao: "2024-09-14",
+            statusAtual: "Aguardando Reunião da Diretoria",
+            responsavel: "Dra. Fernanda Rocha",
+            contatoPrincipal: "Li Wei",
+            emailContato: "li.wei@asiantech.cn",
+            telefoneContato: "+86 21 87654321",
+            produtosInteresse: "Monitores multiparâmetros",
+            protocoloInterno: "PROT-DD-005-2024"
           }
         ]
       }

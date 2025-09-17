@@ -18,6 +18,8 @@ import { RegistrosAnvisaTable } from '@/components/administrativo/components/Reg
 import { HistoricoRegistroModal } from '@/components/administrativo/components/HistoricoRegistroModal';
 import { AtualizacoesAnvisaTable } from '@/components/administrativo/components/AtualizacoesAnvisaTable';
 import { NovaAtualizacaoModal } from '@/components/administrativo/NovaAtualizacaoModal';
+import { DueDiligenceTable } from '@/components/administrativo/components/DueDiligenceTable';
+import { NovaTriagemModal } from '@/components/administrativo/NovaTriagemModal';
 import { modules } from '@/data/cadastroModules';
 import { toast } from '@/components/ui/use-toast';
 
@@ -30,6 +32,8 @@ const Administrativo = () => {
   const [showNovaAtualizacaoModal, setShowNovaAtualizacaoModal] = useState(false);
   const [showAtualizacaoHistoryModal, setShowAtualizacaoHistoryModal] = useState(false);
   const [selectedAtualizacaoHistory, setSelectedAtualizacaoHistory] = useState<any>(null);
+  const [showNovaTriagemModal, setShowNovaTriagemModal] = useState(false);
+  const [selectedTriagem, setSelectedTriagem] = useState<any>(null);
 
   const renderMainModules = () => (
     <div className="space-y-6">
@@ -234,7 +238,7 @@ const Administrativo = () => {
         case 'dashboard': return renderRegulatorioIndicadores();
         case 'registro-produtos': return renderRegistroProdutosTab();
         case 'atualizacoes': return renderAtualizacoesTab();
-        case 'due-diligence': return renderEmptyTab('DUE DILIGENCE - FORNECEDOR', 'Análise de conformidade de fornecedores');
+        case 'due-diligence': return renderDueDiligenceTab();
         case 'rastreabilidade': return renderEmptyTab('RASTREABILIDADE', 'Sistema de rastreamento regulatório');
         case 'boas-praticas': return renderEmptyTab('BOAS PRÁTICAS', 'Gestão de boas práticas regulatórias');
         case 'controle-qualidade': return renderEmptyTab('CONTROLE DE QUALIDADE', 'Controle e auditorias de qualidade');
