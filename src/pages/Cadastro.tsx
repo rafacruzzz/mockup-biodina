@@ -34,7 +34,6 @@ const Cadastro = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingColaboradorId, setEditingColaboradorId] = useState<string | null>(null);
   const [editingColaboradorData, setEditingColaboradorData] = useState<any>(null);
-  const [editingUserData, setEditingUserData] = useState<any>(null);
 
   // Reset state when no module is selected
   const resetSelection = () => {
@@ -90,7 +89,7 @@ const Cadastro = () => {
   };
 
   const handleEditItem = (item: any, moduleName: string) => {
-    if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') {
+    if (activeModule === 'usuarios' && (activeSubModule === 'colaboradores' || activeSubModule === 'usuarios')) {
       setIsEditMode(true);
       setEditingColaboradorId(String(item.id));
       
@@ -165,23 +164,6 @@ const Cadastro = () => {
       
       setEditingColaboradorData(colaboradorCompleto);
       setIsColaboradorModalOpen(true);
-    } else if (activeModule === 'usuarios' && activeSubModule === 'usuarios') {
-      // Abrir UserModal para edição de usuário
-      const userData = {
-        username: item.nome?.toLowerCase().replace(/\s+/g, '.') || '',
-        password: '',
-        confirmPassword: '',
-        nome: item.nome || '',
-        email: item.email || '',
-        cpf: '',
-        telefone: '',
-        colaboradorId: '',
-        isActive: true,
-        userType: item.perfil || 'usuario',
-        moduleAccess: []
-      };
-      setEditingUserData(userData);
-      setIsUserModalOpen(true);
     }
   };
 
@@ -293,12 +275,7 @@ const Cadastro = () => {
       
       <UserModal 
         isOpen={isUserModalOpen} 
-        onClose={() => {
-          setIsUserModalOpen(false);
-          setEditingUserData(null);
-        }}
-        userData={editingUserData}
-        editMode={!!editingUserData}
+        onClose={() => setIsUserModalOpen(false)} 
       />
 
       <ColaboradorModal 
