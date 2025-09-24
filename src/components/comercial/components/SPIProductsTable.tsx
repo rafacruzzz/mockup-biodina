@@ -16,14 +16,12 @@ const SPIProductsTable = ({ mercadorias, onUpdateMercadorias }: SPIProductsTable
     const novaMercadoria = {
       id: Date.now(),
       mercadoria: '',
-      equip: '',
+      equipamento: '',
       codigo: '',
-      unidade: '',
-      qtde: '',
-      qtdePendente: '',
-      totalOrdens: '',
-      plU: '',
-      plT: '',
+      quantidade: '',
+      qtdePendenteDV: '',
+      qtdePendenteDT: '',
+      totalQuantidades: '',
       precoUnitUsd: '',
       precoTotalUsd: ''
     };
@@ -40,18 +38,19 @@ const SPIProductsTable = ({ mercadorias, onUpdateMercadorias }: SPIProductsTable
       if (item.id === id) {
         const itemAtualizado = { ...item, [field]: value };
         
-        // Calcular "Total das Qtdes" automaticamente
-        if (field === 'qtde' || field === 'qtdePendente') {
-          const qtde = parseFloat(itemAtualizado.qtde) || 0;
-          const qtdePendente = parseFloat(itemAtualizado.qtdePendente) || 0;
-          itemAtualizado.totalOrdens = (qtde + qtdePendente).toString();
+        // Calcular "Total de Quantidades" automaticamente
+        if (field === 'quantidade' || field === 'qtdePendenteDV' || field === 'qtdePendenteDT') {
+          const quantidade = parseFloat(itemAtualizado.quantidade) || 0;
+          const qtdeDV = parseFloat(itemAtualizado.qtdePendenteDV) || 0;
+          const qtdeDT = parseFloat(itemAtualizado.qtdePendenteDT) || 0;
+          itemAtualizado.totalQuantidades = (quantidade + qtdeDV + qtdeDT).toString();
         }
         
         // Calcular preço total automaticamente
-        if (field === 'qtde' || field === 'precoUnitUsd') {
-          const qtde = parseFloat(itemAtualizado.qtde) || 0;
+        if (field === 'quantidade' || field === 'precoUnitUsd') {
+          const quantidade = parseFloat(itemAtualizado.quantidade) || 0;
           const precoUnit = parseUSD(itemAtualizado.precoUnitUsd) || 0;
-          itemAtualizado.precoTotalUsd = formatUSD(qtde * precoUnit);
+          itemAtualizado.precoTotalUsd = formatUSD(quantidade * precoUnit);
         }
         
         return itemAtualizado;
@@ -77,14 +76,12 @@ const SPIProductsTable = ({ mercadorias, onUpdateMercadorias }: SPIProductsTable
             <TableRow>
               <TableHead className="min-w-[50px]">Item</TableHead>
               <TableHead className="min-w-[150px]">Mercadoria</TableHead>
-              <TableHead className="min-w-[80px]">Equip</TableHead>
+              <TableHead className="min-w-[120px]">Equipamento</TableHead>
               <TableHead className="min-w-[80px]">Código</TableHead>
-              <TableHead className="min-w-[100px]">Unidade/QX</TableHead>
-              <TableHead className="min-w-[80px]">Qtde</TableHead>
-              <TableHead className="min-w-[100px]">Qtde Pendente</TableHead>
-              <TableHead className="min-w-[120px]">Total das Qtdes</TableHead>
-              <TableHead className="min-w-[80px]">PL U</TableHead>
-              <TableHead className="min-w-[80px]">PL T</TableHead>
+              <TableHead className="min-w-[100px]">Quantidade</TableHead>
+              <TableHead className="min-w-[120px]">Quantidade Pendente DV</TableHead>
+              <TableHead className="min-w-[120px]">Quantidade Pendente DT</TableHead>
+              <TableHead className="min-w-[140px]">Total de Quantidades</TableHead>
               <TableHead className="min-w-[120px]">Preço Unit USD</TableHead>
               <TableHead className="min-w-[120px]">Preço Total USD</TableHead>
               <TableHead className="min-w-[80px]">Ações</TableHead>
@@ -104,10 +101,10 @@ const SPIProductsTable = ({ mercadorias, onUpdateMercadorias }: SPIProductsTable
                 </TableCell>
                 <TableCell>
                   <Input
-                    value={item.equip}
-                    onChange={(e) => updateMercadoria(item.id, 'equip', e.target.value)}
-                    placeholder="Equip"
-                    className="min-w-[80px]"
+                    value={item.equipamento || item.equip || ''}
+                    onChange={(e) => updateMercadoria(item.id, 'equipamento', e.target.value)}
+                    placeholder="Equipamento"
+                    className="min-w-[120px]"
                   />
                 </TableCell>
                 <TableCell>
@@ -120,51 +117,36 @@ const SPIProductsTable = ({ mercadorias, onUpdateMercadorias }: SPIProductsTable
                 </TableCell>
                 <TableCell>
                   <Input
-                    value={item.unidade}
-                    onChange={(e) => updateMercadoria(item.id, 'unidade', e.target.value)}
-                    placeholder="UN"
-                    className="min-w-[100px]"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
                     type="number"
-                    value={item.qtde}
-                    onChange={(e) => updateMercadoria(item.id, 'qtde', e.target.value)}
-                    placeholder="0"
-                    className="min-w-[80px]"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    type="number"
-                    value={item.qtdePendente}
-                    onChange={(e) => updateMercadoria(item.id, 'qtdePendente', e.target.value)}
+                    value={item.quantidade || item.qtde || ''}
+                    onChange={(e) => updateMercadoria(item.id, 'quantidade', e.target.value)}
                     placeholder="0"
                     className="min-w-[100px]"
                   />
                 </TableCell>
                 <TableCell>
                   <Input
-                    value={item.totalOrdens}
+                    type="number"
+                    value={item.qtdePendenteDV || ''}
+                    onChange={(e) => updateMercadoria(item.id, 'qtdePendenteDV', e.target.value)}
+                    placeholder="0"
+                    className="min-w-[120px]"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    type="number"
+                    value={item.qtdePendenteDT || ''}
+                    onChange={(e) => updateMercadoria(item.id, 'qtdePendenteDT', e.target.value)}
+                    placeholder="0"
+                    className="min-w-[120px]"
+                  />
+                </TableCell>
+                <TableCell>
+                  <Input
+                    value={item.totalQuantidades || item.totalOrdens || ''}
                     readOnly
-                    className="bg-gray-100 min-w-[120px]"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    value={item.plU}
-                    onChange={(e) => updateMercadoria(item.id, 'plU', e.target.value)}
-                    placeholder="PL U"
-                    className="min-w-[80px]"
-                  />
-                </TableCell>
-                <TableCell>
-                  <Input
-                    value={item.plT}
-                    onChange={(e) => updateMercadoria(item.id, 'plT', e.target.value)}
-                    placeholder="PL T"
-                    className="min-w-[80px]"
+                    className="bg-gray-100 min-w-[140px]"
                   />
                 </TableCell>
                 <TableCell>

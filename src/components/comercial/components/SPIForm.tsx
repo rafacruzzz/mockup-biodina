@@ -50,17 +50,6 @@ const SPIForm = ({ formData, onInputChange, piHistory, piStatus, onPIStatusChang
               />
             </div>
             
-            <div>
-              <Label htmlFor="spiDadosProforma">Dados para preenchimento da Proforma Invoice</Label>
-              <Input
-                id="spiDadosProforma"
-                value={formData.spiDadosProforma}
-                onChange={(e) => onInputChange('spiDadosProforma', e.target.value)}
-                placeholder="Dados da proforma"
-                className="w-full"
-                disabled={isFieldsLocked}
-              />
-            </div>
             
             <div>
               <Label htmlFor="spiEmNomeDe">Em nome de</Label>
@@ -118,7 +107,7 @@ const SPIForm = ({ formData, onInputChange, piHistory, piStatus, onPIStatusChang
             </div>
             
             <div>
-              <Label htmlFor="spiNumero">No SPI</Label>
+              <Label htmlFor="spiNumero">Número da SPI</Label>
               <Input
                 id="spiNumero"
                 value={formData.spiNumero}
@@ -141,44 +130,9 @@ const SPIForm = ({ formData, onInputChange, piHistory, piStatus, onPIStatusChang
               />
             </div>
             
-            <div>
-              <Label htmlFor="spiProposta">Proposta</Label>
-              <Input
-                id="spiProposta"
-                value={formData.spiProposta}
-                onChange={(e) => onInputChange('spiProposta', e.target.value)}
-                placeholder="Número da proposta"
-                className="w-full"
-                disabled={isFieldsLocked}
-              />
-            </div>
             
             <div>
-              <Label htmlFor="spiEquipamento">Equipamento</Label>
-              <Input
-                id="spiEquipamento"
-                value={formData.spiEquipamento}
-                onChange={(e) => onInputChange('spiEquipamento', e.target.value)}
-                placeholder="Nome do equipamento"
-                className="w-full"
-                disabled={isFieldsLocked}
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="spiModelo">Modelo</Label>
-              <Input
-                id="spiModelo"
-                value={formData.spiModelo}
-                onChange={(e) => onInputChange('spiModelo', e.target.value)}
-                placeholder="Modelo do equipamento"
-                className="w-full"
-                disabled={isFieldsLocked}
-              />
-            </div>
-            
-            <div>
-              <Label htmlFor="spiPacking">Packing (%)</Label>
+              <Label htmlFor="spiPacking">Packing</Label>
               <Input
                 id="spiPacking"
                 type="number"
