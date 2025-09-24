@@ -9,7 +9,7 @@ import SidebarLayout from "@/components/SidebarLayout";
 import { 
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
-  AlertTriangle, Clock
+  AlertTriangle, Clock, Globe, Vault, ArrowLeft
 } from "lucide-react";
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -17,7 +17,8 @@ import {
 } from 'recharts';
 
 const Financeiro = () => {
-  const [activeTab, setActiveTab] = useState('pagar');
+  const [activeModule, setActiveModule] = useState<string | null>(null);
+  const [activeSubModule, setActiveSubModule] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState('todos');
   const [filterPeriodo, setFilterPeriodo] = useState('mes');
 
@@ -528,25 +529,263 @@ const Financeiro = () => {
     </Card>
   );
 
-  const tabs = [
-    { id: 'pagar', label: 'Contas a Pagar', icon: CreditCard },
-    { id: 'receber', label: 'Contas a Receber', icon: Banknote },
-    { id: 'caixa', label: 'Caixa', icon: Wallet },
-    { id: 'bancos', label: 'Bancos', icon: Building },
-    { id: 'conciliacao', label: 'Conciliação', icon: CheckCircle },
-    { id: 'dre', label: 'DRE', icon: FileText },
+  const mainModules = [
+    {
+      id: 'importacao',
+      title: 'Importação Financeira',
+      description: 'Fechamento de Câmbio, Comissões a Receber, Custo Importação',
+      icon: Globe,
+      subModules: [
+        { id: 'fechamento_cambio', title: 'Fechamento de Câmbio' },
+        { id: 'comissoes_receber', title: 'Comissões a Receber' },
+        { id: 'custo_importacao', title: 'Custo Importação' }
+      ]
+    },
+    {
+      id: 'tesouraria',
+      title: 'Tesouraria',
+      description: 'Conciliação, Caixa, Cheque, Empréstimos, Investimentos, Seguros, Consórcios',
+      icon: Vault,
+      subModules: [
+        { id: 'conciliacao_pagamentos', title: 'Conciliação de Pagamentos' },
+        { id: 'caixa', title: 'Caixa' },
+        { id: 'cheque', title: 'Cheque' },
+        { id: 'emprestimos', title: 'Empréstimos' },
+        { id: 'investimentos', title: 'Investimentos' },
+        { id: 'seguros', title: 'Seguros' },
+        { id: 'consorcios', title: 'Consórcios' }
+      ]
+    },
+    {
+      id: 'contas_pagar',
+      title: 'Contas a Pagar',
+      description: 'Programação Financeira, Uso e Consumo, Despesas, Comissões a Pagar',
+      icon: CreditCard,
+      subModules: [
+        { id: 'programacao_financeira', title: 'Programação Financeira' },
+        { id: 'uso_consumo', title: 'Uso e Consumo' },
+        { id: 'despesas_servico', title: 'Despesas a Serviço' },
+        { id: 'comissoes_pagar', title: 'Comissões a Pagar' }
+      ]
+    },
+    {
+      id: 'contas_receber',
+      title: 'Contas a Receber',
+      description: 'Conciliação de Recebimentos, A Receber, Recebido, Comissões Geradas',
+      icon: Banknote,
+      subModules: [
+        { id: 'conciliacao_recebimentos', title: 'Conciliação de Recebimentos' },
+        { id: 'a_receber', title: 'A Receber' },
+        { id: 'recebido', title: 'Recebido' },
+        { id: 'comissoes_geradas', title: 'Comissões Geradas a Pagar' }
+      ]
+    },
+    {
+      id: 'faturamento',
+      title: 'Faturamento',
+      description: 'Venda a Faturar, Venda Faturada, Serviços, Banco de Nfs',
+      icon: FileText,
+      subModules: [
+        { id: 'venda_faturar', title: 'Venda a Faturar' },
+        { id: 'venda_faturada', title: 'Venda Faturada' },
+        { id: 'servicos_faturar', title: 'Serviços a Faturar' },
+        { id: 'servicos_faturados', title: 'Serviços Faturados' },
+        { id: 'banco_nfs', title: 'Banco de Nfs' }
+      ]
+    }
   ];
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'pagar': return renderContasPagar();
-      case 'receber': return renderContasReceber();
-      case 'caixa': return renderCaixa();
-      case 'bancos': return renderBancos();
-      case 'conciliacao': return renderConciliacao();
-      case 'dre': return renderDRE();
-      default: return renderContasPagar();
+  const renderMainModules = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {mainModules.map((module) => (
+        <Card 
+          key={module.id} 
+          className="shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-l-4 border-l-biodina-gold group"
+          onClick={() => setActiveModule(module.id)}
+        >
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-biodina-gold/10 rounded-lg group-hover:bg-biodina-gold/20 transition-colors">
+                <module.icon className="h-6 w-6 text-biodina-gold" />
+              </div>
+              <div>
+                <CardTitle className="text-biodina-blue group-hover:text-biodina-gold transition-colors">
+                  {module.title}
+                </CardTitle>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              {module.description}
+            </p>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+
+  const renderSubModules = () => {
+    const currentModule = mainModules.find(m => m.id === activeModule);
+    if (!currentModule) return null;
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="outline" 
+            onClick={() => setActiveModule(null)}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar
+          </Button>
+          <div>
+            <h2 className="text-2xl font-bold text-biodina-blue">{currentModule.title}</h2>
+            <p className="text-muted-foreground">{currentModule.description}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {currentModule.subModules.map((subModule) => (
+            <Card 
+              key={subModule.id}
+              className="shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-biodina-gold/50"
+              onClick={() => setActiveSubModule(subModule.id)}
+            >
+              <CardContent className="p-6">
+                <h3 className="font-semibold text-biodina-blue hover:text-biodina-gold transition-colors">
+                  {subModule.title}
+                </h3>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderSubModuleContent = () => {
+    if (!activeSubModule) return null;
+
+    // Map existing render functions to submodules
+    switch (activeSubModule) {
+      case 'a_receber':
+      case 'recebido':
+      case 'conciliacao_recebimentos':
+      case 'comissoes_geradas':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+              <h2 className="text-2xl font-bold text-biodina-blue">
+                {mainModules.find(m => m.id === activeModule)?.subModules.find(s => s.id === activeSubModule)?.title}
+              </h2>
+            </div>
+            {renderContasReceber()}
+          </div>
+        );
+      case 'programacao_financeira':
+      case 'uso_consumo':
+      case 'despesas_servico':
+      case 'comissoes_pagar':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+              <h2 className="text-2xl font-bold text-biodina-blue">
+                {mainModules.find(m => m.id === activeModule)?.subModules.find(s => s.id === activeSubModule)?.title}
+              </h2>
+            </div>
+            {renderContasPagar()}
+          </div>
+        );
+      case 'caixa':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+              <h2 className="text-2xl font-bold text-biodina-blue">Caixa</h2>
+            </div>
+            {renderCaixa()}
+          </div>
+        );
+      case 'conciliacao_pagamentos':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+              <h2 className="text-2xl font-bold text-biodina-blue">Conciliação de Pagamentos</h2>
+            </div>
+            {renderConciliacao()}
+          </div>
+        );
+      default:
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+              <h2 className="text-2xl font-bold text-biodina-blue">
+                {mainModules.find(m => m.id === activeModule)?.subModules.find(s => s.id === activeSubModule)?.title}
+              </h2>
+            </div>
+            <Card className="shadow-lg">
+              <CardContent className="p-8 text-center">
+                <p className="text-muted-foreground">
+                  Este módulo está em desenvolvimento. Em breve estará disponível.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        );
     }
+  };
+
+  const renderContent = () => {
+    if (activeSubModule) {
+      return renderSubModuleContent();
+    }
+    
+    if (activeModule) {
+      return renderSubModules();
+    }
+    
+    return renderMainModules();
   };
 
   return (
@@ -557,27 +796,7 @@ const Financeiro = () => {
           <p className="text-gray-600">Controle financeiro completo da empresa</p>
         </header>
 
-        {/* Navegação por abas */}
-        <div className="border-b border-gray-200">
-          <nav className="flex space-x-8">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === tab.id
-                    ? 'border-biodina-blue text-biodina-blue'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <tab.icon className="h-4 w-4" />
-                {tab.label}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        {/* Conteúdo da aba ativa */}
+        {/* Conteúdo principal */}
         <div className="space-y-6">
           {renderContent()}
         </div>
