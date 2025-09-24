@@ -16,12 +16,12 @@ const NOMainForm = ({ formData, onInputChange }: NOMainFormProps) => {
     const noContent = `BIODINA
 
 Company Information
-Company Name: BIODINA INSTRUMENTOS CIENTÍFICOS LTDA.
-Address: RUA SÃO PEDRO 154 - SALA 408 CENTRO
-ZIP/City/State/Country: 24.024-058 - NITERÓI - RJ, BRASIL
-Phone: 55 21 2435-9872
-Fax: 55 21 2435-9870
-Email: bios@biodina.com.br
+Company Name: ${formData.companyName || 'BIODINA INSTRUMENTOS CIENTÍFICOS LTDA.'}
+Address: ${formData.companyAddress || 'RUA SÃO PEDRO 154 - SALA 408 CENTRO'}
+ZIP/City/State/Country: ${formData.companyZipCity || '24.024-058 - NITERÓI - RJ, BRASIL'}
+Phone: ${formData.companyPhone || '55 21 2435-9872'}
+Fax: ${formData.companyFax || '55 21 2435-9870'}
+Email: ${formData.companyEmail || 'bios@biodina.com.br'}
 
 Recipient
 To: ${formData.noDestinatario || 'RADIOMETER MEDICAL ApS, International Sales Division'}
@@ -78,16 +78,76 @@ Documento gerado em: ${new Date().toLocaleString()}
         </CardHeader>
         
         <CardContent className="p-6 space-y-6">
-          {/* Company Information - Cabeçalho Fixo */}
-          <div className="border p-4 rounded bg-gray-50">
-            <h3 className="font-bold mb-4 text-lg">Company Information</h3>
-            <div className="space-y-2 text-sm">
-              <p><strong>Company Name:</strong> BIODINA INSTRUMENTOS CIENTÍFICOS LTDA.</p>
-              <p><strong>Address:</strong> RUA SÃO PEDRO 154 - SALA 408 CENTRO</p>
-              <p><strong>ZIP/City/State/Country:</strong> 24.024-058 - NITERÓI - RJ, BRASIL</p>
-              <p><strong>Phone:</strong> 55 21 2435-9872</p>
-              <p><strong>Fax:</strong> 55 21 2435-9870</p>
-              <p><strong>Email:</strong> bios@biodina.com.br</p>
+          {/* Company Information */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 border p-4 rounded">
+            <div className="lg:col-span-2">
+              <h3 className="font-semibold mb-4 border-b pb-2">COMPANY INFORMATION</h3>
+            </div>
+            
+            <div className="lg:col-span-2">
+              <Label htmlFor="companyName">Company Name</Label>
+              <Input
+                id="companyName"
+                value={formData.companyName || ''}
+                onChange={(e) => onInputChange('companyName', e.target.value)}
+                placeholder="BIODINA INSTRUMENTOS CIENTÍFICOS LTDA."
+                className="w-full"
+              />
+            </div>
+            
+            <div className="lg:col-span-2">
+              <Label htmlFor="companyAddress">Address</Label>
+              <Input
+                id="companyAddress"
+                value={formData.companyAddress || ''}
+                onChange={(e) => onInputChange('companyAddress', e.target.value)}
+                placeholder="RUA SÃO PEDRO 154 - SALA 408 CENTRO"
+                className="w-full"
+              />
+            </div>
+            
+            <div className="lg:col-span-2">
+              <Label htmlFor="companyZipCity">ZIP/City/State/Country</Label>
+              <Input
+                id="companyZipCity"
+                value={formData.companyZipCity || ''}
+                onChange={(e) => onInputChange('companyZipCity', e.target.value)}
+                placeholder="24.024-058 - NITERÓI - RJ, BRASIL"
+                className="w-full"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="companyPhone">Phone</Label>
+              <Input
+                id="companyPhone"
+                value={formData.companyPhone || ''}
+                onChange={(e) => onInputChange('companyPhone', e.target.value)}
+                placeholder="55 21 2435-9872"
+                className="w-full"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="companyFax">Fax</Label>
+              <Input
+                id="companyFax"
+                value={formData.companyFax || ''}
+                onChange={(e) => onInputChange('companyFax', e.target.value)}
+                placeholder="55 21 2435-9870"
+                className="w-full"
+              />
+            </div>
+            
+            <div className="lg:col-span-2">
+              <Label htmlFor="companyEmail">Email</Label>
+              <Input
+                id="companyEmail"
+                value={formData.companyEmail || ''}
+                onChange={(e) => onInputChange('companyEmail', e.target.value)}
+                placeholder="bios@biodina.com.br"
+                className="w-full"
+              />
             </div>
           </div>
 
