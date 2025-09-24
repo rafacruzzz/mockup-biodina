@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertCircle, FolderPlus, Upload, FileText, Folder, ChevronRight, ChevronDown } from 'lucide-react';
 import { PastaAnvisa, ArquivoAnvisa, RegistroAnvisaData } from '@/types/anvisaRegistro';
 import { FileSystemManager } from './FileSystemManager';
@@ -24,10 +25,22 @@ export const OrganizacaoDocumentosStep = ({
   const [nomeArquivoPrincipal, setNomeArquivoPrincipal] = useState('');
   const [estruturaArquivos, setEstruturaArquivos] = useState<PastaAnvisa[]>([]);
   const [protocoloPeticionamento, setProtocoloPeticionamento] = useState<ArquivoAnvisa | null>(null);
+  const [assunto, setAssunto] = useState('');
+  const [motivoPeticionamento, setMotivoPeticionamento] = useState('');
 
   const handleFinalizarRegistro = () => {
     if (!nomeArquivoPrincipal.trim()) {
       toast.error('Nome do arquivo principal é obrigatório');
+      return;
+    }
+
+    if (!assunto.trim()) {
+      toast.error('Assunto é obrigatório');
+      return;
+    }
+
+    if (!motivoPeticionamento.trim()) {
+      toast.error('Motivo de peticionamento é obrigatório');
       return;
     }
 
@@ -48,8 +61,8 @@ export const OrganizacaoDocumentosStep = ({
       // Etapa 3: Informações Regulatórias (defaults)
       areaAnvisa: '',
       numeroProcessoAnvisa: '',
-      assunto: '',
-      motivoPeticionamento: '',
+      assunto,
+      motivoPeticionamento,
       transacao: '',
       expediente: '',
       dataEnvio: '',
@@ -127,6 +140,40 @@ export const OrganizacaoDocumentosStep = ({
             <div>
               <span className="text-muted-foreground">Referência:</span>
               <span className="ml-2 font-medium">{produtoSelecionado.referencia}</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Informações do Registro */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Informações do Registro</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Campo Assunto */}
+            <div className="space-y-2">
+              <Label>Assunto *</Label>
+              <Input 
+                placeholder="Digite o assunto do registro"
+                value={assunto}
+                onChange={(e) => setAssunto(e.target.value)}
+              />
+            </div>
+            
+            {/* Campo Motivo de Peticionamento */}
+            <div className="space-y-2">
+              <Label>Motivo de Peticionamento *</Label>
+              <Select value={motivoPeticionamento} onValueChange={setMotivoPeticionamento}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o motivo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="notificacao">Notificação</SelectItem>
+                  <SelectItem value="registro">Registro</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </CardContent>
