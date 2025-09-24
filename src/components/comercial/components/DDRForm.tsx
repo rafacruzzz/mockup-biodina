@@ -38,6 +38,12 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
 
   // Estados para DDR
   const [ddrData, setDdrData] = useState({
+    // Campos do cabeçalho
+    razaoSocial: 'BIODINA INSTRUMENTOS CIENTÍFICOS LTDA',
+    cnpj: '29.375.441/0001-50',
+    nomeFantasia: 'BIODINA',
+    atividadePrincipal: 'COMÉRCIO DE MATERIAIS CIENTÍFICOS',
+    // Campos existentes
     autorizacaoAnvisa: '103.011-6',
     numeroRegularizacao: '10301160243',
     licenciamentoImportacao: '25/1217686-1',
@@ -139,13 +145,48 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
           </div>
 
           {/* 1. Cabeçalho */}
-          <div className="border p-4 rounded bg-gray-50">
-            <h3 className="font-semibold mb-4 border-b pb-2">1. CABEÇALHO (Carregado automaticamente do sistema)</h3>
-            <div className="space-y-2 text-sm">
-              <p className="font-bold">BIODINA INSTRUMENTOS CIENTÍFICOS LTDA</p>
-              <p>29.375.441/0001-50</p>
-              <p>BIODINA</p>
-              <p>COMÉRCIO DE MATERIAIS CIENTÍFICOS</p>
+          <div className="border p-4 rounded">
+            <h3 className="font-semibold mb-4 border-b pb-2">1. CABEÇALHO (Editável)</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="razaoSocial">Razão Social</Label>
+                <Input
+                  id="razaoSocial"
+                  value={ddrData.razaoSocial}
+                  onChange={(e) => handleDdrInputChange('razaoSocial', e.target.value)}
+                  className="w-full font-semibold"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="cnpj">CNPJ</Label>
+                <Input
+                  id="cnpj"
+                  value={ddrData.cnpj}
+                  onChange={(e) => handleDdrInputChange('cnpj', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="nomeFantasia">Nome Fantasia</Label>
+                <Input
+                  id="nomeFantasia"
+                  value={ddrData.nomeFantasia}
+                  onChange={(e) => handleDdrInputChange('nomeFantasia', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="atividadePrincipal">Atividade Principal</Label>
+                <Input
+                  id="atividadePrincipal"
+                  value={ddrData.atividadePrincipal}
+                  onChange={(e) => handleDdrInputChange('atividadePrincipal', e.target.value)}
+                  className="w-full"
+                />
+              </div>
             </div>
           </div>
 
