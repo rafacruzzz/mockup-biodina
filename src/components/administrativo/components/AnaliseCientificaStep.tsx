@@ -13,18 +13,45 @@ interface AnaliseCientificaStepProps {
 }
 
 export const AnaliseCientificaStep = ({ data, onChange }: AnaliseCientificaStepProps) => {
-  const [analises, setAnalises] = useState(data.analiseCientifica || []);
-
-  // Debug: Log para verificar se o componente está sendo carregado corretamente
-  console.log("AnaliseCientificaStep carregado - perguntasPredefinidas atualizadas:", new Date().toLocaleTimeString());
-
+  // Novas perguntas definidas pelo usuário
   const perguntasPredefinidas = [
-    "Boas Práticas",
-    "Organismo Certificador", 
-    "Taxa de Revalidação ANVISA",
-    "Organismo Certificador (Secundário)",
-    "Laboratório"
+    "Identificação dos diferenciais técnicos do produto",
+    "Levantamento de concorrentes diretos e indiretos", 
+    "Avaliação do nível de qualidade (comparação com padrões nacionais e internacionais)",
+    "Avaliação do nível de modernidade (tendência, atualização tecnológica)",
+    "Parecer pessoal do assessor científico (no mínimo 3 assessores indicado pelo gestor)",
+    "Observações gerais"
   ];
+
+  // Função para inicializar dados limpos com as novas perguntas
+  const initializeAnalises = () => {
+    const existingData = data.analiseCientifica || [];
+    
+    // Debug: Log dos dados existentes
+    console.log("Dados existentes de analiseCientifica:", existingData);
+    console.log("Número de perguntas atuais:", perguntasPredefinidas.length);
+    
+    // Se não há dados ou o número de perguntas mudou, inicializar array vazio
+    if (!existingData.length || existingData.length !== perguntasPredefinidas.length) {
+      console.log("Inicializando com array vazio - dados antigos limpos");
+      return [];
+    }
+    
+    // Verificar se as perguntas nos dados existentes correspondem às atuais
+    const questoesCorrespondem = existingData.every((item, index) => 
+      item.pergunta === perguntasPredefinidas[index]
+    );
+    
+    if (!questoesCorrespondem) {
+      console.log("Perguntas não correspondem - limpando dados antigos");
+      return [];
+    }
+    
+    console.log("Mantendo dados existentes - perguntas correspondem");
+    return existingData;
+  };
+
+  const [analises, setAnalises] = useState(initializeAnalises());
 
   const handleAnaliseChange = (index: number, field: string, value: string) => {
     const updatedAnalises = [...analises];
