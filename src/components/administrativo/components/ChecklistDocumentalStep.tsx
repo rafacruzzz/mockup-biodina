@@ -67,6 +67,7 @@ export const ChecklistDocumentalStep = ({ data, onChange }: ChecklistDocumentalS
   };
 
   const predefinedDocuments = [
+    "CNPJ",
     "Licença de Funcionamento",
     "Certificado de Boas Práticas de Fabricação (CBPF)",
     "Autorização de Funcionamento de Empresa (AFE)",
@@ -74,14 +75,14 @@ export const ChecklistDocumentalStep = ({ data, onChange }: ChecklistDocumentalS
     "Certificado ISO 13485",
     "Declaração de Conformidade CE",
     "Manual do Usuário",
-    "Certificado de Calibração",
-    "Laudo de Análise Técnica",
     "Especificações Técnicas do Produto",
     "Certificado de Origem",
     "Apólice de Seguro",
     "Contrato Social da Empresa",
+    "Estatuto",
     "Balanço Patrimonial",
-    "Certidões Negativas (Federal, Estadual, Municipal)"
+    "Certidões Negativas (Federal, Estadual, Municipal)",
+    "Outros documentos"
   ];
 
   return (
