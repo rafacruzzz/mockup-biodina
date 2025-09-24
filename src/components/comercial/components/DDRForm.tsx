@@ -14,6 +14,28 @@ interface DDRFormProps {
 }
 
 const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
+  // Estado para modelo DDR selecionado
+  const [modeloDDR, setModeloDDR] = useState('modelo1');
+
+  // Modelos DDR disponíveis
+  const modelosDDR = [
+    {
+      id: 'modelo1',
+      nome: 'Modelo DDR Entidade Vinculada RDC n81',
+      titulo: 'DECLARAÇÃO DO DETENTOR DA REGULARIZAÇÃO DO PRODUTO AUTORIZANDO A IMPORTAÇÃO DIRETA POR UNIDADE DE SAÚDE'
+    },
+    {
+      id: 'modelo2', 
+      nome: 'Modelo Autorização - Capitulo IX - Importação por unidade hospitalar',
+      titulo: 'IMPORTAÇÃO PARA UNIDADE DE SAÚDE POR MEIO DE SUAS ENTIDADES VINCULADAS'
+    },
+    {
+      id: 'modelo3',
+      nome: 'Modelo Autorização - Capítulo VII - Importação terceirizada', 
+      titulo: 'DECLARAÇÃO DO DETENTOR DA REGULARIZAÇÃO DO PRODUTO AUTORIZANDO A IMPORTAÇÃO POR TERCEIRO'
+    }
+  ];
+
   // Estados para DDR
   const [ddrData, setDdrData] = useState({
     autorizacaoAnvisa: '103.011-6',
@@ -65,12 +87,43 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
   };
 
   const handleDownloadDDR = () => {
-    console.log('Baixando DDR...');
-    // Aqui seria implementada a lógica de download do DDR
+    const modeloSelecionado = modelosDDR.find(m => m.id === modeloDDR);
+    console.log('Baixando DDR...', {
+      modelo: modeloSelecionado?.nome,
+      titulo: modeloSelecionado?.titulo
+    });
+    // Aqui seria implementada a lógica de download do DDR baseada no modelo selecionado
   };
 
   return (
     <div className="space-y-6">
+      {/* Seletor de Modelo DDR */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Selecionar Modelo DDR</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <Label htmlFor="modeloDDR">Tipo de DDR</Label>
+            <Select 
+              value={modeloDDR} 
+              onValueChange={setModeloDDR}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecione o modelo DDR" />
+              </SelectTrigger>
+              <SelectContent>
+                {modelosDDR.map((modelo) => (
+                  <SelectItem key={modelo.id} value={modelo.id}>
+                    {modelo.nome}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader className="text-center border-b">
           <CardTitle className="text-xl font-bold text-purple-600">
@@ -81,7 +134,7 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
         <CardContent className="p-6 space-y-6">
           <div className="border p-4 rounded bg-blue-50">
             <h3 className="font-bold mb-4 text-lg text-blue-700">
-              DECLARAÇÃO DO DETENTOR DA REGULARIZAÇÃO DO PRODUTO AUTORIZANDO A IMPORTAÇÃO DIRETA POR UNIDADE DE SAÚDE
+              {modelosDDR.find(m => m.id === modeloDDR)?.titulo}
             </h3>
           </div>
 
