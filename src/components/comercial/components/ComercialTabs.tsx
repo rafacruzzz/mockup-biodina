@@ -10,7 +10,6 @@ import { Badge } from '@/components/ui/badge';
 import { FileText, MessageSquare, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatInterno from '../ChatInterno';
-import InterfaceamentoTab from '../InterfaceamentoTab';
 
 interface ComercialTabsProps {
   activeTab: string;
@@ -23,14 +22,10 @@ interface ComercialTabsProps {
 const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportunidade }: ComercialTabsProps) => {
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-      <TabsList className="grid w-full grid-cols-5">
+      <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="dados-gerais" className="flex items-center gap-2">
           <FileText className="h-4 w-4" />
           Dados Gerais
-        </TabsTrigger>
-        <TabsTrigger value="analise-tecnica" className="flex items-center gap-2">
-          <FileText className="h-4 w-4" />
-          Análise Técnica
         </TabsTrigger>
         <TabsTrigger value="historico-chat" className="flex items-center gap-2">
           <MessageSquare className="h-4 w-4" />
@@ -39,10 +34,6 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
         <TabsTrigger value="documentos" className="flex items-center gap-2">
           <Upload className="h-4 w-4" />
           Documentos
-        </TabsTrigger>
-        <TabsTrigger value="interfaceamento" className="flex items-center gap-2">
-          <FileText className="h-4 w-4" />
-          Interfaceamento TI
         </TabsTrigger>
       </TabsList>
 
@@ -368,23 +359,6 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
         </Card>
       </TabsContent>
 
-      <TabsContent value="analise-tecnica" className="space-y-4 mt-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Análise Técnica-Científica</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Textarea
-              value={formData.analiseTecnica}
-              onChange={(e) => onInputChange('analiseTecnica', e.target.value)}
-              placeholder="Digite a análise técnica-científica da oportunidade..."
-              rows={15}
-              className="w-full"
-            />
-          </CardContent>
-        </Card>
-      </TabsContent>
-
       <TabsContent value="historico-chat" className="space-y-4 mt-4">
         <Card>
           <CardHeader>
@@ -413,13 +387,6 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
         </Card>
       </TabsContent>
 
-      <TabsContent value="interfaceamento" className="space-y-4 mt-4">
-        <InterfaceamentoTab
-          oportunidade={oportunidade}
-          formData={formData}
-          onInputChange={onInputChange}
-        />
-      </TabsContent>
     </Tabs>
   );
 };
