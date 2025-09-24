@@ -16,16 +16,12 @@ export const AnaliseCientificaStep = ({ data, onChange }: AnaliseCientificaStepP
   const [analises, setAnalises] = useState(data.analiseCientifica || []);
 
   const perguntasPredefinidas = [
-    "O produto possui registro vigente na ANVISA?",
-    "As especificações técnicas estão de acordo com as normas brasileiras?",
-    "A documentação técnica está completa e atualizada?",
-    "O fabricante possui certificação ISO 13485?",
-    "Existe comprovação de eficácia e segurança do produto?",
-    "O produto atende aos requisitos da RDC relevante?",
-    "As instruções de uso estão em português e completas?",
-    "Existe análise de biocompatibilidade (quando aplicável)?",
-    "O produto possui estudos clínicos comprobatórios?",
-    "A rotulagem está conforme a legislação brasileira?"
+    "Identificação dos diferenciais técnicos do produto.",
+    "Levantamento de concorrentes diretos e indiretos.",
+    "Avaliação do nível de qualidade (comparação com padrões nacionais e internacionais).",
+    "Avaliação do nível de modernidade (tendência, atualização tecnológica).",
+    "Parecer pessoal do assessor científico (no mínimo 3 assessores indicado pelo gestor).",
+    "Observações gerais."
   ];
 
   const handleAnaliseChange = (index: number, field: string, value: string) => {
@@ -74,7 +70,7 @@ export const AnaliseCientificaStep = ({ data, onChange }: AnaliseCientificaStepP
         <CardHeader>
           <CardTitle className="text-base">Análise Científica do Produto</CardTitle>
           <div className="text-sm text-muted-foreground">
-            Avalie cada aspecto científico e técnico do produto do fornecedor.
+            Avalie os aspectos técnicos, competitivos e de qualidade do produto para análise científica.
           </div>
         </CardHeader>
         <CardContent>
