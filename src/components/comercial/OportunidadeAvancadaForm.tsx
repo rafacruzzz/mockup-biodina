@@ -98,6 +98,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     segmentoLead: oportunidade?.segmentoLead || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || [],
     valorNegocio: oportunidade?.valorNegocio || 0,
+    metodoContato: oportunidade?.metodoContato || '',
     tags: oportunidade?.tags || '',
     caracteristicas: oportunidade?.caracteristicas || '',
     fluxoTrabalho: oportunidade?.fluxoTrabalho || '',
@@ -369,6 +370,26 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               placeholder="0,00"
               disabled={isReadOnlyMode()}
             />
+          </div>
+          <div>
+            <Label htmlFor="metodoContato">Método de contato</Label>
+            <Select 
+              value={formData.metodoContato} 
+              onValueChange={(value) => setFormData({...formData, metodoContato: value})}
+              disabled={isReadOnlyMode()}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="telefone">Telefone</SelectItem>
+                <SelectItem value="email">E-mail</SelectItem>
+                <SelectItem value="presencial">Presencial</SelectItem>
+                <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                <SelectItem value="video_chamada">Vídeo Chamada</SelectItem>
+                <SelectItem value="outros">Outros</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         
@@ -667,6 +688,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               <SelectItem value="aceitacao_propostas">Aceitação de Propostas</SelectItem>
               <SelectItem value="habilitacao_fornecedores">Habilitação de Fornecedores</SelectItem>
               <SelectItem value="negociacao_preco">Negociação de Preço</SelectItem>
+              <SelectItem value="recursos">Recursos</SelectItem>
               <SelectItem value="suspenso">Suspenso</SelectItem>
               <SelectItem value="adjudicacao">Adjudicação</SelectItem>
               <SelectItem value="homologacao">Homologação</SelectItem>
