@@ -9,9 +9,11 @@ interface OVCItem {
   qty: string;
   priceListUnit: string;
   priceListTotal: string;
-  customerDiscountPercent: string;
-  customerDiscountUnit: string;
+  customerDiscountRmed: string;
+  customerDiscountBiodina: string;
   customerDiscountTotal: string;
+  discountUnit: string;
+  discountTotal: string;
   subTotalUnit: string;
   subTotalTotal: string;
   handlingCharge: string;
@@ -39,18 +41,6 @@ const OVCTable = ({ items, onUpdateItems }: OVCTableProps) => {
           updatedItem.priceListTotal = (qty * priceListUnit).toFixed(2);
         }
         
-        if (field === 'customerDiscountPercent' || field === 'priceListUnit') {
-          const priceListUnit = parseFloat(updatedItem.priceListUnit) || 0;
-          const discountPercent = parseFloat(updatedItem.customerDiscountPercent) || 0;
-          updatedItem.customerDiscountUnit = (priceListUnit * discountPercent / 100).toFixed(2);
-        }
-        
-        if (field === 'qty' || field === 'customerDiscountUnit') {
-          const qty = parseFloat(updatedItem.qty) || 0;
-          const customerDiscountUnit = parseFloat(updatedItem.customerDiscountUnit) || 0;
-          updatedItem.customerDiscountTotal = (qty * customerDiscountUnit).toFixed(2);
-        }
-        
         return updatedItem;
       }
       return item;
@@ -62,6 +52,7 @@ const OVCTable = ({ items, onUpdateItems }: OVCTableProps) => {
     return {
       priceListTotal: items.reduce((sum, item) => sum + (parseFloat(item.priceListTotal) || 0), 0).toFixed(2),
       customerDiscountTotal: items.reduce((sum, item) => sum + (parseFloat(item.customerDiscountTotal) || 0), 0).toFixed(2),
+      discountTotal: items.reduce((sum, item) => sum + (parseFloat(item.discountTotal) || 0), 0).toFixed(2),
       subTotalTotal: items.reduce((sum, item) => sum + (parseFloat(item.subTotalTotal) || 0), 0).toFixed(2),
       handlingCharge: items.reduce((sum, item) => sum + (parseFloat(item.handlingCharge) || 0), 0).toFixed(2),
       total: items.reduce((sum, item) => sum + (parseFloat(item.total) || 0), 0).toFixed(2),
@@ -81,6 +72,7 @@ const OVCTable = ({ items, onUpdateItems }: OVCTableProps) => {
             <TableHead className="border border-gray-300 text-center font-bold" rowSpan={2}>Qty</TableHead>
             <TableHead className="border border-gray-300 text-center font-bold" colSpan={2}>Price List</TableHead>
             <TableHead className="border border-gray-300 text-center font-bold" colSpan={3}>Customer Discount</TableHead>
+            <TableHead className="border border-gray-300 text-center font-bold" colSpan={2}>Discount</TableHead>
             <TableHead className="border border-gray-300 text-center font-bold" colSpan={2}>Sub total</TableHead>
             <TableHead className="border border-gray-300 text-center font-bold" rowSpan={2}>Handling charge* (3%)</TableHead>
             <TableHead className="border border-gray-300 text-center font-bold" rowSpan={2}>Total</TableHead>
@@ -91,7 +83,9 @@ const OVCTable = ({ items, onUpdateItems }: OVCTableProps) => {
           <TableRow className="bg-gray-50">
             <TableHead className="border border-gray-300 text-center text-sm">Unit</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Total</TableHead>
-            <TableHead className="border border-gray-300 text-center text-sm">%</TableHead>
+            <TableHead className="border border-gray-300 text-center text-sm">Rmed</TableHead>
+            <TableHead className="border border-gray-300 text-center text-sm">Biodina</TableHead>
+            <TableHead className="border border-gray-300 text-center text-sm">Total</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Unit</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Total</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Unit</TableHead>
@@ -131,23 +125,37 @@ const OVCTable = ({ items, onUpdateItems }: OVCTableProps) => {
               </TableCell>
               <TableCell className="border border-gray-300 p-1">
                 <Input
-                  value={item.customerDiscountPercent}
-                  onChange={(e) => updateItem(item.id, 'customerDiscountPercent', e.target.value)}
+                  value={item.customerDiscountRmed}
+                  onChange={(e) => updateItem(item.id, 'customerDiscountRmed', e.target.value)}
                   className="border-0 h-8 text-center"
                 />
               </TableCell>
               <TableCell className="border border-gray-300 p-1">
                 <Input
-                  value={item.customerDiscountUnit}
-                  readOnly
-                  className="border-0 h-8 text-center bg-gray-50"
+                  value={item.customerDiscountBiodina}
+                  onChange={(e) => updateItem(item.id, 'customerDiscountBiodina', e.target.value)}
+                  className="border-0 h-8 text-center"
                 />
               </TableCell>
               <TableCell className="border border-gray-300 p-1">
                 <Input
                   value={item.customerDiscountTotal}
-                  readOnly
-                  className="border-0 h-8 text-center bg-gray-50"
+                  onChange={(e) => updateItem(item.id, 'customerDiscountTotal', e.target.value)}
+                  className="border-0 h-8 text-center"
+                />
+              </TableCell>
+              <TableCell className="border border-gray-300 p-1">
+                <Input
+                  value={item.discountUnit}
+                  onChange={(e) => updateItem(item.id, 'discountUnit', e.target.value)}
+                  className="border-0 h-8 text-center"
+                />
+              </TableCell>
+              <TableCell className="border border-gray-300 p-1">
+                <Input
+                  value={item.discountTotal}
+                  onChange={(e) => updateItem(item.id, 'discountTotal', e.target.value)}
+                  className="border-0 h-8 text-center"
                 />
               </TableCell>
               <TableCell className="border border-gray-300 p-1">
@@ -202,10 +210,13 @@ const OVCTable = ({ items, onUpdateItems }: OVCTableProps) => {
             </TableRow>
           ))}
           <TableRow className="bg-gray-100 font-bold">
+            <TableCell className="border border-gray-300"></TableCell>
             <TableCell className="border border-gray-300 text-center">{totals.priceListTotal}</TableCell>
             <TableCell className="border border-gray-300"></TableCell>
             <TableCell className="border border-gray-300"></TableCell>
             <TableCell className="border border-gray-300 text-center">{totals.customerDiscountTotal}</TableCell>
+            <TableCell className="border border-gray-300"></TableCell>
+            <TableCell className="border border-gray-300 text-center">{totals.discountTotal}</TableCell>
             <TableCell className="border border-gray-300"></TableCell>
             <TableCell className="border border-gray-300 text-center">{totals.subTotalTotal}</TableCell>
             <TableCell className="border border-gray-300 text-center">{totals.handlingCharge}</TableCell>
