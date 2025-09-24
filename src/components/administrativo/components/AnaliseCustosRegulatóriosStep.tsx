@@ -47,11 +47,11 @@ export const AnaliseCustosRegulatóriosStep = ({ data, onChange }: AnaliseCustos
             </div>
 
             <div>
-              <Label htmlFor="taxaRenovacaoAnvisa">Taxa de Renovação ANVISA (anual)</Label>
+              <Label htmlFor="taxaRevalidacaoAnvisa">Taxa de Revalidação ANVISA</Label>
               <Input
-                id="taxaRenovacaoAnvisa"
-                value={data.taxaRenovacaoAnvisa || ""}
-                onChange={(e) => handleInputChange('taxaRenovacaoAnvisa', e.target.value)}
+                id="taxaRevalidacaoAnvisa"
+                value={data.taxaRevalidacaoAnvisa || ""}
+                onChange={(e) => handleInputChange('taxaRevalidacaoAnvisa', e.target.value)}
                 placeholder="R$ 0,00"
               />
             </div>
@@ -59,21 +59,21 @@ export const AnaliseCustosRegulatóriosStep = ({ data, onChange }: AnaliseCustos
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="custoConsultoriaRegulatoria">Consultoria Regulatória</Label>
+              <Label htmlFor="custoBoasPraticas">Boas Práticas</Label>
               <Input
-                id="custoConsultoriaRegulatoria"
-                value={data.custoConsultoriaRegulatoria || ""}
-                onChange={(e) => handleInputChange('custoConsultoriaRegulatoria', e.target.value)}
+                id="custoBoasPraticas"
+                value={data.custoBoasPraticas || ""}
+                onChange={(e) => handleInputChange('custoBoasPraticas', e.target.value)}
                 placeholder="R$ 0,00"
               />
             </div>
 
             <div>
-              <Label htmlFor="custoEstudosClinicos">Estudos Clínicos (se necessário)</Label>
+              <Label htmlFor="custoOrganismoCertificador">Organismo Certificador</Label>
               <Input
-                id="custoEstudosClinicos"
-                value={data.custoEstudosClinicos || ""}
-                onChange={(e) => handleInputChange('custoEstudosClinicos', e.target.value)}
+                id="custoOrganismoCertificador"
+                value={data.custoOrganismoCertificador || ""}
+                onChange={(e) => handleInputChange('custoOrganismoCertificador', e.target.value)}
                 placeholder="R$ 0,00"
               />
             </div>
@@ -81,21 +81,21 @@ export const AnaliseCustosRegulatóriosStep = ({ data, onChange }: AnaliseCustos
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="custoCertificacoes">Certificações (ISO, CE, etc.)</Label>
+              <Label htmlFor="custoOrganismoCertificador2">Organismo Certificador</Label>
               <Input
-                id="custoCertificacoes"
-                value={data.custoCertificacoes || ""}
-                onChange={(e) => handleInputChange('custoCertificacoes', e.target.value)}
+                id="custoOrganismoCertificador2"
+                value={data.custoOrganismoCertificador2 || ""}
+                onChange={(e) => handleInputChange('custoOrganismoCertificador2', e.target.value)}
                 placeholder="R$ 0,00"
               />
             </div>
 
             <div>
-              <Label htmlFor="custoTraducaoDocumentos">Tradução de Documentos</Label>
+              <Label htmlFor="custoLaboratorio">Laboratório</Label>
               <Input
-                id="custoTraducaoDocumentos"
-                value={data.custoTraducaoDocumentos || ""}
-                onChange={(e) => handleInputChange('custoTraducaoDocumentos', e.target.value)}
+                id="custoLaboratorio"
+                value={data.custoLaboratorio || ""}
+                onChange={(e) => handleInputChange('custoLaboratorio', e.target.value)}
                 placeholder="R$ 0,00"
               />
             </div>
@@ -154,16 +154,6 @@ export const AnaliseCustosRegulatóriosStep = ({ data, onChange }: AnaliseCustos
             />
           </div>
 
-          <div>
-            <Label htmlFor="planoMitigacaoRiscos">Plano de Mitigação de Riscos</Label>
-            <Textarea
-              id="planoMitigacaoRiscos"
-              value={data.planoMitigacaoRiscos || ""}
-              onChange={(e) => handleInputChange('planoMitigacaoRiscos', e.target.value)}
-              placeholder="Descreva as estratégias para mitigar os riscos identificados..."
-              rows={4}
-            />
-          </div>
 
           <div>
             <Label htmlFor="conclusaoViabilidadeRegulatoria">Conclusão da Viabilidade Regulatória</Label>
