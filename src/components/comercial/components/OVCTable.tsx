@@ -202,6 +202,7 @@ const OVCTable = ({ items, onUpdateItems }: OVCTableProps) => {
             </TableRow>
           ))}
           <TableRow className="bg-gray-100 font-bold">
+            <TableCell className="border border-gray-300"></TableCell>
             <TableCell className="border border-gray-300 text-center">{totals.priceListTotal}</TableCell>
             <TableCell className="border border-gray-300"></TableCell>
             <TableCell className="border border-gray-300"></TableCell>
