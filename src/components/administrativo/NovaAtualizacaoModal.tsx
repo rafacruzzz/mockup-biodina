@@ -19,6 +19,10 @@ interface AtualizacaoData {
   produtoSelecionado?: any;
   numeroRegistroAnvisa?: string;
   tipoAtualizacao?: string;
+  // Etapa 2 - Informações Adicionais
+  assunto?: string;
+  breveDescricao?: string;
+  alteradoPor?: string;
   nomeArquivoPrincipal?: string;
   documentosAlteracao?: any[];
   protocoloPeticionamentoAnexado?: boolean;

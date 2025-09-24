@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
 import { ArrowLeft, FileText, Upload, Trash2, Plus, Calendar, CheckCircle, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -31,6 +32,11 @@ export const GeracaoDocumentacaoStep = ({
   const [documentos, setDocumentos] = useState<DocumentoAlteracao[]>(atualizacaoData.documentosAlteracao || []);
   const [protocoloPeticionamento, setProtocoloPeticionamento] = useState<File | null>(null);
   const [novoSubtitulo, setNovoSubtitulo] = useState('');
+  
+  // Novos campos
+  const [assunto, setAssunto] = useState(atualizacaoData.assunto || '');
+  const [breveDescricao, setBreveDescricao] = useState(atualizacaoData.breveDescricao || '');
+  const [alteradoPor, setAlteradoPor] = useState(atualizacaoData.alteradoPor || '');
   
   const fileInputRefs = useRef<{ [key: number]: HTMLInputElement | null }>({});
   const protocoloInputRef = useRef<HTMLInputElement>(null);
@@ -145,6 +151,21 @@ export const GeracaoDocumentacaoStep = ({
 
   const handleProximaEtapa = () => {
     // Validação dos campos obrigatórios
+    if (!assunto.trim()) {
+      toast.error('Digite o assunto da atualização');
+      return;
+    }
+
+    if (!breveDescricao.trim()) {
+      toast.error('Digite a breve descrição sobre o motivo do peticionamento');
+      return;
+    }
+
+    if (!alteradoPor.trim()) {
+      toast.error('Digite quem é o responsável pela alteração');
+      return;
+    }
+
     if (!nomeArquivoPrincipal.trim()) {
       toast.error('Digite o nome do arquivo principal');
       return;
@@ -162,6 +183,9 @@ export const GeracaoDocumentacaoStep = ({
 
     const data = {
       ...atualizacaoData,
+      assunto,
+      breveDescricao,
+      alteradoPor,
       nomeArquivoPrincipal,
       documentosAlteracao: documentos,
       protocoloPeticionamentoAnexado: !!protocoloPeticionamento
@@ -191,6 +215,53 @@ export const GeracaoDocumentacaoStep = ({
             <div><span className="font-medium">Nome:</span> {produtoSelecionado?.nome}</div>
             <div><span className="font-medium">Registro ANVISA:</span> {atualizacaoData.numeroRegistroAnvisa}</div>
             <div><span className="font-medium">Fabricante:</span> {produtoSelecionado?.fabricante}</div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Informações Adicionais da Atualização */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Informações Adicionais da Atualização</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {/* Assunto */}
+            <div>
+              <Label htmlFor="assunto">Assunto *</Label>
+              <Input 
+                id="assunto"
+                value={assunto}
+                onChange={(e) => setAssunto(e.target.value)}
+                placeholder="Digite o assunto da atualização"
+                className="mt-1"
+              />
+            </div>
+            
+            {/* Breve Descrição */}
+            <div>
+              <Label htmlFor="breveDescricao">Breve descrição sobre o motivo do peticionamento *</Label>
+              <Textarea 
+                id="breveDescricao"
+                value={breveDescricao}
+                onChange={(e) => setBreveDescricao(e.target.value)}
+                placeholder="Descreva brevemente o motivo desta atualização..."
+                rows={3}
+                className="mt-1"
+              />
+            </div>
+            
+            {/* Alterado Por */}
+            <div>
+              <Label htmlFor="alteradoPor">Alterado por *</Label>
+              <Input 
+                id="alteradoPor"
+                value={alteradoPor}
+                onChange={(e) => setAlteradoPor(e.target.value)}
+                placeholder="Nome da pessoa responsável pela alteração"
+                className="mt-1"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -431,7 +502,7 @@ export const GeracaoDocumentacaoStep = ({
         <Button 
           onClick={handleProximaEtapa} 
           className="bg-blue-600 hover:bg-blue-700 text-white"
-          disabled={!nomeArquivoPrincipal.trim() || !protocoloPeticionamento || documentos.length === 0}
+          disabled={!assunto.trim() || !breveDescricao.trim() || !alteradoPor.trim() || !nomeArquivoPrincipal.trim() || !protocoloPeticionamento || documentos.length === 0}
         >
           Próxima Etapa
         </Button>
