@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { TipoSolicitacao } from '@/types/solicitacao';
 import { useUser } from '@/contexts/UserContext';
+import DocumentUploadField from '@/components/rh/DocumentUploadField';
 
 interface FormularioDinamicoProps {
   tipoSolicitacao: TipoSolicitacao;
@@ -163,11 +164,21 @@ const FormularioDinamico = ({ tipoSolicitacao, onSubmit }: FormularioDinamicoPro
 
       case 'file':
         return (
-          <Input
-            type="file"
-            onChange={(e) => handleInputChange(campo.id, e.target.files?.[0])}
+          <DocumentUploadField
+            label=""
+            documento={value ? { 
+              id: `temp-${campo.id}`,
+              nome: value.name || 'Arquivo anexado', 
+              tipo: value.type || 'application/octet-stream',
+              tamanho: value.size || 0,
+              dataUpload: new Date().toISOString(),
+              categoria: 'solicitacao',
+              arquivo: value,
+              validadeIndeterminada: true
+            } : undefined}
+            onUpload={(file) => handleInputChange(campo.id, file)}
+            onRemove={() => handleInputChange(campo.id, null)}
             required={campo.obrigatorio}
-            multiple
           />
         );
 

@@ -91,7 +91,7 @@ export const tiposSolicitacao: TipoSolicitacao[] = [
       { id: 'nome_candidato', label: 'Nome do Candidato', tipo: 'text', obrigatorio: true },
       { id: 'cargo', label: 'Cargo', tipo: 'text', obrigatorio: true },
       { id: 'salario', label: 'Salário', tipo: 'text', obrigatorio: true },
-      { id: 'nivel', label: 'Nível', tipo: 'select', obrigatorio: true, opcoes: ['Júnior', 'Pleno', 'Sênior', 'Especialista'] },
+      { id: 'nivel', label: 'Nível', tipo: 'text', obrigatorio: true },
       { id: 'beneficios', label: 'Benefícios', tipo: 'textarea', obrigatorio: true },
       { id: 'tipo_contratacao', label: 'Tipo de Contratação', tipo: 'select', obrigatorio: true, opcoes: ['CLT', 'Estágio', 'Jovem Aprendiz', 'PJ', 'Autônomo'] },
       { id: 'modelo_trabalho', label: 'Modelo de Trabalho', tipo: 'select', obrigatorio: true, opcoes: ['Presencial', 'Híbrido', 'Remoto'] },
@@ -101,6 +101,7 @@ export const tiposSolicitacao: TipoSolicitacao[] = [
       { id: 'data_admissao', label: 'Data de Admissão', tipo: 'date', obrigatorio: true },
       { id: 'gestor_responsavel', label: 'Gestor Responsável', tipo: 'text', obrigatorio: true },
       { id: 'anexar_documentos', label: 'Anexar documentos recebidos do candidato?', tipo: 'checkbox', obrigatorio: false },
+      { id: 'documentos_candidato_upload', label: 'Documentos do Candidato', tipo: 'file', obrigatorio: false },
       { id: 'telefone_contato', label: 'Telefone para Contato', tipo: 'text', obrigatorio: true },
       { id: 'email_contato', label: 'Email para Contato', tipo: 'text', obrigatorio: true },
       { id: 'aprovacao_gestor', label: 'Aprovação (Gestor/Diretoria)', tipo: 'checkbox', obrigatorio: true },
@@ -154,7 +155,8 @@ export const tiposSolicitacao: TipoSolicitacao[] = [
     campos: [
       { id: 'nome_colaborador', label: 'Nome do Colaborador', tipo: 'text', obrigatorio: true },
       { id: 'novo_endereco_completo', label: 'Novo Endereço Completo', tipo: 'textarea', obrigatorio: true },
-      { id: 'comprovante_residencia_anexo', label: 'Comprovante de Residência em Anexo', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] }
+      { id: 'comprovante_residencia_anexo', label: 'Comprovante de Residência em Anexo', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] },
+      { id: 'comprovante_residencia_upload', label: 'Comprovante de Residência', tipo: 'file', obrigatorio: false }
     ]
   },
   {
@@ -170,6 +172,7 @@ export const tiposSolicitacao: TipoSolicitacao[] = [
       { id: 'data_inicio_prevista', label: 'Data de Início Prevista ou Afastamento Médico', tipo: 'date', obrigatorio: true },
       { id: 'data_termino_estimado', label: 'Data de Término (se estimado)', tipo: 'date', obrigatorio: false },
       { id: 'atestado_documento_anexo', label: 'Atestado / Documento Anexo', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] },
+      { id: 'atestado_upload', label: 'Atestado / Documento', tipo: 'file', obrigatorio: false },
       { id: 'atestado_sistema_ponto', label: 'Atestado / Documento Anexo no Sistema de Ponto', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] },
       { id: 'observacoes', label: 'Observações', tipo: 'textarea', obrigatorio: false }
     ]
@@ -187,7 +190,8 @@ export const tiposSolicitacao: TipoSolicitacao[] = [
       { id: 'nome_dependente', label: 'Nome do Dependente', tipo: 'text', obrigatorio: true },
       { id: 'parentesco', label: 'Parentesco', tipo: 'select', obrigatorio: true, opcoes: ['Filho(a)', 'Cônjuge', 'Companheiro(a)', 'Pai/Mãe', 'Outros'] },
       { id: 'data_nascimento_dependente', label: 'Data de Nascimento', tipo: 'date', obrigatorio: true },
-      { id: 'documentos_enviados', label: 'Documentos Enviados (RG/CPF/Certidão)', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] }
+      { id: 'documentos_enviados', label: 'Documentos Enviados (RG/CPF/Certidão)', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] },
+      { id: 'documentos_dependente_ir_upload', label: 'Documentos do Dependente (RG/CPF/Certidão)', tipo: 'file', obrigatorio: false }
     ]
   },
   {
@@ -204,6 +208,7 @@ export const tiposSolicitacao: TipoSolicitacao[] = [
       { id: 'grau_parentesco', label: 'Grau de Parentesco', tipo: 'select', obrigatorio: true, opcoes: ['Filho(a)', 'Cônjuge', 'Companheiro(a)', 'Pai/Mãe', 'Outros'] },
       { id: 'data_nascimento_dependente', label: 'Data de Nascimento', tipo: 'date', obrigatorio: true },
       { id: 'documentos_anexados', label: 'Documentos Necessários Anexados (RG/CPF/Certidão de Nascimento)', tipo: 'radio', obrigatorio: true, opcoes: ['Sim', 'Não'] },
+      { id: 'documentos_dependente_plano_upload', label: 'Documentos do Dependente (RG/CPF/Certidão)', tipo: 'file', obrigatorio: false },
       { id: 'tabela_valores_dependentes', label: 'Anexar Tabela de Valores dos Dependentes', tipo: 'file', obrigatorio: false },
       { id: 'observacoes', label: 'Observações', tipo: 'textarea', obrigatorio: false }
     ]
@@ -221,7 +226,8 @@ export const tiposSolicitacao: TipoSolicitacao[] = [
       { id: 'datas_referentes', label: 'Data(s) Referente(s)', tipo: 'text', obrigatorio: true },
       { id: 'tipo_solicitacao', label: 'Tipo de Solicitação', tipo: 'checkbox', obrigatorio: true, opcoes: ['Atestado médico', 'Esquecimento de marcação', 'Compensação de horas', 'Erro no sistema', 'Ajuste banco de horas'] },
       { id: 'descricao_justificativa', label: 'Descrição / Justificativa', tipo: 'textarea', obrigatorio: true },
-      { id: 'documento_comprobatorio', label: 'Documento Comprobatório Anexo (se houver)', tipo: 'radio', obrigatorio: false, opcoes: ['Sim', 'Não'] }
+      { id: 'documento_comprobatorio', label: 'Documento Comprobatório Anexo (se houver)', tipo: 'radio', obrigatorio: false, opcoes: ['Sim', 'Não'] },
+      { id: 'documento_comprobatorio_upload', label: 'Documento Comprobatório', tipo: 'file', obrigatorio: false }
     ]
   },
   {
@@ -237,7 +243,8 @@ export const tiposSolicitacao: TipoSolicitacao[] = [
       { id: 'tipo_solicitacao', label: 'Tipo de Solicitação', tipo: 'text', obrigatorio: true },
       { id: 'descricao_detalhada', label: 'Descrição Detalhada', tipo: 'textarea', obrigatorio: true },
       { id: 'data_solicitacao', label: 'Data', tipo: 'date', obrigatorio: true },
-      { id: 'anexos_necessarios', label: 'Anexos (se necessário)', tipo: 'radio', obrigatorio: false, opcoes: ['Sim', 'Não'] }
+      { id: 'anexos_necessarios', label: 'Anexos (se necessário)', tipo: 'radio', obrigatorio: false, opcoes: ['Sim', 'Não'] },
+      { id: 'anexos_upload', label: 'Anexos', tipo: 'file', obrigatorio: false }
     ]
   },
   {
