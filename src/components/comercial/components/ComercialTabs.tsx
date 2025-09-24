@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { FileText, MessageSquare, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatInterno from '../ChatInterno';
+import MercadoriasTable from './MercadoriasTable';
 
 interface ComercialTabsProps {
   activeTab: string;
@@ -177,186 +178,154 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
           </CardContent>
         </Card>
 
-        {/* Informações do Negócio */}
+        {/* Processo de Due Diligence */}
         <Card>
           <CardHeader>
-            <CardTitle>Informações do Negócio</CardTitle>
+            <CardTitle>Processo de Due Diligence</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="valorNegocio">Valor do Negócio *</Label>
+              <Label htmlFor="numeroProcessoDD">Número do processo DD</Label>
               <Input
-                id="valorNegocio"
-                value={formData.valorNegocio}
-                onChange={(e) => onInputChange('valorNegocio', e.target.value)}
-                placeholder="R$ 0,00"
+                id="numeroProcessoDD"
+                value={formData.numeroProcessoDD}
+                onChange={(e) => onInputChange('numeroProcessoDD', e.target.value)}
+                placeholder="Gerado automaticamente"
+                disabled
               />
             </div>
             <div>
-              <Label htmlFor="segmentoLead">Segmento do Lead</Label>
-              <Select value={formData.segmentoLead} onValueChange={(value) => onInputChange('segmentoLead', value)}>
+              <Label htmlFor="comissaoInfo">Informação sobre comissão</Label>
+              <Input
+                id="comissaoInfo"
+                value={formData.comissaoInfo}
+                onChange={(e) => onInputChange('comissaoInfo', e.target.value)}
+                placeholder="Digite a informação sobre comissão"
+              />
+            </div>
+            <div>
+              <Label htmlFor="descontoInfo">Informação sobre desconto</Label>
+              <Input
+                id="descontoInfo"
+                value={formData.descontoInfo}
+                onChange={(e) => onInputChange('descontoInfo', e.target.value)}
+                placeholder="Digite a informação sobre desconto"
+              />
+            </div>
+            <div>
+              <Label htmlFor="valorPacking">Valor do packing</Label>
+              <Input
+                id="valorPacking"
+                value={formData.valorPacking}
+                onChange={(e) => onInputChange('valorPacking', e.target.value)}
+                placeholder="US$ 0,00"
+              />
+            </div>
+            <div>
+              <Label htmlFor="valorTotalFatura">Valor total da fatura</Label>
+              <Input
+                id="valorTotalFatura"
+                value={formData.valorTotalFatura}
+                onChange={(e) => onInputChange('valorTotalFatura', e.target.value)}
+                placeholder="US$ 0,00"
+              />
+            </div>
+            <div>
+              <Label htmlFor="formaPagamento">Forma de pagamento</Label>
+              <Select value={formData.formaPagamento} onValueChange={(value) => onInputChange('formaPagamento', value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecione o segmento" />
+                  <SelectValue placeholder="Selecione a forma de pagamento" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="hospitalar">Hospitalar</SelectItem>
-                  <SelectItem value="universitario">Universitário</SelectItem>
-                  <SelectItem value="publico">Público</SelectItem>
-                  <SelectItem value="municipal">Municipal</SelectItem>
-                  <SelectItem value="privado">Privado</SelectItem>
+                  <SelectItem value="CAD">CAD - Pagamento Antecipado</SelectItem>
+                  <SelectItem value="30_dias">30 dias</SelectItem>
+                  <SelectItem value="60_dias">60 dias</SelectItem>
+                  <SelectItem value="90_dias">90 dias</SelectItem>
+                  <SelectItem value="carta_credito">Carta de Crédito</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label htmlFor="dataInicio">Data de Início</Label>
+              <Label htmlFor="dataElaboracaoSPI">Data da elaboração da SPI</Label>
               <Input
-                id="dataInicio"
+                id="dataElaboracaoSPI"
                 type="date"
-                value={formData.dataInicio}
-                onChange={(e) => onInputChange('dataInicio', e.target.value)}
+                value={formData.dataElaboracaoSPI}
+                onChange={(e) => onInputChange('dataElaboracaoSPI', e.target.value)}
               />
             </div>
             <div>
-              <Label htmlFor="dataLimite">Data Limite</Label>
+              <Label htmlFor="numeroProformaInvoice">Número da proforma invoice</Label>
               <Input
-                id="dataLimite"
-                type="date"
-                value={formData.dataLimite}
-                onChange={(e) => onInputChange('dataLimite', e.target.value)}
+                id="numeroProformaInvoice"
+                value={formData.numeroProformaInvoice}
+                onChange={(e) => onInputChange('numeroProformaInvoice', e.target.value)}
+                placeholder="Digite o número da proforma invoice"
               />
             </div>
             <div>
-              <Label htmlFor="dataVisita">Data da Visita</Label>
+              <Label htmlFor="dataAprovacaoCliente">Data de aprovação do cliente</Label>
               <Input
-                id="dataVisita"
+                id="dataAprovacaoCliente"
                 type="date"
-                value={formData.dataVisita}
-                onChange={(e) => onInputChange('dataVisita', e.target.value)}
+                value={formData.dataAprovacaoCliente}
+                onChange={(e) => onInputChange('dataAprovacaoCliente', e.target.value)}
               />
             </div>
-            <div className="md:col-span-2 lg:col-span-3">
-              <Label htmlFor="procurandoPor">Procurando Por (Contatos Vinculados ao Cliente)</Label>
+            <div>
+              <Label htmlFor="dataPagamento">Data do pagamento</Label>
               <Input
-                id="procurandoPor"
-                value={formData.procurandoPor}
-                onChange={(e) => onInputChange('procurandoPor', e.target.value)}
-                placeholder="Digite os contatos"
+                id="dataPagamento"
+                type="date"
+                value={formData.dataPagamento}
+                onChange={(e) => onInputChange('dataPagamento', e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="dataFaturamento">Data do faturamento</Label>
+              <Input
+                id="dataFaturamento"
+                type="date"
+                value={formData.dataFaturamento}
+                onChange={(e) => onInputChange('dataFaturamento', e.target.value)}
+              />
+            </div>
+            <div>
+              <Label htmlFor="valorFaturamento">Valor do faturamento</Label>
+              <Input
+                id="valorFaturamento"
+                value={formData.valorFaturamento}
+                onChange={(e) => onInputChange('valorFaturamento', e.target.value)}
+                placeholder="US$ 0,00"
+              />
+            </div>
+            <div>
+              <Label htmlFor="numeroFatura">Número da fatura</Label>
+              <Input
+                id="numeroFatura"
+                value={formData.numeroFatura}
+                onChange={(e) => onInputChange('numeroFatura', e.target.value)}
+                placeholder="Digite o número da fatura"
               />
             </div>
             <div className="md:col-span-2 lg:col-span-3">
-              <Label htmlFor="descricao">Descrição</Label>
+              <Label htmlFor="observacoesDD">Observações</Label>
               <Textarea
-                id="descricao"
-                value={formData.descricao}
-                onChange={(e) => onInputChange('descricao', e.target.value)}
-                placeholder="Digite a descrição"
+                id="observacoesDD"
+                value={formData.observacoesDD}
+                onChange={(e) => onInputChange('observacoesDD', e.target.value)}
+                placeholder="Digite as observações"
                 rows={3}
               />
             </div>
           </CardContent>
         </Card>
 
-        {/* Campos Específicos de Importação */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Dados Específicos da Importação Direta</CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="spi">SPI</Label>
-              <Input
-                id="spi"
-                value={formData.spi}
-                onChange={(e) => onInputChange('spi', e.target.value)}
-                placeholder="Digite o SPI"
-              />
-            </div>
-            <div>
-              <Label htmlFor="di">DI</Label>
-              <Input
-                id="di"
-                value={formData.di}
-                onChange={(e) => onInputChange('di', e.target.value)}
-                placeholder="Digite a DI"
-              />
-            </div>
-            <div>
-              <Label htmlFor="invoice">Invoice</Label>
-              <Input
-                id="invoice"
-                value={formData.invoice}
-                onChange={(e) => onInputChange('invoice', e.target.value)}
-                placeholder="Digite o invoice"
-              />
-            </div>
-            <div>
-              <Label htmlFor="comissao">Comissão</Label>
-              <Input
-                id="comissao"
-                value={formData.comissao}
-                onChange={(e) => onInputChange('comissao', e.target.value)}
-                placeholder="Digite a comissão"
-              />
-            </div>
-            <div>
-              <Label htmlFor="numeroProjeto">Número do Projeto (Automático)</Label>
-              <Input
-                id="numeroProjeto"
-                value={formData.numeroProjeto}
-                onChange={(e) => onInputChange('numeroProjeto', e.target.value)}
-                placeholder="Gerado automaticamente"
-                disabled
-              />
-            </div>
-            <div>
-              <Label htmlFor="numeroPedido">Número do Pedido (Automático)</Label>
-              <Input
-                id="numeroPedido"
-                value={formData.numeroPedido}
-                onChange={(e) => onInputChange('numeroPedido', e.target.value)}
-                placeholder="Gerado automaticamente"
-                disabled
-              />
-            </div>
-            <div>
-              <Label htmlFor="numeroContrato">Número do Contrato (Automático)</Label>
-              <Input
-                id="numeroContrato"
-                value={formData.numeroContrato}
-                onChange={(e) => onInputChange('numeroContrato', e.target.value)}
-                placeholder="Gerado automaticamente"
-                disabled
-              />
-            </div>
-            <div>
-              <Label htmlFor="naturezaOperacao">Qual Natureza da Operação (CFOP vinculado ao OMIE)</Label>
-              <Input
-                id="naturezaOperacao"
-                value={formData.naturezaOperacao}
-                onChange={(e) => onInputChange('naturezaOperacao', e.target.value)}
-                placeholder="Digite a natureza da operação"
-              />
-            </div>
-            <div>
-              <Label htmlFor="tipoContrato">Detalhar Natureza da Operação {'->'} Tipo de Contrato</Label>
-              <Input
-                id="tipoContrato"
-                value={formData.tipoContrato}
-                onChange={(e) => onInputChange('tipoContrato', e.target.value)}
-                placeholder="Digite o tipo de contrato"
-              />
-            </div>
-            <div>
-              <Label htmlFor="previsaoFechamento">Previsão de Fechamento (Vigência da ATA)</Label>
-              <Input
-                id="previsaoFechamento"
-                type="date"
-                value={formData.previsaoFechamento}
-                onChange={(e) => onInputChange('previsaoFechamento', e.target.value)}
-              />
-            </div>
-          </CardContent>
-        </Card>
+        {/* Tabela de Mercadorias */}
+        <MercadoriasTable
+          mercadorias={formData.mercadorias || []}
+          onMercadoriasChange={(mercadorias) => onInputChange('mercadorias', mercadorias)}
+        />
       </TabsContent>
 
       <TabsContent value="historico-chat" className="space-y-4 mt-4">

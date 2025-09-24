@@ -43,32 +43,22 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     telefone: '',
     website: '',
     
-    // Informações do Negócio
-    valorNegocio: '',
-    metodoContato: '',
-    segmentoLead: '',
-    colaboradoresResponsaveis: [],
-    dataInicio: '',
-    dataLimite: '',
-    procurandoPor: '',
-    tags: [],
-    caracteristicas: '',
-    fluxoTrabalho: '',
-    status: '',
-    descricao: '',
-    dataVisita: '',
-    
-    // Campos Específicos de Importação
-    spi: '',
-    di: '',
-    invoice: '',
-    comissao: '',
-    numeroProjeto: '',
-    numeroPedido: '',
-    numeroContrato: '',
-    naturezaOperacao: '',
-    tipoContrato: '',
-    previsaoFechamento: '',
+    // Processo de Due Diligence
+    numeroProcessoDD: `DD-${new Date().getFullYear()}-${String(Date.now()).slice(-3)}`,
+    mercadorias: [],
+    comissaoInfo: '',
+    descontoInfo: '',
+    valorPacking: '',
+    valorTotalFatura: '',
+    formaPagamento: '',
+    dataElaboracaoSPI: '',
+    numeroProformaInvoice: '',
+    dataAprovacaoCliente: '',
+    dataPagamento: '',
+    dataFaturamento: '',
+    valorFaturamento: '',
+    numeroFatura: '',
+    observacoesDD: '',
     
     // Análise Técnica
     analiseTecnica: '',
@@ -201,9 +191,9 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
       return formData.spiNumero;
     }
     
-    // Verificar se numeroProjeto está no padrão
-    if (formData.numeroProjeto && formData.numeroProjeto.startsWith('IMP-')) {
-      return formData.numeroProjeto;
+    // Verificar se numeroProcessoDD está no padrão
+    if (formData.numeroProcessoDD && formData.numeroProcessoDD.startsWith('DD-')) {
+      return formData.numeroProcessoDD;
     }
     
     return undefined;
