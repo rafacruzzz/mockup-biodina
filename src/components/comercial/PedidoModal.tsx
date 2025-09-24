@@ -57,6 +57,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   
   // Frete - Seção 5: Urgência (já existe mas melhorado)
   const [observacoesFrete, setObservacoesFrete] = useState('');
+  const [conhecimento, setConhecimento] = useState('');
   
   // Autorização
   const [urgente, setUrgente] = useState(false);
@@ -145,6 +146,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       enderecoEntrega,
       maisInformacoesEntrega,
       observacoesFrete,
+      conhecimento,
       urgente,
       justificativaUrgencia,
       cpfAutorizador,
@@ -470,6 +472,15 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                         value={dataEntrega}
                         onChange={(e) => setDataEntrega(e.target.value)}
                         min={new Date().toISOString().split('T')[0]}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="conhecimento">Conhecimento</Label>
+                      <Input
+                        id="conhecimento"
+                        value={conhecimento}
+                        onChange={(e) => setConhecimento(e.target.value)}
+                        placeholder="Número do conhecimento"
                       />
                     </div>
                   </CardContent>

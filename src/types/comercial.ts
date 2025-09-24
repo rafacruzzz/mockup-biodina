@@ -108,6 +108,7 @@ export interface PedidoCompleto {
   enderecoEntrega?: string;
   maisInformacoesEntrega?: string;
   observacoesFrete?: string;
+  conhecimento?: string;
   urgente?: boolean;
   justificativaUrgencia?: string;
   cpfAutorizador?: string;
