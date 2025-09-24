@@ -45,24 +45,28 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
     atividadePrincipal: 'COMÉRCIO DE MATERIAIS CIENTÍFICOS',
     // Campos existentes
     autorizacaoAnvisa: '103.011-6',
-    numeroRegularizacao: '10301160243',
     licenciamentoImportacao: '25/1217686-1',
     rdcNumero: '81',
     dataRdc: '05/11/2008',
     unidadeSaude: 'HOSPITAL SAO VICENTE DE PAULO',
     cnpjUnidadeSaude: '18.010.750/0001-00',
     finalidadeImportacao: 'Uso exclusivo',
+    // Novos campos para modelo DDR Entidade Vinculada
+    empresa: '',
+    entidadeVinculada: '',
+    cnpjAdicional: '',
+    finalidadeImportacaoAdicional: 'Uso exclusivo',
     codigoInterno: '944-157',
     nomeComercial: 'REF. 944-157 - SOLUTION PACK - SP90, 680 ATIVIDADES. TEMPERATURA DE ARMAZENAGEM: +2°C A +25°C',
     apresentacaoComercial: 'UNIDADE',
     registroMS: '10301160243',
-    numeroSerie: '944-157DX10',
-    dataFabricacao: '04/03/2025',
-    dataValidade: '31/08/2025',
     naoComercio: false,
     rastreabilidade: false,
     normasSanitarias: false,
     declaracaoValida: false,
+    // Textos editáveis das declarações legais
+    textoRastreabilidade: 'Rastreabilidade garantida conforme Lei nº 6360/76 e Decreto nº 8.077/2013',
+    textoNormasSanitarias: 'Observância das normas sanitárias conforme Lei nº 6437/77',
     responsavelNome: 'Sylvio dos Santos Jr.',
     responsavelFuncao: 'Responsável Técnico e Legal',
     responsavelCrq: '03211626',
@@ -213,16 +217,6 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-gray-300 p-2">Número da regularização na ANVISA</td>
-                    <td className="border border-gray-300 p-2">
-                      <Input
-                        value={ddrData.numeroRegularizacao}
-                        onChange={(e) => handleDdrInputChange('numeroRegularizacao', e.target.value)}
-                        className="w-full"
-                      />
-                    </td>
-                  </tr>
-                  <tr>
                     <td className="border border-gray-300 p-2">Licenciamento de Importação nº</td>
                     <td className="border border-gray-300 p-2">
                       <Input
@@ -292,6 +286,62 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                       </Select>
                     </td>
                   </tr>
+                  
+                  {/* Campos específicos para modelo DDR Entidade Vinculada */}
+                  {modeloDDR === 'modelo1' && (
+                    <>
+                      <tr>
+                        <td className="border border-gray-300 p-2">Empresa</td>
+                        <td className="border border-gray-300 p-2">
+                          <Input
+                            value={ddrData.empresa}
+                            onChange={(e) => handleDdrInputChange('empresa', e.target.value)}
+                            className="w-full"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-300 p-2">Entidade Vinculada</td>
+                        <td className="border border-gray-300 p-2">
+                          <Input
+                            value={ddrData.entidadeVinculada}
+                            onChange={(e) => handleDdrInputChange('entidadeVinculada', e.target.value)}
+                            className="w-full"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-300 p-2">CNPJ (Adicional)</td>
+                        <td className="border border-gray-300 p-2">
+                          <Input
+                            value={ddrData.cnpjAdicional}
+                            onChange={(e) => handleDdrInputChange('cnpjAdicional', e.target.value)}
+                            className="w-full"
+                          />
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="border border-gray-300 p-2">Finalidade de Importação (Adicional)</td>
+                        <td className="border border-gray-300 p-2">
+                          <Select 
+                            value={ddrData.finalidadeImportacaoAdicional} 
+                            onValueChange={(value) => handleDdrInputChange('finalidadeImportacaoAdicional', value)}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {finalidadesImportacao.map((finalidade) => (
+                                <SelectItem key={finalidade} value={finalidade}>
+                                  {finalidade}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </td>
+                      </tr>
+                    </>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -342,35 +392,6 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                 />
               </div>
               
-              <div>
-                <Label htmlFor="numeroSerie">Número de Série</Label>
-                <Input
-                  id="numeroSerie"
-                  value={ddrData.numeroSerie}
-                  onChange={(e) => handleDdrInputChange('numeroSerie', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="dataFabricacao">Data de Fabricação</Label>
-                <Input
-                  id="dataFabricacao"
-                  value={ddrData.dataFabricacao}
-                  onChange={(e) => handleDdrInputChange('dataFabricacao', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="dataValidade">Data de Validade</Label>
-                <Input
-                  id="dataValidade"
-                  value={ddrData.dataValidade}
-                  onChange={(e) => handleDdrInputChange('dataValidade', e.target.value)}
-                  className="w-full"
-                />
-              </div>
             </div>
             <p className="text-sm text-gray-600 mt-4 italic">
               (Essas informações podem ser preenchidas a partir do XML da DI ou ficha técnica do produto no sistema)
@@ -390,22 +411,38 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                 <Label htmlFor="naoComercio">Produtos não serão destinados ao comércio</Label>
               </div>
               
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="rastreabilidade"
-                  checked={ddrData.rastreabilidade}
-                  onCheckedChange={(checked) => handleDdrInputChange('rastreabilidade', checked)}
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="rastreabilidade"
+                    checked={ddrData.rastreabilidade}
+                    onCheckedChange={(checked) => handleDdrInputChange('rastreabilidade', checked)}
+                  />
+                  <Label htmlFor="rastreabilidade">Texto da declaração de rastreabilidade:</Label>
+                </div>
+                <Input
+                  value={ddrData.textoRastreabilidade}
+                  onChange={(e) => handleDdrInputChange('textoRastreabilidade', e.target.value)}
+                  className="w-full"
+                  placeholder="Rastreabilidade garantida conforme Lei nº..."
                 />
-                <Label htmlFor="rastreabilidade">Rastreabilidade garantida conforme Lei nº 6360/76 e Decreto nº 8.077/2013</Label>
               </div>
               
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="normasSanitarias"
-                  checked={ddrData.normasSanitarias}
-                  onCheckedChange={(checked) => handleDdrInputChange('normasSanitarias', checked)}
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="normasSanitarias"
+                    checked={ddrData.normasSanitarias}
+                    onCheckedChange={(checked) => handleDdrInputChange('normasSanitarias', checked)}
+                  />
+                  <Label htmlFor="normasSanitarias">Texto das normas sanitárias:</Label>
+                </div>
+                <Input
+                  value={ddrData.textoNormasSanitarias}
+                  onChange={(e) => handleDdrInputChange('textoNormasSanitarias', e.target.value)}
+                  className="w-full"
+                  placeholder="Observância das normas sanitárias conforme Lei nº..."
                 />
-                <Label htmlFor="normasSanitarias">Observância das normas sanitárias conforme Lei nº 6437/77</Label>
               </div>
               
               <div className="flex items-center space-x-2">
