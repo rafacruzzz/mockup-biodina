@@ -26,13 +26,13 @@ Email: ${formData.companyEmail || 'bios@biodina.com.br'}
 Recipient
 To: ${formData.noDestinatario || 'RADIOMETER MEDICAL ApS, International Sales Division'}
 Attn.: ${formData.noAtencao || 'Ms. Lene Orbansen'}
-Date: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-Total Pages: 01
+Date: ${formData.noData || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+Total Pages: ${formData.noTotalPaginas || '01'}
 Subject: ${formData.noAssunto || 'OUR NEW ORDER OD-XXXX/RD-XXXX, YOUR P.I XXXXXX - USD - XXXX'}
 Customer: ${formData.noCliente || 'XXXXXXXXXXXXXXXX'}
 
 Order Content
-"We would like to place our new order, according to your P.I. a.m. consigned to the following customer:"
+${formData.noOrderContent || 'We would like to place our new order, according to your P.I. a.m. consigned to the following customer:'}
 
 Customer Information
 Customer: ${formData.noConsignadoPara || 'XXXXXXXXXXXXXXXX'}
@@ -152,12 +152,12 @@ Documento gerado em: ${new Date().toLocaleString()}
           </div>
 
           {/* Recipient */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 border p-4 rounded">
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 border p-4 rounded">
+            <div className="lg:col-span-3">
               <h3 className="font-semibold mb-4 border-b pb-2">RECIPIENT</h3>
             </div>
             
-            <div>
+            <div className="lg:col-span-2">
               <Label htmlFor="noDestinatario">To</Label>
               <Input
                 id="noDestinatario"
@@ -178,8 +178,30 @@ Documento gerado em: ${new Date().toLocaleString()}
                 className="w-full"
               />
             </div>
-            
+
             <div>
+              <Label htmlFor="noData">Date</Label>
+              <Input
+                id="noData"
+                value={formData.noData || ''}
+                onChange={(e) => onInputChange('noData', e.target.value)}
+                placeholder={new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                className="w-full"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="noTotalPaginas">Total Pages</Label>
+              <Input
+                id="noTotalPaginas"
+                value={formData.noTotalPaginas || ''}
+                onChange={(e) => onInputChange('noTotalPaginas', e.target.value)}
+                placeholder="01"
+                className="w-full"
+              />
+            </div>
+            
+            <div className="lg:col-span-2">
               <Label htmlFor="noAssunto">Subject</Label>
               <Input
                 id="noAssunto"
@@ -202,10 +224,23 @@ Documento gerado em: ${new Date().toLocaleString()}
             </div>
           </div>
 
-          {/* Order Content - Texto fixo */}
-          <div className="border p-4 rounded bg-gray-50">
-            <h3 className="font-semibold mb-4 border-b pb-2">ORDER CONTENT</h3>
-            <p className="text-sm italic">"We would like to place our new order, according to your P.I. a.m. consigned to the following customer:"</p>
+          {/* Order Content */}
+          <div className="border p-4 rounded">
+            <div className="mb-4">
+              <h3 className="font-semibold mb-4 border-b pb-2">ORDER CONTENT</h3>
+            </div>
+            
+            <div>
+              <Label htmlFor="noOrderContent">Order Description</Label>
+              <Textarea
+                id="noOrderContent"
+                value={formData.noOrderContent || ''}
+                onChange={(e) => onInputChange('noOrderContent', e.target.value)}
+                placeholder="We would like to place our new order, according to your P.I. a.m. consigned to the following customer:"
+                rows={3}
+                className="w-full"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 border p-4 rounded">
@@ -287,8 +322,22 @@ Documento gerado em: ${new Date().toLocaleString()}
             </div>
           </div>
 
-          <div className="border p-4 rounded bg-gray-50">
-            <p className="text-sm italic">"We thank you in advance and look forward to receiving your AO."</p>
+          <div className="border p-4 rounded">
+            <div className="mb-4">
+              <h3 className="font-semibold mb-4 border-b pb-2">CLOSING MESSAGE</h3>
+            </div>
+            
+            <div>
+              <Label htmlFor="noAgradecimento">Message</Label>
+              <Textarea
+                id="noAgradecimento"
+                value={formData.noAgradecimento || ''}
+                onChange={(e) => onInputChange('noAgradecimento', e.target.value)}
+                placeholder="We thank you in advance and look forward to receiving your AO."
+                rows={2}
+                className="w-full"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 border p-4 rounded">
