@@ -62,7 +62,8 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   // Autorização
   const [urgente, setUrgente] = useState(false);
   const [justificativaUrgencia, setJustificativaUrgencia] = useState('');
-  const [cpfAutorizador, setCpfAutorizador] = useState('');
+  const [autorizadoPor, setAutorizadoPor] = useState('');
+  const [dataAutorizacao, setDataAutorizacao] = useState('');
   const [emailAutorizador, setEmailAutorizador] = useState('');
   const [observacoesAutorizacao, setObservacoesAutorizacao] = useState('');
 
@@ -149,7 +150,8 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       conhecimento,
       urgente,
       justificativaUrgencia,
-      cpfAutorizador,
+      autorizadoPor,
+      dataAutorizacao,
       emailAutorizador,
       observacoesAutorizacao
     };
@@ -492,49 +494,42 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                     <CardTitle>Responsabilidades</CardTitle>
                   </CardHeader>
                   <CardContent className="grid grid-cols-1 gap-4">
-                    <div>
-                      <Label htmlFor="fretePagarPor">Frete a Pagar Por</Label>
-                      <Select value={fretePagarPor} onValueChange={setFretePagarPor}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione quem pagará o frete" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="emitente">Emitente</SelectItem>
-                          <SelectItem value="destinatario">Destinatário</SelectItem>
-                          <SelectItem value="terceiros">Terceiros</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="freteRetirarPor">Frete a Retirar Por</Label>
-                      <Select value={freteRetirarPor} onValueChange={setFreteRetirarPor}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione quem retirará" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="emitente">Emitente</SelectItem>
-                          <SelectItem value="destinatario">Destinatário</SelectItem>
-                          <SelectItem value="terceiros">Terceiros</SelectItem>
-                          <SelectItem value="transportadora">Transportadora</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="entregarRetirarCuidados">Entregar/Retirar aos Cuidados de Quem</Label>
-                      <Select value={entregarRetirarCuidados} onValueChange={setEntregarRetirarCuidados}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione aos cuidados de quem" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="responsavel_compras">Responsável pelas Compras</SelectItem>
-                          <SelectItem value="gerente_filial">Gerente da Filial</SelectItem>
-                          <SelectItem value="farmaceutico_responsavel">Farmacêutico Responsável</SelectItem>
-                          <SelectItem value="almoxarifado">Almoxarifado</SelectItem>
-                          <SelectItem value="recepcao">Recepção</SelectItem>
-                          <SelectItem value="outro">Outro</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                     <div>
+                       <Label htmlFor="fretePagarPor">Frete a Pagar Por</Label>
+                       <Select value={fretePagarPor} onValueChange={setFretePagarPor}>
+                         <SelectTrigger>
+                           <SelectValue placeholder="Selecione quem pagará o frete" />
+                         </SelectTrigger>
+                         <SelectContent>
+                           <SelectItem value="cliente">CLIENTE</SelectItem>
+                           <SelectItem value="representante">REPRESENTANTE</SelectItem>
+                           <SelectItem value="empresa">EMPRESA</SelectItem>
+                         </SelectContent>
+                       </Select>
+                     </div>
+                     <div>
+                       <Label htmlFor="freteRetirarPor">Frete a Retirar Por</Label>
+                       <Select value={freteRetirarPor} onValueChange={setFreteRetirarPor}>
+                         <SelectTrigger>
+                           <SelectValue placeholder="Selecione quem retirará" />
+                         </SelectTrigger>
+                         <SelectContent>
+                           <SelectItem value="cliente">CLIENTE</SelectItem>
+                           <SelectItem value="representante">REPRESENTANTE</SelectItem>
+                           <SelectItem value="portador_interno">PORTADOR INTERNO</SelectItem>
+                           <SelectItem value="destino_final">DESTINO FINAL</SelectItem>
+                         </SelectContent>
+                       </Select>
+                     </div>
+                     <div>
+                       <Label htmlFor="entregarRetirarCuidados">Entregar/Retirar aos Cuidados de Quem</Label>
+                       <Input
+                         id="entregarRetirarCuidados"
+                         value={entregarRetirarCuidados}
+                         onChange={(e) => setEntregarRetirarCuidados(e.target.value)}
+                         placeholder="Nome da pessoa responsável pelo recebimento"
+                       />
+                     </div>
                   </CardContent>
                 </Card>
 
@@ -661,28 +656,27 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                             required
                           />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="cpfAutorizadorFrete">Autorizado Por (CPF)</Label>
-                            <Input
-                              id="cpfAutorizadorFrete"
-                              value={cpfAutorizador}
-                              onChange={(e) => setCpfAutorizador(e.target.value)}
-                              placeholder="000.000.000-00"
-                              maxLength={14}
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="emailAutorizadorFrete">Email do Autorizador</Label>
-                            <Input
-                              id="emailAutorizadorFrete"
-                              type="email"
-                              value={emailAutorizador}
-                              onChange={(e) => setEmailAutorizador(e.target.value)}
-                              placeholder="autorizador@empresa.com"
-                            />
-                          </div>
-                        </div>
+                         <div className="grid grid-cols-2 gap-4">
+                           <div>
+                             <Label htmlFor="autorizadoPorFrete">Autorizado Por</Label>
+                             <Input
+                               id="autorizadoPorFrete"
+                               value={autorizadoPor}
+                               onChange={(e) => setAutorizadoPor(e.target.value)}
+                               placeholder="Nome do autorizador"
+                             />
+                           </div>
+                           <div>
+                             <Label htmlFor="emailAutorizadorFrete">Email do Autorizador</Label>
+                             <Input
+                               id="emailAutorizadorFrete"
+                               type="email"
+                               value={emailAutorizador}
+                               onChange={(e) => setEmailAutorizador(e.target.value)}
+                               placeholder="autorizador@empresa.com"
+                             />
+                           </div>
+                         </div>
                       </>
                     )}
                     
@@ -736,28 +730,37 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                   <CardHeader>
                     <CardTitle>Dados do Autorizador</CardTitle>
                   </CardHeader>
-                  <CardContent className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="cpfAutorizador">CPF do Autorizador</Label>
-                      <Input
-                        id="cpfAutorizador"
-                        value={cpfAutorizador}
-                        onChange={(e) => setCpfAutorizador(e.target.value)}
-                        placeholder="000.000.000-00"
-                        maxLength={14}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="emailAutorizador">Email do Autorizador</Label>
-                      <Input
-                        id="emailAutorizador"
-                        type="email"
-                        value={emailAutorizador}
-                        onChange={(e) => setEmailAutorizador(e.target.value)}
-                        placeholder="autorizador@empresa.com"
-                      />
-                    </div>
-                  </CardContent>
+                   <CardContent className="grid grid-cols-2 gap-4">
+                     <div>
+                       <Label htmlFor="autorizadoPor">Autorizado Por</Label>
+                       <Input
+                         id="autorizadoPor"
+                         value={autorizadoPor}
+                         onChange={(e) => setAutorizadoPor(e.target.value)}
+                         placeholder="Nome do autorizador"
+                       />
+                     </div>
+                     <div>
+                       <Label htmlFor="dataAutorizacao">Data de Autorização</Label>
+                       <Input
+                         id="dataAutorizacao"
+                         type="date"
+                         value={dataAutorizacao}
+                         onChange={(e) => setDataAutorizacao(e.target.value)}
+                         min={new Date().toISOString().split('T')[0]}
+                       />
+                     </div>
+                     <div>
+                       <Label htmlFor="emailAutorizador">Email do Autorizador</Label>
+                       <Input
+                         id="emailAutorizador"
+                         type="email"
+                         value={emailAutorizador}
+                         onChange={(e) => setEmailAutorizador(e.target.value)}
+                         placeholder="autorizador@empresa.com"
+                       />
+                     </div>
+                   </CardContent>
                 </Card>
 
                 <Card>

@@ -111,7 +111,8 @@ export interface PedidoCompleto {
   conhecimento?: string;
   urgente?: boolean;
   justificativaUrgencia?: string;
-  cpfAutorizador?: string;
+  autorizadoPor?: string;
+  dataAutorizacao?: string;
   emailAutorizador?: string;
   observacoesAutorizacao?: string;
 }
