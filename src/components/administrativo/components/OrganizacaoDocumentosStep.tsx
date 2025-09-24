@@ -179,7 +179,7 @@ export const OrganizacaoDocumentosStep = ({
         </CardContent>
       </Card>
 
-      {/* Campo do nome do arquivo principal */}
+      {/* Nome do Arquivo Principal */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Nome do Arquivo Principal *</CardTitle>
@@ -194,7 +194,13 @@ export const OrganizacaoDocumentosStep = ({
         </CardContent>
       </Card>
 
-      {/* Campo obrigatório do protocolo */}
+      {/* Gerenciador de Sistema de Arquivos */}
+      <FileSystemManager
+        estruturaArquivos={estruturaArquivos}
+        onEstruturaChange={setEstruturaArquivos}
+      />
+
+      {/* Protocolo de Peticionamento na ANVISA */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
@@ -260,12 +266,6 @@ export const OrganizacaoDocumentosStep = ({
           </div>
         </CardContent>
       </Card>
-
-      {/* Gerenciador de Sistema de Arquivos */}
-      <FileSystemManager
-        estruturaArquivos={estruturaArquivos}
-        onEstruturaChange={setEstruturaArquivos}
-      />
 
       {/* Botões de ação */}
       <div className="flex justify-between pt-6">

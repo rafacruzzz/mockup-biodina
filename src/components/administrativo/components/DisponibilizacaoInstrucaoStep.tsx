@@ -87,8 +87,8 @@ export const DisponibilizacaoInstrucaoStep = ({
 
   const handleSalvarRegistro = () => {
     // Validação dos campos obrigatórios
-    if (!formData.disponibilizacaoInstrucaoUso || !formData.arquivoInstrucaoUso) {
-      toast.error('Preencha todos os campos obrigatórios e anexe o arquivo da Instrução de Uso');
+    if (!formData.arquivoInstrucaoUso) {
+      toast.error('Anexe o arquivo da Instrução de Uso');
       return;
     }
     
@@ -124,16 +124,6 @@ export const DisponibilizacaoInstrucaoStep = ({
           <CardTitle>Disponibilização de Instrução de Uso</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <Label htmlFor="disponibilizacaoInstrucaoUso">Disponibilização da Instrução de Uso *</Label>
-            <Input 
-              id="disponibilizacaoInstrucaoUso"
-              value={formData.disponibilizacaoInstrucaoUso}
-              onChange={(e) => handleInputChange('disponibilizacaoInstrucaoUso', e.target.value)}
-              placeholder="Descreva a disponibilização da instrução de uso"
-            />
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="transacaoInstrucao">Transação</Label>
@@ -295,11 +285,11 @@ export const DisponibilizacaoInstrucaoStep = ({
           Voltar
         </Button>
         
-        <Button 
-          onClick={handleSalvarRegistro} 
-          className="bg-green-600 hover:bg-green-700 text-white"
-          disabled={!formData.disponibilizacaoInstrucaoUso || !formData.arquivoInstrucaoUso}
-        >
+          <Button 
+            onClick={handleSalvarRegistro} 
+            className="bg-green-600 hover:bg-green-700 text-white"
+            disabled={!formData.arquivoInstrucaoUso}
+          >
           <Download className="h-4 w-4 mr-2" />
           Salvar Registro
         </Button>

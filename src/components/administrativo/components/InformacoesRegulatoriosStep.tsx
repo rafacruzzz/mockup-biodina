@@ -9,6 +9,7 @@ import { ArrowLeft, FileText, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { RegistroAnvisaData } from '@/types/anvisaRegistro';
 import { generateAnvisaPDF } from '../utils/anvisaPDFUtils';
+import { LinkFileUpload } from './LinkFileUpload';
 
 interface InformacoesRegulatoriosStepProps {
   produtoSelecionado: any;
@@ -24,9 +25,22 @@ export const InformacoesRegulatoriosStep = ({
   onProximaEtapa 
 }: InformacoesRegulatoriosStepProps) => {
   const [formData, setFormData] = useState<RegistroAnvisaData>(registroData);
+  const [arquivos, setArquivos] = useState<{[key: string]: File | null}>({
+    linkConsultaAnvisa: null,
+    linkAnaliseConcorrencia: null,
+    linkFichaTecnica: null,
+    linkBancoImagens: null,
+    linkTreinamentoApresentacao: null,
+    linkTreinamentoCientifico: null,
+    linkTreinamentoManutencao: null
+  });
 
   const handleInputChange = (field: keyof RegistroAnvisaData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileChange = (field: string, file: File | null) => {
+    setArquivos(prev => ({ ...prev, [field]: file }));
   };
 
   const handleGerarPDF = () => {
@@ -40,7 +54,7 @@ export const InformacoesRegulatoriosStep = ({
 
   const handleProximaEtapa = () => {
     // Validação dos campos obrigatórios
-    if (!formData.areaAnvisa || !formData.numeroProcessoAnvisa || !formData.assunto) {
+    if (!formData.areaAnvisa || !formData.numeroProcessoAnvisa) {
       toast.error('Preencha todos os campos obrigatórios');
       return;
     }
@@ -97,29 +111,6 @@ export const InformacoesRegulatoriosStep = ({
                 onChange={(e) => handleInputChange('numeroProcessoAnvisa', e.target.value)}
                 placeholder="Número do processo"
               />
-            </div>
-
-            <div>
-              <Label htmlFor="assunto">Assunto *</Label>
-              <Input 
-                id="assunto"
-                value={formData.assunto}
-                onChange={(e) => handleInputChange('assunto', e.target.value)}
-                placeholder="Assunto do peticionamento"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="motivoPeticionamento">Motivo do peticionamento</Label>
-              <Select value={formData.motivoPeticionamento} onValueChange={(value) => handleInputChange('motivoPeticionamento', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecionar motivo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="notificacao">Notificação</SelectItem>
-                  <SelectItem value="registro">Registro</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
 
             <div>
@@ -459,76 +450,76 @@ export const InformacoesRegulatoriosStep = ({
           <CardTitle>Links e Documentação</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 gap-4">
-            <div>
-              <Label htmlFor="linkConsultaAnvisa">Link para consulta na Anvisa</Label>
-              <Input 
-                id="linkConsultaAnvisa"
-                value={formData.linkConsultaAnvisa}
-                onChange={(e) => handleInputChange('linkConsultaAnvisa', e.target.value)}
-                placeholder="https://consultas.anvisa.gov.br/"
-              />
-            </div>
+          <div className="grid grid-cols-1 gap-6">
+            <LinkFileUpload
+              id="linkConsultaAnvisa"
+              label="Link para consulta na Anvisa"
+              linkValue={formData.linkConsultaAnvisa}
+              onLinkChange={(value) => handleInputChange('linkConsultaAnvisa', value)}
+              onFileChange={(file) => handleFileChange('linkConsultaAnvisa', file)}
+              uploadedFile={arquivos.linkConsultaAnvisa}
+              placeholder="https://consultas.anvisa.gov.br/"
+            />
 
-            <div>
-              <Label htmlFor="linkAnaliseConcorrencia">Diferenciais e Comparativos</Label>
-              <Input 
-                id="linkAnaliseConcorrencia"
-                value={formData.linkAnaliseConcorrencia}
-                onChange={(e) => handleInputChange('linkAnaliseConcorrencia', e.target.value)}
-                placeholder="Link análise concorrência"
-              />
-            </div>
+            <LinkFileUpload
+              id="linkAnaliseConcorrencia"
+              label="Diferenciais e Comparativos"
+              linkValue={formData.linkAnaliseConcorrencia}
+              onLinkChange={(value) => handleInputChange('linkAnaliseConcorrencia', value)}
+              onFileChange={(file) => handleFileChange('linkAnaliseConcorrencia', file)}
+              uploadedFile={arquivos.linkAnaliseConcorrencia}
+              placeholder="Link análise concorrência"
+            />
 
-            <div>
-              <Label htmlFor="linkFichaTecnica">Ficha Técnica - Instrução de Uso - Manual</Label>
-              <Input 
-                id="linkFichaTecnica"
-                value={formData.linkFichaTecnica}
-                onChange={(e) => handleInputChange('linkFichaTecnica', e.target.value)}
-                placeholder="Link manual"
-              />
-            </div>
+            <LinkFileUpload
+              id="linkFichaTecnica"
+              label="Ficha Técnica - Instrução de Uso - Manual"
+              linkValue={formData.linkFichaTecnica}
+              onLinkChange={(value) => handleInputChange('linkFichaTecnica', value)}
+              onFileChange={(file) => handleFileChange('linkFichaTecnica', file)}
+              uploadedFile={arquivos.linkFichaTecnica}
+              placeholder="Link manual"
+            />
 
-            <div>
-              <Label htmlFor="linkBancoImagens">Banco de Imagens do Produto</Label>
-              <Input 
-                id="linkBancoImagens"
-                value={formData.linkBancoImagens}
-                onChange={(e) => handleInputChange('linkBancoImagens', e.target.value)}
-                placeholder="Link imagens"
-              />
-            </div>
+            <LinkFileUpload
+              id="linkBancoImagens"
+              label="Banco de Imagens do Produto"
+              linkValue={formData.linkBancoImagens}
+              onLinkChange={(value) => handleInputChange('linkBancoImagens', value)}
+              onFileChange={(file) => handleFileChange('linkBancoImagens', file)}
+              uploadedFile={arquivos.linkBancoImagens}
+              placeholder="Link imagens"
+            />
 
-            <div>
-              <Label htmlFor="linkTreinamentoApresentacao">Treinamento Científico de Apresentação</Label>
-              <Input 
-                id="linkTreinamentoApresentacao"
-                value={formData.linkTreinamentoApresentacao}
-                onChange={(e) => handleInputChange('linkTreinamentoApresentacao', e.target.value)}
-                placeholder="Link training SSJ"
-              />
-            </div>
+            <LinkFileUpload
+              id="linkTreinamentoApresentacao"
+              label="Treinamento Científico de Apresentação"
+              linkValue={formData.linkTreinamentoApresentacao}
+              onLinkChange={(value) => handleInputChange('linkTreinamentoApresentacao', value)}
+              onFileChange={(file) => handleFileChange('linkTreinamentoApresentacao', file)}
+              uploadedFile={arquivos.linkTreinamentoApresentacao}
+              placeholder="Link training SSJ"
+            />
 
-            <div>
-              <Label htmlFor="linkTreinamentoCientifico">Treinamento Científico do Produto</Label>
-              <Input 
-                id="linkTreinamentoCientifico"
-                value={formData.linkTreinamentoCientifico}
-                onChange={(e) => handleInputChange('linkTreinamentoCientifico', e.target.value)}
-                placeholder="Link training Assessoria"
-              />
-            </div>
+            <LinkFileUpload
+              id="linkTreinamentoCientifico"
+              label="Treinamento Científico do Produto"
+              linkValue={formData.linkTreinamentoCientifico}
+              onLinkChange={(value) => handleInputChange('linkTreinamentoCientifico', value)}
+              onFileChange={(file) => handleFileChange('linkTreinamentoCientifico', file)}
+              uploadedFile={arquivos.linkTreinamentoCientifico}
+              placeholder="Link training Assessoria"
+            />
 
-            <div>
-              <Label htmlFor="linkTreinamentoManutencao">Treinamento de Manutenção do Produto</Label>
-              <Input 
-                id="linkTreinamentoManutencao"
-                value={formData.linkTreinamentoManutencao}
-                onChange={(e) => handleInputChange('linkTreinamentoManutencao', e.target.value)}
-                placeholder="Link training Técnico"
-              />
-            </div>
+            <LinkFileUpload
+              id="linkTreinamentoManutencao"
+              label="Treinamento de Manutenção do Produto"
+              linkValue={formData.linkTreinamentoManutencao}
+              onLinkChange={(value) => handleInputChange('linkTreinamentoManutencao', value)}
+              onFileChange={(file) => handleFileChange('linkTreinamentoManutencao', file)}
+              uploadedFile={arquivos.linkTreinamentoManutencao}
+              placeholder="Link training Técnico"
+            />
           </div>
         </CardContent>
       </Card>
