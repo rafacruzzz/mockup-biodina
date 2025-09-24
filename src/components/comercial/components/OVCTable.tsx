@@ -209,22 +209,6 @@ const OVCTable = ({ items, onUpdateItems }: OVCTableProps) => {
               </TableCell>
             </TableRow>
           ))}
-          <TableRow className="bg-gray-100 font-bold">
-            <TableCell className="border border-gray-300"></TableCell>
-            <TableCell className="border border-gray-300 text-center">{totals.priceListTotal}</TableCell>
-            <TableCell className="border border-gray-300"></TableCell>
-            <TableCell className="border border-gray-300"></TableCell>
-            <TableCell className="border border-gray-300 text-center">{totals.customerDiscountTotal}</TableCell>
-            <TableCell className="border border-gray-300"></TableCell>
-            <TableCell className="border border-gray-300 text-center">{totals.discountTotal}</TableCell>
-            <TableCell className="border border-gray-300"></TableCell>
-            <TableCell className="border border-gray-300 text-center">{totals.subTotalTotal}</TableCell>
-            <TableCell className="border border-gray-300 text-center">{totals.handlingCharge}</TableCell>
-            <TableCell className="border border-gray-300 text-center">{totals.total}</TableCell>
-            <TableCell className="border border-gray-300"></TableCell>
-            <TableCell className="border border-gray-300 text-center">{totals.comissionValue}</TableCell>
-            <TableCell className="border border-gray-300 text-center">{totals.netRadiometer}</TableCell>
-          </TableRow>
         </TableBody>
       </Table>
     </div>
