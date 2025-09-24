@@ -15,13 +15,15 @@ interface AnaliseCientificaStepProps {
 export const AnaliseCientificaStep = ({ data, onChange }: AnaliseCientificaStepProps) => {
   const [analises, setAnalises] = useState(data.analiseCientifica || []);
 
+  // Debug: Log para verificar se o componente está sendo carregado corretamente
+  console.log("AnaliseCientificaStep carregado - perguntasPredefinidas atualizadas:", new Date().toLocaleTimeString());
+
   const perguntasPredefinidas = [
-    "Identificação dos diferenciais técnicos do produto.",
-    "Levantamento de concorrentes diretos e indiretos.",
-    "Avaliação do nível de qualidade (comparação com padrões nacionais e internacionais).",
-    "Avaliação do nível de modernidade (tendência, atualização tecnológica).",
-    "Parecer pessoal do assessor científico (no mínimo 3 assessores indicado pelo gestor).",
-    "Observações gerais."
+    "Boas Práticas",
+    "Organismo Certificador", 
+    "Taxa de Revalidação ANVISA",
+    "Organismo Certificador (Secundário)",
+    "Laboratório"
   ];
 
   const handleAnaliseChange = (index: number, field: string, value: string) => {
