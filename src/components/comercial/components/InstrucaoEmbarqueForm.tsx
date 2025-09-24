@@ -51,15 +51,69 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
         </CardHeader>
         
         <CardContent className="p-6 space-y-6">
-          {/* Cabeçalho da Empresa - Fixo */}
-          <div className="border p-4 rounded bg-gray-50">
-            <div className="space-y-2 text-sm">
-              <p className="font-bold">BIODINA EMPREENDIMENTOS E PARTICIPAÇÕES LTDA.</p>
-              <p>AVENIDA DAS AMÉRICAS 505 SALA 217 – BARRA DA TIJUCA</p>
-              <p>22631- 000- RIO DE JANEIRO - RJ, BRASIL.</p>
-              <p>TEL.: 55 21 2435-9872 - FAX: 55 21 2435-9870</p>
-              <p>biosi@biodina.com.br</p>
-              <p className="italic">If you do not receive all pages, please call: + 55 21 2435-9872</p>
+          {/* Company Information - Editável */}
+          <div className="border p-4 rounded">
+            <h3 className="font-semibold mb-4 border-b pb-2">COMPANY INFORMATION</h3>
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label htmlFor="companyName">Company Name</Label>
+                <Input
+                  id="companyName"
+                  value={formData.companyName || 'BIODINA EMPREENDIMENTOS E PARTICIPAÇÕES LTDA.'}
+                  onChange={(e) => onInputChange('companyName', e.target.value)}
+                  className="w-full font-bold"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="companyAddress">Address</Label>
+                <Input
+                  id="companyAddress"
+                  value={formData.companyAddress || 'AVENIDA DAS AMÉRICAS 505 SALA 217 – BARRA DA TIJUCA'}
+                  onChange={(e) => onInputChange('companyAddress', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="companyZipCity">ZIP Code - City - State - Country</Label>
+                <Input
+                  id="companyZipCity"
+                  value={formData.companyZipCity || '22631- 000- RIO DE JANEIRO - RJ, BRASIL.'}
+                  onChange={(e) => onInputChange('companyZipCity', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="companyPhone">Phone and Fax</Label>
+                <Input
+                  id="companyPhone"
+                  value={formData.companyPhone || 'TEL.: 55 21 2435-9872 - FAX: 55 21 2435-9870'}
+                  onChange={(e) => onInputChange('companyPhone', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="companyEmail">Email</Label>
+                <Input
+                  id="companyEmail"
+                  value={formData.companyEmail || 'biosi@biodina.com.br'}
+                  onChange={(e) => onInputChange('companyEmail', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="companyCallMessage">Contact Message</Label>
+                <Input
+                  id="companyCallMessage"
+                  value={formData.companyCallMessage || 'If you do not receive all pages, please call: + 55 21 2435-9872'}
+                  onChange={(e) => onInputChange('companyCallMessage', e.target.value)}
+                  className="w-full italic"
+                />
+              </div>
             </div>
           </div>
 
@@ -135,18 +189,28 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
             </div>
           </div>
 
-          <div className="border p-4 rounded bg-gray-50">
+          <div className="border p-4 rounded">
             <h3 className="font-semibold mb-4 border-b pb-2">SHIPPING INSTRUCTIONS</h3>
-            <p className="text-sm italic">Please pack the goods of our order a.m. as soon as possible in accordance with the following instructions:</p>
+            <div>
+              <Label htmlFor="shippingInstructions">Instructions Text</Label>
+              <Textarea
+                id="shippingInstructions"
+                value={formData.shippingInstructions || 'Please pack the goods of our order a.m. as soon as possible in accordance with the following instructions:'}
+                onChange={(e) => onInputChange('shippingInstructions', e.target.value)}
+                rows={2}
+                className="w-full italic"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4 border p-4 rounded">
             <div>
               <h3 className="font-semibold mb-4 border-b pb-2">SPECIFIC FIELDS</h3>
+              <p className="text-sm font-medium mb-4">1- Invoice: Please mention on the invoice:</p>
             </div>
             
             <div>
-              <Label htmlFor="aoPortugueseDescription">1. Portuguese description as AO#</Label>
+              <Label htmlFor="aoPortugueseDescription">1. Portuguese description as</Label>
               <Textarea
                 id="aoPortugueseDescription"
                 value={formData.aoPortugueseDescription || ''}
@@ -251,51 +315,129 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
             </div>
           </div>
 
-          <div className="border p-4 rounded bg-gray-50">
+          <div className="border p-4 rounded">
             <h3 className="font-semibold mb-4 border-b pb-2">DELIVERY ADDRESS</h3>
-            <div className="space-y-2 text-sm">
-              <p>Rua Goncalves Crespo, 430 - Tijuca</p>
-              <p>20.270-320 Rio de Janeiro - RJ</p>
-              <p>Brazil</p>
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label htmlFor="deliveryAddress1">Address Line 1</Label>
+                <Input
+                  id="deliveryAddress1"
+                  value={formData.deliveryAddress1 || 'Rua Goncalves Crespo, 430 - Tijuca'}
+                  onChange={(e) => onInputChange('deliveryAddress1', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="deliveryAddress2">Address Line 2</Label>
+                <Input
+                  id="deliveryAddress2"
+                  value={formData.deliveryAddress2 || '20.270-320 Rio de Janeiro - RJ'}
+                  onChange={(e) => onInputChange('deliveryAddress2', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="deliveryCountry">Country</Label>
+                <Input
+                  id="deliveryCountry"
+                  value={formData.deliveryCountry || 'Brazil'}
+                  onChange={(e) => onInputChange('deliveryCountry', e.target.value)}
+                  className="w-full"
+                />
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 border p-4 rounded">
-            <div>
-              <h3 className="font-semibold mb-4 border-b pb-2">ADDITIONAL INFORMATION</h3>
-            </div>
-            
-            <div>
-              <Label htmlFor="aoCnpj">CNPJ</Label>
-              <Input
-                id="aoCnpj"
-                value={formData.aoCnpj || ''}
-                onChange={(e) => onInputChange('aoCnpj', e.target.value)}
-                placeholder="18.010.750/0001-00"
-                className="w-full"
-              />
-            </div>
-          </div>
 
-          <div className="border p-4 rounded bg-gray-50">
+          <div className="border p-4 rounded">
             <h3 className="font-semibold mb-4 border-b pb-2">BANKING INFORMATION</h3>
-            <div className="space-y-2 text-sm">
-              <p className="font-semibold">OUR BANK</p>
-              <p>NORDEA BANK DENMARK A/S</p>
-              <p>P.O. BOX 850</p>
-              <p>0900 COPENHAGEN C DENMARK</p>
-              <p>S.W.I.F.T NDEEDKKK</p>
-              <p>ACCOUNT NO.: 2149 5005508776</p>
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label htmlFor="bankName">Bank Name</Label>
+                <Input
+                  id="bankName"
+                  value={formData.bankName || 'NORDEA BANK DENMARK A/S'}
+                  onChange={(e) => onInputChange('bankName', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="bankPOBox">P.O. Box</Label>
+                <Input
+                  id="bankPOBox"
+                  value={formData.bankPOBox || 'P.O. BOX 850'}
+                  onChange={(e) => onInputChange('bankPOBox', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="bankCity">City</Label>
+                <Input
+                  id="bankCity"
+                  value={formData.bankCity || '0900 COPENHAGEN C DENMARK'}
+                  onChange={(e) => onInputChange('bankCity', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="bankSwift">S.W.I.F.T</Label>
+                <Input
+                  id="bankSwift"
+                  value={formData.bankSwift || 'S.W.I.F.T NDEEDKKK'}
+                  onChange={(e) => onInputChange('bankSwift', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="bankAccount">Account Number</Label>
+                <Input
+                  id="bankAccount"
+                  value={formData.bankAccount || 'ACCOUNT NO.: 2149 5005508776'}
+                  onChange={(e) => onInputChange('bankAccount', e.target.value)}
+                  className="w-full"
+                />
+              </div>
             </div>
           </div>
 
-          <div className="border p-4 rounded bg-gray-50">
+          <div className="border p-4 rounded">
             <h3 className="font-semibold mb-4 border-b pb-2">EXPORTER INFORMATION</h3>
-            <div className="space-y-2 text-sm">
-              <p className="font-semibold">EXPORTADOR:</p>
-              <p>Radiometer Medical Aps</p>
-              <p>Akandevej 21,DK-2700</p>
-              <p>Bronshoj - Denmark</p>
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label htmlFor="exporterName">Exporter Name</Label>
+                <Input
+                  id="exporterName"
+                  value={formData.exporterName || 'Radiometer Medical Aps'}
+                  onChange={(e) => onInputChange('exporterName', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="exporterAddress">Address</Label>
+                <Input
+                  id="exporterAddress"
+                  value={formData.exporterAddress || 'Akandevej 21,DK-2700'}
+                  onChange={(e) => onInputChange('exporterAddress', e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="exporterCity">City - Country</Label>
+                <Input
+                  id="exporterCity"
+                  value={formData.exporterCity || 'Bronshoj - Denmark'}
+                  onChange={(e) => onInputChange('exporterCity', e.target.value)}
+                  className="w-full"
+                />
+              </div>
             </div>
           </div>
 
