@@ -88,9 +88,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="companyName">Company Name</Label>
               <Input
                 id="companyName"
-                value={formData.companyName || ''}
+                value={formData.companyName || 'BIODINA INSTRUMENTOS CIENTÍFICOS LTDA.'}
                 onChange={(e) => onInputChange('companyName', e.target.value)}
-                placeholder="BIODINA INSTRUMENTOS CIENTÍFICOS LTDA."
                 className="w-full"
               />
             </div>
@@ -99,9 +98,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="companyAddress">Address</Label>
               <Input
                 id="companyAddress"
-                value={formData.companyAddress || ''}
+                value={formData.companyAddress || 'RUA SÃO PEDRO 154 - SALA 408 CENTRO'}
                 onChange={(e) => onInputChange('companyAddress', e.target.value)}
-                placeholder="RUA SÃO PEDRO 154 - SALA 408 CENTRO"
                 className="w-full"
               />
             </div>
@@ -110,9 +108,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="companyZipCity">ZIP/City/State/Country</Label>
               <Input
                 id="companyZipCity"
-                value={formData.companyZipCity || ''}
+                value={formData.companyZipCity || '24.024-058 - NITERÓI - RJ, BRASIL'}
                 onChange={(e) => onInputChange('companyZipCity', e.target.value)}
-                placeholder="24.024-058 - NITERÓI - RJ, BRASIL"
                 className="w-full"
               />
             </div>
@@ -121,9 +118,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="companyPhone">Phone</Label>
               <Input
                 id="companyPhone"
-                value={formData.companyPhone || ''}
+                value={formData.companyPhone || '55 21 2435-9872'}
                 onChange={(e) => onInputChange('companyPhone', e.target.value)}
-                placeholder="55 21 2435-9872"
                 className="w-full"
               />
             </div>
@@ -132,9 +128,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="companyFax">Fax</Label>
               <Input
                 id="companyFax"
-                value={formData.companyFax || ''}
+                value={formData.companyFax || '55 21 2435-9870'}
                 onChange={(e) => onInputChange('companyFax', e.target.value)}
-                placeholder="55 21 2435-9870"
                 className="w-full"
               />
             </div>
@@ -143,9 +138,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="companyEmail">Email</Label>
               <Input
                 id="companyEmail"
-                value={formData.companyEmail || ''}
+                value={formData.companyEmail || 'bios@biodina.com.br'}
                 onChange={(e) => onInputChange('companyEmail', e.target.value)}
-                placeholder="bios@biodina.com.br"
                 className="w-full"
               />
             </div>
@@ -161,9 +155,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="noDestinatario">To</Label>
               <Input
                 id="noDestinatario"
-                value={formData.noDestinatario || ''}
+                value={formData.noDestinatario || 'RADIOMETER MEDICAL ApS, International Sales Division'}
                 onChange={(e) => onInputChange('noDestinatario', e.target.value)}
-                placeholder="RADIOMETER MEDICAL ApS, International Sales Division"
                 className="w-full"
               />
             </div>
@@ -172,9 +165,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="noAtencao">Attn.</Label>
               <Input
                 id="noAtencao"
-                value={formData.noAtencao || ''}
+                value={formData.noAtencao || 'Ms. Lene Orbansen'}
                 onChange={(e) => onInputChange('noAtencao', e.target.value)}
-                placeholder="Ms. Lene Orbansen"
                 className="w-full"
               />
             </div>
@@ -183,9 +175,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="noData">Date</Label>
               <Input
                 id="noData"
-                value={formData.noData || ''}
+                value={formData.noData || new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                 onChange={(e) => onInputChange('noData', e.target.value)}
-                placeholder={new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                 className="w-full"
               />
             </div>
@@ -194,9 +185,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="noTotalPaginas">Total Pages</Label>
               <Input
                 id="noTotalPaginas"
-                value={formData.noTotalPaginas || ''}
+                value={formData.noTotalPaginas || '01'}
                 onChange={(e) => onInputChange('noTotalPaginas', e.target.value)}
-                placeholder="01"
                 className="w-full"
               />
             </div>
@@ -205,9 +195,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="noAssunto">Subject</Label>
               <Input
                 id="noAssunto"
-                value={formData.noAssunto || ''}
+                value={formData.noAssunto || 'OUR NEW ORDER OD-XXXX/RD-XXXX, YOUR P.I XXXXXX - USD - XXXX'}
                 onChange={(e) => onInputChange('noAssunto', e.target.value)}
-                placeholder="OUR NEW ORDER OD-XXXX/RD-XXXX, YOUR P.I XXXXXX - USD - XXXX"
                 className="w-full"
               />
             </div>
@@ -234,9 +223,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="noOrderContent">Order Description</Label>
               <Textarea
                 id="noOrderContent"
-                value={formData.noOrderContent || ''}
+                value={formData.noOrderContent || 'We would like to place our new order, according to your P.I. a.m. consigned to the following customer:'}
                 onChange={(e) => onInputChange('noOrderContent', e.target.value)}
-                placeholder="We would like to place our new order, according to your P.I. a.m. consigned to the following customer:"
                 rows={3}
                 className="w-full"
               />
@@ -313,9 +301,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="noInstrucaoEnvio">Shipment Instruction</Label>
               <Textarea
                 id="noInstrucaoEnvio"
-                value={formData.noInstrucaoEnvio || ''}
+                value={formData.noInstrucaoEnvio || 'Will be sent as soon as possible.'}
                 onChange={(e) => onInputChange('noInstrucaoEnvio', e.target.value)}
-                placeholder="Will be sent as soon as possible."
                 rows={3}
                 className="w-full"
               />
@@ -331,9 +318,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="noAgradecimento">Message</Label>
               <Textarea
                 id="noAgradecimento"
-                value={formData.noAgradecimento || ''}
+                value={formData.noAgradecimento || 'We thank you in advance and look forward to receiving your AO.'}
                 onChange={(e) => onInputChange('noAgradecimento', e.target.value)}
-                placeholder="We thank you in advance and look forward to receiving your AO."
                 rows={2}
                 className="w-full"
               />
@@ -349,9 +335,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="noAssinante">Name</Label>
               <Input
                 id="noAssinante"
-                value={formData.noAssinante || ''}
+                value={formData.noAssinante || 'Evandro Amorim'}
                 onChange={(e) => onInputChange('noAssinante', e.target.value)}
-                placeholder="Evandro Amorim"
                 className="w-full"
               />
             </div>
@@ -360,9 +345,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="noCargo">Department</Label>
               <Input
                 id="noCargo"
-                value={formData.noCargo || ''}
+                value={formData.noCargo || 'International Division'}
                 onChange={(e) => onInputChange('noCargo', e.target.value)}
-                placeholder="International Division"
                 className="w-full"
               />
             </div>
@@ -371,9 +355,8 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="noEaa">Code</Label>
               <Input
                 id="noEaa"
-                value={formData.noEaa || ''}
+                value={formData.noEaa || 'EAA - XXX'}
                 onChange={(e) => onInputChange('noEaa', e.target.value)}
-                placeholder="EAA - XXX"
                 className="w-full"
               />
             </div>
