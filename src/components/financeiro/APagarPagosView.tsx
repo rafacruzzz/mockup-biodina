@@ -9,6 +9,7 @@ import {
   Plus, Search, Calendar, FileText, Clock, DollarSign,
   AlertTriangle, CheckCircle, CreditCard, Building, Download
 } from "lucide-react";
+import ConciliacaoBancariaView from "./ConciliacaoBancariaView";
 import CalendarioVencimentos from "./CalendarioVencimentos";
 import PagamentosRecorrentesModal from "./PagamentosRecorrentesModal";
 import { NovaContaPagarModal } from "./NovaContaPagarModal";
@@ -388,25 +389,7 @@ const APagarPagosView = () => {
         </TabsContent>
 
         <TabsContent value="conciliacao" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <CheckCircle className="h-5 w-5" />
-                Conciliação Bancária
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <Building className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <p className="text-lg text-muted-foreground">Conciliação com extratos OFX</p>
-                <p className="text-sm text-muted-foreground mt-2">Importe seus extratos bancários para conciliação automática</p>
-                <Button className="mt-4">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Importar Extrato OFX
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <ConciliacaoBancariaView />
         </TabsContent>
 
         <TabsContent value="contratos" className="space-y-4">
