@@ -13,10 +13,17 @@ import DespesasViagemServicosView from "@/components/financeiro/DespesasViagemSe
 import CadastrosFinanceirosView from "@/components/financeiro/CadastrosFinanceirosView";
 import DocumentosFiscaisView from "@/components/financeiro/DocumentosFiscaisView";
 import ComissoesPagarView from "@/components/financeiro/ComissoesPagarView";
+import FaturamentoDashboard from "@/components/faturamento/FaturamentoDashboard";
+import EntradaFaturamento from "@/components/faturamento/EntradaFaturamento";
+import SaidaFaturamento from "@/components/faturamento/SaidaFaturamento";
+import DevolucaoFaturamento from "@/components/faturamento/DevolucaoFaturamento";
+import CancelamentoFaturamento from "@/components/faturamento/CancelamentoFaturamento";
+import ServicosFaturamento from "@/components/faturamento/ServicosFaturamento";
+import RelatoriosFaturamento from "@/components/faturamento/RelatoriosFaturamento";
 import { 
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
-  AlertTriangle, Clock, Globe, Vault, ArrowLeft
+  AlertTriangle, Clock, Globe, Vault, ArrowLeft, Receipt
 } from "lucide-react";
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -397,6 +404,21 @@ const Financeiro = () => {
         { id: 'comissoes_geradas', title: 'Comissões Geradas a Pagar' }
       ]
     },
+    {
+      id: 'faturamento',
+      title: 'Faturamento',
+      description: 'Entrada, Saída, Devolução, Cancelamento, Serviços, Relatórios',
+      icon: Receipt,
+      subModules: [
+        { id: 'dashboard_faturamento', title: 'Dashboard' },
+        { id: 'entrada', title: 'Entrada' },
+        { id: 'saida', title: 'Saída' },
+        { id: 'devolucao', title: 'Devolução' },
+        { id: 'cancelamento', title: 'Cancelamento' },
+        { id: 'servicos', title: 'Serviços' },
+        { id: 'relatorios', title: 'Relatórios' }
+      ]
+    },
   ];
 
   const renderMainModules = () => (
@@ -668,7 +690,7 @@ const Financeiro = () => {
             </Suspense>
           </div>
         );
-      case 'consorcios':
+        case 'consorcios':
         const GestaoConsorciosView = lazy(() => import('@/components/tesouraria/GestaoConsorciosView'));
         return (
           <div className="space-y-6">
@@ -685,6 +707,118 @@ const Financeiro = () => {
             <Suspense fallback={<div>Carregando...</div>}>
               <GestaoConsorciosView />
             </Suspense>
+          </div>
+        );
+      case 'dashboard_faturamento':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <FaturamentoDashboard />
+          </div>
+        );
+      case 'entrada':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <EntradaFaturamento />
+          </div>
+        );
+      case 'saida':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <SaidaFaturamento />
+          </div>
+        );
+      case 'devolucao':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <DevolucaoFaturamento />
+          </div>
+        );
+      case 'cancelamento':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <CancelamentoFaturamento />
+          </div>
+        );
+      case 'servicos':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <ServicosFaturamento />
+          </div>
+        );
+      case 'relatorios':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <RelatoriosFaturamento />
           </div>
         );
       default:

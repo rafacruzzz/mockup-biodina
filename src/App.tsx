@@ -52,7 +52,6 @@ const App: React.FC = () => {
               <Route path="/compras" element={<Compras />} />
               <Route path="/estoque" element={<Estoque />} />
               <Route path="/financeiro" element={<Financeiro />} />
-              <Route path="/faturamento" element={<Faturamento />} />
               <Route path="/administrativo" element={<Administrativo />} />
         <Route path="/rh" element={<RH />} />
         <Route path="/ti" element={<TI />} />
