@@ -397,19 +397,6 @@ const Financeiro = () => {
         { id: 'comissoes_geradas', title: 'Comissões Geradas a Pagar' }
       ]
     },
-    {
-      id: 'faturamento',
-      title: 'Faturamento',
-      description: 'Venda a Faturar, Venda Faturada, Serviços, Banco de Nfs',
-      icon: FileText,
-      subModules: [
-        { id: 'venda_faturar', title: 'Venda a Faturar' },
-        { id: 'venda_faturada', title: 'Venda Faturada' },
-        { id: 'servicos_faturar', title: 'Serviços a Faturar' },
-        { id: 'servicos_faturados', title: 'Serviços Faturados' },
-        { id: 'banco_nfs', title: 'Banco de Nfs' }
-      ]
-    }
   ];
 
   const renderMainModules = () => (

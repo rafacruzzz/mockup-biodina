@@ -18,6 +18,7 @@ import TI from "./pages/TI";
 import Administrativo from "./pages/Administrativo";
 import ProcessoRescisao from "./pages/ProcessoRescisao";
 import Solicitacoes from "./pages/Solicitacoes";
+import Faturamento from "./pages/Faturamento";
 import EditarPerfil from "./pages/EditarPerfil";
 import CandidaturaPublica from "./pages/CandidaturaPublica";
 import PersonalizarNavegacao from "./pages/PersonalizarNavegacao";
@@ -51,6 +52,7 @@ const App: React.FC = () => {
               <Route path="/compras" element={<Compras />} />
               <Route path="/estoque" element={<Estoque />} />
               <Route path="/financeiro" element={<Financeiro />} />
+              <Route path="/faturamento" element={<Faturamento />} />
               <Route path="/administrativo" element={<Administrativo />} />
         <Route path="/rh" element={<RH />} />
         <Route path="/ti" element={<TI />} />
