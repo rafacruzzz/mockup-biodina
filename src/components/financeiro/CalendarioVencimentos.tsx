@@ -9,8 +9,8 @@ import DetalhesContaModal from "./DetalhesContaModal";
 const vencimentosCalendario = [
   {
     id: 1,
-    data: "sexta-feira, 24 de janeiro",
-    dataObj: new Date(2025, 0, 24),
+    data: "terça-feira, 3 de setembro",
+    dataObj: new Date(2025, 8, 3),
     contas: [
       {
         id: "CP-001",
@@ -35,8 +35,8 @@ const vencimentosCalendario = [
   },
   {
     id: 2,
-    data: "terça-feira, 28 de janeiro", 
-    dataObj: new Date(2025, 0, 28),
+    data: "sexta-feira, 6 de setembro", 
+    dataObj: new Date(2025, 8, 6),
     contas: [
       {
         id: "CP-002",
@@ -51,7 +51,7 @@ const vencimentosCalendario = [
         detalhes: {
           beneficiados: "5 colaboradores da produção",
           justificativa: "Atualização em novas tecnologias de processo",
-          periodo: "3 dias - 10 a 12 de fevereiro",
+          periodo: "3 dias - 15 a 17 de setembro",
           local: "Presencial - São Paulo"
         }
       }
@@ -61,8 +61,8 @@ const vencimentosCalendario = [
   },
   {
     id: 3,
-    data: "quarta-feira, 29 de janeiro",
-    dataObj: new Date(2025, 0, 29),
+    data: "segunda-feira, 9 de setembro",
+    dataObj: new Date(2025, 8, 9),
     contas: [
       {
         id: "CP-003",
@@ -76,7 +76,7 @@ const vencimentosCalendario = [
         solicitante: "Ana Santos",
         detalhes: {
           destino: "Rio de Janeiro - Reunião com cliente",
-          periodo: "02 a 04 de fevereiro",
+          periodo: "12 a 14 de setembro",
           projeto: "Projeto Beta - Expansão Sul",
           aprovacao: "Aprovado pelo gestor comercial e financeiro"
         }
@@ -95,7 +95,7 @@ const vencimentosCalendario = [
           usuarios: "25 licenças mensais",
           renovacao: "Automática",
           categoria: "Software essencial",
-          proximoVencimento: "29 de fevereiro"
+          proximoVencimento: "9 de outubro"
         }
       }
     ],
@@ -104,8 +104,8 @@ const vencimentosCalendario = [
   },
   {
     id: 4,
-    data: "domingo, 2 de fevereiro",
-    dataObj: new Date(2025, 1, 2),
+    data: "quinta-feira, 12 de setembro",
+    dataObj: new Date(2025, 8, 12),
     contas: [
       {
         id: "CP-005",
@@ -130,8 +130,8 @@ const vencimentosCalendario = [
   },
   {
     id: 5,
-    data: "terça-feira, 4 de fevereiro",
-    dataObj: new Date(2025, 1, 4),
+    data: "domingo, 15 de setembro",
+    dataObj: new Date(2025, 8, 15),
     contas: [
       {
         id: "CP-006",
@@ -147,7 +147,7 @@ const vencimentosCalendario = [
           contrato: "Aluguel galpão principal",
           area: "2.500m² - Zona Industrial",
           vigencia: "Contrato até dezembro/2025",
-          reajuste: "Próximo reajuste: julho/2025"
+          reajuste: "Próximo reajuste: janeiro/2026"
         }
       }
     ],
@@ -156,8 +156,8 @@ const vencimentosCalendario = [
   },
   {
     id: 6,
-    data: "quinta-feira, 6 de fevereiro",
-    dataObj: new Date(2025, 1, 6),
+    data: "quarta-feira, 18 de setembro",
+    dataObj: new Date(2025, 8, 18),
     contas: [
       {
         id: "CP-007",
@@ -173,7 +173,7 @@ const vencimentosCalendario = [
           servico: "Auditoria para renovação ISO 9001",
           prazo: "15 dias - inclui relatório final",
           importancia: "Certificação obrigatória para manter contratos",
-          historico: "Última auditoria: fevereiro/2023"
+          historico: "Última auditoria: setembro/2023"
         }
       },
       {
@@ -189,7 +189,7 @@ const vencimentosCalendario = [
         detalhes: {
           evento: "Feira Industrial São Paulo",
           itens: "Banners, folders, brindes personalizados",
-          prazo: "Entrega até 15 de fevereiro",
+          prazo: "Entrega até 25 de setembro",
           aprovacao: "Aguardando aprovação da arte final"
         }
       }
@@ -199,8 +199,8 @@ const vencimentosCalendario = [
   },
   {
     id: 7,
-    data: "domingo, 9 de fevereiro",
-    dataObj: new Date(2025, 1, 9),
+    data: "sábado, 21 de setembro",
+    dataObj: new Date(2025, 8, 21),
     contas: [
       {
         id: "CP-009",
@@ -215,8 +215,8 @@ const vencimentosCalendario = [
         detalhes: {
           servicos: "Internet, telefonia fixa e móvel",
           plano: "Empresarial 500MB + 20 linhas móveis",
-          vencimento: "Todo dia 9",
-          contrato: "Vigente até agosto/2025"
+          vencimento: "Todo dia 21",
+          contrato: "Vigente até agosto/2026"
         }
       }
     ],
@@ -225,8 +225,8 @@ const vencimentosCalendario = [
   },
   {
     id: 8,
-    data: "quarta-feira, 12 de fevereiro",
-    dataObj: new Date(2025, 1, 12),
+    data: "terça-feira, 24 de setembro",
+    dataObj: new Date(2025, 8, 24),
     contas: [
       {
         id: "CP-010",
@@ -251,8 +251,8 @@ const vencimentosCalendario = [
   },
   {
     id: 9,
-    data: "sexta-feira, 14 de fevereiro",
-    dataObj: new Date(2025, 1, 14),
+    data: "sexta-feira, 27 de setembro",
+    dataObj: new Date(2025, 8, 27),
     contas: [
       {
         id: "CP-011",
@@ -266,7 +266,7 @@ const vencimentosCalendario = [
         solicitante: "Roberto Lima",
         detalhes: {
           finalidade: "Abastecimento frota de entregas",
-          periodo: "Quinzena 01-15 de fevereiro",
+          periodo: "Quinzena 15-30 de setembro",
           veiculos: "8 veículos de entrega",
           controle: "Cartão combustível com limite mensal"
         }
@@ -283,7 +283,7 @@ const vencimentosCalendario = [
         solicitante: "Fernando Souza",
         detalhes: {
           destino: "Belo Horizonte - Instalação equipamentos",
-          periodo: "3 diárias - 18 a 20 de fevereiro",
+          periodo: "3 diárias - 30 de setembro a 2 de outubro",
           equipe: "2 técnicos + 1 supervisor",
           projeto: "Projeto Gamma - Cliente MG Solutions"
         }
