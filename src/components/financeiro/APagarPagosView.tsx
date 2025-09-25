@@ -19,6 +19,7 @@ import { PagarContaModal } from "./PagarContaModal";
 import { EditarContaModal } from "./EditarContaModal";
 import { ContaPagar } from "@/types/financeiro";
 import { useToast } from "@/hooks/use-toast";
+import ContratosTabContent from "./ContratosTabContent";
 
 const APagarPagosView = () => {
   const { toast } = useToast();
@@ -393,25 +394,7 @@ const APagarPagosView = () => {
         </TabsContent>
 
         <TabsContent value="contratos" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Acompanhamento de Contratos
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <FileText className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <p className="text-lg text-muted-foreground">Contratos Parcelados</p>
-                <p className="text-sm text-muted-foreground mt-2">Gerencie contratos com pagamentos parcelados</p>
-                <Button className="mt-4">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Novo Contrato
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <ContratosTabContent />
         </TabsContent>
 
         <TabsContent value="relatorios" className="space-y-4">
