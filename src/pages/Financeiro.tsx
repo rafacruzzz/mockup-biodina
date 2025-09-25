@@ -760,6 +760,44 @@ const Financeiro = () => {
             {renderConciliacao()}
           </div>
         );
+      case 'emprestimos':
+        return import('./tesouraria/GestaoEmprestimosView').then(module => {
+          const GestaoEmprestimosView = module.default;
+          return (
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setActiveSubModule(null)}
+                  className="flex items-center gap-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Voltar
+                </Button>
+              </div>
+              <GestaoEmprestimosView />
+            </div>
+          );
+        });
+      case 'investimentos':
+        return import('./tesouraria/GestaoInvestimentosView').then(module => {
+          const GestaoInvestimentosView = module.default;
+          return (
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setActiveSubModule(null)}
+                  className="flex items-center gap-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Voltar
+                </Button>
+              </div>
+              <GestaoInvestimentosView />
+            </div>
+          );
+        });
       default:
         return (
           <div className="space-y-6">
