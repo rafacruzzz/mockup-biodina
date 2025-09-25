@@ -151,7 +151,7 @@ export const GestaoDocumentos = () => {
                 <SelectValue placeholder="Categoria" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas</SelectItem>
+                <SelectItem value="todas">Todas</SelectItem>
                 {categorias.map(cat => (
                   <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                 ))}
@@ -162,7 +162,7 @@ export const GestaoDocumentos = () => {
                 <SelectValue placeholder="Nível Acesso" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos</SelectItem>
+                <SelectItem value="todos">Todos</SelectItem>
                 {niveisAcesso.map(nivel => (
                   <SelectItem key={nivel} value={nivel}>{nivel}</SelectItem>
                 ))}

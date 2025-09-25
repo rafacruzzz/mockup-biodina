@@ -134,7 +134,7 @@ export const ControleCaixaContabil = () => {
                 <SelectValue placeholder="Tipo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os tipos</SelectItem>
+                <SelectItem value="todos">Todos os tipos</SelectItem>
                 <SelectItem value="Entrada">Entrada</SelectItem>
                 <SelectItem value="Saída">Saída</SelectItem>
               </SelectContent>
@@ -144,7 +144,7 @@ export const ControleCaixaContabil = () => {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os status</SelectItem>
+                <SelectItem value="todos">Todos os status</SelectItem>
                 <SelectItem value="Confirmado">Confirmado</SelectItem>
                 <SelectItem value="Pendente">Pendente</SelectItem>
                 <SelectItem value="Cancelado">Cancelado</SelectItem>

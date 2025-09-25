@@ -149,7 +149,7 @@ export const GestaoContasBancarias = () => {
                 <SelectValue placeholder="Banco" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os bancos</SelectItem>
+                <SelectItem value="todos">Todos os bancos</SelectItem>
                 {bancos.map(banco => (
                   <SelectItem key={banco} value={banco}>{banco}</SelectItem>
                 ))}
@@ -160,7 +160,7 @@ export const GestaoContasBancarias = () => {
                 <SelectValue placeholder="Tipo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os tipos</SelectItem>
+                <SelectItem value="todos">Todos os tipos</SelectItem>
                 {tipos.map(tipo => (
                   <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
                 ))}
@@ -171,7 +171,7 @@ export const GestaoContasBancarias = () => {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos</SelectItem>
+                <SelectItem value="todos">Todos</SelectItem>
                 <SelectItem value="Ativa">Ativa</SelectItem>
                 <SelectItem value="Inativa">Inativa</SelectItem>
                 <SelectItem value="Bloqueada">Bloqueada</SelectItem>

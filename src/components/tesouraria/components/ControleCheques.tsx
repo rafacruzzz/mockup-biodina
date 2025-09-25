@@ -133,7 +133,7 @@ export const ControleCheques = () => {
                 <SelectValue placeholder="Banco" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os bancos</SelectItem>
+                <SelectItem value="todos">Todos os bancos</SelectItem>
                 {bancos.map(banco => (
                   <SelectItem key={banco} value={banco}>{banco}</SelectItem>
                 ))}
@@ -144,7 +144,7 @@ export const ControleCheques = () => {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os status</SelectItem>
+                <SelectItem value="todos">Todos os status</SelectItem>
                 <SelectItem value="Emitido">Emitido</SelectItem>
                 <SelectItem value="Compensado">Compensado</SelectItem>
                 <SelectItem value="Devolvido">Devolvido</SelectItem>

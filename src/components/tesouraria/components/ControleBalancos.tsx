@@ -188,7 +188,7 @@ export const ControleBalancos = () => {
                 <SelectValue placeholder="Ano" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos</SelectItem>
+                <SelectItem value="todos">Todos</SelectItem>
                 {anos.map(ano => (
                   <SelectItem key={ano} value={ano}>{ano}</SelectItem>
                 ))}
@@ -199,7 +199,7 @@ export const ControleBalancos = () => {
                 <SelectValue placeholder="Tipo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos</SelectItem>
+                <SelectItem value="todos">Todos</SelectItem>
                 {tipos.map(tipo => (
                   <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
                 ))}
@@ -210,7 +210,7 @@ export const ControleBalancos = () => {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos</SelectItem>
+                <SelectItem value="todos">Todos</SelectItem>
                 <SelectItem value="Recebido">Recebido</SelectItem>
                 <SelectItem value="Em Análise">Em Análise</SelectItem>
                 <SelectItem value="Aprovado">Aprovado</SelectItem>

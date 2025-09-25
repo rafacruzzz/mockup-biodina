@@ -168,7 +168,7 @@ export const GestaoCartoesCredito = () => {
                 <SelectValue placeholder="Banco" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos os bancos</SelectItem>
+                <SelectItem value="todos">Todos os bancos</SelectItem>
                 {bancos.map(banco => (
                   <SelectItem key={banco} value={banco}>{banco}</SelectItem>
                 ))}
@@ -179,7 +179,7 @@ export const GestaoCartoesCredito = () => {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos</SelectItem>
+                <SelectItem value="todos">Todos</SelectItem>
                 <SelectItem value="Ativo">Ativo</SelectItem>
                 <SelectItem value="Bloqueado">Bloqueado</SelectItem>
                 <SelectItem value="Cancelado">Cancelado</SelectItem>
