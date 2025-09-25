@@ -337,3 +337,5 @@ export const GestaoCaixaView = () => {
     </div>
   );
 };
+
+export default GestaoCaixaView;

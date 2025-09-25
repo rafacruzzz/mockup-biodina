@@ -264,70 +264,6 @@ const Financeiro = () => {
     </Card>
   );
 
-  const renderCaixa = () => (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Entradas do Mês</p>
-                <p className="text-2xl font-bold text-green-600">R$ 427.000</p>
-              </div>
-              <TrendingUp className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Saídas do Mês</p>
-                <p className="text-2xl font-bold text-red-600">R$ 270.000</p>
-              </div>
-              <TrendingDown className="h-8 w-8 text-red-600" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="shadow-lg">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Saldo Atual</p>
-                <p className="text-2xl font-bold text-biodina-blue">R$ 505.000</p>
-              </div>
-              <Wallet className="h-8 w-8 text-biodina-blue" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
-            Fluxo de Caixa - Últimos 7 Dias
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={400}>
-            <AreaChart data={fluxoCaixa}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="data" />
-              <YAxis tickFormatter={(value) => `R$ ${(value / 1000)}k`} />
-              <Tooltip formatter={(value) => formatCurrency(Number(value))} />
-              <Legend />
-              <Area type="monotone" dataKey="entradas" stackId="1" stroke="#22c55e" fill="#22c55e" name="Entradas" />
-              <Area type="monotone" dataKey="saidas" stackId="2" stroke="#ef4444" fill="#ef4444" name="Saídas" />
-              <Line type="monotone" dataKey="saldo" stroke="#0A2342" strokeWidth={3} name="Saldo" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-    </div>
-  );
 
   const renderBancos = () => (
     <Card className="shadow-lg">
@@ -670,6 +606,7 @@ const Financeiro = () => {
           </div>
         );
       case 'caixa':
+        const GestaoCaixaView = lazy(() => import('@/components/tesouraria/GestaoCaixaView'));
         return (
           <div className="space-y-6">
             <div className="flex items-center gap-4">
@@ -681,9 +618,10 @@ const Financeiro = () => {
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
-              <h2 className="text-2xl font-bold text-biodina-blue">Caixa</h2>
             </div>
-            {renderCaixa()}
+            <Suspense fallback={<div>Carregando...</div>}>
+              <GestaoCaixaView />
+            </Suspense>
           </div>
         );
       case 'emprestimos':
