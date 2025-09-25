@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SidebarLayout from "@/components/SidebarLayout";
+import ContasPagarDashboard from "@/components/financeiro/ContasPagarDashboard";
 import { 
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
@@ -189,70 +190,7 @@ const Financeiro = () => {
     }
   };
 
-  // Importar o novo dashboard de Contas a Pagar
-  const renderContasPagar = () => {
-    const ContasPagarDashboard = require('@/components/financeiro/ContasPagarDashboard').default;
-    return <ContasPagarDashboard />;
-  };
-        <div className="flex gap-4 mt-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input placeholder="Pesquisar contas..." className="pl-10" />
-          </div>
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todos">Todos os Status</SelectItem>
-              <SelectItem value="pendente">Pendente</SelectItem>
-              <SelectItem value="pago">Pago</SelectItem>
-              <SelectItem value="vencido">Vencido</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Fornecedor</TableHead>
-              <TableHead>Descrição</TableHead>
-              <TableHead>Valor</TableHead>
-              <TableHead>Vencimento</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Categoria</TableHead>
-              <TableHead>Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {contasPagar.map((conta) => (
-              <TableRow key={conta.id}>
-                <TableCell className="font-medium">{conta.id}</TableCell>
-                <TableCell>{conta.fornecedor}</TableCell>
-                <TableCell>{conta.descricao}</TableCell>
-                <TableCell>{formatCurrency(conta.valor)}</TableCell>
-                <TableCell>{conta.vencimento}</TableCell>
-                <TableCell>
-                  <Badge className={`${getStatusColor(conta.status)} text-white flex items-center gap-1 w-fit`}>
-                    {getStatusIcon(conta.status)}
-                    {conta.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>{conta.categoria}</TableCell>
-                <TableCell>
-                  <Button size="sm" variant="outline">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
-  );
+  const renderContasPagar = () => <ContasPagarDashboard />;
 
   const renderContasReceber = () => (
     <Card className="shadow-lg">
