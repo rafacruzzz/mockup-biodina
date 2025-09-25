@@ -355,16 +355,30 @@ const Financeiro = () => {
 
   const mainModules = [
     {
-      id: 'tesouraria',
-      title: 'Tesouraria',
-      description: 'Caixa, Empréstimos, Investimentos, Seguros, Consórcios',
-      icon: Vault,
+      id: 'faturamento',
+      title: 'Faturamento',
+      description: 'Entrada, Saída, Devolução, Cancelamento, Serviços, Relatórios',
+      icon: Receipt,
       subModules: [
-        { id: 'caixa', title: 'Caixa' },
-        { id: 'emprestimos', title: 'Empréstimos' },
-        { id: 'investimentos', title: 'Investimentos' },
-        { id: 'seguros', title: 'Seguros' },
-        { id: 'consorcios', title: 'Consórcios' }
+        { id: 'dashboard_faturamento', title: 'Dashboard' },
+        { id: 'entrada', title: 'Entrada' },
+        { id: 'saida', title: 'Saída' },
+        { id: 'devolucao', title: 'Devolução' },
+        { id: 'cancelamento', title: 'Cancelamento' },
+        { id: 'servicos', title: 'Serviços' },
+        { id: 'relatorios', title: 'Relatórios' }
+      ]
+    },
+    {
+      id: 'contas_receber',
+      title: 'Contas a Receber',
+      description: 'Conciliação de Recebimentos, A Receber, Recebido, Comissões Geradas',
+      icon: Banknote,
+      subModules: [
+        { id: 'conciliacao_recebimentos', title: 'Conciliação de Recebimentos' },
+        { id: 'a_receber', title: 'A Receber' },
+        { id: 'recebido', title: 'Recebido' },
+        { id: 'comissoes_geradas', title: 'Comissões Geradas a Pagar' }
       ]
     },
     {
@@ -382,30 +396,16 @@ const Financeiro = () => {
       ]
     },
     {
-      id: 'contas_receber',
-      title: 'Contas a Receber',
-      description: 'Conciliação de Recebimentos, A Receber, Recebido, Comissões Geradas',
-      icon: Banknote,
+      id: 'tesouraria',
+      title: 'Tesouraria',
+      description: 'Caixa, Empréstimos, Investimentos, Seguros, Consórcios',
+      icon: Vault,
       subModules: [
-        { id: 'conciliacao_recebimentos', title: 'Conciliação de Recebimentos' },
-        { id: 'a_receber', title: 'A Receber' },
-        { id: 'recebido', title: 'Recebido' },
-        { id: 'comissoes_geradas', title: 'Comissões Geradas a Pagar' }
-      ]
-    },
-    {
-      id: 'faturamento',
-      title: 'Faturamento',
-      description: 'Entrada, Saída, Devolução, Cancelamento, Serviços, Relatórios',
-      icon: Receipt,
-      subModules: [
-        { id: 'dashboard_faturamento', title: 'Dashboard' },
-        { id: 'entrada', title: 'Entrada' },
-        { id: 'saida', title: 'Saída' },
-        { id: 'devolucao', title: 'Devolução' },
-        { id: 'cancelamento', title: 'Cancelamento' },
-        { id: 'servicos', title: 'Serviços' },
-        { id: 'relatorios', title: 'Relatórios' }
+        { id: 'caixa', title: 'Caixa' },
+        { id: 'emprestimos', title: 'Empréstimos' },
+        { id: 'investimentos', title: 'Investimentos' },
+        { id: 'seguros', title: 'Seguros' },
+        { id: 'consorcios', title: 'Consórcios' }
       ]
     },
   ];
