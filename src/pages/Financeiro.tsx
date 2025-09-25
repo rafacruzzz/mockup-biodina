@@ -798,6 +798,44 @@ const Financeiro = () => {
             </Suspense>
           </div>
         );
+      case 'seguros':
+        const GestaoSegurosView = lazy(() => import('@/components/tesouraria/GestaoSegurosView'));
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <Suspense fallback={<div>Carregando...</div>}>
+              <GestaoSegurosView />
+            </Suspense>
+          </div>
+        );
+      case 'consorcios':
+        const GestaoConsorciosView = lazy(() => import('@/components/tesouraria/GestaoConsorciosView'));
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <Suspense fallback={<div>Carregando...</div>}>
+              <GestaoConsorciosView />
+            </Suspense>
+          </div>
+        );
       default:
         return (
           <div className="space-y-6">
