@@ -68,6 +68,10 @@ const Compras = () => {
     else if (activeModule === 'pedidos' && activeSubModule === 'pedidos') {
       setShowNovoPedido(true);
     }
+    // Para submódulos de importação, ações específicas podem ser implementadas futuramente
+    else if (activeModule === 'di') {
+      console.log(`Novo registro para: ${activeSubModule}`);
+    }
   };
 
   const handleImportarXML = (dadosXML: any) => {
@@ -90,6 +94,15 @@ const Compras = () => {
     }
     if (activeModule === 'pedidos' && activeSubModule === 'pedidos') {
       return 'Novo Pedido';
+    }
+    if (activeModule === 'di' && activeSubModule === 'pagamentos_importacao') {
+      return 'Novo Pagamento';
+    }
+    if (activeModule === 'di' && activeSubModule === 'fechamento_cambio') {
+      return 'Nova Operação';
+    }
+    if (activeModule === 'di' && activeSubModule === 'custos_importacao') {
+      return 'Novo Custo';
     }
     return 'Novo Registro';
   };
@@ -121,6 +134,31 @@ const Compras = () => {
           )}
         </div>
       );
+    }
+
+    // Para submódulos de importação, renderiza componentes específicos
+    if (activeModule === 'di') {
+      if (activeSubModule === 'pagamentos_importacao') {
+        return <PagamentosImportacaoView />;
+      }
+      if (activeSubModule === 'fechamento_cambio') {
+        return <FechamentoCambioView />;
+      }
+      if (activeSubModule === 'custos_importacao') {
+        return <CustosImportacaoView />;
+      }
+      // Para DI principal, mantém a DataTable
+      if (activeSubModule === 'di') {
+        return (
+          <div className="flex-1 p-6 min-h-0">
+            <DataTable 
+              data={currentSubModule?.data || []} 
+              moduleName={currentSubModule?.name || ''}
+              onRowClick={handleRowClick}
+            />
+          </div>
+        );
+      }
     }
 
     // Para outros módulos, renderiza a DataTable normal
