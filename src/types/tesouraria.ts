@@ -126,23 +126,6 @@ export interface ContemplacaoConsorcio {
   situacao: 'Pendente' | 'Utilizada' | 'Expirada';
 }
 
-export interface Cheque {
-  id: string;
-  banco: string;
-  agencia: string;
-  conta: string;
-  numeroCheque: string;
-  valor: number;
-  dataEmissao: Date;
-  beneficiario: string;
-  motivo: string;
-  status: 'Emitido' | 'Compensado' | 'Devolvido' | 'Cancelado';
-  dataCompensacao?: Date;
-  observacoes?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 export interface ContaBancaria {
   id: string;
   banco: string;
@@ -220,13 +203,6 @@ export enum StatusConsorcio {
   CANCELADO = 'Cancelado'
 }
 
-export enum StatusCheque {
-  EMITIDO = 'Emitido',
-  COMPENSADO = 'Compensado',
-  DEVOLVIDO = 'Devolvido',
-  CANCELADO = 'Cancelado'
-}
-
 export enum StatusConta {
   ATIVA = 'Ativa',
   INATIVA = 'Inativa',
@@ -257,12 +233,6 @@ export const STATUS_COLORS_TESOURARIA = {
   'Contemplado': 'bg-green-500',
   'Quitado_Consorcio': 'bg-gray-500',
   'Cancelado_Consorcio': 'bg-red-500',
-  
-  // Cheques
-  'Emitido': 'bg-yellow-500',
-  'Compensado': 'bg-green-500',
-  'Devolvido': 'bg-red-500',
-  'Cancelado_Cheque': 'bg-gray-500',
   
   // Contas
   'Ativa': 'bg-green-500',

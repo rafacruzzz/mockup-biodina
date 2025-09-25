@@ -149,13 +149,6 @@ const Financeiro = () => {
     { mes: 'Dez', receita: 750000, despesa: 485000, lucro: 265000 },
   ];
 
-  // Dados de conciliação
-  const conciliacaoData = [
-    { conta: 'Banco do Brasil', extrato: 285000, sistema: 285000, diferenca: 0, status: 'Conciliado' },
-    { conta: 'Caixa Econômica', extrato: 125500, sistema: 125000, diferenca: 500, status: 'Divergente' },
-    { conta: 'Itaú', extrato: 95000, sistema: 95000, diferenca: 0, status: 'Conciliado' },
-  ];
-
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -392,54 +385,6 @@ const Financeiro = () => {
     </Card>
   );
 
-  const renderConciliacao = () => (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <CheckCircle className="h-5 w-5" />
-          Conciliação Bancária
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Conta</TableHead>
-              <TableHead>Saldo Extrato</TableHead>
-              <TableHead>Saldo Sistema</TableHead>
-              <TableHead>Diferença</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {conciliacaoData.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell className="font-medium">{item.conta}</TableCell>
-                <TableCell>{formatCurrency(item.extrato)}</TableCell>
-                <TableCell>{formatCurrency(item.sistema)}</TableCell>
-                <TableCell className={item.diferenca !== 0 ? 'text-red-600 font-semibold' : 'text-green-600'}>
-                  {formatCurrency(item.diferenca)}
-                </TableCell>
-                <TableCell>
-                  <Badge className={`${getStatusColor(item.status)} text-white flex items-center gap-1 w-fit`}>
-                    {getStatusIcon(item.status)}
-                    {item.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Button size="sm" variant="outline">
-                    Conciliar
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardContent>
-    </Card>
-  );
-
   const renderDRE = () => (
     <Card className="shadow-lg">
       <CardHeader>
@@ -480,12 +425,10 @@ const Financeiro = () => {
     {
       id: 'tesouraria',
       title: 'Tesouraria',
-      description: 'Conciliação, Caixa, Cheque, Empréstimentos, Investimentos, Seguros, Consórcios',
+      description: 'Caixa, Empréstimos, Investimentos, Seguros, Consórcios',
       icon: Vault,
       subModules: [
-        { id: 'conciliacao_pagamentos', title: 'Conciliação de Pagamentos' },
         { id: 'caixa', title: 'Caixa' },
-        { id: 'cheque', title: 'Cheque' },
         { id: 'emprestimos', title: 'Empréstimos' },
         { id: 'investimentos', title: 'Investimentos' },
         { id: 'seguros', title: 'Seguros' },
@@ -741,23 +684,6 @@ const Financeiro = () => {
               <h2 className="text-2xl font-bold text-biodina-blue">Caixa</h2>
             </div>
             {renderCaixa()}
-          </div>
-        );
-      case 'conciliacao_pagamentos':
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveSubModule(null)}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-              <h2 className="text-2xl font-bold text-biodina-blue">Conciliação de Pagamentos</h2>
-            </div>
-            {renderConciliacao()}
           </div>
         );
       case 'emprestimos':

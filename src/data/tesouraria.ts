@@ -9,7 +9,6 @@ import {
   Consorcio, 
   ReajusteConsorcio,
   ContemplacaoConsorcio,
-  Cheque, 
   ContaBancaria,
   CartaoCredito,
   StatusEmprestimo,
@@ -18,7 +17,6 @@ import {
   TipoSeguro,
   StatusSeguro,
   StatusConsorcio,
-  StatusCheque,
   StatusConta
 } from '@/types/tesouraria';
 
@@ -307,56 +305,6 @@ export const mockConsorcios: Consorcio[] = [
     observacoes: 'Contemplado em nov/2024 - Carta de crédito utilizada',
     createdAt: new Date('2023-06-01'),
     updatedAt: new Date('2024-11-20')
-  }
-];
-
-// Mock Cheques
-export const mockCheques: Cheque[] = [
-  {
-    id: 'CHQ001',
-    banco: 'Banco do Brasil',
-    agencia: '1234-5',
-    conta: '67890-1',
-    numeroCheque: '000001',
-    valor: 15000,
-    dataEmissao: new Date('2025-01-15'),
-    beneficiario: 'Fornecedor ABC Ltda',
-    motivo: 'Pagamento de materiais - NF 1234',
-    status: StatusCheque.EMITIDO,
-    observacoes: 'Pagamento à vista com desconto',
-    createdAt: new Date('2025-01-15'),
-    updatedAt: new Date('2025-01-15')
-  },
-  {
-    id: 'CHQ002',
-    banco: 'Itaú',
-    agencia: '5555-5',
-    conta: '11111-1',
-    numeroCheque: '000025',
-    valor: 8500,
-    dataEmissao: new Date('2025-01-10'),
-    beneficiario: 'João Silva - Prestação de Serviços',
-    motivo: 'Pagamento serviços de consultoria',
-    status: StatusCheque.COMPENSADO,
-    dataCompensacao: new Date('2025-01-12'),
-    observacoes: 'Compensado no prazo normal',
-    createdAt: new Date('2025-01-10'),
-    updatedAt: new Date('2025-01-12')
-  },
-  {
-    id: 'CHQ003',
-    banco: 'Caixa Econômica',
-    agencia: '9876-5',
-    conta: '54321-0',
-    numeroCheque: '000012',
-    valor: 25000,
-    dataEmissao: new Date('2025-01-08'),
-    beneficiario: 'Transportadora XYZ',
-    motivo: 'Pagamento frete importação',
-    status: StatusCheque.DEVOLVIDO,
-    observacoes: 'Devolvido por insuficiência de fundos - regularizado',
-    createdAt: new Date('2025-01-08'),
-    updatedAt: new Date('2025-01-09')
   }
 ];
 
