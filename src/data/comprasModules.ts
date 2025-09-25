@@ -1,5 +1,5 @@
 
-import { ShoppingCart, FileText, Ship } from "lucide-react";
+import { ShoppingCart, FileText, Ship, CreditCard, TrendingUp, Calculator } from "lucide-react";
 import { ComprasModulesConfig } from "@/types/compras";
 
 export const comprasModules: ComprasModulesConfig = {
@@ -70,12 +70,72 @@ export const comprasModules: ComprasModulesConfig = {
     }
   },
   di: {
-    name: "DI",
+    name: "Importação/DI",
     icon: Ship,
     subModules: {
       di: {
-        name: "DI",
+        name: "Declaração de Importação",
         data: []
+      },
+      pagamentos_importacao: {
+        name: "Pagamentos de Importação",
+        data: [],
+        subSections: [
+          {
+            key: "programacao_pagamentos",
+            name: "Programação de Pagamentos",
+            icon: CreditCard,
+            description: "Gerencie pagamentos internacionais programados",
+            data: []
+          },
+          {
+            key: "comprovantes",
+            name: "Comprovantes",
+            icon: FileText,
+            description: "Upload e gestão de comprovantes SWIFT e bancários",
+            data: []
+          }
+        ]
+      },
+      fechamento_cambio: {
+        name: "Fechamento de Câmbio",
+        data: [],
+        subSections: [
+          {
+            key: "operacoes_cambio",
+            name: "Operações de Câmbio",
+            icon: TrendingUp,
+            description: "Registre fechamentos de câmbio por mesa",
+            data: []
+          },
+          {
+            key: "contratos_cambio",
+            name: "Contratos de Câmbio",
+            icon: FileText,
+            description: "Gestão de contratos e documentos",
+            data: []
+          }
+        ]
+      },
+      custos_importacao: {
+        name: "Custos de Importação",
+        data: [],
+        subSections: [
+          {
+            key: "custos_detalhados",
+            name: "Custos Detalhados",
+            icon: Calculator,
+            description: "Cadastro e acompanhamento de todos os custos",
+            data: []
+          },
+          {
+            key: "relatorio_custos",
+            name: "Relatório de Custos",
+            icon: FileText,
+            description: "Comparação previsão vs realizado por processo",
+            data: []
+          }
+        ]
       }
     }
   }

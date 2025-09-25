@@ -8,6 +8,9 @@ import PedidoDetalhesModal from "@/components/compras/PedidoDetalhesModal";
 import NovoPedidoModal from "@/components/compras/NovoPedidoModal";
 import ImportarXMLModal from "@/components/compras/ImportarXMLModal";
 import ReviewXMLData from "@/components/compras/ReviewXMLData";
+import PagamentosImportacaoView from "@/components/compras/importacao/PagamentosImportacaoView";
+import FechamentoCambioView from "@/components/compras/importacao/FechamentoCambioView";
+import CustosImportacaoView from "@/components/compras/importacao/CustosImportacaoView";
 import { comprasModules } from "@/data/comprasModules";
 import { Pedido } from "@/types/compras";
 
