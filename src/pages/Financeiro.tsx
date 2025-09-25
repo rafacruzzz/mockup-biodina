@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -761,43 +761,43 @@ const Financeiro = () => {
           </div>
         );
       case 'emprestimos':
-        return import('./tesouraria/GestaoEmprestimosView').then(module => {
-          const GestaoEmprestimosView = module.default;
-          return (
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setActiveSubModule(null)}
-                  className="flex items-center gap-2"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Voltar
-                </Button>
-              </div>
+        const GestaoEmprestimosView = lazy(() => import('@/components/tesouraria/GestaoEmprestimosView'));
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <Suspense fallback={<div>Carregando...</div>}>
               <GestaoEmprestimosView />
-            </div>
-          );
-        });
+            </Suspense>
+          </div>
+        );
       case 'investimentos':
-        return import('./tesouraria/GestaoInvestimentosView').then(module => {
-          const GestaoInvestimentosView = module.default;
-          return (
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setActiveSubModule(null)}
-                  className="flex items-center gap-2"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                  Voltar
-                </Button>
-              </div>
-              <GestaoInvestimentosView />
+        const GestaoInvestimentosView = lazy(() => import('@/components/tesouraria/GestaoInvestimentosView'));
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
             </div>
-          );
-        });
+            <Suspense fallback={<div>Carregando...</div>}>
+              <GestaoInvestimentosView />
+            </Suspense>
+          </div>
+        );
       default:
         return (
           <div className="space-y-6">

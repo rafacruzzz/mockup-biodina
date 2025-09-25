@@ -211,7 +211,11 @@ const DetalhesEmprestimoModal = ({ isOpen, onClose, emprestimoId }: DetalhesEmpr
               <TableBody>
                 {cronogramaCompleto.slice(0, 12).map((parcela) => { // Mostrar apenas primeiras 12 parcelas
                   const parcelaReal = parcelasEmprestimo.find(p => p.numerosParcela === parcela.numerosParcela);
-                  const status = parcelaReal?.status || StatusParcela.PENDENTE;
+                  const status: StatusParcela = parcelaReal?.status === StatusParcela.PAGO 
+                    ? StatusParcela.PAGO 
+                    : parcelaReal?.status === StatusParcela.VENCIDO
+                      ? StatusParcela.VENCIDO
+                      : StatusParcela.PENDENTE;
                   
                   return (
                     <TableRow key={parcela.id}>
