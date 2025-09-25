@@ -11,9 +11,21 @@ import {
 } from "lucide-react";
 import CalendarioVencimentos from "./CalendarioVencimentos";
 import PagamentosRecorrentesModal from "./PagamentosRecorrentesModal";
+import { NovaContaPagarModal } from "./NovaContaPagarModal";
+import { NovaContaRecorrenteModal } from "./NovaContaRecorrenteModal";
+import { VisualizarContaModal } from "./VisualizarContaModal";
+import { PagarContaModal } from "./PagarContaModal";
+import { EditarContaModal } from "./EditarContaModal";
+import { ContaPagar } from "@/types/financeiro";
 
 const APagarPagosView = () => {
   const [showRecorrentesModal, setShowRecorrentesModal] = useState(false);
+  const [showNovaContaModal, setShowNovaContaModal] = useState(false);
+  const [showNovaRecorrenteModal, setShowNovaRecorrenteModal] = useState(false);
+  const [showVisualizarModal, setShowVisualizarModal] = useState(false);
+  const [showPagarModal, setShowPagarModal] = useState(false);
+  const [showEditarModal, setShowEditarModal] = useState(false);
+  const [contaSelecionada, setContaSelecionada] = useState<ContaPagar | null>(null);
 
   const resumoGeral = {
     totalPendente: 47500.00,
@@ -42,7 +54,7 @@ const APagarPagosView = () => {
             <Plus className="h-4 w-4 mr-2" />
             Pagamentos Recorrentes
           </Button>
-          <Button>
+          <Button onClick={() => setShowNovaContaModal(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Nova Conta a Pagar
           </Button>
@@ -167,8 +179,54 @@ const APagarPagosView = () => {
                     <TableCell>PIX</TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        <Button variant="outline" size="sm">Ver</Button>
-                        <Button variant="outline" size="sm">Pagar</Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setContaSelecionada({
+                              id: 'CP-001',
+                              numero: 'CP-001',
+                              tipo: 'compra' as any,
+                              departamentoSolicitante: 'Administrativo',
+                              vincularA: 'departamento',
+                              departamento: 'Administrativo',
+                              fornecedor: 'Fornecedor ABC Ltda',
+                              descricao: 'Material de escritório - Janeiro',
+                              valor: 2500,
+                              dataVencimento: new Date('2025-01-25'),
+                              formaPagamentoSugerida: 'pix' as any,
+                              status: 'pendente' as any,
+                              createdAt: new Date()
+                            });
+                            setShowVisualizarModal(true);
+                          }}
+                        >
+                          Ver
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setContaSelecionada({
+                              id: 'CP-001',
+                              numero: 'CP-001',
+                              tipo: 'compra' as any,
+                              departamentoSolicitante: 'Administrativo',
+                              vincularA: 'departamento',
+                              departamento: 'Administrativo',
+                              fornecedor: 'Fornecedor ABC Ltda',
+                              descricao: 'Material de escritório - Janeiro',
+                              valor: 2500,
+                              dataVencimento: new Date('2025-01-25'),
+                              formaPagamentoSugerida: 'pix' as any,
+                              status: 'pendente' as any,
+                              createdAt: new Date()
+                            });
+                            setShowPagarModal(true);
+                          }}
+                        >
+                          Pagar
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -184,8 +242,54 @@ const APagarPagosView = () => {
                     <TableCell>Boleto</TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        <Button variant="outline" size="sm">Ver</Button>
-                        <Button variant="default" size="sm">Pagar</Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setContaSelecionada({
+                              id: 'CP-002',
+                              numero: 'CP-002',
+                              tipo: 'outros' as any,
+                              departamentoSolicitante: 'Administrativo',
+                              vincularA: 'departamento',
+                              departamento: 'Administrativo',
+                              fornecedor: 'Energy Corp',
+                              descricao: 'Conta de energia elétrica',
+                              valor: 4800,
+                              dataVencimento: new Date('2025-01-15'),
+                              formaPagamentoSugerida: 'boleto' as any,
+                              status: 'vencido' as any,
+                              createdAt: new Date()
+                            });
+                            setShowVisualizarModal(true);
+                          }}
+                        >
+                          Ver
+                        </Button>
+                        <Button 
+                          variant="default" 
+                          size="sm"
+                          onClick={() => {
+                            setContaSelecionada({
+                              id: 'CP-002',
+                              numero: 'CP-002',
+                              tipo: 'outros' as any,
+                              departamentoSolicitante: 'Administrativo',
+                              vincularA: 'departamento',
+                              departamento: 'Administrativo',
+                              fornecedor: 'Energy Corp',
+                              descricao: 'Conta de energia elétrica',
+                              valor: 4800,
+                              dataVencimento: new Date('2025-01-15'),
+                              formaPagamentoSugerida: 'boleto' as any,
+                              status: 'vencido' as any,
+                              createdAt: new Date()
+                            });
+                            setShowPagarModal(true);
+                          }}
+                        >
+                          Pagar
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -201,8 +305,54 @@ const APagarPagosView = () => {
                     <TableCell>Débito Automático</TableCell>
                     <TableCell>
                       <div className="flex gap-1">
-                        <Button variant="outline" size="sm">Ver</Button>
-                        <Button variant="outline" size="sm">Editar</Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setContaSelecionada({
+                              id: 'CP-003',
+                              numero: 'CP-003',
+                              tipo: 'outros' as any,
+                              departamentoSolicitante: 'TI',
+                              vincularA: 'departamento',
+                              departamento: 'TI',
+                              fornecedor: 'Telecom Solutions',
+                              descricao: 'Internet e telefonia corporativa',
+                              valor: 1200,
+                              dataVencimento: new Date('2025-01-30'),
+                              formaPagamentoSugerida: 'debito_automatico' as any,
+                              status: 'programado' as any,
+                              createdAt: new Date()
+                            });
+                            setShowVisualizarModal(true);
+                          }}
+                        >
+                          Ver
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => {
+                            setContaSelecionada({
+                              id: 'CP-003',
+                              numero: 'CP-003',
+                              tipo: 'outros' as any,
+                              departamentoSolicitante: 'TI',
+                              vincularA: 'departamento',
+                              departamento: 'TI',
+                              fornecedor: 'Telecom Solutions',
+                              descricao: 'Internet e telefonia corporativa',
+                              valor: 1200,
+                              dataVencimento: new Date('2025-01-30'),
+                              formaPagamentoSugerida: 'debito_automatico' as any,
+                              status: 'programado' as any,
+                              createdAt: new Date()
+                            });
+                            setShowEditarModal(true);
+                          }}
+                        >
+                          Editar
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
