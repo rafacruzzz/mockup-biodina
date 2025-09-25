@@ -11,7 +11,6 @@ import {
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
   AlertTriangle, Clock, Globe, Vault, ArrowLeft
 } from "lucide-react";
-import { ContasPagarDashboard } from '@/components/financeiro/ContasPagarDashboard';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area 
