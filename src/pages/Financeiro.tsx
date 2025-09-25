@@ -7,6 +7,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SidebarLayout from "@/components/SidebarLayout";
 import ContasPagarDashboard from "@/components/financeiro/ContasPagarDashboard";
+import ProgramacaoFinanceiraView from "@/components/financeiro/ProgramacaoFinanceiraView";
+import UsoConsumoView from "@/components/financeiro/UsoConsumoView";
+import DespesasServicoView from "@/components/financeiro/DespesasServicoView";
+import ComissoesPagarView from "@/components/financeiro/ComissoesPagarView";
 import { 
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
@@ -623,8 +627,53 @@ const Financeiro = () => {
           </div>
         );
       case 'programacao_financeira':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <ProgramacaoFinanceiraView />
+          </div>
+        );
       case 'uso_consumo':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <UsoConsumoView />
+          </div>
+        );
       case 'despesas_servico':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <DespesasServicoView />
+          </div>
+        );
       case 'comissoes_pagar':
         return (
           <div className="space-y-6">
@@ -637,11 +686,8 @@ const Financeiro = () => {
                 <ArrowLeft className="h-4 w-4" />
                 Voltar
               </Button>
-              <h2 className="text-2xl font-bold text-biodina-blue">
-                {mainModules.find(m => m.id === activeModule)?.subModules.find(s => s.id === activeSubModule)?.title}
-              </h2>
             </div>
-            {renderContasPagar()}
+            <ComissoesPagarView />
           </div>
         );
       case 'caixa':
