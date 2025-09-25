@@ -23,7 +23,7 @@ import RelatoriosFaturamento from "@/components/faturamento/RelatoriosFaturament
 import { 
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
-  AlertTriangle, Clock, Globe, Vault, ArrowLeft, Receipt
+  AlertTriangle, Clock, Vault, ArrowLeft, Receipt
 } from "lucide-react";
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -354,17 +354,6 @@ const Financeiro = () => {
   );
 
   const mainModules = [
-    {
-      id: 'importacao',
-      title: 'Importação Financeira',
-      description: 'Fechamento de Câmbio, Comissões a Receber, Custo Importação',
-      icon: Globe,
-      subModules: [
-        { id: 'fechamento_cambio', title: 'Fechamento de Câmbio' },
-        { id: 'comissoes_receber', title: 'Comissões a Receber' },
-        { id: 'custo_importacao', title: 'Custo Importação' }
-      ]
-    },
     {
       id: 'tesouraria',
       title: 'Tesouraria',
