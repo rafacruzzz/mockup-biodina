@@ -1,5 +1,38 @@
 // Tipos para o módulo Financeiro - Sistema de Contas a Pagar
 
+// Interface unificada para pedidos vindos do comercial
+export interface PedidoFinanceiro {
+  id: string;
+  numeroPedido: string;
+  origem: 'licitacao' | 'contratacao_direta' | 'importacao_direta';
+  cliente: string;
+  vendedor: string;
+  valor: number;
+  dataVenda: string;
+  dataPrevistaPagamento: string;
+  status: 'pendente_aprovacao' | 'aprovado' | 'em_pagamento' | 'pago' | 'atrasado';
+  prioridade: 'baixa' | 'media' | 'alta' | 'urgente';
+  descricao: string;
+  observacoes?: string;
+  numeroOportunidade?: string;
+  numeroLicitacao?: string;
+  tipoContrato?: string;
+  responsavelComercial: string;
+  documentos: string[];
+  historico: HistoricoPedido[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface HistoricoPedido {
+  id: string;
+  pedidoId: string;
+  data: string;
+  acao: string;
+  observacao?: string;
+  usuario: string;
+}
+
 export interface Requisicao {
   id: string;
   numeroRequisicao: string;

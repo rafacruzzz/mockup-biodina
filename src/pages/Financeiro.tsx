@@ -13,6 +13,7 @@ import DespesasViagemServicosView from "@/components/financeiro/DespesasViagemSe
 import CadastrosFinanceirosView from "@/components/financeiro/CadastrosFinanceirosView";
 import DocumentosFiscaisView from "@/components/financeiro/DocumentosFiscaisView";
 import ComissoesPagarView from "@/components/financeiro/ComissoesPagarView";
+import { ContratosView } from "@/components/financeiro/ContratosView";
 import { 
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
@@ -498,6 +499,7 @@ const Financeiro = () => {
       description: 'A Pagar x Pagos, Suprimentos, Despesas de Viagem, Cadastros, Documentos Fiscais, Comissões',
       icon: CreditCard,
       subModules: [
+        { id: 'contratos', title: 'Contratos' },
         { id: 'a_pagar_pagos', title: 'A Pagar x Pagos' },
         { id: 'suprimentos', title: 'Suprimentos (Uso e Consumo)' },
         { id: 'despesas_viagem_servicos', title: 'Despesas de Viagem e Serviços' },
@@ -608,6 +610,22 @@ const Financeiro = () => {
 
     // Map existing render functions to submodules
     switch (activeSubModule) {
+      case 'contratos':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <ContratosView />
+          </div>
+        );
       case 'a_receber':
       case 'recebido':
       case 'conciliacao_recebimentos':
