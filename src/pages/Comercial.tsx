@@ -1137,6 +1137,7 @@ const Comercial = () => {
         {activeModule === 'pos-venda' && !activeSubModule && renderPosVendaModules()}
         {activeModule === 'pos-venda' && activeSubModule && renderSubModule()}
         {activeModule === 'emprestimos' && renderEmprestimosModule()}
+        {activeModule === 'assinaturas' && renderAssinaturasModule()}
       </div>
 
       {showOportunidadeAvancadaForm && (
