@@ -17,8 +17,10 @@ import { VisualizarContaModal } from "./VisualizarContaModal";
 import { PagarContaModal } from "./PagarContaModal";
 import { EditarContaModal } from "./EditarContaModal";
 import { ContaPagar } from "@/types/financeiro";
+import { useToast } from "@/hooks/use-toast";
 
 const APagarPagosView = () => {
+  const { toast } = useToast();
   const [showRecorrentesModal, setShowRecorrentesModal] = useState(false);
   const [showNovaContaModal, setShowNovaContaModal] = useState(false);
   const [showNovaRecorrenteModal, setShowNovaRecorrenteModal] = useState(false);
@@ -26,6 +28,7 @@ const APagarPagosView = () => {
   const [showPagarModal, setShowPagarModal] = useState(false);
   const [showEditarModal, setShowEditarModal] = useState(false);
   const [contaSelecionada, setContaSelecionada] = useState<ContaPagar | null>(null);
+  const [contasPagas, setContasPagas] = useState<string[]>([]);
 
   const resumoGeral = {
     totalPendente: 47500.00,
@@ -174,7 +177,13 @@ const APagarPagosView = () => {
                     <TableCell className="text-right">R$ 2.500,00</TableCell>
                     <TableCell>25/01/2025</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="text-orange-600 border-orange-600">Pendente</Badge>
+                      <Badge variant="outline" className={
+                        contasPagas.includes('CP-001') 
+                          ? "text-green-600 border-green-600" 
+                          : "text-orange-600 border-orange-600"
+                      }>
+                        {contasPagas.includes('CP-001') ? 'Pago' : 'Pendente'}
+                      </Badge>
                     </TableCell>
                     <TableCell>PIX</TableCell>
                     <TableCell>
@@ -237,7 +246,13 @@ const APagarPagosView = () => {
                     <TableCell className="text-right">R$ 4.800,00</TableCell>
                     <TableCell>15/01/2025</TableCell>
                     <TableCell>
-                      <Badge variant="destructive">Vencido</Badge>
+                      <Badge variant={contasPagas.includes('CP-002') ? "outline" : "destructive"} className={
+                        contasPagas.includes('CP-002') 
+                          ? "text-green-600 border-green-600" 
+                          : undefined
+                      }>
+                        {contasPagas.includes('CP-002') ? 'Pago' : 'Vencido'}
+                      </Badge>
                     </TableCell>
                     <TableCell>Boleto</TableCell>
                     <TableCell>
@@ -300,7 +315,13 @@ const APagarPagosView = () => {
                     <TableCell className="text-right">R$ 1.200,00</TableCell>
                     <TableCell>30/01/2025</TableCell>
                     <TableCell>
-                      <Badge variant="secondary">Programado</Badge>
+                      <Badge variant={contasPagas.includes('CP-003') ? "outline" : "secondary"} className={
+                        contasPagas.includes('CP-003') 
+                          ? "text-green-600 border-green-600" 
+                          : undefined
+                      }>
+                        {contasPagas.includes('CP-003') ? 'Pago' : 'Programado'}
+                      </Badge>
                     </TableCell>
                     <TableCell>Débito Automático</TableCell>
                     <TableCell>
@@ -477,8 +498,18 @@ const APagarPagosView = () => {
         onClose={() => setShowPagarModal(false)}
         conta={contaSelecionada}
         onConfirmarPagamento={(dados) => {
-          console.log('Pagamento confirmado:', dados);
-          // Aqui você adicionaria a lógica para processar o pagamento
+          // Atualiza o status da conta para "Pago"
+          setContasPagas(prev => [...prev, dados.contaId]);
+          
+          // Exibe mensagem de sucesso
+          toast({
+            title: "Pagamento Confirmado",
+            description: `O pagamento da conta ${dados.contaId} foi confirmado com sucesso. Status alterado para "Pago".`,
+            className: "bg-green-50 border-green-200 text-green-800",
+          });
+          
+          // Fecha o modal de pagamento
+          setShowPagarModal(false);
         }}
       />
 
