@@ -156,6 +156,82 @@ export interface CartaoCredito {
   updatedAt: Date;
 }
 
+// Novas interfaces para o módulo Caixa
+export interface MovimentacaoCaixa {
+  id: string;
+  tipo: 'Entrada' | 'Saída';
+  categoria: 'Receita Operacional' | 'Despesa Operacional' | 'Investimento' | 'Financiamento' | 'Outros';
+  descricao: string;
+  valor: number;
+  dataMovimentacao: Date;
+  contaBancaria?: string;
+  formaPagamento: 'Dinheiro' | 'Transferência' | 'Cheque' | 'PIX' | 'Cartão';
+  numeroDocumento?: string;
+  responsavel: string;
+  status: 'Pendente' | 'Confirmado' | 'Cancelado';
+  observacoes?: string;
+  anexoUrl?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Cheque {
+  id: string;
+  banco: string;
+  agencia: string;
+  conta: string;
+  numeroCheque: string;
+  valor: number;
+  dataEmissao: Date;
+  dataVencimento: Date;
+  beneficiario: string;
+  finalidade: string;
+  status: 'Emitido' | 'Compensado' | 'Devolvido' | 'Cancelado';
+  dataCompensacao?: Date;
+  motivoDevolucao?: string;
+  observacoes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface DocumentoImportante {
+  id: string;
+  titulo: string;
+  categoria: 'Contrato' | 'Estatuto' | 'Certidão' | 'Balanço' | 'Ata' | 'Procuração' | 'Outros';
+  descricao?: string;
+  arquivo: string;
+  versao: string;
+  dataDocumento: Date;
+  dataUpload: Date;
+  dataValidade?: Date;
+  responsavelUpload: string;
+  niveisAcesso: ('Diretoria' | 'Financeiro' | 'Contabilidade' | 'Jurídico' | 'Todos')[];
+  tags: string[];
+  observacoes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Balanco {
+  id: string;
+  periodo: string;
+  anoExercicio: number;
+  tipoBalanco: 'Mensal' | 'Trimestral' | 'Semestral' | 'Anual';
+  dataRecebimento: Date;
+  escritorioContabil: string;
+  ativo: number;
+  passivo: number;
+  patrimonio: number;
+  receitas: number;
+  despesas: number;
+  resultado: number;
+  arquivo?: string;
+  status: 'Recebido' | 'Em Análise' | 'Aprovado' | 'Questionado';
+  observacoes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Enums
 export enum StatusEmprestimo {
   ATIVO = 'Ativo',
@@ -209,6 +285,32 @@ export enum StatusConta {
   BLOQUEADA = 'Bloqueada'
 }
 
+// Novos enums para o módulo Caixa
+export enum TipoMovimentacao {
+  ENTRADA = 'Entrada',
+  SAIDA = 'Saída'
+}
+
+export enum StatusMovimentacao {
+  PENDENTE = 'Pendente',
+  CONFIRMADO = 'Confirmado',
+  CANCELADO = 'Cancelado'
+}
+
+export enum StatusCheque {
+  EMITIDO = 'Emitido',
+  COMPENSADO = 'Compensado',
+  DEVOLVIDO = 'Devolvido',
+  CANCELADO = 'Cancelado'
+}
+
+export enum StatusBalanco {
+  RECEBIDO = 'Recebido',
+  EM_ANALISE = 'Em Análise',
+  APROVADO = 'Aprovado',
+  QUESTIONADO = 'Questionado'
+}
+
 // Constants for colors
 export const STATUS_COLORS_TESOURARIA = {
   // Empréstimos
@@ -237,5 +339,22 @@ export const STATUS_COLORS_TESOURARIA = {
   // Contas
   'Ativa': 'bg-green-500',
   'Inativa': 'bg-gray-500',
-  'Bloqueada': 'bg-red-500'
+  'Bloqueada': 'bg-red-500',
+  
+  // Movimentações Caixa
+  'Pendente_Mov': 'bg-yellow-500',
+  'Confirmado': 'bg-green-500',
+  'Cancelado_Mov': 'bg-red-500',
+  
+  // Cheques
+  'Emitido': 'bg-blue-500',
+  'Compensado_Cheque': 'bg-green-500',
+  'Devolvido': 'bg-red-500',
+  'Cancelado_Cheque': 'bg-gray-500',
+  
+  // Balanços
+  'Recebido': 'bg-blue-500',
+  'Em Análise': 'bg-yellow-500',
+  'Aprovado_Balanco': 'bg-green-500',
+  'Questionado': 'bg-red-500'
 };

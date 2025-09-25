@@ -11,13 +11,21 @@ import {
   ContemplacaoConsorcio,
   ContaBancaria,
   CartaoCredito,
+  MovimentacaoCaixa,
+  Cheque,
+  DocumentoImportante,
+  Balanco,
   StatusEmprestimo,
   StatusParcela,
   TipoInvestimento,
   TipoSeguro,
   StatusSeguro,
   StatusConsorcio,
-  StatusConta
+  StatusConta,
+  TipoMovimentacao,
+  StatusMovimentacao,
+  StatusCheque,
+  StatusBalanco
 } from '@/types/tesouraria';
 
 // Mock Empréstimos
@@ -394,6 +402,227 @@ export const mockCartoesCredito: CartaoCredito[] = [
     observacoes: 'Bloqueado temporariamente - suspeita de fraude',
     createdAt: new Date('2024-02-10'),
     updatedAt: new Date('2025-01-12')
+  }
+];
+
+// Mock Movimentações de Caixa
+export const mockMovimentacoesCaixa: MovimentacaoCaixa[] = [
+  {
+    id: 'MOV001',
+    tipo: TipoMovimentacao.ENTRADA,
+    categoria: 'Receita Operacional',
+    descricao: 'Recebimento de vendas - Cliente ABC Ltda',
+    valor: 45000,
+    dataMovimentacao: new Date('2025-01-20'),
+    contaBancaria: 'CB001',
+    formaPagamento: 'Transferência',
+    numeroDocumento: 'TED-12345',
+    responsavel: 'Carlos Silva',
+    status: StatusMovimentacao.CONFIRMADO,
+    observacoes: 'Pagamento via TED - fatura vencida em 15/01',
+    createdAt: new Date('2025-01-20'),
+    updatedAt: new Date('2025-01-20')
+  },
+  {
+    id: 'MOV002',
+    tipo: TipoMovimentacao.SAIDA,
+    categoria: 'Despesa Operacional',
+    descricao: 'Pagamento fornecedor - Material escritório',
+    valor: 2850,
+    dataMovimentacao: new Date('2025-01-22'),
+    contaBancaria: 'CB001',
+    formaPagamento: 'PIX',
+    numeroDocumento: 'PIX-98765',
+    responsavel: 'Maria Santos',
+    status: StatusMovimentacao.PENDENTE,
+    observacoes: 'Aguardando confirmação do fornecedor',
+    createdAt: new Date('2025-01-22'),
+    updatedAt: new Date('2025-01-22')
+  },
+  {
+    id: 'MOV003',
+    tipo: TipoMovimentacao.ENTRADA,
+    categoria: 'Financiamento',
+    descricao: 'Liberação empréstimo Banco do Brasil',
+    valor: 100000,
+    dataMovimentacao: new Date('2025-01-18'),
+    contaBancaria: 'CB001',
+    formaPagamento: 'Transferência',
+    numeroDocumento: 'EMP-2025-001',
+    responsavel: 'João Silva',
+    status: StatusMovimentacao.CONFIRMADO,
+    observacoes: 'Segunda liberação do contrato EMP-2024-001',
+    createdAt: new Date('2025-01-18'),
+    updatedAt: new Date('2025-01-18')
+  }
+];
+
+// Mock Cheques
+export const mockCheques: Cheque[] = [
+  {
+    id: 'CHQ001',
+    banco: 'Banco do Brasil',
+    agencia: '1234-5',
+    conta: '67890-1',
+    numeroCheque: '000001',
+    valor: 15000,
+    dataEmissao: new Date('2025-01-15'),
+    dataVencimento: new Date('2025-01-30'),
+    beneficiario: 'Fornecedor XYZ Ltda',
+    finalidade: 'Pagamento de mercadorias',
+    status: StatusCheque.EMITIDO,
+    observacoes: 'Cheque pré-datado conforme acordo',
+    createdAt: new Date('2025-01-15'),
+    updatedAt: new Date('2025-01-15')
+  },
+  {
+    id: 'CHQ002',
+    banco: 'Itaú Unibanco',
+    agencia: '5555-5',
+    conta: '11111-1',
+    numeroCheque: '000025',
+    valor: 8500,
+    dataEmissao: new Date('2025-01-10'),
+    dataVencimento: new Date('2025-01-10'),
+    beneficiario: 'Serviços Contábeis Silva & Associados',
+    finalidade: 'Honorários contábeis - dezembro/2024',
+    status: StatusCheque.COMPENSADO,
+    dataCompensacao: new Date('2025-01-11'),
+    observacoes: 'Compensado no prazo',
+    createdAt: new Date('2025-01-10'),
+    updatedAt: new Date('2025-01-11')
+  },
+  {
+    id: 'CHQ003',
+    banco: 'Caixa Econômica Federal',
+    agencia: '9876-5',
+    conta: '54321-0',
+    numeroCheque: '000012',
+    valor: 3200,
+    dataEmissao: new Date('2025-01-08'),
+    dataVencimento: new Date('2025-01-08'),
+    beneficiario: 'Posto de Combustível ABC',
+    finalidade: 'Abastecimento veículos da empresa',
+    status: StatusCheque.DEVOLVIDO,
+    motivoDevolucao: 'Insuficiência de fundos',
+    observacoes: 'Foi reapresentado e compensado posteriormente',
+    createdAt: new Date('2025-01-08'),
+    updatedAt: new Date('2025-01-12')
+  }
+];
+
+// Mock Documentos Importantes
+export const mockDocumentosImportantes: DocumentoImportante[] = [
+  {
+    id: 'DOC001',
+    titulo: 'Contrato Social Consolidado',
+    categoria: 'Contrato',
+    descricao: 'Contrato social da empresa com última consolidação',
+    arquivo: '/docs/importantes/contrato-social-2024.pdf',
+    versao: '3.1',
+    dataDocumento: new Date('2024-06-15'),
+    dataUpload: new Date('2024-06-20'),
+    responsavelUpload: 'Departamento Jurídico',
+    niveisAcesso: ['Diretoria', 'Jurídico'],
+    tags: ['contrato social', 'jurídico', 'consolidação'],
+    observacoes: 'Versão consolidada após alteração de capital social',
+    createdAt: new Date('2024-06-20'),
+    updatedAt: new Date('2024-06-20')
+  },
+  {
+    id: 'DOC002',
+    titulo: 'Certidão Negativa Federal',
+    categoria: 'Certidão',
+    descricao: 'Certidão negativa de débitos federais',
+    arquivo: '/docs/importantes/certidao-federal-2025.pdf',
+    versao: '1.0',
+    dataDocumento: new Date('2025-01-10'),
+    dataUpload: new Date('2025-01-12'),
+    dataValidade: new Date('2025-07-10'),
+    responsavelUpload: 'Departamento Financeiro',
+    niveisAcesso: ['Diretoria', 'Financeiro', 'Contabilidade'],
+    tags: ['certidão', 'federal', 'regularidade fiscal'],
+    observacoes: 'Válida por 180 dias',
+    createdAt: new Date('2025-01-12'),
+    updatedAt: new Date('2025-01-12')
+  },
+  {
+    id: 'DOC003',
+    titulo: 'Procuração - Representação Bancária',
+    categoria: 'Procuração',
+    descricao: 'Procuração para representação em bancos',
+    arquivo: '/docs/importantes/procuracao-bancaria-2024.pdf',
+    versao: '2.0',
+    dataDocumento: new Date('2024-11-30'),
+    dataUpload: new Date('2024-12-02'),
+    dataValidade: new Date('2025-11-30'),
+    responsavelUpload: 'Departamento Jurídico',
+    niveisAcesso: ['Diretoria', 'Financeiro', 'Jurídico'],
+    tags: ['procuração', 'bancária', 'representação legal'],
+    observacoes: 'Outorga poderes para Carlos Silva e Maria Santos',
+    createdAt: new Date('2024-12-02'),
+    updatedAt: new Date('2024-12-02')
+  }
+];
+
+// Mock Balanços
+export const mockBalancos: Balanco[] = [
+  {
+    id: 'BAL001',
+    periodo: 'Dezembro/2024',
+    anoExercicio: 2024,
+    tipoBalanco: 'Mensal',
+    dataRecebimento: new Date('2025-01-15'),
+    escritorioContabil: 'Silva & Associados Contabilidade',
+    ativo: 2850000,
+    passivo: 1650000,
+    patrimonio: 1200000,
+    receitas: 850000,
+    despesas: 650000,
+    resultado: 200000,
+    arquivo: '/docs/balancos/balanco-dez-2024.pdf',
+    status: StatusBalanco.APROVADO,
+    observacoes: 'Resultado positivo no encerramento do ano',
+    createdAt: new Date('2025-01-15'),
+    updatedAt: new Date('2025-01-18')
+  },
+  {
+    id: 'BAL002',
+    periodo: 'Novembro/2024',
+    anoExercicio: 2024,
+    tipoBalanco: 'Mensal',
+    dataRecebimento: new Date('2024-12-10'),
+    escritorioContabil: 'Silva & Associados Contabilidade',
+    ativo: 2780000,
+    passivo: 1680000,
+    patrimonio: 1100000,
+    receitas: 780000,
+    despesas: 720000,
+    resultado: 60000,
+    arquivo: '/docs/balancos/balanco-nov-2024.pdf',
+    status: StatusBalanco.APROVADO,
+    observacoes: 'Margem menor devido a investimentos em equipamentos',
+    createdAt: new Date('2024-12-10'),
+    updatedAt: new Date('2024-12-12')
+  },
+  {
+    id: 'BAL003',
+    periodo: '3º Trimestre/2024',
+    anoExercicio: 2024,
+    tipoBalanco: 'Trimestral',
+    dataRecebimento: new Date('2024-10-20'),
+    escritorioContabil: 'Silva & Associados Contabilidade',
+    ativo: 2650000,
+    passivo: 1580000,
+    patrimonio: 1070000,
+    receitas: 2150000,
+    despesas: 1980000,
+    resultado: 170000,
+    arquivo: '/docs/balancos/balanco-3tri-2024.pdf',
+    status: StatusBalanco.EM_ANALISE,
+    observacoes: 'Em análise pela diretoria - questionamentos sobre depreciação',
+    createdAt: new Date('2024-10-20'),
+    updatedAt: new Date('2024-10-25')
   }
 ];
 
