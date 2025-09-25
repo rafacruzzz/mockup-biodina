@@ -323,3 +323,58 @@ export const URGENCIA_COLORS: Record<UrgenciaVencimento, string> = {
   [UrgenciaVencimento.VENCIDO]: 'bg-red-100 text-red-800',
   [UrgenciaVencimento.CRITICA]: 'bg-red-600 text-white'
 };
+
+// Simplified ContaPagar interface for the modals
+export interface ContaPagar {
+  id: string;
+  numero: string;
+  tipo: TipoRequisicaoSimples;
+  departamentoSolicitante: string;
+  vincularA: 'projeto' | 'departamento';
+  projetoCliente?: string;
+  departamento?: string;
+  fornecedor: string;
+  descricao: string;
+  valor: number;
+  dataVencimento: Date;
+  formaPagamentoSugerida: FormaPagamento;
+  status: StatusConta;
+  anexos?: string[];
+  dataPagamento?: Date;
+  contaBancariaSaida?: string;
+  comprovantePagamento?: string;
+  createdAt: Date;
+}
+
+// Simplified enums for the new modals
+export enum TipoRequisicaoSimples {
+  PAGAMENTO = 'pagamento',
+  COMPRA = 'compra',
+  HOSPEDAGEM = 'hospedagem',
+  PASSAGEM = 'passagem',
+  OUTROS = 'outros'
+}
+
+export enum StatusConta {
+  PROGRAMADO = 'programado',
+  PENDENTE = 'pendente',
+  VENCIDO = 'vencido',
+  PAGO = 'pago'
+}
+
+export enum FormaPagamento {
+  BOLETO = 'boleto',
+  PIX = 'pix',
+  DEBITO_AUTOMATICO = 'debito_automatico',
+  CARTAO_CREDITO = 'cartao_credito',
+  OUTROS = 'outros'
+}
+
+// Enhanced ContaRecorrente with missing fields
+export interface ContaRecorrenteEnhanced extends Omit<ContaRecorrente, 'fornecedor'> {
+  fornecedor: string;
+  dataPrimeiroVencimento: Date;
+  formaPagamento: FormaPagamento;
+  anexos?: string[];
+  status: StatusConta;
+}

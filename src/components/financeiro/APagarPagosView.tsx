@@ -290,8 +290,56 @@ const APagarPagosView = () => {
 
       {/* Modal de Pagamentos Recorrentes */}
       <PagamentosRecorrentesModal 
-        isOpen={showRecorrentesModal} 
-        onClose={() => setShowRecorrentesModal(false)} 
+        isOpen={showRecorrentesModal}
+        onClose={() => setShowRecorrentesModal(false)}
+        onNovaContaRecorrente={() => {
+          setShowRecorrentesModal(false);
+          setShowNovaRecorrenteModal(true);
+        }}
+      />
+
+      <NovaContaPagarModal
+        isOpen={showNovaContaModal}
+        onClose={() => setShowNovaContaModal(false)}
+        onSave={(novaConta) => {
+          console.log('Nova conta criada:', novaConta);
+          // Aqui você adicionaria a lógica para salvar a conta
+        }}
+      />
+
+      <NovaContaRecorrenteModal
+        isOpen={showNovaRecorrenteModal}
+        onClose={() => setShowNovaRecorrenteModal(false)}
+        onSave={(novaConta) => {
+          console.log('Nova conta recorrente criada:', novaConta);
+          // Aqui você adicionaria a lógica para salvar a conta recorrente
+        }}
+      />
+
+      <VisualizarContaModal
+        isOpen={showVisualizarModal}
+        onClose={() => setShowVisualizarModal(false)}
+        conta={contaSelecionada}
+      />
+
+      <PagarContaModal
+        isOpen={showPagarModal}
+        onClose={() => setShowPagarModal(false)}
+        conta={contaSelecionada}
+        onConfirmarPagamento={(dados) => {
+          console.log('Pagamento confirmado:', dados);
+          // Aqui você adicionaria a lógica para processar o pagamento
+        }}
+      />
+
+      <EditarContaModal
+        isOpen={showEditarModal}
+        onClose={() => setShowEditarModal(false)}
+        conta={contaSelecionada}
+        onSave={(contaAtualizada) => {
+          console.log('Conta atualizada:', contaAtualizada);
+          // Aqui você adicionaria a lógica para atualizar a conta
+        }}
       />
     </div>
   );

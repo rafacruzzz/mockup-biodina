@@ -437,3 +437,38 @@ export const gerarProximoNumeroRequisicao = (): string => {
   const ultimoNumero = mockRequisicoes.length;
   return `${ano}-${String(ultimoNumero + 1).padStart(3, '0')}`;
 };
+
+// Mock simplified for modal forms
+export const mockDepartamentosSimples = [
+  { id: '1', nome: 'Administração' },
+  { id: '2', nome: 'Comercial' },
+  { id: '3', nome: 'Produção' },
+  { id: '4', nome: 'Suprimentos' },
+  { id: '5', nome: 'Tecnologia da Informação' },
+  { id: '6', nome: 'Recursos Humanos' },
+  { id: '7', nome: 'Financeiro' },
+  { id: '8', nome: 'Qualidade' },
+  { id: '9', nome: 'Logística' }
+];
+
+export const mockProjetosSimples = [
+  { id: '1', nome: 'Projeto Alpha' },
+  { id: '2', nome: 'Projeto Beta' },
+  { id: '3', nome: 'Projeto Gamma' }  
+];
+
+export const mockFornecedoresSimples = [
+  { id: '1', nome: 'Distribuidora ABC Ltda' },
+  { id: '2', nome: 'Energia Elétrica S.A' },
+  { id: '3', nome: 'Telecomunicações XYZ' },
+  { id: '4', nome: 'João da Silva - MEI' }
+];
+
+// Required documents list for new modals
+export const DOCUMENTOS_OBRIGATORIOS_MODAL = [
+  'E-mail do pedido/requisição',
+  'Requisição formal (formulário)',
+  'Nota Fiscal',
+  'Boleto/Duplicata',
+  'Comprovante de pagamento (após pagamento)'
+];

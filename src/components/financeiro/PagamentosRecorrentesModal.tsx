@@ -13,6 +13,7 @@ import { Periodicidade, CategoriaContaRecorrente } from '@/types/financeiro';
 interface PagamentosRecorrentesModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onNovaContaRecorrente?: () => void;
 }
 
 const PagamentosRecorrentesModal = ({ isOpen, onClose }: PagamentosRecorrentesModalProps) => {
