@@ -7,9 +7,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SidebarLayout from "@/components/SidebarLayout";
 import ContasPagarDashboard from "@/components/financeiro/ContasPagarDashboard";
-import ProgramacaoFinanceiraView from "@/components/financeiro/ProgramacaoFinanceiraView";
-import UsoConsumoView from "@/components/financeiro/UsoConsumoView";
-import DespesasServicoView from "@/components/financeiro/DespesasServicoView";
+import APagarPagosView from "@/components/financeiro/APagarPagosView";
+import SuprimentosView from "@/components/financeiro/SuprimentosView";
+import DespesasViagemServicosView from "@/components/financeiro/DespesasViagemServicosView";
+import CadastrosFinanceirosView from "@/components/financeiro/CadastrosFinanceirosView";
+import DocumentosFiscaisView from "@/components/financeiro/DocumentosFiscaisView";
 import ComissoesPagarView from "@/components/financeiro/ComissoesPagarView";
 import { 
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
@@ -478,7 +480,7 @@ const Financeiro = () => {
     {
       id: 'tesouraria',
       title: 'Tesouraria',
-      description: 'Conciliação, Caixa, Cheque, Empréstimos, Investimentos, Seguros, Consórcios',
+      description: 'Conciliação, Caixa, Cheque, Empréstimentos, Investimentos, Seguros, Consórcios',
       icon: Vault,
       subModules: [
         { id: 'conciliacao_pagamentos', title: 'Conciliação de Pagamentos' },
@@ -493,12 +495,14 @@ const Financeiro = () => {
     {
       id: 'contas_pagar',
       title: 'Contas a Pagar',
-      description: 'Programação Financeira, Uso e Consumo, Despesas, Comissões a Pagar',
+      description: 'A Pagar x Pagos, Suprimentos, Despesas de Viagem, Cadastros, Documentos Fiscais, Comissões',
       icon: CreditCard,
       subModules: [
-        { id: 'programacao_financeira', title: 'Programação Financeira' },
-        { id: 'uso_consumo', title: 'Uso e Consumo' },
-        { id: 'despesas_servico', title: 'Despesas a Serviço' },
+        { id: 'a_pagar_pagos', title: 'A Pagar x Pagos' },
+        { id: 'suprimentos', title: 'Suprimentos (Uso e Consumo)' },
+        { id: 'despesas_viagem_servicos', title: 'Despesas de Viagem e Serviços' },
+        { id: 'cadastros_financeiros', title: 'Cadastros Financeiros' },
+        { id: 'documentos_fiscais', title: 'Documentos Fiscais' },
         { id: 'comissoes_pagar', title: 'Comissões a Pagar' }
       ]
     },
@@ -626,7 +630,7 @@ const Financeiro = () => {
             {renderContasReceber()}
           </div>
         );
-      case 'programacao_financeira':
+      case 'a_pagar_pagos':
         return (
           <div className="space-y-6">
             <div className="flex items-center gap-4">
@@ -639,10 +643,10 @@ const Financeiro = () => {
                 Voltar
               </Button>
             </div>
-            <ProgramacaoFinanceiraView />
+            <APagarPagosView />
           </div>
         );
-      case 'uso_consumo':
+      case 'suprimentos':
         return (
           <div className="space-y-6">
             <div className="flex items-center gap-4">
@@ -655,10 +659,10 @@ const Financeiro = () => {
                 Voltar
               </Button>
             </div>
-            <UsoConsumoView />
+            <SuprimentosView />
           </div>
         );
-      case 'despesas_servico':
+      case 'despesas_viagem_servicos':
         return (
           <div className="space-y-6">
             <div className="flex items-center gap-4">
@@ -671,7 +675,39 @@ const Financeiro = () => {
                 Voltar
               </Button>
             </div>
-            <DespesasServicoView />
+            <DespesasViagemServicosView />
+          </div>
+        );
+      case 'cadastros_financeiros':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <CadastrosFinanceirosView />
+          </div>
+        );
+      case 'documentos_fiscais':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <DocumentosFiscaisView />
           </div>
         );
       case 'comissoes_pagar':
