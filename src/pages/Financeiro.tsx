@@ -189,19 +189,11 @@ const Financeiro = () => {
     }
   };
 
-  const renderContasPagar = () => (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5" />
-            Contas a Pagar
-          </CardTitle>
-          <Button className="bg-biodina-gold hover:bg-biodina-gold/90">
-            <Plus className="h-4 w-4 mr-2" />
-            Nova Conta
-          </Button>
-        </div>
+  // Importar o novo dashboard de Contas a Pagar
+  const renderContasPagar = () => {
+    const ContasPagarDashboard = require('@/components/financeiro/ContasPagarDashboard').default;
+    return <ContasPagarDashboard />;
+  };
         <div className="flex gap-4 mt-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
