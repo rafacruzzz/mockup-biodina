@@ -372,13 +372,15 @@ const Financeiro = () => {
     {
       id: 'contas_receber',
       title: 'Contas a Receber',
-      description: 'Conciliação de Recebimentos, A Receber, Recebido, Comissões Geradas',
+      description: 'Conciliação Entradas, A Receber, Canhotos, Pedidos, Cadastros, Relatórios',
       icon: Banknote,
       subModules: [
-        { id: 'conciliacao_recebimentos', title: 'Conciliação de Recebimentos' },
+        { id: 'conciliacao_entradas', title: 'Conciliação Entradas' },
         { id: 'a_receber', title: 'A Receber' },
-        { id: 'recebido', title: 'Recebido' },
-        { id: 'comissoes_geradas', title: 'Comissões Geradas a Pagar' }
+        { id: 'canhotos', title: 'Canhotos' },
+        { id: 'pedidos', title: 'Pedidos' },
+        { id: 'cadastros_receber', title: 'Cadastros' },
+        { id: 'relatorios_receber', title: 'Relatórios' }
       ]
     },
     {
@@ -486,9 +488,11 @@ const Financeiro = () => {
     // Map existing render functions to submodules
     switch (activeSubModule) {
       case 'a_receber':
-      case 'recebido':
-      case 'conciliacao_recebimentos':
-      case 'comissoes_geradas':
+      case 'canhotos':
+      case 'conciliacao_entradas':
+      case 'pedidos':
+      case 'cadastros_receber':
+      case 'relatorios_receber':
         return (
           <div className="space-y-6">
             <div className="flex items-center gap-4">
