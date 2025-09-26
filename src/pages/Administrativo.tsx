@@ -404,7 +404,7 @@ const Administrativo = () => {
       {/* Segunda Tabela de Produtos com Vencimento Próximo */}
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Produtos com Vencimento de Registro Próximo - Categoria B</CardTitle>
+          <CardTitle>Boas Práticas com Vencimento Próximo</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
