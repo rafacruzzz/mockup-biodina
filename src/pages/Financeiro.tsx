@@ -400,14 +400,20 @@ const Financeiro = () => {
     {
       id: 'tesouraria',
       title: 'Tesouraria',
-      description: 'Caixa, Empréstimos, Investimentos, Seguros, Consórcios',
+      description: 'Caixa, Empréstimos, Investimentos, Seguros, Consórcios, Cadastros, Extratos, Doc. Fin, Saldos, Despesas a Serviço, Relatórios',
       icon: Vault,
       subModules: [
         { id: 'caixa', title: 'Caixa' },
         { id: 'emprestimos', title: 'Empréstimos' },
         { id: 'investimentos', title: 'Investimentos' },
         { id: 'seguros', title: 'Seguros' },
-        { id: 'consorcios', title: 'Consórcios' }
+        { id: 'consorcios', title: 'Consórcios' },
+        { id: 'cadastros_tesouraria', title: 'Cadastros' },
+        { id: 'extratos', title: 'Extratos' },
+        { id: 'doc_fin', title: 'Doc. Fin' },
+        { id: 'saldos', title: 'Saldos' },
+        { id: 'despesas_servico', title: 'Despesas a Serviço (Cartão de Crédito)' },
+        { id: 'relatorios_tesouraria', title: 'Relatórios' }
       ]
     },
   ];
@@ -700,6 +706,120 @@ const Financeiro = () => {
             <Suspense fallback={<div>Carregando...</div>}>
               <GestaoConsorciosView />
             </Suspense>
+          </div>
+        );
+      case 'cadastros_tesouraria':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <div className="p-6 bg-background rounded-lg">
+              <h2 className="text-2xl font-bold mb-4">Cadastros - Tesouraria</h2>
+              <p className="text-muted-foreground">Módulo de cadastros da tesouraria em desenvolvimento.</p>
+            </div>
+          </div>
+        );
+      case 'extratos':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <div className="p-6 bg-background rounded-lg">
+              <h2 className="text-2xl font-bold mb-4">Extratos</h2>
+              <p className="text-muted-foreground">Módulo de extratos em desenvolvimento.</p>
+            </div>
+          </div>
+        );
+      case 'doc_fin':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <div className="p-6 bg-background rounded-lg">
+              <h2 className="text-2xl font-bold mb-4">Doc. Fin</h2>
+              <p className="text-muted-foreground">Módulo de documentos financeiros em desenvolvimento.</p>
+            </div>
+          </div>
+        );
+      case 'saldos':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <div className="p-6 bg-background rounded-lg">
+              <h2 className="text-2xl font-bold mb-4">Saldos</h2>
+              <p className="text-muted-foreground">Módulo de saldos em desenvolvimento.</p>
+            </div>
+          </div>
+        );
+      case 'despesas_servico':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <div className="p-6 bg-background rounded-lg">
+              <h2 className="text-2xl font-bold mb-4">Despesas a Serviço (Cartão de Crédito)</h2>
+              <p className="text-muted-foreground">Módulo de despesas a serviço em desenvolvimento.</p>
+            </div>
+          </div>
+        );
+      case 'relatorios_tesouraria':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <div className="p-6 bg-background rounded-lg">
+              <h2 className="text-2xl font-bold mb-4">Relatórios - Tesouraria</h2>
+              <p className="text-muted-foreground">Módulo de relatórios da tesouraria em desenvolvimento.</p>
+            </div>
           </div>
         );
       case 'dashboard_faturamento':
