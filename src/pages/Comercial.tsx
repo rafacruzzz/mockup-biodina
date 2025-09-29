@@ -13,6 +13,7 @@ import PedidoForm from "@/components/comercial/PedidoForm";
 import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
 import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
 import AssinaturasDigitaisView from "@/components/comercial/AssinaturasDigitaisView";
+import EmprestimosTable from "@/components/comercial/EmprestimosTable";
 import AgendaComercial from "@/components/comercial/AgendaComercial";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
@@ -701,12 +702,7 @@ const Comercial = () => {
           <h1 className="text-2xl font-bold text-biodina-blue">Comercial / Empréstimos</h1>
         </div>
 
-        <Card>
-          <CardContent className="p-8 text-center">
-            <HandCoins className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-            <p className="text-gray-600">Módulo de Empréstimos em desenvolvimento</p>
-          </CardContent>
-        </Card>
+        <EmprestimosTable />
       </div>
     );
   };
