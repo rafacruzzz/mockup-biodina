@@ -111,7 +111,9 @@ const DadosGeraisTab = ({ formData, onInputChange }: ProductTabProps) => {
                   className="border-gray-300"
                 />
               </div>
+            </div>
 
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="nomeProdutoFabricante" className="text-sm font-semibold">Nome do produto (fabricante) *</Label>
                 <Input
@@ -134,9 +136,7 @@ const DadosGeraisTab = ({ formData, onInputChange }: ProductTabProps) => {
                   className="border-gray-300 min-h-[80px]"
                 />
               </div>
-            </div>
 
-            <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="nomeMarketing" className="text-sm font-semibold">Nome de Marketing</Label>
                 <Input
