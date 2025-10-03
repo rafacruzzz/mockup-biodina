@@ -129,4 +129,23 @@ export interface PedidoCompleto {
     outrosAcessorios: boolean;
     especificacaoOutros: string;
   };
+  
+  // Faturamento
+  pedidoOrigem?: string;
+  naturezaOperacao?: string;
+  tipoContrato?: string;
+  emailsNF?: string;
+  formaPagamentoNF?: string;
+  documentacaoNF?: {
+    certificadoQualidade: boolean;
+    certificadoAnalise: boolean;
+    manual: boolean;
+    fichaTecnica: boolean;
+    laudoTecnico: boolean;
+    nfOrigem: boolean;
+    outros: boolean;
+    especificacaoOutros: string;
+  };
+  destacarIR?: boolean;
+  percentualIR?: number;
 }

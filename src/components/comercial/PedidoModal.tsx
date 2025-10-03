@@ -83,6 +83,25 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
     especificacaoOutros: ''
   });
 
+  // Faturamento
+  const [pedidoOrigem, setPedidoOrigem] = useState('');
+  const [naturezaOperacao, setNaturezaOperacao] = useState('');
+  const [tipoContrato, setTipoContrato] = useState('');
+  const [emailsNF, setEmailsNF] = useState('');
+  const [formaPagamentoNF, setFormaPagamentoNF] = useState('');
+  const [documentacaoNF, setDocumentacaoNF] = useState({
+    certificadoQualidade: false,
+    certificadoAnalise: false,
+    manual: false,
+    fichaTecnica: false,
+    laudoTecnico: false,
+    nfOrigem: false,
+    outros: false,
+    especificacaoOutros: ''
+  });
+  const [destacarIR, setDestacarIR] = useState(false);
+  const [percentualIR, setPercentualIR] = useState(0);
+
   const handleAdicionarProduto = (produto: ProdutoPedido) => {
     setProdutos(prev => [...prev, { ...produto, id: Date.now() }]);
     setIsAdicionarProdutoOpen(false);
@@ -208,7 +227,16 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       validadeMinimaGlobal,
       temPrevisaoConsumo,
       previsaoConsumoMensal,
-      materiaisComplementares
+      materiaisComplementares,
+      // Faturamento
+      pedidoOrigem,
+      naturezaOperacao,
+      tipoContrato,
+      emailsNF,
+      formaPagamentoNF,
+      documentacaoNF,
+      destacarIR,
+      percentualIR: destacarIR ? percentualIR : undefined
     };
     onSave(pedido);
     onClose();
@@ -622,6 +650,237 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
 
               {/* Aba Informações NF */}
               <TabsContent value="informacoes-nf" className="space-y-6">
+                {/* Card 1: Vinculação e Origem */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Vinculação e Origem</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div>
+                      <Label htmlFor="pedidoOrigem">Material vinculado a qual pedido/origem?</Label>
+                      <Input
+                        id="pedidoOrigem"
+                        value={pedidoOrigem}
+                        onChange={(e) => setPedidoOrigem(e.target.value)}
+                        placeholder="Ex: Pedido #1234, OC-5678"
+                        className="mt-2"
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Card 2: Natureza da Operação */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Natureza da Operação</CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="naturezaOperacao">Qual natureza da operação?</Label>
+                      <Select value={naturezaOperacao} onValueChange={setNaturezaOperacao}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="Selecione a natureza" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="venda">Venda</SelectItem>
+                          <SelectItem value="remessa">Remessa</SelectItem>
+                          <SelectItem value="devolucao">Devolução</SelectItem>
+                          <SelectItem value="transferencia">Transferência</SelectItem>
+                          <SelectItem value="bonificacao">Bonificação</SelectItem>
+                          <SelectItem value="demonstracao">Demonstração</SelectItem>
+                          <SelectItem value="comodato">Comodato</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="tipoContrato">Tipo de Contrato</Label>
+                      <Select value={tipoContrato} onValueChange={setTipoContrato}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="Selecione o tipo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="compra_direta">Compra Direta</SelectItem>
+                          <SelectItem value="consignacao">Consignação</SelectItem>
+                          <SelectItem value="comodato">Comodato</SelectItem>
+                          <SelectItem value="emprestimo">Empréstimo</SelectItem>
+                          <SelectItem value="demonstracao">Demonstração</SelectItem>
+                          <SelectItem value="licitacao">Licitação</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Card 3: Comunicação e Envio */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Comunicação e Envio</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div>
+                      <Label htmlFor="emailsNF">E-mails para envio das notas fiscais</Label>
+                      <Textarea
+                        id="emailsNF"
+                        value={emailsNF}
+                        onChange={(e) => setEmailsNF(e.target.value)}
+                        placeholder="exemplo@email.com, outro@email.com"
+                        rows={3}
+                        className="mt-2"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">Separe múltiplos e-mails por vírgula</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Card 4: Pagamento e Documentação */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Pagamento e Documentação</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="formaPagamentoNF">Forma de pagamento</Label>
+                      <Select value={formaPagamentoNF} onValueChange={setFormaPagamentoNF}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="Selecione a forma de pagamento" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="a_vista">À vista</SelectItem>
+                          <SelectItem value="boleto">Boleto</SelectItem>
+                          <SelectItem value="cartao_credito">Cartão de Crédito</SelectItem>
+                          <SelectItem value="transferencia">Transferência Bancária</SelectItem>
+                          <SelectItem value="cheque">Cheque</SelectItem>
+                          <SelectItem value="parcelado">Parcelado</SelectItem>
+                          <SelectItem value="deposito">Depósito</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label>Documentação para enviar junto à NF</Label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="certQualidade"
+                            checked={documentacaoNF.certificadoQualidade}
+                            onCheckedChange={(checked) => 
+                              setDocumentacaoNF({...documentacaoNF, certificadoQualidade: checked === true})
+                            }
+                          />
+                          <label htmlFor="certQualidade" className="text-sm cursor-pointer">Certificado de Qualidade</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="certAnalise"
+                            checked={documentacaoNF.certificadoAnalise}
+                            onCheckedChange={(checked) => 
+                              setDocumentacaoNF({...documentacaoNF, certificadoAnalise: checked === true})
+                            }
+                          />
+                          <label htmlFor="certAnalise" className="text-sm cursor-pointer">Certificado de Análise</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="manual"
+                            checked={documentacaoNF.manual}
+                            onCheckedChange={(checked) => 
+                              setDocumentacaoNF({...documentacaoNF, manual: checked === true})
+                            }
+                          />
+                          <label htmlFor="manual" className="text-sm cursor-pointer">Manual do Produto</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="fichaTecnica"
+                            checked={documentacaoNF.fichaTecnica}
+                            onCheckedChange={(checked) => 
+                              setDocumentacaoNF({...documentacaoNF, fichaTecnica: checked === true})
+                            }
+                          />
+                          <label htmlFor="fichaTecnica" className="text-sm cursor-pointer">Ficha Técnica</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="laudoTecnico"
+                            checked={documentacaoNF.laudoTecnico}
+                            onCheckedChange={(checked) => 
+                              setDocumentacaoNF({...documentacaoNF, laudoTecnico: checked === true})
+                            }
+                          />
+                          <label htmlFor="laudoTecnico" className="text-sm cursor-pointer">Laudo Técnico</label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="nfOrigem"
+                            checked={documentacaoNF.nfOrigem}
+                            onCheckedChange={(checked) => 
+                              setDocumentacaoNF({...documentacaoNF, nfOrigem: checked === true})
+                            }
+                          />
+                          <label htmlFor="nfOrigem" className="text-sm cursor-pointer">NF de Origem</label>
+                        </div>
+                        <div className="flex items-center space-x-2 col-span-2">
+                          <Checkbox
+                            id="outros"
+                            checked={documentacaoNF.outros}
+                            onCheckedChange={(checked) => 
+                              setDocumentacaoNF({...documentacaoNF, outros: checked === true})
+                            }
+                          />
+                          <label htmlFor="outros" className="text-sm cursor-pointer">Outros</label>
+                        </div>
+                        {documentacaoNF.outros && (
+                          <div className="col-span-2">
+                            <Input
+                              placeholder="Especifique outros documentos..."
+                              value={documentacaoNF.especificacaoOutros}
+                              onChange={(e) => 
+                                setDocumentacaoNF({...documentacaoNF, especificacaoOutros: e.target.value})
+                              }
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Card 5: Configurações Fiscais */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Configurações Fiscais</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label>Deve destacar IR?</Label>
+                        <p className="text-xs text-muted-foreground">Destacar Imposto de Renda na nota fiscal</p>
+                      </div>
+                      <Switch
+                        checked={destacarIR}
+                        onCheckedChange={setDestacarIR}
+                      />
+                    </div>
+                    
+                    {destacarIR && (
+                      <div>
+                        <Label htmlFor="percentualIR">Percentual de IR (%)</Label>
+                        <Input
+                          id="percentualIR"
+                          type="number"
+                          value={percentualIR}
+                          onChange={(e) => setPercentualIR(Number(e.target.value))}
+                          step="0.01"
+                          min="0"
+                          max="100"
+                          placeholder="0,00"
+                          className="mt-2"
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
                 <Card>
                   <CardHeader>
                     <CardTitle>Informações Complementares da NF</CardTitle>
