@@ -316,42 +316,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
           </div>
 
           <div className="border p-4 rounded">
-            <h3 className="font-semibold mb-4 border-b pb-2">DELIVERY ADDRESS</h3>
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <Label htmlFor="deliveryAddress1">Address Line 1</Label>
-                <Input
-                  id="deliveryAddress1"
-                  value={formData.deliveryAddress1 || 'Rua Goncalves Crespo, 430 - Tijuca'}
-                  onChange={(e) => onInputChange('deliveryAddress1', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="deliveryAddress2">Address Line 2</Label>
-                <Input
-                  id="deliveryAddress2"
-                  value={formData.deliveryAddress2 || '20.270-320 Rio de Janeiro - RJ'}
-                  onChange={(e) => onInputChange('deliveryAddress2', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="deliveryCountry">Country</Label>
-                <Input
-                  id="deliveryCountry"
-                  value={formData.deliveryCountry || 'Brazil'}
-                  onChange={(e) => onInputChange('deliveryCountry', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-            </div>
-          </div>
-
-
-          <div className="border p-4 rounded">
             <h3 className="font-semibold mb-4 border-b pb-2">BANKING INFORMATION</h3>
             <div className="grid grid-cols-1 gap-4">
               <div>
@@ -438,18 +402,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   className="w-full"
                 />
               </div>
-            </div>
-          </div>
-
-          <div className="border p-4 rounded bg-gray-50">
-            <h3 className="font-semibold mb-4 border-b pb-2">FINAL OBSERVATION</h3>
-            <div className="space-y-2 text-sm">
-              <p>The following sentences need to be included in the shipping documents:</p>
-              <ul className="list-disc list-inside space-y-1 ml-4">
-                <li>This equipment is for medical use only</li>
-                <li>Fragile medical equipment, handle with care</li>
-                <li>Keep in temperature controlled environment (15-25°C)</li>
-              </ul>
             </div>
           </div>
 
