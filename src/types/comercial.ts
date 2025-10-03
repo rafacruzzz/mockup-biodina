@@ -148,4 +148,8 @@ export interface PedidoCompleto {
   };
   destacarIR?: boolean;
   percentualIR?: number;
+  
+  // Controle de Canhoto
+  exigeCanhoto?: boolean;
+  observacoesCanhoto?: string;
 }

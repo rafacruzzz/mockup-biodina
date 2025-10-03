@@ -101,6 +101,10 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   });
   const [destacarIR, setDestacarIR] = useState(false);
   const [percentualIR, setPercentualIR] = useState(0);
+  
+  // Controle de Canhoto
+  const [exigeCanhoto, setExigeCanhoto] = useState(false);
+  const [observacoesCanhoto, setObservacoesCanhoto] = useState('');
 
   const handleAdicionarProduto = (produto: ProdutoPedido) => {
     setProdutos(prev => [...prev, { ...produto, id: Date.now() }]);
@@ -236,7 +240,10 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       formaPagamentoNF,
       documentacaoNF,
       destacarIR,
-      percentualIR: destacarIR ? percentualIR : undefined
+      percentualIR: destacarIR ? percentualIR : undefined,
+      // Controle de Canhoto
+      exigeCanhoto,
+      observacoesCanhoto: exigeCanhoto ? observacoesCanhoto : undefined
     };
     onSave(pedido);
     onClose();
@@ -282,7 +289,6 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                 <TabsTrigger value="produtos" className="min-w-fit whitespace-nowrap">Produtos</TabsTrigger>
                 <TabsTrigger value="informacoes-nf" className="min-w-fit whitespace-nowrap">Informações NF</TabsTrigger>
                 <TabsTrigger value="frete" className="min-w-fit whitespace-nowrap">Frete</TabsTrigger>
-                <TabsTrigger value="autorizacao" className="min-w-fit whitespace-nowrap">Autorização</TabsTrigger>
               </TabsList>
 
               {/* Aba Geral */}
@@ -1124,7 +1130,39 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                   </CardContent>
                 </Card>
 
-                {/* Seção 5: Urgência e Autorização */}
+                {/* Seção 5: Controle de Canhoto */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Controle de Canhoto</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label>Exige canhoto assinado?</Label>
+                        <p className="text-xs text-muted-foreground">Marque se for necessário comprovante de entrega assinado</p>
+                      </div>
+                      <Switch
+                        checked={exigeCanhoto}
+                        onCheckedChange={setExigeCanhoto}
+                      />
+                    </div>
+                    
+                    {exigeCanhoto && (
+                      <div>
+                        <Label htmlFor="observacoesCanhoto">Observações sobre o canhoto</Label>
+                        <Textarea
+                          id="observacoesCanhoto"
+                          value={observacoesCanhoto}
+                          onChange={(e) => setObservacoesCanhoto(e.target.value)}
+                          placeholder="Instruções especiais sobre o canhoto de entrega..."
+                          rows={3}
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Seção 6: Urgência e Autorização */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Urgência e Autorização</CardTitle>
@@ -1152,27 +1190,47 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                             required
                           />
                         </div>
-                         <div className="grid grid-cols-2 gap-4">
-                           <div>
-                             <Label htmlFor="autorizadoPorFrete">Autorizado Por</Label>
-                             <Input
-                               id="autorizadoPorFrete"
-                               value={autorizadoPor}
-                               onChange={(e) => setAutorizadoPor(e.target.value)}
-                               placeholder="Nome do autorizador"
-                             />
-                           </div>
-                           <div>
-                             <Label htmlFor="emailAutorizadorFrete">Email do Autorizador</Label>
-                             <Input
-                               id="emailAutorizadorFrete"
-                               type="email"
-                               value={emailAutorizador}
-                               onChange={(e) => setEmailAutorizador(e.target.value)}
-                               placeholder="autorizador@empresa.com"
-                             />
-                           </div>
-                         </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="autorizadoPorFrete">Autorizado Por</Label>
+                            <Input
+                              id="autorizadoPorFrete"
+                              value={autorizadoPor}
+                              onChange={(e) => setAutorizadoPor(e.target.value)}
+                              placeholder="Nome do autorizador"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="dataAutorizacaoFrete">Data de Autorização</Label>
+                            <Input
+                              id="dataAutorizacaoFrete"
+                              type="date"
+                              value={dataAutorizacao}
+                              onChange={(e) => setDataAutorizacao(e.target.value)}
+                              min={new Date().toISOString().split('T')[0]}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label htmlFor="emailAutorizadorFrete">Email do Autorizador</Label>
+                          <Input
+                            id="emailAutorizadorFrete"
+                            type="email"
+                            value={emailAutorizador}
+                            onChange={(e) => setEmailAutorizador(e.target.value)}
+                            placeholder="autorizador@empresa.com"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="observacoesAutorizacaoFrete">Observações de Autorização</Label>
+                          <Textarea
+                            id="observacoesAutorizacaoFrete"
+                            value={observacoesAutorizacao}
+                            onChange={(e) => setObservacoesAutorizacao(e.target.value)}
+                            placeholder="Observações sobre a autorização do pedido..."
+                            rows={3}
+                          />
+                        </div>
                       </>
                     )}
                     
@@ -1190,89 +1248,6 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                 </Card>
               </TabsContent>
 
-              {/* Aba Autorização */}
-              <TabsContent value="autorizacao" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Configurações de Urgência</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="urgente" 
-                        checked={urgente}
-                        onCheckedChange={handleUrgenteChange}
-                      />
-                      <Label htmlFor="urgente">Este pedido é urgente</Label>
-                    </div>
-
-                    {urgente && (
-                      <div>
-                        <Label htmlFor="justificativaUrgencia">Justificativa da Urgência *</Label>
-                        <Textarea
-                          id="justificativaUrgencia"
-                          value={justificativaUrgencia}
-                          onChange={(e) => setJustificativaUrgencia(e.target.value)}
-                          placeholder="Por que este pedido é urgente?"
-                          rows={3}
-                          required
-                        />
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Dados do Autorizador</CardTitle>
-                  </CardHeader>
-                   <CardContent className="grid grid-cols-2 gap-4">
-                     <div>
-                       <Label htmlFor="autorizadoPor">Autorizado Por</Label>
-                       <Input
-                         id="autorizadoPor"
-                         value={autorizadoPor}
-                         onChange={(e) => setAutorizadoPor(e.target.value)}
-                         placeholder="Nome do autorizador"
-                       />
-                     </div>
-                     <div>
-                       <Label htmlFor="dataAutorizacao">Data de Autorização</Label>
-                       <Input
-                         id="dataAutorizacao"
-                         type="date"
-                         value={dataAutorizacao}
-                         onChange={(e) => setDataAutorizacao(e.target.value)}
-                         min={new Date().toISOString().split('T')[0]}
-                       />
-                     </div>
-                     <div>
-                       <Label htmlFor="emailAutorizador">Email do Autorizador</Label>
-                       <Input
-                         id="emailAutorizador"
-                         type="email"
-                         value={emailAutorizador}
-                         onChange={(e) => setEmailAutorizador(e.target.value)}
-                         placeholder="autorizador@empresa.com"
-                       />
-                     </div>
-                   </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Observações de Autorização</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Textarea
-                      value={observacoesAutorizacao}
-                      onChange={(e) => setObservacoesAutorizacao(e.target.value)}
-                      placeholder="Observações sobre a autorização do pedido..."
-                      rows={3}
-                    />
-                  </CardContent>
-                </Card>
-              </TabsContent>
             </Tabs>
 
             {/* Botões */}
