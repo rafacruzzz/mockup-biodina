@@ -116,7 +116,7 @@ const EmprestimosTable = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-biodina-blue">Empréstimos</h2>
-          <p className="text-gray-600">Gestão de empréstimos de equipamentos e produtos</p>
+          <p className="text-gray-600">Gestão de empréstimos</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline">
