@@ -115,4 +115,18 @@ export interface PedidoCompleto {
   dataAutorizacao?: string;
   emailAutorizador?: string;
   observacoesAutorizacao?: string;
+  // Configurações de Estoque
+  temValidadeMinima?: boolean;
+  validadeMinimaGlobal?: string;
+  temPrevisaoConsumo?: boolean;
+  previsaoConsumoMensal?: number;
+  materiaisComplementares?: {
+    cabo: boolean;
+    nobreak: boolean;
+    manuais: boolean;
+    gelox: boolean;
+    geloSeco: boolean;
+    outrosAcessorios: boolean;
+    especificacaoOutros: string;
+  };
 }

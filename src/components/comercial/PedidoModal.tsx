@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import { Plus, X, Trash2, Info, ShoppingCart, AlertTriangle } from "lucide-react";
 import { ProdutoPedido, PedidoCompleto, UnidadeVenda } from "@/types/comercial";
 import AdicionarProdutoModal from "./AdicionarProdutoModal";
@@ -66,6 +67,21 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   const [dataAutorizacao, setDataAutorizacao] = useState('');
   const [emailAutorizador, setEmailAutorizador] = useState('');
   const [observacoesAutorizacao, setObservacoesAutorizacao] = useState('');
+
+  // Configurações de Estoque
+  const [temValidadeMinima, setTemValidadeMinima] = useState(false);
+  const [validadeMinimaGlobal, setValidadeMinimaGlobal] = useState('');
+  const [temPrevisaoConsumo, setTemPrevisaoConsumo] = useState(false);
+  const [previsaoConsumoMensal, setPrevisaoConsumoMensal] = useState(0);
+  const [materiaisComplementares, setMateriaisComplementares] = useState({
+    cabo: false,
+    nobreak: false,
+    manuais: false,
+    gelox: false,
+    geloSeco: false,
+    outrosAcessorios: false,
+    especificacaoOutros: ''
+  });
 
   const handleAdicionarProduto = (produto: ProdutoPedido) => {
     setProdutos(prev => [...prev, { ...produto, id: Date.now() }]);
@@ -153,7 +169,13 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       autorizadoPor,
       dataAutorizacao,
       emailAutorizador,
-      observacoesAutorizacao
+      observacoesAutorizacao,
+      // Configurações de Estoque
+      temValidadeMinima,
+      validadeMinimaGlobal,
+      temPrevisaoConsumo,
+      previsaoConsumoMensal,
+      materiaisComplementares
     };
     onSave(pedido);
     onClose();
@@ -235,6 +257,161 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                       placeholder="Observações gerais para o pedido..."
                       rows={3}
                     />
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Configurações de Estoque</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Validade Mínima */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="validade-minima" className="text-base font-medium">
+                          Validade Mínima?
+                        </Label>
+                        <Switch
+                          id="validade-minima"
+                          checked={temValidadeMinima}
+                          onCheckedChange={setTemValidadeMinima}
+                        />
+                      </div>
+                      
+                      {temValidadeMinima && (
+                        <div>
+                          <Label htmlFor="validade-minima-data">Qual validade mínima permitida?</Label>
+                          <Input
+                            id="validade-minima-data"
+                            type="date"
+                            value={validadeMinimaGlobal}
+                            onChange={(e) => setValidadeMinimaGlobal(e.target.value)}
+                            min={new Date().toISOString().split('T')[0]}
+                            className="mt-2"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Previsão de Consumo */}
+                    <div className="space-y-4 pt-4 border-t">
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="previsao-consumo" className="text-base font-medium">
+                          Previsão de consumo?
+                        </Label>
+                        <Switch
+                          id="previsao-consumo"
+                          checked={temPrevisaoConsumo}
+                          onCheckedChange={setTemPrevisaoConsumo}
+                        />
+                      </div>
+                      
+                      {temPrevisaoConsumo && (
+                        <div>
+                          <Label htmlFor="previsao-consumo-mensal">Qual previsão de consumo mensal?</Label>
+                          <Input
+                            id="previsao-consumo-mensal"
+                            type="number"
+                            value={previsaoConsumoMensal}
+                            onChange={(e) => setPrevisaoConsumoMensal(Number(e.target.value))}
+                            min="0"
+                            placeholder="0"
+                            className="mt-2"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Materiais Complementares */}
+                    <div className="space-y-4 pt-4 border-t">
+                      <Label className="text-base font-medium">
+                        Informar materiais complementares ao pedido
+                      </Label>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="cabo"
+                            checked={materiaisComplementares.cabo}
+                            onCheckedChange={(checked) => 
+                              setMateriaisComplementares(prev => ({ ...prev, cabo: checked === true }))
+                            }
+                          />
+                          <Label htmlFor="cabo" className="font-normal cursor-pointer">Cabo</Label>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="nobreak"
+                            checked={materiaisComplementares.nobreak}
+                            onCheckedChange={(checked) => 
+                              setMateriaisComplementares(prev => ({ ...prev, nobreak: checked === true }))
+                            }
+                          />
+                          <Label htmlFor="nobreak" className="font-normal cursor-pointer">Nobreak</Label>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="manuais"
+                            checked={materiaisComplementares.manuais}
+                            onCheckedChange={(checked) => 
+                              setMateriaisComplementares(prev => ({ ...prev, manuais: checked === true }))
+                            }
+                          />
+                          <Label htmlFor="manuais" className="font-normal cursor-pointer">Manuais</Label>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="gelox"
+                            checked={materiaisComplementares.gelox}
+                            onCheckedChange={(checked) => 
+                              setMateriaisComplementares(prev => ({ ...prev, gelox: checked === true }))
+                            }
+                          />
+                          <Label htmlFor="gelox" className="font-normal cursor-pointer">Gelox</Label>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="gelo-seco"
+                            checked={materiaisComplementares.geloSeco}
+                            onCheckedChange={(checked) => 
+                              setMateriaisComplementares(prev => ({ ...prev, geloSeco: checked === true }))
+                            }
+                          />
+                          <Label htmlFor="gelo-seco" className="font-normal cursor-pointer">Gelo seco</Label>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="outros-acessorios"
+                            checked={materiaisComplementares.outrosAcessorios}
+                            onCheckedChange={(checked) => 
+                              setMateriaisComplementares(prev => ({ ...prev, outrosAcessorios: checked === true }))
+                            }
+                          />
+                          <Label htmlFor="outros-acessorios" className="font-normal cursor-pointer">Outros acessórios</Label>
+                        </div>
+                      </div>
+
+                      {materiaisComplementares.outrosAcessorios && (
+                        <div className="mt-4">
+                          <Label htmlFor="especificacao-outros">Especificar outros acessórios</Label>
+                          <Textarea
+                            id="especificacao-outros"
+                            value={materiaisComplementares.especificacaoOutros}
+                            onChange={(e) => 
+                              setMateriaisComplementares(prev => ({ ...prev, especificacaoOutros: e.target.value }))
+                            }
+                            placeholder="Descreva os outros acessórios necessários..."
+                            rows={3}
+                            className="mt-2"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -339,10 +516,11 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                                 <TableCell>
                                   <Input
                                     type="date"
-                                    value={produto.validadeMinima || ''}
+                                    value={produto.validadeMinima || validadeMinimaGlobal}
                                     onChange={(e) => handleAtualizarValidadeMinima(produto.id, e.target.value)}
                                     className="w-36"
-                                    min={new Date().toISOString().split('T')[0]}
+                                    disabled={!temValidadeMinima}
+                                    min={validadeMinimaGlobal || new Date().toISOString().split('T')[0]}
                                   />
                                 </TableCell>
                                 <TableCell>
