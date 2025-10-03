@@ -471,15 +471,15 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="aeroportoDestino">AEROPORTO DE DESTINO:</Label>
-                  <Input
-                    id="aeroportoDestino"
-                    value={formData.aeroportoDestino || 'AEROPORTO INTERNACIONAL xxx -xxx - Brazil'}
-                    onChange={(e) => onInputChange('aeroportoDestino', e.target.value)}
-                    className="w-full"
-                  />
-                </div>
+              <div>
+                <Label htmlFor="aeroportoDestino">AEROPORTO DE DESTINO:</Label>
+                <Input
+                  id="aeroportoDestino"
+                  value={formData.aeroportoDestino || ''}
+                  onChange={(e) => onInputChange('aeroportoDestino', e.target.value)}
+                  className="w-full"
+                />
+              </div>
 
                 <div>
                   <Label htmlFor="entrega">Entrega:</Label>
@@ -492,15 +492,15 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="forEachBox">For each box, please include:</Label>
-                  <Input
-                    id="forEachBox"
-                    value={formData.forEachBox || 'control no.xxx; Temperature xº-xºC; Dimmension: xxx X xxx X xxx; Gross weight: xxx'}
-                    onChange={(e) => onInputChange('forEachBox', e.target.value)}
-                    className="w-full"
-                  />
-                </div>
+              <div>
+                <Label htmlFor="forEachBox">For each box, please include:</Label>
+                <Input
+                  id="forEachBox"
+                  value={formData.forEachBox || ''}
+                  onChange={(e) => onInputChange('forEachBox', e.target.value)}
+                  className="w-full"
+                />
+              </div>
 
                 {/* Packing List Section */}
                 <div className="border p-4 rounded bg-white mt-4">
@@ -604,7 +604,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   <h4 className="font-bold mb-3 text-red-600">ATTENTION:</h4>
                   <div className="space-y-2 text-sm">
                     <p className="font-medium">
-                      "TO AVOID PROBLEMS WITH THE REFRIGERATED GOODS, PLEASE PACK THESE ITEMS (xxxx) IN BIG BOXES, 
+                      "TO AVOID PROBLEMS WITH THE REFRIGERATED GOODS, PLEASE PACK THESE ITEMS IN BIG BOXES, 
                       DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE 
                       BETWEEN 2-8ºC, AS FOLLOWS:"
                     </p>
@@ -641,7 +641,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       <Label htmlFor="ffDestination">1- Destination:</Label>
                       <Input
                         id="ffDestination"
-                        value={formData.ffDestination || 'XXX International Airport –XX – Brazil'}
+                        value={formData.ffDestination || ''}
                         onChange={(e) => onInputChange('ffDestination', e.target.value)}
                         className="w-full"
                       />
@@ -722,7 +722,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     <p>Cordially,</p>
                     <p className="mt-3 font-semibold">Evandro Amorim</p>
                     <p>International Division</p>
-                    <p>EAA – xxx.</p>
+                    <p>EAA</p>
                   </div>
                 </div>
               </div>
@@ -785,7 +785,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     <Label htmlFor="aeroportoDestino_congelado">AEROPORTO DE DESTINO:</Label>
                     <Input
                       id="aeroportoDestino_congelado"
-                      value={formData.aeroportoDestino_congelado || 'AEROPORTO INTERNACIONAL DE xxx – xx – Brazil'}
+                      value={formData.aeroportoDestino_congelado || ''}
                       onChange={(e) => onInputChange('aeroportoDestino_congelado', e.target.value)}
                       className="w-full"
                     />
@@ -806,7 +806,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   <Label htmlFor="forEachBox_congelado">For each box, please include:</Label>
                   <Input
                     id="forEachBox_congelado"
-                    value={formData.forEachBox_congelado || 'control no.xxx; Temperature xº-xºC; Dimmension: xxx X xxx X xxx; Gross weight: xxx'}
+                    value={formData.forEachBox_congelado || ''}
                     onChange={(e) => onInputChange('forEachBox_congelado', e.target.value)}
                     className="w-full"
                   />
@@ -884,7 +884,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     <Label htmlFor="forwarder_congelado">6- Forwarder:</Label>
                     <Textarea
                       id="forwarder_congelado"
-                      value={formData.forwarder_congelado || 'Please contact the following agent forwarder:\nxxx\nxxx\nxxx\nxxx\nxxx'}
+                      value={formData.forwarder_congelado || 'Please contact the following agent forwarder:'}
                       onChange={(e) => onInputChange('forwarder_congelado', e.target.value)}
                       rows={6}
                       className="w-full"
@@ -906,8 +906,8 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 {/* ATTENTION FOR FROZEN PRODUCTS */}
                 <div className="border-2 border-red-500 p-4 rounded bg-red-100">
                   <div className="space-y-3 text-sm">
-                    <p className="font-bold text-red-800 text-base">ATTENTION FOR ITENS xxxxxxxxx:</p>
-                    <p className="font-semibold">"TO AVOID PROBLEMS WITH THE FROZEN GOODS, PLEASE PACK THESE ITEMS (xxxx) IN BIG BOXES, DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE BETWEEN 2-8ºC, AS FOLLOWS:"</p>
+                    <p className="font-bold text-red-800 text-base">ATTENTION FOR FROZEN ITEMS:</p>
+                    <p className="font-semibold">"TO AVOID PROBLEMS WITH THE FROZEN GOODS, PLEASE PACK THESE ITEMS IN BIG BOXES, DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE BETWEEN 2-8ºC, AS FOLLOWS:"</p>
                     
                     <div className="bg-white p-3 rounded border border-red-300 my-3">
                       <p className="font-bold mb-2">LABEL IN PORTUGUESE:</p>
@@ -937,7 +937,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       <Label htmlFor="ffDestination_congelado">1- Destination:</Label>
                       <Input
                         id="ffDestination_congelado"
-                        value={formData.ffDestination_congelado || 'xxx International Airport – XX – Brazil'}
+                        value={formData.ffDestination_congelado || ''}
                         onChange={(e) => onInputChange('ffDestination_congelado', e.target.value)}
                         className="w-full"
                       />
@@ -977,7 +977,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       <Label htmlFor="ffNotify_congelado">Notify:</Label>
                       <Textarea
                         id="ffNotify_congelado"
-                        value={formData.ffNotify_congelado || 'xxx\nxxx\nxxx'}
+                        value={formData.ffNotify_congelado || ''}
                         onChange={(e) => onInputChange('ffNotify_congelado', e.target.value)}
                         rows={3}
                         className="w-full"
@@ -986,7 +986,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
 
                     <div className="bg-blue-50 p-3 rounded border border-blue-300 text-sm">
                       <p className="font-semibold">PLEASE DECLARE ON THE AWB THE NET AND GROSS WEIGHT OF THE GOODS.</p>
-                      <p className="font-semibold mt-2">PLEASE DECLARE ON THE AWB THE SENTENCE "xxxxx"</p>
                     </div>
 
                     <div className="bg-red-100 p-4 rounded border-2 border-red-400">
@@ -1016,7 +1015,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     <p>Cordially,</p>
                     <p className="mt-3 font-semibold">Evandro Amorim</p>
                     <p>International Division</p>
-                    <p>EAA – xxx.</p>
+                    <p>EAA</p>
                   </div>
                 </div>
               </div>

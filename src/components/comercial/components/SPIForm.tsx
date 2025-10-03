@@ -69,7 +69,7 @@ const SPIForm = ({ formData, onInputChange, piHistory, piStatus, onPIStatusChang
                 id="spiCnpj"
                 value={formData.spiCnpj}
                 onChange={(e) => onInputChange('spiCnpj', e.target.value)}
-                placeholder="XX.XXX.XXX/XXXX-XX"
+                placeholder=""
                 className="w-full"
                 disabled={isFieldsLocked}
               />
