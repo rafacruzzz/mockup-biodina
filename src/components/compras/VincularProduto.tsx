@@ -29,6 +29,7 @@ const VincularProduto = ({ produto, onClose, onVincular }: VincularProdutoProps)
     {
       id: 1,
       nome: "Paracetamol 500mg Genérico",
+      descricao: "Analgésico e antipirético para dor e febre",
       codigoBarras: "7891234567890",
       codeProduct: "PAR500GEN",
       tipoProduto: "Medicamento",
@@ -40,6 +41,7 @@ const VincularProduto = ({ produto, onClose, onVincular }: VincularProdutoProps)
     {
       id: 2,
       nome: "Termômetro Digital Clínico Premium",
+      descricao: "Termômetro digital de alta precisão para uso clínico",
       codigoBarras: "7891234567891",
       codeProduct: "TERMDIG001",
       tipoProduto: "Equipamento",
@@ -51,6 +53,7 @@ const VincularProduto = ({ produto, onClose, onVincular }: VincularProdutoProps)
     {
       id: 3,
       nome: "Ibuprofeno 400mg",
+      descricao: "Anti-inflamatório não esteroidal para dor e inflamação",
       codigoBarras: "7891234567892",
       codeProduct: "IBU400",
       tipoProduto: "Medicamento",
@@ -67,7 +70,9 @@ const VincularProduto = ({ produto, onClose, onVincular }: VincularProdutoProps)
     // Simular busca com delay
     setTimeout(() => {
       const resultadosFiltrados = produtosCadastrados.filter(p => {
-        const matchNome = !busca.nome || p.nome.toLowerCase().includes(busca.nome.toLowerCase());
+        const matchNome = !busca.nome || 
+          p.nome.toLowerCase().includes(busca.nome.toLowerCase()) ||
+          p.descricao?.toLowerCase().includes(busca.nome.toLowerCase());
         const matchCodigo = !busca.codigoBarras || p.codigoBarras.includes(busca.codigoBarras);
         const matchProduct = !busca.codeProduct || p.codeProduct.toLowerCase().includes(busca.codeProduct.toLowerCase());
         const matchTipo = !busca.tipoProduto || busca.tipoProduto === 'todos' || p.tipoProduto === busca.tipoProduto;
@@ -126,11 +131,11 @@ const VincularProduto = ({ produto, onClose, onVincular }: VincularProdutoProps)
             </h4>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="nomeBusca">Nome do Produto</Label>
+            <div className="space-y-2">
+                <Label htmlFor="nomeBusca">Nome ou Descrição do Produto</Label>
                 <Input
                   id="nomeBusca"
-                  placeholder="Digite o nome do produto..."
+                  placeholder="Digite o nome ou descrição do produto..."
                   value={busca.nome}
                   onChange={(e) => setBusca(prev => ({ ...prev, nome: e.target.value }))}
                 />

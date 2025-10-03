@@ -72,9 +72,10 @@ export const RegistrosAnvisaTable = ({
     // Filtro de busca
     const matchBusca = !busca || 
       registro.produtoSelecionado?.nome?.toLowerCase().includes(busca.toLowerCase()) ||
+      registro.produtoSelecionado?.descricao?.toLowerCase().includes(busca.toLowerCase()) ||
       registro.produtoSelecionado?.codigo?.toLowerCase().includes(busca.toLowerCase()) ||
       registro.numeroProcessoAnvisa?.toLowerCase().includes(busca.toLowerCase()) ||
-      registro.nomeArquivoPrincipal?.toLowerCase().includes(busca.toLowerCase());
+      registro.nomeArquivaPrincipal?.toLowerCase().includes(busca.toLowerCase());
 
     if (!matchBusca) return false;
 
