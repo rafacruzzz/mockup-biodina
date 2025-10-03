@@ -516,7 +516,7 @@ const Comercial = () => {
           <CardContent className="p-8 text-center">
             <HandCoins className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-biodina-blue mb-2">Empréstimos</h3>
-            <p className="text-gray-600">Gestão de empréstimos de equipamentos</p>
+            <p className="text-gray-600">Gestão de empréstimos</p>
           </CardContent>
         </Card>
 
