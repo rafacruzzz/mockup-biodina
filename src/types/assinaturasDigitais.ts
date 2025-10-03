@@ -1,3 +1,9 @@
+/**
+ * ⚠️ ARQUIVO COMENTADO - NÃO USAR NO MOMENTO ⚠️
+ * Este arquivo de tipos de Assinaturas Digitais está temporariamente desativado.
+ * Para reativá-lo, remova este comentário e descomente os imports e referências no arquivo Comercial.tsx
+ */
+
 export interface DocumentoAssinatura {
   id: number;
   titulo: string;

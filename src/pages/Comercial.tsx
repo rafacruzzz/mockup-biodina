@@ -12,7 +12,7 @@ import PedidoModal from "@/components/comercial/PedidoModal";
 import PedidoForm from "@/components/comercial/PedidoForm";
 import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesForm";
 import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
-import AssinaturasDigitaisView from "@/components/comercial/AssinaturasDigitaisView";
+// import AssinaturasDigitaisView from "@/components/comercial/AssinaturasDigitaisView"; // COMENTADO - NÃO USAR NO MOMENTO
 import EmprestimosTable from "@/components/comercial/EmprestimosTable";
 import AgendaComercial from "@/components/comercial/AgendaComercial";
 import { 
@@ -20,7 +20,7 @@ import {
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
   ShoppingCart, Headphones, ArrowLeft, Package, Truck, ClipboardList,
   AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal,
-  Gavel, Building2, Globe, HandCoins, FileSpreadsheet, FileSignature
+  Gavel, Building2, Globe, HandCoins, FileSpreadsheet // FileSignature COMENTADO - NÃO USAR NO MOMENTO
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -28,7 +28,7 @@ import {
 } from 'recharts';
 
 const Comercial = () => {
-  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'pos-venda' | 'emprestimos' | 'assinaturas'>('main');
+  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'pos-venda' | 'emprestimos' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeSubModule, setActiveSubModule] = useState<'assessoria' | 'departamento-tecnico' | null>(null);
   const [activeTab, setActiveTab] = useState('indicadores');
   const [searchTerm, setSearchTerm] = useState('');
@@ -40,7 +40,7 @@ const Comercial = () => {
   const [selectedOportunidade, setSelectedOportunidade] = useState<any>();
   const [showContratacaoSimplesForm, setShowContratacaoSimplesForm] = useState(false);
   const [showImportacaoDiretaForm, setShowImportacaoDiretaForm] = useState(false);
-  const [showAssinaturas, setShowAssinaturas] = useState(false);
+  // const [showAssinaturas, setShowAssinaturas] = useState(false); // COMENTADO - NÃO USAR NO MOMENTO
 
   const oportunidades = [
     { 
@@ -520,6 +520,7 @@ const Comercial = () => {
           </CardContent>
         </Card>
 
+        {/* COMENTADO - NÃO USAR NO MOMENTO
         <Card 
           className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
           onClick={() => setActiveModule('assinaturas')}
@@ -530,6 +531,7 @@ const Comercial = () => {
             <p className="text-gray-600">Central de assinaturas e aprovações digitais</p>
           </CardContent>
         </Card>
+        */}
       </div>
 
       {/* Agenda Comercial Section */}
@@ -707,6 +709,7 @@ const Comercial = () => {
     );
   };
 
+  /* COMENTADO - NÃO USAR NO MOMENTO
   const renderAssinaturasModule = () => {
     return (
       <div className="space-y-4">
@@ -726,6 +729,7 @@ const Comercial = () => {
       </div>
     );
   };
+  */
 
   const renderOportunidadesPorModalidade = (modalidade: string) => {
     const getModalidadeLabel = (modalidade: string) => {
@@ -1133,7 +1137,7 @@ const Comercial = () => {
         {activeModule === 'pos-venda' && !activeSubModule && renderPosVendaModules()}
         {activeModule === 'pos-venda' && activeSubModule && renderSubModule()}
         {activeModule === 'emprestimos' && renderEmprestimosModule()}
-        {activeModule === 'assinaturas' && renderAssinaturasModule()}
+        {/* activeModule === 'assinaturas' && renderAssinaturasModule() */} {/* COMENTADO - NÃO USAR NO MOMENTO */}
       </div>
 
       {showOportunidadeAvancadaForm && (

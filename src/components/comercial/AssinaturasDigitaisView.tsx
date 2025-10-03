@@ -1,3 +1,9 @@
+/**
+ * ⚠️ ARQUIVO COMENTADO - NÃO USAR NO MOMENTO ⚠️
+ * Este componente de Assinaturas Digitais está temporariamente desativado.
+ * Para reativá-lo, remova este comentário e descomente os imports e referências no arquivo Comercial.tsx
+ */
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

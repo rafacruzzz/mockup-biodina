@@ -1,3 +1,9 @@
+/**
+ * ⚠️ ARQUIVO COMENTADO - NÃO USAR NO MOMENTO ⚠️
+ * Este arquivo de dados de Assinaturas Digitais está temporariamente desativado.
+ * Para reativá-lo, remova este comentário e descomente os imports e referências no arquivo Comercial.tsx
+ */
+
 import { DocumentoAssinatura, ProcessoAssinatura, RelatorioAssinaturas } from "@/types/assinaturasDigitais";
 
 export const documentosAssinatura: DocumentoAssinatura[] = [
