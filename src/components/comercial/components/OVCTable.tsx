@@ -74,16 +74,16 @@ const OVCTable = ({ items, onUpdateItems }: OVCTableProps) => {
             <TableHead className="border border-gray-300 text-center font-bold" colSpan={3}>Customer Discount %</TableHead>
             <TableHead className="border border-gray-300 text-center font-bold" colSpan={2}>Discount</TableHead>
             <TableHead className="border border-gray-300 text-center font-bold" colSpan={2}>Sub total</TableHead>
-            <TableHead className="border border-gray-300 text-center font-bold" rowSpan={2}>Handling charge* (3%)</TableHead>
+            <TableHead className="border border-gray-300 text-center font-bold" rowSpan={2}>Handling charge*</TableHead>
             <TableHead className="border border-gray-300 text-center font-bold" rowSpan={2}>Total</TableHead>
             <TableHead className="border border-gray-300 text-center font-bold" rowSpan={2}>% Comission</TableHead>
             <TableHead className="border border-gray-300 text-center font-bold" rowSpan={2}>Comission value</TableHead>
-            <TableHead className="border border-gray-300 text-center font-bold" rowSpan={2}>Net Radiometer</TableHead>
+            <TableHead className="border border-gray-300 text-center font-bold" rowSpan={2}>Net</TableHead>
           </TableRow>
           <TableRow className="bg-gray-50">
             <TableHead className="border border-gray-300 text-center text-sm">Unit</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Total</TableHead>
-            <TableHead className="border border-gray-300 text-center text-sm">Rmed</TableHead>
+            <TableHead className="border border-gray-300 text-center text-sm">Manufacturer</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Biodina</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Total</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Unit</TableHead>
