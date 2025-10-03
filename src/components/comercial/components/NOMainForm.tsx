@@ -17,11 +17,10 @@ const NOMainForm = ({ formData, onInputChange }: NOMainFormProps) => {
 
 Company Information
 Company Name: ${formData.companyName || 'BIODINA INSTRUMENTOS CIENTÍFICOS LTDA.'}
-Address: ${formData.companyAddress || 'RUA SÃO PEDRO 154 - SALA 408 CENTRO'}
-ZIP/City/State/Country: ${formData.companyZipCity || '24.024-058 - NITERÓI - RJ, BRASIL'}
+Address: ${formData.companyAddress || 'Rua São Pedro, n°. 154 – Sala 409 – Centro'}
+ZIP/City/State/Country: ${formData.companyZipCity || 'CEP: 24.020-058/ Niterói / RJ/ Brazil'}
 Phone: ${formData.companyPhone || '55 21 2435-9872'}
-Fax: ${formData.companyFax || '55 21 2435-9870'}
-Email: ${formData.companyEmail || 'bios@biodina.com.br'}
+Email: ${formData.companyEmail || 'importacao@biodina.com.br'}
 
 Recipient
 To: ${formData.noDestinatario || 'RADIOMETER MEDICAL ApS, International Sales Division'}
@@ -98,7 +97,7 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="companyAddress">Address</Label>
               <Input
                 id="companyAddress"
-                value={formData.companyAddress || 'RUA SÃO PEDRO 154 - SALA 408 CENTRO'}
+                value={formData.companyAddress || 'Rua São Pedro, n°. 154 – Sala 409 – Centro'}
                 onChange={(e) => onInputChange('companyAddress', e.target.value)}
                 className="w-full"
               />
@@ -108,13 +107,13 @@ Documento gerado em: ${new Date().toLocaleString()}
               <Label htmlFor="companyZipCity">ZIP/City/State/Country</Label>
               <Input
                 id="companyZipCity"
-                value={formData.companyZipCity || '24.024-058 - NITERÓI - RJ, BRASIL'}
+                value={formData.companyZipCity || 'CEP: 24.020-058/ Niterói / RJ/ Brazil'}
                 onChange={(e) => onInputChange('companyZipCity', e.target.value)}
                 className="w-full"
               />
             </div>
             
-            <div>
+            <div className="lg:col-span-2">
               <Label htmlFor="companyPhone">Phone</Label>
               <Input
                 id="companyPhone"
@@ -124,21 +123,11 @@ Documento gerado em: ${new Date().toLocaleString()}
               />
             </div>
             
-            <div>
-              <Label htmlFor="companyFax">Fax</Label>
-              <Input
-                id="companyFax"
-                value={formData.companyFax || '55 21 2435-9870'}
-                onChange={(e) => onInputChange('companyFax', e.target.value)}
-                className="w-full"
-              />
-            </div>
-            
             <div className="lg:col-span-2">
               <Label htmlFor="companyEmail">Email</Label>
               <Input
                 id="companyEmail"
-                value={formData.companyEmail || 'bios@biodina.com.br'}
+                value={formData.companyEmail || 'importacao@biodina.com.br'}
                 onChange={(e) => onInputChange('companyEmail', e.target.value)}
                 className="w-full"
               />

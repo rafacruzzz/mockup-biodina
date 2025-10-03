@@ -75,7 +75,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 <Label htmlFor="companyName">Company Name</Label>
                 <Input
                   id="companyName"
-                  value={formData.companyName || 'BIODINA EMPREENDIMENTOS E PARTICIPAÇÕES LTDA.'}
+                  value={formData.companyName || 'Biodina Instrumentos Científicos LTDA'}
                   onChange={(e) => onInputChange('companyName', e.target.value)}
                   className="w-full font-bold"
                 />
@@ -85,7 +85,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 <Label htmlFor="companyAddress">Address</Label>
                 <Input
                   id="companyAddress"
-                  value={formData.companyAddress || 'AVENIDA DAS AMÉRICAS 505 SALA 217 – BARRA DA TIJUCA'}
+                  value={formData.companyAddress || 'Rua São Pedro, n°. 154 – Sala 409 – Centro'}
                   onChange={(e) => onInputChange('companyAddress', e.target.value)}
                   className="w-full"
                 />
@@ -95,17 +95,17 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 <Label htmlFor="companyZipCity">ZIP Code - City - State - Country</Label>
                 <Input
                   id="companyZipCity"
-                  value={formData.companyZipCity || '22631- 000- RIO DE JANEIRO - RJ, BRASIL.'}
+                  value={formData.companyZipCity || 'CEP: 24.020-058/ Niterói / RJ/ Brazil'}
                   onChange={(e) => onInputChange('companyZipCity', e.target.value)}
                   className="w-full"
                 />
               </div>
               
               <div>
-                <Label htmlFor="companyPhone">Phone and Fax</Label>
+                <Label htmlFor="companyPhone">Phone</Label>
                 <Input
                   id="companyPhone"
-                  value={formData.companyPhone || 'TEL.: 55 21 2435-9872 - FAX: 55 21 2435-9870'}
+                  value={formData.companyPhone || '55 21 2435-9872'}
                   onChange={(e) => onInputChange('companyPhone', e.target.value)}
                   className="w-full"
                 />
@@ -115,7 +115,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 <Label htmlFor="companyEmail">Email</Label>
                 <Input
                   id="companyEmail"
-                  value={formData.companyEmail || 'biosi@biodina.com.br'}
+                  value={formData.companyEmail || 'importacao@biodina.com.br'}
                   onChange={(e) => onInputChange('companyEmail', e.target.value)}
                   className="w-full"
                 />
