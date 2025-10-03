@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, Network } from 'lucide-react';
 import { PedidoCompleto } from '@/types/comercial';
 import { Chamado, StatusChamado } from '@/types/chamado';
 import { licitacoesGanhasDetalhadas } from '@/data/licitacaoMockData';
@@ -18,6 +18,7 @@ import { useColaboradores } from '@/hooks/useColaboradores';
 import ChatInterno from './ChatInterno';
 import PedidoModal from './PedidoModal';
 import ChamadosTab from './ChamadosTab';
+import InterfaceamentoTab from './InterfaceamentoTab';
 
 interface ContratacaoSimplesFormProps {
   isOpen: boolean;
@@ -42,6 +43,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [documentosLicitacao, setDocumentosLicitacao] = useState<any[]>([]);
   const [historicoLicitacao, setHistoricoLicitacao] = useState<any[]>([]);
   const [historicoVisitas, setHistoricoVisitas] = useState<HistoricoVisita[]>(oportunidade?.historicoVisitas || []);
+  const [interfaceamentos, setInterfaceamentos] = useState<any[]>(oportunidade?.interfaceamentos || []);
   const [modalHistoricoOpen, setModalHistoricoOpen] = useState(false);
   const [novaVisita, setNovaVisita] = useState({
     colaborador: '',
@@ -174,6 +176,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       concorrentes,
       pedidos,
       chamados,
+      interfaceamentos,
       historicoVisitas,
       licitacaoVinculada,
       documentosLicitacao,
@@ -259,7 +262,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
           </DialogHeader>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6">
+            <TabsList className="grid w-full grid-cols-7">
               <TabsTrigger value="dados-gerais" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Dados Gerais
@@ -283,6 +286,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               <TabsTrigger value="chamados" className="flex items-center gap-2">
                 <Headphones className="h-4 w-4" />
                 Chamados
+              </TabsTrigger>
+              <TabsTrigger value="interfaceamento" className="flex items-center gap-2">
+                <Network className="h-4 w-4" />
+                Interfaceamento
               </TabsTrigger>
             </TabsList>
 
@@ -1021,6 +1028,14 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               <ChamadosTab 
                 chamados={chamados}
                 onAdicionarChamado={handleAdicionarChamado}
+              />
+            </TabsContent>
+
+            <TabsContent value="interfaceamento" className="space-y-4">
+              <InterfaceamentoTab 
+                oportunidade={{ ...formData, id: oportunidade?.id }}
+                formData={formData}
+                onInputChange={handleInputChange}
               />
             </TabsContent>
           </Tabs>
