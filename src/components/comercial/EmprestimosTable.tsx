@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Filter, Plus, Download, Package, Truck } from "lucide-react";
 import NovoEmprestimoModal from "./NovoEmprestimoModal";
 import ControleRetornosTab from "./components/ControleRetornosTab";
+import DetalhesEmprestimoComercialModal from "./DetalhesEmprestimoComercialModal";
 import { emprestimosMock, Emprestimo } from "@/data/emprestimos";
 
 const EmprestimosTable = () => {
@@ -18,6 +19,8 @@ const EmprestimosTable = () => {
   const [clienteFilter, setClienteFilter] = useState('todos');
   const [moedaFilter, setMoedaFilter] = useState('todos');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetalhesModalOpen, setIsDetalhesModalOpen] = useState(false);
+  const [selectedEmprestimo, setSelectedEmprestimo] = useState<Emprestimo | null>(null);
 
   // Usar dados centralizados
   const emprestimos: Emprestimo[] = emprestimosMock;
@@ -313,7 +316,14 @@ const EmprestimosTable = () => {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Button size="sm" variant="outline">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedEmprestimo(emprestimo);
+                              setIsDetalhesModalOpen(true);
+                            }}
+                          >
                             Detalhes
                           </Button>
                         </TableCell>
@@ -334,6 +344,15 @@ const EmprestimosTable = () => {
       <NovoEmprestimoModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+      />
+
+      <DetalhesEmprestimoComercialModal
+        isOpen={isDetalhesModalOpen}
+        onClose={() => {
+          setIsDetalhesModalOpen(false);
+          setSelectedEmprestimo(null);
+        }}
+        emprestimo={selectedEmprestimo}
       />
     </div>
   );

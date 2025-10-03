@@ -21,6 +21,7 @@ export interface Emprestimo {
   id_movimentacao_retorno?: string;
   data_entrada_fisica?: string;
   observacoes_retorno?: string;
+  usuario_retorno?: string;
 }
 
 export const emprestimosMock: Emprestimo[] = [
@@ -46,7 +47,8 @@ export const emprestimosMock: Emprestimo[] = [
     status: 'retorno_efetivado',
     id_movimentacao_retorno: "MOV-2024-0156",
     data_entrada_fisica: "2024-03-16",
-    observacoes_retorno: "Material recebido em perfeitas condições"
+    observacoes_retorno: "Material recebido em perfeitas condições",
+    usuario_retorno: "João Silva"
   },
   {
     numeroProcesso: "EMP-2024-004",
@@ -66,7 +68,8 @@ export const emprestimosMock: Emprestimo[] = [
     valorRetornado: 50000.00,
     idImportacaoDireta: "IMP-2024-001",
     status: 'devolvido_nf',
-    observacoes_retorno: "Aguardando recebimento físico da versão atualizada"
+    observacoes_retorno: "Aguardando recebimento físico da versão atualizada",
+    usuario_retorno: "Maria Santos"
   },
   {
     numeroProcesso: "EMP-2024-008",
@@ -163,7 +166,8 @@ export const emprestimosMock: Emprestimo[] = [
     status: 'retorno_efetivado',
     id_movimentacao_retorno: "MOV-2024-0089",
     data_entrada_fisica: "2024-02-16",
-    observacoes_retorno: "Material recebido conforme especificado"
+    observacoes_retorno: "Material recebido conforme especificado",
+    usuario_retorno: "Carlos Oliveira"
   },
 
   // Empréstimos pontuais (sem vinculação com importação direta) - BRL
@@ -200,7 +204,8 @@ export const emprestimosMock: Emprestimo[] = [
     status: 'retorno_efetivado',
     id_movimentacao_retorno: "MOV-2024-0201",
     data_entrada_fisica: "2024-03-26",
-    observacoes_retorno: "Equipamento recebido em ótimo estado de conservação"
+    observacoes_retorno: "Equipamento recebido em ótimo estado de conservação",
+    usuario_retorno: "Ana Paula Costa"
   },
 
   // Empréstimos sem vinculação (para mostrar na tabela geral)
@@ -235,7 +240,8 @@ export const emprestimosMock: Emprestimo[] = [
     dataBaixa: "2024-03-19",
     valorRetornado: 5800.00,
     status: 'devolvido_nf',
-    observacoes_retorno: "DANFE registrada, aguardando chegada física no estoque"
+    observacoes_retorno: "DANFE registrada, aguardando chegada física no estoque",
+    usuario_retorno: "Pedro Henrique"
   },
 
   // Novos casos para demonstrar diferentes status
@@ -259,7 +265,8 @@ export const emprestimosMock: Emprestimo[] = [
     status: 'retorno_parcial',
     id_movimentacao_retorno: "MOV-2024-0287",
     data_entrada_fisica: "2024-03-25",
-    observacoes_retorno: "Material recebido com avarias. Valor reduzido devido ao estado."
+    observacoes_retorno: "Material recebido com avarias. Valor reduzido devido ao estado.",
+    usuario_retorno: "Juliana Fernandes"
   }
 ];
 
