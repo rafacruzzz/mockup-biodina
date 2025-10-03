@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Send, Upload, FileText, X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -15,6 +16,7 @@ interface InstrucaoEmbarqueFormProps {
 const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFormProps) => {
   const [pagamentoPago, setPagamentoPago] = useState(false);
   const [comprovantePagamento, setComprovantePagamento] = useState<File | null>(null);
+  const [tipoProduto, setTipoProduto] = useState<string>('refrigerado');
 
   const handleAnexarComprovante = () => {
     const input = document.createElement('input');
@@ -44,10 +46,24 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader className="text-center border-b">
+        <CardHeader className="text-center border-b space-y-4">
           <CardTitle className="text-xl font-bold text-purple-600">
             INSTRUÇÃO DE EMBARQUE
           </CardTitle>
+          <div className="flex items-center justify-center gap-3">
+            <Label htmlFor="tipoProduto" className="text-sm font-medium">
+              Tipo de Produto:
+            </Label>
+            <Select value={tipoProduto} onValueChange={setTipoProduto}>
+              <SelectTrigger id="tipoProduto" className="w-[200px]">
+                <SelectValue placeholder="Selecione o tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="refrigerado">Produto Refrigerado</SelectItem>
+                <SelectItem value="congelado">Produto Congelado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         
         <CardContent className="p-6 space-y-6">
