@@ -421,6 +421,314 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
             </div>
           </div>
 
+          {/* Nova Seção - Shipping Documents - Apenas para Refrigerado */}
+          {tipoProduto === 'refrigerado' && (
+            <div className="border p-4 rounded bg-blue-50">
+              <h3 className="font-semibold mb-4 border-b pb-2 text-lg">
+                The following sentences need to be included in the shipping documents
+              </h3>
+              
+              <div className="space-y-4">
+                {/* Campos de Texto Simples */}
+                <div>
+                  <Label htmlFor="paisAquisicao">PAÍS DE AQUISIÇÃO DE TODOS OS ITENS:</Label>
+                  <Input
+                    id="paisAquisicao"
+                    value={formData.paisAquisicao || 'DINAMARCA'}
+                    onChange={(e) => onInputChange('paisAquisicao', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="paisProcedencia">PAÍS DE PROCEDÊNCIA DE TODOS OS ITENS:</Label>
+                  <Input
+                    id="paisProcedencia"
+                    value={formData.paisProcedencia || 'POLÔNIA'}
+                    onChange={(e) => onInputChange('paisProcedencia', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="previsaoEmbarque">PREVISÃO DE EMBARQUE:</Label>
+                  <Textarea
+                    id="previsaoEmbarque"
+                    value={formData.previsaoEmbarque || '30 DIAS APÓS A CONFIRMAÇÃO DO RECEBIMENTO DO PAGAMENTO E/OU APÓS AUTORIZAÇÃO DE EMBARQUE'}
+                    onChange={(e) => onInputChange('previsaoEmbarque', e.target.value)}
+                    rows={2}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="aeroportoOrigem">AEROPORTO DE ORIGEM:</Label>
+                  <Input
+                    id="aeroportoOrigem"
+                    value={formData.aeroportoOrigem || 'AEROPORTO INTERNACIONAL DE COPENHAGEN / DINAMARCA'}
+                    onChange={(e) => onInputChange('aeroportoOrigem', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="aeroportoDestino">AEROPORTO DE DESTINO:</Label>
+                  <Input
+                    id="aeroportoDestino"
+                    value={formData.aeroportoDestino || 'AEROPORTO INTERNACIONAL xxx -xxx - Brazil'}
+                    onChange={(e) => onInputChange('aeroportoDestino', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="entrega">Entrega:</Label>
+                  <Textarea
+                    id="entrega"
+                    value={formData.entrega || 'O material estará disponível para coleta dentro de 3 dias após nossa notificação de coleta ao agente de cargas indicado'}
+                    onChange={(e) => onInputChange('entrega', e.target.value)}
+                    rows={2}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="forEachBox">For each box, please include:</Label>
+                  <Input
+                    id="forEachBox"
+                    value={formData.forEachBox || 'control no.xxx; Temperature xº-xºC; Dimmension: xxx X xxx X xxx; Gross weight: xxx'}
+                    onChange={(e) => onInputChange('forEachBox', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Packing List Section */}
+                <div className="border p-4 rounded bg-white mt-4">
+                  <h4 className="font-semibold mb-3">2- Packing List: Please mention on the Packing list:</h4>
+                  <div className="space-y-2 mb-3">
+                    <div className="flex items-start space-x-2">
+                      <input type="checkbox" id="pl1" className="mt-1" />
+                      <Label htmlFor="pl1" className="cursor-pointer">Portuguese description as proforma invoice#</Label>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <input type="checkbox" id="pl2" className="mt-1" />
+                      <Label htmlFor="pl2" className="cursor-pointer">Total of cartons and its marks</Label>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <input type="checkbox" id="pl3" className="mt-1" />
+                      <Label htmlFor="pl3" className="cursor-pointer">Unit and total Gross weight</Label>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <input type="checkbox" id="pl4" className="mt-1" />
+                      <Label htmlFor="pl4" className="cursor-pointer">Unit and total Net weight</Label>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <input type="checkbox" id="pl5" className="mt-1" />
+                      <Label htmlFor="pl5" className="cursor-pointer">Temperature of each item</Label>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <input type="checkbox" id="pl6" className="mt-1" />
+                      <Label htmlFor="pl6" className="cursor-pointer">For each box, please include: control no.xxx; Temperature xº-xºC; Dimmension: xxx X xxx X xxx; Gross weight: xxx</Label>
+                    </div>
+                  </div>
+                  <div className="bg-yellow-50 border border-yellow-200 p-3 rounded text-sm">
+                    <p className="font-medium">
+                      THE ORIGINAL INVOICE (PLUS 1 COPY) AND PACKING LIST (PLUS 1 COPY). MUST BE SENT TOGETHER WITH THE CARGO: 
+                      DULY SIGNED (WITH THE RESPONSIBLE'S WHOLE NAME AND HIS/HER POSITION AT THE COMPANY) WITH BLUE INK PEN, 
+                      STAMPED WITHOUT ANY KIND OF ERASURES, STAINS, OVERWRITING, CORRECTION FLUID OR OTHER.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Certificate of Quality */}
+                <div>
+                  <Label htmlFor="certificateQuality">3- Certificate of Quality:</Label>
+                  <Textarea
+                    id="certificateQuality"
+                    value={formData.certificateQuality || 'Together with all documents'}
+                    onChange={(e) => onInputChange('certificateQuality', e.target.value)}
+                    rows={2}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Packing */}
+                <div>
+                  <Label htmlFor="packing">4- Packing:</Label>
+                  <Textarea
+                    id="packing"
+                    value={formData.packing || "As usual for this merchandise. IN CASE OF PACKAGES, BOXES OR PALLETS MADE OF WOOD, FUMIGATION IS OBLIGED AND ALSO THE IPPC STAMP ON THE WOOD IS OBLIGED. THE FUMIGATION CERTIFICATE MUST BE SENT TOGETHER WITH THE CARGO DECLARING THE IPPC STAMP CODE OF THE WOOD FOR EACH SHIPMENT. THE NON-COMPLIANCE WILL IMPLY THE RETURN OF THE GOODS TO THE ORIGIN (COSTS OF THE RETURN WILL BE COVERED BY THE EXPORTER), ACCORDING TO THE RULES OF 'IN 32/2015' OF MINISTRY OF AGRICULTURE."}
+                    onChange={(e) => onInputChange('packing', e.target.value)}
+                    rows={4}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Insurance */}
+                <div>
+                  <Label htmlFor="insurance">5- Insurance:</Label>
+                  <Input
+                    id="insurance"
+                    value={formData.insurance || 'Will be covered by the customer'}
+                    onChange={(e) => onInputChange('insurance', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Forwarder */}
+                <div>
+                  <Label htmlFor="forwarder">6- Forwarder:</Label>
+                  <Textarea
+                    id="forwarder"
+                    value={formData.forwarder || 'Please contact the following agent forwarder:'}
+                    onChange={(e) => onInputChange('forwarder', e.target.value)}
+                    rows={2}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Others */}
+                <div>
+                  <Label htmlFor="others">7- Others:</Label>
+                  <Textarea
+                    id="others"
+                    value={formData.others || 'Please e-mail us the copy of all shipping documents as soon as possible, as following: *Comercial Invoice, *Packing list, *Quality Certificate, *Consignment Note, *Treated Wood Certificate and *Shipper declaration for dangerous goods and package certificate for dangerous goods (when applicable).'}
+                    onChange={(e) => onInputChange('others', e.target.value)}
+                    rows={3}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* ATTENTION - Refrigerated Goods */}
+                <div className="bg-yellow-100 border-2 border-yellow-400 p-4 rounded mt-4">
+                  <h4 className="font-bold mb-3 text-red-600">ATTENTION:</h4>
+                  <div className="space-y-2 text-sm">
+                    <p className="font-medium">
+                      "TO AVOID PROBLEMS WITH THE REFRIGERATED GOODS, PLEASE PACK THESE ITEMS (xxxx) IN BIG BOXES, 
+                      DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE 
+                      BETWEEN 2-8ºC, AS FOLLOWS:"
+                    </p>
+                    <div className="bg-white p-3 rounded border border-yellow-400 mt-2">
+                      <p className="font-semibold">THE LABEL IN PORTUGUESE:</p>
+                      <p className="font-bold text-blue-600">"ESTAS CAIXAS CONTÊM PRODUTOS QUE DEVEM SER REFRIGERADOS ENTRE 2-8ºC."</p>
+                      <p className="font-semibold mt-2">THAT MEANS:</p>
+                      <p className="font-bold text-blue-600">"THESE BOXES CONTAIN PRODUCTS WHICH SHOULD BE REFRIGERATED BETWEEN 2-8ºC."</p>
+                    </div>
+                    <p className="font-bold text-red-600 mt-3">ATTENTION:</p>
+                    <p className="font-medium">THE REFRIGERATED ITEMS MUST BE PACKED SEPARATELY.</p>
+                    <p className="font-medium">PLEASE THE PALLETS MUST NOT HAVE MORE THAN 120 (LENGTH) X 80 (WIDTH) X 100 (HEIGHT).</p>
+                  </div>
+                </div>
+
+                {/* Batch/Serial Numbers */}
+                <div>
+                  <Label htmlFor="batchSerialAttention">8- ATTENTION! BATCH/SERIAL NUMBERS:</Label>
+                  <Textarea
+                    id="batchSerialAttention"
+                    value="ATTENTION! PLEASE SEND US THE BATCH/SERIAL NUMBERS AND EXPIRY DATES OF ALL ITEMS BEFORE INVOICING FOR APPROVAL"
+                    readOnly
+                    rows={2}
+                    className="w-full bg-gray-100 cursor-not-allowed"
+                  />
+                </div>
+
+                {/* INSTRUCTIONS FOR THE FREIGHT FORWARD */}
+                <div className="border p-4 rounded bg-green-50 mt-4">
+                  <h4 className="font-bold mb-3 text-lg">INSTRUCTIONS FOR THE FREIGHT FORWARD</h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="ffDestination">1- Destination:</Label>
+                      <Input
+                        id="ffDestination"
+                        value={formData.ffDestination || 'XXX International Airport –XX – Brazil'}
+                        onChange={(e) => onInputChange('ffDestination', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffFreight">2- Freight:</Label>
+                      <Input
+                        id="ffFreight"
+                        value={formData.ffFreight || 'Collect'}
+                        onChange={(e) => onInputChange('ffFreight', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffShipment">3- Shipment:</Label>
+                      <Input
+                        id="ffShipment"
+                        value={formData.ffShipment || 'By airfreight'}
+                        onChange={(e) => onInputChange('ffShipment', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffAirWaybill">4- Air waybill: Consigned to:</Label>
+                      <Input
+                        id="ffAirWaybill"
+                        value={formData.ffAirWaybill || 'The customer above mentioned'}
+                        onChange={(e) => onInputChange('ffAirWaybill', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffNotify">Notify:</Label>
+                      <Textarea
+                        id="ffNotify"
+                        value={formData.ffNotify || ''}
+                        onChange={(e) => onInputChange('ffNotify', e.target.value)}
+                        rows={2}
+                        placeholder="Enter notify information..."
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div className="bg-blue-100 border border-blue-300 p-3 rounded">
+                      <p className="font-medium text-sm">
+                        PLEASE DECLARE ON THE AWB THE NET AND GROSS WEIGHT OF THE GOODS.
+                      </p>
+                    </div>
+
+                    <div className="bg-yellow-100 border-2 border-yellow-400 p-3 rounded">
+                      <p className="font-bold text-red-600 mb-2">ALSO PLEASE DECLARE THE FOLLOWING SENTENCE ON THE AWB:</p>
+                      <p className="font-bold mb-1">ATTENTION:</p>
+                      <p className="font-semibold">"THE BOXES MARKED WITH THE LABEL MUST BE REFRIGERATED BETWEEN 2-8ºC"</p>
+                      <p className="font-semibold">"AS CAIXAS MARCADAS COM A ETIQUETA DEVEM SER REFRIGERADAS ENTRE 2-8ºC"</p>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffOthers">5- Others:</Label>
+                      <Textarea
+                        id="ffOthers"
+                        value={formData.ffOthers || 'Please e-mail us (vanessa.hevia@biodina.com.br) a copy of AWB as soon as you have dispatched the goods. PLEASE SEND THE ORIGINAL COMMERCIAL INVOICE, PACKING LIST AND AWB TOGETHER WITH THE CARGO.'}
+                        onChange={(e) => onInputChange('ffOthers', e.target.value)}
+                        rows={3}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Final Signature */}
+                <div className="border p-4 rounded bg-gray-50 mt-4">
+                  <div className="text-sm space-y-1">
+                    <p>Looking forward to hearing from you soon.</p>
+                    <p>Cordially,</p>
+                    <p className="mt-3 font-semibold">Evandro Amorim</p>
+                    <p>International Division</p>
+                    <p>EAA – xxx.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="border-2 border-red-400 p-4 rounded bg-red-50">
             <div className="flex items-center justify-between">
               <div>
