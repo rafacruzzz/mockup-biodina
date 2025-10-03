@@ -93,27 +93,37 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   };
 
   const handleAtualizarQuantidade = (id: number, quantidade: number) => {
-    setProdutos(prev => prev.map(p => 
-      p.id === id 
-        ? { 
-            ...p, 
-            quantidade, 
-            precoFinal: p.precoUnitario * quantidade 
-          } 
-        : p
-    ));
+    setProdutos(prev => prev.map(p => {
+      if (p.id === id) {
+        const descontoDecimal = (p.desconto || 0) / 100;
+        const valorDesconto = p.precoUnitario * quantidade * descontoDecimal;
+        const precoFinal = (p.precoUnitario * quantidade) - valorDesconto;
+        
+        return { 
+          ...p, 
+          quantidade,
+          precoFinal 
+        };
+      }
+      return p;
+    }));
   };
 
   const handleAtualizarPreco = (id: number, preco: number) => {
-    setProdutos(prev => prev.map(p => 
-      p.id === id 
-        ? { 
-            ...p, 
-            precoUnitario: preco,
-            precoFinal: preco * p.quantidade 
-          } 
-        : p
-    ));
+    setProdutos(prev => prev.map(p => {
+      if (p.id === id) {
+        const descontoDecimal = (p.desconto || 0) / 100;
+        const valorDesconto = preco * p.quantidade * descontoDecimal;
+        const precoFinal = (preco * p.quantidade) - valorDesconto;
+        
+        return { 
+          ...p, 
+          precoUnitario: preco,
+          precoFinal 
+        };
+      }
+      return p;
+    }));
   };
 
   const handleAtualizarValidadeMinima = (id: number, validade: string) => {
@@ -125,6 +135,29 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   const handleAtualizarDescritivoNF = (id: number, descritivo: string) => {
     setProdutos(prev => prev.map(p => 
       p.id === id ? { ...p, descritivoNF: descritivo } : p
+    ));
+  };
+
+  const handleAtualizarDesconto = (produtoId: number, desconto: number) => {
+    setProdutos(produtos.map(p => {
+      if (p.id === produtoId) {
+        const descontoDecimal = desconto / 100;
+        const valorDesconto = p.precoUnitario * p.quantidade * descontoDecimal;
+        const precoFinal = (p.precoUnitario * p.quantidade) - valorDesconto;
+        
+        return { 
+          ...p, 
+          desconto,
+          precoFinal 
+        };
+      }
+      return p;
+    }));
+  };
+
+  const handleAtualizarObservacoes = (produtoId: number, observacoes: string) => {
+    setProdutos(produtos.map(p => 
+      p.id === produtoId ? { ...p, observacoes } : p
     ));
   };
 
@@ -446,9 +479,11 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                               <TableHead>Quantidade</TableHead>
                               <TableHead>Unidade</TableHead>
                               <TableHead>Preço Unit.</TableHead>
+                              <TableHead>Desconto%</TableHead>
                               <TableHead>Total</TableHead>
                               <TableHead>Validade Mín. Exigida</TableHead>
                               <TableHead>Descritivo do Item (para NF)</TableHead>
+                              <TableHead>Observações</TableHead>
                               <TableHead className="w-20">Ações</TableHead>
                             </TableRow>
                           </TableHeader>
@@ -510,6 +545,21 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                                     placeholder="0.0000"
                                   />
                                 </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center">
+                                    <Input
+                                      type="number"
+                                      value={produto.desconto || 0}
+                                      onChange={(e) => handleAtualizarDesconto(produto.id, Number(e.target.value))}
+                                      className="w-20"
+                                      step="0.01"
+                                      min="0"
+                                      max="100"
+                                      placeholder="0"
+                                    />
+                                    <span className="ml-1 text-gray-500">%</span>
+                                  </div>
+                                </TableCell>
                                 <TableCell className="font-medium">
                                   {formatCurrency(produto.precoFinal)}
                                 </TableCell>
@@ -529,6 +579,15 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                                     onChange={(e) => handleAtualizarDescritivoNF(produto.id, e.target.value)}
                                     placeholder="Descritivo para NF"
                                     className="w-40"
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  <Textarea
+                                    value={produto.observacoes || ''}
+                                    onChange={(e) => handleAtualizarObservacoes(produto.id, e.target.value)}
+                                    placeholder="Observações do produto"
+                                    className="w-48 min-h-[60px]"
+                                    rows={2}
                                   />
                                 </TableCell>
                                 <TableCell>
