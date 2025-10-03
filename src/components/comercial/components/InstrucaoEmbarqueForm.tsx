@@ -729,6 +729,300 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
             </div>
           )}
 
+          {/* SEÇÃO ESPECÍFICA PARA PRODUTOS CONGELADOS */}
+          {tipoProduto === 'congelado' && (
+            <div className="border-2 border-orange-500 p-6 rounded-lg bg-orange-50 space-y-6 mt-6">
+              <h3 className="text-lg font-bold text-orange-700 border-b-2 border-orange-300 pb-2">
+                The following sentences need to be included in the shipping documents - PRODUTOS CONGELADOS
+              </h3>
+
+              <div className="space-y-6">
+                {/* Campos de Texto Básicos */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="paisAquisicao_congelado">PAÍS DE AQUISIÇÃO DE TODOS OS ITENS:</Label>
+                    <Input
+                      id="paisAquisicao_congelado"
+                      value={formData.paisAquisicao_congelado || 'DINAMARCA'}
+                      onChange={(e) => onInputChange('paisAquisicao_congelado', e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="paisProcedencia_congelado">PAÍS DE PROCEDÊNCIA DE TODOS OS ITENS:</Label>
+                    <Input
+                      id="paisProcedencia_congelado"
+                      value={formData.paisProcedencia_congelado || 'POLÔNIA'}
+                      onChange={(e) => onInputChange('paisProcedencia_congelado', e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="previsaoEmbarque_congelado">PREVISÃO DE EMBARQUE:</Label>
+                  <Input
+                    id="previsaoEmbarque_congelado"
+                    value={formData.previsaoEmbarque_congelado || '30 DIAS APÓS A CONFIRMAÇÃO DO RECEBIMENTO DO PAGAMENTO E/OU APÓS AUTORIZAÇÃO DE EMBARQUE'}
+                    onChange={(e) => onInputChange('previsaoEmbarque_congelado', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="aeroportoOrigem_congelado">AEROPORTO DE ORIGEM:</Label>
+                    <Input
+                      id="aeroportoOrigem_congelado"
+                      value={formData.aeroportoOrigem_congelado || 'AEROPORTO INTERNACIONAL DE COPENHAGEN / DINAMARCA'}
+                      onChange={(e) => onInputChange('aeroportoOrigem_congelado', e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="aeroportoDestino_congelado">AEROPORTO DE DESTINO:</Label>
+                    <Input
+                      id="aeroportoDestino_congelado"
+                      value={formData.aeroportoDestino_congelado || 'AEROPORTO INTERNACIONAL DE xxx – xx – Brazil'}
+                      onChange={(e) => onInputChange('aeroportoDestino_congelado', e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="entrega_congelado">Entrega:</Label>
+                  <Input
+                    id="entrega_congelado"
+                    value={formData.entrega_congelado || 'O material estará disponível para coleta dentro de 3 dias após nossa notificação de coleta ao agente de cargas indicado'}
+                    onChange={(e) => onInputChange('entrega_congelado', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="forEachBox_congelado">For each box, please include:</Label>
+                  <Input
+                    id="forEachBox_congelado"
+                    value={formData.forEachBox_congelado || 'control no.xxx; Temperature xº-xºC; Dimmension: xxx X xxx X xxx; Gross weight: xxx'}
+                    onChange={(e) => onInputChange('forEachBox_congelado', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Packing List Multi-select */}
+                <div className="border p-4 rounded bg-white">
+                  <Label className="text-base font-semibold mb-3 block">2- Packing List: Please mention on the Packing list:</Label>
+                  <div className="space-y-2 mb-4">
+                    <label className="flex items-center space-x-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">Portuguese description as proforma invoice #</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">Total of cartons and its marks</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">Unit and total Gross weight</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">Unit and total Net weight</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">Temperature of each item</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input type="checkbox" className="rounded" />
+                      <span className="text-sm">For each box, please include: control no.xxx; Temperature xº-xºC; Dimmension: xxx X xxx X xxx; Gross weight: xxx</span>
+                    </label>
+                  </div>
+                  <div className="bg-blue-50 p-3 rounded border border-blue-200 text-sm">
+                    <p className="font-semibold">THE ORIGINAL INVOICE (PLUS 1 COPY) AND PACKING LIST (PLUS 1 COPY). MUST BE SENT TOGETHER WITH THE CARGO: DULY SIGNED (WITH THE RESPONSIBLE'S WHOLE NAME AND HIS/HER POSITION AT THE COMPANY) WITH BLUE INK PEN, STAMPED WITHOUT ANY KIND OF ERASURES, STAINS, OVERWRITING, CORRECTION FLUID OR OTHER.</p>
+                  </div>
+                </div>
+
+                {/* Campos Adicionais 3-7 */}
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="certificateQuality_congelado">3- Certificate of Quality:</Label>
+                    <Textarea
+                      id="certificateQuality_congelado"
+                      value={formData.certificateQuality_congelado || 'Together with all documents'}
+                      onChange={(e) => onInputChange('certificateQuality_congelado', e.target.value)}
+                      rows={2}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="packing_congelado">4- Packing:</Label>
+                    <Textarea
+                      id="packing_congelado"
+                      value={formData.packing_congelado || 'As usual for this merchandise.\n\nIN CASE OF PACKAGES, BOXES OR PALLETS MADE OF WOOD, FUMIGATION IS OBLIGED AND ALSO THE IPPC STAMP ON THE WOOD IS OBLIGED. THE FUMIGATION CERTIFICATE MUST BE SENT TOGETHER WITH THE CARGO DECLARING THE IPPC STAMP CODE OF THE WOOD FOR EACH SHIPMENT. THE NON-COMPLIANCE WILL IMPLY THE RETURN OF THE GOODS TO THE ORIGIN (COSTS OF THE RETURN WILL BE COVERED BY THE EXPORTER), ACCORDING TO THE RULES OF "IN 32/2015" OF MINISTRY OF AGRICULTURE.'}
+                      onChange={(e) => onInputChange('packing_congelado', e.target.value)}
+                      rows={6}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="insurance_congelado">5- Insurance:</Label>
+                    <Input
+                      id="insurance_congelado"
+                      value={formData.insurance_congelado || 'Will be covered by the customer'}
+                      onChange={(e) => onInputChange('insurance_congelado', e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="forwarder_congelado">6- Forwarder:</Label>
+                    <Textarea
+                      id="forwarder_congelado"
+                      value={formData.forwarder_congelado || 'Please contact the following agent forwarder:\nxxx\nxxx\nxxx\nxxx\nxxx'}
+                      onChange={(e) => onInputChange('forwarder_congelado', e.target.value)}
+                      rows={6}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="others_congelado">7- Others:</Label>
+                    <Textarea
+                      id="others_congelado"
+                      value={formData.others_congelado || 'Please e-mail us the copy of all shipping documents as soon as possible, as following:\n*Comercial Invoice, *Packing list, *Quality Certificate, *Consignment Note, *Treated Wood Certificate and *Shipper declaration for dangerous goods and package certificate for dangerous goods (when applicable).'}
+                      onChange={(e) => onInputChange('others_congelado', e.target.value)}
+                      rows={4}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                {/* ATTENTION FOR FROZEN PRODUCTS */}
+                <div className="border-2 border-red-500 p-4 rounded bg-red-100">
+                  <div className="space-y-3 text-sm">
+                    <p className="font-bold text-red-800 text-base">ATTENTION FOR ITENS xxxxxxxxx:</p>
+                    <p className="font-semibold">"TO AVOID PROBLEMS WITH THE FROZEN GOODS, PLEASE PACK THESE ITEMS (xxxx) IN BIG BOXES, DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE BETWEEN 2-8ºC, AS FOLLOWS:"</p>
+                    
+                    <div className="bg-white p-3 rounded border border-red-300 my-3">
+                      <p className="font-bold mb-2">LABEL IN PORTUGUESE:</p>
+                      <p className="font-semibold text-red-700">"ESTAS CAIXAS TÉRMICAS DE ISOPOR CONTÊM PRODUTOS CONGELADOS COM GELO SECO A -18ºC (dezoito graus celsius negativos)".</p>
+                      
+                      <p className="font-bold mt-3 mb-2">THAT MEANS:</p>
+                      <p className="font-semibold text-red-700">"THIS THERMO BOX CONTAIN FROZEN PRODUCTS WITH DRY ICE AT -18ºC (eighteen negatives celsius degrees)".</p>
+                    </div>
+
+                    <p className="font-bold">THE FROZEN ITEMS MUST BE PACKED SEPARATELY.</p>
+                    <p className="font-bold text-red-800">PLEASE INCLUDE THE TAGLOG TO MONITORIZE THE TEMPERATURE.</p>
+                    <p className="font-semibold">PLEASE THE PALLETS MUST NOT HAVE MORE THAN 120 (LENGTH) X 80 (WIDTH) X 100 (HEIGHT).</p>
+                  </div>
+                </div>
+
+                {/* Batch/Serial Numbers */}
+                <div className="border p-3 rounded bg-yellow-50 border-yellow-400">
+                  <p className="text-sm font-semibold text-yellow-900">8- ATTENTION! PLEASE SEND US THE BATCH/SERIAL NUMBERS AND EXPIRY DATES OF ALL ITEMS BEFORE INVOICING FOR APPROVAL</p>
+                </div>
+
+                {/* INSTRUCTIONS FOR THE FREIGHT FORWARD - CONGELADOS */}
+                <div className="border-2 border-purple-400 p-4 rounded bg-purple-50 space-y-4">
+                  <h4 className="font-bold text-lg text-purple-800 border-b-2 border-purple-300 pb-2">INSTRUCTIONS FOR THE FREIGHT FORWARD</h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="ffDestination_congelado">1- Destination:</Label>
+                      <Input
+                        id="ffDestination_congelado"
+                        value={formData.ffDestination_congelado || 'xxx International Airport – XX – Brazil'}
+                        onChange={(e) => onInputChange('ffDestination_congelado', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffFreight_congelado">2- Freight:</Label>
+                      <Input
+                        id="ffFreight_congelado"
+                        value={formData.ffFreight_congelado || 'Collect'}
+                        onChange={(e) => onInputChange('ffFreight_congelado', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffShipment_congelado">3- Shipment:</Label>
+                      <Input
+                        id="ffShipment_congelado"
+                        value={formData.ffShipment_congelado || 'By airfreight'}
+                        onChange={(e) => onInputChange('ffShipment_congelado', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffAirWaybill_congelado">4- Air waybill: Consigned to:</Label>
+                      <Input
+                        id="ffAirWaybill_congelado"
+                        value={formData.ffAirWaybill_congelado || 'The customer above mentioned'}
+                        onChange={(e) => onInputChange('ffAirWaybill_congelado', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffNotify_congelado">Notify:</Label>
+                      <Textarea
+                        id="ffNotify_congelado"
+                        value={formData.ffNotify_congelado || 'xxx\nxxx\nxxx'}
+                        onChange={(e) => onInputChange('ffNotify_congelado', e.target.value)}
+                        rows={3}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div className="bg-blue-50 p-3 rounded border border-blue-300 text-sm">
+                      <p className="font-semibold">PLEASE DECLARE ON THE AWB THE NET AND GROSS WEIGHT OF THE GOODS.</p>
+                      <p className="font-semibold mt-2">PLEASE DECLARE ON THE AWB THE SENTENCE "xxxxx"</p>
+                    </div>
+
+                    <div className="bg-red-100 p-4 rounded border-2 border-red-400">
+                      <p className="font-bold mb-2 text-red-800">ATTENTION:</p>
+                      <p className="font-bold mb-2">PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:</p>
+                      <p className="font-semibold text-red-700">"THIS THERMO BOX CONTAIN FROZEN PRODUCTS WITH DRY ICE AT -18ºC". (Eighteen negatives celsius degrees)".</p>
+                      <p className="font-semibold text-red-700 mt-1">"ESTAS CAIXAS TÉRMICAS DE ISOPOR CONTÊM PRODUTOS CONGELADOS COM GELO SECO A -18ºC". (Dezoito graus celsius negativos)".</p>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffOthers_congelado">5- Others:</Label>
+                      <Textarea
+                        id="ffOthers_congelado"
+                        value={formData.ffOthers_congelado || 'Please e-mail us (vanessa.hevia@biodina.com.br) a copy of AWB as soon as you have dispatched the goods.\n\nPLEASE SEND THE ORIGINAL COMMERCIAL INVOICE,PACKING LIST AND AWB TOGETHER WITH THE CARGO.'}
+                        onChange={(e) => onInputChange('ffOthers_congelado', e.target.value)}
+                        rows={3}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Final Signature */}
+                <div className="border p-4 rounded bg-gray-50 mt-4">
+                  <div className="text-sm space-y-1">
+                    <p>Looking forward to hearing from you soon.</p>
+                    <p>Cordially,</p>
+                    <p className="mt-3 font-semibold">Evandro Amorim</p>
+                    <p>International Division</p>
+                    <p>EAA – xxx.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="border-2 border-red-400 p-4 rounded bg-red-50">
             <div className="flex items-center justify-between">
               <div>
