@@ -228,6 +228,30 @@ export interface GrupoPermissao {
 }
 
 // Gestão de Telefonia types
+export interface DefeitoRamal {
+  id: number;
+  ramalId: number;
+  tipoProblema: string;
+  prioridade: 'baixa' | 'media' | 'alta' | 'urgente';
+  descricaoProblema: string;
+  observacoes?: string;
+  dataRegistro: string;
+  statusDefeito: 'aberto' | 'em_analise' | 'em_reparo' | 'resolvido';
+  dataResolucao?: string;
+  tecnicoResponsavel?: string;
+  chamadoVinculado?: number;
+}
+
+export interface RegistroUsoRamal {
+  id: number;
+  ramalId: number;
+  data: string;
+  tipoUso: 'entrada' | 'saida' | 'interno';
+  duracao: number;
+  numeroDestino?: string;
+  custo?: number;
+}
+
 export interface RamalTelefone {
   id: number;
   numeroRamal: string;
@@ -238,6 +262,8 @@ export interface RamalTelefone {
   localizacao: string;
   dataInstalacao: string;
   observacoes?: string;
+  defeitos?: DefeitoRamal[];
+  registrosUso?: RegistroUsoRamal[];
 }
 
 // Interfaceamento types

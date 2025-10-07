@@ -764,7 +764,40 @@ export const tiModules: TIModulesConfig = {
             status: "operacional",
             localizacao: "Sala 101 - Comercial",
             dataInstalacao: "2023-06-15",
-            observacoes: "Aparelho principal do gerente comercial"
+            observacoes: "Aparelho principal do gerente comercial",
+            defeitos: [
+              {
+                id: 1,
+                ramalId: 1,
+                tipoProblema: "Problemas de áudio",
+                prioridade: "alta",
+                descricaoProblema: "Não estava saindo áudio no fone durante as ligações",
+                dataRegistro: "2024-01-05T10:30:00",
+                statusDefeito: "resolvido",
+                dataResolucao: "2024-01-05T14:20:00",
+                tecnicoResponsavel: "Carlos TI",
+                chamadoVinculado: 45
+              }
+            ],
+            registrosUso: [
+              {
+                id: 1,
+                ramalId: 1,
+                data: "2024-01-15",
+                tipoUso: "saida",
+                duracao: 180,
+                numeroDestino: "(11) 98765-4321",
+                custo: 0.50
+              },
+              {
+                id: 2,
+                ramalId: 1,
+                data: "2024-01-15",
+                tipoUso: "entrada",
+                duracao: 420,
+                custo: 0
+              }
+            ]
           },
           {
             id: 2,
@@ -774,7 +807,19 @@ export const tiModules: TIModulesConfig = {
             modeloAparelho: "Cisco IP Phone 7940",
             status: "operacional",
             localizacao: "Sala 205 - RH",
-            dataInstalacao: "2023-06-15"
+            dataInstalacao: "2023-06-15",
+            defeitos: [],
+            registrosUso: [
+              {
+                id: 3,
+                ramalId: 2,
+                data: "2024-01-14",
+                tipoUso: "saida",
+                duracao: 300,
+                numeroDestino: "(11) 3456-7890",
+                custo: 0.75
+              }
+            ]
           },
           {
             id: 3,
@@ -784,7 +829,77 @@ export const tiModules: TIModulesConfig = {
             status: "com_defeito",
             localizacao: "Recepção Principal",
             dataInstalacao: "2023-05-20",
-            observacoes: "Display com defeito, necessita troca"
+            observacoes: "Display com defeito, necessita troca",
+            defeitos: [
+              {
+                id: 2,
+                ramalId: 3,
+                tipoProblema: "Display com defeito",
+                prioridade: "media",
+                descricaoProblema: "Display não está mostrando informações das ligações",
+                observacoes: "Necessário solicitar peça de reposição ao fornecedor",
+                dataRegistro: "2024-01-14T09:00:00",
+                statusDefeito: "em_reparo",
+                tecnicoResponsavel: "Ana TI"
+              },
+              {
+                id: 3,
+                ramalId: 3,
+                tipoProblema: "Botões não funcionam",
+                prioridade: "baixa",
+                descricaoProblema: "Botões de volume estavam travados",
+                dataRegistro: "2023-12-10T15:30:00",
+                statusDefeito: "resolvido",
+                dataResolucao: "2023-12-11T10:00:00",
+                tecnicoResponsavel: "Carlos TI",
+                chamadoVinculado: 38
+              }
+            ],
+            registrosUso: [
+              {
+                id: 4,
+                ramalId: 3,
+                data: "2024-01-13",
+                tipoUso: "entrada",
+                duracao: 120,
+                custo: 0
+              }
+            ]
+          },
+          {
+            id: 4,
+            numeroRamal: "2015",
+            usuarioAssociado: "Pedro Oliveira",
+            setor: "TI",
+            modeloAparelho: "Cisco IP Phone 7962",
+            status: "operacional",
+            localizacao: "Sala 301 - TI",
+            dataInstalacao: "2023-07-10",
+            defeitos: [],
+            registrosUso: []
+          },
+          {
+            id: 5,
+            numeroRamal: "2020",
+            setor: "Almoxarifado",
+            modeloAparelho: "Cisco IP Phone 7940",
+            status: "em_manutencao",
+            localizacao: "Almoxarifado - Térreo",
+            dataInstalacao: "2023-04-20",
+            observacoes: "Em manutenção preventiva",
+            defeitos: [
+              {
+                id: 4,
+                ramalId: 5,
+                tipoProblema: "Aparelho não liga",
+                prioridade: "alta",
+                descricaoProblema: "Aparelho não está ligando após queda de energia",
+                dataRegistro: "2024-01-10T08:00:00",
+                statusDefeito: "em_analise",
+                tecnicoResponsavel: "Ana TI"
+              }
+            ],
+            registrosUso: []
           }
         ]
       }
