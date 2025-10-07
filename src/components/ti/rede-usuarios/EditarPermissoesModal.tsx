@@ -4,8 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Shield } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import type { UsuarioRede } from "@/types/ti";
+import type { ModuleAccess } from "@/types/permissions";
+import ModuleAccessTree from "../../cadastro/ModuleAccessTree";
+import AccessProfileSelector from "../../cadastro/AccessProfileSelector";
 
 interface EditarPermissoesModalProps {
   open: boolean;
@@ -27,6 +32,7 @@ const gruposDisponiveis = [
 
 export const EditarPermissoesModal = ({ open, onClose, user }: EditarPermissoesModalProps) => {
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+  const [moduleAccess, setModuleAccess] = useState<ModuleAccess[]>([]);
 
   useEffect(() => {
     if (user) {
@@ -36,20 +42,34 @@ export const EditarPermissoesModal = ({ open, onClose, user }: EditarPermissoesM
         return grupo ? grupo.id : groupName.toLowerCase().replace(/\s+/g, '_');
       });
       setSelectedGroups(groupIds);
+      
+      // Inicializar moduleAccess
+      // Por enquanto vazio - aqui você pode carregar as permissões salvas do usuário
+      setModuleAccess([]);
     }
   }, [user]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (selectedGroups.length === 0) {
+    // Validar se tem pelo menos um tipo de permissão
+    const hasGrupoPermissao = selectedGroups.length > 0;
+    const hasModuleAccess = moduleAccess.some(m => m.enabled);
+    
+    if (!hasGrupoPermissao && !hasModuleAccess) {
       toast({
         title: "Erro",
-        description: "Selecione pelo menos um grupo de permissão",
+        description: "Selecione pelo menos um grupo de permissão ou configure os controles de sistema",
         variant: "destructive"
       });
       return;
     }
+
+    console.log('Atualizando permissões:', {
+      user: user?.nomeUsuario,
+      gruposPermissao: selectedGroups,
+      moduleAccess: moduleAccess
+    });
 
     toast({
       title: "Sucesso",
@@ -71,7 +91,7 @@ export const EditarPermissoesModal = ({ open, onClose, user }: EditarPermissoesM
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Editar Permissões - {user.nomeCompleto}</DialogTitle>
         </DialogHeader>
@@ -89,39 +109,76 @@ export const EditarPermissoesModal = ({ open, onClose, user }: EditarPermissoesM
             </div>
           </div>
 
-          {/* Permissões atuais */}
-          <div>
-            <Label className="text-base font-medium">Permissões Atuais</Label>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {user.gruposPermissao.map((grupo, index) => (
-                <Badge key={index} variant="secondary">
-                  {grupo}
-                </Badge>
-              ))}
-            </div>
-          </div>
+          <Tabs defaultValue="grupos-simples">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="grupos-simples">
+                Grupos de Permissão
+              </TabsTrigger>
+              <TabsTrigger value="permissoes-detalhadas">
+                <Shield className="h-4 w-4 mr-2" />
+                Permissões Detalhadas
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Seleção de novos grupos */}
-          <div className="space-y-4">
-            <Label className="text-base font-medium">Grupos de Permissão Disponíveis</Label>
-            <div className="grid gap-3 max-h-60 overflow-y-auto p-1">
-              {gruposDisponiveis.map((grupo) => (
-                <div key={grupo.id} className="flex items-start space-x-3 p-3 border rounded-lg">
-                  <Checkbox
-                    id={grupo.id}
-                    checked={selectedGroups.includes(grupo.id)}
-                    onCheckedChange={(checked) => handleGroupToggle(grupo.id, checked as boolean)}
-                  />
-                  <div className="flex-1">
-                    <Label htmlFor={grupo.id} className="font-medium cursor-pointer">
-                      {grupo.name}
-                    </Label>
-                    <p className="text-sm text-gray-500">{grupo.description}</p>
-                  </div>
+            <TabsContent value="grupos-simples" className="space-y-6">
+              {/* Permissões atuais */}
+              <div>
+                <Label className="text-base font-medium">Permissões Atuais</Label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {user.gruposPermissao.map((grupo, index) => (
+                    <Badge key={index} variant="secondary">
+                      {grupo}
+                    </Badge>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
+
+              {/* Seleção de novos grupos */}
+              <div className="space-y-4">
+                <Label className="text-base font-medium">Grupos de Permissão Disponíveis</Label>
+                <div className="grid gap-3 max-h-60 overflow-y-auto p-1">
+                  {gruposDisponiveis.map((grupo) => (
+                    <div key={grupo.id} className="flex items-start space-x-3 p-3 border rounded-lg">
+                      <Checkbox
+                        id={grupo.id}
+                        checked={selectedGroups.includes(grupo.id)}
+                        onCheckedChange={(checked) => handleGroupToggle(grupo.id, checked as boolean)}
+                      />
+                      <div className="flex-1">
+                        <Label htmlFor={grupo.id} className="font-medium cursor-pointer">
+                          {grupo.name}
+                        </Label>
+                        <p className="text-sm text-gray-500">{grupo.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="permissoes-detalhadas" className="space-y-6">
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Permissões Detalhadas por Módulo
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Configure permissões granulares de acesso aos módulos do sistema
+                </p>
+              </div>
+
+              <AccessProfileSelector onProfileSelect={setModuleAccess} />
+              
+              <div className="border-t pt-4">
+                <h4 className="font-medium text-gray-900 mb-3">
+                  Permissões Detalhadas
+                </h4>
+                <ModuleAccessTree 
+                  modules={moduleAccess}
+                  onModuleChange={setModuleAccess}
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
 
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose}>
