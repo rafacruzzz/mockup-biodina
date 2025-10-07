@@ -20,10 +20,32 @@ export interface TIModulesConfig {
 }
 
 // Chamados TI types
+export type SubcategoriaImpressoras = 'falta_impressao' | 'atolamento' | 'drivers' | 'instalacao';
+export type SubcategoriaPerifericos = 'teclado' | 'mouse' | 'monitores' | 'cabos';
+export type SubcategoriaTelefonia = 'ramais_inoperantes' | 'defeito_aparelhos' | 'solicitacoes';
+export type SubcategoriaSoftwares = 'instalacao' | 'atualizacao' | 'erro_sistemas';
+export type SubcategoriaSistemaOperacional = 'falhas_windows' | 'falhas_linux' | 'outros_so';
+export type SubcategoriaRede = 'sem_conexao' | 'lentidao' | 'queda_internet' | 'vpn';
+export type SubcategoriaAcessos = 'criacao_login' | 'reset_senha' | 'bloqueio_desbloqueio';
+export type SubcategoriaSeguranca = 'antivirus' | 'alerta_malware' | 'phishing' | 'spam';
+export type SubcategoriaGeral = 'pedido_equipamento' | 'duvidas_tecnicas';
+
+export type SubcategoriaChamado = 
+  | SubcategoriaImpressoras 
+  | SubcategoriaPerifericos 
+  | SubcategoriaTelefonia 
+  | SubcategoriaSoftwares 
+  | SubcategoriaSistemaOperacional 
+  | SubcategoriaRede 
+  | SubcategoriaAcessos 
+  | SubcategoriaSeguranca 
+  | SubcategoriaGeral;
+
 export interface ChamadoTI {
   id: number;
   titulo: string;
   categoria: 'impressoras' | 'perifericos' | 'telefonia' | 'softwares' | 'sistema_operacional' | 'rede' | 'acessos' | 'seguranca' | 'geral';
+  subcategoria?: SubcategoriaChamado;
   prioridade: 'baixa' | 'media' | 'alta' | 'critica';
   status: 'aberto' | 'em_andamento' | 'aguardando' | 'resolvido' | 'fechado';
   solicitante: string;

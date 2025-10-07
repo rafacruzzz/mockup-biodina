@@ -16,6 +16,7 @@ const AbrirChamadoForm = () => {
   const [formData, setFormData] = useState({
     titulo: '',
     categoria: '',
+    subcategoria: '',
     prioridade: 'media',
     descricao: '',
     departamento: '',
@@ -37,6 +38,57 @@ const AbrirChamadoForm = () => {
     { value: 'geral', label: 'Solicitações Gerais' }
   ];
 
+  const subcategoriasPorCategoria: Record<string, { value: string; label: string }[]> = {
+    impressoras: [
+      { value: 'falta_impressao', label: 'Falta de Impressão' },
+      { value: 'atolamento', label: 'Atolamento' },
+      { value: 'drivers', label: 'Drivers' },
+      { value: 'instalacao', label: 'Instalação' }
+    ],
+    perifericos: [
+      { value: 'teclado', label: 'Teclado' },
+      { value: 'mouse', label: 'Mouse' },
+      { value: 'monitores', label: 'Monitores' },
+      { value: 'cabos', label: 'Cabos' }
+    ],
+    telefonia: [
+      { value: 'ramais_inoperantes', label: 'Ramais Inoperantes' },
+      { value: 'defeito_aparelhos', label: 'Defeito em Aparelhos' },
+      { value: 'solicitacoes', label: 'Solicitações' }
+    ],
+    softwares: [
+      { value: 'instalacao', label: 'Instalação' },
+      { value: 'atualizacao', label: 'Atualização' },
+      { value: 'erro_sistemas', label: 'Erro em Sistemas' }
+    ],
+    sistema_operacional: [
+      { value: 'falhas_windows', label: 'Falhas no Windows' },
+      { value: 'falhas_linux', label: 'Falhas no Linux' },
+      { value: 'outros_so', label: 'Outros Sistemas Operacionais' }
+    ],
+    rede: [
+      { value: 'sem_conexao', label: 'Sem Conexão' },
+      { value: 'lentidao', label: 'Lentidão' },
+      { value: 'queda_internet', label: 'Queda de Internet' },
+      { value: 'vpn', label: 'VPN' }
+    ],
+    acessos: [
+      { value: 'criacao_login', label: 'Criação de Login' },
+      { value: 'reset_senha', label: 'Reset de Senha' },
+      { value: 'bloqueio_desbloqueio', label: 'Bloqueio/Desbloqueio' }
+    ],
+    seguranca: [
+      { value: 'antivirus', label: 'Antivírus' },
+      { value: 'alerta_malware', label: 'Alerta de Malware' },
+      { value: 'phishing', label: 'Phishing' },
+      { value: 'spam', label: 'Spam' }
+    ],
+    geral: [
+      { value: 'pedido_equipamento', label: 'Pedido de Novo Equipamento' },
+      { value: 'duvidas_tecnicas', label: 'Dúvidas Técnicas' }
+    ]
+  };
+
   const prioridades = [
     { value: 'baixa', label: 'Baixa', color: 'text-green-600' },
     { value: 'media', label: 'Média', color: 'text-yellow-600' },
@@ -51,7 +103,7 @@ const AbrirChamadoForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.titulo || !formData.categoria || !formData.descricao) {
+    if (!formData.titulo || !formData.categoria || !formData.descricao || !formData.subcategoria) {
       toast({
         title: "Erro",
         description: "Por favor, preencha todos os campos obrigatórios.",
@@ -83,6 +135,7 @@ const AbrirChamadoForm = () => {
     setFormData({
       titulo: '',
       categoria: '',
+      subcategoria: '',
       prioridade: 'media',
       descricao: '',
       departamento: user?.colaboradorData?.dadosProfissionais?.setor || '',
@@ -132,12 +185,27 @@ const AbrirChamadoForm = () => {
                 </div>
                 
                 <div className="space-y-2">
+                  <Label htmlFor="solicitante">Solicitante</Label>
+                  <Input
+                    id="solicitante"
+                    value={user?.name || 'Usuário Atual'}
+                    disabled
+                    className="bg-muted"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
                   <Label htmlFor="categoria">Categoria *</Label>
-                  <Select value={formData.categoria} onValueChange={(value) => setFormData({ ...formData, categoria: value })}>
+                  <Select 
+                    value={formData.categoria} 
+                    onValueChange={(value) => setFormData({ ...formData, categoria: value, subcategoria: '' })}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione a categoria" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background z-50">
                       {categorias.map((cat) => (
                         <SelectItem key={cat.value} value={cat.value}>
                           {cat.label}
@@ -146,6 +214,27 @@ const AbrirChamadoForm = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                
+                {formData.categoria && (
+                  <div className="space-y-2">
+                    <Label htmlFor="subcategoria">Tipo de Problema *</Label>
+                    <Select 
+                      value={formData.subcategoria} 
+                      onValueChange={(value) => setFormData({ ...formData, subcategoria: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o tipo de problema" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-background z-50">
+                        {subcategoriasPorCategoria[formData.categoria]?.map((subcat) => (
+                          <SelectItem key={subcat.value} value={subcat.value}>
+                            {subcat.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -155,7 +244,7 @@ const AbrirChamadoForm = () => {
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background z-50">
                       {prioridades.map((pri) => (
                         <SelectItem key={pri.value} value={pri.value}>
                           <span className={pri.color}>{pri.label}</span>
@@ -174,7 +263,7 @@ const AbrirChamadoForm = () => {
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione seu departamento" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background z-50">
                       {departamentos.map((dept) => (
                         <SelectItem key={dept} value={dept}>
                           {dept}
