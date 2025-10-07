@@ -4,11 +4,12 @@ import {
   Menu, X, Home, Users, Settings, 
   BarChart2, FileText, Database, 
   ShoppingCart, DollarSign, Briefcase, 
-  Package, Calculator, UserCheck, Cpu
+  Package, Calculator, UserCheck, Cpu, Crown
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import UserProfileMenu from "@/components/UserProfileMenu";
 import FloatingChat from "@/components/chat/FloatingChat";
+import { useEmpresa } from "@/contexts/EmpresaContext";
 
 interface NavOverrides {
   order?: string[];
@@ -23,9 +24,11 @@ interface SidebarLayoutProps {
 const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
+  const { empresaAtual, isMasterUser, modulosDisponiveis } = useEmpresa();
 
   const defaultMenuItems = [
-    { name: "Aplicativos", path: "/aplicativos", icon: <Home size={20} />, id: "aplicativos" },
+    { name: "Aplicativos", path: "/home", icon: <Home size={20} />, id: "aplicativos" },
+    { name: "SUPER", path: "/super", icon: <Crown size={20} />, id: "super" },
     { name: "Pessoal", path: "/pessoal", icon: <Users size={20} />, id: "pessoal" },
     { name: "BI", path: "/bi-geral", icon: <BarChart2 size={20} />, id: "bi" },
     { name: "Cadastro", path: "/cadastro", icon: <FileText size={20} />, id: "cadastro" },
@@ -81,7 +84,18 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
     ];
   };
 
-  const menuItems = getMenuItems();
+  const menuItems = getMenuItems().filter(item => {
+    // Sempre mostrar: Aplicativos, Solicitações, Personalizar
+    if (['aplicativos', 'solicitacoes', 'personalizar-navegacao'].includes(item.id)) {
+      return true;
+    }
+    // SUPER apenas para Master
+    if (item.id === 'super') {
+      return isMasterUser;
+    }
+    // Outros módulos: verificar se empresa tem acesso
+    return modulosDisponiveis.includes(item.id as any);
+  });
 
   return (
     <div className="flex h-screen bg-gray-50/50">
@@ -95,7 +109,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
         <div className="flex h-16 items-center justify-between px-4 border-b border-gray-100">
           <div className={cn("flex items-center", !isSidebarOpen && "justify-center w-full")}>
             <span className={cn("text-xl font-bold text-biodina-blue", !isSidebarOpen && "hidden")}>
-              Biodina
+              {empresaAtual?.nome || 'Biodina'}
             </span>
             <span className={cn("text-sm text-biodina-gold ml-2", !isSidebarOpen && "hidden")}>
               Sistemas

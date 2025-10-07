@@ -5,7 +5,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "@/contexts/UserContext";
+import { EmpresaProvider } from "@/contexts/EmpresaContext";
 import Index from "./pages/Index";
+import Super from "./pages/Super";
 import Login from "./pages/Login";
 import BIGeral from "./pages/BIGeral";
 import Cadastro from "./pages/Cadastro";
@@ -42,7 +44,8 @@ const App: React.FC = () => {
         <Sonner />
         <BrowserRouter>
           <UserProvider>
-            <Routes>
+            <EmpresaProvider>
+              <Routes>
               <Route path="/" element={<Login />} />
               <Route path="/home" element={<Index />} />
               <Route path="/login" element={<Login />} />
@@ -57,13 +60,15 @@ const App: React.FC = () => {
         <Route path="/ti" element={<TI />} />
         <Route path="/rh/rescisao/:colaboradorId" element={<ProcessoRescisao />} />
               <Route path="/solicitacoes" element={<Solicitacoes />} />
+              <Route path="/super" element={<Super />} />
               <Route path="/editar-perfil" element={<EditarPerfil />} />
               <Route path="/personalizar-navegacao" element={<PersonalizarNavegacao />} />
               {/* Rota pública para candidatura */}
               <Route path="/candidatura/:linkId" element={<CandidaturaPublica />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
-            </Routes>
+              </Routes>
+            </EmpresaProvider>
           </UserProvider>
         </BrowserRouter>
       </TooltipProvider>
