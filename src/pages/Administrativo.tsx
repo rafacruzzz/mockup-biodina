@@ -22,6 +22,7 @@ import { DueDiligenceTable } from '@/components/administrativo/components/DueDil
 import { NovaTriagemModal } from '@/components/administrativo/NovaTriagemModal';
 import { modules } from '@/data/cadastroModules';
 import { toast } from '@/components/ui/use-toast';
+import { parse, subDays, differenceInDays, format } from 'date-fns';
 
 const Administrativo = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'rt' | 'regulatorio' | 'institucional' | 'juridico' | 'compliance' | 'biblioteca'>('main');
@@ -204,12 +205,30 @@ const Administrativo = () => {
       { produto: 'Sistema Diagnóstico DEF-300', registro: 'REG-2024-003', vencimento: '10/04/2025', dias: 81, status: 'Normal' },
       { produto: 'Analisador GHI-400', registro: 'REG-2024-004', vencimento: '22/05/2025', dias: 123, status: 'Normal' }
     ],
-    produtosPendentes2: [
-      { produto: 'Monitor Cardíaco MNO-500', registro: 'REG-2024-005', vencimento: '08/03/2025', dias: 43, status: 'Atenção' },
-      { produto: 'Ventilador Pulmonar PQR-600', registro: 'REG-2024-006', vencimento: '18/04/2025', dias: 89, status: 'Normal' },
-      { produto: 'Bomba de Infusão STU-700', registro: 'REG-2024-007', vencimento: '05/06/2025', dias: 137, status: 'Normal' },
-      { produto: 'Desfibrilador VWX-800', registro: 'REG-2024-008', vencimento: '12/01/2025', dias: 8, status: 'Urgente' }
-    ]
+    produtosPendentes2: (() => {
+      const produtos = [
+        { produto: 'Monitor Cardíaco MNO-500', vencimento: '08/03/2025' },
+        { produto: 'Ventilador Pulmonar PQR-600', vencimento: '18/04/2025' },
+        { produto: 'Bomba de Infusão STU-700', vencimento: '05/06/2025' },
+        { produto: 'Desfibrilador VWX-800', vencimento: '12/01/2025' }
+      ];
+      
+      return produtos.map(p => {
+        const vencimento = parse(p.vencimento, 'dd/MM/yyyy', new Date());
+        const dataMinima = subDays(vencimento, 180);
+        const dataMaxima = subDays(vencimento, 90);
+        const hoje = new Date();
+        const diasParaPeticionamento = differenceInDays(dataMinima, hoje);
+        
+        return {
+          produto: p.produto,
+          vencimento: p.vencimento,
+          dataMinimaPeticionamento: format(dataMinima, 'dd/MM/yyyy'),
+          dataMaximaPeticionamento: format(dataMaxima, 'dd/MM/yyyy'),
+          diasParaPeticionamento
+        };
+      });
+    })()
   };
 
   const formatCurrency = (value: number) => {
@@ -412,26 +431,34 @@ const Administrativo = () => {
               <thead>
                 <tr className="border-b">
                   <th className="text-left py-2 px-4 font-medium">Produto</th>
-                  <th className="text-left py-2 px-4 font-medium">Número do Registro</th>
                   <th className="text-left py-2 px-4 font-medium">Data de Vencimento</th>
-                  <th className="text-left py-2 px-4 font-medium">Dias para Vencimento</th>
-                  <th className="text-left py-2 px-4 font-medium">Status</th>
+                  <th className="text-left py-2 px-4 font-medium">Data Mínima para Peticionamento</th>
+                  <th className="text-left py-2 px-4 font-medium">Data Máxima para Peticionamento</th>
+                  <th className="text-left py-2 px-4 font-medium">Dias para Peticionamento</th>
                 </tr>
               </thead>
               <tbody>
-                {regulatorioData.produtosPendentes2.map((produto, index) => (
-                  <tr key={index} className="border-b hover:bg-gray-50">
-                    <td className="py-3 px-4">{produto.produto}</td>
-                    <td className="py-3 px-4 font-mono text-sm">{produto.registro}</td>
-                    <td className="py-3 px-4">{produto.vencimento}</td>
-                    <td className="py-3 px-4">{produto.dias} dias</td>
-                    <td className="py-3 px-4">
-                      <Badge className={getStatusColor(produto.status)}>
-                        {produto.status}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
+                {regulatorioData.produtosPendentes2.map((produto, index) => {
+                  const getDiasColor = (dias: number) => {
+                    if (dias < 0) return 'text-red-600 font-semibold';
+                    if (dias < 30) return 'text-orange-600 font-semibold';
+                    return 'text-green-600 font-semibold';
+                  };
+                  
+                  return (
+                    <tr key={index} className="border-b hover:bg-gray-50">
+                      <td className="py-3 px-4">{produto.produto}</td>
+                      <td className="py-3 px-4">{produto.vencimento}</td>
+                      <td className="py-3 px-4">{produto.dataMinimaPeticionamento}</td>
+                      <td className="py-3 px-4">{produto.dataMaximaPeticionamento}</td>
+                      <td className="py-3 px-4">
+                        <span className={getDiasColor(produto.diasParaPeticionamento)}>
+                          {produto.diasParaPeticionamento} dias
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
