@@ -169,6 +169,7 @@ const AccessProfileSelector = ({ onProfileSelect }: AccessProfileSelectorProps) 
         {profiles.map((profile) => (
           <Button
             key={profile.id}
+            type="button"
             variant="outline"
             className="h-auto p-4 flex flex-col items-start space-y-2"
             onClick={() => handleProfileSelect(profile.id)}
