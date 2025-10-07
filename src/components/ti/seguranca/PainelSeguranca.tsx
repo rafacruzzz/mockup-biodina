@@ -17,9 +17,13 @@ import {
   Activity
 } from "lucide-react";
 import { tiModules } from "@/data/tiModules";
+import { useToast } from "@/hooks/use-toast";
+import NovoIncidenteModal from "./NovoIncidenteModal";
 
 const PainelSeguranca = () => {
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
 
   // Dados consolidados de segurança
   const segurancaData = tiModules.seguranca.data || [];
@@ -66,6 +70,12 @@ const PainelSeguranca = () => {
 
   const formatDateTime = (dateString: string) => {
     return new Date(dateString).toLocaleString('pt-BR');
+  };
+
+  const handleNovoIncidente = (novoIncidente: any) => {
+    // Por enquanto, apenas exibe toast de sucesso
+    // Em produção, salvará no banco de dados
+    console.log('Novo incidente registrado:', novoIncidente);
   };
 
   // Estatísticas consolidadas
@@ -195,8 +205,8 @@ const PainelSeguranca = () => {
                 Incidentes de Segurança
               </CardTitle>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline">
-                  <Eye className="h-4 w-4 mr-2" />
+                <Button size="sm" variant="outline" onClick={() => setModalOpen(true)}>
+                  <AlertTriangle className="h-4 w-4 mr-2" />
                   Novo Incidente
                 </Button>
               </div>
@@ -381,6 +391,13 @@ const PainelSeguranca = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Modal de Novo Incidente */}
+      <NovoIncidenteModal 
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onSave={handleNovoIncidente}
+      />
     </div>
   );
 };
