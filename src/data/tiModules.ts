@@ -358,6 +358,61 @@ export const tiModules: TIModulesConfig = {
             status: "ativo",
             arquivo: "solicitacao-equipamentos-v3.0.pdf",
             descricao: "Processo para solicitação de novos equipamentos de TI"
+          },
+          {
+            id: 4,
+            nome: "Credenciais de Sistemas Corporativos",
+            categoria: "senhas",
+            versao: "1.0",
+            dataUltimaRevisao: "2024-01-15",
+            responsavel: "Segurança TI",
+            status: "ativo",
+            arquivo: "credenciais-sistemas-v1.0.pdf.enc",
+            descricao: "Repositório seguro de credenciais de sistemas críticos (acesso restrito)"
+          },
+          {
+            id: 5,
+            nome: "Acessos Administrativos - Rede e Servidores",
+            categoria: "senhas",
+            versao: "2.3",
+            dataUltimaRevisao: "2024-01-12",
+            responsavel: "João Silva - TI",
+            status: "ativo",
+            arquivo: "acessos-admin-rede-v2.3.pdf.enc",
+            descricao: "Credenciais de contas administrativas de infraestrutura de rede"
+          },
+          {
+            id: 6,
+            nome: "Senhas de Serviços Cloud",
+            categoria: "senhas",
+            versao: "1.8",
+            dataUltimaRevisao: "2024-01-10",
+            responsavel: "Carlos Santos - TI",
+            status: "ativo",
+            arquivo: "senhas-cloud-v1.8.pdf.enc",
+            descricao: "AWS, Azure, Google Cloud e outros serviços de nuvem"
+          },
+          {
+            id: 7,
+            nome: "Chaves de API e Tokens",
+            categoria: "senhas",
+            versao: "3.1",
+            dataUltimaRevisao: "2024-01-08",
+            responsavel: "Segurança TI",
+            status: "ativo",
+            arquivo: "chaves-api-v3.1.pdf.enc",
+            descricao: "Tokens de autenticação, chaves de API e segredos de integração"
+          },
+          {
+            id: 8,
+            nome: "Certificados Digitais e Senhas",
+            categoria: "senhas",
+            versao: "1.2",
+            dataUltimaRevisao: "2024-01-05",
+            responsavel: "Maria Costa - TI",
+            status: "ativo",
+            arquivo: "certificados-digitais-v1.2.pdf.enc",
+            descricao: "Senhas de certificados SSL/TLS, assinaturas digitais e PKI"
           }
         ]
       }

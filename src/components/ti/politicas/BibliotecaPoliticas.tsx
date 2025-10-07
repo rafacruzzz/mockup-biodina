@@ -15,7 +15,8 @@ import {
   Shield,
   Database,
   Settings,
-  BookOpen
+  BookOpen,
+  KeyRound
 } from "lucide-react";
 import { tiModules } from "@/data/tiModules";
 
@@ -55,6 +56,13 @@ const BibliotecaPoliticas = () => {
       icon: BookOpen,
       cor: 'text-purple-600',
       documentos: politicasData.filter((p: any) => p.categoria === 'boas_praticas')
+    },
+    {
+      id: 'senhas',
+      nome: '05. Repositório de Documentos de Senhas',
+      icon: KeyRound,
+      cor: 'text-orange-600',
+      documentos: politicasData.filter((p: any) => p.categoria === 'senhas')
     }
   ];
 
