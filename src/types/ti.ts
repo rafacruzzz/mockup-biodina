@@ -78,11 +78,25 @@ export interface ConexaoRede {
 }
 
 // Inventário types
+export interface MovimentacaoAtivo {
+  id: number;
+  data: string;
+  tipo: 'cadastro' | 'transferencia' | 'manutencao' | 'atualizacao' | 'baixa';
+  departamentoOrigem?: string;
+  departamentoDestino?: string;
+  responsavelOrigem?: string;
+  responsavelDestino?: string;
+  motivo?: string;
+  usuario: string;
+  observacoes?: string;
+}
+
 export interface AtivoTI {
   id: number;
   numeroInventario: string;
   equipamento: string;
   tipo: 'notebook' | 'desktop' | 'impressora' | 'servidor' | 'switch' | 'roteador' | 'outro';
+  tipoOutro?: string;
   marca: string;
   modelo: string;
   numeroSerie: string;
@@ -95,6 +109,13 @@ export interface AtivoTI {
   valorAquisicao?: number;
   fornecedor?: string;
   observacoes?: string;
+  notasFiscais?: Array<{
+    nome: string;
+    tipo: string;
+    tamanho: number;
+    url?: string;
+  }>;
+  historico?: MovimentacaoAtivo[];
 }
 
 // Políticas types

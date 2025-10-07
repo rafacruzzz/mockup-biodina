@@ -87,7 +87,32 @@ export const tiModules: TIModulesConfig = {
             fornecedor: "Dell do Brasil",
             numeroNF: "NF-2024-001",
             centroCusto: "Comercial",
-            observacoes: "Notebook principal do gerente comercial"
+            observacoes: "Notebook principal do gerente comercial",
+            notasFiscais: [
+              { nome: "NF-2024-001.pdf", tipo: "application/pdf", tamanho: 245678 },
+              { nome: "NF-2024-001.xml", tipo: "application/xml", tamanho: 12345 }
+            ],
+            historico: [
+              {
+                id: 1,
+                data: "2024-01-10T10:30:00",
+                tipo: "cadastro",
+                usuario: "Carlos TI",
+                observacoes: "Cadastro inicial do ativo - equipamento recém adquirido"
+              },
+              {
+                id: 2,
+                data: "2024-01-10T14:00:00",
+                tipo: "transferencia",
+                departamentoOrigem: "TI",
+                departamentoDestino: "Comercial",
+                responsavelOrigem: "Estoque TI",
+                responsavelDestino: "João Silva",
+                motivo: "Alocação para novo gerente comercial",
+                usuario: "Carlos TI",
+                observacoes: "Transferência aprovada pela diretoria"
+              }
+            ]
           },
           {
             id: 2,
@@ -107,7 +132,23 @@ export const tiModules: TIModulesConfig = {
             fornecedor: "HP Brasil",
             numeroNF: "NF-2023-045",
             centroCusto: "TI",
-            observacoes: "Em manutenção preventiva"
+            observacoes: "Em manutenção preventiva",
+            historico: [
+              {
+                id: 1,
+                data: "2023-06-15T09:00:00",
+                tipo: "cadastro",
+                usuario: "Ana Costa - TI",
+                observacoes: "Cadastro inicial do equipamento"
+              },
+              {
+                id: 2,
+                data: "2024-01-14T11:30:00",
+                tipo: "manutencao",
+                usuario: "Carlos TI",
+                observacoes: "Manutenção preventiva - substituição de toner e limpeza"
+              }
+            ]
           },
           {
             id: 3,
