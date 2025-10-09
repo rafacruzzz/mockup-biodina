@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,8 +25,15 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
     sistemaCliente: '',
     prazoDesejado: '',
     anexos: [] as File[],
-    observacoes: ''
+    observacoes: '',
+    valor: oportunidade?.valor || 0
   });
+
+  useEffect(() => {
+    if (oportunidade?.valor !== undefined) {
+      setFormData(prev => ({ ...prev, valor: oportunidade.valor }));
+    }
+  }, [oportunidade]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -80,7 +87,11 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
       ...formData,
       clienteNome: oportunidade?.cliente || '',
       oportunidadeId: oportunidade?.codigo || '',
+      responsavel: oportunidade?.responsavel || '',
       status: 'aguardando_aprovacao',
+      statusOportunidade: oportunidade?.status || '',
+      segmento: oportunidade?.segmento || '',
+      valor: formData.valor,
       solicitante: 'Current User', // This would come from auth context
       departamentoSolicitante: 'Comercial',
       dataSolicitacao: new Date().toISOString(),
@@ -103,7 +114,8 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
       sistemaCliente: '',
       prazoDesejado: '',
       anexos: [],
-      observacoes: ''
+      observacoes: '',
+      valor: 0
     });
 
     toast({
@@ -118,7 +130,8 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
       sistemaCliente: '',
       prazoDesejado: '',
       anexos: [],
-      observacoes: ''
+      observacoes: '',
+      valor: 0
     });
     onClose();
   };
@@ -157,8 +170,22 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
                   <p className="mt-1">{oportunidade?.responsavel}</p>
                 </div>
                 <div>
-                  <span className="font-medium text-muted-foreground">Valor:</span>
-                  <p className="mt-1">R$ {oportunidade?.valor?.toLocaleString('pt-BR')}</p>
+                  <Label htmlFor="valorOportunidade" className="font-medium text-muted-foreground">
+                    Valor:
+                  </Label>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-sm">R$</span>
+                    <Input
+                      id="valorOportunidade"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      value={formData.valor}
+                      onChange={(e) => handleInputChange('valor', parseFloat(e.target.value) || 0)}
+                      className="w-full"
+                      placeholder="0,00"
+                    />
+                  </div>
                 </div>
                 <div>
                   <span className="font-medium text-muted-foreground">Status:</span>
