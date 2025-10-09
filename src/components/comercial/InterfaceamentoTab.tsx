@@ -3,7 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Network, Plus, Clock, CheckCircle, AlertCircle, XCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import SolicitarInterfaceamentoModal from "./SolicitarInterfaceamentoModal";
 import InterfaceamentoStatusWidget from "./InterfaceamentoStatusWidget";
 import { tiModules } from "@/data/tiModules";
@@ -16,7 +20,11 @@ interface InterfaceamentoTabProps {
 }
 
 const InterfaceamentoTab = ({ oportunidade, formData, onInputChange }: InterfaceamentoTabProps) => {
+  const { toast } = useToast();
   const [showSolicitarModal, setShowSolicitarModal] = useState(false);
+  const [tipoChamado, setTipoChamado] = useState('');
+  const [descricaoChamado, setDescricaoChamado] = useState('');
+  const [observacoesChamado, setObservacoesChamado] = useState('');
   
   // Get existing requests for this opportunity
   const solicitacoes = tiModules.interfaceamento.subModules.solicitacoes.data as SolicitacaoInterfaceamento[];
@@ -61,6 +69,44 @@ const InterfaceamentoTab = ({ oportunidade, formData, onInputChange }: Interface
     // This would normally save to backend/context
     console.log('Nova solicitação de interfaceamento:', solicitacaoData);
     setShowSolicitarModal(false);
+  };
+
+  const handleAbrirChamado = () => {
+    if (!tipoChamado || !descricaoChamado.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Erro de Validação",
+        description: "Tipo de chamado e descrição são obrigatórios."
+      });
+      return;
+    }
+
+    const chamadoData = {
+      tipo: tipoChamado,
+      descricao: descricaoChamado,
+      observacoes: observacoesChamado,
+      clienteNome: oportunidade?.cliente || '',
+      oportunidadeId: oportunidade?.codigo || '',
+      responsavel: oportunidade?.responsavel || '',
+      segmento: oportunidade?.segmento || '',
+      status: 'aberto',
+      departamentoOrigem: 'Comercial',
+      departamentoDestino: 'TI',
+      dataAbertura: new Date().toISOString(),
+      prioridade: 'media'
+    };
+
+    console.log('Novo chamado TI:', chamadoData);
+
+    toast({
+      title: "Chamado Aberto",
+      description: "O chamado foi encaminhado para a equipe de TI."
+    });
+
+    // Reset form
+    setTipoChamado('');
+    setDescricaoChamado('');
+    setObservacoesChamado('');
   };
 
   return (
@@ -187,6 +233,99 @@ const InterfaceamentoTab = ({ oportunidade, formData, onInputChange }: Interface
           </Card>
         )}
       </div>
+
+      {/* Abrir Novo Chamado TI Interno */}
+      <Card className="border-2 border-dashed border-primary/30 bg-primary/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Plus className="h-5 w-5" />
+            Abrir Novo Chamado
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Para interfaceamentos internos com a equipe de TI
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="tipoChamado">
+              Tipo de Chamado *
+            </Label>
+            <Select value={tipoChamado} onValueChange={setTipoChamado}>
+              <SelectTrigger id="tipoChamado" className="mt-1">
+                <SelectValue placeholder="Selecione o tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="interface_ti">Interface (TI)</SelectItem>
+                <SelectItem value="suporte_tecnico">Suporte Técnico</SelectItem>
+                <SelectItem value="infraestrutura">Infraestrutura</SelectItem>
+                <SelectItem value="configuracao">Configuração</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="descricaoChamado">
+              Descrição do Chamado *
+            </Label>
+            <Textarea
+              id="descricaoChamado"
+              value={descricaoChamado}
+              onChange={(e) => setDescricaoChamado(e.target.value)}
+              placeholder="Descreva detalhadamente o chamado..."
+              rows={4}
+              className="mt-1"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="observacoesChamado">
+              Observações
+            </Label>
+            <Textarea
+              id="observacoesChamado"
+              value={observacoesChamado}
+              onChange={(e) => setObservacoesChamado(e.target.value)}
+              placeholder="Informações adicionais sobre custos (modem, servidor, etc)..."
+              rows={3}
+              className="mt-1"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              💡 Inclua custos esperados como aquisição de modem, servidor, etc. para solicitação de compra (uso e consumo)
+            </p>
+          </div>
+
+          <Separator />
+
+          {/* Informações Auto-preenchidas */}
+          <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+            <div>
+              <span className="text-xs font-medium text-muted-foreground">Cliente:</span>
+              <p className="text-sm mt-1">{oportunidade?.cliente || 'N/A'}</p>
+            </div>
+            <div>
+              <span className="text-xs font-medium text-muted-foreground">Oportunidade:</span>
+              <p className="text-sm mt-1">{oportunidade?.codigo || 'N/A'}</p>
+            </div>
+            <div>
+              <span className="text-xs font-medium text-muted-foreground">Responsável:</span>
+              <p className="text-sm mt-1">{oportunidade?.responsavel || 'N/A'}</p>
+            </div>
+            <div>
+              <span className="text-xs font-medium text-muted-foreground">Segmento:</span>
+              <p className="text-sm mt-1">{oportunidade?.segmento || 'N/A'}</p>
+            </div>
+          </div>
+
+          <Button 
+            onClick={handleAbrirChamado}
+            className="w-full flex items-center justify-center gap-2"
+            disabled={!tipoChamado || !descricaoChamado.trim()}
+          >
+            <Network className="h-4 w-4" />
+            Abrir Chamado
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Modal */}
       <SolicitarInterfaceamentoModal

@@ -119,8 +119,8 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
     });
 
     toast({
-      title: "Solicitação Enviada",
-      description: "A solicitação de interfaceamento foi enviada para a TI."
+      title: "Requisição de Pagamento Criada",
+      description: "A requisição foi enviada para Contas a Pagar para aprovação."
     });
   };
 
