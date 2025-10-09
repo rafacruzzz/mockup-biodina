@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -144,6 +144,9 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
             <Network className="h-6 w-6 text-primary" />
             Solicitação de Interfaceamento para {oportunidade?.cliente}
           </DialogTitle>
+          <DialogDescription>
+            Preencha os detalhes da solicitação de integração de sistemas
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">

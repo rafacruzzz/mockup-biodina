@@ -1033,7 +1033,15 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
 
             <TabsContent value="interfaceamento" className="space-y-4">
               <InterfaceamentoTab 
-                oportunidade={{ ...formData, id: oportunidade?.id }}
+                oportunidade={{
+                  id: oportunidade?.id,
+                  codigo: oportunidade?.codigo || oportunidade?.id || `OPP-${Date.now()}`,
+                  cliente: formData.nomeFantasia || formData.razaoSocial,
+                  responsavel: formData.colaboradoresResponsaveis,
+                  valor: formData.valorNegocio,
+                  status: formData.status,
+                  segmento: formData.segmentoLead
+                }}
                 formData={formData}
                 onInputChange={handleInputChange}
               />
