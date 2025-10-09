@@ -1028,6 +1028,15 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               <ChamadosTab 
                 chamados={chamados}
                 onAdicionarChamado={handleAdicionarChamado}
+                oportunidade={{
+                  id: oportunidade?.id,
+                  codigo: oportunidade?.codigo || oportunidade?.id || `OPP-${Date.now()}`,
+                  cliente: formData.nomeFantasia || formData.razaoSocial,
+                  responsavel: formData.colaboradoresResponsaveis,
+                  valor: formData.valorNegocio,
+                  status: formData.status,
+                  segmento: formData.segmentoLead
+                }}
               />
             </TabsContent>
 
