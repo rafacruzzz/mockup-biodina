@@ -17,6 +17,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { ProdutoPedido, PedidoCompleto, UnidadeVenda, ItemUsoConsumoPedido } from "@/types/comercial";
 import AdicionarProdutoModal from "./AdicionarProdutoModal";
 import AdicionarItemUsoConsumoModal from "./AdicionarItemUsoConsumoModal";
+import AcompanhamentoPedidoTab from "./components/AcompanhamentoPedidoTab";
 import { mockContasBancarias } from "@/data/tesouraria";
 import { naturezasOperacao, getDescritivosOperacao, temDescritivoUnico, type DescritivoOperacao } from "@/data/naturezasOperacao";
 import { tiposDocumentosNF } from "@/data/documentosNF";
@@ -335,6 +336,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                 <TabsTrigger value="produtos" className="min-w-fit whitespace-nowrap">Produtos</TabsTrigger>
                 <TabsTrigger value="informacoes-nf" className="min-w-fit whitespace-nowrap">Informações NF</TabsTrigger>
                 <TabsTrigger value="frete" className="min-w-fit whitespace-nowrap">Frete</TabsTrigger>
+                <TabsTrigger value="acompanhamento" className="min-w-fit whitespace-nowrap">Acompanhamento do Pedido</TabsTrigger>
               </TabsList>
 
               {/* Aba Geral */}
@@ -1496,6 +1498,23 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                     )}
                   </CardContent>
                 </Card>
+              </TabsContent>
+
+              {/* Aba Acompanhamento do Pedido */}
+              <TabsContent value="acompanhamento" className="space-y-6">
+                <AcompanhamentoPedidoTab 
+                  pedido={{
+                    id: 0,
+                    numeroOportunidade: oportunidade.codigo || oportunidade.id || '',
+                    cliente: oportunidade.nomeFantasia || oportunidade.cliente,
+                    vendedor: 'Usuário Atual',
+                    dataVenda: new Date().toISOString().split('T')[0],
+                    status: 'rascunho',
+                    statusAtual: 'rascunho',
+                    produtos,
+                    valorTotal: calcularTotal(),
+                  }} 
+                />
               </TabsContent>
 
             </Tabs>

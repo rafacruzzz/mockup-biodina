@@ -156,4 +156,151 @@ export interface PedidoCompleto {
   
   // Itens de Uso e Consumo
   itensUsoConsumo?: ItemUsoConsumoPedido[];
+  
+  // Acompanhamento do Pedido
+  statusAtual?: StatusPedido;
+  timeline?: EventoTimeline[];
+  recebimentoEstoque?: RecebimentoEstoque;
+  faturamento?: FaturamentoPedido;
+  logistica?: LogisticaPedido;
+  feedbackEntrega?: FeedbackEntrega;
+}
+
+// ============= TIPOS PARA ACOMPANHAMENTO DO PEDIDO =============
+
+export type StatusPedido = 
+  | 'rascunho'
+  | 'enviado' 
+  | 'recebido_estoque'
+  | 'em_separacao'
+  | 'pronto_faturamento'
+  | 'faturado'
+  | 'em_transito'
+  | 'entregue'
+  | 'cancelado'
+  | 'devolvido';
+
+export interface EventoTimeline {
+  status: StatusPedido;
+  data: string;
+  hora: string;
+  responsavel?: string;
+  observacoes?: string;
+}
+
+export interface RecebimentoEstoque {
+  status: 'recebido' | 'em_separacao' | 'pronto_faturamento';
+  dataRecebimento: string;
+  horaRecebimento: string;
+  responsavel: string;
+  numeroLote?: string;
+  referenciaInterna?: string;
+  itensConferidos: ItemConferido[];
+  observacoesDivergencia?: string;
+  dataSaidaPrevista?: string;
+  dataSaidaEfetiva?: string;
+}
+
+export interface ItemConferido {
+  produtoId: number;
+  codigoProduto: string;
+  descricao: string;
+  quantidadeSolicitada: number;
+  quantidadeConferida: number;
+  divergencia: boolean;
+  tipoDivergencia?: 'falta' | 'dano' | 'substituicao';
+  observacoes?: string;
+}
+
+export interface FaturamentoPedido {
+  numeroNF: string;
+  serieNF: string;
+  dataEmissao: string;
+  valorTotal: number;
+  chaveAcesso: string;
+  statusSefaz: 'autorizada' | 'cancelada' | 'rejeitada' | 'processando';
+  protocolo?: string;
+  linkXML?: string;
+  linkDANFE?: string;
+  boleto?: BoletoPedido;
+  gnre?: GNREPedido;
+  documentosAnexos?: DocumentoAnexo[];
+}
+
+export interface BoletoPedido {
+  numeroDocumento: string;
+  dataVencimento: string;
+  valor: number;
+  linkBoleto?: string;
+  codigoBarras?: string;
+  linhaDigitavel?: string;
+}
+
+export interface GNREPedido {
+  numeroGuia: string;
+  dataVencimento: string;
+  valor: number;
+  linkGNRE?: string;
+}
+
+export interface DocumentoAnexo {
+  id: string;
+  tipo: string;
+  nome: string;
+  url: string;
+  dataUpload: string;
+}
+
+export interface LogisticaPedido {
+  transportadora: DadosTransportadora;
+  conhecimentoTransporte: ConhecimentoTransporte;
+  statusEntrega: 'aguardando_coleta' | 'em_transito' | 'em_rota_entrega' | 'entregue' | 'devolvido';
+  prazoEstimado: string;
+  dataSaida?: string;
+  previsaoEntrega?: string;
+  dataEntregaEfetiva?: string;
+  comprovanteEntrega?: ComprovanteEntrega;
+}
+
+export interface DadosTransportadora {
+  nome: string;
+  cnpj: string;
+  telefone?: string;
+  email?: string;
+  custoFrete: number;
+}
+
+export interface ConhecimentoTransporte {
+  numeroCTe: string;
+  serieCTe: string;
+  chaveAcesso: string;
+  linkRastreamento?: string;
+  protocolo?: string;
+}
+
+export interface ComprovanteEntrega {
+  tipo: 'canhoto' | 'protocolo' | 'assinatura_digital';
+  dataEntrega: string;
+  horaEntrega: string;
+  nomeRecebedor: string;
+  documentoRecebedor?: string;
+  imagemCanhoto?: string;
+  protocoloCliente?: string;
+}
+
+export interface FeedbackEntrega {
+  statusRecebimento: 'ok' | 'com_avarias' | 'temperatura_errada' | 'incompleto' | 'produto_errado' | 'devolucao';
+  observacoesCliente?: string;
+  acoesTomadas?: string;
+  responsavelFeedback: string;
+  dataFeedback: string;
+  anexos?: AnexoFeedback[];
+}
+
+export interface AnexoFeedback {
+  id: string;
+  tipo: 'foto' | 'documento' | 'protocolo';
+  nome: string;
+  url: string;
+  dataUpload: string;
 }
