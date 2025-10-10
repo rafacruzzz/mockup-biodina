@@ -4,12 +4,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Save, X, CheckCircle, FileText, User, Package, RotateCcw, Link } from "lucide-react";
+import { Save, X, CheckCircle, FileText, User, Package, RotateCcw } from "lucide-react";
 import DadosGeraisTab from "./components/DadosGeraisTab";
 import ProdutoEmprestadoTab from "./components/ProdutoEmprestadoTab";
 import DANFEUploadTab from "./components/DANFEUploadTab";
 import RetornoTab from "./components/RetornoTab";
-import VinculacaoTab from "./components/VinculacaoTab";
 
 interface NovoEmprestimoModalProps {
   isOpen: boolean;
@@ -102,8 +101,6 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
         return extractedDANFE ? "complete" : "optional";
       case "retorno":
         return "optional";
-      case "vinculacao":
-        return "optional";
       default:
         return "incomplete";
     }
@@ -152,7 +149,7 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4">
             <TabTriggerWithStatus value="dados-gerais" icon={User}>
               Dados Gerais
             </TabTriggerWithStatus>
@@ -164,9 +161,6 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
             </TabTriggerWithStatus>
             <TabTriggerWithStatus value="retorno" icon={RotateCcw}>
               Retorno
-            </TabTriggerWithStatus>
-            <TabTriggerWithStatus value="vinculacao" icon={Link}>
-              Vinculação
             </TabTriggerWithStatus>
           </TabsList>
 
@@ -196,13 +190,6 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
 
             <TabsContent value="retorno" className="space-y-4">
               <RetornoTab 
-                formData={formData}
-                onInputChange={handleInputChange}
-              />
-            </TabsContent>
-
-            <TabsContent value="vinculacao" className="space-y-4">
-              <VinculacaoTab 
                 formData={formData}
                 onInputChange={handleInputChange}
               />
