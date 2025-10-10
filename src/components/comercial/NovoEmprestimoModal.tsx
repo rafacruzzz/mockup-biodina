@@ -4,11 +4,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Save, X, CheckCircle, FileText, User, ShoppingCart, RotateCcw } from "lucide-react";
+import { Save, X, CheckCircle, User, ShoppingCart, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import DadosGeraisTab from "./components/DadosGeraisTab";
 import PedidosEmprestimoTab from "./components/PedidosEmprestimoTab";
-import DANFEUploadTab from "./components/DANFEUploadTab";
 import RetornoTab from "./components/RetornoTab";
 import PedidoEmprestimoModal from "./PedidoEmprestimoModal";
 import { PedidoEmprestimo } from "@/types/comercial";
@@ -18,26 +17,8 @@ interface NovoEmprestimoModalProps {
   onClose: () => void;
 }
 
-interface DANFEData {
-  id: string;
-  numeroDanfe: string;
-  cnpjCliente: string;
-  nomeCliente: string;
-  valorTotal: string;
-  dataEmissao: Date;
-  dataUpload: Date;
-  tipoDanfe: 'entrada' | 'saida';
-  produtos: Array<{
-    referencia: string;
-    descricao: string;
-    valor: string;
-  }>;
-}
-
 const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
   const [activeTab, setActiveTab] = useState("dados-gerais");
-  const [extractedDANFE, setExtractedDANFE] = useState<DANFEData | null>(null);
-  const [historicoDANFEs, setHistoricoDANFEs] = useState<DANFEData[]>([]);
   
   // Estados para gerenciar pedidos
   const [pedidosVinculados, setPedidosVinculados] = useState<PedidoEmprestimo[]>([]);
@@ -72,21 +53,6 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
 
   const handleInputChange = (field: string, value: string | Date | null) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleDANFEDataExtracted = (data: DANFEData) => {
-    setExtractedDANFE(data);
-    
-    // Auto-fill form data - apenas dados do cliente
-    setFormData(prev => ({
-      ...prev,
-      cnpjCliente: data.cnpjCliente,
-      nomeCliente: data.nomeCliente
-    }));
-  };
-
-  const handleHistoricoUpdate = (novoHistorico: DANFEData[]) => {
-    setHistoricoDANFEs(novoHistorico);
   };
 
   // Handlers para gerenciar pedidos
@@ -142,10 +108,6 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
 
     console.log("Salvando empréstimo:", formData);
     console.log("Pedidos vinculados:", pedidosVinculados);
-    console.log("Histórico de DANFEs:", historicoDANFEs);
-    if (extractedDANFE) {
-      console.log("Com dados da DANFE:", extractedDANFE);
-    }
     
     toast.success("Empréstimo salvo com sucesso!");
     onClose();
@@ -158,8 +120,6 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
         return formData.cnpjCliente && formData.nomeCliente && formData.dataEmprestimo ? "complete" : "incomplete";
       case "pedidos":
         return formData.moeda && pedidosVinculados.length > 0 ? "complete" : "incomplete";
-      case "danfe":
-        return extractedDANFE ? "complete" : "optional";
       case "retorno":
         return "optional";
       default:
@@ -186,14 +146,9 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
             <CheckCircle className="h-3 w-3" />
           </Badge>
         )}
-        {status === "optional" && value !== "danfe" && value !== "retorno" && (
+        {status === "optional" && value !== "retorno" && (
           <Badge variant="outline" className="ml-2 text-xs">
             Opcional
-          </Badge>
-        )}
-        {status === "complete" && value === "danfe" && (
-          <Badge className="ml-2 h-5 w-5 p-0 bg-blue-100 text-blue-700">
-            <FileText className="h-3 w-3" />
           </Badge>
         )}
       </TabsTrigger>
@@ -211,15 +166,12 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
           </DialogHeader>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-3">
               <TabTriggerWithStatus value="dados-gerais" icon={User}>
                 Dados Gerais
               </TabTriggerWithStatus>
               <TabTriggerWithStatus value="pedidos" icon={ShoppingCart}>
                 Pedidos
-              </TabTriggerWithStatus>
-              <TabTriggerWithStatus value="danfe" icon={FileText}>
-                DANFE
               </TabTriggerWithStatus>
               <TabTriggerWithStatus value="retorno" icon={RotateCcw}>
                 Retorno
@@ -244,15 +196,6 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
                   onVisualizarPedido={handleVisualizarPedido}
                   onEditarPedido={handleEditarPedido}
                   onRemoverPedido={handleRemoverPedido}
-                />
-              </TabsContent>
-
-              <TabsContent value="danfe" className="space-y-4">
-                <DANFEUploadTab 
-                  onDataExtracted={handleDANFEDataExtracted}
-                  extractedData={extractedDANFE}
-                  historicoDANFEs={historicoDANFEs}
-                  onHistoricoUpdate={handleHistoricoUpdate}
                 />
               </TabsContent>
 
