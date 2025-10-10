@@ -79,6 +79,17 @@ export enum UnidadeVenda {
   KIT = 'kit'
 }
 
+export interface ItemUsoConsumoPedido {
+  id: number;
+  itemId: string;
+  codigo: string;
+  descricao: string;
+  quantidade: number;
+  unidade: string;
+  observacoes: string;
+  categoria: string;
+}
+
 export interface PedidoCompleto {
   id: number;
   numeroOportunidade: string;
@@ -152,4 +163,7 @@ export interface PedidoCompleto {
   // Controle de Canhoto
   exigeCanhoto?: boolean;
   observacoesCanhoto?: string;
+  
+  // Itens de Uso e Consumo
+  itensUsoConsumo?: ItemUsoConsumoPedido[];
 }

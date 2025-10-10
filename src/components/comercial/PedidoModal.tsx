@@ -12,9 +12,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { Plus, X, Trash2, Info, ShoppingCart, AlertTriangle } from "lucide-react";
-import { ProdutoPedido, PedidoCompleto, UnidadeVenda } from "@/types/comercial";
+import { Plus, X, Trash2, Info, ShoppingCart, AlertTriangle, Package } from "lucide-react";
+import { ProdutoPedido, PedidoCompleto, UnidadeVenda, ItemUsoConsumoPedido } from "@/types/comercial";
 import AdicionarProdutoModal from "./AdicionarProdutoModal";
+import AdicionarItemUsoConsumoModal from "./AdicionarItemUsoConsumoModal";
 
 interface PedidoModalProps {
   isOpen: boolean;
@@ -27,6 +28,10 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   const [produtos, setProdutos] = useState<ProdutoPedido[]>([]);
   const [observacoesGerais, setObservacoesGerais] = useState('');
   const [isAdicionarProdutoOpen, setIsAdicionarProdutoOpen] = useState(false);
+  
+  // Estados para Itens de Uso e Consumo
+  const [itensUsoConsumo, setItensUsoConsumo] = useState<ItemUsoConsumoPedido[]>([]);
+  const [isAdicionarItemUCOpen, setIsAdicionarItemUCOpen] = useState(false);
 
   // Estados para os novos campos das abas
   const [informacoesComplementares, setInformacoesComplementares] = useState('');
@@ -243,10 +248,34 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       percentualIR: destacarIR ? percentualIR : undefined,
       // Controle de Canhoto
       exigeCanhoto,
-      observacoesCanhoto: exigeCanhoto ? observacoesCanhoto : undefined
+      observacoesCanhoto: exigeCanhoto ? observacoesCanhoto : undefined,
+      // Itens de Uso e Consumo
+      itensUsoConsumo
     };
     onSave(pedido);
     onClose();
+  };
+  
+  // Handlers para Itens de Uso e Consumo
+  const handleAdicionarItemUC = (item: ItemUsoConsumoPedido) => {
+    setItensUsoConsumo(prev => [...prev, { ...item, id: Date.now() }]);
+    setIsAdicionarItemUCOpen(false);
+  };
+
+  const handleRemoverItemUC = (id: number) => {
+    setItensUsoConsumo(prev => prev.filter(item => item.id !== id));
+  };
+
+  const handleAtualizarQuantidadeItemUC = (id: number, quantidade: number) => {
+    setItensUsoConsumo(prev => prev.map(item => 
+      item.id === id ? { ...item, quantidade } : item
+    ));
+  };
+
+  const handleAtualizarObservacoesItemUC = (id: number, observacoes: string) => {
+    setItensUsoConsumo(prev => prev.map(item => 
+      item.id === id ? { ...item, observacoes } : item
+    ));
   };
 
   const formatCurrency = (value: number) => {
@@ -278,7 +307,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <ShoppingCart className="h-5 w-5" />
-              Novo Pedido - {oportunidade.nomeFantasia || oportunidade.cliente}
+              Novo Pedido
             </DialogTitle>
           </DialogHeader>
 
@@ -389,96 +418,6 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                       )}
                     </div>
 
-                    {/* Materiais Complementares */}
-                    <div className="space-y-4 pt-4 border-t">
-                      <Label className="text-base font-medium">
-                        Informar materiais complementares ao pedido
-                      </Label>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="cabo"
-                            checked={materiaisComplementares.cabo}
-                            onCheckedChange={(checked) => 
-                              setMateriaisComplementares(prev => ({ ...prev, cabo: checked === true }))
-                            }
-                          />
-                          <Label htmlFor="cabo" className="font-normal cursor-pointer">Cabo</Label>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="nobreak"
-                            checked={materiaisComplementares.nobreak}
-                            onCheckedChange={(checked) => 
-                              setMateriaisComplementares(prev => ({ ...prev, nobreak: checked === true }))
-                            }
-                          />
-                          <Label htmlFor="nobreak" className="font-normal cursor-pointer">Nobreak</Label>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="manuais"
-                            checked={materiaisComplementares.manuais}
-                            onCheckedChange={(checked) => 
-                              setMateriaisComplementares(prev => ({ ...prev, manuais: checked === true }))
-                            }
-                          />
-                          <Label htmlFor="manuais" className="font-normal cursor-pointer">Manuais</Label>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="gelox"
-                            checked={materiaisComplementares.gelox}
-                            onCheckedChange={(checked) => 
-                              setMateriaisComplementares(prev => ({ ...prev, gelox: checked === true }))
-                            }
-                          />
-                          <Label htmlFor="gelox" className="font-normal cursor-pointer">Gelox</Label>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="gelo-seco"
-                            checked={materiaisComplementares.geloSeco}
-                            onCheckedChange={(checked) => 
-                              setMateriaisComplementares(prev => ({ ...prev, geloSeco: checked === true }))
-                            }
-                          />
-                          <Label htmlFor="gelo-seco" className="font-normal cursor-pointer">Gelo seco</Label>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="outros-acessorios"
-                            checked={materiaisComplementares.outrosAcessorios}
-                            onCheckedChange={(checked) => 
-                              setMateriaisComplementares(prev => ({ ...prev, outrosAcessorios: checked === true }))
-                            }
-                          />
-                          <Label htmlFor="outros-acessorios" className="font-normal cursor-pointer">Outros acessórios</Label>
-                        </div>
-                      </div>
-
-                      {materiaisComplementares.outrosAcessorios && (
-                        <div className="mt-4">
-                          <Label htmlFor="especificacao-outros">Especificar outros acessórios</Label>
-                          <Textarea
-                            id="especificacao-outros"
-                            value={materiaisComplementares.especificacaoOutros}
-                            onChange={(e) => 
-                              setMateriaisComplementares(prev => ({ ...prev, especificacaoOutros: e.target.value }))
-                            }
-                            placeholder="Descreva os outros acessórios necessários..."
-                            rows={3}
-                            className="mt-2"
-                          />
-                        </div>
-                      )}
-                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -643,9 +582,115 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                     {produtos.length > 0 && (
                       <div className="flex justify-end mt-4 pt-4 border-t">
                         <div className="text-right">
-                          <div className="text-sm text-gray-500">Total do Pedido</div>
+                          <div className="text-sm text-gray-500">Total dos Produtos</div>
                           <div className="text-2xl font-bold text-green-600">
                             {formatCurrency(calcularTotal())}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                
+                {/* Seção de Itens de Uso e Consumo */}
+                <Card className="mt-6">
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <Package className="h-5 w-5" />
+                        Itens de Uso e Consumo
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        ⚠️ Itens NÃO comercializados - Controle interno de estoque e reabastecimento
+                      </p>
+                    </div>
+                    <Button 
+                      onClick={() => setIsAdicionarItemUCOpen(true)}
+                      variant="outline"
+                      className="border-biodina-gold text-biodina-gold hover:bg-biodina-gold/10"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar Item U&C
+                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    {itensUsoConsumo.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500 bg-muted/30 rounded-lg">
+                        <Package className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                        <p className="font-medium text-base">Nenhum item de uso e consumo adicionado</p>
+                        <p className="text-sm mt-1">
+                          Adicione cabos, nobreaks, manuais, gelo seco e outros itens complementares
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Item</TableHead>
+                              <TableHead>Categoria</TableHead>
+                              <TableHead>Quantidade</TableHead>
+                              <TableHead>Unidade</TableHead>
+                              <TableHead>Observações</TableHead>
+                              <TableHead className="w-20">Ações</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {itensUsoConsumo.map((item) => (
+                              <TableRow key={item.id}>
+                                <TableCell>
+                                  <div>
+                                    <div className="font-medium">{item.codigo}</div>
+                                    <div className="text-sm text-gray-500">{item.descricao}</div>
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  <Badge variant="outline">{item.categoria}</Badge>
+                                </TableCell>
+                                <TableCell>
+                                  <Input
+                                    type="number"
+                                    value={item.quantidade}
+                                    onChange={(e) => handleAtualizarQuantidadeItemUC(item.id, Number(e.target.value))}
+                                    className="w-20"
+                                    min="1"
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  <Badge variant="secondary">{item.unidade}</Badge>
+                                </TableCell>
+                                <TableCell>
+                                  <Textarea
+                                    value={item.observacoes}
+                                    onChange={(e) => handleAtualizarObservacoesItemUC(item.id, e.target.value)}
+                                    placeholder="Observações do item"
+                                    className="w-48 min-h-[60px]"
+                                    rows={2}
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleRemoverItemUC(item.id)}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    )}
+                    
+                    {itensUsoConsumo.length > 0 && (
+                      <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <div className="flex items-start gap-2">
+                          <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                          <div className="text-sm text-blue-800">
+                            <strong>Informação importante:</strong> Estes itens serão separados pelo estoque/expedição 
+                            e não geram movimentação comercial. O controle serve para reabastecimento pelo Financeiro/Compras.
                           </div>
                         </div>
                       </div>
@@ -1271,6 +1316,12 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
         isOpen={isAdicionarProdutoOpen}
         onClose={() => setIsAdicionarProdutoOpen(false)}
         onAdicionarProduto={handleAdicionarProduto}
+      />
+      
+      <AdicionarItemUsoConsumoModal
+        isOpen={isAdicionarItemUCOpen}
+        onClose={() => setIsAdicionarItemUCOpen(false)}
+        onAdicionarItem={handleAdicionarItemUC}
       />
     </>
   );
