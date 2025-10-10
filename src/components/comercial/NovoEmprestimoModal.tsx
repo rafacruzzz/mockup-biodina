@@ -1,14 +1,17 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Save, X, CheckCircle, FileText, User, Package, RotateCcw } from "lucide-react";
+import { Save, X, CheckCircle, FileText, User, ShoppingCart, RotateCcw } from "lucide-react";
+import { toast } from "sonner";
 import DadosGeraisTab from "./components/DadosGeraisTab";
-import ProdutoEmprestadoTab from "./components/ProdutoEmprestadoTab";
+import PedidosEmprestimoTab from "./components/PedidosEmprestimoTab";
 import DANFEUploadTab from "./components/DANFEUploadTab";
 import RetornoTab from "./components/RetornoTab";
+import PedidoEmprestimoModal from "./PedidoEmprestimoModal";
+import { PedidoEmprestimo } from "@/types/comercial";
 
 interface NovoEmprestimoModalProps {
   isOpen: boolean;
@@ -36,16 +39,18 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
   const [extractedDANFE, setExtractedDANFE] = useState<DANFEData | null>(null);
   const [historicoDANFEs, setHistoricoDANFEs] = useState<DANFEData[]>([]);
   
+  // Estados para gerenciar pedidos
+  const [pedidosVinculados, setPedidosVinculados] = useState<PedidoEmprestimo[]>([]);
+  const [modalPedidoAberto, setModalPedidoAberto] = useState(false);
+  const [pedidoEmEdicao, setPedidoEmEdicao] = useState<PedidoEmprestimo | null>(null);
+  
   const [formData, setFormData] = useState({
     numeroProcesso: `EMP-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
     cnpjCliente: "",
     nomeCliente: "",
     observacoes: "",
-    numeroDanfeEmprestimo: "",
-    referenciaProdutoEmprestado: "",
-    descricaoProdutoEmprestado: "",
-    valorEmprestimo: "",
     moeda: "BRL" as "BRL" | "USD",
+    valorEmprestimo: 0,
     dataEmprestimo: null as Date | null,
     dataSaida: null as Date | null,
     numeroDanfeRetorno: "",
@@ -57,6 +62,14 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
     idImportacaoDireta: ""
   });
 
+  // Calcular valor total automaticamente
+  useEffect(() => {
+    const valorTotal = pedidosVinculados.reduce((total, pedido) => {
+      return total + pedido.valorTotal;
+    }, 0);
+    setFormData(prev => ({ ...prev, valorEmprestimo: valorTotal }));
+  }, [pedidosVinculados]);
+
   const handleInputChange = (field: string, value: string | Date | null) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -64,16 +77,11 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
   const handleDANFEDataExtracted = (data: DANFEData) => {
     setExtractedDANFE(data);
     
-    // Auto-fill form data
+    // Auto-fill form data - apenas dados do cliente
     setFormData(prev => ({
       ...prev,
-      numeroDanfeEmprestimo: data.numeroDanfe,
       cnpjCliente: data.cnpjCliente,
-      nomeCliente: data.nomeCliente,
-      valorEmprestimo: data.valorTotal,
-      dataEmprestimo: data.dataEmissao,
-      referenciaProdutoEmprestado: data.produtos[0]?.referencia || "",
-      descricaoProdutoEmprestado: data.produtos[0]?.descricao || ""
+      nomeCliente: data.nomeCliente
     }));
   };
 
@@ -81,12 +89,65 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
     setHistoricoDANFEs(novoHistorico);
   };
 
+  // Handlers para gerenciar pedidos
+  const handleCriarNovoPedido = () => {
+    setPedidoEmEdicao(null);
+    setModalPedidoAberto(true);
+  };
+
+  const handleEditarPedido = (pedido: PedidoEmprestimo) => {
+    setPedidoEmEdicao(pedido);
+    setModalPedidoAberto(true);
+  };
+
+  const handleVisualizarPedido = (pedido: PedidoEmprestimo) => {
+    setPedidoEmEdicao(pedido);
+    setModalPedidoAberto(true);
+  };
+
+  const handleRemoverPedido = (pedidoId: number) => {
+    if (confirm("Tem certeza que deseja remover este pedido do empréstimo?")) {
+      setPedidosVinculados(prev => prev.filter(p => p.id !== pedidoId));
+      toast.success("Pedido removido com sucesso");
+    }
+  };
+
+  const handleSalvarPedido = (pedido: PedidoEmprestimo) => {
+    if (pedidoEmEdicao) {
+      // Atualizar pedido existente
+      setPedidosVinculados(prev => 
+        prev.map(p => p.id === pedido.id ? pedido : p)
+      );
+    } else {
+      // Adicionar novo pedido
+      setPedidosVinculados(prev => [...prev, pedido]);
+    }
+    setModalPedidoAberto(false);
+    setPedidoEmEdicao(null);
+  };
+
   const handleSave = () => {
+    // Validações
+    if (!formData.moeda) {
+      toast.error("Selecione a moeda do empréstimo");
+      setActiveTab("pedidos");
+      return;
+    }
+
+    if (pedidosVinculados.length === 0) {
+      toast.error("Adicione pelo menos um pedido ao empréstimo");
+      setActiveTab("pedidos");
+      return;
+    }
+
     console.log("Salvando empréstimo:", formData);
+    console.log("Pedidos vinculados:", pedidosVinculados);
     console.log("Histórico de DANFEs:", historicoDANFEs);
     if (extractedDANFE) {
       console.log("Com dados da DANFE:", extractedDANFE);
     }
+    
+    toast.success("Empréstimo salvo com sucesso!");
     onClose();
   };
 
@@ -95,8 +156,8 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
     switch (tabId) {
       case "dados-gerais":
         return formData.cnpjCliente && formData.nomeCliente && formData.dataEmprestimo ? "complete" : "incomplete";
-      case "produto":
-        return formData.numeroDanfeEmprestimo && formData.referenciaProdutoEmprestado && formData.valorEmprestimo ? "complete" : "incomplete";
+      case "pedidos":
+        return formData.moeda && pedidosVinculados.length > 0 ? "complete" : "incomplete";
       case "danfe":
         return extractedDANFE ? "complete" : "optional";
       case "retorno":
@@ -140,75 +201,100 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-biodina-blue">
-            Novo Empréstimo
-          </DialogTitle>
-        </DialogHeader>
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-biodina-blue">
+              Novo Empréstimo
+            </DialogTitle>
+          </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabTriggerWithStatus value="dados-gerais" icon={User}>
-              Dados Gerais
-            </TabTriggerWithStatus>
-            <TabTriggerWithStatus value="produto" icon={Package}>
-              Produto
-            </TabTriggerWithStatus>
-            <TabTriggerWithStatus value="danfe" icon={FileText}>
-              DANFE
-            </TabTriggerWithStatus>
-            <TabTriggerWithStatus value="retorno" icon={RotateCcw}>
-              Retorno
-            </TabTriggerWithStatus>
-          </TabsList>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabTriggerWithStatus value="dados-gerais" icon={User}>
+                Dados Gerais
+              </TabTriggerWithStatus>
+              <TabTriggerWithStatus value="pedidos" icon={ShoppingCart}>
+                Pedidos
+              </TabTriggerWithStatus>
+              <TabTriggerWithStatus value="danfe" icon={FileText}>
+                DANFE
+              </TabTriggerWithStatus>
+              <TabTriggerWithStatus value="retorno" icon={RotateCcw}>
+                Retorno
+              </TabTriggerWithStatus>
+            </TabsList>
 
-          <div className="mt-6">
-            <TabsContent value="dados-gerais" className="space-y-4">
-              <DadosGeraisTab 
-                formData={formData}
-                onInputChange={handleInputChange}
-              />
-            </TabsContent>
+            <div className="mt-6">
+              <TabsContent value="dados-gerais" className="space-y-4">
+                <DadosGeraisTab 
+                  formData={formData}
+                  onInputChange={handleInputChange}
+                />
+              </TabsContent>
 
-            <TabsContent value="produto" className="space-y-4">
-              <ProdutoEmprestadoTab 
-                formData={formData}
-                onInputChange={handleInputChange}
-              />
-            </TabsContent>
+              <TabsContent value="pedidos" className="space-y-4">
+                <PedidosEmprestimoTab 
+                  moeda={formData.moeda}
+                  onMoedaChange={(moeda) => handleInputChange('moeda', moeda)}
+                  valorTotal={formData.valorEmprestimo}
+                  pedidos={pedidosVinculados}
+                  onCriarNovoPedido={handleCriarNovoPedido}
+                  onVisualizarPedido={handleVisualizarPedido}
+                  onEditarPedido={handleEditarPedido}
+                  onRemoverPedido={handleRemoverPedido}
+                />
+              </TabsContent>
 
-            <TabsContent value="danfe" className="space-y-4">
-              <DANFEUploadTab 
-                onDataExtracted={handleDANFEDataExtracted}
-                extractedData={extractedDANFE}
-                historicoDANFEs={historicoDANFEs}
-                onHistoricoUpdate={handleHistoricoUpdate}
-              />
-            </TabsContent>
+              <TabsContent value="danfe" className="space-y-4">
+                <DANFEUploadTab 
+                  onDataExtracted={handleDANFEDataExtracted}
+                  extractedData={extractedDANFE}
+                  historicoDANFEs={historicoDANFEs}
+                  onHistoricoUpdate={handleHistoricoUpdate}
+                />
+              </TabsContent>
 
-            <TabsContent value="retorno" className="space-y-4">
-              <RetornoTab 
-                formData={formData}
-                onInputChange={handleInputChange}
-              />
-            </TabsContent>
-          </div>
-        </Tabs>
+              <TabsContent value="retorno" className="space-y-4">
+                <RetornoTab 
+                  formData={formData}
+                  onInputChange={handleInputChange}
+                />
+              </TabsContent>
+            </div>
+          </Tabs>
 
-        <DialogFooter className="gap-2">
-          <Button variant="outline" onClick={onClose}>
-            <X className="h-4 w-4 mr-2" />
-            Cancelar
-          </Button>
-          <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
-            <Save className="h-4 w-4 mr-2" />
-            Salvar Empréstimo
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={onClose}>
+              <X className="h-4 w-4 mr-2" />
+              Cancelar
+            </Button>
+            <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
+              <Save className="h-4 w-4 mr-2" />
+              Salvar Empréstimo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Pedido */}
+      <PedidoEmprestimoModal
+        isOpen={modalPedidoAberto}
+        onClose={() => {
+          setModalPedidoAberto(false);
+          setPedidoEmEdicao(null);
+        }}
+        onSave={handleSalvarPedido}
+        pedidoInicial={pedidoEmEdicao}
+        dadosEmprestimo={{
+          numeroProcesso: formData.numeroProcesso,
+          cliente: formData.nomeCliente,
+          cnpj: formData.cnpjCliente,
+          moeda: formData.moeda
+        }}
+      />
+    </>
   );
 };
 

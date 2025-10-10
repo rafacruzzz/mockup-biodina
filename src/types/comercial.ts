@@ -1,6 +1,7 @@
 export interface ProdutoPedido {
   id: number;
   codigo: string;
+  referencia?: string; // Referência/código adicional do produto
   descricao: string;
   quantidade: number;
   unidade: UnidadeVenda;
@@ -94,6 +95,7 @@ export interface PedidoCompleto {
   id: number;
   numeroOportunidade: string;
   projetoOrigem?: string;
+  emprestimoId?: string; // NOVO - ID do empréstimo quando aplicável
   cliente: string;
   vendedor: string;
   dataVenda: string;
@@ -304,3 +306,6 @@ export interface AnexoFeedback {
   url: string;
   dataUpload: string;
 }
+
+// Pedido específico para empréstimo (reutiliza PedidoCompleto)
+export type PedidoEmprestimo = PedidoCompleto;
