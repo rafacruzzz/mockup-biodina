@@ -215,7 +215,7 @@ const AdicionarItemUsoConsumoModal = ({ isOpen, onClose, onAdicionarItem }: Adic
       item.codigo.toLowerCase().includes(busca.toLowerCase()) ||
       item.descricao.toLowerCase().includes(busca.toLowerCase());
     
-    const matchCategoria = categoriaFiltro === '' || item.categoria === categoriaFiltro;
+    const matchCategoria = categoriaFiltro === '' || categoriaFiltro === 'all' || item.categoria === categoriaFiltro;
     
     return matchBusca && matchCategoria;
   });
@@ -285,12 +285,12 @@ const AdicionarItemUsoConsumoModal = ({ isOpen, onClose, onAdicionarItem }: Adic
             </div>
             <div>
               <Label htmlFor="categoria">Filtrar por Categoria</Label>
-              <Select value={categoriaFiltro} onValueChange={setCategoriaFiltro}>
+              <Select value={categoriaFiltro || 'all'} onValueChange={setCategoriaFiltro}>
                 <SelectTrigger className="mt-2">
                   <SelectValue placeholder="Todas as categorias" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Todas as categorias</SelectItem>
+                  <SelectItem value="all">Todas as categorias</SelectItem>
                   {categorias.map(cat => (
                     <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                   ))}
