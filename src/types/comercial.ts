@@ -103,9 +103,7 @@ export interface PedidoCompleto {
   observacoesGerais?: string;
   informacoesComplementares?: string;
   condicoesPagamento?: string;
-  valorFrete?: number;
   tipoFrete?: string;
-  transportadora?: string;
   prazoEntrega?: string;
   dataEntrega?: string;
   fretePagarPor?: string;
@@ -119,14 +117,14 @@ export interface PedidoCompleto {
   locaisEntrega?: string;
   enderecoEntrega?: string;
   maisInformacoesEntrega?: string;
-  observacoesFrete?: string;
-  conhecimento?: string;
-  urgente?: boolean;
+  // Urgência
+  solicitarUrgencia?: boolean;
   justificativaUrgencia?: string;
+  urgenciaStatus?: 'pendente' | 'aprovada' | 'rejeitada' | null;
+  // Campos preenchidos automaticamente pelo sistema após aprovação
   autorizadoPor?: string;
   dataAutorizacao?: string;
   emailAutorizador?: string;
-  observacoesAutorizacao?: string;
   // Configurações de Estoque
   temValidadeMinima?: boolean;
   validadeMinimaGlobal?: string;
@@ -155,10 +153,6 @@ export interface PedidoCompleto {
   observacoesDocumentacao?: string;
   destacarIR?: boolean;
   percentualIR?: number;
-  
-  // Controle de Canhoto
-  exigeCanhoto?: boolean;
-  observacoesCanhoto?: string;
   
   // Itens de Uso e Consumo
   itensUsoConsumo?: ItemUsoConsumoPedido[];

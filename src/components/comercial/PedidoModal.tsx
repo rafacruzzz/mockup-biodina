@@ -12,7 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { Plus, X, Trash2, Info, ShoppingCart, AlertTriangle, Package, Link as LinkIcon, Lock, Wallet, Building, FileText } from "lucide-react";
+import { Plus, X, Trash2, Info, ShoppingCart, AlertTriangle, Package, Link as LinkIcon, Lock, Wallet, Building, FileText, CheckCircle2, XCircle, Clock, Shield } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ProdutoPedido, PedidoCompleto, UnidadeVenda, ItemUsoConsumoPedido } from "@/types/comercial";
 import AdicionarProdutoModal from "./AdicionarProdutoModal";
 import AdicionarItemUsoConsumoModal from "./AdicionarItemUsoConsumoModal";
@@ -52,9 +53,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   const condicoesPagamentoProjeto = oportunidade.condicoesPagamento || '';
   
   // Frete - Seção 1: Informações Básicas
-  const [valorFrete, setValorFrete] = useState(0);
   const [tipoFrete, setTipoFrete] = useState('');
-  const [transportadora, setTransportadora] = useState('');
   const [prazoEntrega, setPrazoEntrega] = useState('');
   const [dataEntrega, setDataEntrega] = useState('');
   
@@ -75,17 +74,13 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   const [enderecoEntrega, setEnderecoEntrega] = useState('');
   const [maisInformacoesEntrega, setMaisInformacoesEntrega] = useState('');
   
-  // Frete - Seção 5: Urgência (já existe mas melhorado)
-  const [observacoesFrete, setObservacoesFrete] = useState('');
-  const [conhecimento, setConhecimento] = useState('');
-  
-  // Autorização
-  const [urgente, setUrgente] = useState(false);
+  // Autorização e Urgência
+  const [solicitarUrgencia, setSolicitarUrgencia] = useState(false);
   const [justificativaUrgencia, setJustificativaUrgencia] = useState('');
+  const [urgenciaStatus, setUrgenciaStatus] = useState<'pendente' | 'aprovada' | 'rejeitada' | null>(null);
   const [autorizadoPor, setAutorizadoPor] = useState('');
   const [dataAutorizacao, setDataAutorizacao] = useState('');
   const [emailAutorizador, setEmailAutorizador] = useState('');
-  const [observacoesAutorizacao, setObservacoesAutorizacao] = useState('');
 
   // Configurações de Estoque
   const [temValidadeMinima, setTemValidadeMinima] = useState(false);
@@ -111,9 +106,6 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   const [formaPagamentoNF, setFormaPagamentoNF] = useState('');
   const [documentosSelecionados, setDocumentosSelecionados] = useState<string[]>([]);
   
-  // Controle de Canhoto
-  const [exigeCanhoto, setExigeCanhoto] = useState(false);
-  const [observacoesCanhoto, setObservacoesCanhoto] = useState('');
 
   // Auto-preencher descritivo quando operação tem apenas 1 opção
   useEffect(() => {
@@ -239,9 +231,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       // Novos campos
       informacoesComplementares,
       condicoesPagamento: condicoesPagamento || condicoesPagamentoProjeto,
-      valorFrete,
       tipoFrete,
-      transportadora,
       prazoEntrega,
       dataEntrega,
       fretePagarPor,
@@ -255,14 +245,13 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       locaisEntrega,
       enderecoEntrega,
       maisInformacoesEntrega,
-      observacoesFrete,
-      conhecimento,
-      urgente,
-      justificativaUrgencia,
-      autorizadoPor,
-      dataAutorizacao,
-      emailAutorizador,
-      observacoesAutorizacao,
+      // Urgência
+      solicitarUrgencia,
+      justificativaUrgencia: solicitarUrgencia ? justificativaUrgencia : undefined,
+      urgenciaStatus: solicitarUrgencia ? (urgenciaStatus || 'pendente') : null,
+      autorizadoPor: urgenciaStatus === 'aprovada' ? autorizadoPor : undefined,
+      dataAutorizacao: urgenciaStatus === 'aprovada' ? dataAutorizacao : undefined,
+      emailAutorizador: urgenciaStatus === 'aprovada' ? emailAutorizador : undefined,
       // Configurações de Estoque
       temValidadeMinima,
       validadeMinimaGlobal,
@@ -281,9 +270,6 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       documentosNF: documentosSelecionados,
       observacoesDocumentacao,
       destacarIR,
-      // Controle de Canhoto
-      exigeCanhoto,
-      observacoesCanhoto: exigeCanhoto ? observacoesCanhoto : undefined,
       // Itens de Uso e Consumo
       itensUsoConsumo
     };
@@ -330,10 +316,6 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
     }
   };
 
-  // Handler para o checkbox urgente
-  const handleUrgenteChange = (checked: boolean | "indeterminate") => {
-    setUrgente(checked === true);
-  };
 
   return (
     <>
@@ -1183,22 +1165,14 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                 <Card>
                   <CardHeader>
                     <CardTitle>Informações Básicas de Frete</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Preencha as informações básicas de entrega
+                    </p>
                   </CardHeader>
                   <CardContent className="grid grid-cols-2 gap-4">
+                    {/* Tipo de Frete */}
                     <div>
-                      <Label htmlFor="valorFrete">Valor do Frete</Label>
-                      <Input
-                        id="valorFrete"
-                        type="number"
-                        value={valorFrete}
-                        onChange={(e) => setValorFrete(Number(e.target.value))}
-                        step="0.01"
-                        min="0"
-                        placeholder="0,00"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="tipoFrete">Tipo de Frete</Label>
+                      <Label htmlFor="tipoFrete">Tipo de Frete *</Label>
                       <Select value={tipoFrete} onValueChange={setTipoFrete}>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o tipo" />
@@ -1211,17 +1185,22 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                         </SelectContent>
                       </Select>
                     </div>
+
+                    {/* Prazo Máximo de Entrega */}
                     <div>
-                      <Label htmlFor="transportadora">Transportadora</Label>
-                      <Input
-                        id="transportadora"
-                        value={transportadora}
-                        onChange={(e) => setTransportadora(e.target.value)}
-                        placeholder="Nome da transportadora"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="prazoEntrega">Prazo de Entrega</Label>
+                      <Label htmlFor="prazoEntrega" className="flex items-center gap-2">
+                        Prazo Máximo de Entrega *
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-[300px]">
+                              <p>Prazo máximo que o cliente precisa receber o material. O estoque informará depois quando receberá efetivamente.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </Label>
                       <Input
                         id="prazoEntrega"
                         value={prazoEntrega}
@@ -1229,23 +1208,28 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                         placeholder="Ex: 5 dias úteis"
                       />
                     </div>
-                    <div>
-                      <Label htmlFor="dataEntrega">Data de Entrega</Label>
+
+                    {/* Data de Entrega Agendada */}
+                    <div className="col-span-2">
+                      <Label htmlFor="dataEntrega" className="flex items-center gap-2">
+                        Data de Entrega (Agendada)
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-[300px]">
+                              <p>Use apenas se houver agendamento direto com o cliente</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </Label>
                       <Input
                         id="dataEntrega"
                         type="date"
                         value={dataEntrega}
                         onChange={(e) => setDataEntrega(e.target.value)}
                         min={new Date().toISOString().split('T')[0]}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="conhecimento">Conhecimento</Label>
-                      <Input
-                        id="conhecimento"
-                        value={conhecimento}
-                        onChange={(e) => setConhecimento(e.target.value)}
-                        placeholder="Número do conhecimento"
                       />
                     </div>
                   </CardContent>
@@ -1391,120 +1375,125 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                   </CardContent>
                 </Card>
 
-                {/* Seção 5: Controle de Canhoto */}
+                {/* Seção 5: Urgência e Autorização */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Controle de Canhoto</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5 text-orange-500" />
+                      Urgência e Autorização
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Solicite aprovação do gestor para entregas urgentes
+                    </p>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <Label>Exige canhoto assinado?</Label>
-                        <p className="text-xs text-muted-foreground">Marque se for necessário comprovante de entrega assinado</p>
-                      </div>
-                      <Switch
-                        checked={exigeCanhoto}
-                        onCheckedChange={setExigeCanhoto}
-                      />
-                    </div>
-                    
-                    {exigeCanhoto && (
-                      <div>
-                        <Label htmlFor="observacoesCanhoto">Observações sobre o canhoto</Label>
-                        <Textarea
-                          id="observacoesCanhoto"
-                          value={observacoesCanhoto}
-                          onChange={(e) => setObservacoesCanhoto(e.target.value)}
-                          placeholder="Instruções especiais sobre o canhoto de entrega..."
-                          rows={3}
-                        />
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Seção 6: Urgência e Autorização */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Urgência e Autorização</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center space-x-2">
+                    {/* Checkbox para solicitar urgência */}
+                    <div className="flex items-start space-x-3 p-4 border rounded-lg bg-muted/30">
                       <Checkbox 
-                        id="urgenteFreteTab" 
-                        checked={urgente}
-                        onCheckedChange={handleUrgenteChange}
+                        id="solicitarUrgencia" 
+                        checked={solicitarUrgencia}
+                        onCheckedChange={(checked) => {
+                          setSolicitarUrgencia(checked as boolean);
+                          if (!checked) {
+                            setJustificativaUrgencia('');
+                            setUrgenciaStatus(null);
+                          }
+                        }}
                       />
-                      <Label htmlFor="urgenteFreteTab">Esta entrega é urgente</Label>
+                      <div className="flex-1">
+                        <Label htmlFor="solicitarUrgencia" className="font-semibold cursor-pointer">
+                          Solicitar urgência ao gestor
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Marque se esta entrega precisa de aprovação de urgência do gestor
+                        </p>
+                      </div>
                     </div>
 
-                    {urgente && (
+                    {/* Campo de justificativa (aparece quando marcado) */}
+                    {solicitarUrgencia && (
                       <>
+                        <div className="p-4 bg-orange-50 dark:bg-orange-950/20 rounded-lg border border-orange-200 dark:border-orange-800">
+                          <div className="flex items-start gap-2 mb-3">
+                            <AlertTriangle className="h-5 w-5 text-orange-600 dark:text-orange-400 mt-0.5 flex-shrink-0" />
+                            <div className="text-sm text-orange-800 dark:text-orange-300">
+                              <strong>Atenção:</strong> Esta solicitação será enviada ao gestor para aprovação. Justifique claramente o motivo da urgência.
+                            </div>
+                          </div>
+                        </div>
+
                         <div>
-                          <Label htmlFor="justificativaUrgenciaFrete">Justificar a Urgência *</Label>
+                          <Label htmlFor="justificativaUrgencia" className="text-orange-700 dark:text-orange-400 font-semibold">
+                            Justificar a Urgência *
+                          </Label>
                           <Textarea
-                            id="justificativaUrgenciaFrete"
+                            id="justificativaUrgencia"
                             value={justificativaUrgencia}
                             onChange={(e) => setJustificativaUrgencia(e.target.value)}
-                            placeholder="Por que esta entrega é urgente?"
-                            rows={3}
+                            placeholder="Explique detalhadamente por que esta entrega é urgente e precisa de aprovação do gestor..."
+                            rows={4}
                             required
+                            className="mt-2 border-orange-300 dark:border-orange-700 focus:border-orange-500"
                           />
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Seja específico sobre prazos, comprometimentos com cliente, etc.
+                          </p>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="autorizadoPorFrete">Autorizado Por</Label>
-                            <Input
-                              id="autorizadoPorFrete"
-                              value={autorizadoPor}
-                              onChange={(e) => setAutorizadoPor(e.target.value)}
-                              placeholder="Nome do autorizador"
-                            />
+
+                        {/* Informações de autorização (preenchidas automaticamente pelo sistema) */}
+                        <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                          <h5 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                            <Shield className="h-4 w-4" />
+                            Informações de Autorização (Preenchimento Automático)
+                          </h5>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                            <div className="space-y-1">
+                              <p className="text-muted-foreground text-xs">Autorizado Por:</p>
+                              <p className="font-medium text-blue-700 dark:text-blue-300">
+                                {urgenciaStatus === 'aprovada' ? autorizadoPor || 'Aguardando aprovação' : 'Aguardando aprovação'}
+                              </p>
+                            </div>
+                            <div className="space-y-1">
+                              <p className="text-muted-foreground text-xs">Data de Autorização:</p>
+                              <p className="font-medium text-blue-700 dark:text-blue-300">
+                                {urgenciaStatus === 'aprovada' && dataAutorizacao 
+                                  ? new Date(dataAutorizacao).toLocaleDateString('pt-BR') 
+                                  : 'Aguardando aprovação'}
+                              </p>
+                            </div>
+                            <div className="space-y-1">
+                              <p className="text-muted-foreground text-xs">Email do Autorizador:</p>
+                              <p className="font-medium text-blue-700 dark:text-blue-300 truncate">
+                                {urgenciaStatus === 'aprovada' ? emailAutorizador || 'Aguardando aprovação' : 'Aguardando aprovação'}
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <Label htmlFor="dataAutorizacaoFrete">Data de Autorização</Label>
-                            <Input
-                              id="dataAutorizacaoFrete"
-                              type="date"
-                              value={dataAutorizacao}
-                              onChange={(e) => setDataAutorizacao(e.target.value)}
-                              min={new Date().toISOString().split('T')[0]}
-                            />
+                          <p className="text-xs text-muted-foreground mt-3 italic">
+                            ℹ️ Estes campos serão preenchidos automaticamente quando o gestor aprovar a solicitação
+                          </p>
+                        </div>
+
+                        {/* Status da solicitação */}
+                        {urgenciaStatus && (
+                          <div className={`p-3 rounded-lg border flex items-center gap-2 ${
+                            urgenciaStatus === 'aprovada' 
+                              ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800' 
+                              : urgenciaStatus === 'rejeitada'
+                              ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-800'
+                              : 'bg-yellow-50 dark:bg-yellow-950/20 border-yellow-200 dark:border-yellow-800'
+                          }`}>
+                            {urgenciaStatus === 'aprovada' && <CheckCircle2 className="h-5 w-5 text-green-600" />}
+                            {urgenciaStatus === 'rejeitada' && <XCircle className="h-5 w-5 text-red-600" />}
+                            {urgenciaStatus === 'pendente' && <Clock className="h-5 w-5 text-yellow-600" />}
+                            <span className="text-sm font-medium">
+                              {urgenciaStatus === 'aprovada' && 'Urgência aprovada pelo gestor'}
+                              {urgenciaStatus === 'rejeitada' && 'Urgência rejeitada pelo gestor'}
+                              {urgenciaStatus === 'pendente' && 'Aguardando aprovação do gestor'}
+                            </span>
                           </div>
-                        </div>
-                        <div>
-                          <Label htmlFor="emailAutorizadorFrete">Email do Autorizador</Label>
-                          <Input
-                            id="emailAutorizadorFrete"
-                            type="email"
-                            value={emailAutorizador}
-                            onChange={(e) => setEmailAutorizador(e.target.value)}
-                            placeholder="autorizador@empresa.com"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="observacoesAutorizacaoFrete">Observações de Autorização</Label>
-                          <Textarea
-                            id="observacoesAutorizacaoFrete"
-                            value={observacoesAutorizacao}
-                            onChange={(e) => setObservacoesAutorizacao(e.target.value)}
-                            placeholder="Observações sobre a autorização do pedido..."
-                            rows={3}
-                          />
-                        </div>
+                        )}
                       </>
                     )}
-                    
-                    <div>
-                      <Label htmlFor="observacoesFreteGeral">Observações Gerais do Frete</Label>
-                      <Textarea
-                        id="observacoesFreteGeral"
-                        value={observacoesFrete}
-                        onChange={(e) => setObservacoesFrete(e.target.value)}
-                        placeholder="Observações específicas sobre o frete e entrega..."
-                        rows={3}
-                      />
-                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -1518,7 +1507,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
               </Button>
               <Button 
                 onClick={handleSalvarPedido}
-                disabled={produtos.length === 0 || (urgente && !justificativaUrgencia.trim())}
+                disabled={produtos.length === 0 || (solicitarUrgencia && !justificativaUrgencia.trim())}
                 className="bg-biodina-gold hover:bg-biodina-gold/90"
               >
                 Salvar Pedido
