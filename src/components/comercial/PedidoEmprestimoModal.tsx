@@ -94,21 +94,6 @@ const PedidoEmprestimoModal = ({
   const [dataAutorizacao, setDataAutorizacao] = useState(pedidoInicial?.dataAutorizacao || '');
   const [emailAutorizador, setEmailAutorizador] = useState(pedidoInicial?.emailAutorizador || '');
 
-  // Configurações de Estoque
-  const [temValidadeMinima, setTemValidadeMinima] = useState(pedidoInicial?.temValidadeMinima || false);
-  const [validadeMinimaGlobal, setValidadeMinimaGlobal] = useState(pedidoInicial?.validadeMinimaGlobal || '');
-  const [temPrevisaoConsumo, setTemPrevisaoConsumo] = useState(pedidoInicial?.temPrevisaoConsumo || false);
-  const [previsaoConsumoMensal, setPrevisaoConsumoMensal] = useState(pedidoInicial?.previsaoConsumoMensal || 0);
-  const [materiaisComplementares, setMateriaisComplementares] = useState(pedidoInicial?.materiaisComplementares || {
-    cabo: false,
-    nobreak: false,
-    manuais: false,
-    gelox: false,
-    geloSeco: false,
-    outrosAcessorios: false,
-    especificacaoOutros: ''
-  });
-
   // Faturamento
   const [pedidoOrigem, setPedidoOrigem] = useState(pedidoInicial?.pedidoOrigem || '');
   const [naturezaOperacao, setNaturezaOperacao] = useState(pedidoInicial?.naturezaOperacao || '');
@@ -272,12 +257,6 @@ const PedidoEmprestimoModal = ({
       autorizadoPor: urgenciaStatus === 'aprovada' ? autorizadoPor : undefined,
       dataAutorizacao: urgenciaStatus === 'aprovada' ? dataAutorizacao : undefined,
       emailAutorizador: urgenciaStatus === 'aprovada' ? emailAutorizador : undefined,
-      // Configurações de Estoque
-      temValidadeMinima,
-      validadeMinimaGlobal,
-      temPrevisaoConsumo,
-      previsaoConsumoMensal,
-      materiaisComplementares,
       // Faturamento
       pedidoOrigem,
       naturezaOperacao,
@@ -547,70 +526,6 @@ const PedidoEmprestimoModal = ({
                       placeholder="Observações gerais para o pedido..."
                       rows={3}
                     />
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Configurações de Estoque</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Validade Mínima */}
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="validade-minima" className="text-base font-medium">
-                          Validade Mínima?
-                        </Label>
-                        <Switch
-                          id="validade-minima"
-                          checked={temValidadeMinima}
-                          onCheckedChange={setTemValidadeMinima}
-                        />
-                      </div>
-                      
-                      {temValidadeMinima && (
-                        <div>
-                          <Label htmlFor="validade-minima-data">Qual validade mínima permitida?</Label>
-                          <Input
-                            id="validade-minima-data"
-                            type="date"
-                            value={validadeMinimaGlobal}
-                            onChange={(e) => setValidadeMinimaGlobal(e.target.value)}
-                            min={new Date().toISOString().split('T')[0]}
-                            className="mt-2"
-                          />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Previsão de Consumo */}
-                    <div className="space-y-4 pt-4 border-t">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="previsao-consumo" className="text-base font-medium">
-                          Previsão de consumo?
-                        </Label>
-                        <Switch
-                          id="previsao-consumo"
-                          checked={temPrevisaoConsumo}
-                          onCheckedChange={setTemPrevisaoConsumo}
-                        />
-                      </div>
-                      
-                      {temPrevisaoConsumo && (
-                        <div>
-                          <Label htmlFor="previsao-consumo-mensal">Qual previsão de consumo mensal?</Label>
-                          <Input
-                            id="previsao-consumo-mensal"
-                            type="number"
-                            value={previsaoConsumoMensal}
-                            onChange={(e) => setPrevisaoConsumoMensal(Number(e.target.value))}
-                            min="0"
-                            placeholder="0"
-                            className="mt-2"
-                          />
-                        </div>
-                      )}
-                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
