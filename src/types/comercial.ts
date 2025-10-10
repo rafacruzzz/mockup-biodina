@@ -93,6 +93,7 @@ export interface ItemUsoConsumoPedido {
 export interface PedidoCompleto {
   id: number;
   numeroOportunidade: string;
+  projetoOrigem?: string;
   cliente: string;
   vendedor: string;
   dataVenda: string;
@@ -147,6 +148,9 @@ export interface PedidoCompleto {
   tipoContrato?: string;
   emailsNF?: string;
   formaPagamentoNF?: string;
+  contaBancariaRecebimento?: string;
+  numeroParcelas?: number;
+  instrucoesBoleto?: string;
   documentacaoNF?: {
     certificadoQualidade: boolean;
     certificadoAnalise: boolean;
@@ -157,6 +161,7 @@ export interface PedidoCompleto {
     outros: boolean;
     especificacaoOutros: string;
   };
+  observacoesDocumentacao?: string;
   destacarIR?: boolean;
   percentualIR?: number;
   

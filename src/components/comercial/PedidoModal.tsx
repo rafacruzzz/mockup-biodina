@@ -12,10 +12,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { Plus, X, Trash2, Info, ShoppingCart, AlertTriangle, Package } from "lucide-react";
+import { Plus, X, Trash2, Info, ShoppingCart, AlertTriangle, Package, Link as LinkIcon, Lock, Wallet, Building, FileText } from "lucide-react";
 import { ProdutoPedido, PedidoCompleto, UnidadeVenda, ItemUsoConsumoPedido } from "@/types/comercial";
 import AdicionarProdutoModal from "./AdicionarProdutoModal";
 import AdicionarItemUsoConsumoModal from "./AdicionarItemUsoConsumoModal";
+import { mockContasBancarias } from "@/data/tesouraria";
 
 interface PedidoModalProps {
   isOpen: boolean;
@@ -36,6 +37,16 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   // Estados para os novos campos das abas
   const [informacoesComplementares, setInformacoesComplementares] = useState('');
   const [condicoesPagamento, setCondicoesPagamento] = useState('');
+  
+  // Estados para PAGAMENTO
+  const [contaBancariaRecebimento, setContaBancariaRecebimento] = useState('');
+  const [numeroParcelas, setNumeroParcelas] = useState(1);
+  const [instrucoesBoleto, setInstrucoesBoleto] = useState('');
+  const [observacoesDocumentacao, setObservacoesDocumentacao] = useState('');
+
+  // Estado derivado do projeto (auto-preenchido)
+  const projetoOrigem = oportunidade.codigo || oportunidade.id || '';
+  const condicoesPagamentoProjeto = oportunidade.condicoesPagamento || '';
   
   // Frete - Seção 1: Informações Básicas
   const [valorFrete, setValorFrete] = useState(0);
@@ -197,6 +208,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
     const pedido: PedidoCompleto = {
       id: Date.now(),
       numeroOportunidade: oportunidade.id.toString(),
+      projetoOrigem,
       cliente: oportunidade.nomeFantasia || oportunidade.cliente,
       vendedor: 'Usuário Atual',
       dataVenda: new Date().toISOString().split('T')[0],
@@ -206,7 +218,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       observacoesGerais,
       // Novos campos
       informacoesComplementares,
-      condicoesPagamento,
+      condicoesPagamento: condicoesPagamento || condicoesPagamentoProjeto,
       valorFrete,
       tipoFrete,
       transportadora,
@@ -243,7 +255,11 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       tipoContrato,
       emailsNF,
       formaPagamentoNF,
+      contaBancariaRecebimento,
+      numeroParcelas,
+      instrucoesBoleto,
       documentacaoNF,
+      observacoesDocumentacao,
       destacarIR,
       percentualIR: destacarIR ? percentualIR : undefined,
       // Controle de Canhoto
@@ -704,18 +720,32 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                 {/* Card 1: Vinculação e Origem */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Vinculação e Origem</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                      <LinkIcon className="h-5 w-5" />
+                      Vinculação e Origem
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-3">
                     <div>
-                      <Label htmlFor="pedidoOrigem">Material vinculado a qual pedido/origem?</Label>
-                      <Input
-                        id="pedidoOrigem"
-                        value={pedidoOrigem}
-                        onChange={(e) => setPedidoOrigem(e.target.value)}
-                        placeholder="Ex: Pedido #1234, OC-5678"
-                        className="mt-2"
-                      />
+                      <Label htmlFor="projetoOrigem">Projeto de Origem *</Label>
+                      <div className="relative mt-2">
+                        <Input
+                          id="projetoOrigem"
+                          value={projetoOrigem}
+                          disabled
+                          className="bg-muted/50 cursor-not-allowed pr-10"
+                        />
+                        <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </div>
+                    
+                    <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <div className="flex items-start gap-2">
+                        <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-blue-800 dark:text-blue-300">
+                          Este pedido está vinculado automaticamente ao projeto de origem da oportunidade.
+                        </p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -783,115 +813,286 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                   </CardContent>
                 </Card>
 
-                {/* Card 4: Pagamento e Documentação */}
+                {/* Card 4: PAGAMENTO */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Pagamento e Documentação</CardTitle>
+                    <CardTitle className="flex items-center gap-2">
+                      <Wallet className="h-5 w-5" />
+                      Pagamento
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="formaPagamentoNF">Forma de Pagamento *</Label>
+                        <Select value={formaPagamentoNF} onValueChange={setFormaPagamentoNF}>
+                          <SelectTrigger className="mt-2">
+                            <SelectValue placeholder="Selecione a forma de pagamento" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="a_vista">À Vista</SelectItem>
+                            <SelectItem value="boleto">Boleto</SelectItem>
+                            <SelectItem value="cartao_credito">Cartão de Crédito</SelectItem>
+                            <SelectItem value="transferencia">Transferência Bancária</SelectItem>
+                            <SelectItem value="cheque">Cheque</SelectItem>
+                            <SelectItem value="parcelado">Parcelado</SelectItem>
+                            <SelectItem value="deposito">Depósito</SelectItem>
+                            <SelectItem value="pix">PIX</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="condicoesPagamento">Condições de Pagamento *</Label>
+                        <div className="relative mt-2">
+                          <Input
+                            id="condicoesPagamento"
+                            value={condicoesPagamento || condicoesPagamentoProjeto}
+                            onChange={(e) => setCondicoesPagamento(e.target.value)}
+                            placeholder="Ex: 30/60/90 dias"
+                            className={condicoesPagamentoProjeto ? "bg-muted/30" : ""}
+                          />
+                          {condicoesPagamentoProjeto && (
+                            <span className="text-xs text-muted-foreground ml-1 mt-1 block">
+                              (pré-preenchido do projeto)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
                     <div>
-                      <Label htmlFor="formaPagamentoNF">Forma de pagamento</Label>
-                      <Select value={formaPagamentoNF} onValueChange={setFormaPagamentoNF}>
+                      <Label htmlFor="contaBancaria">Conta Bancária para Recebimento *</Label>
+                      <Select value={contaBancariaRecebimento} onValueChange={setContaBancariaRecebimento}>
                         <SelectTrigger className="mt-2">
-                          <SelectValue placeholder="Selecione a forma de pagamento" />
+                          <SelectValue placeholder="Selecione a conta bancária" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="a_vista">À vista</SelectItem>
-                          <SelectItem value="boleto">Boleto</SelectItem>
-                          <SelectItem value="cartao_credito">Cartão de Crédito</SelectItem>
-                          <SelectItem value="transferencia">Transferência Bancária</SelectItem>
-                          <SelectItem value="cheque">Cheque</SelectItem>
-                          <SelectItem value="parcelado">Parcelado</SelectItem>
-                          <SelectItem value="deposito">Depósito</SelectItem>
+                          {mockContasBancarias
+                            .filter(c => c.status === 'Ativa')
+                            .map(conta => (
+                              <SelectItem key={conta.id} value={conta.id}>
+                                {conta.banco} - Ag: {conta.agencia} - Conta: {conta.conta}
+                              </SelectItem>
+                            ))
+                          }
                         </SelectContent>
                       </Select>
                     </div>
                     
-                    <div className="space-y-2">
-                      <Label>Documentação para enviar junto à NF</Label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="certQualidade"
-                            checked={documentacaoNF.certificadoQualidade}
-                            onCheckedChange={(checked) => 
-                              setDocumentacaoNF({...documentacaoNF, certificadoQualidade: checked === true})
-                            }
-                          />
-                          <label htmlFor="certQualidade" className="text-sm cursor-pointer">Certificado de Qualidade</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="certAnalise"
-                            checked={documentacaoNF.certificadoAnalise}
-                            onCheckedChange={(checked) => 
-                              setDocumentacaoNF({...documentacaoNF, certificadoAnalise: checked === true})
-                            }
-                          />
-                          <label htmlFor="certAnalise" className="text-sm cursor-pointer">Certificado de Análise</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="manual"
-                            checked={documentacaoNF.manual}
-                            onCheckedChange={(checked) => 
-                              setDocumentacaoNF({...documentacaoNF, manual: checked === true})
-                            }
-                          />
-                          <label htmlFor="manual" className="text-sm cursor-pointer">Manual do Produto</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="fichaTecnica"
-                            checked={documentacaoNF.fichaTecnica}
-                            onCheckedChange={(checked) => 
-                              setDocumentacaoNF({...documentacaoNF, fichaTecnica: checked === true})
-                            }
-                          />
-                          <label htmlFor="fichaTecnica" className="text-sm cursor-pointer">Ficha Técnica</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="laudoTecnico"
-                            checked={documentacaoNF.laudoTecnico}
-                            onCheckedChange={(checked) => 
-                              setDocumentacaoNF({...documentacaoNF, laudoTecnico: checked === true})
-                            }
-                          />
-                          <label htmlFor="laudoTecnico" className="text-sm cursor-pointer">Laudo Técnico</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="nfOrigem"
-                            checked={documentacaoNF.nfOrigem}
-                            onCheckedChange={(checked) => 
-                              setDocumentacaoNF({...documentacaoNF, nfOrigem: checked === true})
-                            }
-                          />
-                          <label htmlFor="nfOrigem" className="text-sm cursor-pointer">NF de Origem</label>
-                        </div>
-                        <div className="flex items-center space-x-2 col-span-2">
-                          <Checkbox
-                            id="outros"
-                            checked={documentacaoNF.outros}
-                            onCheckedChange={(checked) => 
-                              setDocumentacaoNF({...documentacaoNF, outros: checked === true})
-                            }
-                          />
-                          <label htmlFor="outros" className="text-sm cursor-pointer">Outros</label>
-                        </div>
-                        {documentacaoNF.outros && (
-                          <div className="col-span-2">
-                            <Input
-                              placeholder="Especifique outros documentos..."
-                              value={documentacaoNF.especificacaoOutros}
-                              onChange={(e) => 
-                                setDocumentacaoNF({...documentacaoNF, especificacaoOutros: e.target.value})
-                              }
-                            />
+                    {contaBancariaRecebimento && (() => {
+                      const contaSelecionada = mockContasBancarias.find(c => c.id === contaBancariaRecebimento);
+                      return contaSelecionada && (
+                        <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                          <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                            <Building className="h-4 w-4" />
+                            Dados Bancários Selecionados:
+                          </h4>
+                          <div className="grid grid-cols-2 gap-2 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground">🏦 Banco:</span>
+                              <span className="font-medium">{contaSelecionada.banco}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground">🔢 Agência:</span>
+                              <span className="font-medium">{contaSelecionada.agencia}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground">💳 Conta:</span>
+                              <span className="font-medium">{contaSelecionada.conta} ({contaSelecionada.tipo})</span>
+                            </div>
+                            {contaSelecionada.gerente && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-muted-foreground">👤 Gerente:</span>
+                                <span className="font-medium">{contaSelecionada.gerente}</span>
+                              </div>
+                            )}
                           </div>
-                        )}
+                        </div>
+                      );
+                    })()}
+                    
+                    {(formaPagamentoNF === 'parcelado' || formaPagamentoNF === 'boleto') && (
+                      <div>
+                        <Label htmlFor="numeroParcelas">Número de Parcelas *</Label>
+                        <Input
+                          id="numeroParcelas"
+                          type="number"
+                          value={numeroParcelas}
+                          onChange={(e) => setNumeroParcelas(Number(e.target.value))}
+                          min="1"
+                          max="12"
+                          className="mt-2 w-32"
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {numeroParcelas > 1 ? `${numeroParcelas}x de ${formatCurrency(calcularTotal() / numeroParcelas)}` : 'Pagamento à vista'}
+                        </p>
                       </div>
+                    )}
+                    
+                    {formaPagamentoNF === 'boleto' && (
+                      <>
+                        <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg border border-yellow-300 dark:border-yellow-800">
+                          <div className="flex items-start gap-2">
+                            <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 mt-0.5 flex-shrink-0" />
+                            <div className="text-sm text-yellow-800 dark:text-yellow-300">
+                              <strong>ATENÇÃO:</strong> O departamento de faturamento deverá emitir {numeroParcelas > 1 ? `${numeroParcelas} boletos` : 'o boleto'} e anexar junto à Nota Fiscal antes do envio ao cliente.
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="instrucoesBoleto">Instruções para o Boleto (opcional)</Label>
+                          <Textarea
+                            id="instrucoesBoleto"
+                            value={instrucoesBoleto}
+                            onChange={(e) => setInstrucoesBoleto(e.target.value)}
+                            placeholder="Ex: Não aceitar pagamento em cheque, multa de 2% após vencimento..."
+                            rows={3}
+                            className="mt-2"
+                          />
+                        </div>
+                      </>
+                    )}
+                    
+                    <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <div className="flex items-start gap-2">
+                        <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-blue-800 dark:text-blue-300">
+                          💡 Estas informações serão incluídas automaticamente nas <strong>informações complementares da Nota Fiscal</strong>
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Card 5: DOCUMENTAÇÃO */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Documentação para Envio junto à NF
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800 mb-4">
+                      <div className="flex items-start gap-2">
+                        <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-blue-800 dark:text-blue-300">
+                          ℹ️ A documentação pode vir pré-selecionada do projeto inicial pela equipe comercial
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="certQualidade"
+                          checked={documentacaoNF.certificadoQualidade}
+                          onCheckedChange={(checked) => 
+                            setDocumentacaoNF({...documentacaoNF, certificadoQualidade: checked === true})
+                          }
+                        />
+                        <label htmlFor="certQualidade" className="text-sm cursor-pointer">
+                          Certificado de Qualidade
+                        </label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="certAnalise"
+                          checked={documentacaoNF.certificadoAnalise}
+                          onCheckedChange={(checked) => 
+                            setDocumentacaoNF({...documentacaoNF, certificadoAnalise: checked === true})
+                          }
+                        />
+                        <label htmlFor="certAnalise" className="text-sm cursor-pointer">
+                          Certificado de Análise
+                        </label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="manual"
+                          checked={documentacaoNF.manual}
+                          onCheckedChange={(checked) => 
+                            setDocumentacaoNF({...documentacaoNF, manual: checked === true})
+                          }
+                        />
+                        <label htmlFor="manual" className="text-sm cursor-pointer">
+                          Manual do Produto
+                        </label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="fichaTecnica"
+                          checked={documentacaoNF.fichaTecnica}
+                          onCheckedChange={(checked) => 
+                            setDocumentacaoNF({...documentacaoNF, fichaTecnica: checked === true})
+                          }
+                        />
+                        <label htmlFor="fichaTecnica" className="text-sm cursor-pointer">
+                          Ficha Técnica
+                        </label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="laudoTecnico"
+                          checked={documentacaoNF.laudoTecnico}
+                          onCheckedChange={(checked) => 
+                            setDocumentacaoNF({...documentacaoNF, laudoTecnico: checked === true})
+                          }
+                        />
+                        <label htmlFor="laudoTecnico" className="text-sm cursor-pointer">
+                          Laudo Técnico
+                        </label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="nfOrigem"
+                          checked={documentacaoNF.nfOrigem}
+                          onCheckedChange={(checked) => 
+                            setDocumentacaoNF({...documentacaoNF, nfOrigem: checked === true})
+                          }
+                        />
+                        <label htmlFor="nfOrigem" className="text-sm cursor-pointer">
+                          NF de Origem
+                        </label>
+                      </div>
+                      <div className="flex items-center space-x-2 col-span-2">
+                        <Checkbox
+                          id="outros"
+                          checked={documentacaoNF.outros}
+                          onCheckedChange={(checked) => 
+                            setDocumentacaoNF({...documentacaoNF, outros: checked === true})
+                          }
+                        />
+                        <label htmlFor="outros" className="text-sm cursor-pointer">
+                          Outros
+                        </label>
+                      </div>
+                      {documentacaoNF.outros && (
+                        <div className="col-span-2">
+                          <Input
+                            placeholder="Especifique outros documentos..."
+                            value={documentacaoNF.especificacaoOutros}
+                            onChange={(e) => 
+                              setDocumentacaoNF({...documentacaoNF, especificacaoOutros: e.target.value})
+                            }
+                            className="mt-2"
+                          />
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="observacoesDocumentacao">Observações sobre a Documentação</Label>
+                      <Textarea
+                        id="observacoesDocumentacao"
+                        value={observacoesDocumentacao}
+                        onChange={(e) => setObservacoesDocumentacao(e.target.value)}
+                        placeholder="Instruções especiais sobre documentos..."
+                        rows={3}
+                        className="mt-2"
+                      />
                     </div>
                   </CardContent>
                 </Card>
