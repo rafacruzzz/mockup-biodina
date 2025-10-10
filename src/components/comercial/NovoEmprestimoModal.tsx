@@ -40,7 +40,30 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
     dataRetorno: null as Date | null,
     dataBaixa: null as Date | null,
     valorRetornado: "",
-    idImportacaoDireta: ""
+    idImportacaoDireta: "",
+    
+    // Novos campos de Retorno
+    tipoRetorno: null as 'produto' | 'servico' | 'financeiro' | null,
+    statusRetorno: "",
+    danfeRetornoFile: null as File | null,
+    
+    // Campos específicos de Produto
+    dataConferencia: null as Date | null,
+    
+    // Campos específicos de Serviço
+    tipoServico: "",
+    responsavelServico: "",
+    dataExecucaoServico: null as Date | null,
+    dataConclusaoServico: null as Date | null,
+    descricaoServico: "",
+    observacoesServico: "",
+    
+    // Campos específicos de Financeiro
+    formaPagamento: "",
+    numeroComprovante: "",
+    dataPagamento: null as Date | null,
+    comprovanteFile: null as File | null,
+    observacoesPagamento: ""
   });
 
   // Calcular valor total automaticamente
@@ -93,7 +116,13 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
   };
 
   const handleSave = () => {
-    // Validações
+    // Validação dos campos obrigatórios
+    if (!formData.cnpjCliente || !formData.nomeCliente || !formData.dataEmprestimo) {
+      toast.error("Preencha todos os campos obrigatórios em Dados Gerais");
+      setActiveTab("dados-gerais");
+      return;
+    }
+
     if (!formData.moeda) {
       toast.error("Selecione a moeda do empréstimo");
       setActiveTab("pedidos");
@@ -104,6 +133,48 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
       toast.error("Adicione pelo menos um pedido ao empréstimo");
       setActiveTab("pedidos");
       return;
+    }
+
+    // Nova validação de Retorno (se a aba for preenchida)
+    if (formData.tipoRetorno) {
+      if (!formData.statusRetorno) {
+        toast.error("Selecione o status do retorno");
+        setActiveTab("retorno");
+        return;
+      }
+      
+      // Validações específicas por tipo
+      if (formData.tipoRetorno === 'produto' && !formData.dataRetorno) {
+        toast.error("Informe a data do retorno do produto");
+        setActiveTab("retorno");
+        return;
+      }
+      
+      if (formData.tipoRetorno === 'servico') {
+        if (!formData.tipoServico) {
+          toast.error("Informe o tipo de serviço prestado");
+          setActiveTab("retorno");
+          return;
+        }
+        if (!formData.dataExecucaoServico) {
+          toast.error("Informe a data de execução do serviço");
+          setActiveTab("retorno");
+          return;
+        }
+      }
+      
+      if (formData.tipoRetorno === 'financeiro') {
+        if (!formData.valorRetornado || !formData.formaPagamento) {
+          toast.error("Informe o valor e a forma de pagamento");
+          setActiveTab("retorno");
+          return;
+        }
+        if (!formData.dataPagamento) {
+          toast.error("Informe a data do pagamento");
+          setActiveTab("retorno");
+          return;
+        }
+      }
     }
 
     console.log("Salvando empréstimo:", formData);
@@ -121,6 +192,18 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
       case "pedidos":
         return formData.moeda && pedidosVinculados.length > 0 ? "complete" : "incomplete";
       case "retorno":
+        // Se tipoRetorno foi selecionado, verificar se está completo
+        if (formData.tipoRetorno) {
+          if (formData.tipoRetorno === 'produto') {
+            return formData.statusRetorno && formData.dataRetorno ? "complete" : "incomplete";
+          }
+          if (formData.tipoRetorno === 'servico') {
+            return formData.statusRetorno && formData.tipoServico && formData.dataExecucaoServico ? "complete" : "incomplete";
+          }
+          if (formData.tipoRetorno === 'financeiro') {
+            return formData.statusRetorno && formData.valorRetornado && formData.formaPagamento && formData.dataPagamento ? "complete" : "incomplete";
+          }
+        }
         return "optional";
       default:
         return "incomplete";
