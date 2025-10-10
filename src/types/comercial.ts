@@ -151,16 +151,7 @@ export interface PedidoCompleto {
   contaBancariaRecebimento?: string;
   numeroParcelas?: number;
   instrucoesBoleto?: string;
-  documentacaoNF?: {
-    certificadoQualidade: boolean;
-    certificadoAnalise: boolean;
-    manual: boolean;
-    fichaTecnica: boolean;
-    laudoTecnico: boolean;
-    nfOrigem: boolean;
-    outros: boolean;
-    especificacaoOutros: string;
-  };
+  documentosNF?: string[];
   observacoesDocumentacao?: string;
   destacarIR?: boolean;
   percentualIR?: number;

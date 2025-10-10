@@ -18,6 +18,7 @@ import AdicionarProdutoModal from "./AdicionarProdutoModal";
 import AdicionarItemUsoConsumoModal from "./AdicionarItemUsoConsumoModal";
 import { mockContasBancarias } from "@/data/tesouraria";
 import { naturezasOperacao, getDescritivosOperacao, temDescritivoUnico, type DescritivoOperacao } from "@/data/naturezasOperacao";
+import { tiposDocumentosNF } from "@/data/documentosNF";
 
 interface PedidoModalProps {
   isOpen: boolean;
@@ -108,16 +109,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   const [descritivosFiltrados, setDescritivosFiltrados] = useState<DescritivoOperacao[]>([]);
   const [emailsNF, setEmailsNF] = useState('');
   const [formaPagamentoNF, setFormaPagamentoNF] = useState('');
-  const [documentacaoNF, setDocumentacaoNF] = useState({
-    certificadoQualidade: false,
-    certificadoAnalise: false,
-    manual: false,
-    fichaTecnica: false,
-    laudoTecnico: false,
-    nfOrigem: false,
-    outros: false,
-    especificacaoOutros: ''
-  });
+  const [documentosSelecionados, setDocumentosSelecionados] = useState<string[]>([]);
   
   // Controle de Canhoto
   const [exigeCanhoto, setExigeCanhoto] = useState(false);
@@ -141,6 +133,14 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       setDescritivoOperacao('');
     }
   }, [naturezaOperacao]);
+
+  const handleToggleDocumento = (documento: string) => {
+    setDocumentosSelecionados(prev => 
+      prev.includes(documento)
+        ? prev.filter(d => d !== documento)
+        : [...prev, documento]
+    );
+  };
 
   const handleAdicionarProduto = (produto: ProdutoPedido) => {
     setProdutos(prev => [...prev, { ...produto, id: Date.now() }]);
@@ -278,7 +278,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       contaBancariaRecebimento,
       numeroParcelas,
       instrucoesBoleto,
-      documentacaoNF,
+      documentosNF: documentosSelecionados,
       observacoesDocumentacao,
       destacarIR,
       // Controle de Canhoto
@@ -1071,105 +1071,83 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="certQualidade"
-                          checked={documentacaoNF.certificadoQualidade}
-                          onCheckedChange={(checked) => 
-                            setDocumentacaoNF({...documentacaoNF, certificadoQualidade: checked === true})
+                    {/* Select Multi-escolha */}
+                    <div>
+                      <Label htmlFor="documentosNF">Documentos a serem enviados</Label>
+                      <Select 
+                        value="" 
+                        onValueChange={(value) => {
+                          if (value && !documentosSelecionados.includes(value)) {
+                            handleToggleDocumento(value);
                           }
-                        />
-                        <label htmlFor="certQualidade" className="text-sm cursor-pointer">
-                          Certificado de Qualidade
-                        </label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="certAnalise"
-                          checked={documentacaoNF.certificadoAnalise}
-                          onCheckedChange={(checked) => 
-                            setDocumentacaoNF({...documentacaoNF, certificadoAnalise: checked === true})
+                        }}
+                      >
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder={
+                            documentosSelecionados.length === 0 
+                              ? "Selecione os documentos..." 
+                              : `${documentosSelecionados.length} documento(s) selecionado(s)`
+                          } />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[400px]">
+                          {tiposDocumentosNF
+                            .filter(doc => !documentosSelecionados.includes(doc))
+                            .map(doc => (
+                              <SelectItem key={doc} value={doc}>
+                                {doc}
+                              </SelectItem>
+                            ))
                           }
-                        />
-                        <label htmlFor="certAnalise" className="text-sm cursor-pointer">
-                          Certificado de Análise
-                        </label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="manual"
-                          checked={documentacaoNF.manual}
-                          onCheckedChange={(checked) => 
-                            setDocumentacaoNF({...documentacaoNF, manual: checked === true})
-                          }
-                        />
-                        <label htmlFor="manual" className="text-sm cursor-pointer">
-                          Manual do Produto
-                        </label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="fichaTecnica"
-                          checked={documentacaoNF.fichaTecnica}
-                          onCheckedChange={(checked) => 
-                            setDocumentacaoNF({...documentacaoNF, fichaTecnica: checked === true})
-                          }
-                        />
-                        <label htmlFor="fichaTecnica" className="text-sm cursor-pointer">
-                          Ficha Técnica
-                        </label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="laudoTecnico"
-                          checked={documentacaoNF.laudoTecnico}
-                          onCheckedChange={(checked) => 
-                            setDocumentacaoNF({...documentacaoNF, laudoTecnico: checked === true})
-                          }
-                        />
-                        <label htmlFor="laudoTecnico" className="text-sm cursor-pointer">
-                          Laudo Técnico
-                        </label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="nfOrigem"
-                          checked={documentacaoNF.nfOrigem}
-                          onCheckedChange={(checked) => 
-                            setDocumentacaoNF({...documentacaoNF, nfOrigem: checked === true})
-                          }
-                        />
-                        <label htmlFor="nfOrigem" className="text-sm cursor-pointer">
-                          NF de Origem
-                        </label>
-                      </div>
-                      <div className="flex items-center space-x-2 col-span-2">
-                        <Checkbox
-                          id="outros"
-                          checked={documentacaoNF.outros}
-                          onCheckedChange={(checked) => 
-                            setDocumentacaoNF({...documentacaoNF, outros: checked === true})
-                          }
-                        />
-                        <label htmlFor="outros" className="text-sm cursor-pointer">
-                          Outros
-                        </label>
-                      </div>
-                      {documentacaoNF.outros && (
-                        <div className="col-span-2">
-                          <Input
-                            placeholder="Especifique outros documentos..."
-                            value={documentacaoNF.especificacaoOutros}
-                            onChange={(e) => 
-                              setDocumentacaoNF({...documentacaoNF, especificacaoOutros: e.target.value})
-                            }
-                            className="mt-2"
-                          />
-                        </div>
-                      )}
+                          {tiposDocumentosNF.every(doc => documentosSelecionados.includes(doc)) && (
+                            <div className="p-4 text-center text-sm text-muted-foreground">
+                              Todos os documentos já foram selecionados
+                            </div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Clique para adicionar documentos à lista. Você pode selecionar múltiplos documentos.
+                      </p>
                     </div>
                     
+                    {/* Lista de documentos selecionados */}
+                    {documentosSelecionados.length > 0 && (
+                      <div className="border rounded-lg p-3 space-y-2 bg-muted/30">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold text-sm">
+                            Documentos Selecionados ({documentosSelecionados.length})
+                          </h4>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setDocumentosSelecionados([])}
+                            className="h-7 text-xs"
+                          >
+                            Limpar todos
+                          </Button>
+                        </div>
+                        <div className="space-y-1 max-h-[300px] overflow-y-auto">
+                          {documentosSelecionados.map(doc => (
+                            <div 
+                              key={doc}
+                              className="flex items-center justify-between p-2 bg-background rounded border hover:border-primary/50 transition-colors"
+                            >
+                              <span className="text-sm flex-1">{doc}</span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleToggleDocumento(doc)}
+                                className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Campo Observações (mantido) */}
                     <div>
                       <Label htmlFor="observacoesDocumentacao">Observações sobre a Documentação</Label>
                       <Textarea
