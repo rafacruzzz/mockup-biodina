@@ -38,6 +38,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   // Estados para os novos campos das abas
   const [informacoesComplementares, setInformacoesComplementares] = useState('');
   const [condicoesPagamento, setCondicoesPagamento] = useState('');
+  const [destacarIR, setDestacarIR] = useState(false);
   
   // Estados para PAGAMENTO
   const [contaBancariaRecebimento, setContaBancariaRecebimento] = useState('');
@@ -117,8 +118,6 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
     outros: false,
     especificacaoOutros: ''
   });
-  const [destacarIR, setDestacarIR] = useState(false);
-  const [percentualIR, setPercentualIR] = useState(0);
   
   // Controle de Canhoto
   const [exigeCanhoto, setExigeCanhoto] = useState(false);
@@ -282,7 +281,6 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       documentacaoNF,
       observacoesDocumentacao,
       destacarIR,
-      percentualIR: destacarIR ? percentualIR : undefined,
       // Controle de Canhoto
       exigeCanhoto,
       observacoesCanhoto: exigeCanhoto ? observacoesCanhoto : undefined,
@@ -857,7 +855,31 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                   </CardContent>
                 </Card>
 
-                {/* Card 3: Comunicação e Envio */}
+                {/* Card 3: Configurações Fiscais */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Configurações Fiscais</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between p-4 rounded-lg border">
+                      <div className="space-y-1">
+                        <Label htmlFor="destacarIR" className="text-base font-medium cursor-pointer">
+                          Deve destacar IR?
+                        </Label>
+                        <p className="text-sm text-muted-foreground">
+                          Destacar Imposto de Renda na nota fiscal
+                        </p>
+                      </div>
+                      <Switch
+                        id="destacarIR"
+                        checked={destacarIR}
+                        onCheckedChange={setDestacarIR}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Card 4: Comunicação e Envio */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Comunicação e Envio</CardTitle>
@@ -878,7 +900,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                   </CardContent>
                 </Card>
 
-                {/* Card 4: PAGAMENTO */}
+                {/* Card 5: PAGAMENTO */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -1031,7 +1053,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                   </CardContent>
                 </Card>
 
-                {/* Card 5: DOCUMENTAÇÃO */}
+                {/* Card 6: DOCUMENTAÇÃO */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -1162,42 +1184,6 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                   </CardContent>
                 </Card>
 
-                {/* Card 5: Configurações Fiscais */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Configurações Fiscais</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <Label>Deve destacar IR?</Label>
-                        <p className="text-xs text-muted-foreground">Destacar Imposto de Renda na nota fiscal</p>
-                      </div>
-                      <Switch
-                        checked={destacarIR}
-                        onCheckedChange={setDestacarIR}
-                      />
-                    </div>
-                    
-                    {destacarIR && (
-                      <div>
-                        <Label htmlFor="percentualIR">Percentual de IR (%)</Label>
-                        <Input
-                          id="percentualIR"
-                          type="number"
-                          value={percentualIR}
-                          onChange={(e) => setPercentualIR(Number(e.target.value))}
-                          step="0.01"
-                          min="0"
-                          max="100"
-                          placeholder="0,00"
-                          className="mt-2"
-                        />
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
                 <Card>
                   <CardHeader>
                     <CardTitle>Informações Complementares da NF</CardTitle>
@@ -1208,20 +1194,6 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                       onChange={(e) => setInformacoesComplementares(e.target.value)}
                       placeholder="Informações complementares que aparecerão na nota fiscal..."
                       rows={4}
-                    />
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Condições de Pagamento</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Textarea
-                      value={condicoesPagamento}
-                      onChange={(e) => setCondicoesPagamento(e.target.value)}
-                      placeholder="Descreva as condições de pagamento..."
-                      rows={3}
                     />
                   </CardContent>
                 </Card>
