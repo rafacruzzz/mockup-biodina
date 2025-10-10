@@ -1504,15 +1504,153 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
               <TabsContent value="acompanhamento" className="space-y-6">
                 <AcompanhamentoPedidoTab 
                   pedido={{
-                    id: 0,
-                    numeroOportunidade: oportunidade.codigo || oportunidade.id || '',
+                    id: 12345,
+                    numeroOportunidade: oportunidade.codigo || oportunidade.id || 'OPP-2025-001',
                     cliente: oportunidade.nomeFantasia || oportunidade.cliente,
                     vendedor: 'Usuário Atual',
                     dataVenda: new Date().toISOString().split('T')[0],
-                    status: 'rascunho',
-                    statusAtual: 'rascunho',
+                    status: 'enviado',
+                    statusAtual: 'em_transito',
                     produtos,
                     valorTotal: calcularTotal(),
+                    timeline: [
+                      {
+                        status: 'enviado',
+                        data: '12/01/2025',
+                        hora: '10:30',
+                        responsavel: 'João Vendedor',
+                        observacoes: 'Pedido criado e enviado para processamento'
+                      },
+                      {
+                        status: 'recebido_estoque',
+                        data: '13/01/2025',
+                        hora: '08:15',
+                        responsavel: 'Maria Silva (Estoque)',
+                        observacoes: 'Pedido recebido pelo departamento de estoque'
+                      },
+                      {
+                        status: 'em_separacao',
+                        data: '13/01/2025',
+                        hora: '14:20',
+                        responsavel: 'Carlos Santos (Expedição)',
+                        observacoes: 'Iniciada separação dos itens'
+                      },
+                      {
+                        status: 'pronto_faturamento',
+                        data: '14/01/2025',
+                        hora: '09:00',
+                        responsavel: 'Ana Costa (Expedição)',
+                        observacoes: 'Separação concluída, pronto para faturamento'
+                      },
+                      {
+                        status: 'faturado',
+                        data: '14/01/2025',
+                        hora: '11:30',
+                        responsavel: 'Pedro Oliveira (Faturamento)',
+                        observacoes: 'Nota fiscal emitida com sucesso'
+                      },
+                      {
+                        status: 'em_transito',
+                        data: '14/01/2025',
+                        hora: '16:00',
+                        responsavel: 'Sistema Logística',
+                        observacoes: 'Material coletado pela transportadora'
+                      }
+                    ],
+                    recebimentoEstoque: {
+                      status: 'pronto_faturamento',
+                      dataRecebimento: '13/01/2025',
+                      horaRecebimento: '08:15',
+                      responsavel: 'Maria Silva (Estoque)',
+                      numeroLote: 'LT-2025-001',
+                      referenciaInterna: 'REF-12345-ESTQ',
+                      itensConferidos: [
+                        {
+                          produtoId: 1,
+                          codigoProduto: 'PRD-001',
+                          descricao: 'Reagente Diagnóstico A',
+                          quantidadeSolicitada: 10,
+                          quantidadeConferida: 10,
+                          divergencia: false
+                        },
+                        {
+                          produtoId: 2,
+                          codigoProduto: 'PRD-002',
+                          descricao: 'Kit Análise Laboratorial B',
+                          quantidadeSolicitada: 5,
+                          quantidadeConferida: 4,
+                          divergencia: true,
+                          tipoDivergencia: 'dano',
+                          observacoes: '1 caixa com avaria na embalagem externa, produto interno íntegro'
+                        },
+                        {
+                          produtoId: 3,
+                          codigoProduto: 'PRD-003',
+                          descricao: 'Equipamento Portátil C',
+                          quantidadeSolicitada: 2,
+                          quantidadeConferida: 2,
+                          divergencia: false
+                        }
+                      ],
+                      observacoesDivergencia: 'PRD-002: 1 caixa com avaria na embalagem. Cliente foi informado e aceitou receber o produto com desconto de 10%.',
+                      dataSaidaPrevista: '14/01/2025',
+                      dataSaidaEfetiva: '14/01/2025 15:45'
+                    },
+                    faturamento: {
+                      numeroNF: '000012345',
+                      serieNF: '1',
+                      dataEmissao: '14/01/2025',
+                      valorTotal: 15750.00,
+                      chaveAcesso: '35250112345678000190550010000123451234567890',
+                      statusSefaz: 'autorizada',
+                      protocolo: '135250000012345',
+                      linkXML: '/documentos/nfe/12345.xml',
+                      linkDANFE: '/documentos/nfe/12345.pdf',
+                      boleto: {
+                        numeroDocumento: '00001-2025',
+                        dataVencimento: '28/02/2025',
+                        valor: 5250.00,
+                        linkBoleto: '/documentos/boletos/00001-2025.pdf',
+                        codigoBarras: '34191.79001 01234.567890 12345.678901 1 99990000525000',
+                        linhaDigitavel: '34191790010123456789012345678901199990000525000'
+                      },
+                      gnre: {
+                        numeroGuia: 'GNRE-987654',
+                        dataVencimento: '28/02/2025',
+                        valor: 450.00,
+                        linkGNRE: '/documentos/gnre/987654.pdf'
+                      },
+                      documentosAnexos: [
+                        {
+                          id: 'doc-1',
+                          tipo: 'Certificado de Qualidade',
+                          nome: 'certificado_qualidade.pdf',
+                          url: '/documentos/anexos/cert_qual.pdf',
+                          dataUpload: '14/01/2025 11:45'
+                        }
+                      ]
+                    },
+                    logistica: {
+                      transportadora: {
+                        nome: 'Transportadora XYZ Ltda',
+                        cnpj: '12.345.678/0001-90',
+                        telefone: '(11) 1234-5678',
+                        email: 'contato@transportadoraxyz.com.br',
+                        custoFrete: 350.00
+                      },
+                      conhecimentoTransporte: {
+                        numeroCTe: '000054321',
+                        serieCTe: '1',
+                        chaveAcesso: '35250112345678000190570010000543211234567890',
+                        linkRastreamento: 'https://rastreamento.transportadoraxyz.com.br/54321',
+                        protocolo: '135250000054321'
+                      },
+                      statusEntrega: 'em_transito',
+                      prazoEstimado: '5 dias úteis',
+                      dataSaida: '14/01/2025 16:00',
+                      previsaoEntrega: '21/01/2025',
+                      dataEntregaEfetiva: undefined
+                    }
                   }} 
                 />
               </TabsContent>
