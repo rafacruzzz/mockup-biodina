@@ -91,6 +91,45 @@ const ChamadosTab = ({ chamados, onAdicionarChamado, oportunidade }: ChamadosTab
 
   return (
     <div className="space-y-6">
+      {/* Informações da Oportunidade - Cabeçalho */}
+      {oportunidade && (
+        <Card className="bg-muted/30">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              📋 Informações da Oportunidade
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <span className="text-xs font-medium text-muted-foreground">Cliente:</span>
+                <p className="text-sm mt-1 font-medium">{oportunidade.cliente || 'N/A'}</p>
+              </div>
+              <div>
+                <span className="text-xs font-medium text-muted-foreground">Código Oportunidade:</span>
+                <p className="text-sm mt-1 font-medium">{oportunidade.codigo || 'N/A'}</p>
+              </div>
+              <div>
+                <span className="text-xs font-medium text-muted-foreground">Responsável:</span>
+                <p className="text-sm mt-1">{oportunidade.responsavel || 'N/A'}</p>
+              </div>
+              <div>
+                <span className="text-xs font-medium text-muted-foreground">Segmento:</span>
+                <p className="text-sm mt-1">{oportunidade.segmento || 'N/A'}</p>
+              </div>
+              {oportunidade.valor && (
+                <div className="col-span-2 md:col-span-4">
+                  <span className="text-xs font-medium text-muted-foreground">Valor da Oportunidade:</span>
+                  <p className="text-sm mt-1 font-medium text-green-600">
+                    R$ {oportunidade.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                  </p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Formulário para Novo Chamado */}
       <Card>
         <CardHeader>
@@ -173,42 +212,6 @@ const ChamadosTab = ({ chamados, onAdicionarChamado, oportunidade }: ChamadosTab
                 <p className="text-xs text-muted-foreground mt-1">
                   💡 Documente custos indiretos para solicitação de compra (uso e consumo)
                 </p>
-              </div>
-            )}
-
-            {/* Informações da Oportunidade - Auto-preenchidas */}
-            {oportunidade && (
-              <div className="pt-4">
-                <Separator className="mb-4" />
-                <h4 className="text-sm font-semibold mb-3 text-muted-foreground">
-                  📋 Informações da Oportunidade
-                </h4>
-                <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
-                  <div>
-                    <span className="text-xs font-medium text-muted-foreground">Cliente:</span>
-                    <p className="text-sm mt-1 font-medium">{oportunidade.cliente || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <span className="text-xs font-medium text-muted-foreground">Código Oportunidade:</span>
-                    <p className="text-sm mt-1 font-medium">{oportunidade.codigo || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <span className="text-xs font-medium text-muted-foreground">Responsável:</span>
-                    <p className="text-sm mt-1">{oportunidade.responsavel || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <span className="text-xs font-medium text-muted-foreground">Segmento:</span>
-                    <p className="text-sm mt-1">{oportunidade.segmento || 'N/A'}</p>
-                  </div>
-                  {oportunidade.valor && (
-                    <div className="col-span-2">
-                      <span className="text-xs font-medium text-muted-foreground">Valor da Oportunidade:</span>
-                      <p className="text-sm mt-1 font-medium text-green-600">
-                        R$ {oportunidade.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </p>
-                    </div>
-                  )}
-                </div>
               </div>
             )}
 
