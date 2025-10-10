@@ -145,7 +145,7 @@ export interface PedidoCompleto {
   // Faturamento
   pedidoOrigem?: string;
   naturezaOperacao?: string;
-  tipoContrato?: string;
+  descritivoNaturezaOperacao?: string;
   emailsNF?: string;
   formaPagamentoNF?: string;
   contaBancariaRecebimento?: string;

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,7 @@ import { ProdutoPedido, PedidoCompleto, UnidadeVenda, ItemUsoConsumoPedido } fro
 import AdicionarProdutoModal from "./AdicionarProdutoModal";
 import AdicionarItemUsoConsumoModal from "./AdicionarItemUsoConsumoModal";
 import { mockContasBancarias } from "@/data/tesouraria";
+import { naturezasOperacao, getDescritivosOperacao, temDescritivoUnico, type DescritivoOperacao } from "@/data/naturezasOperacao";
 
 interface PedidoModalProps {
   isOpen: boolean;
@@ -102,7 +103,8 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   // Faturamento
   const [pedidoOrigem, setPedidoOrigem] = useState('');
   const [naturezaOperacao, setNaturezaOperacao] = useState('');
-  const [tipoContrato, setTipoContrato] = useState('');
+  const [descritivoOperacao, setDescritivoOperacao] = useState('');
+  const [descritivosFiltrados, setDescritivosFiltrados] = useState<DescritivoOperacao[]>([]);
   const [emailsNF, setEmailsNF] = useState('');
   const [formaPagamentoNF, setFormaPagamentoNF] = useState('');
   const [documentacaoNF, setDocumentacaoNF] = useState({
@@ -121,6 +123,25 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   // Controle de Canhoto
   const [exigeCanhoto, setExigeCanhoto] = useState(false);
   const [observacoesCanhoto, setObservacoesCanhoto] = useState('');
+
+  // Auto-preencher descritivo quando operação tem apenas 1 opção
+  useEffect(() => {
+    if (naturezaOperacao) {
+      const descritivos = getDescritivosOperacao(naturezaOperacao);
+      setDescritivosFiltrados(descritivos);
+      
+      // Se tiver apenas 1 descritivo, preencher automaticamente
+      if (temDescritivoUnico(naturezaOperacao)) {
+        setDescritivoOperacao(descritivos[0].descritivo);
+      } else {
+        // Limpar seleção se mudar operação
+        setDescritivoOperacao('');
+      }
+    } else {
+      setDescritivosFiltrados([]);
+      setDescritivoOperacao('');
+    }
+  }, [naturezaOperacao]);
 
   const handleAdicionarProduto = (produto: ProdutoPedido) => {
     setProdutos(prev => [...prev, { ...produto, id: Date.now() }]);
@@ -252,7 +273,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       // Faturamento
       pedidoOrigem,
       naturezaOperacao,
-      tipoContrato,
+      descritivoNaturezaOperacao: descritivoOperacao,
       emailsNF,
       formaPagamentoNF,
       contaBancariaRecebimento,
@@ -754,41 +775,85 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                 <Card>
                   <CardHeader>
                     <CardTitle>Natureza da Operação</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Selecione a operação e seu descritivo específico
+                    </p>
                   </CardHeader>
-                  <CardContent className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="naturezaOperacao">Qual natureza da operação?</Label>
-                      <Select value={naturezaOperacao} onValueChange={setNaturezaOperacao}>
-                        <SelectTrigger className="mt-2">
-                          <SelectValue placeholder="Selecione a natureza" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="venda">Venda</SelectItem>
-                          <SelectItem value="remessa">Remessa</SelectItem>
-                          <SelectItem value="devolucao">Devolução</SelectItem>
-                          <SelectItem value="transferencia">Transferência</SelectItem>
-                          <SelectItem value="bonificacao">Bonificação</SelectItem>
-                          <SelectItem value="demonstracao">Demonstração</SelectItem>
-                          <SelectItem value="comodato">Comodato</SelectItem>
-                        </SelectContent>
-                      </Select>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="operacao">Qual natureza da operação? *</Label>
+                        <Select 
+                          value={naturezaOperacao} 
+                          onValueChange={setNaturezaOperacao}
+                        >
+                          <SelectTrigger className="mt-2">
+                            <SelectValue placeholder="Selecione a operação" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[300px]">
+                            {naturezasOperacao.map((nat) => (
+                              <SelectItem key={nat.operacao} value={nat.operacao}>
+                                {nat.label}
+                                {temDescritivoUnico(nat.operacao) && (
+                                  <span className="text-xs text-muted-foreground ml-2">
+                                    (preenchimento automático)
+                                  </span>
+                                )}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="descritivoOperacao">
+                          Descritivo da Operação *
+                          {temDescritivoUnico(naturezaOperacao) && (
+                            <span className="text-xs text-green-600 dark:text-green-400 ml-2">
+                              ✓ Preenchido automaticamente
+                            </span>
+                          )}
+                        </Label>
+                        <Select 
+                          value={descritivoOperacao} 
+                          onValueChange={setDescritivoOperacao}
+                          disabled={!naturezaOperacao || temDescritivoUnico(naturezaOperacao)}
+                        >
+                          <SelectTrigger className={`mt-2 ${temDescritivoUnico(naturezaOperacao) ? 'bg-muted/50 cursor-not-allowed' : ''}`}>
+                            <SelectValue placeholder={
+                              !naturezaOperacao 
+                                ? "Selecione primeiro a operação" 
+                                : "Selecione o descritivo"
+                            } />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[300px]">
+                            {descritivosFiltrados.map((desc) => (
+                              <SelectItem 
+                                key={`${naturezaOperacao}-${desc.numero}`} 
+                                value={desc.descritivo}
+                              >
+                                {desc.descritivo}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                    <div>
-                      <Label htmlFor="tipoContrato">Tipo de Contrato</Label>
-                      <Select value={tipoContrato} onValueChange={setTipoContrato}>
-                        <SelectTrigger className="mt-2">
-                          <SelectValue placeholder="Selecione o tipo" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="compra_direta">Compra Direta</SelectItem>
-                          <SelectItem value="consignacao">Consignação</SelectItem>
-                          <SelectItem value="comodato">Comodato</SelectItem>
-                          <SelectItem value="emprestimo">Empréstimo</SelectItem>
-                          <SelectItem value="demonstracao">Demonstração</SelectItem>
-                          <SelectItem value="licitacao">Licitação</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    
+                    {/* Informação visual sobre a seleção */}
+                    {naturezaOperacao && descritivoOperacao && (
+                      <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                        <div className="flex items-start gap-2">
+                          <Info className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                          <div className="text-sm">
+                            <strong className="text-green-800 dark:text-green-300">Operação selecionada:</strong>
+                            <p className="text-green-700 dark:text-green-400 mt-1">
+                              {naturezasOperacao.find(n => n.operacao === naturezaOperacao)?.label} - {descritivoOperacao}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 
