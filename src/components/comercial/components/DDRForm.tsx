@@ -21,17 +21,17 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
   const modelosDDR = [
     {
       id: 'modelo1',
-      nome: 'Modelo DDR Entidade Vinculada RDC n81',
+      nome: 'Declaração do Detentor da Regularização do Produto Autorizando a Importação Direta por Unidade de Saúde',
       titulo: 'DECLARAÇÃO DO DETENTOR DA REGULARIZAÇÃO DO PRODUTO AUTORIZANDO A IMPORTAÇÃO DIRETA POR UNIDADE DE SAÚDE'
     },
     {
       id: 'modelo2', 
-      nome: 'Modelo Autorização - Capitulo IX - Importação por unidade hospitalar',
+      nome: 'Importação para Unidade de Saúde por Meio de suas Entidades Vinculadas',
       titulo: 'IMPORTAÇÃO PARA UNIDADE DE SAÚDE POR MEIO DE SUAS ENTIDADES VINCULADAS'
     },
     {
       id: 'modelo3',
-      nome: 'Modelo Autorização - Capítulo VII - Importação terceirizada', 
+      nome: 'Declaração do Detentor da Regularização do Produto Autorizando a Importação por Terceiro', 
       titulo: 'DECLARAÇÃO DO DETENTOR DA REGULARIZAÇÃO DO PRODUTO AUTORIZANDO A IMPORTAÇÃO POR TERCEIRO'
     }
   ];
@@ -142,12 +142,6 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
         </CardHeader>
         
         <CardContent className="p-6 space-y-6">
-          <div className="border p-4 rounded bg-blue-50">
-            <h3 className="font-bold mb-4 text-lg text-blue-700">
-              {modelosDDR.find(m => m.id === modeloDDR)?.titulo}
-            </h3>
-          </div>
-
           {/* 1. Cabeçalho */}
           <div className="border p-4 rounded">
             <h3 className="font-semibold mb-4 border-b pb-2">1. CABEÇALHO (Editável)</h3>
