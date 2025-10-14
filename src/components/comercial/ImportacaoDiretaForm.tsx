@@ -129,37 +129,32 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
     finalSignature: 'Looking forward to hearing from you soon.\nCordially,\n\nEvandro Amorim\nInternational Division\nEAA',
     finalSignature_congelado: 'Looking forward to hearing from you soon.\nCordially,\n\nEvandro Amorim\nInternational Division\nEAA',
     
-    // DOCUMENT FIELDS - Instrução de Embarque
-    aoTo: '',
-    aoAttn: '',
-    aoDate: '',
-    aoTotalPages: '',
-    aoSubject: '',
-    aoCustomer: '',
+    // DOCUMENT FIELDS - Instrução de Embarque (COM VALORES PADRÃO)
+    aoTo: 'RADIOMETER MEDICAL ApS.',
+    aoAttn: 'Ms. Lene Orbansen',
+    aoDate: 'June 15th, 2023',
+    aoTotalPages: '02',
+    aoSubject: 'SHIPMENT INSTRUCTIONS, DD-6859/RD-4968, YOUR AO\'s 003627075 USD 17,299.74.',
+    aoCustomer: 'HOSPITAL SÃO VICENTE DE PAULO',
     
-    // SPECIFIC FIELDS (Invoice) - Instrução de Embarque
-    aoPortugueseDescription: '',
-    aoUnitTotalPrices: '',
-    aoLotEachItem: '',
-    aoCountryOrigin: '',
-    aoTotalCartons: '',
-    aoGrossWeight: '',
-    aoNetWeight: '',
-    aoTermsPayment: '',
-    aoConsignedTo: '',
+    // SPECIFIC FIELDS (Invoice) - Instrução de Embarque (COM VALORES PADRÃO)
+    aoPortugueseDescription: 'Analisador de Gases Sanguíneos ABL800 FLEX, AO#003627075',
+    aoUnitTotalPrices: 'ABL800 FLEX - USD 15,000.00/unit - Total USD 15,000.00; Sensors (5 units) - USD 459.95/unit - Total USD 2,299.74',
+    aoLotEachItem: 'ABL800 FLEX - Lot 2023-06-A; Sensors - Lot 2023-05-B',
+    aoCountryOrigin: 'Denmark',
+    aoTotalCartons: '3 cartons - Marks: BIODINA 2023/06-001, BIODINA 2023/06-002, BIODINA 2023/06-003',
+    aoGrossWeight: '45 kg',
+    aoNetWeight: '38 kg',
+    aoTermsPayment: 'International wire transfer, 30 days after shipment',
+    aoConsignedTo: 'HOSPITAL SÃO VICENTE DE PAULO',
     
-    // SHIPPING DOCUMENTS - Refrigerado
+    // SHIPPING DOCUMENTS - Refrigerado e Congelado (campos específicos mantidos vazios)
     aeroportoDestino: '',
-    
-    // FREIGHT FORWARD - Refrigerado
-    ffDestination: '',
-    ffNotify: '',
-    
-    // SHIPPING DOCUMENTS - Congelado
-    paisProcedencia_congelado: 'POLÔNIA',
     aeroportoDestino_congelado: '',
     
-    // FREIGHT FORWARD - Congelado
+    // FREIGHT FORWARD - Refrigerado e Congelado (campos específicos mantidos vazios)
+    ffDestination: '',
+    ffNotify: '',
     ffDestination_congelado: '',
     ffNotify_congelado: '',
     
