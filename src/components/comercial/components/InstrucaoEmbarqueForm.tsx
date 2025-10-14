@@ -651,24 +651,17 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 </div>
 
                 {/* ATTENTION - Refrigerated Goods */}
-                <div className="bg-yellow-100 border-2 border-yellow-400 p-4 rounded mt-4">
-                  <h4 className="font-bold mb-3 text-red-600">ATTENTION:</h4>
-                  <div className="space-y-2 text-sm">
-                    <p className="font-medium">
-                      "TO AVOID PROBLEMS WITH THE REFRIGERATED GOODS, PLEASE PACK THESE ITEMS IN BIG BOXES, 
-                      DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE 
-                      BETWEEN 2-8ºC, AS FOLLOWS:"
-                    </p>
-                    <div className="bg-white p-3 rounded border border-yellow-400 mt-2">
-                      <p className="font-semibold">THE LABEL IN PORTUGUESE:</p>
-                      <p className="font-bold text-blue-600">"ESTAS CAIXAS CONTÊM PRODUTOS QUE DEVEM SER REFRIGERADOS ENTRE 2-8ºC."</p>
-                      <p className="font-semibold mt-2">THAT MEANS:</p>
-                      <p className="font-bold text-blue-600">"THESE BOXES CONTAIN PRODUCTS WHICH SHOULD BE REFRIGERATED BETWEEN 2-8ºC."</p>
-                    </div>
-                    <p className="font-bold text-red-600 mt-3">ATTENTION:</p>
-                    <p className="font-medium">THE REFRIGERATED ITEMS MUST BE PACKED SEPARATELY.</p>
-                    <p className="font-medium">PLEASE THE PALLETS MUST NOT HAVE MORE THAN 120 (LENGTH) X 80 (WIDTH) X 100 (HEIGHT).</p>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="attentionRefrigeratedGoods" className="text-sm font-medium">
+                    Instruções para Produtos Refrigerados
+                  </Label>
+                  <Textarea
+                    id="attentionRefrigeratedGoods"
+                    value={formData.attentionRefrigeratedGoods || ''}
+                    onChange={(e) => onInputChange('attentionRefrigeratedGoods', e.target.value)}
+                    className="min-h-[220px] bg-yellow-50 border-yellow-200 text-sm font-mono"
+                    placeholder="Instruções para produtos refrigerados..."
+                  />
                 </div>
 
                 {/* Batch/Serial Numbers */}
@@ -746,11 +739,17 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       </p>
                     </div>
 
-                    <div className="bg-yellow-100 border-2 border-yellow-400 p-3 rounded">
-                      <p className="font-bold text-red-600 mb-2">ALSO PLEASE DECLARE THE FOLLOWING SENTENCE ON THE AWB:</p>
-                      <p className="font-bold mb-1">ATTENTION:</p>
-                      <p className="font-semibold">"THE BOXES MARKED WITH THE LABEL MUST BE REFRIGERATED BETWEEN 2-8ºC"</p>
-                      <p className="font-semibold">"AS CAIXAS MARCADAS COM A ETIQUETA DEVEM SER REFRIGERADAS ENTRE 2-8ºC"</p>
+                    <div className="space-y-2">
+                      <Label htmlFor="awbDeclarationRefrigerated" className="text-sm font-medium">
+                        Declaração AWB - Produtos Refrigerados
+                      </Label>
+                      <Textarea
+                        id="awbDeclarationRefrigerated"
+                        value={formData.awbDeclarationRefrigerated || ''}
+                        onChange={(e) => onInputChange('awbDeclarationRefrigerated', e.target.value)}
+                        className="min-h-[100px] bg-red-50 border-red-200 text-sm font-mono"
+                        placeholder="Declaração para AWB..."
+                      />
                     </div>
 
                     <div>
@@ -1006,23 +1005,17 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 </div>
 
                 {/* ATTENTION FOR FROZEN PRODUCTS */}
-                <div className="border-2 border-red-500 p-4 rounded bg-red-100">
-                  <div className="space-y-3 text-sm">
-                    <p className="font-bold text-red-800 text-base">ATTENTION FOR FROZEN ITEMS:</p>
-                    <p className="font-semibold">"TO AVOID PROBLEMS WITH THE FROZEN GOODS, PLEASE PACK THESE ITEMS IN BIG BOXES, DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE BETWEEN 2-8ºC, AS FOLLOWS:"</p>
-                    
-                    <div className="bg-white p-3 rounded border border-red-300 my-3">
-                      <p className="font-bold mb-2">LABEL IN PORTUGUESE:</p>
-                      <p className="font-semibold text-red-700">"ESTAS CAIXAS TÉRMICAS DE ISOPOR CONTÊM PRODUTOS CONGELADOS COM GELO SECO A -18ºC (dezoito graus celsius negativos)".</p>
-                      
-                      <p className="font-bold mt-3 mb-2">THAT MEANS:</p>
-                      <p className="font-semibold text-red-700">"THIS THERMO BOX CONTAIN FROZEN PRODUCTS WITH DRY ICE AT -18ºC (eighteen negatives celsius degrees)".</p>
-                    </div>
-
-                    <p className="font-bold">THE FROZEN ITEMS MUST BE PACKED SEPARATELY.</p>
-                    <p className="font-bold text-red-800">PLEASE INCLUDE THE TAGLOG TO MONITORIZE THE TEMPERATURE.</p>
-                    <p className="font-semibold">PLEASE THE PALLETS MUST NOT HAVE MORE THAN 120 (LENGTH) X 80 (WIDTH) X 100 (HEIGHT).</p>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="attentionFrozenItems" className="text-sm font-medium">
+                    Instruções para Produtos Congelados
+                  </Label>
+                  <Textarea
+                    id="attentionFrozenItems"
+                    value={formData.attentionFrozenItems || ''}
+                    onChange={(e) => onInputChange('attentionFrozenItems', e.target.value)}
+                    className="min-h-[220px] bg-blue-50 border-blue-200 text-sm font-mono"
+                    placeholder="Instruções para produtos congelados..."
+                  />
                 </div>
 
                 {/* Batch/Serial Numbers */}
@@ -1090,11 +1083,17 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       <p className="font-semibold">PLEASE DECLARE ON THE AWB THE NET AND GROSS WEIGHT OF THE GOODS.</p>
                     </div>
 
-                    <div className="bg-red-100 p-4 rounded border-2 border-red-400">
-                      <p className="font-bold mb-2 text-red-800">ATTENTION:</p>
-                      <p className="font-bold mb-2">PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:</p>
-                      <p className="font-semibold text-red-700">"THIS THERMO BOX CONTAIN FROZEN PRODUCTS WITH DRY ICE AT -18ºC". (Eighteen negatives celsius degrees)".</p>
-                      <p className="font-semibold text-red-700 mt-1">"ESTAS CAIXAS TÉRMICAS DE ISOPOR CONTÊM PRODUTOS CONGELADOS COM GELO SECO A -18ºC". (Dezoito graus celsius negativos)".</p>
+                    <div className="space-y-2">
+                      <Label htmlFor="awbDeclarationFrozen" className="text-sm font-medium">
+                        Declaração AWB - Produtos Congelados
+                      </Label>
+                      <Textarea
+                        id="awbDeclarationFrozen"
+                        value={formData.awbDeclarationFrozen || ''}
+                        onChange={(e) => onInputChange('awbDeclarationFrozen', e.target.value)}
+                        className="min-h-[110px] bg-red-50 border-red-200 text-sm font-mono"
+                        placeholder="Declaração para AWB..."
+                      />
                     </div>
 
                     <div>
