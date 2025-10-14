@@ -61,6 +61,18 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     dataRecebimentoMercadoria: '',
     observacoesDD: '',
     
+    // Campos estruturados de "For each box" - Produto Refrigerado
+    boxControlNo: '',
+    boxTemperature: '',
+    boxDimension: '',
+    boxGrossWeight: '',
+    
+    // Campos estruturados de "For each box" - Produto Congelado
+    boxControlNo_congelado: '',
+    boxTemperature_congelado: '',
+    boxDimension_congelado: '',
+    boxGrossWeight_congelado: '',
+    
     // Análise Técnica
     analiseTecnica: '',
     

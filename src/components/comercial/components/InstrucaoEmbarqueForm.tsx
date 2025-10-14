@@ -492,14 +492,62 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   />
                 </div>
 
-              <div>
-                <Label htmlFor="forEachBox">For each box, please include:</Label>
-                <Input
-                  id="forEachBox"
-                  value={formData.forEachBox || ''}
-                  onChange={(e) => onInputChange('forEachBox', e.target.value)}
-                  className="w-full"
-                />
+              {/* For each box section - Structured fields */}
+              <div className="border-2 border-gray-300 p-4 rounded-lg bg-gray-50">
+                <Label className="text-base font-semibold mb-3 block">For each box, please include:</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="boxControlNo" className="text-sm">
+                      Control no. <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="boxControlNo"
+                      value={formData.boxControlNo || ''}
+                      onChange={(e) => onInputChange('boxControlNo', e.target.value)}
+                      placeholder="xxx"
+                      className="w-full mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="boxTemperature" className="text-sm">
+                      Temperature <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="boxTemperature"
+                      value={formData.boxTemperature || ''}
+                      onChange={(e) => onInputChange('boxTemperature', e.target.value)}
+                      placeholder="xº-xºC"
+                      className="w-full mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="boxDimension" className="text-sm">
+                      Dimension <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="boxDimension"
+                      value={formData.boxDimension || ''}
+                      onChange={(e) => onInputChange('boxDimension', e.target.value)}
+                      placeholder="xxx X xxx X xxx"
+                      className="w-full mt-1"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="boxGrossWeight" className="text-sm">
+                      Gross weight <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="boxGrossWeight"
+                      value={formData.boxGrossWeight || ''}
+                      onChange={(e) => onInputChange('boxGrossWeight', e.target.value)}
+                      placeholder="xxx"
+                      className="w-full mt-1"
+                    />
+                  </div>
+                </div>
               </div>
 
                 {/* Packing List Section */}
@@ -802,14 +850,62 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="forEachBox_congelado">For each box, please include:</Label>
-                  <Input
-                    id="forEachBox_congelado"
-                    value={formData.forEachBox_congelado || ''}
-                    onChange={(e) => onInputChange('forEachBox_congelado', e.target.value)}
-                    className="w-full"
-                  />
+                {/* For each box section - Structured fields (Congelado) */}
+                <div className="border-2 border-gray-300 p-4 rounded-lg bg-gray-50">
+                  <Label className="text-base font-semibold mb-3 block">For each box, please include:</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="boxControlNo_congelado" className="text-sm">
+                        Control no. <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="boxControlNo_congelado"
+                        value={formData.boxControlNo_congelado || ''}
+                        onChange={(e) => onInputChange('boxControlNo_congelado', e.target.value)}
+                        placeholder="xxx"
+                        className="w-full mt-1"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="boxTemperature_congelado" className="text-sm">
+                        Temperature <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="boxTemperature_congelado"
+                        value={formData.boxTemperature_congelado || ''}
+                        onChange={(e) => onInputChange('boxTemperature_congelado', e.target.value)}
+                        placeholder="xº-xºC"
+                        className="w-full mt-1"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="boxDimension_congelado" className="text-sm">
+                        Dimension <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="boxDimension_congelado"
+                        value={formData.boxDimension_congelado || ''}
+                        onChange={(e) => onInputChange('boxDimension_congelado', e.target.value)}
+                        placeholder="xxx X xxx X xxx"
+                        className="w-full mt-1"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="boxGrossWeight_congelado" className="text-sm">
+                        Gross weight <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="boxGrossWeight_congelado"
+                        value={formData.boxGrossWeight_congelado || ''}
+                        onChange={(e) => onInputChange('boxGrossWeight_congelado', e.target.value)}
+                        placeholder="xxx"
+                        className="w-full mt-1"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Packing List Multi-select */}
