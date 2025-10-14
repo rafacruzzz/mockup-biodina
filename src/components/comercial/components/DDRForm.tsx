@@ -76,10 +76,10 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
   });
 
   const finalidadesImportacao = [
-    'Uso exclusivo',
-    'Pesquisa científica',
-    'Demonstração',
-    'Avaliação técnica'
+    'realizar a atividade exclusiva de importação terceirizada',
+    'realizar a importação direta do produto para seu uso exclusivo',
+    'importação direta do produto',
+    'para uso exclusivo pela unidade de saúde'
   ];
 
   const statusDocumento = [
