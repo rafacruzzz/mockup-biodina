@@ -770,7 +770,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
           {tipoProduto === 'congelado' && (
             <div className="border-2 border-orange-500 p-6 rounded-lg bg-orange-50 space-y-6 mt-6">
               <h3 className="text-lg font-bold text-orange-700 border-b-2 border-orange-300 pb-2">
-                The following sentences need to be included in the shipping documents - PRODUTOS CONGELADOS
+                The following sentences need to be included in the shipping documents
               </h3>
 
               <div className="space-y-6">
