@@ -181,7 +181,7 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
         {/* Processo de Due Diligence */}
         <Card>
           <CardHeader>
-            <CardTitle>Processo de Due Diligence</CardTitle>
+            <CardTitle>Informações Sobre a Importação Direta</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
@@ -306,6 +306,15 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
                 value={formData.numeroFatura}
                 onChange={(e) => onInputChange('numeroFatura', e.target.value)}
                 placeholder="Digite o número da fatura"
+              />
+            </div>
+            <div>
+              <Label htmlFor="dataRecebimentoMercadoria">Data do recebimento da mercadoria pelo cliente</Label>
+              <Input
+                id="dataRecebimentoMercadoria"
+                type="date"
+                value={formData.dataRecebimentoMercadoria}
+                onChange={(e) => onInputChange('dataRecebimentoMercadoria', e.target.value)}
               />
             </div>
             <div className="md:col-span-2 lg:col-span-3">

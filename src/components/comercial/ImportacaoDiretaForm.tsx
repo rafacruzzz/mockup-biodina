@@ -58,6 +58,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     dataFaturamento: '',
     valorFaturamento: '',
     numeroFatura: '',
+    dataRecebimentoMercadoria: '',
     observacoesDD: '',
     
     // Análise Técnica
