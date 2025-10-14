@@ -87,6 +87,21 @@ export interface FaturaRecebimento {
   numeroOrigem: string;
   dataInclusao: string;
   remetente: string;
+  
+  // TRANSACTION DETAILS
+  transactionId?: string;
+  transactionAmount?: number;
+  transactionBookedDate?: string;
+  transactionType?: string;
+  transactionValueDate?: string;
+  transactionExchangeRate?: number;
+  transactionMessage?: string;
+  beneficiaryAccount?: string;
+  beneficiaryBank?: string;
+  beneficiaryBankAddress?: string;
+  beneficiaryName?: string;
+  beneficiaryAddress?: string;
+  
   moeda: string;
   valor: number;
   saldo: number;
@@ -111,6 +126,9 @@ export interface FaturaRecebimento {
   
   // Rodapé
   footer: string;
+  
+  // Anexo Swift
+  swiftAnexo?: string;
 }
 
 export interface RelatorioAgente {

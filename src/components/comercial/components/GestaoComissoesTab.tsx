@@ -20,7 +20,8 @@ import {
   Send,
   Banknote,
   Plus,
-  Trash2
+  Trash2,
+  Paperclip
 } from 'lucide-react';
 import { StatusComissao, ItemInvoice } from '@/types/comissoes';
 import { mockComissoes, defaultInvoiceServico, defaultFaturaRecebimento, mockDadosBancariosInternacionais } from '@/data/comissoes';
@@ -97,12 +98,60 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
   };
 
   // Simular upload de arquivo
-  const handleFileUpload = (field: string, fileName: string) => {
-    setComissao(prev => ({ ...prev, [field]: fileName }));
-    toast({
-      title: "Arquivo anexado",
-      description: `${fileName} foi anexado com sucesso.`
-    });
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const fileName = file.name;
+      
+      switch(field) {
+        case 'swiftFabrica':
+          setComissao(prev => ({
+            ...prev,
+            swiftFabricaAnexo: fileName
+          }));
+          break;
+        case 'swiftFabricaFatura':
+          setComissao(prev => ({
+            ...prev,
+            faturaRecebimento: {
+              ...prev.faturaRecebimento,
+              swiftAnexo: fileName
+            }
+          }));
+          break;
+        case 'ordemPagamento':
+          setComissao(prev => ({
+            ...prev,
+            ordemPagamentoAnexo: fileName
+          }));
+          break;
+        case 'swiftCambio':
+          setComissao(prev => ({
+            ...prev,
+            swiftCambioAnexo: fileName
+          }));
+          break;
+        case 'contratoCambio':
+          setComissao(prev => ({
+            ...prev,
+            contratoCambioAnexo: fileName
+          }));
+          break;
+        case 'detalhamentoRemessa':
+          setComissao(prev => ({
+            ...prev,
+            detalhamentoRemessaAnexo: fileName
+          }));
+          break;
+        default:
+          setComissao(prev => ({ ...prev, [field]: fileName }));
+      }
+      
+      toast({
+        title: "Arquivo anexado",
+        description: `${fileName} foi anexado com sucesso.`
+      });
+    }
   };
 
   // Simular preenchimento automático do Swift
@@ -430,10 +479,7 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 <div className="flex gap-2 mt-1">
                   <Input 
                     type="file" 
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileUpload('avisoRecebimentoCliente', file.name);
-                    }}
+                    onChange={(e) => handleFileUpload(e, 'avisoRecebimentoCliente')}
                   />
                   {comissao.avisoRecebimentoCliente && (
                     <Badge variant="secondary">
@@ -517,10 +563,7 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 <div className="flex gap-2 mt-1">
                   <Input 
                     type="file" 
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileUpload('swiftFabricaAnexo', file.name);
-                    }}
+                    onChange={(e) => handleFileUpload(e, 'swiftFabrica')}
                   />
                   {comissao.swiftFabricaAnexo && (
                     <Badge variant="secondary">
@@ -565,10 +608,7 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 <div className="flex gap-2">
                   <Input 
                     type="file" 
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileUpload('swiftFabricaAnexo', file.name);
-                    }}
+                    onChange={(e) => handleFileUpload(e, 'swiftFabrica')}
                   />
                   {comissao.swiftFabricaAnexo && (
                     <Badge variant="secondary">
@@ -1096,10 +1136,7 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 <div className="flex gap-2 mt-1">
                   <Input 
                     type="file" 
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileUpload('ordemPagamentoAnexo', file.name);
-                    }}
+                    onChange={(e) => handleFileUpload(e, 'ordemPagamento')}
                   />
                   {comissao.ordemPagamentoAnexo && (
                     <Badge variant="secondary">
@@ -1326,6 +1363,201 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 </div>
               </div>
 
+              {/* Transaction Details */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm uppercase text-muted-foreground">
+                  Transaction Details
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Transaction ID */}
+                  <div className="p-3 rounded-md">
+                    <Label>Transaction ID</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.transactionId || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, transactionId: e.target.value }
+                      }))}
+                      placeholder="ID da transação"
+                    />
+                  </div>
+
+                  {/* Amount */}
+                  <div className="p-3 rounded-md">
+                    <Label>Amount</Label>
+                    <Input 
+                      type="number"
+                      step="0.01"
+                      value={comissao.faturaRecebimento.transactionAmount || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, transactionAmount: parseFloat(e.target.value) || 0 }
+                      }))}
+                      placeholder="Valor da transação"
+                    />
+                  </div>
+
+                  {/* Booked date */}
+                  <div className="p-3 rounded-md">
+                    <Label>Booked date</Label>
+                    <Input 
+                      type="date"
+                      value={comissao.faturaRecebimento.transactionBookedDate || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, transactionBookedDate: e.target.value }
+                      }))}
+                    />
+                  </div>
+
+                  {/* Transaction type */}
+                  <div className="p-3 rounded-md">
+                    <Label>Transaction type</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.transactionType || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, transactionType: e.target.value }
+                      }))}
+                      placeholder="Tipo de transação"
+                    />
+                  </div>
+
+                  {/* Value date */}
+                  <div className="p-3 rounded-md">
+                    <Label>Value date</Label>
+                    <Input 
+                      type="date"
+                      value={comissao.faturaRecebimento.transactionValueDate || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, transactionValueDate: e.target.value }
+                      }))}
+                    />
+                  </div>
+
+                  {/* Exchange rate */}
+                  <div className="p-3 rounded-md">
+                    <Label>Exchange rate</Label>
+                    <Input 
+                      type="number"
+                      step="0.0001"
+                      value={comissao.faturaRecebimento.transactionExchangeRate || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, transactionExchangeRate: parseFloat(e.target.value) || 0 }
+                      }))}
+                      placeholder="Taxa de câmbio"
+                    />
+                  </div>
+
+                  {/* Beneficiary's account */}
+                  <div className="p-3 rounded-md">
+                    <Label>Beneficiary's account</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.beneficiaryAccount || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, beneficiaryAccount: e.target.value }
+                      }))}
+                      placeholder="Conta do beneficiário"
+                    />
+                  </div>
+
+                  {/* Beneficiary's bank */}
+                  <div className="p-3 rounded-md">
+                    <Label>Beneficiary's bank</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.beneficiaryBank || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, beneficiaryBank: e.target.value }
+                      }))}
+                      placeholder="Banco do beneficiário"
+                    />
+                  </div>
+
+                  {/* Beneficiary bank's address */}
+                  <div className="p-3 rounded-md">
+                    <Label>Beneficiary bank's address</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.beneficiaryBankAddress || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, beneficiaryBankAddress: e.target.value }
+                      }))}
+                      placeholder="Endereço do banco"
+                    />
+                  </div>
+
+                  {/* Beneficiary's name */}
+                  <div className="p-3 rounded-md">
+                    <Label>Beneficiary's name</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.beneficiaryName || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, beneficiaryName: e.target.value }
+                      }))}
+                      placeholder="Nome do beneficiário"
+                    />
+                  </div>
+
+                  {/* Beneficiary's address */}
+                  <div className="p-3 rounded-md">
+                    <Label>Beneficiary's address</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.beneficiaryAddress || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, beneficiaryAddress: e.target.value }
+                      }))}
+                      placeholder="Endereço do beneficiário"
+                    />
+                  </div>
+
+                  {/* Message - ocupa 2 colunas */}
+                  <div className="p-3 rounded-md md:col-span-2">
+                    <Label>Message</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.transactionMessage || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, transactionMessage: e.target.value }
+                      }))}
+                      placeholder="Mensagem da transação"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Swift da Fábrica */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm uppercase text-muted-foreground">
+                  Anexo
+                </h3>
+                <div className="p-3 rounded-md border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors">
+                  <Label htmlFor="swift-fatura-file" className="cursor-pointer">
+                    Swift da fábrica informando o pagamento
+                  </Label>
+                  <div className="flex items-center gap-3 mt-2">
+                    <Input
+                      id="swift-fatura-file"
+                      type="file"
+                      onChange={(e) => handleFileUpload(e, 'swiftFabricaFatura')}
+                      className="cursor-pointer"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                    />
+                    {comissao.faturaRecebimento.swiftAnexo && (
+                      <Badge variant="secondary" className="flex items-center gap-1">
+                        <Paperclip className="h-3 w-3" />
+                        Anexado
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               {/* Banking Information */}
               <div className="space-y-4">
                 <h3 className="font-semibold text-sm">BANKING INFORMATION</h3>
@@ -1440,10 +1672,7 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 <div className="flex gap-2 mt-1">
                   <Input 
                     type="file" 
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileUpload('swiftCambioAnexo', file.name);
-                    }}
+                    onChange={(e) => handleFileUpload(e, 'swiftCambio')}
                   />
                   {comissao.swiftCambioAnexo && (
                     <Badge variant="secondary">
@@ -1459,10 +1688,7 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 <div className="flex gap-2 mt-1">
                   <Input 
                     type="file" 
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileUpload('contratoCambioAnexo', file.name);
-                    }}
+                    onChange={(e) => handleFileUpload(e, 'contratoCambio')}
                   />
                   {comissao.contratoCambioAnexo && (
                     <Badge variant="secondary">
@@ -1478,10 +1704,7 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 <div className="flex gap-2 mt-1">
                   <Input 
                     type="file" 
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileUpload('detalhamentoRemessaAnexo', file.name);
-                    }}
+                    onChange={(e) => handleFileUpload(e, 'detalhamentoRemessa')}
                   />
                   {comissao.detalhamentoRemessaAnexo && (
                     <Badge variant="secondary">

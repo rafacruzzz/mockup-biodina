@@ -74,6 +74,18 @@ export const mockComissoes: Comissao[] = [
       numeroOrigem: '',
       dataInclusao: '',
       remetente: 'RADIOMETER MEDICAL APS',
+      transactionId: '',
+      transactionAmount: 0,
+      transactionBookedDate: '',
+      transactionType: '',
+      transactionValueDate: '',
+      transactionExchangeRate: 0,
+      transactionMessage: '',
+      beneficiaryAccount: '',
+      beneficiaryBank: '',
+      beneficiaryBankAddress: '',
+      beneficiaryName: '',
+      beneficiaryAddress: '',
       moeda: '',
       valor: 0,
       saldo: 0,
@@ -89,7 +101,8 @@ export const mockComissoes: Comissao[] = [
       agency: '72-8',
       accountNumber: '19260-0',
       swiftIban: 'BR5600000000720000192600C1',
-      footer: 'BIODINA INSTRUMENTOS CIENTIFICOS LTDA – CNPJ: 29.375.441/0001-50\nRUA SÃO PEDRO, NÚMERO 154, COMPLEMENTO SALA 409 CEP 24.020-058\nBAIRRO/DISTRITO CENTRO MUNICÍPIO NITERÓI UF RJ TELEFONE (21) 2719-2419'
+      footer: 'BIODINA INSTRUMENTOS CIENTIFICOS LTDA – CNPJ: 29.375.441/0001-50\nRUA SÃO PEDRO, NÚMERO 154, COMPLEMENTO SALA 409 CEP 24.020-058\nBAIRRO/DISTRITO CENTRO MUNICÍPIO NITERÓI UF RJ TELEFONE (21) 2719-2419',
+      swiftAnexo: ''
     },
     relatorioAgente: {
       nomeAgente: 'BIOMEDICAL SOLUTIONS LTDA',
@@ -182,6 +195,18 @@ export const mockComissoes: Comissao[] = [
       numeroOrigem: '',
       dataInclusao: '',
       remetente: 'RADIOMETER MEDICAL APS',
+      transactionId: '',
+      transactionAmount: 0,
+      transactionBookedDate: '',
+      transactionType: '',
+      transactionValueDate: '',
+      transactionExchangeRate: 0,
+      transactionMessage: '',
+      beneficiaryAccount: '',
+      beneficiaryBank: '',
+      beneficiaryBankAddress: '',
+      beneficiaryName: '',
+      beneficiaryAddress: '',
       moeda: '',
       valor: 0,
       saldo: 0,
@@ -197,7 +222,8 @@ export const mockComissoes: Comissao[] = [
       agency: '72-8',
       accountNumber: '19260-0',
       swiftIban: 'BR5600000000720000192600C1',
-      footer: 'BIODINA INSTRUMENTOS CIENTIFICOS LTDA – CNPJ: 29.375.441/0001-50\nRUA SÃO PEDRO, NÚMERO 154, COMPLEMENTO SALA 409 CEP 24.020-058\nBAIRRO/DISTRITO CENTRO MUNICÍPIO NITERÓI UF RJ TELEFONE (21) 2719-2419'
+      footer: 'BIODINA INSTRUMENTOS CIENTIFICOS LTDA – CNPJ: 29.375.441/0001-50\nRUA SÃO PEDRO, NÚMERO 154, COMPLEMENTO SALA 409 CEP 24.020-058\nBAIRRO/DISTRITO CENTRO MUNICÍPIO NITERÓI UF RJ TELEFONE (21) 2719-2419',
+      swiftAnexo: ''
     },
     relatorioAgente: {
       nomeAgente: 'BIOMEDICAL SOLUTIONS LTDA',
@@ -301,6 +327,20 @@ export const defaultFaturaRecebimento = {
   // PRÉ-PREENCHIDO
   remetente: 'RADIOMETER MEDICAL APS',
   
+  // TRANSACTION DETAILS (VAZIOS)
+  transactionId: '',
+  transactionAmount: 0,
+  transactionBookedDate: '',
+  transactionType: '',
+  transactionValueDate: '',
+  transactionExchangeRate: 0,
+  transactionMessage: '',
+  beneficiaryAccount: '',
+  beneficiaryBank: '',
+  beneficiaryBankAddress: '',
+  beneficiaryName: '',
+  beneficiaryAddress: '',
+  
   // VAZIOS
   moeda: '',
   valor: 0,
@@ -327,5 +367,7 @@ export const defaultFaturaRecebimento = {
   swiftIban: 'BR5600000000720000192600C1',
   
   // RODAPÉ PRÉ-PREENCHIDO
-  footer: 'BIODINA INSTRUMENTOS CIENTIFICOS LTDA – CNPJ: 29.375.441/0001-50\nRUA SÃO PEDRO, NÚMERO 154, COMPLEMENTO SALA 409 CEP 24.020-058\nBAIRRO/DISTRITO CENTRO MUNICÍPIO NITERÓI UF RJ TELEFONE (21) 2719-2419'
+  footer: 'BIODINA INSTRUMENTOS CIENTIFICOS LTDA – CNPJ: 29.375.441/0001-50\nRUA SÃO PEDRO, NÚMERO 154, COMPLEMENTO SALA 409 CEP 24.020-058\nBAIRRO/DISTRITO CENTRO MUNICÍPIO NITERÓI UF RJ TELEFONE (21) 2719-2419',
+  
+  swiftAnexo: ''
 };
