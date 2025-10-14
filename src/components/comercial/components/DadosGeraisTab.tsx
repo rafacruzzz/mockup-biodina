@@ -136,7 +136,6 @@ const mockProjetos: Projeto[] = [
   }
 ];
 const DadosGeraisTab = ({ formData, onInputChange }: DadosGeraisTabProps) => {
-  const [vinculacaoHabilitada, setVinculacaoHabilitada] = useState(false);
   const [tipoProjeto, setTipoProjeto] = useState<string>("");
   const [projetoSearch, setProjetoSearch] = useState("");
   const [selectedProjeto, setSelectedProjeto] = useState<Projeto | null>(null);
@@ -195,18 +194,6 @@ const DadosGeraisTab = ({ formData, onInputChange }: DadosGeraisTabProps) => {
     }
   };
 
-  const handleVinculacaoToggle = (checked: boolean) => {
-    setVinculacaoHabilitada(checked);
-    if (!checked) {
-      setTipoProjeto("");
-      setProjetoSearch("");
-      setSelectedProjeto(null);
-      onInputChange('cnpjCliente', '');
-      onInputChange('nomeCliente', '');
-      onInputChange('projetoVinculadoId', '');
-      onInputChange('projetoVinculadoTipo', '');
-    }
-  };
 
   const getTipoProjetoLabel = (tipo: string) => {
     switch (tipo) {
@@ -265,132 +252,113 @@ const DadosGeraisTab = ({ formData, onInputChange }: DadosGeraisTabProps) => {
       <Card className="bg-muted/30">
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            🔗 Vinculação de Projeto (Opcional)
+            🔗 Vinculação de Projeto
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="vinculacao" 
-              checked={vinculacaoHabilitada}
-              onCheckedChange={handleVinculacaoToggle}
-            />
-            <Label htmlFor="vinculacao" className="cursor-pointer">
-              Vincular a um projeto existente
-            </Label>
-          </div>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Tipo de Projeto *</Label>
+              <Select value={tipoProjeto} onValueChange={setTipoProjeto}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o tipo de projeto..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="importacao">Importação Direta</SelectItem>
+                  <SelectItem value="licitacao">Licitação</SelectItem>
+                  <SelectItem value="contratacao">Contratação</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          {vinculacaoHabilitada && (
-            <div className="space-y-4 pt-2">
+            {tipoProjeto && (
               <div className="space-y-2">
-                <Label>Tipo de Projeto *</Label>
-                <Select value={tipoProjeto} onValueChange={setTipoProjeto}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o tipo de projeto..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="importacao">Importação Direta</SelectItem>
-                    <SelectItem value="licitacao">Licitação</SelectItem>
-                    <SelectItem value="contratacao">Contratação</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {tipoProjeto && (
-                <div className="space-y-2">
-                  <Label>Buscar Projeto *</Label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      value={projetoSearch}
-                      onChange={(e) => handleProjetoSearch(e.target.value)}
-                      onFocus={() => setShowSuggestions(true)}
-                      placeholder="Digite o número do processo ou nome do cliente..."
-                      className="pl-10"
-                    />
-                    {selectedProjeto && (
-                      <CheckCircle className="absolute right-3 top-3 h-4 w-4 text-green-600" />
-                    )}
-                    {projetoSearch && !selectedProjeto && projetosDisponiveis.length === 0 && (
-                      <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-600" />
-                    )}
-                  </div>
-
-                  {/* Sugestões rápidas */}
-                  {!projetoSearch && projetosDisponiveis.length > 0 && (
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      <span className="text-xs text-muted-foreground">Sugestões:</span>
-                      {projetosDisponiveis.slice(0, 5).map((projeto) => (
-                        <Badge
-                          key={projeto.id}
-                          variant="outline"
-                          className="cursor-pointer hover:bg-accent"
-                          onClick={() => handleSelectProjeto(projeto)}
-                        >
-                          {projeto.numeroProcesso}
-                        </Badge>
-                      ))}
-                    </div>
+                <Label>Buscar Projeto *</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    value={projetoSearch}
+                    onChange={(e) => handleProjetoSearch(e.target.value)}
+                    onFocus={() => setShowSuggestions(true)}
+                    placeholder="Digite o número do processo ou nome do cliente..."
+                    className="pl-10"
+                  />
+                  {selectedProjeto && (
+                    <CheckCircle className="absolute right-3 top-3 h-4 w-4 text-green-600" />
                   )}
+                  {projetoSearch && !selectedProjeto && projetosDisponiveis.length === 0 && (
+                    <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-600" />
+                  )}
+                </div>
 
-                  {/* Dropdown de resultados */}
-                  {showSuggestions && projetoSearch && projetosDisponiveis.length > 0 && (
-                    <div className="absolute z-10 mt-1 w-full bg-background border rounded-md shadow-lg max-h-60 overflow-y-auto">
-                      {projetosDisponiveis.map((projeto) => (
-                        <div
-                          key={projeto.id}
-                          className="p-3 hover:bg-accent cursor-pointer border-b last:border-b-0"
-                          onClick={() => handleSelectProjeto(projeto)}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="font-medium">{projeto.id}</p>
-                              <p className="text-sm text-muted-foreground">{projeto.cliente}</p>
-                            </div>
-                            <Badge variant="outline">{projeto.status}</Badge>
+                {/* Sugestões rápidas */}
+                {!projetoSearch && projetosDisponiveis.length > 0 && (
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    <span className="text-xs text-muted-foreground">Sugestões:</span>
+                    {projetosDisponiveis.slice(0, 5).map((projeto) => (
+                      <Badge
+                        key={projeto.id}
+                        variant="outline"
+                        className="cursor-pointer hover:bg-accent"
+                        onClick={() => handleSelectProjeto(projeto)}
+                      >
+                        {projeto.numeroProcesso}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                {/* Dropdown de resultados */}
+                {showSuggestions && projetoSearch && projetosDisponiveis.length > 0 && (
+                  <div className="absolute z-10 mt-1 w-full bg-background border rounded-md shadow-lg max-h-60 overflow-y-auto">
+                    {projetosDisponiveis.map((projeto) => (
+                      <div
+                        key={projeto.id}
+                        className="p-3 hover:bg-accent cursor-pointer border-b last:border-b-0"
+                        onClick={() => handleSelectProjeto(projeto)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium">{projeto.id}</p>
+                            <p className="text-sm text-muted-foreground">{projeto.cliente}</p>
                           </div>
+                          <Badge variant="outline">{projeto.status}</Badge>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
-              {/* Projeto selecionado */}
-              {selectedProjeto && (
-                <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
-                  <div className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-                    <div className="flex-1">
-                      <p className="font-medium text-green-900 dark:text-green-100">
-                        Vinculado: {selectedProjeto.id} - {selectedProjeto.cliente}
+            {/* Projeto selecionado */}
+            {selectedProjeto && (
+              <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                <div className="flex items-start gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-medium text-green-900 dark:text-green-100">
+                      Vinculado: {selectedProjeto.id} - {selectedProjeto.cliente}
+                    </p>
+                    <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                      {getTipoProjetoLabel(selectedProjeto.tipo)} • {selectedProjeto.status}
+                    </p>
+                    {selectedProjeto.responsavel && (
+                      <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                        Responsável: {selectedProjeto.responsavel}
                       </p>
-                      <p className="text-sm text-green-700 dark:text-green-300 mt-1">
-                        {getTipoProjetoLabel(selectedProjeto.tipo)} • {selectedProjeto.status}
-                      </p>
-                      {selectedProjeto.responsavel && (
-                        <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-                          Responsável: {selectedProjeto.responsavel}
-                        </p>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </div>
-              )}
+              </div>
+            )}
 
-              {!selectedProjeto && !tipoProjeto && (
-                <div className="text-sm text-muted-foreground bg-muted/50 rounded-lg p-3">
-                  💡 Selecione o tipo de projeto para visualizar as opções disponíveis
-                </div>
-              )}
-            </div>
-          )}
-
-          {!vinculacaoHabilitada && (
-            <div className="text-sm text-muted-foreground bg-muted/50 rounded-lg p-3">
-              📦 Empréstimo Avulso - Preencha os dados do cliente manualmente
-            </div>
-          )}
+            {!selectedProjeto && !tipoProjeto && (
+              <div className="text-sm text-muted-foreground bg-muted/50 rounded-lg p-3">
+                💡 Selecione o tipo de projeto para visualizar as opções disponíveis
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
 
