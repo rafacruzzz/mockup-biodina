@@ -11,6 +11,7 @@ import OVCForm from './components/OVCForm';
 import ComercialTabs from './components/ComercialTabs';
 import SPIEnvioModal from './components/SPIEnvioModal';
 import GestaoEmprestimosTab from './components/GestaoEmprestimosTab';
+import GestaoComissoesTab from './components/GestaoComissoesTab';
 import { AnexosForm } from './components/AnexosForm';
 import { generateSPIPDF } from './utils/spiUtils';
 import { PIHistoryItem, PIStatus } from '@/types/piHistory';
@@ -276,6 +277,7 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
     { id: 'packing-list', label: 'PACKING LIST' },
     { id: 'ddr', label: 'DDR' },
     { id: 'gestao-emprestimos', label: 'GESTÃO DE EMPRÉSTIMOS' },
+    { id: 'gestao-comissoes', label: 'GESTÃO DE COMISSÕES' },
     { id: 'anexos', label: 'ANEXOS' }
   ];
 
@@ -445,6 +447,16 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
       return (
         <GestaoEmprestimosTab
           importacaoId={getImportacaoId()}
+        />
+      );
+    }
+
+    if (activeMasterTab === 'gestao-comissoes') {
+      return (
+        <GestaoComissoesTab
+          importacaoId={getImportacaoId()}
+          formData={formData}
+          onInputChange={handleInputChange}
         />
       );
     }
