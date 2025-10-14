@@ -559,6 +559,26 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
           </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent className="space-y-6">
+              {/* Swift da Fábrica */}
+              <div className="space-y-2">
+                <Label>Swift da fábrica informando o pagamento</Label>
+                <div className="flex gap-2">
+                  <Input 
+                    type="file" 
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleFileUpload('swiftFabricaAnexo', file.name);
+                    }}
+                  />
+                  {comissao.swiftFabricaAnexo && (
+                    <Badge variant="secondary">
+                      <CheckCircle className="h-3 w-3 mr-1" />
+                      Anexado
+                    </Badge>
+                  )}
+                </div>
+              </div>
+
               {/* Invoice To */}
               <div className="space-y-4">
                 <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
