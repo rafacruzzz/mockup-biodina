@@ -126,6 +126,8 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
     awbWeightDeclaration: 'PLEASE DECLARE ON THE AWB THE NET AND GROSS WEIGHT OF THE GOODS.',
     batchSerialAttention_congelado: '8- ATTENTION! PLEASE SEND US THE BATCH/SERIAL NUMBERS AND EXPIRY DATES OF ALL ITEMS BEFORE INVOICING FOR APPROVAL',
     awbWeightDeclaration_congelado: 'PLEASE DECLARE ON THE AWB THE NET AND GROSS WEIGHT OF THE GOODS.',
+    finalSignature: 'Looking forward to hearing from you soon.\nCordially,\n\nEvandro Amorim\nInternational Division\nEAA',
+    finalSignature_congelado: 'Looking forward to hearing from you soon.\nCordially,\n\nEvandro Amorim\nInternational Division\nEAA',
     
     // Análise Técnica
     analiseTecnica: '',

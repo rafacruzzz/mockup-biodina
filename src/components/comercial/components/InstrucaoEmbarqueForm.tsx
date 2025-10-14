@@ -755,15 +755,13 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 </div>
 
                 {/* Final Signature */}
-                <div className="border p-4 rounded bg-gray-50 mt-4">
-                  <div className="text-sm space-y-1">
-                    <p>Looking forward to hearing from you soon.</p>
-                    <p>Cordially,</p>
-                    <p className="mt-3 font-semibold">Evandro Amorim</p>
-                    <p>International Division</p>
-                    <p>EAA</p>
-                  </div>
-                </div>
+                <Textarea
+                  id="finalSignature"
+                  value={formData.finalSignature || ''}
+                  onChange={(e) => onInputChange('finalSignature', e.target.value)}
+                  rows={6}
+                  className="w-full bg-gray-50 border-gray-200 text-sm"
+                />
               </div>
             </div>
           )}
@@ -1097,15 +1095,13 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 </div>
 
                 {/* Final Signature */}
-                <div className="border p-4 rounded bg-gray-50 mt-4">
-                  <div className="text-sm space-y-1">
-                    <p>Looking forward to hearing from you soon.</p>
-                    <p>Cordially,</p>
-                    <p className="mt-3 font-semibold">Evandro Amorim</p>
-                    <p>International Division</p>
-                    <p>EAA</p>
-                  </div>
-                </div>
+                <Textarea
+                  id="finalSignature_congelado"
+                  value={formData.finalSignature_congelado || ''}
+                  onChange={(e) => onInputChange('finalSignature_congelado', e.target.value)}
+                  rows={6}
+                  className="w-full bg-gray-50 border-gray-200 text-sm"
+                />
               </div>
             </div>
           )}
