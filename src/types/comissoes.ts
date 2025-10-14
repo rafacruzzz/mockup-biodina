@@ -36,9 +36,16 @@ export interface InvoiceServico {
   
   // Cabeçalho
   invoiceTo: string;
+  
+  // PAGE / SALES REPRES
   page: string;
-  salesRepres: string;
-  contactPerson: string;
+  preparedBy: string;
+  phoneNumber: string;
+  email: string;
+  
+  // CONTACT PERSON
+  contactPersonName: string;
+  contactPersonEmail: string;
   
   // Itens de serviço
   items: ItemInvoice[];

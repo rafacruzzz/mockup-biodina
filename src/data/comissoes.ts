@@ -23,8 +23,11 @@ export const mockComissoes: Comissao[] = [
       data: '2025-01-20',
       invoiceTo: 'RADIOMETER MEDICAL ApS',
       page: '1/1',
-      salesRepres: 'BIOMEDICAL SOLUTIONS LTDA',
-      contactPerson: 'John Smith',
+      preparedBy: 'BIOMEDICAL SOLUTIONS LTDA',
+      phoneNumber: '55 (21) 2719-2419',
+      email: 'contato@biomedicalsolutions.com.br',
+      contactPersonName: 'John Smith',
+      contactPersonEmail: 'john.smith@radiometer.com',
       items: [
         {
           id: '1',
@@ -101,8 +104,11 @@ export const mockComissoes: Comissao[] = [
       data: '2024-12-15',
       invoiceTo: 'ACME MEDICAL INC',
       page: '1/1',
-      salesRepres: 'BIOMEDICAL SOLUTIONS LTDA',
-      contactPerson: 'Mary Johnson',
+      preparedBy: 'BIOMEDICAL SOLUTIONS LTDA',
+      phoneNumber: '55 (21) 2719-2419',
+      email: 'contato@biomedicalsolutions.com.br',
+      contactPersonName: 'Mary Johnson',
+      contactPersonEmail: 'mary.johnson@acmemedical.com',
       items: [
         {
           id: '1',
@@ -162,8 +168,11 @@ export const defaultInvoiceServico = {
   data: new Date().toISOString().split('T')[0],
   invoiceTo: '',
   page: '1/1',
-  salesRepres: 'BIOMEDICAL SOLUTIONS LTDA',
-  contactPerson: '',
+  preparedBy: 'BIOMEDICAL SOLUTIONS LTDA',
+  phoneNumber: '55 (21) 2719-2419',
+  email: 'contato@biomedicalsolutions.com.br',
+  contactPersonName: '',
+  contactPersonEmail: '',
   items: [
     {
       id: '1',

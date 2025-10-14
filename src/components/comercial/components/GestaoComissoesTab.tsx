@@ -114,6 +114,11 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
         numero: `IS-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000)}`,
         data: new Date().toISOString().split('T')[0],
         invoiceTo: prev.fabricante,
+        preparedBy: 'BIOMEDICAL SOLUTIONS LTDA',
+        phoneNumber: '55 (21) 2719-2419',
+        email: 'contato@biomedicalsolutions.com.br',
+        contactPersonName: 'Maria Silva',
+        contactPersonEmail: 'maria.silva@radiometer.com',
         items: [
           {
             id: '1',
@@ -144,7 +149,7 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
     setComissao(prev => ({
       ...prev,
       relatorioAgente: {
-        nomeAgente: prev.invoiceServico.salesRepres,
+        nomeAgente: prev.invoiceServico.preparedBy,
         periodoInicio: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         periodoFim: new Date().toISOString().split('T')[0],
         totalVendas: prev.valorInvoice,
@@ -554,31 +559,27 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
           </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent className="space-y-6">
-              {/* Dados da Invoice */}
+              {/* Invoice To */}
               <div className="space-y-4">
-                <h3 className="font-semibold text-sm">DADOS DA INVOICE</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                    <Label>Invoice #</Label>
-                    <Input 
-                      value={comissao.invoiceServico.numero}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        invoiceServico: { ...prev.invoiceServico, numero: e.target.value }
-                      }))}
-                    />
-                  </div>
-                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                    <Label>Data</Label>
-                    <Input 
-                      type="date"
-                      value={comissao.invoiceServico.data}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        invoiceServico: { ...prev.invoiceServico, data: e.target.value }
-                      }))}
-                    />
-                  </div>
+                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                  <Label>Invoice to</Label>
+                  <Input 
+                    value={comissao.invoiceServico.invoiceTo}
+                    onChange={(e) => setComissao(prev => ({
+                      ...prev,
+                      invoiceServico: { ...prev.invoiceServico, invoiceTo: e.target.value }
+                    }))}
+                    placeholder="Nome do fabricante/destinatário"
+                  />
+                </div>
+              </div>
+
+              {/* PAGE / SALES REPRES */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm uppercase text-muted-foreground">
+                  Page / Sales Repres
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
                     <Label>Page</Label>
                     <Input 
@@ -587,41 +588,70 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                         ...prev,
                         invoiceServico: { ...prev.invoiceServico, page: e.target.value }
                       }))}
+                      placeholder="1/1"
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Prepared by</Label>
+                    <Input 
+                      value={comissao.invoiceServico.preparedBy}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, preparedBy: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Phone Number</Label>
+                    <Input 
+                      value={comissao.invoiceServico.phoneNumber}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, phoneNumber: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Email</Label>
+                    <Input 
+                      type="email"
+                      value={comissao.invoiceServico.email}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, email: e.target.value }
+                      }))}
                     />
                   </div>
                 </div>
+              </div>
 
+              {/* CONTACT PERSON */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm uppercase text-muted-foreground">
+                  Contact Person
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                    <Label>Invoice to</Label>
+                    <Label>Name</Label>
                     <Input 
-                      value={comissao.invoiceServico.invoiceTo}
+                      value={comissao.invoiceServico.contactPersonName}
                       onChange={(e) => setComissao(prev => ({
                         ...prev,
-                        invoiceServico: { ...prev.invoiceServico, invoiceTo: e.target.value }
+                        invoiceServico: { ...prev.invoiceServico, contactPersonName: e.target.value }
                       }))}
-                      placeholder="Destinatário"
+                      placeholder="Nome da pessoa de contato"
                     />
                   </div>
                   <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                    <Label>Sales Repres</Label>
+                    <Label>Email</Label>
                     <Input 
-                      value={comissao.invoiceServico.salesRepres}
+                      type="email"
+                      value={comissao.invoiceServico.contactPersonEmail}
                       onChange={(e) => setComissao(prev => ({
                         ...prev,
-                        invoiceServico: { ...prev.invoiceServico, salesRepres: e.target.value }
+                        invoiceServico: { ...prev.invoiceServico, contactPersonEmail: e.target.value }
                       }))}
-                    />
-                  </div>
-                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md md:col-span-2">
-                    <Label>Contact Person</Label>
-                    <Input 
-                      value={comissao.invoiceServico.contactPerson}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        invoiceServico: { ...prev.invoiceServico, contactPerson: e.target.value }
-                      }))}
-                      placeholder="Pessoa de contato"
+                      placeholder="Email da pessoa de contato"
                     />
                   </div>
                 </div>
@@ -755,7 +785,7 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                     <div>
                       <Label className="text-muted-foreground">Please remit to</Label>
                       <Input 
-                        value={comissao.invoiceServico.salesRepres}
+                        value={comissao.invoiceServico.preparedBy}
                         readOnly
                         className="bg-muted"
                       />
