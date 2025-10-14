@@ -651,30 +651,22 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 </div>
 
                 {/* ATTENTION - Refrigerated Goods */}
-                <div className="space-y-2">
-                  <Label htmlFor="attentionRefrigeratedGoods" className="text-sm font-medium">
-                    Instruções para Produtos Refrigerados
-                  </Label>
-                  <Textarea
-                    id="attentionRefrigeratedGoods"
-                    value={formData.attentionRefrigeratedGoods || ''}
-                    onChange={(e) => onInputChange('attentionRefrigeratedGoods', e.target.value)}
-                    className="min-h-[220px] bg-yellow-50 border-yellow-200 text-sm font-mono"
-                    placeholder="Instruções para produtos refrigerados..."
-                  />
-                </div>
+                <Textarea
+                  id="attentionRefrigeratedGoods"
+                  value={formData.attentionRefrigeratedGoods || ''}
+                  onChange={(e) => onInputChange('attentionRefrigeratedGoods', e.target.value)}
+                  className="min-h-[220px] bg-yellow-50 border-yellow-200 text-sm font-mono"
+                  placeholder="Instruções para produtos refrigerados..."
+                />
 
                 {/* Batch/Serial Numbers */}
-                <div>
-                  <Label htmlFor="batchSerialAttention">8- ATTENTION! BATCH/SERIAL NUMBERS:</Label>
-                  <Textarea
-                    id="batchSerialAttention"
-                    value="ATTENTION! PLEASE SEND US THE BATCH/SERIAL NUMBERS AND EXPIRY DATES OF ALL ITEMS BEFORE INVOICING FOR APPROVAL"
-                    readOnly
-                    rows={2}
-                    className="w-full bg-gray-100 cursor-not-allowed"
-                  />
-                </div>
+                <Textarea
+                  id="batchSerialAttention"
+                  value={formData.batchSerialAttention || ''}
+                  onChange={(e) => onInputChange('batchSerialAttention', e.target.value)}
+                  rows={2}
+                  className="w-full bg-red-50 border-red-200 font-semibold text-sm"
+                />
 
                 {/* INSTRUCTIONS FOR THE FREIGHT FORWARD */}
                 <div className="border p-4 rounded bg-green-50 mt-4">
@@ -733,24 +725,21 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       />
                     </div>
 
-                    <div className="bg-blue-100 border border-blue-300 p-3 rounded">
-                      <p className="font-medium text-sm">
-                        PLEASE DECLARE ON THE AWB THE NET AND GROSS WEIGHT OF THE GOODS.
-                      </p>
-                    </div>
+                    <Textarea
+                      id="awbWeightDeclaration"
+                      value={formData.awbWeightDeclaration || ''}
+                      onChange={(e) => onInputChange('awbWeightDeclaration', e.target.value)}
+                      rows={2}
+                      className="w-full bg-blue-50 border-blue-200 font-medium text-sm"
+                    />
 
-                    <div className="space-y-2">
-                      <Label htmlFor="awbDeclarationRefrigerated" className="text-sm font-medium">
-                        Declaração AWB - Produtos Refrigerados
-                      </Label>
-                      <Textarea
-                        id="awbDeclarationRefrigerated"
-                        value={formData.awbDeclarationRefrigerated || ''}
-                        onChange={(e) => onInputChange('awbDeclarationRefrigerated', e.target.value)}
-                        className="min-h-[100px] bg-red-50 border-red-200 text-sm font-mono"
-                        placeholder="Declaração para AWB..."
-                      />
-                    </div>
+                    <Textarea
+                      id="awbDeclarationRefrigerated"
+                      value={formData.awbDeclarationRefrigerated || ''}
+                      onChange={(e) => onInputChange('awbDeclarationRefrigerated', e.target.value)}
+                      className="min-h-[100px] bg-red-50 border-red-200 text-sm font-mono"
+                      placeholder="Declaração para AWB..."
+                    />
 
                     <div>
                       <Label htmlFor="ffOthers">5- Others:</Label>
@@ -1005,23 +994,22 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 </div>
 
                 {/* ATTENTION FOR FROZEN PRODUCTS */}
-                <div className="space-y-2">
-                  <Label htmlFor="attentionFrozenItems" className="text-sm font-medium">
-                    Instruções para Produtos Congelados
-                  </Label>
-                  <Textarea
-                    id="attentionFrozenItems"
-                    value={formData.attentionFrozenItems || ''}
-                    onChange={(e) => onInputChange('attentionFrozenItems', e.target.value)}
-                    className="min-h-[220px] bg-blue-50 border-blue-200 text-sm font-mono"
-                    placeholder="Instruções para produtos congelados..."
-                  />
-                </div>
+                <Textarea
+                  id="attentionFrozenItems"
+                  value={formData.attentionFrozenItems || ''}
+                  onChange={(e) => onInputChange('attentionFrozenItems', e.target.value)}
+                  className="min-h-[220px] bg-blue-50 border-blue-200 text-sm font-mono"
+                  placeholder="Instruções para produtos congelados..."
+                />
 
                 {/* Batch/Serial Numbers */}
-                <div className="border p-3 rounded bg-yellow-50 border-yellow-400">
-                  <p className="text-sm font-semibold text-yellow-900">8- ATTENTION! PLEASE SEND US THE BATCH/SERIAL NUMBERS AND EXPIRY DATES OF ALL ITEMS BEFORE INVOICING FOR APPROVAL</p>
-                </div>
+                <Textarea
+                  id="batchSerialAttention_congelado"
+                  value={formData.batchSerialAttention_congelado || ''}
+                  onChange={(e) => onInputChange('batchSerialAttention_congelado', e.target.value)}
+                  rows={2}
+                  className="w-full bg-yellow-50 border-yellow-400 font-semibold text-sm"
+                />
 
                 {/* INSTRUCTIONS FOR THE FREIGHT FORWARD - CONGELADOS */}
                 <div className="border-2 border-purple-400 p-4 rounded bg-purple-50 space-y-4">
@@ -1079,22 +1067,21 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       />
                     </div>
 
-                    <div className="bg-blue-50 p-3 rounded border border-blue-300 text-sm">
-                      <p className="font-semibold">PLEASE DECLARE ON THE AWB THE NET AND GROSS WEIGHT OF THE GOODS.</p>
-                    </div>
+                    <Textarea
+                      id="awbWeightDeclaration_congelado"
+                      value={formData.awbWeightDeclaration_congelado || ''}
+                      onChange={(e) => onInputChange('awbWeightDeclaration_congelado', e.target.value)}
+                      rows={2}
+                      className="w-full bg-blue-50 border-blue-300 font-semibold text-sm"
+                    />
 
-                    <div className="space-y-2">
-                      <Label htmlFor="awbDeclarationFrozen" className="text-sm font-medium">
-                        Declaração AWB - Produtos Congelados
-                      </Label>
-                      <Textarea
-                        id="awbDeclarationFrozen"
-                        value={formData.awbDeclarationFrozen || ''}
-                        onChange={(e) => onInputChange('awbDeclarationFrozen', e.target.value)}
-                        className="min-h-[110px] bg-red-50 border-red-200 text-sm font-mono"
-                        placeholder="Declaração para AWB..."
-                      />
-                    </div>
+                    <Textarea
+                      id="awbDeclarationFrozen"
+                      value={formData.awbDeclarationFrozen || ''}
+                      onChange={(e) => onInputChange('awbDeclarationFrozen', e.target.value)}
+                      className="min-h-[110px] bg-red-50 border-red-200 text-sm font-mono"
+                      placeholder="Declaração para AWB..."
+                    />
 
                     <div>
                       <Label htmlFor="ffOthers_congelado">5- Others:</Label>
