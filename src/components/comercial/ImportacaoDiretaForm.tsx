@@ -129,6 +129,40 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
     finalSignature: 'Looking forward to hearing from you soon.\nCordially,\n\nEvandro Amorim\nInternational Division\nEAA',
     finalSignature_congelado: 'Looking forward to hearing from you soon.\nCordially,\n\nEvandro Amorim\nInternational Division\nEAA',
     
+    // DOCUMENT FIELDS - Instrução de Embarque
+    aoTo: '',
+    aoAttn: '',
+    aoDate: '',
+    aoTotalPages: '',
+    aoSubject: '',
+    aoCustomer: '',
+    
+    // SPECIFIC FIELDS (Invoice) - Instrução de Embarque
+    aoPortugueseDescription: '',
+    aoUnitTotalPrices: '',
+    aoLotEachItem: '',
+    aoCountryOrigin: '',
+    aoTotalCartons: '',
+    aoGrossWeight: '',
+    aoNetWeight: '',
+    aoTermsPayment: '',
+    aoConsignedTo: '',
+    
+    // SHIPPING DOCUMENTS - Refrigerado
+    aeroportoDestino: '',
+    
+    // FREIGHT FORWARD - Refrigerado
+    ffDestination: '',
+    ffNotify: '',
+    
+    // SHIPPING DOCUMENTS - Congelado
+    paisProcedencia_congelado: 'POLÔNIA',
+    aeroportoDestino_congelado: '',
+    
+    // FREIGHT FORWARD - Congelado
+    ffDestination_congelado: '',
+    ffNotify_congelado: '',
+    
     // Análise Técnica
     analiseTecnica: '',
     
