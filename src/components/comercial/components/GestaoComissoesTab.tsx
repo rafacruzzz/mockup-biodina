@@ -1130,91 +1130,286 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
             </CardHeader>
           </CollapsibleTrigger>
           <CollapsibleContent>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Número da Fatura</Label>
-                  <Input 
-                    value={comissao.faturaRecebimento.numero}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      faturaRecebimento: { ...prev.faturaRecebimento, numero: e.target.value }
-                    }))}
-                  />
+            <CardContent className="space-y-6">
+              {/* Dados da Ordem de Pagamento */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm">DADOS DA ORDEM DE PAGAMENTO</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Número</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.numeroOrdem}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, numeroOrdem: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Banco</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.banco}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, banco: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>País</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.pais}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, pais: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Finalidade</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.finalidade}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, finalidade: e.target.value }
+                      }))}
+                    />
+                  </div>
                 </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Data</Label>
-                  <Input 
-                    type="date"
-                    value={comissao.faturaRecebimento.data}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      faturaRecebimento: { ...prev.faturaRecebimento, data: e.target.value }
-                    }))}
-                  />
+              </div>
+
+              {/* Detalhes da Transação */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm">DETALHES DA TRANSAÇÃO</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-3 rounded-md">
+                    <Label>Número Origem</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.numeroOrigem}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, numeroOrigem: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="p-3 rounded-md">
+                    <Label>Data Inclusão</Label>
+                    <Input 
+                      type="date"
+                      value={comissao.faturaRecebimento.dataInclusao}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, dataInclusao: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md md:col-span-2">
+                    <Label>Remetente</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.remetente}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, remetente: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="p-3 rounded-md">
+                    <Label>Moeda</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.moeda}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, moeda: e.target.value }
+                      }))}
+                      placeholder="USD, EUR, etc."
+                    />
+                  </div>
+                  <div className="p-3 rounded-md">
+                    <Label>Valor</Label>
+                    <Input 
+                      type="number"
+                      value={comissao.faturaRecebimento.valor}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, valor: Number(e.target.value) }
+                      }))}
+                    />
+                  </div>
+                  <div className="p-3 rounded-md">
+                    <Label>Saldo</Label>
+                    <Input 
+                      type="number"
+                      value={comissao.faturaRecebimento.saldo}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, saldo: Number(e.target.value) }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md md:col-span-2">
+                    <Label>Description of Service</Label>
+                    <Textarea 
+                      rows={2}
+                      value={comissao.faturaRecebimento.descriptionOfService}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, descriptionOfService: e.target.value }
+                      }))}
+                    />
+                  </div>
                 </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Beneficiário</Label>
-                  <Input 
-                    value={comissao.faturaRecebimento.beneficiario}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      faturaRecebimento: { ...prev.faturaRecebimento, beneficiario: e.target.value }
-                    }))}
-                  />
+              </div>
+
+              {/* Contact Person (Biodina) */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm">CONTACT PERSON (BIODINA)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Prepared by</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.preparedBy}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, preparedBy: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Phone Number</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.phoneNumber}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, phoneNumber: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md md:col-span-2">
+                    <Label>E-mail</Label>
+                    <Input 
+                      type="email"
+                      value={comissao.faturaRecebimento.emailBiodina}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, emailBiodina: e.target.value }
+                      }))}
+                    />
+                  </div>
                 </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Banco</Label>
-                  <Input 
-                    value={comissao.faturaRecebimento.banco}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      faturaRecebimento: { ...prev.faturaRecebimento, banco: e.target.value }
-                    }))}
-                  />
+              </div>
+
+              {/* Contact Person (Radiometer) */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm">CONTACT PERSON (RADIOMETER)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Contact Person</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.contactPersonRadiometer}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, contactPersonRadiometer: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>E-mail</Label>
+                    <Input 
+                      type="email"
+                      value={comissao.faturaRecebimento.emailRadiometer}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, emailRadiometer: e.target.value }
+                      }))}
+                    />
+                  </div>
                 </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Agência</Label>
-                  <Input 
-                    value={comissao.faturaRecebimento.agencia}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      faturaRecebimento: { ...prev.faturaRecebimento, agencia: e.target.value }
-                    }))}
-                  />
+              </div>
+
+              {/* Banking Information */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm">BANKING INFORMATION</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Payment Terms</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.paymentTerms}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, paymentTerms: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Bank</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.bankName}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, bankName: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md md:col-span-2">
+                    <Label>Address</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.bankAddress}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, bankAddress: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Agency</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.agency}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, agency: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Account number</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.accountNumber}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, accountNumber: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md md:col-span-2">
+                    <Label>SWIFT/IBAN code</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.swiftIban}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { ...prev.faturaRecebimento, swiftIban: e.target.value }
+                      }))}
+                    />
+                  </div>
                 </div>
+              </div>
+
+              {/* Rodapé */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm">RODAPÉ</h3>
                 <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Conta</Label>
-                  <Input 
-                    value={comissao.faturaRecebimento.conta}
+                  <Label>Rodapé (Editável)</Label>
+                  <Textarea 
+                    rows={3}
+                    value={comissao.faturaRecebimento.footer}
                     onChange={(e) => setComissao(prev => ({
                       ...prev,
-                      faturaRecebimento: { ...prev.faturaRecebimento, conta: e.target.value }
+                      faturaRecebimento: { ...prev.faturaRecebimento, footer: e.target.value }
                     }))}
-                  />
-                </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Valor Recebido (USD)</Label>
-                  <Input 
-                    type="number"
-                    value={comissao.faturaRecebimento.valorRecebido}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      faturaRecebimento: { ...prev.faturaRecebimento, valorRecebido: Number(e.target.value) }
-                    }))}
-                  />
-                </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Moeda</Label>
-                  <Input 
-                    value={comissao.faturaRecebimento.moeda}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      faturaRecebimento: { ...prev.faturaRecebimento, moeda: e.target.value }
-                    }))}
+                    className="font-mono text-xs"
                   />
                 </div>
               </div>
+
               <Button onClick={() => gerarPDF('Fatura de Recebimento')} className="w-full">
                 <Download className="h-4 w-4 mr-2" />
                 Gerar PDF Fatura

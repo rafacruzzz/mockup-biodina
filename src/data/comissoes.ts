@@ -67,14 +67,29 @@ export const mockComissoes: Comissao[] = [
       rodape: 'RUA SAO PEDRO, 154 SALA 409 - CENTRO, Niteroi - RJ/ Brasil - ZIP CODE: 24020-058\nPhone: 55 (21) 2719-2419'
     },
     faturaRecebimento: {
-      numero: 'FR-2025-001',
-      data: '2025-02-01',
-      beneficiario: 'BIOMEDICAL SOLUTIONS LTDA',
-      banco: 'Banco do Brasil',
-      agencia: '1234-5',
-      conta: '12345-6',
-      valorRecebido: 2500.00,
-      moeda: 'USD'
+      numeroOrdem: '59114503',
+      banco: 'CITIBANK NA',
+      pais: 'DINAMARCA',
+      finalidade: 'PAYMENT MULTIPLE ORDERS',
+      numeroOrigem: '',
+      dataInclusao: '',
+      remetente: 'RADIOMETER MEDICAL APS',
+      moeda: '',
+      valor: 0,
+      saldo: 0,
+      descriptionOfService: 'Comissões de agente referente a representações em geral',
+      preparedBy: 'Thais Tolentino',
+      phoneNumber: '+55 11 97638-9677',
+      emailBiodina: 'thais.tolentino@biodina.com.br',
+      contactPersonRadiometer: 'André Borges',
+      emailRadiometer: 'andre.borges-hansen@radiometer.dk',
+      paymentTerms: 'Net Cash',
+      bankName: 'Banco do Brasil',
+      bankAddress: 'Avenida Ernani do Amaral Peixoto, 347, Bairro: Centro, Cidade: Niterói -RJ, Brazil ZIP Code: 24020-072',
+      agency: '72-8',
+      accountNumber: '19260-0',
+      swiftIban: 'BR5600000000720000192600C1',
+      footer: 'BIODINA INSTRUMENTOS CIENTIFICOS LTDA – CNPJ: 29.375.441/0001-50\nRUA SÃO PEDRO, NÚMERO 154, COMPLEMENTO SALA 409 CEP 24.020-058\nBAIRRO/DISTRITO CENTRO MUNICÍPIO NITERÓI UF RJ TELEFONE (21) 2719-2419'
     },
     relatorioAgente: {
       nomeAgente: 'BIOMEDICAL SOLUTIONS LTDA',
@@ -160,14 +175,29 @@ export const mockComissoes: Comissao[] = [
       rodape: 'RUA SAO PEDRO, 154 SALA 409 - CENTRO, Niteroi - RJ/ Brasil - ZIP CODE: 24020-058\nPhone: 55 (21) 2719-2419'
     },
     faturaRecebimento: {
-      numero: 'FR-2024-087',
-      data: '2024-12-22',
-      beneficiario: 'BIOMEDICAL SOLUTIONS LTDA',
-      banco: 'Banco do Brasil',
-      agencia: '1234-5',
-      conta: '12345-6',
-      valorRecebido: 1920.00,
-      moeda: 'USD'
+      numeroOrdem: '59114503',
+      banco: 'CITIBANK NA',
+      pais: 'DINAMARCA',
+      finalidade: 'PAYMENT MULTIPLE ORDERS',
+      numeroOrigem: '',
+      dataInclusao: '',
+      remetente: 'RADIOMETER MEDICAL APS',
+      moeda: '',
+      valor: 0,
+      saldo: 0,
+      descriptionOfService: 'Comissões de agente referente a representações em geral',
+      preparedBy: 'Thais Tolentino',
+      phoneNumber: '+55 11 97638-9677',
+      emailBiodina: 'thais.tolentino@biodina.com.br',
+      contactPersonRadiometer: 'André Borges',
+      emailRadiometer: 'andre.borges-hansen@radiometer.dk',
+      paymentTerms: 'Net Cash',
+      bankName: 'Banco do Brasil',
+      bankAddress: 'Avenida Ernani do Amaral Peixoto, 347, Bairro: Centro, Cidade: Niterói -RJ, Brazil ZIP Code: 24020-072',
+      agency: '72-8',
+      accountNumber: '19260-0',
+      swiftIban: 'BR5600000000720000192600C1',
+      footer: 'BIODINA INSTRUMENTOS CIENTIFICOS LTDA – CNPJ: 29.375.441/0001-50\nRUA SÃO PEDRO, NÚMERO 154, COMPLEMENTO SALA 409 CEP 24.020-058\nBAIRRO/DISTRITO CENTRO MUNICÍPIO NITERÓI UF RJ TELEFONE (21) 2719-2419'
     },
     relatorioAgente: {
       nomeAgente: 'BIOMEDICAL SOLUTIONS LTDA',
@@ -258,12 +288,44 @@ export const mockDadosBancariosInternacionais: Record<string, { address: string;
 };
 
 export const defaultFaturaRecebimento = {
-  numero: '',
-  data: new Date().toISOString().split('T')[0],
-  beneficiario: 'BIOMEDICAL SOLUTIONS LTDA',
-  banco: 'Banco do Brasil',
-  agencia: '1234-5',
-  conta: '12345-6',
-  valorRecebido: 0,
-  moeda: 'USD'
+  // PRÉ-PREENCHIDOS (campos em amarelo)
+  numeroOrdem: '59114503',
+  banco: 'CITIBANK NA',
+  pais: 'DINAMARCA',
+  finalidade: 'PAYMENT MULTIPLE ORDERS',
+  
+  // VAZIOS (para edição)
+  numeroOrigem: '',
+  dataInclusao: '',
+  
+  // PRÉ-PREENCHIDO
+  remetente: 'RADIOMETER MEDICAL APS',
+  
+  // VAZIOS
+  moeda: '',
+  valor: 0,
+  saldo: 0,
+  
+  // PRÉ-PREENCHIDO
+  descriptionOfService: 'Comissões de agente referente a representações em geral',
+  
+  // PRÉ-PREENCHIDOS (Biodina)
+  preparedBy: 'Thais Tolentino',
+  phoneNumber: '+55 11 97638-9677',
+  emailBiodina: 'thais.tolentino@biodina.com.br',
+  
+  // PRÉ-PREENCHIDOS (Radiometer)
+  contactPersonRadiometer: 'André Borges',
+  emailRadiometer: 'andre.borges-hansen@radiometer.dk',
+  
+  // PRÉ-PREENCHIDOS (Banking)
+  paymentTerms: 'Net Cash',
+  bankName: 'Banco do Brasil',
+  bankAddress: 'Avenida Ernani do Amaral Peixoto, 347, Bairro: Centro, Cidade: Niterói -RJ, Brazil ZIP Code: 24020-072',
+  agency: '72-8',
+  accountNumber: '19260-0',
+  swiftIban: 'BR5600000000720000192600C1',
+  
+  // RODAPÉ PRÉ-PREENCHIDO
+  footer: 'BIODINA INSTRUMENTOS CIENTIFICOS LTDA – CNPJ: 29.375.441/0001-50\nRUA SÃO PEDRO, NÚMERO 154, COMPLEMENTO SALA 409 CEP 24.020-058\nBAIRRO/DISTRITO CENTRO MUNICÍPIO NITERÓI UF RJ TELEFONE (21) 2719-2419'
 };

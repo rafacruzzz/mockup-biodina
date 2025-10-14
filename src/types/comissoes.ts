@@ -77,14 +77,40 @@ export interface InvoiceServico {
 }
 
 export interface FaturaRecebimento {
-  numero: string;
-  data: string;
-  beneficiario: string;
+  // Dados da ordem de pagamento (pré-preenchidos)
+  numeroOrdem: string;
   banco: string;
-  agencia: string;
-  conta: string;
-  valorRecebido: number;
+  pais: string;
+  finalidade: string;
+  
+  // Tabela de detalhes
+  numeroOrigem: string;
+  dataInclusao: string;
+  remetente: string;
   moeda: string;
+  valor: number;
+  saldo: number;
+  descriptionOfService: string;
+  
+  // Contact Person (Biodina)
+  preparedBy: string;
+  phoneNumber: string;
+  emailBiodina: string;
+  
+  // Contact Person (Radiometer)
+  contactPersonRadiometer: string;
+  emailRadiometer: string;
+  
+  // Banking Information
+  paymentTerms: string;
+  bankName: string;
+  bankAddress: string;
+  agency: string;
+  accountNumber: string;
+  swiftIban: string;
+  
+  // Rodapé
+  footer: string;
 }
 
 export interface RelatorioAgente {
