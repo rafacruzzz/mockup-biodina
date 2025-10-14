@@ -127,7 +127,7 @@ const DadosGeraisTab = ({ formData, onInputChange }: ProductTabProps) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="descricao" className="text-sm font-semibold">Descrição *</Label>
+                <Label htmlFor="descricao" className="text-sm font-semibold">Nome do produto (Anvisa) *</Label>
                 <Textarea
                   id="descricao"
                   value={formData.descricao}
