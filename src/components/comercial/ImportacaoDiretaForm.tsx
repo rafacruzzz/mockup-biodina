@@ -73,6 +73,10 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     boxDimension_congelado: '',
     boxGrossWeight_congelado: '',
     
+    // Número da invoice para Packing List
+    numeroInvoicePackingList: '',
+    numeroInvoicePackingList_congelado: '',
+    
     // Análise Técnica
     analiseTecnica: '',
     

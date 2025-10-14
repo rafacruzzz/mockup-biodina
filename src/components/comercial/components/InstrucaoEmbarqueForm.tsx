@@ -504,7 +504,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       id="boxControlNo"
                       value={formData.boxControlNo || ''}
                       onChange={(e) => onInputChange('boxControlNo', e.target.value)}
-                      placeholder="xxx"
                       className="w-full mt-1"
                     />
                   </div>
@@ -517,7 +516,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       id="boxTemperature"
                       value={formData.boxTemperature || ''}
                       onChange={(e) => onInputChange('boxTemperature', e.target.value)}
-                      placeholder="xº-xºC"
                       className="w-full mt-1"
                     />
                   </div>
@@ -530,7 +528,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       id="boxDimension"
                       value={formData.boxDimension || ''}
                       onChange={(e) => onInputChange('boxDimension', e.target.value)}
-                      placeholder="xxx X xxx X xxx"
                       className="w-full mt-1"
                     />
                   </div>
@@ -543,7 +540,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       id="boxGrossWeight"
                       value={formData.boxGrossWeight || ''}
                       onChange={(e) => onInputChange('boxGrossWeight', e.target.value)}
-                      placeholder="xxx"
                       className="w-full mt-1"
                     />
                   </div>
@@ -556,7 +552,14 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   <div className="space-y-2 mb-3">
                     <div className="flex items-start space-x-2">
                       <input type="checkbox" id="pl1" className="mt-1" />
-                      <Label htmlFor="pl1" className="cursor-pointer">Portuguese description as proforma invoice#</Label>
+                      <Label htmlFor="pl1" className="cursor-pointer">Portuguese description as proforma invoice</Label>
+                      <Input
+                        type="text"
+                        value={formData.numeroInvoicePackingList || ''}
+                        onChange={(e) => onInputChange('numeroInvoicePackingList', e.target.value)}
+                        placeholder="Nº da invoice"
+                        className="w-40 h-8 ml-2"
+                      />
                     </div>
                     <div className="flex items-start space-x-2">
                       <input type="checkbox" id="pl2" className="mt-1" />
@@ -862,7 +865,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                         id="boxControlNo_congelado"
                         value={formData.boxControlNo_congelado || ''}
                         onChange={(e) => onInputChange('boxControlNo_congelado', e.target.value)}
-                        placeholder="xxx"
                         className="w-full mt-1"
                       />
                     </div>
@@ -875,7 +877,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                         id="boxTemperature_congelado"
                         value={formData.boxTemperature_congelado || ''}
                         onChange={(e) => onInputChange('boxTemperature_congelado', e.target.value)}
-                        placeholder="xº-xºC"
                         className="w-full mt-1"
                       />
                     </div>
@@ -888,7 +889,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                         id="boxDimension_congelado"
                         value={formData.boxDimension_congelado || ''}
                         onChange={(e) => onInputChange('boxDimension_congelado', e.target.value)}
-                        placeholder="xxx X xxx X xxx"
                         className="w-full mt-1"
                       />
                     </div>
@@ -901,7 +901,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                         id="boxGrossWeight_congelado"
                         value={formData.boxGrossWeight_congelado || ''}
                         onChange={(e) => onInputChange('boxGrossWeight_congelado', e.target.value)}
-                        placeholder="xxx"
                         className="w-full mt-1"
                       />
                     </div>
@@ -914,7 +913,14 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   <div className="space-y-2 mb-4">
                     <label className="flex items-center space-x-2">
                       <input type="checkbox" className="rounded" />
-                      <span className="text-sm">Portuguese description as proforma invoice #</span>
+                      <span className="text-sm">Portuguese description as proforma invoice</span>
+                      <Input
+                        type="text"
+                        value={formData.numeroInvoicePackingList_congelado || ''}
+                        onChange={(e) => onInputChange('numeroInvoicePackingList_congelado', e.target.value)}
+                        placeholder="Nº da invoice"
+                        className="w-40 h-8 ml-2"
+                      />
                     </label>
                     <label className="flex items-center space-x-2">
                       <input type="checkbox" className="rounded" />
