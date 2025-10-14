@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { 
   FileText, 
@@ -16,10 +18,13 @@ import {
   Download,
   ChevronDown,
   Send,
-  Banknote
+  Banknote,
+  Plus,
+  Trash2
 } from 'lucide-react';
-import { StatusComissao } from '@/types/comissoes';
-import { mockComissoes, defaultInvoiceServico, defaultFaturaRecebimento } from '@/data/comissoes';
+import { StatusComissao, ItemInvoice } from '@/types/comissoes';
+import { mockComissoes, defaultInvoiceServico, defaultFaturaRecebimento, mockDadosBancariosInternacionais } from '@/data/comissoes';
+import { mockContasBancarias } from '@/data/tesouraria';
 
 interface GestaoComissoesTabProps {
   importacaoId: string;
@@ -108,9 +113,20 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
         ...prev.invoiceServico,
         numero: `IS-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000)}`,
         data: new Date().toISOString().split('T')[0],
-        destinatario: prev.fabricante,
-        descricaoServico: `Comissão sobre ${prev.descricao}`,
-        valorServico: prev.valorComissao
+        invoiceTo: prev.fabricante,
+        items: [
+          {
+            id: '1',
+            item: '1',
+            qty: 1,
+            code: 'COM',
+            description: `Commission on ${prev.descricao}`,
+            unitPrice: prev.valorComissao,
+            totalPrice: prev.valorComissao
+          }
+        ],
+        totalInvoice: prev.valorComissao,
+        paymentTerms: prev.formaPagamento
       }
     }));
     
@@ -128,7 +144,7 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
     setComissao(prev => ({
       ...prev,
       relatorioAgente: {
-        nomeAgente: prev.invoiceServico.empresaEmissora,
+        nomeAgente: prev.invoiceServico.salesRepres,
         periodoInicio: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         periodoFim: new Date().toISOString().split('T')[0],
         totalVendas: prev.valorInvoice,
@@ -201,6 +217,93 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
         return 'outline';
     }
   };
+
+  // Funções para manipular items da Invoice
+  const adicionarItem = () => {
+    const novoItem: ItemInvoice = {
+      id: Date.now().toString(),
+      item: (comissao.invoiceServico.items.length + 1).toString(),
+      qty: 1,
+      code: '',
+      description: '',
+      unitPrice: 0,
+      totalPrice: 0
+    };
+    setComissao(prev => ({
+      ...prev,
+      invoiceServico: {
+        ...prev.invoiceServico,
+        items: [...prev.invoiceServico.items, novoItem]
+      }
+    }));
+  };
+
+  const removerItem = (id: string) => {
+    setComissao(prev => ({
+      ...prev,
+      invoiceServico: {
+        ...prev.invoiceServico,
+        items: prev.invoiceServico.items.filter(item => item.id !== id)
+      }
+    }));
+  };
+
+  const atualizarItem = (id: string, campo: keyof ItemInvoice, valor: any) => {
+    setComissao(prev => ({
+      ...prev,
+      invoiceServico: {
+        ...prev.invoiceServico,
+        items: prev.invoiceServico.items.map(item => {
+          if (item.id === id) {
+            const itemAtualizado = { ...item, [campo]: valor };
+            if (campo === 'qty' || campo === 'unitPrice') {
+              itemAtualizado.totalPrice = Number(itemAtualizado.qty) * Number(itemAtualizado.unitPrice);
+            }
+            return itemAtualizado;
+          }
+          return item;
+        }),
+        totalInvoice: prev.invoiceServico.items.reduce((sum, item) => {
+          if (item.id === id) {
+            const qty = campo === 'qty' ? Number(valor) : Number(item.qty);
+            const price = campo === 'unitPrice' ? Number(valor) : Number(item.unitPrice);
+            return sum + (qty * price);
+          }
+          return sum + item.totalPrice;
+        }, 0)
+      }
+    }));
+  };
+
+  const handleBancoChange = (bancoId: string) => {
+    const conta = mockContasBancarias.find(c => c.id === bancoId);
+    const dadosInternacionais = mockDadosBancariosInternacionais[bancoId];
+    
+    if (conta && dadosInternacionais) {
+      setComissao(prev => ({
+        ...prev,
+        invoiceServico: {
+          ...prev.invoiceServico,
+          dadosBancarios: {
+            bancoId: conta.id,
+            bancoNome: conta.banco,
+            agencia: conta.agencia,
+            accountNumber: conta.conta,
+            address: dadosInternacionais.address,
+            zipCode: dadosInternacionais.zipCode,
+            swift: dadosInternacionais.swift,
+            iban: dadosInternacionais.iban
+          }
+        }
+      }));
+      
+      toast({
+        title: "Banco selecionado",
+        description: `Dados bancários de ${conta.banco} carregados.`
+      });
+    }
+  };
+
 
   const toggleSection = (section: keyof typeof openSections) => {
     setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -450,91 +553,324 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
             </CardHeader>
           </CollapsibleTrigger>
           <CollapsibleContent>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CardContent className="space-y-6">
+              {/* Dados da Invoice */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm">DADOS DA INVOICE</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Invoice #</Label>
+                    <Input 
+                      value={comissao.invoiceServico.numero}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, numero: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Data</Label>
+                    <Input 
+                      type="date"
+                      value={comissao.invoiceServico.data}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, data: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Page</Label>
+                    <Input 
+                      value={comissao.invoiceServico.page}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, page: e.target.value }
+                      }))}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Invoice to</Label>
+                    <Input 
+                      value={comissao.invoiceServico.invoiceTo}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, invoiceTo: e.target.value }
+                      }))}
+                      placeholder="Destinatário"
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Sales Repres</Label>
+                    <Input 
+                      value={comissao.invoiceServico.salesRepres}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, salesRepres: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md md:col-span-2">
+                    <Label>Contact Person</Label>
+                    <Input 
+                      value={comissao.invoiceServico.contactPerson}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, contactPerson: e.target.value }
+                      }))}
+                      placeholder="Pessoa de contato"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Itens de Serviço */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-sm">ITENS DE SERVIÇO</h3>
+                  <Button onClick={adicionarItem} size="sm" variant="outline">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Adicionar Item
+                  </Button>
+                </div>
+
+                <div className="border rounded-lg overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-16">Item</TableHead>
+                        <TableHead className="w-20">Qty</TableHead>
+                        <TableHead className="w-24">Code</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead className="w-32">Unit Price USD</TableHead>
+                        <TableHead className="w-32">Total Price USD</TableHead>
+                        <TableHead className="w-12"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {comissao.invoiceServico.items.map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell className="font-medium">{item.item}</TableCell>
+                          <TableCell>
+                            <Input 
+                              type="number"
+                              min="1"
+                              value={item.qty}
+                              onChange={(e) => atualizarItem(item.id, 'qty', e.target.value)}
+                              className="w-full"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input 
+                              value={item.code}
+                              onChange={(e) => atualizarItem(item.id, 'code', e.target.value)}
+                              className="w-full"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input 
+                              value={item.description}
+                              onChange={(e) => atualizarItem(item.id, 'description', e.target.value)}
+                              className="w-full"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input 
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={item.unitPrice}
+                              onChange={(e) => atualizarItem(item.id, 'unitPrice', e.target.value)}
+                              className="w-full"
+                            />
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {item.totalPrice.toFixed(2)}
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removerItem(item.id)}
+                              disabled={comissao.invoiceServico.items.length === 1}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                <div className="flex justify-end">
+                  <div className="bg-muted p-4 rounded-md">
+                    <p className="text-sm font-semibold">
+                      TOTAL OF INVOICE: {comissao.invoiceServico.moeda} {comissao.invoiceServico.totalInvoice.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dados Bancários */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm">DADOS BANCÁRIOS</h3>
+                
+                <div>
+                  <Label>Selecionar Banco</Label>
+                  <Select 
+                    value={comissao.invoiceServico.dadosBancarios.bancoId}
+                    onValueChange={handleBancoChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o banco para remessa" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mockContasBancarias
+                        .filter(c => c.status === 'Ativa')
+                        .map(conta => (
+                          <SelectItem key={conta.id} value={conta.id}>
+                            {conta.banco} - Ag: {conta.agencia} - Conta: {conta.conta}
+                          </SelectItem>
+                        ))
+                      }
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {comissao.invoiceServico.dadosBancarios.bancoId && (
+                  <div className="space-y-4 border p-4 rounded-md bg-muted/20">
+                    <div>
+                      <Label className="text-muted-foreground">Payment Terms</Label>
+                      <Input 
+                        value={comissao.invoiceServico.paymentTerms || comissao.formaPagamento}
+                        readOnly
+                        className="bg-muted"
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-muted-foreground">Please remit to</Label>
+                      <Input 
+                        value={comissao.invoiceServico.salesRepres}
+                        readOnly
+                        className="bg-muted"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-muted-foreground">Bank</Label>
+                        <Input 
+                          value={comissao.invoiceServico.dadosBancarios.bancoNome}
+                          readOnly
+                          className="bg-muted"
+                        />
+                      </div>
+                      <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                        <Label>Address</Label>
+                        <Input 
+                          value={comissao.invoiceServico.dadosBancarios.address}
+                          onChange={(e) => setComissao(prev => ({
+                            ...prev,
+                            invoiceServico: {
+                              ...prev.invoiceServico,
+                              dadosBancarios: {
+                                ...prev.invoiceServico.dadosBancarios,
+                                address: e.target.value
+                              }
+                            }
+                          }))}
+                        />
+                      </div>
+                      <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                        <Label>ZIP Code</Label>
+                        <Input 
+                          value={comissao.invoiceServico.dadosBancarios.zipCode}
+                          onChange={(e) => setComissao(prev => ({
+                            ...prev,
+                            invoiceServico: {
+                              ...prev.invoiceServico,
+                              dadosBancarios: {
+                                ...prev.invoiceServico.dadosBancarios,
+                                zipCode: e.target.value
+                              }
+                            }
+                          }))}
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-muted-foreground">Agency</Label>
+                        <Input 
+                          value={comissao.invoiceServico.dadosBancarios.agencia}
+                          readOnly
+                          className="bg-muted"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-muted-foreground">Account number</Label>
+                        <Input 
+                          value={comissao.invoiceServico.dadosBancarios.accountNumber}
+                          readOnly
+                          className="bg-muted"
+                        />
+                      </div>
+                      <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                        <Label>SWIFT</Label>
+                        <Input 
+                          value={comissao.invoiceServico.dadosBancarios.swift}
+                          onChange={(e) => setComissao(prev => ({
+                            ...prev,
+                            invoiceServico: {
+                              ...prev.invoiceServico,
+                              dadosBancarios: {
+                                ...prev.invoiceServico.dadosBancarios,
+                                swift: e.target.value
+                              }
+                            }
+                          }))}
+                        />
+                      </div>
+                      <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                        <Label>IBAN code</Label>
+                        <Input 
+                          value={comissao.invoiceServico.dadosBancarios.iban}
+                          onChange={(e) => setComissao(prev => ({
+                            ...prev,
+                            invoiceServico: {
+                              ...prev.invoiceServico,
+                              dadosBancarios: {
+                                ...prev.invoiceServico.dadosBancarios,
+                                iban: e.target.value
+                              }
+                            }
+                          }))}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Rodapé */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm">RODAPÉ</h3>
                 <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Número da Invoice</Label>
-                  <Input 
-                    value={comissao.invoiceServico.numero}
+                  <Label>Rodapé (Editável)</Label>
+                  <Textarea 
+                    rows={3}
+                    value={comissao.invoiceServico.rodape}
                     onChange={(e) => setComissao(prev => ({
                       ...prev,
-                      invoiceServico: { ...prev.invoiceServico, numero: e.target.value }
-                    }))}
-                  />
-                </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Data</Label>
-                  <Input 
-                    type="date"
-                    value={comissao.invoiceServico.data}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      invoiceServico: { ...prev.invoiceServico, data: e.target.value }
-                    }))}
-                  />
-                </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Empresa Emissora</Label>
-                  <Input 
-                    value={comissao.invoiceServico.empresaEmissora}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      invoiceServico: { ...prev.invoiceServico, empresaEmissora: e.target.value }
-                    }))}
-                  />
-                </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>CNPJ Emissora</Label>
-                  <Input 
-                    value={comissao.invoiceServico.cnpjEmissora}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      invoiceServico: { ...prev.invoiceServico, cnpjEmissora: e.target.value }
-                    }))}
-                  />
-                </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md md:col-span-2">
-                  <Label>Endereço Emissora</Label>
-                  <Input 
-                    value={comissao.invoiceServico.enderecoEmissora}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      invoiceServico: { ...prev.invoiceServico, enderecoEmissora: e.target.value }
-                    }))}
-                  />
-                </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Destinatário</Label>
-                  <Input 
-                    value={comissao.invoiceServico.destinatario}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      invoiceServico: { ...prev.invoiceServico, destinatario: e.target.value }
-                    }))}
-                  />
-                </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                  <Label>Valor do Serviço (USD)</Label>
-                  <Input 
-                    type="number"
-                    value={comissao.invoiceServico.valorServico}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      invoiceServico: { ...prev.invoiceServico, valorServico: Number(e.target.value) }
-                    }))}
-                  />
-                </div>
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md md:col-span-2">
-                  <Label>Descrição do Serviço</Label>
-                  <Input 
-                    value={comissao.invoiceServico.descricaoServico}
-                    onChange={(e) => setComissao(prev => ({
-                      ...prev,
-                      invoiceServico: { ...prev.invoiceServico, descricaoServico: e.target.value }
+                      invoiceServico: { ...prev.invoiceServico, rodape: e.target.value }
                     }))}
                   />
                 </div>
               </div>
+
               <Button onClick={() => gerarPDF('Invoice de Serviço')} className="w-full">
                 <Download className="h-4 w-4 mr-2" />
                 Gerar PDF Invoice

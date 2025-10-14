@@ -21,13 +21,35 @@ export const mockComissoes: Comissao[] = [
     invoiceServico: {
       numero: 'IS-2025-001',
       data: '2025-01-20',
-      empresaEmissora: 'BIOMEDICAL SOLUTIONS LTDA',
-      cnpjEmissora: '12.345.678/0001-90',
-      enderecoEmissora: 'Av. Paulista, 1000 - São Paulo, SP',
-      destinatario: 'RADIOMETER MEDICAL ApS',
-      descricaoServico: 'Comissão sobre importação direta de equipamentos médicos',
-      valorServico: 2500.00,
-      moeda: 'USD'
+      invoiceTo: 'RADIOMETER MEDICAL ApS',
+      page: '1/1',
+      salesRepres: 'BIOMEDICAL SOLUTIONS LTDA',
+      contactPerson: 'John Smith',
+      items: [
+        {
+          id: '1',
+          item: '1',
+          qty: 1,
+          code: 'COM',
+          description: 'Commission on direct importation of medical equipment',
+          unitPrice: 2500.00,
+          totalPrice: 2500.00
+        }
+      ],
+      totalInvoice: 2500.00,
+      moeda: 'USD',
+      paymentTerms: 'Carta de Crédito',
+      dadosBancarios: {
+        bancoId: 'CB001',
+        bancoNome: 'Banco do Brasil',
+        address: 'SBS Quadra 1, Bloco A, Brasília - DF',
+        zipCode: '70070-010',
+        agencia: '1234-5',
+        accountNumber: '12345-6',
+        swift: 'BRASBRRJXXX',
+        iban: 'BR1234567890123456789012345'
+      },
+      rodape: 'RUA SAO PEDRO, 154 SALA 409 - CENTRO, Niteroi - RJ/ Brasil - ZIP CODE: 24020-058\nPhone: 55 (21) 2719-2419'
     },
     faturaRecebimento: {
       numero: 'FR-2025-001',
@@ -77,13 +99,35 @@ export const mockComissoes: Comissao[] = [
     invoiceServico: {
       numero: 'IS-2024-087',
       data: '2024-12-15',
-      empresaEmissora: 'BIOMEDICAL SOLUTIONS LTDA',
-      cnpjEmissora: '12.345.678/0001-90',
-      enderecoEmissora: 'Av. Paulista, 1000 - São Paulo, SP',
-      destinatario: 'ACME MEDICAL INC',
-      descricaoServico: 'Comissão sobre importação direta de material cirúrgico',
-      valorServico: 1920.00,
-      moeda: 'USD'
+      invoiceTo: 'ACME MEDICAL INC',
+      page: '1/1',
+      salesRepres: 'BIOMEDICAL SOLUTIONS LTDA',
+      contactPerson: 'Mary Johnson',
+      items: [
+        {
+          id: '1',
+          item: '1',
+          qty: 1,
+          code: 'COM',
+          description: 'Commission on direct importation of surgical materials',
+          unitPrice: 1920.00,
+          totalPrice: 1920.00
+        }
+      ],
+      totalInvoice: 1920.00,
+      moeda: 'USD',
+      paymentTerms: 'Transferência Internacional',
+      dadosBancarios: {
+        bancoId: 'CB003',
+        bancoNome: 'Itaú',
+        address: 'Praça Alfredo Egydio de Souza Aranha, 100 - São Paulo, SP',
+        zipCode: '04344-902',
+        agencia: '5678-9',
+        accountNumber: '98765-4',
+        swift: 'ITAUBRSPXXX',
+        iban: 'BR5555555555555555555555555'
+      },
+      rodape: 'RUA SAO PEDRO, 154 SALA 409 - CENTRO, Niteroi - RJ/ Brasil - ZIP CODE: 24020-058\nPhone: 55 (21) 2719-2419'
     },
     faturaRecebimento: {
       numero: 'FR-2024-087',
@@ -116,13 +160,56 @@ export const mockComissoes: Comissao[] = [
 export const defaultInvoiceServico = {
   numero: '',
   data: new Date().toISOString().split('T')[0],
-  empresaEmissora: 'BIOMEDICAL SOLUTIONS LTDA',
-  cnpjEmissora: '12.345.678/0001-90',
-  enderecoEmissora: 'Av. Paulista, 1000 - São Paulo, SP',
-  destinatario: '',
-  descricaoServico: 'Comissão sobre importação direta',
-  valorServico: 0,
-  moeda: 'USD'
+  invoiceTo: '',
+  page: '1/1',
+  salesRepres: 'BIOMEDICAL SOLUTIONS LTDA',
+  contactPerson: '',
+  items: [
+    {
+      id: '1',
+      item: '1',
+      qty: 1,
+      code: 'COM',
+      description: 'Commission on direct importation',
+      unitPrice: 0,
+      totalPrice: 0
+    }
+  ],
+  totalInvoice: 0,
+  moeda: 'USD',
+  paymentTerms: '',
+  dadosBancarios: {
+    bancoId: '',
+    bancoNome: '',
+    address: '',
+    zipCode: '',
+    agencia: '',
+    accountNumber: '',
+    swift: '',
+    iban: ''
+  },
+  rodape: 'RUA SAO PEDRO, 154 SALA 409 - CENTRO, Niteroi - RJ/ Brasil - ZIP CODE: 24020-058\nPhone: 55 (21) 2719-2419'
+};
+
+export const mockDadosBancariosInternacionais: Record<string, { address: string; zipCode: string; swift: string; iban: string }> = {
+  'CB001': {
+    address: 'SBS Quadra 1, Bloco A, Brasília - DF',
+    zipCode: '70070-010',
+    swift: 'BRASBRRJXXX',
+    iban: 'BR1234567890123456789012345'
+  },
+  'CB002': {
+    address: 'SBS Quadra 4, Lote 3/4, Brasília - DF',
+    zipCode: '70092-900',
+    swift: 'CEFXBRSPCOR',
+    iban: 'BR9876543210987654321098765'
+  },
+  'CB003': {
+    address: 'Praça Alfredo Egydio de Souza Aranha, 100 - São Paulo, SP',
+    zipCode: '04344-902',
+    swift: 'ITAUBRSPXXX',
+    iban: 'BR5555555555555555555555555'
+  }
 };
 
 export const defaultFaturaRecebimento = {

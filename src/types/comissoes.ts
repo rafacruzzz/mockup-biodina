@@ -9,16 +9,50 @@ export enum StatusComissao {
   CANCELADA = 'Cancelada'
 }
 
+export interface ItemInvoice {
+  id: string;
+  item: string;
+  qty: number;
+  code: string;
+  description: string;
+  unitPrice: number;
+  totalPrice: number;
+}
+
+export interface DadosBancarioInvoice {
+  bancoId: string;
+  bancoNome: string;
+  address: string;
+  zipCode: string;
+  agencia: string;
+  accountNumber: string;
+  swift: string;
+  iban: string;
+}
+
 export interface InvoiceServico {
   numero: string;
   data: string;
-  empresaEmissora: string;
-  cnpjEmissora: string;
-  enderecoEmissora: string;
-  destinatario: string;
-  descricaoServico: string;
-  valorServico: number;
+  
+  // Cabeçalho
+  invoiceTo: string;
+  page: string;
+  salesRepres: string;
+  contactPerson: string;
+  
+  // Itens de serviço
+  items: ItemInvoice[];
+  
+  // Total
+  totalInvoice: number;
   moeda: string;
+  
+  // Dados bancários
+  paymentTerms: string;
+  dadosBancarios: DadosBancarioInvoice;
+  
+  // Rodapé editável
+  rodape: string;
 }
 
 export interface FaturaRecebimento {
