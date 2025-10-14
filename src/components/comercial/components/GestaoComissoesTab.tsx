@@ -657,6 +657,151 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 </div>
               </div>
 
+              {/* TRANSACTION DETAILS */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-sm uppercase text-muted-foreground">
+                  Transaction Details
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Transaction ID</Label>
+                    <Input 
+                      value={comissao.invoiceServico.transactionId || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, transactionId: e.target.value }
+                      }))}
+                      placeholder="ID da transação"
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Amount</Label>
+                    <Input 
+                      type="number"
+                      step="0.01"
+                      value={comissao.invoiceServico.transactionAmount || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, transactionAmount: parseFloat(e.target.value) || 0 }
+                      }))}
+                      placeholder="Valor da transação"
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Booked date</Label>
+                    <Input 
+                      type="date"
+                      value={comissao.invoiceServico.transactionBookedDate || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, transactionBookedDate: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Transaction type</Label>
+                    <Input 
+                      value={comissao.invoiceServico.transactionType || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, transactionType: e.target.value }
+                      }))}
+                      placeholder="Tipo de transação"
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Value date</Label>
+                    <Input 
+                      type="date"
+                      value={comissao.invoiceServico.transactionValueDate || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, transactionValueDate: e.target.value }
+                      }))}
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Exchange rate</Label>
+                    <Input 
+                      type="number"
+                      step="0.0001"
+                      value={comissao.invoiceServico.transactionExchangeRate || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, transactionExchangeRate: parseFloat(e.target.value) || 0 }
+                      }))}
+                      placeholder="Taxa de câmbio"
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Beneficiary's account</Label>
+                    <Input 
+                      value={comissao.invoiceServico.beneficiaryAccount || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, beneficiaryAccount: e.target.value }
+                      }))}
+                      placeholder="Conta do beneficiário"
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Beneficiary's bank</Label>
+                    <Input 
+                      value={comissao.invoiceServico.beneficiaryBank || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, beneficiaryBank: e.target.value }
+                      }))}
+                      placeholder="Banco do beneficiário"
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Beneficiary bank's address</Label>
+                    <Input 
+                      value={comissao.invoiceServico.beneficiaryBankAddress || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, beneficiaryBankAddress: e.target.value }
+                      }))}
+                      placeholder="Endereço do banco"
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Beneficiary's name</Label>
+                    <Input 
+                      value={comissao.invoiceServico.beneficiaryName || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, beneficiaryName: e.target.value }
+                      }))}
+                      placeholder="Nome do beneficiário"
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>Beneficiary's address</Label>
+                    <Input 
+                      value={comissao.invoiceServico.beneficiaryAddress || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, beneficiaryAddress: e.target.value }
+                      }))}
+                      placeholder="Endereço do beneficiário"
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md md:col-span-2">
+                    <Label>Message</Label>
+                    <Input 
+                      value={comissao.invoiceServico.transactionMessage || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        invoiceServico: { ...prev.invoiceServico, transactionMessage: e.target.value }
+                      }))}
+                      placeholder="Mensagem da transação"
+                    />
+                  </div>
+                </div>
+              </div>
+
               {/* Itens de Serviço */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">

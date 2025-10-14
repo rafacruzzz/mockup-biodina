@@ -47,6 +47,20 @@ export interface InvoiceServico {
   contactPersonName: string;
   contactPersonEmail: string;
   
+  // TRANSACTION DETAILS
+  transactionId?: string;
+  transactionAmount?: number;
+  transactionBookedDate?: string;
+  transactionType?: string;
+  transactionValueDate?: string;
+  transactionExchangeRate?: number;
+  transactionMessage?: string;
+  beneficiaryAccount?: string;
+  beneficiaryBank?: string;
+  beneficiaryBankAddress?: string;
+  beneficiaryName?: string;
+  beneficiaryAddress?: string;
+  
   // Itens de serviço
   items: ItemInvoice[];
   
