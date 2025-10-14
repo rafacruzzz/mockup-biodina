@@ -113,12 +113,12 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
         ...prev.invoiceServico,
         numero: `IS-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000)}`,
         data: new Date().toISOString().split('T')[0],
-        invoiceTo: prev.fabricante,
-        preparedBy: 'BIOMEDICAL SOLUTIONS LTDA',
-        phoneNumber: '55 (21) 2719-2419',
-        email: 'contato@biomedicalsolutions.com.br',
-        contactPersonName: 'Maria Silva',
-        contactPersonEmail: 'maria.silva@radiometer.com',
+        invoiceTo: 'Radiometer Medical ApS\nAkandevej 21 - DK-2700 -\nBronshoj - Denmark',
+        preparedBy: 'Thaís Tolentino',
+        phoneNumber: '55 21 2435-9806',
+        email: 'thais.tolentino@biodina.com.br',
+        contactPersonName: 'Andre Borges',
+        contactPersonEmail: 'andre.borges-hansen@radiometer.dk',
         items: [
           {
             id: '1',

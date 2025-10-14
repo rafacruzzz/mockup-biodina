@@ -166,13 +166,13 @@ export const mockComissoes: Comissao[] = [
 export const defaultInvoiceServico = {
   numero: '',
   data: new Date().toISOString().split('T')[0],
-  invoiceTo: '',
+  invoiceTo: 'Radiometer Medical ApS\nAkandevej 21 - DK-2700 -\nBronshoj - Denmark',
   page: '1/1',
-  preparedBy: 'BIOMEDICAL SOLUTIONS LTDA',
-  phoneNumber: '55 (21) 2719-2419',
-  email: 'contato@biomedicalsolutions.com.br',
-  contactPersonName: '',
-  contactPersonEmail: '',
+  preparedBy: 'Thaís Tolentino',
+  phoneNumber: '55 21 2435-9806',
+  email: 'thais.tolentino@biodina.com.br',
+  contactPersonName: 'Andre Borges',
+  contactPersonEmail: 'andre.borges-hansen@radiometer.dk',
   items: [
     {
       id: '1',
