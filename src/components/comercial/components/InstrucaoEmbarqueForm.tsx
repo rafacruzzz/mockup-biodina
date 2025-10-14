@@ -579,7 +579,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     </div>
                     <div className="flex items-start space-x-2">
                       <input type="checkbox" id="pl6" className="mt-1" />
-                      <Label htmlFor="pl6" className="cursor-pointer">For each box, please include: control no.xxx; Temperature xº-xºC; Dimmension: xxx X xxx X xxx; Gross weight: xxx</Label>
+                      <Label htmlFor="pl6" className="cursor-pointer">For each box, please include: control no.; Temperature; Dimension; Gross weight</Label>
                     </div>
                   </div>
                   <div className="bg-yellow-50 border border-yellow-200 p-3 rounded text-sm">
@@ -940,7 +940,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     </label>
                     <label className="flex items-center space-x-2">
                       <input type="checkbox" className="rounded" />
-                      <span className="text-sm">For each box, please include: control no.xxx; Temperature xº-xºC; Dimmension: xxx X xxx X xxx; Gross weight: xxx</span>
+                      <span className="text-sm">For each box, please include: control no.; Temperature; Dimension; Gross weight</span>
                     </label>
                   </div>
                   <div className="bg-blue-50 p-3 rounded border border-blue-200 text-sm">
