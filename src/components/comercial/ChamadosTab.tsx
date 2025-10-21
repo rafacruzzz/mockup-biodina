@@ -117,14 +117,18 @@ const ChamadosTab = ({ chamados, onAdicionarChamado, oportunidade }: ChamadosTab
                 <span className="text-xs font-medium text-muted-foreground">Segmento:</span>
                 <p className="text-sm mt-1">{oportunidade.segmento || 'N/A'}</p>
               </div>
-              {oportunidade.valor && (
-                <div className="col-span-2 md:col-span-4">
-                  <span className="text-xs font-medium text-muted-foreground">Valor da Oportunidade:</span>
+              {oportunidade.valor !== undefined && (
+                <div>
+                  <span className="text-xs font-medium text-muted-foreground">Valor:</span>
                   <p className="text-sm mt-1 font-medium text-green-600">
                     R$ {oportunidade.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </p>
                 </div>
               )}
+              <div>
+                <span className="text-xs font-medium text-muted-foreground">Status:</span>
+                <p className="text-sm mt-1">{oportunidade.status || 'N/A'}</p>
+              </div>
             </div>
           </CardContent>
         </Card>
