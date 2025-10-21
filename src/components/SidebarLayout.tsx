@@ -35,7 +35,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
     { name: "Administrativo", path: "/administrativo", icon: <Database size={20} />, id: "administrativo" },
     { name: "Comercial", path: "/comercial", icon: <Briefcase size={20} />, id: "comercial" },
     { name: "Estoque", path: "/estoque", icon: <Package size={20} />, id: "estoque" },
-    { name: "Compras", path: "/compras", icon: <ShoppingCart size={20} />, id: "compras" },
+    { name: "CPR (Compras para Revenda)", path: "/compras", icon: <ShoppingCart size={20} />, id: "compras" },
     { name: "Financeiro", path: "/financeiro", icon: <DollarSign size={20} />, id: "financeiro" },
     { name: "Contabilidade", path: "/contabilidade", icon: <Calculator size={20} />, id: "contabilidade" },
     { name: "RH", path: "/rh", icon: <UserCheck size={20} />, id: "rh" },

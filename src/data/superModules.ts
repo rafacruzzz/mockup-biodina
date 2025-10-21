@@ -17,8 +17,8 @@ export const modulosDisponiveis: ModuloConfig[] = [
   },
   {
     id: 'compras',
-    nome: 'Compras',
-    descricao: 'Gestão de compras e fornecedores',
+    nome: 'CPR (Compras para Revenda)',
+    descricao: 'Gestão de compras para revenda',
     icon: '📦',
     cor: 'purple'
   },

@@ -33,7 +33,7 @@ const ComprasSidebar = ({
     <div className="w-80 bg-white border-r border-gray-200/80 overflow-y-auto shadow-sm">
       <div className="p-6 border-b border-gray-100 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-biodina-blue mb-2">Módulo de Compras</h2>
+          <h2 className="text-2xl font-bold text-biodina-blue mb-2">CPR (Compras para Revenda)</h2>
           <p className="text-gray-600 text-sm">Gerencie pedidos, compras fiscais e importações</p>
         </div>
         <button

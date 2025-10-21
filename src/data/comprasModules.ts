@@ -4,11 +4,11 @@ import { ComprasModulesConfig } from "@/types/compras";
 
 export const comprasModules: ComprasModulesConfig = {
   pedidos: {
-    name: "Pedidos",
+    name: "Mercadoria para Revenda",
     icon: ShoppingCart,
     subModules: {
       pedidos: {
-        name: "Pedidos",
+        name: "Mercadoria para Revenda",
         data: [
           {
             id: 1,

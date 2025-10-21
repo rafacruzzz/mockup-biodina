@@ -68,8 +68,8 @@ const ComprasDashboard = () => {
   return (
     <div className="p-6 space-y-6 bg-gray-50/50 min-h-full">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-biodina-blue mb-2">Dashboard de Compras</h1>
-        <p className="text-gray-600">Visão geral das previsões, estoque e análises de compras</p>
+        <h1 className="text-3xl font-bold text-biodina-blue mb-2">Dashboard CPR (Compras para Revenda)</h1>
+        <p className="text-gray-600">Visão geral das previsões, estoque e análises de compras para revenda</p>
       </div>
 
       {/* Cards de Resumo */}

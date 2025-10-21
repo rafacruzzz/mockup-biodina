@@ -37,10 +37,10 @@ export const setores: Setor[] = [
   },
   {
     id: 'compras',
-    nome: 'Compras',
+    nome: 'CPR (Compras para Revenda)',
     icone: 'ShoppingCart',
     cor: 'bg-orange-500',
-    descricao: 'Solicitações de compras, cotações e cadastro de fornecedores',
+    descricao: 'Solicitações de compras para revenda e cadastro de fornecedores',
     responsaveis: [responsaveis.find(r => r.nome === 'Julia Ferreira')!]
   },
   {
