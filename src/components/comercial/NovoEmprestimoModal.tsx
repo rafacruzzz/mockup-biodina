@@ -40,6 +40,8 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
     dataRetorno: null as Date | null,
     dataBaixa: null as Date | null,
     valorRetornado: "",
+    valorRetornadoProduto: "",
+    valorServico: "",
     idImportacaoDireta: "",
     
     // Novos campos de Retorno
@@ -144,15 +146,27 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
       }
       
       // Validações específicas por tipo
-      if (formData.tipoRetorno === 'produto' && !formData.dataRetorno) {
-        toast.error("Informe a data do retorno do produto");
-        setActiveTab("retorno");
-        return;
+      if (formData.tipoRetorno === 'produto') {
+        if (!formData.dataRetorno) {
+          toast.error("Informe a data do retorno do produto");
+          setActiveTab("retorno");
+          return;
+        }
+        if (!formData.valorRetornadoProduto) {
+          toast.error("Informe o valor retornado do produto");
+          setActiveTab("retorno");
+          return;
+        }
       }
       
       if (formData.tipoRetorno === 'servico') {
         if (!formData.tipoServico) {
           toast.error("Informe o tipo de serviço prestado");
+          setActiveTab("retorno");
+          return;
+        }
+        if (!formData.valorServico) {
+          toast.error("Informe o valor do serviço");
           setActiveTab("retorno");
           return;
         }
@@ -195,10 +209,10 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
         // Se tipoRetorno foi selecionado, verificar se está completo
         if (formData.tipoRetorno) {
           if (formData.tipoRetorno === 'produto') {
-            return formData.statusRetorno && formData.dataRetorno ? "complete" : "incomplete";
+            return formData.statusRetorno && formData.dataRetorno && formData.valorRetornadoProduto ? "complete" : "incomplete";
           }
           if (formData.tipoRetorno === 'servico') {
-            return formData.statusRetorno && formData.tipoServico && formData.dataExecucaoServico ? "complete" : "incomplete";
+            return formData.statusRetorno && formData.tipoServico && formData.valorServico && formData.dataExecucaoServico ? "complete" : "incomplete";
           }
           if (formData.tipoRetorno === 'financeiro') {
             return formData.statusRetorno && formData.valorRetornado && formData.formaPagamento && formData.dataPagamento ? "complete" : "incomplete";

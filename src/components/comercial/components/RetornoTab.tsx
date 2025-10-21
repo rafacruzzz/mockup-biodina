@@ -298,6 +298,15 @@ const RetornoTab = ({ formData, onInputChange }: RetornoTabProps) => {
                 />
               </div>
 
+              <div>
+                <Label>Valor Retornado ({getCurrencyLabel()}) *</Label>
+                <MoneyInput
+                  value={formData.valorRetornadoProduto}
+                  onChange={(value) => onInputChange('valorRetornadoProduto', value)}
+                  currency={formData.moeda}
+                />
+              </div>
+
               <div className="md:col-span-2">
                 <Label>Descrição do Produto Recebido</Label>
                 <Textarea
@@ -309,7 +318,7 @@ const RetornoTab = ({ formData, onInputChange }: RetornoTabProps) => {
               </div>
 
               <DatePicker label="Data do Retorno" field="dataRetorno" required />
-              <DatePicker label="Data da Conferência" field="dataConferencia" />
+              <DatePicker label="Data da Baixa" field="dataBaixa" />
             </div>
 
             {/* Badge de Status Atual */}
@@ -386,6 +395,15 @@ const RetornoTab = ({ formData, onInputChange }: RetornoTabProps) => {
                   value={formData.tipoServico}
                   onChange={(e) => onInputChange('tipoServico', e.target.value)}
                   placeholder="Ex: Instalação, Manutenção, Treinamento"
+                />
+              </div>
+
+              <div>
+                <Label>Valor do Serviço ({getCurrencyLabel()}) *</Label>
+                <MoneyInput
+                  value={formData.valorServico}
+                  onChange={(value) => onInputChange('valorServico', value)}
+                  currency={formData.moeda}
                 />
               </div>
 
