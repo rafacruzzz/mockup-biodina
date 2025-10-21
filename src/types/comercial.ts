@@ -91,75 +91,99 @@ export interface ItemUsoConsumoPedido {
   categoria: string;
 }
 
+// ============= INDICADORES E ALERTAS =============
+
+export interface IndicadorPedido {
+  tipo: 'atraso_separacao' | 'prazo_excedido' | 'nf_pendente' | 'divergencia_quantidade';
+  severidade: 'baixa' | 'media' | 'alta' | 'critica';
+  mensagem: string;
+  dataDeteccao: string;
+  pedidoId: number;
+  detalhes?: string;
+}
+
+export interface AlertaPedido {
+  tipo: 'mudanca_status' | 'atualizacao_entrega' | 'emissao_nf' | 'divergencia' | 'atraso';
+  titulo: string;
+  mensagem: string;
+  dataAlerta: string;
+  horaAlerta: string;
+  lido: boolean;
+  pedidoId: number;
+  statusRelacionado?: StatusPedido;
+  prioridade: 'normal' | 'alta' | 'urgente';
+}
+
 export interface PedidoCompleto {
   id: number;
   numeroOportunidade: string;
-  projetoOrigem?: string;
-  emprestimoId?: string; // NOVO - ID do empréstimo quando aplicável
-  cliente: string;
+  numeroCliente: string;
+  nomeCliente: string;
+  cnpjCliente: string;
   vendedor: string;
-  dataVenda: string;
-  status: 'rascunho' | 'enviado' | 'aprovado' | 'cancelado';
-  produtos: ProdutoPedido[];
+  dataEmissao: string;
   valorTotal: number;
-  observacoesGerais?: string;
-  informacoesComplementares?: string;
-  condicoesPagamento?: string;
-  tipoFrete?: string;
-  prazoEntrega?: string;
-  dataEntrega?: string;
-  fretePagarPor?: string;
-  freteRetirarPor?: string;
-  entregarRetirarCuidados?: string;
-  nomeCompletoRecebedor?: string;
-  cpfRecebedor?: string;
-  telefoneRecebedor?: string;
-  emailRecebedor?: string;
-  horariosPermitidos?: string;
-  locaisEntrega?: string;
-  enderecoEntrega?: string;
-  maisInformacoesEntrega?: string;
-  // Urgência
-  solicitarUrgencia?: boolean;
-  justificativaUrgencia?: string;
-  urgenciaStatus?: 'pendente' | 'aprovada' | 'rejeitada' | null;
-  // Campos preenchidos automaticamente pelo sistema após aprovação
-  autorizadoPor?: string;
-  dataAutorizacao?: string;
-  emailAutorizador?: string;
-  // Configurações de Estoque
-  temValidadeMinima?: boolean;
-  validadeMinimaGlobal?: string;
-  temPrevisaoConsumo?: boolean;
-  previsaoConsumoMensal?: number;
-  materiaisComplementares?: {
-    cabo: boolean;
-    nobreak: boolean;
-    manuais: boolean;
-    gelox: boolean;
-    geloSeco: boolean;
-    outrosAcessorios: boolean;
-    especificacaoOutros: string;
+  produtos: ProdutoPedido[];
+  
+  // Informações de pagamento e entrega
+  dataPrevista?: string;
+  urgente?: boolean;
+  operacao?: string;
+  descritivo?: string;
+  vendedorExterno?: string;
+  
+  // Configuração de Estoque
+  estoque?: {
+    controlaEstoque: boolean;
+    compraFornecedor: boolean;
+    filial?: string;
   };
   
-  // Faturamento
-  pedidoOrigem?: string;
+  // NF
+  deveEmitirNF?: boolean;
   naturezaOperacao?: string;
-  descritivoNaturezaOperacao?: string;
+  finalidadeNF?: string;
   emailsNF?: string;
-  formaPagamentoNF?: string;
-  contaBancariaRecebimento?: string;
-  numeroParcelas?: number;
-  instrucoesBoleto?: string;
-  documentosNF?: string[];
+  formaPagamento?: string;
+  destinatario?: {
+    razaoSocial?: string;
+    cnpj?: string;
+    inscricaoEstadual?: string;
+    endereco?: {
+      logradouro?: string;
+      numero?: string;
+      complemento?: string;
+      bairro?: string;
+      cidade?: string;
+      uf?: string;
+      cep?: string;
+    };
+  };
+  transportadora?: {
+    nome?: string;
+    cnpj?: string;
+    modalidadeFrete?: 'CIF' | 'FOB' | 'Terceiros' | 'Proprio' | 'Sem Frete';
+    pesoLiquido?: number;
+    pesoBruto?: number;
+    volumes?: number;
+    especie?: string;
+  };
+  
+  // Documentação
+  documentosAnexados?: string[];
   observacoesDocumentacao?: string;
   destacarIR?: boolean;
   percentualIR?: number;
   
   // Itens de Uso e Consumo
-  itensUsoConsumo?: ItemUsoConsumoPedido[];
+  itensUsoConsumo?: Array<{
+    codigo: string;
+    descricao: string;
+    quantidade: number;
+    valorUnitario: number;
+  }>;
   
-  // Acompanhamento do Pedido
+  // Acompanhamento
   statusAtual?: StatusPedido;
   timeline?: EventoTimeline[];
   recebimentoEstoque?: RecebimentoEstoque;
@@ -167,6 +191,8 @@ export interface PedidoCompleto {
   logistica?: LogisticaPedido;
   feedbackEntrega?: FeedbackEntrega;
   canhotoNota?: string;
+  indicadores?: IndicadorPedido[];
+  alertas?: AlertaPedido[];
 }
 
 // ============= TIPOS PARA ACOMPANHAMENTO DO PEDIDO =============
@@ -197,6 +223,7 @@ export interface RecebimentoEstoque {
   horaRecebimento: string;
   responsavel: string;
   numeroLote?: string;
+  numeroSerie?: string;
   referenciaInterna?: string;
   itensConferidos: ItemConferido[];
   observacoesDivergencia?: string;
@@ -227,6 +254,8 @@ export interface FaturamentoPedido {
   linkDANFE?: string;
   boleto?: BoletoPedido;
   gnre?: GNREPedido;
+  condicoesPagamento?: string;
+  documentacaoEnviada?: string;
   documentosAnexos?: DocumentoAnexo[];
 }
 

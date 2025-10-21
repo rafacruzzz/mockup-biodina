@@ -26,8 +26,10 @@ import {
 } from "lucide-react";
 import { 
   PedidoCompleto, 
-  StatusPedido
+  StatusPedido,
+  IndicadorPedido
 } from "@/types/comercial";
+import IndicadoresAlertasPanel from "./IndicadoresAlertasPanel";
 
 interface AcompanhamentoPedidoTabProps {
   pedido: PedidoCompleto;
@@ -87,6 +89,67 @@ const AcompanhamentoPedidoTab = ({ pedido }: AcompanhamentoPedidoTabProps) => {
     return ((indiceAtual + 1) / etapas.length) * 100;
   };
 
+  const calcularIndicadores = (pedido: PedidoCompleto): IndicadorPedido[] => {
+    const indicadores: IndicadorPedido[] = [];
+    const hoje = new Date();
+
+    // 1. Atraso de separação
+    if (pedido.recebimentoEstoque?.dataSaidaPrevista) {
+      const dataSaida = new Date(pedido.recebimentoEstoque.dataSaidaPrevista);
+      if (hoje > dataSaida && pedido.statusAtual === 'em_separacao') {
+        indicadores.push({
+          tipo: 'atraso_separacao',
+          severidade: 'alta',
+          mensagem: 'Pedido com atraso na separação',
+          dataDeteccao: hoje.toISOString(),
+          pedidoId: pedido.id,
+          detalhes: `Previsão: ${pedido.recebimentoEstoque.dataSaidaPrevista}`
+        });
+      }
+    }
+
+    // 2. Prazo de entrega excedido
+    if (pedido.logistica?.previsaoEntrega) {
+      const previsao = new Date(pedido.logistica.previsaoEntrega);
+      if (hoje > previsao && pedido.statusAtual === 'em_transito') {
+        indicadores.push({
+          tipo: 'prazo_excedido',
+          severidade: 'critica',
+          mensagem: 'Entrega com prazo excedido',
+          dataDeteccao: hoje.toISOString(),
+          pedidoId: pedido.id
+        });
+      }
+    }
+
+    // 3. NF pendente
+    if (pedido.statusAtual === 'pronto_faturamento' && !pedido.faturamento) {
+      indicadores.push({
+        tipo: 'nf_pendente',
+        severidade: 'media',
+        mensagem: 'Nota fiscal pendente de emissão',
+        dataDeteccao: hoje.toISOString(),
+        pedidoId: pedido.id
+      });
+    }
+
+    // 4. Divergência de quantidade
+    if (pedido.recebimentoEstoque?.itensConferidos?.some(item => item.divergencia)) {
+      indicadores.push({
+        tipo: 'divergencia_quantidade',
+        severidade: 'alta',
+        mensagem: 'Pedido com divergência de quantidade',
+        dataDeteccao: hoje.toISOString(),
+        pedidoId: pedido.id
+      });
+    }
+
+    return indicadores;
+  };
+
+  const indicadoresCalculados = calcularIndicadores(pedido);
+  const alertasAtivos = pedido.alertas || [];
+
   // Verificar se há dados para exibir
   const temDados = pedido.statusAtual && pedido.statusAtual !== 'rascunho';
 
@@ -132,6 +195,12 @@ const AcompanhamentoPedidoTab = ({ pedido }: AcompanhamentoPedidoTabProps) => {
 
   return (
     <div className="space-y-6">
+      {/* Indicadores e Alertas */}
+      <IndicadoresAlertasPanel 
+        indicadores={indicadoresCalculados}
+        alertas={alertasAtivos}
+      />
+
       {/* Timeline de Status */}
       <Card>
         <CardHeader>
@@ -220,12 +289,16 @@ const AcompanhamentoPedidoTab = ({ pedido }: AcompanhamentoPedidoTabProps) => {
                   <p className="text-sm font-medium">{pedido.recebimentoEstoque.responsavel}</p>
                 </div>
               </div>
-              {pedido.recebimentoEstoque.numeroLote && (
+              {(pedido.recebimentoEstoque.numeroLote || pedido.recebimentoEstoque.numeroSerie) && (
                 <div className="flex items-center gap-2">
                   <Clipboard className="h-4 w-4 text-muted-foreground" />
                   <div>
-                    <p className="text-xs text-muted-foreground">Lote</p>
-                    <p className="text-sm font-medium">{pedido.recebimentoEstoque.numeroLote}</p>
+                    <p className="text-xs text-muted-foreground">Lote/Número de Série</p>
+                    <p className="text-sm font-medium">
+                      {pedido.recebimentoEstoque.numeroLote && `Lote: ${pedido.recebimentoEstoque.numeroLote}`}
+                      {pedido.recebimentoEstoque.numeroLote && pedido.recebimentoEstoque.numeroSerie && ' | '}
+                      {pedido.recebimentoEstoque.numeroSerie && `Nº Série: ${pedido.recebimentoEstoque.numeroSerie}`}
+                    </p>
                   </div>
                 </div>
               )}
@@ -455,6 +528,20 @@ const AcompanhamentoPedidoTab = ({ pedido }: AcompanhamentoPedidoTabProps) => {
                           </p>
                         </div>
                       </div>
+                    </div>
+                  )}
+                  
+                  {pedido.faturamento.condicoesPagamento && (
+                    <div className="p-3 border rounded-lg">
+                      <h5 className="text-sm font-medium mb-2">Condições (parcelas, vencimentos)</h5>
+                      <p className="text-sm text-muted-foreground">{pedido.faturamento.condicoesPagamento}</p>
+                    </div>
+                  )}
+                  
+                  {pedido.faturamento.documentacaoEnviada && (
+                    <div className="p-3 border rounded-lg">
+                      <h5 className="text-sm font-medium mb-2">Documentação enviada junto à NF</h5>
+                      <p className="text-sm text-muted-foreground">{pedido.faturamento.documentacaoEnviada}</p>
                     </div>
                   )}
                 </div>
