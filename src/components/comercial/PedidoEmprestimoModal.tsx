@@ -54,6 +54,7 @@ const PedidoEmprestimoModal = ({
   const [informacoesComplementares, setInformacoesComplementares] = useState(pedidoInicial?.informacoesComplementares || '');
   const [condicoesPagamento, setCondicoesPagamento] = useState(pedidoInicial?.condicoesPagamento || '');
   const [destacarIR, setDestacarIR] = useState(pedidoInicial?.destacarIR || false);
+  const [percentualIR, setPercentualIR] = useState(pedidoInicial?.percentualIR || 0);
   
   // Estados para PAGAMENTO
   const [contaBancariaRecebimento, setContaBancariaRecebimento] = useState(pedidoInicial?.contaBancariaRecebimento || '');
@@ -273,6 +274,7 @@ const PedidoEmprestimoModal = ({
       documentosNF: documentosSelecionados,
       observacoesDocumentacao,
       destacarIR,
+      percentualIR,
       // Itens de Uso e Consumo
       itensUsoConsumo
     };
@@ -925,6 +927,25 @@ const PedidoEmprestimoModal = ({
                         onCheckedChange={setDestacarIR}
                       />
                     </div>
+                    
+                    {destacarIR && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="percentualIR">Percentual de IR (%)</Label>
+                          <Input
+                            id="percentualIR"
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            value={percentualIR}
+                            onChange={(e) => setPercentualIR(parseFloat(e.target.value) || 0)}
+                            placeholder="0"
+                            className="mt-2"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 
