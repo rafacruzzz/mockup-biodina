@@ -108,6 +108,10 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   const [formaPagamentoNF, setFormaPagamentoNF] = useState('');
   const [documentosSelecionados, setDocumentosSelecionados] = useState<string[]>([]);
   
+  // Acompanhamento - Campos de entrada
+  const [canhotoNota, setCanhotoNota] = useState<File | null>(null);
+  const [feedbackEntregaStatus, setFeedbackEntregaStatus] = useState<'ok' | 'com_avarias' | 'temperatura_errada' | ''>('');
+  
 
   // Auto-preencher descritivo quando operação tem apenas 1 opção
   useEffect(() => {
@@ -273,6 +277,13 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       observacoesDocumentacao,
       destacarIR,
       percentualIR,
+      // Acompanhamento
+      canhotoNota: canhotoNota?.name,
+      feedbackEntrega: feedbackEntregaStatus ? {
+        statusRecebimento: feedbackEntregaStatus,
+        responsavelFeedback: 'Usuário Atual',
+        dataFeedback: new Date().toISOString().split('T')[0]
+      } : undefined,
       // Itens de Uso e Consumo
       itensUsoConsumo
     };
@@ -1455,7 +1466,54 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
 
               {/* Aba Acompanhamento do Pedido */}
               <TabsContent value="acompanhamento" className="space-y-6">
-                <AcompanhamentoPedidoTab 
+                {/* Card de Entrada de Dados do Acompanhamento */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Informações de Entrega</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="canhotoNota">Canhoto da Nota</Label>
+                        <div className="mt-2">
+                          <Input
+                            id="canhotoNota"
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setCanhotoNota(file);
+                              }
+                            }}
+                            className="cursor-pointer"
+                          />
+                          {canhotoNota && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Arquivo selecionado: {canhotoNota.name}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="feedbackEntrega">Feedback de Entrega</Label>
+                        <Select value={feedbackEntregaStatus} onValueChange={(value: any) => setFeedbackEntregaStatus(value)}>
+                          <SelectTrigger id="feedbackEntrega">
+                            <SelectValue placeholder="Selecione o status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ok">Recebido OK</SelectItem>
+                            <SelectItem value="com_avarias">Recebido com avarias</SelectItem>
+                            <SelectItem value="temperatura_errada">Recebido em temperatura errada</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <AcompanhamentoPedidoTab
                   pedido={{
                     id: 12345,
                     numeroOportunidade: oportunidade.codigo || oportunidade.id || 'OPP-2025-001',

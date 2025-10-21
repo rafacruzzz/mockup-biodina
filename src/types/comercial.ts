@@ -166,6 +166,7 @@ export interface PedidoCompleto {
   faturamento?: FaturamentoPedido;
   logistica?: LogisticaPedido;
   feedbackEntrega?: FeedbackEntrega;
+  canhotoNota?: string;
 }
 
 // ============= TIPOS PARA ACOMPANHAMENTO DO PEDIDO =============
