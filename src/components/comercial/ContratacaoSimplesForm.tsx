@@ -71,6 +71,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     segmentoLead: oportunidade?.segmentoLead || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || '',
     procurandoPor: oportunidade?.procurandoPor || '',
+    previsaoConsumoMensal: oportunidade?.previsaoConsumoMensal || '',
     
     // Contato Comercial
     contatoComercialNome: oportunidade?.contatoComercialNome || '',
@@ -520,6 +521,23 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                         value={formData.procurandoPor}
                         onChange={(e) => handleInputChange('procurandoPor', e.target.value)}
                         placeholder="Digite os contatos"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="previsaoConsumoMensal">Qual previsão de consumo mensal?</Label>
+                      <Input
+                        id="previsaoConsumoMensal"
+                        value={formData.previsaoConsumoMensal}
+                        onChange={(e) => {
+                          let value = e.target.value.replace(/\D/g, '');
+                          if (value) {
+                            value = (parseInt(value) / 100).toFixed(2);
+                            value = `R$ ${parseFloat(value).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                          }
+                          handleInputChange('previsaoConsumoMensal', value);
+                        }}
+                        placeholder="R$ 0,00"
                       />
                     </div>
 
