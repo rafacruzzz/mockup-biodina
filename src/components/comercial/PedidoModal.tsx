@@ -42,6 +42,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   const [informacoesComplementares, setInformacoesComplementares] = useState('');
   const [condicoesPagamento, setCondicoesPagamento] = useState('');
   const [destacarIR, setDestacarIR] = useState(false);
+  const [percentualIR, setPercentualIR] = useState(0);
   
   // Estados para PAGAMENTO
   const [contaBancariaRecebimento, setContaBancariaRecebimento] = useState('');
@@ -271,6 +272,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       documentosNF: documentosSelecionados,
       observacoesDocumentacao,
       destacarIR,
+      percentualIR,
       // Itens de Uso e Consumo
       itensUsoConsumo
     };
@@ -794,6 +796,22 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                         checked={destacarIR}
                         onCheckedChange={setDestacarIR}
                       />
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="percentualIR">Percentual de IR (%)</Label>
+                        <Input
+                          id="percentualIR"
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="0.01"
+                          value={percentualIR}
+                          onChange={(e) => setPercentualIR(parseFloat(e.target.value) || 0)}
+                          placeholder="0"
+                        />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
