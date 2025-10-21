@@ -42,6 +42,9 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
     valorRetornado: "",
     valorRetornadoProduto: "",
     valorServico: "",
+    moedaRetornoProduto: "BRL" as "BRL" | "USD",
+    moedaRetornoServico: "BRL" as "BRL" | "USD",
+    moedaRetornoFinanceiro: "BRL" as "BRL" | "USD",
     idImportacaoDireta: "",
     
     // Novos campos de Retorno

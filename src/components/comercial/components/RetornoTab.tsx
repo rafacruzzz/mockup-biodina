@@ -38,7 +38,17 @@ interface RetornoTabProps {
 const RetornoTab = ({ formData, onInputChange }: RetornoTabProps) => {
   const [uploadedDANFE, setUploadedDANFE] = useState<File | null>(null);
 
-  const getCurrencyLabel = () => {
+  const getCurrencyLabel = (tipoRetorno?: 'produto' | 'servico' | 'financeiro') => {
+    if (tipoRetorno === 'produto') {
+      return formData.moedaRetornoProduto === 'BRL' ? 'R$' : 'USD';
+    }
+    if (tipoRetorno === 'servico') {
+      return formData.moedaRetornoServico === 'BRL' ? 'R$' : 'USD';
+    }
+    if (tipoRetorno === 'financeiro') {
+      return formData.moedaRetornoFinanceiro === 'BRL' ? 'R$' : 'USD';
+    }
+    // Fallback para a moeda padrão dos pedidos
     return formData.moeda === 'BRL' ? 'R$' : 'USD';
   };
 
@@ -239,6 +249,33 @@ const RetornoTab = ({ formData, onInputChange }: RetornoTabProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Seleção de Moeda para Retorno de Produto */}
+            <div>
+              <Label>Moeda do Retorno *</Label>
+              <Select
+                value={formData.moedaRetornoProduto}
+                onValueChange={(value: "BRL" | "USD") => onInputChange('moedaRetornoProduto', value)}
+              >
+                <SelectTrigger className="mt-2">
+                  <SelectValue placeholder="Selecione a moeda..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="BRL">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">BRL</span>
+                      <span className="text-sm text-muted-foreground">- Real Brasileiro (R$)</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="USD">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">USD</span>
+                      <span className="text-sm text-muted-foreground">- Dólar Americano ($)</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Status do Produto */}
             <div>
               <Label>Status do Produto no Estoque *</Label>
@@ -299,11 +336,11 @@ const RetornoTab = ({ formData, onInputChange }: RetornoTabProps) => {
               </div>
 
               <div>
-                <Label>Valor Retornado ({getCurrencyLabel()}) *</Label>
+                <Label>Valor Retornado ({getCurrencyLabel('produto')}) *</Label>
                 <MoneyInput
                   value={formData.valorRetornadoProduto}
                   onChange={(value) => onInputChange('valorRetornadoProduto', value)}
-                  currency={formData.moeda}
+                  currency={formData.moedaRetornoProduto}
                 />
               </div>
 
@@ -348,6 +385,33 @@ const RetornoTab = ({ formData, onInputChange }: RetornoTabProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Seleção de Moeda para Retorno de Serviço */}
+            <div>
+              <Label>Moeda do Serviço *</Label>
+              <Select
+                value={formData.moedaRetornoServico}
+                onValueChange={(value: "BRL" | "USD") => onInputChange('moedaRetornoServico', value)}
+              >
+                <SelectTrigger className="mt-2">
+                  <SelectValue placeholder="Selecione a moeda..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="BRL">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">BRL</span>
+                      <span className="text-sm text-muted-foreground">- Real Brasileiro (R$)</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="USD">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">USD</span>
+                      <span className="text-sm text-muted-foreground">- Dólar Americano ($)</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Status do Serviço */}
             <div>
               <Label>Status do Serviço *</Label>
@@ -399,11 +463,11 @@ const RetornoTab = ({ formData, onInputChange }: RetornoTabProps) => {
               </div>
 
               <div>
-                <Label>Valor do Serviço ({getCurrencyLabel()}) *</Label>
+                <Label>Valor do Serviço ({getCurrencyLabel('servico')}) *</Label>
                 <MoneyInput
                   value={formData.valorServico}
                   onChange={(value) => onInputChange('valorServico', value)}
-                  currency={formData.moeda}
+                  currency={formData.moedaRetornoServico}
                 />
               </div>
 
@@ -467,6 +531,33 @@ const RetornoTab = ({ formData, onInputChange }: RetornoTabProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Seleção de Moeda para Retorno Financeiro */}
+            <div>
+              <Label>Moeda do Pagamento *</Label>
+              <Select
+                value={formData.moedaRetornoFinanceiro}
+                onValueChange={(value: "BRL" | "USD") => onInputChange('moedaRetornoFinanceiro', value)}
+              >
+                <SelectTrigger className="mt-2">
+                  <SelectValue placeholder="Selecione a moeda..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="BRL">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">BRL</span>
+                      <span className="text-sm text-muted-foreground">- Real Brasileiro (R$)</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="USD">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold">USD</span>
+                      <span className="text-sm text-muted-foreground">- Dólar Americano ($)</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             {/* Status do Pagamento */}
             <div>
               <Label>Status do Pagamento *</Label>
@@ -529,12 +620,12 @@ const RetornoTab = ({ formData, onInputChange }: RetornoTabProps) => {
               </div>
 
               <div>
-                <Label>Valor Retornado ({getCurrencyLabel()}) *</Label>
+                <Label>Valor Retornado ({getCurrencyLabel('financeiro')}) *</Label>
                 <MoneyInput
                   value={formData.valorRetornado}
                   onChange={(value) => onInputChange('valorRetornado', value)}
-                  currency={formData.moeda}
-                  placeholder={formData.moeda === 'BRL' ? 'R$ 0,00' : '$0.00'}
+                  currency={formData.moedaRetornoFinanceiro}
+                  placeholder={formData.moedaRetornoFinanceiro === 'BRL' ? 'R$ 0,00' : '$0.00'}
                 />
               </div>
 
