@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Network, Upload, X, FileText, Calendar, Building } from "lucide-react";
+import { Network, Upload, X, FileText, Calendar, Building, DollarSign, CreditCard, User, Repeat } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface SolicitarInterfaceamentoModalProps {
@@ -21,12 +21,24 @@ interface SolicitarInterfaceamentoModalProps {
 const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }: SolicitarInterfaceamentoModalProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
-    descricaoNecessidade: '',
     sistemaCliente: '',
     prazoDesejado: '',
     anexos: [] as File[],
     observacoes: '',
-    valor: oportunidade?.valor || 0
+    valor: oportunidade?.valor || 0,
+    // Novos campos para financeiro
+    contratoAnexo: null as File | null,
+    periodoContratoInicio: '',
+    periodoContratoFim: '',
+    recorrenciaContrato: '',
+    formaPagamento: '',
+    cnpjFornecedor: '',
+    banco: '',
+    agencia: '',
+    conta: '',
+    chavePix: '',
+    boletoAnexo: null as File | null,
+    responsavelAutorizacao: ''
   });
 
   useEffect(() => {
@@ -56,15 +68,6 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
 
   const handleSave = () => {
     // Validação básica
-    if (!formData.descricaoNecessidade.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Erro de Validação",
-        description: "A descrição da necessidade é obrigatória."
-      });
-      return;
-    }
-
     if (!formData.sistemaCliente.trim()) {
       toast({
         variant: "destructive", 
@@ -79,6 +82,42 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
         variant: "destructive",
         title: "Erro de Validação", 
         description: "O prazo desejado é obrigatório."
+      });
+      return;
+    }
+
+    if (!formData.periodoContratoInicio || !formData.periodoContratoFim) {
+      toast({
+        variant: "destructive",
+        title: "Erro de Validação",
+        description: "O período do contrato é obrigatório."
+      });
+      return;
+    }
+
+    if (!formData.recorrenciaContrato) {
+      toast({
+        variant: "destructive",
+        title: "Erro de Validação",
+        description: "A recorrência do contrato é obrigatória."
+      });
+      return;
+    }
+
+    if (!formData.formaPagamento) {
+      toast({
+        variant: "destructive",
+        title: "Erro de Validação",
+        description: "A forma de pagamento é obrigatória."
+      });
+      return;
+    }
+
+    if (!formData.responsavelAutorizacao.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Erro de Validação",
+        description: "O responsável pela autorização é obrigatório."
       });
       return;
     }
@@ -110,12 +149,23 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
     
     // Reset form
     setFormData({
-      descricaoNecessidade: '',
       sistemaCliente: '',
       prazoDesejado: '',
       anexos: [],
       observacoes: '',
-      valor: 0
+      valor: 0,
+      contratoAnexo: null,
+      periodoContratoInicio: '',
+      periodoContratoFim: '',
+      recorrenciaContrato: '',
+      formaPagamento: '',
+      cnpjFornecedor: '',
+      banco: '',
+      agencia: '',
+      conta: '',
+      chavePix: '',
+      boletoAnexo: null,
+      responsavelAutorizacao: ''
     });
 
     toast({
@@ -126,12 +176,23 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
 
   const handleClose = () => {
     setFormData({
-      descricaoNecessidade: '',
       sistemaCliente: '',
       prazoDesejado: '',
       anexos: [],
       observacoes: '',
-      valor: 0
+      valor: 0,
+      contratoAnexo: null,
+      periodoContratoInicio: '',
+      periodoContratoFim: '',
+      recorrenciaContrato: '',
+      formaPagamento: '',
+      cnpjFornecedor: '',
+      banco: '',
+      agencia: '',
+      conta: '',
+      chavePix: '',
+      boletoAnexo: null,
+      responsavelAutorizacao: ''
     });
     onClose();
   };
@@ -263,24 +324,6 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
                   className="mt-1"
                 />
               </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="descricaoNecessidade" className="flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Descrição da Necessidade *
-                  <Badge variant="outline" className="text-xs">Obrigatório</Badge>
-                </Label>
-                <Textarea
-                  id="descricaoNecessidade"
-                  value={formData.descricaoNecessidade}
-                  onChange={(e) => handleInputChange('descricaoNecessidade', e.target.value)}
-                  placeholder="Descreva detalhadamente a necessidade de integração..."
-                  rows={6}
-                  className="mt-1"
-                />
-              </div>
 
               <div>
                 <Label className="flex items-center gap-2">
@@ -299,10 +342,10 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
                   />
                   <label 
                     htmlFor="fileUpload"
-                    className="flex items-center justify-center w-full h-32 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer hover:border-muted-foreground/50 transition-colors"
+                    className="flex items-center justify-center w-full h-24 border-2 border-dashed border-muted-foreground/25 rounded-lg cursor-pointer hover:border-muted-foreground/50 transition-colors"
                   >
                     <div className="text-center">
-                      <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                      <Upload className="h-6 w-6 text-muted-foreground mx-auto mb-1" />
                       <p className="text-sm text-muted-foreground">
                         Clique para selecionar arquivos
                       </p>
@@ -336,6 +379,219 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
                     ))}
                   </div>
                 )}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {/* Contrato */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Contrato de Interfaceamento *
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <Label htmlFor="contratoAnexo">Anexar Contrato</Label>
+                    <Input
+                      id="contratoAnexo"
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleInputChange('contratoAnexo', file);
+                      }}
+                      className="mt-1"
+                    />
+                    {formData.contratoAnexo && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {formData.contratoAnexo.name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label htmlFor="periodoContratoInicio" className="text-xs">
+                        Início do Contrato *
+                      </Label>
+                      <Input
+                        id="periodoContratoInicio"
+                        type="date"
+                        value={formData.periodoContratoInicio}
+                        onChange={(e) => handleInputChange('periodoContratoInicio', e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="periodoContratoFim" className="text-xs">
+                        Fim do Contrato *
+                      </Label>
+                      <Input
+                        id="periodoContratoFim"
+                        type="date"
+                        value={formData.periodoContratoFim}
+                        onChange={(e) => handleInputChange('periodoContratoFim', e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="recorrenciaContrato" className="flex items-center gap-2 text-xs">
+                      <Repeat className="h-3 w-3" />
+                      Recorrência *
+                    </Label>
+                    <Select 
+                      value={formData.recorrenciaContrato} 
+                      onValueChange={(value) => handleInputChange('recorrenciaContrato', value)}
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="mensal">Mensal</SelectItem>
+                        <SelectItem value="bimestral">Bimestral</SelectItem>
+                        <SelectItem value="trimestral">Trimestral</SelectItem>
+                        <SelectItem value="semestral">Semestral</SelectItem>
+                        <SelectItem value="anual">Anual</SelectItem>
+                        <SelectItem value="pagamento_unico">Pagamento Único</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Dados de Pagamento */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    Dados para Pagamento *
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <Label htmlFor="formaPagamento" className="flex items-center gap-2 text-xs">
+                      <CreditCard className="h-3 w-3" />
+                      Forma de Pagamento *
+                    </Label>
+                    <Select 
+                      value={formData.formaPagamento} 
+                      onValueChange={(value) => handleInputChange('formaPagamento', value)}
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pix">PIX</SelectItem>
+                        <SelectItem value="boleto">Boleto</SelectItem>
+                        <SelectItem value="transferencia">Transferência Bancária</SelectItem>
+                        <SelectItem value="ted">TED</SelectItem>
+                        <SelectItem value="doc">DOC</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="cnpjFornecedor" className="text-xs">CNPJ Fornecedor</Label>
+                    <Input
+                      id="cnpjFornecedor"
+                      value={formData.cnpjFornecedor}
+                      onChange={(e) => handleInputChange('cnpjFornecedor', e.target.value)}
+                      placeholder="00.000.000/0000-00"
+                      className="mt-1"
+                    />
+                  </div>
+
+                  {formData.formaPagamento === 'pix' && (
+                    <div>
+                      <Label htmlFor="chavePix" className="text-xs">Chave PIX</Label>
+                      <Input
+                        id="chavePix"
+                        value={formData.chavePix}
+                        onChange={(e) => handleInputChange('chavePix', e.target.value)}
+                        placeholder="Digite a chave PIX"
+                        className="mt-1"
+                      />
+                    </div>
+                  )}
+
+                  {(formData.formaPagamento === 'transferencia' || formData.formaPagamento === 'ted' || formData.formaPagamento === 'doc') && (
+                    <>
+                      <div>
+                        <Label htmlFor="banco" className="text-xs">Banco</Label>
+                        <Input
+                          id="banco"
+                          value={formData.banco}
+                          onChange={(e) => handleInputChange('banco', e.target.value)}
+                          placeholder="Nome do banco"
+                          className="mt-1"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <Label htmlFor="agencia" className="text-xs">Agência</Label>
+                          <Input
+                            id="agencia"
+                            value={formData.agencia}
+                            onChange={(e) => handleInputChange('agencia', e.target.value)}
+                            placeholder="0000"
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="conta" className="text-xs">Conta</Label>
+                          <Input
+                            id="conta"
+                            value={formData.conta}
+                            onChange={(e) => handleInputChange('conta', e.target.value)}
+                            placeholder="00000-0"
+                            className="mt-1"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {formData.formaPagamento === 'boleto' && (
+                    <div>
+                      <Label htmlFor="boletoAnexo" className="text-xs">Anexar Boleto</Label>
+                      <Input
+                        id="boletoAnexo"
+                        type="file"
+                        accept=".pdf"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleInputChange('boletoAnexo', file);
+                        }}
+                        className="mt-1"
+                      />
+                      {formData.boletoAnexo && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {formData.boletoAnexo.name}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Responsável pela Autorização */}
+              <div>
+                <Label htmlFor="responsavelAutorizacao" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Responsável pela Autorização *
+                  <Badge variant="outline" className="text-xs">Obrigatório</Badge>
+                </Label>
+                <Input
+                  id="responsavelAutorizacao"
+                  value={formData.responsavelAutorizacao}
+                  onChange={(e) => handleInputChange('responsavelAutorizacao', e.target.value)}
+                  placeholder="Nome do responsável"
+                  className="mt-1"
+                />
               </div>
             </div>
           </div>
