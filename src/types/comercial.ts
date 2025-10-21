@@ -86,6 +86,7 @@ export interface ItemUsoConsumoPedido {
   codigo: string;
   descricao: string;
   quantidade: number;
+  valorUnitario?: number;
   unidade: string;
   observacoes: string;
   categoria: string;
@@ -132,6 +133,56 @@ export interface PedidoCompleto {
   descritivo?: string;
   vendedorExterno?: string;
   
+  // Campos adicionais para compatibilidade com outros modais
+  dataVenda?: string;
+  status?: string;
+  cliente?: string;
+  observacoesGerais?: string;
+  informacoesComplementares?: string;
+  condicoesPagamento?: string;
+  contaBancariaRecebimento?: string;
+  numeroParcelas?: number;
+  instrucoesBoleto?: string;
+  tipoFrete?: string;
+  prazoEntrega?: string;
+  dataEntrega?: string;
+  fretePagarPor?: string;
+  freteRetirarPor?: string;
+  entregarRetirarCuidados?: string;
+  nomeCompletoRecebedor?: string;
+  cpfRecebedor?: string;
+  telefoneRecebedor?: string;
+  emailRecebedor?: string;
+  horariosPermitidos?: string;
+  locaisEntrega?: string;
+  enderecoEntrega?: string;
+  maisInformacoesEntrega?: string;
+  solicitarUrgencia?: boolean;
+  justificativaUrgencia?: string;
+  urgenciaStatus?: 'pendente' | 'aprovada' | 'rejeitada';
+  autorizadoPor?: string;
+  dataAutorizacao?: string;
+  emailAutorizador?: string;
+  pedidoOrigem?: string;
+  projetoOrigem?: string;
+  emprestimoId?: string;
+  temValidadeMinima?: boolean;
+  validadeMinimaGlobal?: string;
+  temPrevisaoConsumo?: boolean;
+  previsaoConsumoMensal?: number;
+  materiaisComplementares?: {
+    cabo?: boolean;
+    nobreak?: boolean;
+    manuais?: boolean;
+    gelox?: boolean;
+    geloSeco?: boolean;
+    outrosAcessorios?: boolean;
+    especificacaoOutros?: string;
+  };
+  descritivoNaturezaOperacao?: string;
+  formaPagamentoNF?: string;
+  documentosNF?: string[];
+  
   // Configuração de Estoque
   estoque?: {
     controlaEstoque: boolean;
@@ -176,12 +227,7 @@ export interface PedidoCompleto {
   percentualIR?: number;
   
   // Itens de Uso e Consumo
-  itensUsoConsumo?: Array<{
-    codigo: string;
-    descricao: string;
-    quantidade: number;
-    valorUnitario: number;
-  }>;
+  itensUsoConsumo?: ItemUsoConsumoPedido[];
   
   // Acompanhamento
   statusAtual?: StatusPedido;

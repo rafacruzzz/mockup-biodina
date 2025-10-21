@@ -224,6 +224,10 @@ const PedidoEmprestimoModal = ({
     const pedido: PedidoEmprestimo = {
       id: pedidoInicial?.id || Date.now(),
       numeroOportunidade: `EMP-${dadosEmprestimo.numeroProcesso}-${String(Date.now()).slice(-3)}`,
+      numeroCliente: dadosEmprestimo.numeroProcesso || '',
+      nomeCliente: dadosEmprestimo.cliente || '',
+      cnpjCliente: '',
+      dataEmissao: new Date().toISOString().split('T')[0],
       projetoOrigem,
       emprestimoId: dadosEmprestimo.numeroProcesso,
       cliente: dadosEmprestimo.cliente,
@@ -321,6 +325,10 @@ const PedidoEmprestimoModal = ({
   const pedidoParaAcompanhamento: PedidoEmprestimo = {
     id: pedidoInicial?.id || Date.now(),
     numeroOportunidade: `EMP-${dadosEmprestimo.numeroProcesso}`,
+    numeroCliente: dadosEmprestimo.numeroProcesso || '',
+    nomeCliente: dadosEmprestimo.cliente || '',
+    cnpjCliente: '',
+    dataEmissao: new Date().toISOString().split('T')[0],
     cliente: dadosEmprestimo.cliente,
     vendedor: 'Usuário Atual',
     dataVenda: new Date().toISOString().split('T')[0],

@@ -226,6 +226,10 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
     const pedido: PedidoCompleto = {
       id: Date.now(),
       numeroOportunidade: oportunidade.id.toString(),
+      numeroCliente: oportunidade.codigo || oportunidade.id.toString(),
+      nomeCliente: oportunidade.nomeFantasia || oportunidade.cliente || '',
+      cnpjCliente: oportunidade.cnpj || '',
+      dataEmissao: new Date().toISOString().split('T')[0],
       projetoOrigem,
       cliente: oportunidade.nomeFantasia || oportunidade.cliente,
       vendedor: 'Usuário Atual',
@@ -1517,6 +1521,10 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                   pedido={{
                     id: 12345,
                     numeroOportunidade: oportunidade.codigo || oportunidade.id || 'OPP-2025-001',
+                    numeroCliente: oportunidade.codigo || '',
+                    nomeCliente: oportunidade.nomeFantasia || oportunidade.cliente || '',
+                    cnpjCliente: oportunidade.cnpj || '',
+                    dataEmissao: new Date().toISOString().split('T')[0],
                     cliente: oportunidade.nomeFantasia || oportunidade.cliente,
                     vendedor: 'Usuário Atual',
                     dataVenda: new Date().toISOString().split('T')[0],
