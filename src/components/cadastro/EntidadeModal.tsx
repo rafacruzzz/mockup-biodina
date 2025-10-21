@@ -13,15 +13,15 @@ import { useCepLookup } from "@/hooks/useCepLookup";
 interface EntidadeModalProps {
   isOpen: boolean;
   onClose: () => void;
+  tipoEntidade: string;
 }
 
-const EntidadeModal = ({ isOpen, onClose }: EntidadeModalProps) => {
+const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) => {
   const { lookupCep, loading: cepLoading } = useCepLookup();
   const [uploadedDocs, setUploadedDocs] = useState<Array<{ name: string; size: number; type: string }>>([]);
 
   const [formData, setFormData] = useState({
     // Dados Gerais
-    tipo: "",
     nome_cliente: "",
     razao_social: "",
     cnpj_cpf: "",
@@ -166,13 +166,26 @@ const EntidadeModal = ({ isOpen, onClose }: EntidadeModalProps) => {
   };
 
 
+  const getTipoLabel = (tipo: string) => {
+    const labels: Record<string, string> = {
+      'leads': 'Lead',
+      'clientes': 'Cliente',
+      'representantes': 'Representante Comercial',
+      'fornecedores_revenda': 'Fornecedor - Mercadoria para Revenda',
+      'fornecedores_uso_consumo': 'Fornecedor - Uso e Consumo',
+      'fornecedores_servicos': 'Fornecedor - Serviços',
+      'transportadoras': 'Transportadora'
+    };
+    return labels[tipo] || 'Entidade';
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-background rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-bold">Cadastro de Entidade</h2>
+          <h2 className="text-xl font-bold">Cadastro de {getTipoLabel(tipoEntidade)}</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
@@ -193,21 +206,6 @@ const EntidadeModal = ({ isOpen, onClose }: EntidadeModalProps) => {
             {/* ABA: DADOS GERAIS */}
             <TabsContent value="dados-gerais" className="space-y-4 mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="tipo">Tipo de Entidade *</Label>
-                  <Select value={formData.tipo} onValueChange={(value) => handleInputChange("tipo", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o tipo..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="cliente">Cliente</SelectItem>
-                      <SelectItem value="fornecedor">Fornecedor</SelectItem>
-                      <SelectItem value="lead">Lead</SelectItem>
-                      <SelectItem value="transportadora">Transportadora</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
                 <div>
                   <Label htmlFor="tipo_cliente">Tipo de Cliente</Label>
                   <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>

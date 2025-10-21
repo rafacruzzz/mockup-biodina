@@ -14,14 +14,36 @@ export const modules: ModulesConfig = {
     name: "Entidades",
     icon: Building2,
     subModules: {
-      entidades: {
-        name: "Entidades",
+      leads: {
+        name: "Leads",
+        data: [
+          {
+            id: 1,
+            nome: "Tech Solutions Ltda",
+            cnpj: "12.345.678/0001-90",
+            cidade: "São Paulo",
+            uf: "SP",
+            telefone: "(11) 3456-7890",
+            email: "contato@techsolutions.com.br"
+          },
+          {
+            id: 2,
+            nome: "Saúde Plus",
+            cnpj: "23.456.789/0001-01",
+            cidade: "Rio de Janeiro",
+            uf: "RJ",
+            telefone: "(21) 3567-8901",
+            email: "comercial@saudeplus.com.br"
+          }
+        ]
+      },
+      clientes: {
+        name: "Clientes",
         data: [
           {
             id: 1,
             nome: "Hospital São Lucas",
             cnpj: "12.345.678/0001-90",
-            tipo: "Cliente",
             cidade: "São Paulo",
             uf: "SP",
             telefone: "(11) 3456-7890",
@@ -31,11 +53,125 @@ export const modules: ModulesConfig = {
             id: 2,
             nome: "Clínica Vida",
             cnpj: "98.765.432/0001-10",
-            tipo: "Fornecedor",
             cidade: "Rio de Janeiro",
             uf: "RJ",
             telefone: "(21) 2345-6789",
             email: "comercial@clinicavida.com.br"
+          }
+        ]
+      },
+      representantes: {
+        name: "Representantes Comerciais",
+        data: [
+          {
+            id: 1,
+            nome: "João Silva Representações",
+            cnpj: "34.567.890/0001-12",
+            cidade: "Belo Horizonte",
+            uf: "MG",
+            telefone: "(31) 4567-8901",
+            email: "joao@representacoes.com.br"
+          },
+          {
+            id: 2,
+            nome: "Maria Santos Rep. Comercial",
+            cnpj: "45.678.901/0001-23",
+            cidade: "Curitiba",
+            uf: "PR",
+            telefone: "(41) 5678-9012",
+            email: "maria@repcomercial.com.br"
+          }
+        ]
+      },
+      fornecedores_revenda: {
+        name: "Fornecedor - Mercadoria para Revenda",
+        data: [
+          {
+            id: 1,
+            nome: "Medical Supply Brasil",
+            cnpj: "56.789.012/0001-34",
+            cidade: "São Paulo",
+            uf: "SP",
+            telefone: "(11) 6789-0123",
+            email: "vendas@medicalsupply.com.br"
+          },
+          {
+            id: 2,
+            nome: "HealthTech Distribuidora",
+            cnpj: "67.890.123/0001-45",
+            cidade: "Brasília",
+            uf: "DF",
+            telefone: "(61) 7890-1234",
+            email: "comercial@healthtech.com.br"
+          }
+        ]
+      },
+      fornecedores_uso_consumo: {
+        name: "Fornecedor - Uso e Consumo",
+        data: [
+          {
+            id: 1,
+            nome: "Office Supplies S.A.",
+            cnpj: "78.901.234/0001-56",
+            cidade: "Porto Alegre",
+            uf: "RS",
+            telefone: "(51) 8901-2345",
+            email: "vendas@officesupplies.com.br"
+          },
+          {
+            id: 2,
+            nome: "Clean Solutions Ltda",
+            cnpj: "89.012.345/0001-67",
+            cidade: "Recife",
+            uf: "PE",
+            telefone: "(81) 9012-3456",
+            email: "comercial@cleansolutions.com.br"
+          }
+        ]
+      },
+      fornecedores_servicos: {
+        name: "Fornecedor - Serviços",
+        data: [
+          {
+            id: 1,
+            nome: "Manutenção Tech",
+            cnpj: "90.123.456/0001-78",
+            cidade: "Salvador",
+            uf: "BA",
+            telefone: "(71) 0123-4567",
+            email: "contato@manutencaotech.com.br"
+          },
+          {
+            id: 2,
+            nome: "Consultoria Médica Plus",
+            cnpj: "01.234.567/0001-89",
+            cidade: "Fortaleza",
+            uf: "CE",
+            telefone: "(85) 1234-5678",
+            email: "consultoria@medicaplus.com.br"
+          }
+        ]
+      },
+      transportadoras: {
+        name: "Transportadoras",
+        data: [
+          {
+            id: 1,
+            nome: "Expresso Rápido Transportes",
+            cnpj: "11.222.333/0001-44",
+            cidade: "São Paulo",
+            uf: "SP",
+            telefone: "(11) 2222-3333",
+            email: "contato@expressorapido.com.br"
+          },
+          {
+            id: 2,
+            nome: "LogMed Logística",
+            cnpj: "22.333.444/0001-55",
+            cidade: "Campinas",
+            uf: "SP",
+            telefone: "(19) 3333-4444",
+            email: "logistica@logmed.com.br"
           }
         ]
       }

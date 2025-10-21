@@ -30,6 +30,9 @@ const Cadastro = () => {
   const [isGenericModalOpen, setIsGenericModalOpen] = useState(false);
   const [isRegistroAnvisaModalOpen, setIsRegistroAnvisaModalOpen] = useState(false);
 
+  // Estado para tipo de entidade
+  const [currentEntidadeType, setCurrentEntidadeType] = useState<string>('');
+
   // Estados para modo edição
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingColaboradorId, setEditingColaboradorId] = useState<string | null>(null);
@@ -68,6 +71,7 @@ const Cadastro = () => {
     if (activeModule === 'produtos' && activeSubModule === 'produtos') {
       setIsProductModalOpen(true);
     } else if (activeModule === 'entidades') {
+      setCurrentEntidadeType(activeSubModule);
       setIsEntidadeModalOpen(true);
     } else if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') {
       // Open ColaboradorModal for new user creation
@@ -270,7 +274,8 @@ const Cadastro = () => {
       
       <EntidadeModal 
         isOpen={isEntidadeModalOpen} 
-        onClose={() => setIsEntidadeModalOpen(false)} 
+        onClose={() => setIsEntidadeModalOpen(false)}
+        tipoEntidade={currentEntidadeType}
       />
       
       <UserModal 

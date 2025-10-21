@@ -48,8 +48,8 @@ const DataTable = ({ data, moduleName, onRowClick }: DataTableProps) => {
       );
     }
 
-    // Handle status/category/type fields with badges
-    if (header === 'status' || header === 'categoria' || header === 'tipo') {
+    // Handle status/category fields with badges
+    if (header === 'status' || header === 'categoria') {
       return (
         <Badge variant="outline" className="border-biodina-gold/30 text-biodina-blue">
           {String(value)}
