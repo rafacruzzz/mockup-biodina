@@ -28,8 +28,7 @@ import {
 } from 'recharts';
 
 const Comercial = () => {
-  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'pos-venda' | 'emprestimos' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
-  const [activeSubModule, setActiveSubModule] = useState<'assessoria' | 'departamento-tecnico' | null>(null);
+  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'emprestimos' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeTab, setActiveTab] = useState('indicadores');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
@@ -500,23 +499,34 @@ const Comercial = () => {
 
         <Card 
           className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-          onClick={() => setActiveModule('pos-venda')}
-        >
-          <CardContent className="p-8 text-center">
-            <Headphones className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Pós-Venda</h3>
-            <p className="text-gray-600">Suporte científico e técnico pós-venda</p>
-          </CardContent>
-        </Card>
-
-        <Card 
-          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
           onClick={() => setActiveModule('emprestimos')}
         >
           <CardContent className="p-8 text-center">
             <HandCoins className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-biodina-blue mb-2">Empréstimos</h3>
             <p className="text-gray-600">Gestão de empréstimos</p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+          onClick={() => setActiveModule('assessoria')}
+        >
+          <CardContent className="p-8 text-center">
+            <Target className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Assessoria Científica</h3>
+            <p className="text-gray-600">Suporte científico especializado</p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+          onClick={() => setActiveModule('departamento-tecnico')}
+        >
+          <CardContent className="p-8 text-center">
+            <FileText className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Departamento Técnico</h3>
+            <p className="text-gray-600">Suporte técnico e manutenção</p>
           </CardContent>
         </Card>
 
@@ -541,94 +551,50 @@ const Comercial = () => {
     </div>
   );
 
-  const renderPosVendaModules = () => (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <Button 
-          variant="outline" 
-          onClick={() => setActiveModule('main')}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Voltar
-        </Button>
-        <h2 className="text-2xl font-bold text-biodina-blue">Pós-Venda</h2>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card 
-          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-          onClick={() => setActiveSubModule('assessoria')}
-        >
+  const renderAssessoriaModule = () => {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4 mb-6">
+          <Button 
+            variant="outline" 
+            onClick={() => setActiveModule('main')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar
+          </Button>
+          <h2 className="text-2xl font-bold text-biodina-blue">Comercial / Assessoria Científica</h2>
+        </div>
+        <Card>
           <CardContent className="p-8 text-center">
-            <Target className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Assessoria Científica</h3>
-            <p className="text-gray-600">Suporte científico especializado</p>
-          </CardContent>
-        </Card>
-
-        <Card 
-          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-          onClick={() => setActiveSubModule('departamento-tecnico')}
-        >
-          <CardContent className="p-8 text-center">
-            <FileText className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Departamento Técnico</h3>
-            <p className="text-gray-600">Suporte técnico e manutenção</p>
+            <p className="text-gray-600">Módulo de Assessoria Científica em desenvolvimento</p>
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    );
+  };
 
-  const renderSubModule = () => {
-    if (activeSubModule === 'assessoria') {
-      return (
-        <div className="space-y-6">
-          <div className="flex items-center gap-4 mb-6">
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSubModule(null)}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <h2 className="text-2xl font-bold text-biodina-blue">Assessoria Científica</h2>
-          </div>
-          <Card>
-            <CardContent className="p-8 text-center">
-              <p className="text-gray-600">Módulo de Assessoria Científica em desenvolvimento</p>
-            </CardContent>
-          </Card>
+  const renderDepartamentoTecnicoModule = () => {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4 mb-6">
+          <Button 
+            variant="outline" 
+            onClick={() => setActiveModule('main')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar
+          </Button>
+          <h2 className="text-2xl font-bold text-biodina-blue">Comercial / Departamento Técnico</h2>
         </div>
-      );
-    }
-
-    if (activeSubModule === 'departamento-tecnico') {
-      return (
-        <div className="space-y-6">
-          <div className="flex items-center gap-4 mb-6">
-            <Button 
-              variant="outline" 
-              onClick={() => setActiveSubModule(null)}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
-            <h2 className="text-2xl font-bold text-biodina-blue">Departamento Técnico</h2>
-          </div>
-          <Card>
-            <CardContent className="p-8 text-center">
-              <p className="text-gray-600">Módulo de Departamento Técnico em desenvolvimento</p>
-            </CardContent>
-          </Card>
-        </div>
-      );
-    }
-
-    return null;
+        <Card>
+          <CardContent className="p-8 text-center">
+            <p className="text-gray-600">Módulo de Departamento Técnico em desenvolvimento</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
   };
 
   const renderVendasModule = () => {
@@ -1134,9 +1100,9 @@ const Comercial = () => {
 
         {activeModule === 'main' && renderMainModules()}
         {activeModule === 'vendas' && renderVendasModule()}
-        {activeModule === 'pos-venda' && !activeSubModule && renderPosVendaModules()}
-        {activeModule === 'pos-venda' && activeSubModule && renderSubModule()}
         {activeModule === 'emprestimos' && renderEmprestimosModule()}
+        {activeModule === 'assessoria' && renderAssessoriaModule()}
+        {activeModule === 'departamento-tecnico' && renderDepartamentoTecnicoModule()}
         {/* activeModule === 'assinaturas' && renderAssinaturasModule() */} {/* COMENTADO - NÃO USAR NO MOMENTO */}
       </div>
 
