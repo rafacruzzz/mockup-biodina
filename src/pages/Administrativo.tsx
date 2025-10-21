@@ -139,11 +139,11 @@ const Administrativo = () => {
             <div className="mx-auto mb-4 p-4 bg-biodina-blue/10 rounded-full w-fit">
               <BookOpen className="h-16 w-16 text-biodina-blue" />
             </div>
-            <CardTitle className="text-xl font-bold text-biodina-blue">Biblioteca</CardTitle>
+            <CardTitle className="text-xl font-bold text-biodina-blue">Qualidade</CardTitle>
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-gray-600 text-sm">
-              Biblioteca de documentos e gestão do conhecimento
+              Gestão da qualidade e documentação técnica
             </p>
           </CardContent>
         </Card>
@@ -747,7 +747,7 @@ const Administrativo = () => {
           <ArrowLeft className="h-4 w-4" />
           Voltar
         </Button>
-        <h2 className="text-2xl font-bold text-biodina-blue">Biblioteca</h2>
+        <h2 className="text-2xl font-bold text-biodina-blue">Qualidade</h2>
       </div>
       
       <Card>
@@ -756,9 +756,9 @@ const Administrativo = () => {
         </CardHeader>
         <CardContent>
           <p className="text-gray-600">
-            O módulo de Biblioteca está em desenvolvimento. 
+            O módulo de Qualidade está em desenvolvimento. 
             Em breve você poderá gerenciar documentos, 
-            base de conhecimento e recursos educacionais.
+            processos de qualidade e indicadores.
           </p>
         </CardContent>
       </Card>
