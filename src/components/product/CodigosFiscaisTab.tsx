@@ -2,6 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductTabProps } from "@/types/product";
 
 const CodigosFiscaisTab = ({ formData, onInputChange }: ProductTabProps) => {
@@ -67,6 +68,29 @@ const CodigosFiscaisTab = ({ formData, onInputChange }: ProductTabProps) => {
               placeholder="7891234567892"
               className="border-gray-300"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="origemProdutoICMS" className="text-sm font-semibold">Origem do Produto Conforme ICMS</Label>
+            <Select
+              value={formData.origemProdutoICMS}
+              onValueChange={(value) => onInputChange('origemProdutoICMS', value)}
+            >
+              <SelectTrigger id="origemProdutoICMS" className="border-gray-300">
+                <SelectValue placeholder="Selecione a origem" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0">0 - Nacional, exceto as indicadas nos códigos 3 a 5</SelectItem>
+                <SelectItem value="1">1 - Estrangeira - Importação direta, exceto a indicada no código 6</SelectItem>
+                <SelectItem value="2">2 - Estrangeira - Adquirida no mercado interno, exceto a indicada no código 7</SelectItem>
+                <SelectItem value="3">3 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 40% e inferior ou igual a 70%</SelectItem>
+                <SelectItem value="4">4 - Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos de que tratam as legislações citadas nos Ajustes</SelectItem>
+                <SelectItem value="5">5 - Nacional, mercadoria ou bem com Conteúdo de Importação inferior ou igual a 40%</SelectItem>
+                <SelectItem value="6">6 - Estrangeira - Importação direta, sem similar nacional, constante em lista da CAMEX</SelectItem>
+                <SelectItem value="7">7 - Estrangeira - Adquirida no mercado interno, sem similar nacional, constante em lista da CAMEX</SelectItem>
+                <SelectItem value="8">8 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 70%</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardContent>

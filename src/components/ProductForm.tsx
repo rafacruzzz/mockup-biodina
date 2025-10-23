@@ -72,6 +72,7 @@ const ProductForm = ({ onClose }: { onClose: () => void }) => {
     ncm: "",
     cest: "",
     origemMercadoria: "",
+    origemProdutoICMS: "",
     situacaoTributariaIPI: "",
     exTipi: "",
     codigoBeneficioFiscal: "",

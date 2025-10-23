@@ -59,6 +59,7 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
     codigoEANPrimaria: "",
     codigoEANSecundaria: "",
     codigoEANEmbarque: "",
+    origemProdutoICMS: "",
 
     // Preço e Estoque
     precoUnitarioVenda: 0,

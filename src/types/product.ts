@@ -49,6 +49,7 @@ export interface ProductRegistrationData {
   codigoEANPrimaria: string;
   codigoEANSecundaria: string;
   codigoEANEmbarque: string;
+  origemProdutoICMS: string;
 
   // Aba 5 - Preço e Estoque
   precoUnitarioVenda: number;
