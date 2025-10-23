@@ -20,10 +20,11 @@ import DevolucaoFaturamento from "@/components/faturamento/DevolucaoFaturamento"
 import CancelamentoFaturamento from "@/components/faturamento/CancelamentoFaturamento";
 import ServicosFaturamento from "@/components/faturamento/ServicosFaturamento";
 import RelatoriosFaturamento from "@/components/faturamento/RelatoriosFaturamento";
+import AliquotasEstadoConfig from "@/components/financeiro/AliquotasEstadoConfig";
 import { 
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
-  AlertTriangle, Clock, Vault, ArrowLeft, Receipt
+  AlertTriangle, Clock, Vault, ArrowLeft, Receipt, Settings
 } from "lucide-react";
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -414,6 +415,15 @@ const Financeiro = () => {
         { id: 'saldos', title: 'Saldos' },
         { id: 'despesas_servico', title: 'Despesas a Serviço (Cartão de Crédito)' },
         { id: 'relatorios_tesouraria', title: 'Relatórios' }
+      ]
+    },
+    {
+      id: 'configuracoes',
+      title: 'Configurações',
+      description: 'Alíquotas por Estado, Parâmetros Fiscais, Regras Contábeis',
+      icon: Settings,
+      subModules: [
+        { id: 'aliquotas_estado', title: 'Alíquotas por Estado' }
       ]
     },
   ];
@@ -932,6 +942,22 @@ const Financeiro = () => {
               </Button>
             </div>
             <RelatoriosFaturamento />
+          </div>
+        );
+      case 'aliquotas_estado':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <AliquotasEstadoConfig />
           </div>
         );
       default:

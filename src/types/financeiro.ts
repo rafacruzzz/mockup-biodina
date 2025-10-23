@@ -411,3 +411,12 @@ export interface ContaRecorrenteEnhanced extends Omit<ContaRecorrente, 'forneced
   anexos?: string[];
   status: StatusConta;
 }
+
+// Interface para alíquotas por estado
+export interface AliquotaEstado {
+  estado: string;
+  aliquotaInterestadual: string;
+  aliquotaICMSInterna: string;
+  aliquotaFundoCombate: string;
+  isEditing: boolean;
+}
