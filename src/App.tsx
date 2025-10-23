@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "@/contexts/UserContext";
 import { EmpresaProvider } from "@/contexts/EmpresaContext";
 import Index from "./pages/Index";
-import Super from "./pages/Super";
+// import Super from "./pages/Super"; // Temporariamente escondido
 import Login from "./pages/Login";
 import BIGeral from "./pages/BIGeral";
 import Cadastro from "./pages/Cadastro";
@@ -60,7 +60,7 @@ const App: React.FC = () => {
         <Route path="/ti" element={<TI />} />
         <Route path="/rh/rescisao/:colaboradorId" element={<ProcessoRescisao />} />
               <Route path="/solicitacoes" element={<Solicitacoes />} />
-              <Route path="/super" element={<Super />} />
+              {/* <Route path="/super" element={<Super />} /> */} {/* Temporariamente escondido */}
               <Route path="/editar-perfil" element={<EditarPerfil />} />
               <Route path="/personalizar-navegacao" element={<PersonalizarNavegacao />} />
               {/* Rota pública para candidatura */}
