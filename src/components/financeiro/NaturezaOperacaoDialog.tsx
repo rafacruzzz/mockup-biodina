@@ -88,6 +88,13 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
   const [codigoEnquadramentoIPI, setCodigoEnquadramentoIPI] = useState("");
   const [codigoEnquadramentoSheetOpen, setCodigoEnquadramentoSheetOpen] = useState(false);
   const [codigoEnquadramentoSearch, setCodigoEnquadramentoSearch] = useState("");
+  
+  // Estados para ISSQN
+  const [situacaoTributariaISSQN, setSituacaoTributariaISSQN] = useState("");
+  const [aliquotaISSQN, setAliquotaISSQN] = useState("0,00");
+  const [baseISSQN, setBaseISSQN] = useState("100,0000");
+  const [descontarISS, setDescontarISS] = useState("nao");
+  const [observacoesISSQN, setObservacoesISSQN] = useState("");
 
   const handleSalvar = () => {
     // Implementar lógica de salvamento
@@ -385,7 +392,77 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
             </TabsContent>
 
             <TabsContent value="issqn" className="mt-4">
-              <p className="text-muted-foreground">Configurações de ISSQN</p>
+              <div className="space-y-6 p-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Situação tributária (CST)</Label>
+                    <Select value={situacaoTributariaISSQN} onValueChange={setSituacaoTributariaISSQN}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="selecione">Selecione</SelectItem>
+                        <SelectItem value="tributado">tributado</SelectItem>
+                        <SelectItem value="isento">isento</SelectItem>
+                        <SelectItem value="outra_situacao">outra situação</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Campos condicionais - aparecem quando houver uma seleção válida */}
+                  {situacaoTributariaISSQN && situacaoTributariaISSQN !== "selecione" && (
+                    <>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label>Alíquota</Label>
+                          <div className="relative">
+                            <Input
+                              value={aliquotaISSQN}
+                              onChange={(e) => setAliquotaISSQN(e.target.value)}
+                            />
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label>Base</Label>
+                          <div className="relative">
+                            <Input
+                              value={baseISSQN}
+                              onChange={(e) => setBaseISSQN(e.target.value)}
+                            />
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label>Descontar ISS</Label>
+                          <Select value={descontarISS} onValueChange={setDescontarISS}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="nao">Não</SelectItem>
+                              <SelectItem value="sim">Sim</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <p className="text-xs text-muted-foreground">Considerado no total da nota</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Observações do ISSQN</Label>
+                        <Textarea
+                          value={observacoesISSQN}
+                          onChange={(e) => setObservacoesISSQN(e.target.value)}
+                          placeholder="Observações..."
+                          className="min-h-[80px]"
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="pis" className="mt-4">
