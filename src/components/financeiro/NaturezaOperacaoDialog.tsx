@@ -44,6 +44,14 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
   const [cfopValue, setCfopValue] = useState("");
   const [excecoesSheetOpen, setExcecoesSheetOpen] = useState(false);
   const [excecoesStep, setExcecoesStep] = useState(1);
+  const [excecoesSalvas, setExcecoesSalvas] = useState<Array<{
+    id: string;
+    estado: string;
+    produtos: string;
+    cfop: string;
+    situacaoTributaria: string;
+  }>>([]);
+  const [editandoExcecaoId, setEditandoExcecaoId] = useState<string | null>(null);
   const [estadoDestinatario, setEstadoDestinatario] = useState("");
   const [produtos, setProdutos] = useState<Array<{ produto: string; sku: string }>>([]);
   const [novoProduto, setNovoProduto] = useState("");
@@ -320,12 +328,71 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
           </Tabs>
 
           {/* Exceções */}
-          <div className="space-y-2">
+          <div className="space-y-4">
             <h3 className="font-semibold">Exceções</h3>
+            
+            {excecoesSalvas.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium">Exceções do Simples</h4>
+                <div className="border rounded-lg overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-muted/50">
+                      <tr>
+                        <th className="px-4 py-2 text-left text-sm font-medium">Destino(s)</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium">Produto(s)</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium">CFOP</th>
+                        <th className="px-4 py-2 text-left text-sm font-medium">Situação tributária</th>
+                        <th className="px-4 py-2 text-center text-sm font-medium w-20"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {excecoesSalvas.map((excecao) => (
+                        <tr key={excecao.id} className="border-t hover:bg-muted/20">
+                          <td className="px-4 py-3 text-sm">{excecao.estado}</td>
+                          <td className="px-4 py-3 text-sm">{excecao.produtos}</td>
+                          <td className="px-4 py-3 text-sm">{excecao.cfop}</td>
+                          <td className="px-4 py-3 text-sm">{excecao.situacaoTributaria}</td>
+                          <td className="px-4 py-3 text-center">
+                            <div className="flex items-center justify-center gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => {
+                                  // Carregar dados da exceção para edição
+                                  setEditandoExcecaoId(excecao.id);
+                                  setExcecoesSheetOpen(true);
+                                }}
+                              >
+                                <span className="text-primary">✏️</span>
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => {
+                                  setExcecoesSalvas(excecoesSalvas.filter(e => e.id !== excecao.id));
+                                }}
+                              >
+                                <span className="text-destructive">🗑️</span>
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+            
             <Button 
               variant="link" 
               className="text-primary p-0 h-auto"
-              onClick={() => setExcecoesSheetOpen(true)}
+              onClick={() => {
+                setEditandoExcecaoId(null);
+                setExcecoesSheetOpen(true);
+              }}
             >
               + adicionar exceção
             </Button>
@@ -631,7 +698,37 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
       {/* Sheet de Exceções */}
       <Sheet open={excecoesSheetOpen} onOpenChange={(open) => {
         setExcecoesSheetOpen(open);
-        if (!open) setExcecoesStep(1);
+        if (!open) {
+          setExcecoesStep(1);
+          // Limpar campos ao fechar
+          setEstadoDestinatario("");
+          setProdutos([]);
+          setNovoProduto("");
+          setOrigens("");
+          setNcms([]);
+          setNovoNcm("");
+          setExcecaoCsosn("");
+          setExcecaoCfop("");
+          setAliquotaIcmsEfetivo("");
+          setBaseIcmsEfetivo("");
+          setCodigoFiscalOperacao("");
+          setAliquotaIcms("");
+          setIcmsDifalNaoContribuinte("Não");
+          setIcmsUfDestino("");
+          setDifalContribuinte("Não");
+          setAliquotaAplicavel("");
+          setCodigoBeneficio("");
+          setObservacoesExcecao("");
+          setObterIcmsSt(false);
+          setAliquotaIcmsSt("0,00");
+          setBaseCalculoIcmsSt("0,00");
+          setMargemAdicIcmsSt("0,00");
+          setAliquotaFcpIcmsSt("");
+          setAliquotaIcmsRetido("");
+          setBaseCalculoIcmsRetido("");
+          setFundoCombatePobreza("");
+          setEditandoExcecaoId(null);
+        }
       }}>
         <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
           <div className="space-y-6">
@@ -1102,6 +1199,56 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
                   </div>
                   <Button onClick={() => {
                     // Salvar exceção
+                    const produtosStr = produtos.map(p => p.produto).join(', ') || 'Todos';
+                    const estadoStr = estadoDestinatario === 'qualquer' || !estadoDestinatario ? 'Qualquer estado' : estadoDestinatario;
+                    const situacaoStr = excecaoCsosn ? `${excecaoCsosn} - ${
+                      excecaoCsosn === '101' ? 'Tributada com permissão de crédito' :
+                      excecaoCsosn === '102' ? 'Tributada sem permissão de crédito' :
+                      excecaoCsosn === '103' ? 'Isenção do ICMS para faixa de receita bruta' :
+                      excecaoCsosn === '201' ? 'Tributada com permissão de crédito e com cobrança do ICMS por ST' :
+                      excecaoCsosn === '202' ? 'Tributada sem permissão de crédito e com cobrança do ICMS por ST' :
+                      excecaoCsosn === '203' ? 'Isenção do ICMS para faixa de receita bruta e com cobrança do ICMS por ST' :
+                      excecaoCsosn === '300' ? 'Imune' :
+                      excecaoCsosn === '400' ? 'Não tributada' :
+                      excecaoCsosn === '500' ? 'ICMS cobrado anteriormente por ST ou por antecipação' :
+                      excecaoCsosn === '900' ? 'Outros' : ''
+                    }` : '';
+
+                    if (editandoExcecaoId) {
+                      // Editar exceção existente
+                      setExcecoesSalvas(excecoesSalvas.map(e => 
+                        e.id === editandoExcecaoId 
+                          ? {
+                              id: e.id,
+                              estado: estadoStr,
+                              produtos: produtosStr,
+                              cfop: excecaoCfop || '',
+                              situacaoTributaria: situacaoStr
+                            }
+                          : e
+                      ));
+                    } else {
+                      // Adicionar nova exceção
+                      const novaExcecao = {
+                        id: Math.random().toString(36).substr(2, 9),
+                        estado: estadoStr,
+                        produtos: produtosStr,
+                        cfop: excecaoCfop || '',
+                        situacaoTributaria: situacaoStr
+                      };
+                      setExcecoesSalvas([...excecoesSalvas, novaExcecao]);
+                    }
+                    
+                    // Limpar campos e fechar
+                    setEstadoDestinatario("");
+                    setProdutos([]);
+                    setOrigens("");
+                    setNcms([]);
+                    setExcecaoCsosn("");
+                    setExcecaoCfop("");
+                    setAliquotaIcmsEfetivo("");
+                    setBaseIcmsEfetivo("");
+                    setEditandoExcecaoId(null);
                     setExcecoesSheetOpen(false);
                     setExcecoesStep(1);
                   }}>
