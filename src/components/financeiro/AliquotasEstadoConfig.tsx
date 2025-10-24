@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
 interface AliquotaEstado {
@@ -26,6 +27,9 @@ const estadosBrasileiros = [
 
 const AliquotasEstadoConfig = () => {
   const [possuiICMSDIFAL, setPossuiICMSDIFAL] = useState(false);
+  const [formaCalculo, setFormaCalculo] = useState("base_simples");
+  const [reducaoBase, setReducaoBase] = useState("integral");
+  const [destacarOrigem, setDestacarOrigem] = useState("nao_destacar");
   const [aliquotas, setAliquotas] = useState<AliquotaEstado[]>(() => {
     return estadosBrasileiros.map(estado => ({
       estado,
@@ -67,6 +71,9 @@ const AliquotasEstadoConfig = () => {
       aliquotaFundoCombate: '0,0000',
       isEditing: false
     })));
+    setFormaCalculo("base_simples");
+    setReducaoBase("integral");
+    setDestacarOrigem("nao_destacar");
     setPossuiICMSDIFAL(false);
     toast.info("Alterações canceladas");
   };
@@ -93,9 +100,87 @@ const AliquotasEstadoConfig = () => {
             </div>
           </div>
 
-          {/* Tabela de alíquotas - Exibida apenas quando checkbox está marcado */}
+          {/* Configurações e Tabela - Exibidos apenas quando checkbox está marcado */}
           {possuiICMSDIFAL && (
             <>
+              {/* Seção de Configurações */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold">Configurações de ICMS DIFAL para não contribuinte</h3>
+                
+                {/* Campo 1: Forma de cálculo */}
+                <div className="space-y-2">
+                  <Label htmlFor="forma-calculo">
+                    Forma de cálculo de ICMS DIFAL para não contribuinte em Operações Interestaduais
+                  </Label>
+                  <Select value={formaCalculo} onValueChange={setFormaCalculo}>
+                    <SelectTrigger id="forma-calculo">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="base_simples">Base simples</SelectItem>
+                      <SelectItem value="base_por_dentro_destino">
+                        Base "por dentro", considerando apenas a alíquota no estado de destino
+                      </SelectItem>
+                      <SelectItem value="base_por_dentro_dupla">
+                        Base "por dentro", dupla, considerando alíquotas interestadual e no estado de destino
+                      </SelectItem>
+                      <SelectItem value="base_por_dentro_descontando">
+                        Base "por dentro", considerando apenas a alíquota no estado de destino, descontando o ICMS próprio
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Campo 2: Redução da base de cálculo */}
+                <div className="space-y-2">
+                  <Label htmlFor="reducao-base">
+                    Redução da base de cálculo no ICMS DIFAL para não contribuinte
+                  </Label>
+                  <Select value={reducaoBase} onValueChange={setReducaoBase}>
+                    <SelectTrigger id="reducao-base">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="integral">
+                        Considerar base integral, sem redução
+                      </SelectItem>
+                      <SelectItem value="por_estado">
+                        Considerar redução de base de cálculo de acordo com alíquotas por estado de destino (abaixo)
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-muted-foreground">
+                    O percentual da base cálculo, em alíquotas por estado, abaixo, deve ser a base e não a redução. 
+                    Exemplo: se houver uma redução de 30% usar 70% como percentual da base de cálculo. 
+                    Caso existam produtos com reduções diferentes, configure-os em exceções.
+                  </p>
+                </div>
+
+                {/* Campo 3: Destacar valor */}
+                <div className="space-y-2">
+                  <Label htmlFor="destacar-origem">
+                    Calcular e destacar valor do ICMS DIFAL para não contribuinte para estado de origem
+                  </Label>
+                  <Select value={destacarOrigem} onValueChange={setDestacarOrigem}>
+                    <SelectTrigger id="destacar-origem">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="nao_destacar">
+                        Não destacar ICMS DIFAL para não contribuinte para o estado de origem
+                      </SelectItem>
+                      <SelectItem value="destacar">
+                        Destacar ICMS DIFAL para não contribuinte para o estado de origem
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Separador */}
+              <div className="border-t my-6"></div>
+
+              {/* Tabela de Alíquotas por Estado */}
               <div className="border rounded-lg overflow-hidden">
                 <Table>
                   <TableHeader>
