@@ -37,7 +37,7 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
   const [atualizarPreco, setAtualizarPreco] = useState("sim");
   const [descontarDesoneracao, setDescontarDesoneracao] = useState("sim");
   const [compoeTotalNF, setCompoeTotalNF] = useState("compoe_total");
-  const [mostrarAvancadas, setMostrarAvancadas] = useState(true);
+  const [mostrarAvancadas, setMostrarAvancadas] = useState(false);
 
   const handleSalvar = () => {
     // Implementar lógica de salvamento
@@ -180,10 +180,16 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="101">101 - Tributada pelo Simples Nacional com permissão de crédito</SelectItem>
+                    <SelectItem value="101">101 - Tributada com permissão de crédito</SelectItem>
                     <SelectItem value="102">102 - Tributada sem permissão de crédito</SelectItem>
-                    <SelectItem value="103">103 - Isenção do ICMS no Simples Nacional para faixa de receita bruta</SelectItem>
-                    <SelectItem value="201">201 - Tributada pelo Simples Nacional com permissão de crédito e com cobrança do ICMS por substituição tributária</SelectItem>
+                    <SelectItem value="103">103 - Isenção do ICMS para faixa de receita bruta</SelectItem>
+                    <SelectItem value="201">201 - Tributada com permissão de crédito e com cobrança do ICMS por ST</SelectItem>
+                    <SelectItem value="202">202 - Tributada sem permissão de crédito e com cobrança do ICMS por ST</SelectItem>
+                    <SelectItem value="203">203 - Isenção do ICMS para faixa de receita bruta e com cobrança do ICMS por ST</SelectItem>
+                    <SelectItem value="300">300 - Imune</SelectItem>
+                    <SelectItem value="400">400 - Não tributada</SelectItem>
+                    <SelectItem value="500">500 - ICMS cobrado anteriormente por ST ou por antecipação</SelectItem>
+                    <SelectItem value="900">900 - Outros</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -229,17 +235,6 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
                       <SelectItem value="nao">Não</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Código fiscal da operação</Label>
-                  <Input placeholder="" />
-                </div>
-                <div className="space-y-2">
-                  <Label>ICMS para a UF de Destino</Label>
-                  <Input placeholder="" />
                 </div>
               </div>
 
@@ -417,8 +412,7 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="padrao">Padrão</SelectItem>
-                        <SelectItem value="reducao_30">Redução de 30%</SelectItem>
-                        <SelectItem value="reducao_50">Redução de 50%</SelectItem>
+                        <SelectItem value="antes_somar_ipi">Antes de somar o IPI</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
