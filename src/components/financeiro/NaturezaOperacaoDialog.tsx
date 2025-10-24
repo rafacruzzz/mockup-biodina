@@ -107,6 +107,11 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
   const [aliquotaCOFINS, setAliquotaCOFINS] = useState("0,00");
   const [baseCOFINS, setBaseCOFINS] = useState("100,0000");
   const [observacoesCOFINS, setObservacoesCOFINS] = useState("");
+  
+  // Estados para Importação
+  const [situacaoTributariaImportacao, setSituacaoTributariaImportacao] = useState("");
+  const [aliquotaImportacao, setAliquotaImportacao] = useState("0,00");
+  const [observacoesImportacao, setObservacoesImportacao] = useState("");
 
   const handleSalvar = () => {
     // Implementar lógica de salvamento
@@ -620,7 +625,44 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
             </TabsContent>
 
             <TabsContent value="importacao" className="mt-4">
-              <p className="text-muted-foreground">Configurações de importação</p>
+              <div className="space-y-6 p-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Situação tributária (CST)</Label>
+                    <Select value={situacaoTributariaImportacao} onValueChange={setSituacaoTributariaImportacao}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="selecione">Selecione</SelectItem>
+                        <SelectItem value="tributado">Tributado</SelectItem>
+                        <SelectItem value="nao_tributado">Não tributado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Alíquota</Label>
+                    <div className="relative">
+                      <Input
+                        value={aliquotaImportacao}
+                        onChange={(e) => setAliquotaImportacao(e.target.value)}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Observações de Importação</Label>
+                    <Textarea
+                      value={observacoesImportacao}
+                      onChange={(e) => setObservacoesImportacao(e.target.value)}
+                      placeholder="Observações..."
+                      className="min-h-[80px]"
+                    />
+                  </div>
+                </div>
+              </div>
             </TabsContent>
           </Tabs>
 
