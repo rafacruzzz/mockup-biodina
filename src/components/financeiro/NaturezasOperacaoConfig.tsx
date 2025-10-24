@@ -6,10 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Plus, MoreVertical } from "lucide-react";
 import { naturezasOperacao } from "@/data/naturezasOperacao";
+import NaturezaOperacaoDialog from "./NaturezaOperacaoDialog";
 
 const NaturezasOperacaoConfig = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ativas");
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   // Filtrar naturezas com base na pesquisa
   const filteredNaturezas = naturezasOperacao.filter(nat => 
@@ -26,7 +28,7 @@ const NaturezasOperacaoConfig = () => {
               <CardTitle className="text-2xl text-primary">Natureza de operação</CardTitle>
               <p className="text-sm text-muted-foreground mt-1">Tributação</p>
             </div>
-            <Button className="gap-2">
+            <Button className="gap-2" onClick={() => setDialogOpen(true)}>
               <Plus className="h-4 w-4" />
               Nova Natureza de Operação
             </Button>
@@ -111,6 +113,8 @@ const NaturezasOperacaoConfig = () => {
 
         </CardContent>
       </Card>
+
+      <NaturezaOperacaoDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 };
