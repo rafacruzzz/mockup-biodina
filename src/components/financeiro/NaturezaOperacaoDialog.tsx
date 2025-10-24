@@ -101,6 +101,12 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
   const [aliquotaPIS, setAliquotaPIS] = useState("0,00");
   const [basePIS, setBasePIS] = useState("100,0000");
   const [observacoesPIS, setObservacoesPIS] = useState("");
+  
+  // Estados para COFINS
+  const [situacaoTributariaCOFINS, setSituacaoTributariaCOFINS] = useState("");
+  const [aliquotaCOFINS, setAliquotaCOFINS] = useState("0,00");
+  const [baseCOFINS, setBaseCOFINS] = useState("100,0000");
+  const [observacoesCOFINS, setObservacoesCOFINS] = useState("");
 
   const handleSalvar = () => {
     // Implementar lógica de salvamento
@@ -543,7 +549,74 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
             </TabsContent>
 
             <TabsContent value="cofins" className="mt-4">
-              <p className="text-muted-foreground">Configurações de COFINS</p>
+              <div className="space-y-6 p-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Situação tributária (CST)</Label>
+                    <Select value={situacaoTributariaCOFINS} onValueChange={setSituacaoTributariaCOFINS}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="selecione">Selecione</SelectItem>
+                        <SelectItem value="01">01 - Operação tributável (alíquota normal, cumulativo ou não)</SelectItem>
+                        <SelectItem value="02">02 - Operação tributável (alíquota diferenciada)</SelectItem>
+                        <SelectItem value="03">03 - Operação tributável (alíquota por unidade de produto)</SelectItem>
+                        <SelectItem value="04">04 - Operação tributável (tributação monofásica, alíquota zero)</SelectItem>
+                        <SelectItem value="05">05 - Operação Tributável (Substituição Tributária)</SelectItem>
+                        <SelectItem value="06">06 - Operação tributável (alíquota zero)</SelectItem>
+                        <SelectItem value="07">07 - Operação isenta da contribuição</SelectItem>
+                        <SelectItem value="08">08 - Operação sem incidência da contribuição</SelectItem>
+                        <SelectItem value="09">09 - Operação com suspensão da contribuição</SelectItem>
+                        <SelectItem value="49">49 - Outras Operações de Saída</SelectItem>
+                        <SelectItem value="50">50 - Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Tributada no Mercado Interno</SelectItem>
+                        <SelectItem value="51">51 - Operação com Direito a Crédito - Vinculada Exclusivamente a Receita Não Tributada no Mercado Interno</SelectItem>
+                        <SelectItem value="52">52 - Operação com Direito a Crédito - Vinculada Exclusivamente a Receita de Exportação</SelectItem>
+                        <SelectItem value="53">53 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno</SelectItem>
+                        <SelectItem value="54">54 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas no Mercado Interno e de Exportação</SelectItem>
+                        <SelectItem value="55">55 - Operação com Direito a Crédito - Vinculada a Receitas Não-Tributadas no Mercado Interno e de Exportação</SelectItem>
+                        <SelectItem value="56">56 - Operação com Direito a Crédito - Vinculada a Receitas Tributadas e Não-Tributadas no Mercado Interno, e de Exportação</SelectItem>
+                        <SelectItem value="60">60 - Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Tributada no Mercado Interno</SelectItem>
+                        <SelectItem value="61">61 - Crédito Presumido - Operação de Aquisição Vinculada Exclusivamente a Receita Não-Tributada no Mercado Interno</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Alíquota</Label>
+                      <div className="relative">
+                        <Input
+                          value={aliquotaCOFINS}
+                          onChange={(e) => setAliquotaCOFINS(e.target.value)}
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Base</Label>
+                      <div className="relative">
+                        <Input
+                          value={baseCOFINS}
+                          onChange={(e) => setBaseCOFINS(e.target.value)}
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Observações do COFINS</Label>
+                    <Textarea
+                      value={observacoesCOFINS}
+                      onChange={(e) => setObservacoesCOFINS(e.target.value)}
+                      placeholder="Observações..."
+                      className="min-h-[80px]"
+                    />
+                  </div>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="importacao" className="mt-4">
