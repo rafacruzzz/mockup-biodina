@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Search, Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 interface NaturezaOperacaoDialogProps {
   open: boolean;
@@ -38,6 +39,9 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
   const [descontarDesoneracao, setDescontarDesoneracao] = useState("sim");
   const [compoeTotalNF, setCompoeTotalNF] = useState("compoe_total");
   const [mostrarAvancadas, setMostrarAvancadas] = useState(false);
+  const [cfopSheetOpen, setCfopSheetOpen] = useState(false);
+  const [cfopSearch, setCfopSearch] = useState("");
+  const [cfopValue, setCfopValue] = useState("");
 
   const handleSalvar = () => {
     // Implementar lógica de salvamento
@@ -196,29 +200,41 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-1">
-                    CFOP
+                  <div className="flex items-center gap-2">
+                    <Label>CFOP</Label>
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger>
-                          <Info className="h-3 w-3 text-muted-foreground" />
+                        <TooltipTrigger asChild>
+                          <Info className="h-4 w-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Código Fiscal de Operações e Prestações</p>
+                        <TooltipContent side="right" className="max-w-xs">
+                          <p className="text-sm">
+                            Utilize o <strong>?</strong> no início do CFOP para substituí-lo conforme a UF do destinatário.
+                          </p>
+                          <p className="text-sm mt-2">
+                            Ex: CFOP <strong>?.102</strong> será substituído por:
+                          </p>
+                          <ul className="text-sm mt-1 space-y-1">
+                            <li><strong>1</strong> - para operações com mesma UF</li>
+                            <li><strong>2</strong> - para interestaduais</li>
+                            <li><strong>3</strong> - para exportação.</li>
+                          </ul>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                  </Label>
+                  </div>
                   <div className="relative">
                     <Input
-                      value={cfop}
-                      onChange={(e) => setCfop(e.target.value)}
-                      placeholder="?.201"
+                      value={cfopValue}
+                      onChange={(e) => setCfopValue(e.target.value)}
+                      placeholder="Código fiscal da operação"
+                      className="pr-10"
                     />
                     <Button
                       variant="ghost"
                       size="icon"
                       className="absolute right-0 top-0 h-full"
+                      onClick={() => setCfopSheetOpen(true)}
                     >
                       <Search className="h-4 w-4" />
                     </Button>
@@ -507,6 +523,76 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
           </div>
         </div>
       </DialogContent>
+
+      <Sheet open={cfopSheetOpen} onOpenChange={setCfopSheetOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-2xl">
+          <SheetHeader>
+            <SheetTitle>Busca de CFOP</SheetTitle>
+          </SheetHeader>
+          
+          <div className="mt-6 space-y-4">
+            <div className="grid grid-cols-[120px_1fr] gap-4">
+              <div>
+                <Label>CFOP</Label>
+                <Input 
+                  placeholder=""
+                  value={cfopSearch}
+                  onChange={(e) => setCfopSearch(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label>Descrição</Label>
+                <div className="flex gap-2">
+                  <Input placeholder="" className="flex-1" />
+                  <Button size="icon" variant="outline">
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-[120px_1fr] bg-muted/50 border-b">
+                <div className="p-3 font-semibold text-sm">CFOP</div>
+                <div className="p-3 font-semibold text-sm">Descrição</div>
+              </div>
+              <div className="max-h-[500px] overflow-y-auto">
+                {[
+                  { code: "1.603", desc: "Ressarcimento de ICMS retido por substituição tributária" },
+                  { code: "1.205", desc: "Anulação de valor relativo à prestação de serviço de comunicação" },
+                  { code: "1.206", desc: "Anulação de valor relativo à prestação de serviço de transporte" },
+                  { code: "1.207", desc: "Anulação de valor relativo à venda de energia elétrica" },
+                  { code: "1.301", desc: "Aquisição de serviço de comunicação para execução de serviço da mesma natureza" },
+                ]
+                  .filter(item => 
+                    cfopSearch === "" || 
+                    item.code.includes(cfopSearch) || 
+                    item.desc.toLowerCase().includes(cfopSearch.toLowerCase())
+                  )
+                  .map((item) => (
+                    <div
+                      key={item.code}
+                      className="grid grid-cols-[120px_1fr] border-b last:border-b-0 hover:bg-muted/30 cursor-pointer transition-colors"
+                      onClick={() => {
+                        setCfopValue(item.code);
+                        setCfopSheetOpen(false);
+                      }}
+                    >
+                      <div className="p-3 text-sm">{item.code}</div>
+                      <div className="p-3 text-sm">{item.desc}</div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-4">
+              <Button variant="outline" onClick={() => setCfopSheetOpen(false)}>
+                cancelar <span className="ml-2 text-xs text-muted-foreground">ESC</span>
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
     </Dialog>
   );
 };
