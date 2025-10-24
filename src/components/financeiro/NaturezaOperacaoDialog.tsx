@@ -42,6 +42,13 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
   const [cfopSheetOpen, setCfopSheetOpen] = useState(false);
   const [cfopSearch, setCfopSearch] = useState("");
   const [cfopValue, setCfopValue] = useState("");
+  const [excecoesSheetOpen, setExcecoesSheetOpen] = useState(false);
+  const [estadoDestinatario, setEstadoDestinatario] = useState("");
+  const [produtos, setProdutos] = useState<Array<{ produto: string; sku: string }>>([]);
+  const [novoProduto, setNovoProduto] = useState("");
+  const [origens, setOrigens] = useState("");
+  const [ncms, setNcms] = useState<string[]>([]);
+  const [novoNcm, setNovoNcm] = useState("");
 
   const handleSalvar = () => {
     // Implementar lógica de salvamento
@@ -292,7 +299,11 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
           {/* Exceções */}
           <div className="space-y-2">
             <h3 className="font-semibold">Exceções</h3>
-            <Button variant="link" className="text-primary p-0 h-auto">
+            <Button 
+              variant="link" 
+              className="text-primary p-0 h-auto"
+              onClick={() => setExcecoesSheetOpen(true)}
+            >
               + adicionar exceção
             </Button>
           </div>
@@ -588,6 +599,206 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
             <div className="flex justify-end pt-4">
               <Button variant="outline" onClick={() => setCfopSheetOpen(false)}>
                 cancelar <span className="ml-2 text-xs text-muted-foreground">ESC</span>
+              </Button>
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Sheet de Exceções */}
+      <Sheet open={excecoesSheetOpen} onOpenChange={setExcecoesSheetOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
+          <div className="space-y-6">
+            <SheetHeader>
+              <div className="flex items-center justify-between">
+                <SheetTitle>Exceções do Simples</SheetTitle>
+                <Button variant="ghost" size="sm" onClick={() => setExcecoesSheetOpen(false)}>
+                  fechar
+                </Button>
+              </div>
+            </SheetHeader>
+
+            {/* Estados */}
+            <div className="space-y-2">
+              <Label>Quando o destinatário for um destes estados</Label>
+              <Select value={estadoDestinatario} onValueChange={setEstadoDestinatario}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Qualquer estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="qualquer">Qualquer estado</SelectItem>
+                  <SelectItem value="AC">AC</SelectItem>
+                  <SelectItem value="AL">AL</SelectItem>
+                  <SelectItem value="AM">AM</SelectItem>
+                  <SelectItem value="AP">AP</SelectItem>
+                  <SelectItem value="BA">BA</SelectItem>
+                  <SelectItem value="CE">CE</SelectItem>
+                  <SelectItem value="DF">DF</SelectItem>
+                  <SelectItem value="ES">ES</SelectItem>
+                  <SelectItem value="EX">EX</SelectItem>
+                  <SelectItem value="GO">GO</SelectItem>
+                  <SelectItem value="MA">MA</SelectItem>
+                  <SelectItem value="MG">MG</SelectItem>
+                  <SelectItem value="MS">MS</SelectItem>
+                  <SelectItem value="MT">MT</SelectItem>
+                  <SelectItem value="PA">PA</SelectItem>
+                  <SelectItem value="PB">PB</SelectItem>
+                  <SelectItem value="PE">PE</SelectItem>
+                  <SelectItem value="PI">PI</SelectItem>
+                  <SelectItem value="PR">PR</SelectItem>
+                  <SelectItem value="RJ">RJ</SelectItem>
+                  <SelectItem value="RN">RN</SelectItem>
+                  <SelectItem value="RO">RO</SelectItem>
+                  <SelectItem value="RR">RR</SelectItem>
+                  <SelectItem value="RS">RS</SelectItem>
+                  <SelectItem value="SC">SC</SelectItem>
+                  <SelectItem value="SE">SE</SelectItem>
+                  <SelectItem value="SP">SP</SelectItem>
+                  <SelectItem value="TO">TO</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Produtos */}
+            <div className="space-y-3">
+              <Label>Para os seguintes produtos</Label>
+              
+              {produtos.length > 0 && (
+                <div className="space-y-2">
+                  {produtos.map((produto, index) => (
+                    <div key={index} className="grid grid-cols-[1fr_200px_auto] gap-2 items-end">
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground">Produto</Label>
+                        <Input value={produto.produto} readOnly />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs text-muted-foreground">Código (SKU)</Label>
+                        <Input value={produto.sku} disabled className="bg-muted" />
+                      </div>
+                      <Button 
+                        variant="link" 
+                        className="text-primary text-sm"
+                        onClick={() => {
+                          setProdutos(produtos.filter((_, i) => i !== index));
+                        }}
+                      >
+                        salvar
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="grid grid-cols-[1fr_200px] gap-2 items-end">
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Produto</Label>
+                  <Input 
+                    value={novoProduto} 
+                    onChange={(e) => setNovoProduto(e.target.value)}
+                    placeholder="Digite o nome do produto"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs text-muted-foreground">Código (SKU)</Label>
+                  <Input 
+                    disabled 
+                    className="bg-muted"
+                    placeholder="Auto"
+                  />
+                </div>
+              </div>
+              
+              <Button 
+                variant="link" 
+                className="text-primary p-0 h-auto text-sm"
+                onClick={() => {
+                  if (novoProduto.trim()) {
+                    setProdutos([...produtos, { produto: novoProduto, sku: "AUTO-" + Math.random().toString(36).substr(2, 9).toUpperCase() }]);
+                    setNovoProduto("");
+                  }
+                }}
+              >
+                + adicionar
+              </Button>
+            </div>
+
+            {/* Origens */}
+            <div className="space-y-2">
+              <Label>Para as seguintes origens</Label>
+              <Select value={origens} onValueChange={setOrigens}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Qualquer origem" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="qualquer">Qualquer origem</SelectItem>
+                  <SelectItem value="0">0 - Nacional, exceto as indicadas nos códigos 3 a 5</SelectItem>
+                  <SelectItem value="1">1 - Estrangeira - Importação direta, exceto a indicada no código 6</SelectItem>
+                  <SelectItem value="2">2 - Estrangeira - Adquirida no mercado interno, exceto a indicada no código 7</SelectItem>
+                  <SelectItem value="3">3 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 40% e inferior ou igual a 70%</SelectItem>
+                  <SelectItem value="4">4 - Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos de que tratam as legislações citadas nos Ajustes</SelectItem>
+                  <SelectItem value="5">5 - Nacional, mercadoria ou bem com Conteúdo de Importação inferior ou igual a 40%</SelectItem>
+                  <SelectItem value="6">6 - Estrangeira - Importação direta, sem similar nacional, constante em lista da CAMEX</SelectItem>
+                  <SelectItem value="7">7 - Estrangeira - Adquirida no mercado interno, sem similar nacional, constante em lista da CAMEX</SelectItem>
+                  <SelectItem value="8">8 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 70%</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* NCMs */}
+            <div className="space-y-3">
+              <Label>Para as seguintes NCMs</Label>
+              
+              {ncms.length > 0 && (
+                <div className="space-y-2">
+                  {ncms.map((ncm, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Input value={ncm} readOnly />
+                      <Button 
+                        variant="link" 
+                        className="text-primary text-sm"
+                        onClick={() => {
+                          setNcms(ncms.filter((_, i) => i !== index));
+                        }}
+                      >
+                        salvar
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex items-end gap-2">
+                <div className="flex-1">
+                  <Input 
+                    value={novoNcm} 
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '');
+                      setNovoNcm(value);
+                    }}
+                    placeholder="Digite apenas números"
+                    type="text"
+                    inputMode="numeric"
+                  />
+                </div>
+              </div>
+              
+              <Button 
+                variant="link" 
+                className="text-primary p-0 h-auto text-sm"
+                onClick={() => {
+                  if (novoNcm.trim()) {
+                    setNcms([...ncms, novoNcm]);
+                    setNovoNcm("");
+                  }
+                }}
+              >
+                + adicionar
+              </Button>
+            </div>
+
+            <div className="flex justify-end pt-4 border-t">
+              <Button onClick={() => setExcecoesSheetOpen(false)}>
+                Salvar exceções
               </Button>
             </div>
           </div>
