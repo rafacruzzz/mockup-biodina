@@ -423,7 +423,8 @@ const Financeiro = () => {
       description: 'Alíquotas por Estado, Parâmetros Fiscais, Regras Contábeis',
       icon: Settings,
       subModules: [
-        { id: 'aliquotas_estado', title: 'ICMS DIFAL para não contribuinte' }
+        { id: 'aliquotas_estado', title: 'ICMS DIFAL para não contribuinte' },
+        { id: 'naturezas_operacao', title: 'Naturezas de operação de entrada (tributação)' }
       ]
     },
   ];
@@ -958,6 +959,25 @@ const Financeiro = () => {
               </Button>
             </div>
             <AliquotasEstadoConfig />
+          </div>
+        );
+      case 'naturezas_operacao':
+        const NaturezasOperacaoConfig = lazy(() => import('@/components/financeiro/NaturezasOperacaoConfig'));
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <Suspense fallback={<div>Carregando...</div>}>
+              <NaturezasOperacaoConfig />
+            </Suspense>
           </div>
         );
       default:
