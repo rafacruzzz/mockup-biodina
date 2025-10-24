@@ -423,7 +423,7 @@ const Financeiro = () => {
       description: 'Alíquotas por Estado, Parâmetros Fiscais, Regras Contábeis',
       icon: Settings,
       subModules: [
-        { id: 'aliquotas_estado', title: 'Alíquotas por Estado' }
+        { id: 'aliquotas_estado', title: 'ICMS DIFAL para não contribuinte' }
       ]
     },
   ];
