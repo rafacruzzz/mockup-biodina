@@ -80,6 +80,14 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
   const [aliquotaIcmsRetido, setAliquotaIcmsRetido] = useState("");
   const [baseCalculoIcmsRetido, setBaseCalculoIcmsRetido] = useState("");
   const [fundoCombatePobreza, setFundoCombatePobreza] = useState("");
+  
+  // Estados para IPI
+  const [situacaoTributariaIPI, setSituacaoTributariaIPI] = useState("");
+  const [observacoesIPI, setObservacoesIPI] = useState("");
+  const [aliquotaIPI, setAliquotaIPI] = useState("");
+  const [codigoEnquadramentoIPI, setCodigoEnquadramentoIPI] = useState("");
+  const [codigoEnquadramentoSheetOpen, setCodigoEnquadramentoSheetOpen] = useState(false);
+  const [codigoEnquadramentoSearch, setCodigoEnquadramentoSearch] = useState("");
 
   const handleSalvar = () => {
     // Implementar lógica de salvamento
@@ -307,7 +315,73 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
             </TabsContent>
 
             <TabsContent value="ipi" className="mt-4">
-              <p className="text-muted-foreground">Configurações de IPI</p>
+              <div className="space-y-6 p-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Situação tributária (CST)</Label>
+                    <Select value={situacaoTributariaIPI} onValueChange={setSituacaoTributariaIPI}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="selecione">Selecione</SelectItem>
+                        <SelectItem value="00">00 - Entrada com recuperação de crédito</SelectItem>
+                        <SelectItem value="01">01 - Entrada tributada com alíquota zero</SelectItem>
+                        <SelectItem value="02">02 - Entrada isenta</SelectItem>
+                        <SelectItem value="03">03 - Entrada não-tributada</SelectItem>
+                        <SelectItem value="04">04 - Entrada imune</SelectItem>
+                        <SelectItem value="05">05 - Entrada com suspensão</SelectItem>
+                        <SelectItem value="49">49 - Outras entradas</SelectItem>
+                        <SelectItem value="nao_destacar">Não destacar IPI</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Observações do IPI</Label>
+                    <Textarea
+                      value={observacoesIPI}
+                      onChange={(e) => setObservacoesIPI(e.target.value)}
+                      placeholder="Observações..."
+                      className="min-h-[80px]"
+                    />
+                  </div>
+
+                  {/* Campos condicionais - aparecem quando NÃO for "Não destacar IPI" */}
+                  {situacaoTributariaIPI && situacaoTributariaIPI !== "nao_destacar" && (
+                    <>
+                      <div className="space-y-2">
+                        <Label>Alíquota</Label>
+                        <Input
+                          value={aliquotaIPI}
+                          onChange={(e) => setAliquotaIPI(e.target.value)}
+                          placeholder="0,00"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Código de enquadramento</Label>
+                        <div className="flex gap-2">
+                          <Input
+                            value={codigoEnquadramentoIPI}
+                            readOnly
+                            placeholder="Selecione o código"
+                            className="flex-1"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => setCodigoEnquadramentoSheetOpen(true)}
+                          >
+                            <Search className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="issqn" className="mt-4">
@@ -1257,6 +1331,85 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
                 </div>
               </>
             )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Sheet para pesquisar código de enquadramento IPI */}
+      <Sheet open={codigoEnquadramentoSheetOpen} onOpenChange={setCodigoEnquadramentoSheetOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Pesquisar código de enquadramento IPI</SheetTitle>
+          </SheetHeader>
+
+          <div className="space-y-4 mt-6">
+            <div className="relative">
+              <Input
+                placeholder="Pesquisar"
+                value={codigoEnquadramentoSearch}
+                onChange={(e) => setCodigoEnquadramentoSearch(e.target.value)}
+                className="pr-10"
+              />
+              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            </div>
+
+            <div className="space-y-2">
+              {[
+                { codigo: "101", descricao: "Óleo de menta em bruto, produzido por lavradores - Art. 43 Inciso I do Decreto 7.212/2010" },
+                { codigo: "102", descricao: "Produtos remetidos à exposição em feiras de amostras e promoções semelhantes - Art. 43 Inciso II do Decreto 7.212/2010" },
+                { codigo: "103", descricao: "Produtos remetidos a depósitos fechados ou armazéns-gerais, bem assim aqueles devolvidos ao remetente - Art. 43 Inciso III do Decreto 7.212/2010" },
+                { codigo: "104", descricao: "Produtos industrializados, que contenham matérias-primas (MP), produtos intermediários (PI) e material de embalagem (ME) importados submetidos a regime especial de drawback - suspensão/isenção, remetidos diretamente a empresas industriais exportadoras - Art. 43 Inciso IV do Decreto 7.212/2010" },
+                { codigo: "105", descricao: "Produtos, destinados à exportação, que saiam do estabelecimento industrial para empresas comerciais exportadoras, com o fim específico de exportação - Art. 43, Inciso V, alínea 'a' do Decreto 7.212/2010" },
+                { codigo: "106", descricao: "Produtos, destinados à exportação, que saiam do estabelecimento industrial para recintos alfandegados onde se processe o despacho aduaneiro de exportação - Art. 43, Inciso V, alínea 'b' do Decreto 7.212/2010" },
+                { codigo: "107", descricao: "Produtos, destinados à exportação, que saiam do estabelecimento industrial para outros locais onde se processe o despacho aduaneiro de exportação - Art. 43, Inciso V, alíneas 'c' do Decreto 7.212/2010" },
+                { codigo: "108", descricao: "Matérias-primas (MP), produtos intermediários (PI) e material de embalagem (ME) destinados ao executor de industrialização por encomenda - Art. 43 Inciso VI do Decreto 7.212/2010" },
+                { codigo: "109", descricao: "Produtos industrializados por encomenda remetidos ao estabelecimento de origem - Art. 43 Inciso VII do Decreto 7.212/2010" },
+                { codigo: "110", descricao: "Matérias-primas ou produtos intermediários remetidos para emprego em operação industrial realizada pelo remetente fora do estabelecimento - Art. 43 Inciso VIII do Decreto 7.212/2010" },
+              ].filter(item => 
+                !codigoEnquadramentoSearch || 
+                item.codigo.includes(codigoEnquadramentoSearch) ||
+                item.descricao.toLowerCase().includes(codigoEnquadramentoSearch.toLowerCase())
+              ).map((item) => (
+                <div 
+                  key={item.codigo}
+                  className={`p-3 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors ${
+                    codigoEnquadramentoIPI === item.codigo ? 'bg-primary text-primary-foreground' : ''
+                  }`}
+                  onClick={() => setCodigoEnquadramentoIPI(item.codigo)}
+                >
+                  <div className="flex items-start gap-2">
+                    <span className="font-medium">{item.codigo}:</span>
+                    <span className="flex-1 text-sm">{item.descricao}</span>
+                    {codigoEnquadramentoIPI === item.codigo && (
+                      <div className="h-5 w-5 rounded-full bg-primary-foreground flex items-center justify-center">
+                        <div className="h-2 w-2 rounded-full bg-primary" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex justify-end gap-2 pt-4 border-t">
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setCodigoEnquadramentoSheetOpen(false);
+                  setCodigoEnquadramentoSearch("");
+                }}
+              >
+                cancelar
+              </Button>
+              <Button 
+                onClick={() => {
+                  setCodigoEnquadramentoSheetOpen(false);
+                  setCodigoEnquadramentoSearch("");
+                }}
+                disabled={!codigoEnquadramentoIPI}
+              >
+                confirmar
+              </Button>
+            </div>
           </div>
         </SheetContent>
       </Sheet>
