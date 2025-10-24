@@ -26,6 +26,10 @@ const NaturezasOperacaoConfig = () => {
               <CardTitle className="text-2xl text-primary">Natureza de operação</CardTitle>
               <p className="text-sm text-muted-foreground mt-1">Tributação</p>
             </div>
+            <Button className="gap-2">
+              <Plus className="h-4 w-4" />
+              Nova Natureza de Operação
+            </Button>
           </div>
         </CardHeader>
         <CardContent className="p-6">
@@ -105,13 +109,6 @@ const NaturezasOperacaoConfig = () => {
             </Table>
           </div>
 
-          {/* Botão Nova Natureza de Operação */}
-          <div className="flex justify-start mt-4">
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Nova Natureza de Operação
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>
