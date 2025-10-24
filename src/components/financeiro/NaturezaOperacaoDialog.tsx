@@ -43,12 +43,35 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
   const [cfopSearch, setCfopSearch] = useState("");
   const [cfopValue, setCfopValue] = useState("");
   const [excecoesSheetOpen, setExcecoesSheetOpen] = useState(false);
+  const [excecoesStep, setExcecoesStep] = useState(1);
   const [estadoDestinatario, setEstadoDestinatario] = useState("");
   const [produtos, setProdutos] = useState<Array<{ produto: string; sku: string }>>([]);
   const [novoProduto, setNovoProduto] = useState("");
   const [origens, setOrigens] = useState("");
   const [ncms, setNcms] = useState<string[]>([]);
   const [novoNcm, setNovoNcm] = useState("");
+  
+  // Campos da segunda página de exceções
+  const [excecaoCsosn, setExcecaoCsosn] = useState("");
+  const [excecaoCfop, setExcecaoCfop] = useState("");
+  const [aliquotaIcmsEfetivo, setAliquotaIcmsEfetivo] = useState("");
+  const [baseIcmsEfetivo, setBaseIcmsEfetivo] = useState("");
+  const [codigoFiscalOperacao, setCodigoFiscalOperacao] = useState("");
+  const [aliquotaIcms, setAliquotaIcms] = useState("");
+  const [icmsDifalNaoContribuinte, setIcmsDifalNaoContribuinte] = useState("Não");
+  const [icmsUfDestino, setIcmsUfDestino] = useState("");
+  const [difalContribuinte, setDifalContribuinte] = useState("Não");
+  const [aliquotaAplicavel, setAliquotaAplicavel] = useState("");
+  const [codigoBeneficio, setCodigoBeneficio] = useState("");
+  const [observacoesExcecao, setObservacoesExcecao] = useState("");
+  const [obterIcmsSt, setObterIcmsSt] = useState(false);
+  const [aliquotaIcmsSt, setAliquotaIcmsSt] = useState("0,00");
+  const [baseCalculoIcmsSt, setBaseCalculoIcmsSt] = useState("0,00");
+  const [margemAdicIcmsSt, setMargemAdicIcmsSt] = useState("0,00");
+  const [aliquotaFcpIcmsSt, setAliquotaFcpIcmsSt] = useState("");
+  const [aliquotaIcmsRetido, setAliquotaIcmsRetido] = useState("");
+  const [baseCalculoIcmsRetido, setBaseCalculoIcmsRetido] = useState("");
+  const [fundoCombatePobreza, setFundoCombatePobreza] = useState("");
 
   const handleSalvar = () => {
     // Implementar lógica de salvamento
@@ -606,201 +629,487 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
       </Sheet>
 
       {/* Sheet de Exceções */}
-      <Sheet open={excecoesSheetOpen} onOpenChange={setExcecoesSheetOpen}>
+      <Sheet open={excecoesSheetOpen} onOpenChange={(open) => {
+        setExcecoesSheetOpen(open);
+        if (!open) setExcecoesStep(1);
+      }}>
         <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
           <div className="space-y-6">
             <SheetHeader>
               <div className="flex items-center justify-between">
                 <SheetTitle>Exceções do Simples</SheetTitle>
-                <Button variant="ghost" size="sm" onClick={() => setExcecoesSheetOpen(false)}>
+                <Button variant="ghost" size="sm" onClick={() => {
+                  setExcecoesSheetOpen(false);
+                  setExcecoesStep(1);
+                }}>
                   fechar
                 </Button>
               </div>
             </SheetHeader>
 
-            {/* Estados */}
-            <div className="space-y-2">
-              <Label>Quando o destinatário for um destes estados</Label>
-              <Select value={estadoDestinatario} onValueChange={setEstadoDestinatario}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Qualquer estado" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="qualquer">Qualquer estado</SelectItem>
-                  <SelectItem value="AC">AC</SelectItem>
-                  <SelectItem value="AL">AL</SelectItem>
-                  <SelectItem value="AM">AM</SelectItem>
-                  <SelectItem value="AP">AP</SelectItem>
-                  <SelectItem value="BA">BA</SelectItem>
-                  <SelectItem value="CE">CE</SelectItem>
-                  <SelectItem value="DF">DF</SelectItem>
-                  <SelectItem value="ES">ES</SelectItem>
-                  <SelectItem value="EX">EX</SelectItem>
-                  <SelectItem value="GO">GO</SelectItem>
-                  <SelectItem value="MA">MA</SelectItem>
-                  <SelectItem value="MG">MG</SelectItem>
-                  <SelectItem value="MS">MS</SelectItem>
-                  <SelectItem value="MT">MT</SelectItem>
-                  <SelectItem value="PA">PA</SelectItem>
-                  <SelectItem value="PB">PB</SelectItem>
-                  <SelectItem value="PE">PE</SelectItem>
-                  <SelectItem value="PI">PI</SelectItem>
-                  <SelectItem value="PR">PR</SelectItem>
-                  <SelectItem value="RJ">RJ</SelectItem>
-                  <SelectItem value="RN">RN</SelectItem>
-                  <SelectItem value="RO">RO</SelectItem>
-                  <SelectItem value="RR">RR</SelectItem>
-                  <SelectItem value="RS">RS</SelectItem>
-                  <SelectItem value="SC">SC</SelectItem>
-                  <SelectItem value="SE">SE</SelectItem>
-                  <SelectItem value="SP">SP</SelectItem>
-                  <SelectItem value="TO">TO</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Produtos */}
-            <div className="space-y-3">
-              <Label>Para os seguintes produtos</Label>
-              
-              {produtos.length > 0 && (
+            {excecoesStep === 1 ? (
+              <>
+                {/* Estados */}
                 <div className="space-y-2">
-                  {produtos.map((produto, index) => (
-                    <div key={index} className="grid grid-cols-[1fr_200px_auto] gap-2 items-end">
-                      <div className="space-y-1">
-                        <Label className="text-xs text-muted-foreground">Produto</Label>
-                        <Input value={produto.produto} readOnly />
-                      </div>
-                      <div className="space-y-1">
-                        <Label className="text-xs text-muted-foreground">Código (SKU)</Label>
-                        <Input value={produto.sku} disabled className="bg-muted" />
-                      </div>
-                      <Button 
-                        variant="link" 
-                        className="text-primary text-sm"
-                        onClick={() => {
-                          setProdutos(produtos.filter((_, i) => i !== index));
-                        }}
-                      >
-                        salvar
-                      </Button>
+                  <Label>Quando o destinatário for um destes estados</Label>
+                  <Select value={estadoDestinatario} onValueChange={setEstadoDestinatario}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Qualquer estado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="qualquer">Qualquer estado</SelectItem>
+                      <SelectItem value="AC">AC</SelectItem>
+                      <SelectItem value="AL">AL</SelectItem>
+                      <SelectItem value="AM">AM</SelectItem>
+                      <SelectItem value="AP">AP</SelectItem>
+                      <SelectItem value="BA">BA</SelectItem>
+                      <SelectItem value="CE">CE</SelectItem>
+                      <SelectItem value="DF">DF</SelectItem>
+                      <SelectItem value="ES">ES</SelectItem>
+                      <SelectItem value="EX">EX</SelectItem>
+                      <SelectItem value="GO">GO</SelectItem>
+                      <SelectItem value="MA">MA</SelectItem>
+                      <SelectItem value="MG">MG</SelectItem>
+                      <SelectItem value="MS">MS</SelectItem>
+                      <SelectItem value="MT">MT</SelectItem>
+                      <SelectItem value="PA">PA</SelectItem>
+                      <SelectItem value="PB">PB</SelectItem>
+                      <SelectItem value="PE">PE</SelectItem>
+                      <SelectItem value="PI">PI</SelectItem>
+                      <SelectItem value="PR">PR</SelectItem>
+                      <SelectItem value="RJ">RJ</SelectItem>
+                      <SelectItem value="RN">RN</SelectItem>
+                      <SelectItem value="RO">RO</SelectItem>
+                      <SelectItem value="RR">RR</SelectItem>
+                      <SelectItem value="RS">RS</SelectItem>
+                      <SelectItem value="SC">SC</SelectItem>
+                      <SelectItem value="SE">SE</SelectItem>
+                      <SelectItem value="SP">SP</SelectItem>
+                      <SelectItem value="TO">TO</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Produtos */}
+                <div className="space-y-3">
+                  <Label>Para os seguintes produtos</Label>
+                  
+                  {produtos.length > 0 && (
+                    <div className="space-y-2">
+                      {produtos.map((produto, index) => (
+                        <div key={index} className="grid grid-cols-[1fr_200px_auto] gap-2 items-end">
+                          <div className="space-y-1">
+                            <Label className="text-xs text-muted-foreground">Produto</Label>
+                            <Input value={produto.produto} readOnly />
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs text-muted-foreground">Código (SKU)</Label>
+                            <Input value={produto.sku} disabled className="bg-muted" />
+                          </div>
+                          <Button 
+                            variant="link" 
+                            className="text-primary text-sm"
+                            onClick={() => {
+                              setProdutos(produtos.filter((_, i) => i !== index));
+                            }}
+                          >
+                            remover
+                          </Button>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              )}
+                  )}
 
-              <div className="grid grid-cols-[1fr_200px] gap-2 items-end">
-                <div className="space-y-1">
-                  <Label className="text-xs text-muted-foreground">Produto</Label>
-                  <Input 
-                    value={novoProduto} 
-                    onChange={(e) => setNovoProduto(e.target.value)}
-                    placeholder="Digite o nome do produto"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs text-muted-foreground">Código (SKU)</Label>
-                  <Input 
-                    disabled 
-                    className="bg-muted"
-                    placeholder="Auto"
-                  />
-                </div>
-              </div>
-              
-              <Button 
-                variant="link" 
-                className="text-primary p-0 h-auto text-sm"
-                onClick={() => {
-                  if (novoProduto.trim()) {
-                    setProdutos([...produtos, { produto: novoProduto, sku: "AUTO-" + Math.random().toString(36).substr(2, 9).toUpperCase() }]);
-                    setNovoProduto("");
-                  }
-                }}
-              >
-                + adicionar
-              </Button>
-            </div>
-
-            {/* Origens */}
-            <div className="space-y-2">
-              <Label>Para as seguintes origens</Label>
-              <Select value={origens} onValueChange={setOrigens}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Qualquer origem" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="qualquer">Qualquer origem</SelectItem>
-                  <SelectItem value="0">0 - Nacional, exceto as indicadas nos códigos 3 a 5</SelectItem>
-                  <SelectItem value="1">1 - Estrangeira - Importação direta, exceto a indicada no código 6</SelectItem>
-                  <SelectItem value="2">2 - Estrangeira - Adquirida no mercado interno, exceto a indicada no código 7</SelectItem>
-                  <SelectItem value="3">3 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 40% e inferior ou igual a 70%</SelectItem>
-                  <SelectItem value="4">4 - Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos de que tratam as legislações citadas nos Ajustes</SelectItem>
-                  <SelectItem value="5">5 - Nacional, mercadoria ou bem com Conteúdo de Importação inferior ou igual a 40%</SelectItem>
-                  <SelectItem value="6">6 - Estrangeira - Importação direta, sem similar nacional, constante em lista da CAMEX</SelectItem>
-                  <SelectItem value="7">7 - Estrangeira - Adquirida no mercado interno, sem similar nacional, constante em lista da CAMEX</SelectItem>
-                  <SelectItem value="8">8 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 70%</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* NCMs */}
-            <div className="space-y-3">
-              <Label>Para as seguintes NCMs</Label>
-              
-              {ncms.length > 0 && (
-                <div className="space-y-2">
-                  {ncms.map((ncm, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <Input value={ncm} readOnly />
-                      <Button 
-                        variant="link" 
-                        className="text-primary text-sm"
-                        onClick={() => {
-                          setNcms(ncms.filter((_, i) => i !== index));
-                        }}
-                      >
-                        salvar
-                      </Button>
+                  <div className="grid grid-cols-[1fr_200px] gap-2 items-end">
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Produto</Label>
+                      <Input 
+                        value={novoProduto} 
+                        onChange={(e) => setNovoProduto(e.target.value)}
+                        placeholder="Digite o nome do produto"
+                      />
                     </div>
-                  ))}
-                </div>
-              )}
-
-              <div className="flex items-end gap-2">
-                <div className="flex-1">
-                  <Input 
-                    value={novoNcm} 
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, '');
-                      setNovoNcm(value);
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Código (SKU)</Label>
+                      <Input 
+                        disabled 
+                        className="bg-muted"
+                        placeholder="Auto"
+                      />
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    variant="link" 
+                    className="text-primary p-0 h-auto text-sm"
+                    onClick={() => {
+                      if (novoProduto.trim()) {
+                        setProdutos([...produtos, { produto: novoProduto, sku: "AUTO-" + Math.random().toString(36).substr(2, 9).toUpperCase() }]);
+                        setNovoProduto("");
+                      }
                     }}
-                    placeholder="Digite apenas números"
-                    type="text"
-                    inputMode="numeric"
-                  />
+                  >
+                    + adicionar
+                  </Button>
                 </div>
-              </div>
-              
-              <Button 
-                variant="link" 
-                className="text-primary p-0 h-auto text-sm"
-                onClick={() => {
-                  if (novoNcm.trim()) {
-                    setNcms([...ncms, novoNcm]);
-                    setNovoNcm("");
-                  }
-                }}
-              >
-                + adicionar
-              </Button>
-            </div>
 
-            <div className="flex justify-end pt-4 border-t">
-              <Button onClick={() => setExcecoesSheetOpen(false)}>
-                Salvar exceções
-              </Button>
-            </div>
+                {/* Origens */}
+                <div className="space-y-2">
+                  <Label>Para as seguintes origens</Label>
+                  <Select value={origens} onValueChange={setOrigens}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Qualquer origem" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="qualquer">Qualquer origem</SelectItem>
+                      <SelectItem value="0">0 - Nacional, exceto as indicadas nos códigos 3 a 5</SelectItem>
+                      <SelectItem value="1">1 - Estrangeira - Importação direta, exceto a indicada no código 6</SelectItem>
+                      <SelectItem value="2">2 - Estrangeira - Adquirida no mercado interno, exceto a indicada no código 7</SelectItem>
+                      <SelectItem value="3">3 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 40% e inferior ou igual a 70%</SelectItem>
+                      <SelectItem value="4">4 - Nacional, cuja produção tenha sido feita em conformidade com os processos produtivos básicos de que tratam as legislações citadas nos Ajustes</SelectItem>
+                      <SelectItem value="5">5 - Nacional, mercadoria ou bem com Conteúdo de Importação inferior ou igual a 40%</SelectItem>
+                      <SelectItem value="6">6 - Estrangeira - Importação direta, sem similar nacional, constante em lista da CAMEX</SelectItem>
+                      <SelectItem value="7">7 - Estrangeira - Adquirida no mercado interno, sem similar nacional, constante em lista da CAMEX</SelectItem>
+                      <SelectItem value="8">8 - Nacional, mercadoria ou bem com Conteúdo de Importação superior a 70%</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* NCMs */}
+                <div className="space-y-3">
+                  <Label>Para as seguintes NCMs</Label>
+                  
+                  {ncms.length > 0 && (
+                    <div className="space-y-2">
+                      {ncms.map((ncm, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <Input value={ncm} readOnly />
+                          <Button 
+                            variant="link" 
+                            className="text-primary text-sm"
+                            onClick={() => {
+                              setNcms(ncms.filter((_, i) => i !== index));
+                            }}
+                          >
+                            remover
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex items-end gap-2">
+                    <div className="flex-1">
+                      <Input 
+                        value={novoNcm} 
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '');
+                          setNovoNcm(value);
+                        }}
+                        placeholder="Digite apenas números"
+                        type="text"
+                        inputMode="numeric"
+                      />
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    variant="link" 
+                    className="text-primary p-0 h-auto text-sm"
+                    onClick={() => {
+                      if (novoNcm.trim()) {
+                        setNcms([...ncms, novoNcm]);
+                        setNovoNcm("");
+                      }
+                    }}
+                  >
+                    + adicionar
+                  </Button>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-4 border-t">
+                  <Button variant="outline" onClick={() => {
+                    setExcecoesSheetOpen(false);
+                    setExcecoesStep(1);
+                  }}>
+                    cancelar
+                  </Button>
+                  <Button onClick={() => setExcecoesStep(2)}>
+                    próximo
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Segunda página - Campos de tributação */}
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Código de situação da operação no Simples nacional (CSOSN)</Label>
+                    <Select value={excecaoCsosn} onValueChange={setExcecaoCsosn}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="101">101 - Tributada com permissão de crédito</SelectItem>
+                        <SelectItem value="102">102 - Tributada sem permissão de crédito</SelectItem>
+                        <SelectItem value="103">103 - Isenção do ICMS para faixa de receita bruta</SelectItem>
+                        <SelectItem value="201">201 - Tributada com permissão de crédito e com cobrança do ICMS por ST</SelectItem>
+                        <SelectItem value="202">202 - Tributada sem permissão de crédito e com cobrança do ICMS por ST</SelectItem>
+                        <SelectItem value="203">203 - Isenção do ICMS para faixa de receita bruta e com cobrança do ICMS por ST</SelectItem>
+                        <SelectItem value="300">300 - Imune</SelectItem>
+                        <SelectItem value="400">400 - Não tributada</SelectItem>
+                        <SelectItem value="500">500 - ICMS cobrado anteriormente por ST ou por antecipação</SelectItem>
+                        <SelectItem value="900">900 - Outros</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Label>CFOP</Label>
+                        <Info className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                      <div className="relative">
+                        <Input
+                          value={excecaoCfop}
+                          onChange={(e) => setExcecaoCfop(e.target.value)}
+                          placeholder="Código"
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-0 top-0 h-full"
+                        >
+                          <Search className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Alíquota ICMS efetivo</Label>
+                      <div className="relative">
+                        <Input
+                          value={aliquotaIcmsEfetivo}
+                          onChange={(e) => setAliquotaIcmsEfetivo(e.target.value)}
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Base ICMS efetivo</Label>
+                      <div className="relative">
+                        <Input
+                          value={baseIcmsEfetivo}
+                          onChange={(e) => setBaseIcmsEfetivo(e.target.value)}
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Código fiscal da operação</Label>
+                    <Input
+                      value={codigoFiscalOperacao}
+                      onChange={(e) => setCodigoFiscalOperacao(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Alíquota ICMS</Label>
+                      <div className="relative">
+                        <Input
+                          value={aliquotaIcms}
+                          onChange={(e) => setAliquotaIcms(e.target.value)}
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>ICMS DIFAL para não contribuinte</Label>
+                      <Select value={icmsDifalNaoContribuinte} onValueChange={setIcmsDifalNaoContribuinte}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Sim">Sim</SelectItem>
+                          <SelectItem value="Não">Não</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>ICMS para a UF de Destino</Label>
+                      <Input
+                        value={icmsUfDestino}
+                        onChange={(e) => setIcmsUfDestino(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>DIFAL para contribuinte</Label>
+                      <Select value={difalContribuinte} onValueChange={setDifalContribuinte}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Sim">Sim</SelectItem>
+                          <SelectItem value="Não">Não</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Alíquota Aplicável de Cálculo do Crédito</Label>
+                    <div className="relative">
+                      <Input
+                        value={aliquotaAplicavel}
+                        onChange={(e) => setAliquotaAplicavel(e.target.value)}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Código de benefício fiscal</Label>
+                    <Input
+                      value={codigoBeneficio}
+                      onChange={(e) => setCodigoBeneficio(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Observações do Simples</Label>
+                    <Textarea
+                      value={observacoesExcecao}
+                      onChange={(e) => setObservacoesExcecao(e.target.value)}
+                      className="min-h-[80px] resize-none"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Para exibir valores nas observações, usar as <span className="text-primary cursor-pointer">variáveis disponíveis</span>.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="obterIcmsSt"
+                      checked={obterIcmsSt}
+                      onChange={(e) => setObterIcmsSt(e.target.checked)}
+                      className="h-4 w-4"
+                    />
+                    <Label htmlFor="obterIcmsSt" className="text-sm font-normal cursor-pointer">
+                      Obter ICMS-ST retido anteriormente a partir de nota fiscal de compra
+                    </Label>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h4 className="font-semibold">Substituição tributária</h4>
+                    
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label>Alíquota ICMS</Label>
+                        <div className="relative">
+                          <Input
+                            value={aliquotaIcmsSt}
+                            onChange={(e) => setAliquotaIcmsSt(e.target.value)}
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Base de Cálculo ICMS</Label>
+                        <div className="relative">
+                          <Input
+                            value={baseCalculoIcmsSt}
+                            onChange={(e) => setBaseCalculoIcmsSt(e.target.value)}
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Margem Adic.ICMS</Label>
+                        <div className="relative">
+                          <Input
+                            value={margemAdicIcmsSt}
+                            onChange={(e) => setMargemAdicIcmsSt(e.target.value)}
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label>Alíquota FCP ICMS-ST</Label>
+                        <div className="relative">
+                          <Input
+                            value={aliquotaFcpIcmsSt}
+                            onChange={(e) => setAliquotaFcpIcmsSt(e.target.value)}
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Alíquota ICMS Retido</Label>
+                        <div className="relative">
+                          <Input
+                            value={aliquotaIcmsRetido}
+                            onChange={(e) => setAliquotaIcmsRetido(e.target.value)}
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Base de Cálculo ICMS Retido</Label>
+                        <div className="relative">
+                          <Input
+                            value={baseCalculoIcmsRetido}
+                            onChange={(e) => setBaseCalculoIcmsRetido(e.target.value)}
+                          />
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>% Fundo de Combate a Pobreza do ST</Label>
+                      <div className="relative">
+                        <Input
+                          value={fundoCombatePobreza}
+                          onChange={(e) => setFundoCombatePobreza(e.target.value)}
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-between gap-2 pt-4 border-t">
+                  <div className="flex gap-2">
+                    <Button variant="outline" onClick={() => setExcecoesStep(1)}>
+                      voltar
+                    </Button>
+                    <Button variant="outline" onClick={() => {
+                      setExcecoesSheetOpen(false);
+                      setExcecoesStep(1);
+                    }}>
+                      cancelar
+                    </Button>
+                  </div>
+                  <Button onClick={() => {
+                    // Salvar exceção
+                    setExcecoesSheetOpen(false);
+                    setExcecoesStep(1);
+                  }}>
+                    salvar
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </SheetContent>
       </Sheet>
