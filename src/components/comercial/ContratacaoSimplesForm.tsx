@@ -71,7 +71,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     segmentoLead: oportunidade?.segmentoLead || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || '',
     procurandoPor: oportunidade?.procurandoPor || '',
-    previsaoConsumoMensal: oportunidade?.previsaoConsumoMensal || 0,
+    previsaoConsumoMensal: oportunidade?.previsaoConsumoMensal || '',
     
     // Contato Comercial
     contatoComercialNome: oportunidade?.contatoComercialNome || '',
@@ -528,10 +528,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                       <Label htmlFor="previsaoConsumoMensal">Previsão de consumo mensal?</Label>
                       <Input
                         id="previsaoConsumoMensal"
-                        type="number"
+                        type="text"
                         value={formData.previsaoConsumoMensal}
-                        onChange={(e) => handleInputChange('previsaoConsumoMensal', parseFloat(e.target.value) || 0)}
-                        placeholder="Digite o valor"
+                        onChange={(e) => handleInputChange('previsaoConsumoMensal', e.target.value)}
+                        placeholder="Digite a quantidade de testes"
                       />
                     </div>
 

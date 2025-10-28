@@ -3,7 +3,8 @@ export enum TipoChamado {
   ASSESSORIA_CIENTIFICA = 'assessoria_cientifica',
   DEPARTAMENTO_TECNICO = 'departamento_tecnico',
   INTERFACE_TI = 'interface_ti',
-  FINANCEIRO = 'financeiro'
+  FINANCEIRO = 'financeiro',
+  ESTOQUE = 'estoque'
 }
 
 export enum SubtipoChamadoFinanceiro {
@@ -35,7 +36,8 @@ export const TIPOS_CHAMADO_LABELS = {
   [TipoChamado.ASSESSORIA_CIENTIFICA]: 'Assessoria Científica',
   [TipoChamado.DEPARTAMENTO_TECNICO]: 'Departamento Técnico',
   [TipoChamado.INTERFACE_TI]: 'Interface (TI)',
-  [TipoChamado.FINANCEIRO]: 'Financeiro'
+  [TipoChamado.FINANCEIRO]: 'Financeiro',
+  [TipoChamado.ESTOQUE]: 'Estoque'
 };
 
 export const SUBTIPOS_FINANCEIRO_LABELS = {
