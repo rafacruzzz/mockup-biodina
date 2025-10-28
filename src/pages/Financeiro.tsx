@@ -430,7 +430,8 @@ const Financeiro = () => {
       icon: Settings,
       subModules: [
         { id: 'aliquotas_estado', title: 'ICMS DIFAL para não contribuinte' },
-        { id: 'naturezas_operacao', title: 'Naturezas de operação de entrada (tributação)' }
+        { id: 'naturezas_operacao', title: 'Naturezas de operação de entrada (tributação)' },
+        { id: 'naturezas_operacao_saida', title: 'Naturezas de operação de saída (tributação)' }
       ]
     },
   ];
@@ -983,6 +984,25 @@ const Financeiro = () => {
             </div>
             <Suspense fallback={<div>Carregando...</div>}>
               <NaturezasOperacaoConfig />
+            </Suspense>
+          </div>
+        );
+      case 'naturezas_operacao_saida':
+        const NaturezasOperacaoSaidaConfig = lazy(() => import('@/components/financeiro/NaturezasOperacaoSaidaConfig'));
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <Suspense fallback={<div>Carregando...</div>}>
+              <NaturezasOperacaoSaidaConfig />
             </Suspense>
           </div>
         );
