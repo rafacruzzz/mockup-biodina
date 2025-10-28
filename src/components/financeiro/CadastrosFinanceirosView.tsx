@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { 
-  Plus, Search, Building, CreditCard, Users, Package,
+  Plus, Search, Building, CreditCard, Package, Calendar, FileText,
   Edit, Trash2, CheckCircle, AlertCircle
 } from "lucide-react";
 
@@ -89,36 +89,71 @@ const CadastrosFinanceirosView = () => {
     { id: 6, nome: "Energia Elétrica", codigo: "ENE-ELE", tipo: "Utilidade", status: "Ativa" }
   ];
 
-  const fornecedores = [
+  const prazosPagamento = [
     {
       id: 1,
-      nome: "Fornecedor ABC Ltda",
-      cnpj: "12.345.678/0001-90",
-      categoria: "Material Escritório",
-      contato: "João Silva",
-      telefone: "(11) 99999-9999",
-      email: "contato@fornecedorabc.com",
+      nome: "À Vista",
+      codigo: "AV",
+      dias: 0,
+      descricao: "Pagamento imediato",
       status: "Ativo"
     },
     {
       id: 2,
-      nome: "Tech Solutions S.A.",
-      cnpj: "98.765.432/0001-12", 
-      categoria: "Equipamentos TI",
-      contato: "Maria Santos",
-      telefone: "(11) 88888-8888",
-      email: "vendas@techsolutions.com",
+      nome: "30 Dias",
+      codigo: "30D",
+      dias: 30,
+      descricao: "Pagamento em 30 dias corridos",
       status: "Ativo"
     },
     {
       id: 3,
-      nome: "Energy Corp",
-      cnpj: "11.222.333/0001-44",
-      categoria: "Utilidades",
-      contato: "Carlos Energy",
-      telefone: "(11) 77777-7777", 
-      email: "faturas@energycorp.com",
+      nome: "45 Dias",
+      codigo: "45D",
+      dias: 45,
+      descricao: "Pagamento em 45 dias corridos",
+      status: "Ativo"
+    },
+    {
+      id: 4,
+      nome: "60 Dias",
+      codigo: "60D",
+      dias: 60,
+      descricao: "Pagamento em 60 dias corridos",
       status: "Inativo"
+    }
+  ];
+
+  const cenariosFiscais = [
+    {
+      id: 1,
+      nome: "Nota Fiscal Eletrônica - NFe",
+      codigo: "NFE",
+      tipo: "Produto",
+      aliquotaICMS: "18%",
+      aliquotaPIS: "1.65%",
+      aliquotaCOFINS: "7.6%",
+      status: "Ativo"
+    },
+    {
+      id: 2,
+      nome: "Nota Fiscal de Serviço - NFSe",
+      codigo: "NFSE",
+      tipo: "Serviço",
+      aliquotaISS: "5%",
+      aliquotaPIS: "1.65%",
+      aliquotaCOFINS: "7.6%",
+      status: "Ativo"
+    },
+    {
+      id: 3,
+      nome: "Simples Nacional",
+      codigo: "SN",
+      tipo: "Simplificado",
+      aliquotaTotal: "6%",
+      aliquotaPIS: "-",
+      aliquotaCOFINS: "-",
+      status: "Ativo"
     }
   ];
 
@@ -150,12 +185,12 @@ const CadastrosFinanceirosView = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold">Cadastros Financeiros</h2>
-          <p className="text-muted-foreground">Gestão de contas, cartões, categorias e fornecedores</p>
+          <p className="text-muted-foreground">Gestão de contas, cartões, categorias, prazos e cenários fiscais</p>
         </div>
       </div>
 
       {/* Cards de Resumo */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -196,10 +231,22 @@ const CadastrosFinanceirosView = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Fornecedores</p>
-                <p className="text-2xl font-bold text-orange-600">{fornecedores.filter(f => f.status === 'Ativo').length}</p>
+                <p className="text-sm font-medium text-muted-foreground">Prazos</p>
+                <p className="text-2xl font-bold text-orange-600">{prazosPagamento.filter(p => p.status === 'Ativo').length}</p>
               </div>
-              <Users className="h-8 w-8 text-orange-600" />
+              <Calendar className="h-8 w-8 text-orange-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Cenários Fiscais</p>
+                <p className="text-2xl font-bold text-indigo-600">{cenariosFiscais.filter(c => c.status === 'Ativo').length}</p>
+              </div>
+              <FileText className="h-8 w-8 text-indigo-600" />
             </div>
           </CardContent>
         </Card>
@@ -207,11 +254,12 @@ const CadastrosFinanceirosView = () => {
 
       {/* Abas dos Cadastros */}
       <Tabs defaultValue="contas" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="contas">Contas Bancárias</TabsTrigger>
           <TabsTrigger value="cartoes">Cartões</TabsTrigger>
           <TabsTrigger value="categorias">Categorias</TabsTrigger>
-          <TabsTrigger value="fornecedores">Fornecedores</TabsTrigger>
+          <TabsTrigger value="prazos">Prazos</TabsTrigger>
+          <TabsTrigger value="cenarios">Cenários Fiscais</TabsTrigger>
         </TabsList>
 
         <TabsContent value="contas" className="space-y-4">
@@ -402,17 +450,17 @@ const CadastrosFinanceirosView = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="fornecedores" className="space-y-4">
+        <TabsContent value="prazos" className="space-y-4">
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  Fornecedores
+                  <Calendar className="h-5 w-5" />
+                  Prazos para Pagamento
                 </CardTitle>
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
-                  Novo Fornecedor
+                  Novo Prazo
                 </Button>
               </div>
             </CardHeader>
@@ -420,26 +468,87 @@ const CadastrosFinanceirosView = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nome/Razão Social</TableHead>
-                    <TableHead>CNPJ</TableHead>
-                    <TableHead>Categoria</TableHead>
-                    <TableHead>Contato</TableHead>
-                    <TableHead>Telefone</TableHead>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Código</TableHead>
+                    <TableHead>Dias</TableHead>
+                    <TableHead>Descrição</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {fornecedores.map((fornecedor) => (
-                    <TableRow key={fornecedor.id}>
-                      <TableCell className="font-medium">{fornecedor.nome}</TableCell>
-                      <TableCell>{fornecedor.cnpj}</TableCell>
-                      <TableCell>{fornecedor.categoria}</TableCell>
-                      <TableCell>{fornecedor.contato}</TableCell>
-                      <TableCell>{fornecedor.telefone}</TableCell>
+                  {prazosPagamento.map((prazo) => (
+                    <TableRow key={prazo.id}>
+                      <TableCell className="font-medium">{prazo.nome}</TableCell>
+                      <TableCell>{prazo.codigo}</TableCell>
+                      <TableCell>{prazo.dias} dias</TableCell>
+                      <TableCell>{prazo.descricao}</TableCell>
                       <TableCell>
-                        <Badge className={getStatusColor(fornecedor.status)}>
-                          {fornecedor.status}
+                        <Badge className={getStatusColor(prazo.status)}>
+                          {prazo.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          <Button variant="outline" size="sm">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="outline" size="sm">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="cenarios" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Cenários Fiscais
+                </CardTitle>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Cenário
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Código</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Alíquotas</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {cenariosFiscais.map((cenario) => (
+                    <TableRow key={cenario.id}>
+                      <TableCell className="font-medium">{cenario.nome}</TableCell>
+                      <TableCell>{cenario.codigo}</TableCell>
+                      <TableCell>{cenario.tipo}</TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          {cenario.aliquotaICMS && <div>ICMS: {cenario.aliquotaICMS}</div>}
+                          {cenario.aliquotaISS && <div>ISS: {cenario.aliquotaISS}</div>}
+                          {cenario.aliquotaTotal && <div>Total: {cenario.aliquotaTotal}</div>}
+                          <div>PIS: {cenario.aliquotaPIS} | COFINS: {cenario.aliquotaCOFINS}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(cenario.status)}>
+                          {cenario.status}
                         </Badge>
                       </TableCell>
                       <TableCell>
