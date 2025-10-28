@@ -247,7 +247,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             <DialogTitle className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span>
-                  {oportunidade ? 'Editar' : 'Nova'} Oportunidade - Contratação
+                  {oportunidade ? 'Editar' : 'Novo'} Projeto - Contratação
                 </span>
                 {licitacaoVinculadaData && (
                   <Badge variant="secondary" className="bg-green-100 text-green-800">
@@ -449,7 +449,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                 {/* Dados da Oportunidade */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Dados da Oportunidade</CardTitle>
+                    <CardTitle>Dados do Projeto</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
