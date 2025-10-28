@@ -1020,6 +1020,24 @@ const Financeiro = () => {
     }
     
     if (activeModule) {
+      // Módulos sem submódulos renderizam diretamente
+      if (activeModule === 'cadastros_financeiros') {
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <CadastrosFinanceirosView />
+          </div>
+        );
+      }
       return renderSubModules();
     }
     
