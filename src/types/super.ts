@@ -44,6 +44,7 @@ export type ModuloSistema =
   | 'compras'
   | 'estoque'
   | 'financeiro'
+  | 'contabilidade'
   | 'faturamento'
   | 'rh'
   | 'ti'

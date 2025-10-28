@@ -37,6 +37,13 @@ export const modulosDisponiveis: ModuloConfig[] = [
     cor: 'yellow'
   },
   {
+    id: 'contabilidade',
+    nome: 'Contabilidade',
+    descricao: 'Gestão contábil e fiscal',
+    icon: '🧮',
+    cor: 'emerald'
+  },
+  {
     id: 'faturamento',
     nome: 'Faturamento',
     descricao: 'Emissão de notas e faturamento',
@@ -91,7 +98,7 @@ export const empresasMock: Empresa[] = [
     dataCriacao: '2020-01-01',
     modulosHabilitados: [
       'cadastro', 'comercial', 'compras', 'estoque',
-      'financeiro', 'faturamento', 'rh', 'ti',
+      'financeiro', 'contabilidade', 'faturamento', 'rh', 'ti',
       'administrativo', 'solicitacoes', 'bi-geral'
     ],
     usuarioMaster: {
@@ -125,7 +132,7 @@ export const empresasMock: Empresa[] = [
     dataCriacao: '2020-06-15',
     modulosHabilitados: [
       'cadastro', 'comercial', 'estoque',
-      'financeiro', 'solicitacoes', 'bi-geral'
+      'financeiro', 'contabilidade', 'solicitacoes', 'bi-geral'
     ],
     usuarioMaster: {
       id: 'user-biodina',
