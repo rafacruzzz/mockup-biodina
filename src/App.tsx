@@ -15,6 +15,7 @@ import Comercial from "./pages/Comercial";
 import Compras from "./pages/Compras";
 import Estoque from "./pages/Estoque";
 import Financeiro from "./pages/Financeiro";
+import Contabilidade from "./pages/Contabilidade";
 import RH from "./pages/RH";
 import TI from "./pages/TI";
 import Administrativo from "./pages/Administrativo";
@@ -55,6 +56,7 @@ const App: React.FC = () => {
               <Route path="/compras" element={<Compras />} />
               <Route path="/estoque" element={<Estoque />} />
               <Route path="/financeiro" element={<Financeiro />} />
+              <Route path="/contabilidade" element={<Contabilidade />} />
               <Route path="/administrativo" element={<Administrativo />} />
         <Route path="/rh" element={<RH />} />
         <Route path="/ti" element={<TI />} />

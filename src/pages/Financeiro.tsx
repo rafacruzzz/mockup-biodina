@@ -20,11 +20,10 @@ import DevolucaoFaturamento from "@/components/faturamento/DevolucaoFaturamento"
 import CancelamentoFaturamento from "@/components/faturamento/CancelamentoFaturamento";
 import ServicosFaturamento from "@/components/faturamento/ServicosFaturamento";
 import RelatoriosFaturamento from "@/components/faturamento/RelatoriosFaturamento";
-import AliquotasEstadoConfig from "@/components/financeiro/AliquotasEstadoConfig";
 import { 
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
-  AlertTriangle, Clock, Vault, ArrowLeft, Receipt, Settings
+  AlertTriangle, Clock, Vault, ArrowLeft, Receipt
 } from "lucide-react";
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -422,18 +421,7 @@ const Financeiro = () => {
       description: 'Contas Bancárias, Cartões Corporativos, Categorias de Despesas, Fornecedores',
       icon: Wallet,
       subModules: []
-    },
-    {
-      id: 'configuracoes',
-      title: 'Configurações',
-      description: 'Alíquotas por Estado, Parâmetros Fiscais, Regras Contábeis',
-      icon: Settings,
-      subModules: [
-        { id: 'aliquotas_estado', title: 'ICMS DIFAL para não contribuinte' },
-        { id: 'naturezas_operacao', title: 'Naturezas de operação de entrada (tributação)' },
-        { id: 'naturezas_operacao_saida', title: 'Naturezas de operação de saída (tributação)' }
-      ]
-    },
+    }
   ];
 
   const renderMainModules = () => (
@@ -950,60 +938,6 @@ const Financeiro = () => {
               </Button>
             </div>
             <RelatoriosFaturamento />
-          </div>
-        );
-      case 'aliquotas_estado':
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveSubModule(null)}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-            </div>
-            <AliquotasEstadoConfig />
-          </div>
-        );
-      case 'naturezas_operacao':
-        const NaturezasOperacaoConfig = lazy(() => import('@/components/financeiro/NaturezasOperacaoConfig'));
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveSubModule(null)}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-            </div>
-            <Suspense fallback={<div>Carregando...</div>}>
-              <NaturezasOperacaoConfig />
-            </Suspense>
-          </div>
-        );
-      case 'naturezas_operacao_saida':
-        const NaturezasOperacaoSaidaConfig = lazy(() => import('@/components/financeiro/NaturezasOperacaoSaidaConfig'));
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveSubModule(null)}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-            </div>
-            <Suspense fallback={<div>Carregando...</div>}>
-              <NaturezasOperacaoSaidaConfig />
-            </Suspense>
           </div>
         );
       default:
