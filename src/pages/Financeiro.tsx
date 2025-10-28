@@ -387,13 +387,12 @@ const Financeiro = () => {
     {
       id: 'contas_pagar',
       title: 'Contas a Pagar',
-      description: 'A Pagar x Pagos, Uso e Consumo, Despesas de Viagem, Cadastros, Documentos Fiscais, Comissões',
+      description: 'A Pagar x Pagos, Uso e Consumo, Despesas de Viagem, Documentos Fiscais, Comissões',
       icon: CreditCard,
       subModules: [
         { id: 'a_pagar_pagos', title: 'A Pagar x Pagos' },
         { id: 'suprimentos', title: 'Uso e Consumo' },
         { id: 'despesas_viagem_servicos', title: 'Despesas de Viagem e Serviços' },
-        { id: 'cadastros', title: 'Cadastros' },
         { id: 'documentos_fiscais', title: 'Documentos Fiscais' },
         { id: 'comissoes_pagar', title: 'Comissões a Pagar' }
       ]
@@ -416,6 +415,13 @@ const Financeiro = () => {
         { id: 'despesas_servico', title: 'Despesas a Serviço (Cartão de Crédito)' },
         { id: 'relatorios_tesouraria', title: 'Relatórios' }
       ]
+    },
+    {
+      id: 'cadastros_financeiros',
+      title: 'Cadastros Financeiros',
+      description: 'Contas Bancárias, Cartões Corporativos, Categorias de Despesas, Fornecedores',
+      icon: Wallet,
+      subModules: []
     },
     {
       id: 'configuracoes',
@@ -576,13 +582,13 @@ const Financeiro = () => {
             <DespesasViagemServicosView />
           </div>
         );
-      case 'cadastros':
+      case 'cadastros_financeiros':
         return (
           <div className="space-y-6">
             <div className="flex items-center gap-4">
               <Button 
                 variant="outline" 
-                onClick={() => setActiveSubModule(null)}
+                onClick={() => setActiveModule(null)}
                 className="flex items-center gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
