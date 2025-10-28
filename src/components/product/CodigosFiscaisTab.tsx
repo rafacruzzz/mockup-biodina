@@ -71,7 +71,7 @@ const CodigosFiscaisTab = ({ formData, onInputChange }: ProductTabProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="origemProdutoICMS" className="text-sm font-semibold">Origem do Produto Conforme ICMS</Label>
+            <Label htmlFor="origemProdutoICMS" className="text-sm font-semibold">Origem do Produto Conforme ICMS *</Label>
             <Select
               value={formData.origemProdutoICMS}
               onValueChange={(value) => onInputChange('origemProdutoICMS', value)}
