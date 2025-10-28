@@ -4,7 +4,6 @@ import {
   Building2, 
   Warehouse,
   Wrench,
-  CreditCard,
   Tag
 } from "lucide-react";
 import type { ModulesConfig } from "@/types/cadastro";
@@ -318,24 +317,6 @@ export const modules: ModulesConfig = {
             nome: "João Silva",
             email: "joao@email.com",
             perfil: "Administrador"
-          }
-        ]
-      }
-    }
-  },
-  contas_bancarias: {
-    name: "Contas Bancárias",
-    icon: CreditCard,
-    subModules: {
-      contas: {
-        name: "Contas",
-        data: [
-          {
-            id: 1,
-            banco: "Banco do Brasil",
-            agencia: "1234-5",
-            conta: "12345-6",
-            tipo: "Corrente"
           }
         ]
       }
