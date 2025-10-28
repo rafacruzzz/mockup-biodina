@@ -22,7 +22,7 @@ interface DadosGeraisTabProps {
 interface Projeto {
   id: string;
   numeroProcesso: string;
-  tipo: 'importacao' | 'licitacao' | 'contratacao';
+  tipo: 'importacao' | 'contratacao';
   cliente: string;
   cnpj: string;
   status: string;
@@ -65,40 +65,6 @@ const mockProjetos: Projeto[] = [
     valorTotal: 180000,
     responsavel: "Pedro Costa",
     segmento: "Hospital Público"
-  },
-  // LICITAÇÕES
-  {
-    id: "LIC-2024-001",
-    numeroProcesso: "001",
-    tipo: "licitacao",
-    cliente: "Hospital São Lucas",
-    cnpj: "12.345.678/0001-99",
-    status: "Homologada",
-    valorTotal: 320000,
-    responsavel: "Ana Oliveira",
-    segmento: "Hospital Filantrópico"
-  },
-  {
-    id: "LIC-2024-005",
-    numeroProcesso: "005",
-    tipo: "licitacao",
-    cliente: "Hospital Universitário UFRJ",
-    cnpj: "33.663.683/0001-16",
-    status: "Em Análise",
-    valorTotal: 450000,
-    responsavel: "Carlos Mendes",
-    segmento: "Hospital Universitário"
-  },
-  {
-    id: "LIC-2024-008",
-    numeroProcesso: "008",
-    tipo: "licitacao",
-    cliente: "Santa Casa de Misericórdia",
-    cnpj: "56.577.059/0001-00",
-    status: "Aguardando Recurso",
-    valorTotal: 280000,
-    responsavel: "Beatriz Lima",
-    segmento: "Hospital Filantrópico"
   },
   // CONTRATAÇÕES
   {
@@ -198,7 +164,6 @@ const DadosGeraisTab = ({ formData, onInputChange }: DadosGeraisTabProps) => {
   const getTipoProjetoLabel = (tipo: string) => {
     switch (tipo) {
       case 'importacao': return 'Importação Direta';
-      case 'licitacao': return 'Licitação';
       case 'contratacao': return 'Contratação';
       default: return '';
     }
@@ -265,7 +230,6 @@ const DadosGeraisTab = ({ formData, onInputChange }: DadosGeraisTabProps) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="importacao">Importação Direta</SelectItem>
-                  <SelectItem value="licitacao">Licitação</SelectItem>
                   <SelectItem value="contratacao">Contratação</SelectItem>
                 </SelectContent>
               </Select>
