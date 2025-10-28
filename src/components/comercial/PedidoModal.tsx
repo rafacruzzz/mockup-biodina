@@ -1715,10 +1715,53 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                       statusEntrega: 'em_transito',
                       prazoEstimado: '5 dias úteis',
                       dataSaida: '14/01/2025 16:00',
-                      previsaoEntrega: '21/01/2025',
+                      previsaoEntrega: '15/01/2025',
                       dataEntregaEfetiva: undefined
-                    }
-                  }} 
+                    },
+                    alertas: [
+                      {
+                        tipo: 'mudanca_status',
+                        titulo: 'Status Atualizado',
+                        mensagem: 'Pedido passou para status "Em Trânsito". Material coletado pela transportadora.',
+                        dataAlerta: '14/01/2025',
+                        horaAlerta: '16:00',
+                        lido: false,
+                        pedidoId: 12345,
+                        statusRelacionado: 'em_transito',
+                        prioridade: 'normal'
+                      },
+                      {
+                        tipo: 'emissao_nf',
+                        titulo: 'Nota Fiscal Emitida',
+                        mensagem: 'NF-e nº 000012345 emitida com sucesso. Protocolo SEFAZ: 135250000012345',
+                        dataAlerta: '14/01/2025',
+                        horaAlerta: '11:30',
+                        lido: true,
+                        pedidoId: 12345,
+                        prioridade: 'alta'
+                      },
+                      {
+                        tipo: 'atualizacao_entrega',
+                        titulo: 'Atualização de Entrega',
+                        mensagem: 'Transportadora confirmou coleta. Previsão de entrega: 21/01/2025',
+                        dataAlerta: '14/01/2025',
+                        horaAlerta: '16:15',
+                        lido: false,
+                        pedidoId: 12345,
+                        prioridade: 'normal'
+                      },
+                      {
+                        tipo: 'divergencia',
+                        titulo: 'Divergência Detectada',
+                        mensagem: 'Produto PRD-002: 1 caixa com avaria detectada durante conferência no estoque.',
+                        dataAlerta: '13/01/2025',
+                        horaAlerta: '15:30',
+                        lido: true,
+                        pedidoId: 12345,
+                        prioridade: 'alta'
+                      }
+                    ]
+                  }}
                 />
               </TabsContent>
 
