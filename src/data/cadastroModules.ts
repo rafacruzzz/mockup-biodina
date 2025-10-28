@@ -245,6 +245,29 @@ export const modules: ModulesConfig = {
             areaAnvisa: "diagnostico_in_vitro"
           }
         ]
+      },
+      uso_consumo: {
+        name: "Uso e Consumo",
+        data: [
+          {
+            id: 1,
+            nome: "Papel A4",
+            categoria: "Papelaria",
+            unidade: "pacote"
+          },
+          {
+            id: 2,
+            nome: "Caneta Esferográfica Azul",
+            categoria: "Papelaria",
+            unidade: "unidade"
+          },
+          {
+            id: 3,
+            nome: "Álcool em Gel 500ml",
+            categoria: "Higiene",
+            unidade: "frasco"
+          }
+        ]
       }
     }
   },

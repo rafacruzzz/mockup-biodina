@@ -12,6 +12,7 @@ import ServiceModal from "@/components/cadastro/ServiceModal";
 import ContaBancariaModal from "@/components/cadastro/ContaBancariaModal";
 import GenericModal from "@/components/cadastro/GenericModal";
 import { RegistroAnvisaModal } from "@/components/cadastro/RegistroAnvisaModal";
+import ProdutoUsoConsumoModal from "@/components/cadastro/ProdutoUsoConsumoModal";
 import { modules } from "@/data/cadastroModules";
 
 const Cadastro = () => {
@@ -29,6 +30,7 @@ const Cadastro = () => {
   const [isContaBancariaModalOpen, setIsContaBancariaModalOpen] = useState(false);
   const [isGenericModalOpen, setIsGenericModalOpen] = useState(false);
   const [isRegistroAnvisaModalOpen, setIsRegistroAnvisaModalOpen] = useState(false);
+  const [isProdutoUsoConsumoModalOpen, setIsProdutoUsoConsumoModalOpen] = useState(false);
 
   // Estado para tipo de entidade
   const [currentEntidadeType, setCurrentEntidadeType] = useState<string>('');
@@ -70,6 +72,8 @@ const Cadastro = () => {
   const handleNewRecord = () => {
     if (activeModule === 'produtos' && activeSubModule === 'produtos') {
       setIsProductModalOpen(true);
+    } else if (activeModule === 'produtos' && activeSubModule === 'uso_consumo') {
+      setIsProdutoUsoConsumoModalOpen(true);
     } else if (activeModule === 'entidades') {
       setCurrentEntidadeType(activeSubModule);
       setIsEntidadeModalOpen(true);
@@ -202,6 +206,7 @@ const Cadastro = () => {
   // Get button text based on active module
   const getButtonText = () => {
     if (activeModule === 'produtos' && activeSubModule === 'produtos') return "Novo Produto";
+    if (activeModule === 'produtos' && activeSubModule === 'uso_consumo') return "Novo Produto de Uso e Consumo";
     if (activeModule === 'entidades') return "Nova Entidade";
     if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') return "Novo Usuário";
     if (activeModule === 'usuarios' && activeSubModule === 'usuarios') return "Novo Usuário";
@@ -316,6 +321,11 @@ const Cadastro = () => {
           console.log('Registro ANVISA salvo:', registro);
           setIsRegistroAnvisaModalOpen(false);
         }}
+      />
+
+      <ProdutoUsoConsumoModal
+        isOpen={isProdutoUsoConsumoModalOpen}
+        onClose={() => setIsProdutoUsoConsumoModalOpen(false)}
       />
     </SidebarLayout>
   );
