@@ -110,7 +110,12 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   
   // Acompanhamento - Campos de entrada
   const [canhotoNota, setCanhotoNota] = useState<File | null>(null);
-  const [feedbackEntregaStatus, setFeedbackEntregaStatus] = useState<'ok' | 'com_avarias' | 'temperatura_errada' | ''>('');
+  const [feedbackEntregaStatus, setFeedbackEntregaStatus] = useState<'ok' | 'com_avarias' | 'temperatura_errada' | 'outros' | ''>('');
+  const [feedbackEntregaOutros, setFeedbackEntregaOutros] = useState('');
+  
+  // Faturamento - Novos campos
+  const [condicoesPagamentoFaturamento, setCondicoesPagamentoFaturamento] = useState('');
+  const [documentacaoEnviadaNF, setDocumentacaoEnviadaNF] = useState('');
   
 
   // Auto-preencher descritivo quando operação tem apenas 1 opção
@@ -279,6 +284,8 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       instrucoesBoleto,
       documentosNF: documentosSelecionados,
       observacoesDocumentacao,
+      condicoesPagamentoFaturamento,
+      documentacaoEnviadaNF,
       destacarIR,
       percentualIR,
       // Acompanhamento
@@ -286,7 +293,8 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
       feedbackEntrega: feedbackEntregaStatus ? {
         statusRecebimento: feedbackEntregaStatus,
         responsavelFeedback: 'Usuário Atual',
-        dataFeedback: new Date().toISOString().split('T')[0]
+        dataFeedback: new Date().toISOString().split('T')[0],
+        outrosDetalhes: feedbackEntregaStatus === 'outros' ? feedbackEntregaOutros : undefined
       } : undefined,
       // Itens de Uso e Consumo
       itensUsoConsumo
@@ -1111,6 +1119,31 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                         className="mt-2"
                       />
                     </div>
+                    
+                    {/* Novos campos */}
+                    <div>
+                      <Label htmlFor="condicoesPagamentoFaturamento">Condições (parcelas, vencimentos)</Label>
+                      <Textarea
+                        id="condicoesPagamentoFaturamento"
+                        value={condicoesPagamentoFaturamento}
+                        onChange={(e) => setCondicoesPagamentoFaturamento(e.target.value)}
+                        placeholder="Ex: Entrada + 2x30/60 dias, Vencimento: todo dia 10..."
+                        rows={2}
+                        className="mt-2"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="documentacaoEnviadaNF">Documentação enviada junto à NF</Label>
+                      <Textarea
+                        id="documentacaoEnviadaNF"
+                        value={documentacaoEnviadaNF}
+                        onChange={(e) => setDocumentacaoEnviadaNF(e.target.value)}
+                        placeholder="Liste a documentação que será enviada junto com a nota fiscal..."
+                        rows={2}
+                        className="mt-2"
+                      />
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -1510,9 +1543,22 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                             <SelectItem value="ok">Recebido OK</SelectItem>
                             <SelectItem value="com_avarias">Recebido com avarias</SelectItem>
                             <SelectItem value="temperatura_errada">Recebido em temperatura errada</SelectItem>
+                            <SelectItem value="outros">Outros</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
+                      
+                      {feedbackEntregaStatus === 'outros' && (
+                        <div>
+                          <Label htmlFor="feedbackEntregaOutros">Especificar</Label>
+                          <Input
+                            id="feedbackEntregaOutros"
+                            value={feedbackEntregaOutros}
+                            onChange={(e) => setFeedbackEntregaOutros(e.target.value)}
+                            placeholder="Descreva o feedback de entrega"
+                          />
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -1639,6 +1685,8 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                         valor: 450.00,
                         linkGNRE: '/documentos/gnre/987654.pdf'
                       },
+                      condicoesPagamento: condicoesPagamentoFaturamento || 'Entrada + 2x30/60 dias',
+                      documentacaoEnviada: documentacaoEnviadaNF || 'Certificado de Qualidade, Manual de Uso',
                       documentosAnexos: [
                         {
                           id: 'doc-1',

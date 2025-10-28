@@ -732,6 +732,7 @@ const AcompanhamentoPedidoTab = ({ pedido }: AcompanhamentoPedidoTabProps) => {
                 {pedido.feedbackEntrega.statusRecebimento === 'incompleto' && '📦 Recebido Incompleto'}
                 {pedido.feedbackEntrega.statusRecebimento === 'produto_errado' && '✗ Produto Errado'}
                 {pedido.feedbackEntrega.statusRecebimento === 'devolucao' && '↩ Devolução Solicitada'}
+                {pedido.feedbackEntrega.statusRecebimento === 'outros' && '📝 Outros'}
               </Badge>
             </div>
 
@@ -740,6 +741,15 @@ const AcompanhamentoPedidoTab = ({ pedido }: AcompanhamentoPedidoTabProps) => {
                 <h4 className="text-sm font-semibold mb-2">Observações do Cliente</h4>
                 <div className="p-3 bg-muted/50 rounded-lg">
                   <p className="text-sm">{pedido.feedbackEntrega.observacoesCliente}</p>
+                </div>
+              </div>
+            )}
+            
+            {pedido.feedbackEntrega.statusRecebimento === 'outros' && pedido.feedbackEntrega.outrosDetalhes && (
+              <div>
+                <h4 className="text-sm font-semibold mb-2">Detalhes</h4>
+                <div className="p-3 bg-muted/50 rounded-lg">
+                  <p className="text-sm">{pedido.feedbackEntrega.outrosDetalhes}</p>
                 </div>
               </div>
             )}

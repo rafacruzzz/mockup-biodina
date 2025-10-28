@@ -223,6 +223,8 @@ export interface PedidoCompleto {
   // Documentação
   documentosAnexados?: string[];
   observacoesDocumentacao?: string;
+  condicoesPagamentoFaturamento?: string;
+  documentacaoEnviadaNF?: string;
   destacarIR?: boolean;
   percentualIR?: number;
   
@@ -367,12 +369,13 @@ export interface ComprovanteEntrega {
 }
 
 export interface FeedbackEntrega {
-  statusRecebimento: 'ok' | 'com_avarias' | 'temperatura_errada' | 'incompleto' | 'produto_errado' | 'devolucao';
+  statusRecebimento: 'ok' | 'com_avarias' | 'temperatura_errada' | 'incompleto' | 'produto_errado' | 'devolucao' | 'outros';
   observacoesCliente?: string;
   acoesTomadas?: string;
   responsavelFeedback: string;
   dataFeedback: string;
   anexos?: AnexoFeedback[];
+  outrosDetalhes?: string;
 }
 
 export interface AnexoFeedback {
