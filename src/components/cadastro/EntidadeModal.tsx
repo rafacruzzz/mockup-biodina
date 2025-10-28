@@ -55,6 +55,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     inscricao_municipal: "",
     inscricao_suframa: "",
     cnae_principal: "",
+    contribuinte: "",
     optante_simples_nacional: false,
     produtor_rural: false,
     orgao_publico: false,
@@ -721,6 +722,19 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                     onChange={(e) => handleInputChange("cnae_principal", e.target.value)}
                     placeholder="0000-0/00"
                   />
+                </div>
+                <div>
+                  <Label htmlFor="contribuinte">Contribuinte</Label>
+                  <Select value={formData.contribuinte} onValueChange={(value) => handleInputChange("contribuinte", value)}>
+                    <SelectTrigger id="contribuinte">
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">1 - Contribuinte ICMS</SelectItem>
+                      <SelectItem value="2">2 - Contribuinte isento de Inscrição no cadastro de Contribuintes do ICMS</SelectItem>
+                      <SelectItem value="9">9 - Não Contribuinte, que pode ou não possuir Inscrição Estadual no Cadastro de Contribuintes do ICMS</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
