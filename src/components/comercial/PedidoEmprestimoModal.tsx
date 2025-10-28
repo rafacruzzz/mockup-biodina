@@ -95,6 +95,21 @@ const PedidoEmprestimoModal = ({
   const [dataAutorizacao, setDataAutorizacao] = useState(pedidoInicial?.dataAutorizacao || '');
   const [emailAutorizador, setEmailAutorizador] = useState(pedidoInicial?.emailAutorizador || '');
 
+  // Configurações de Estoque
+  const [temValidadeMinima, setTemValidadeMinima] = useState(pedidoInicial?.temValidadeMinima || false);
+  const [validadeMinimaGlobal, setValidadeMinimaGlobal] = useState(pedidoInicial?.validadeMinimaGlobal || '');
+  const [temPrevisaoConsumo, setTemPrevisaoConsumo] = useState(pedidoInicial?.temPrevisaoConsumo || false);
+  const [previsaoConsumoMensal, setPrevisaoConsumoMensal] = useState(pedidoInicial?.previsaoConsumoMensal || 0);
+  const [materiaisComplementares, setMateriaisComplementares] = useState(pedidoInicial?.materiaisComplementares || {
+    cabo: false,
+    nobreak: false,
+    manuais: false,
+    gelox: false,
+    geloSeco: false,
+    outrosAcessorios: false,
+    especificacaoOutros: ''
+  });
+
   // Faturamento
   const [pedidoOrigem, setPedidoOrigem] = useState(pedidoInicial?.pedidoOrigem || '');
   const [naturezaOperacao, setNaturezaOperacao] = useState(pedidoInicial?.naturezaOperacao || '');
@@ -103,6 +118,15 @@ const PedidoEmprestimoModal = ({
   const [emailsNF, setEmailsNF] = useState(pedidoInicial?.emailsNF || '');
   const [formaPagamentoNF, setFormaPagamentoNF] = useState(pedidoInicial?.formaPagamentoNF || '');
   const [documentosSelecionados, setDocumentosSelecionados] = useState<string[]>(pedidoInicial?.documentosNF || []);
+  
+  // Acompanhamento - Campos de entrada
+  const [canhotoNota, setCanhotoNota] = useState<File | null>(null);
+  const [feedbackEntregaStatus, setFeedbackEntregaStatus] = useState<'ok' | 'com_avarias' | 'temperatura_errada' | 'outros' | ''>('');
+  const [feedbackEntregaOutros, setFeedbackEntregaOutros] = useState('');
+  
+  // Faturamento - Novos campos
+  const [condicoesPagamentoFaturamento, setCondicoesPagamentoFaturamento] = useState(pedidoInicial?.condicoesPagamentoFaturamento || '');
+  const [documentacaoEnviadaNF, setDocumentacaoEnviadaNF] = useState(pedidoInicial?.documentacaoEnviadaNF || '');
 
   // Auto-preencher descritivo quando operação tem apenas 1 opção
   useEffect(() => {
@@ -262,6 +286,12 @@ const PedidoEmprestimoModal = ({
       autorizadoPor: urgenciaStatus === 'aprovada' ? autorizadoPor : undefined,
       dataAutorizacao: urgenciaStatus === 'aprovada' ? dataAutorizacao : undefined,
       emailAutorizador: urgenciaStatus === 'aprovada' ? emailAutorizador : undefined,
+      // Configurações de Estoque
+      temValidadeMinima,
+      validadeMinimaGlobal,
+      temPrevisaoConsumo,
+      previsaoConsumoMensal,
+      materiaisComplementares,
       // Faturamento
       pedidoOrigem,
       naturezaOperacao,
@@ -273,8 +303,18 @@ const PedidoEmprestimoModal = ({
       instrucoesBoleto,
       documentosNF: documentosSelecionados,
       observacoesDocumentacao,
+      condicoesPagamentoFaturamento,
+      documentacaoEnviadaNF,
       destacarIR,
       percentualIR,
+      // Acompanhamento
+      canhotoNota: canhotoNota?.name,
+      feedbackEntrega: feedbackEntregaStatus ? {
+        statusRecebimento: feedbackEntregaStatus,
+        responsavelFeedback: 'Usuário Atual',
+        dataFeedback: new Date().toISOString().split('T')[0],
+        outrosDetalhes: feedbackEntregaStatus === 'outros' ? feedbackEntregaOutros : undefined
+      } : undefined,
       // Itens de Uso e Consumo
       itensUsoConsumo
     };
@@ -446,6 +486,8 @@ const PedidoEmprestimoModal = ({
         valor: 450.00,
         linkGNRE: '/documentos/gnre/987654.pdf'
       },
+      condicoesPagamento: condicoesPagamentoFaturamento || 'Entrada + 2x30/60 dias',
+      documentacaoEnviada: documentacaoEnviadaNF || 'Certificado de Qualidade, Manual de Uso',
       documentosAnexos: [
         {
           id: 'doc-1',
@@ -474,9 +516,52 @@ const PedidoEmprestimoModal = ({
       statusEntrega: 'em_transito',
       prazoEstimado: '5 dias úteis',
       dataSaida: '14/01/2025 16:00',
-      previsaoEntrega: '21/01/2025',
+      previsaoEntrega: '15/01/2025',
       dataEntregaEfetiva: undefined
-    }
+    },
+    alertas: [
+      {
+        tipo: 'mudanca_status',
+        titulo: 'Status Atualizado',
+        mensagem: 'Pedido passou para status "Em Trânsito". Material coletado pela transportadora.',
+        dataAlerta: '14/01/2025',
+        horaAlerta: '16:00',
+        lido: false,
+        pedidoId: 12345,
+        statusRelacionado: 'em_transito',
+        prioridade: 'normal'
+      },
+      {
+        tipo: 'emissao_nf',
+        titulo: 'Nota Fiscal Emitida',
+        mensagem: 'NF-e nº 000012345 emitida com sucesso. Protocolo SEFAZ: 135250000012345',
+        dataAlerta: '14/01/2025',
+        horaAlerta: '11:30',
+        lido: true,
+        pedidoId: 12345,
+        prioridade: 'alta'
+      },
+      {
+        tipo: 'atualizacao_entrega',
+        titulo: 'Atualização de Entrega',
+        mensagem: 'Transportadora confirmou coleta. Previsão de entrega: 21/01/2025',
+        dataAlerta: '14/01/2025',
+        horaAlerta: '16:15',
+        lido: false,
+        pedidoId: 12345,
+        prioridade: 'normal'
+      },
+      {
+        tipo: 'divergencia',
+        titulo: 'Divergência Detectada',
+        mensagem: 'Produto PRD-002: 1 caixa com avaria detectada durante conferência no estoque.',
+        dataAlerta: '13/01/2025',
+        horaAlerta: '15:30',
+        lido: true,
+        pedidoId: 12345,
+        prioridade: 'alta'
+      }
+    ]
   };
 
   return (
@@ -1222,6 +1307,31 @@ const PedidoEmprestimoModal = ({
                         className="mt-2"
                       />
                     </div>
+                    
+                    {/* Novos campos */}
+                    <div>
+                      <Label htmlFor="condicoesPagamentoFaturamento">Condições (parcelas, vencimentos)</Label>
+                      <Textarea
+                        id="condicoesPagamentoFaturamento"
+                        value={condicoesPagamentoFaturamento}
+                        onChange={(e) => setCondicoesPagamentoFaturamento(e.target.value)}
+                        placeholder="Ex: Entrada + 2x30/60 dias, Vencimento: todo dia 10..."
+                        rows={2}
+                        className="mt-2"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="documentacaoEnviadaNF">Documentação enviada junto à NF</Label>
+                      <Textarea
+                        id="documentacaoEnviadaNF"
+                        value={documentacaoEnviadaNF}
+                        onChange={(e) => setDocumentacaoEnviadaNF(e.target.value)}
+                        placeholder="Liste a documentação que será enviada junto com a nota fiscal..."
+                        rows={2}
+                        className="mt-2"
+                      />
+                    </div>
                   </CardContent>
                 </Card>
 
@@ -1572,6 +1682,66 @@ const PedidoEmprestimoModal = ({
 
               {/* Aba Acompanhamento do Pedido */}
               <TabsContent value="acompanhamento" className="space-y-6">
+                {/* Card de Entrada de Dados do Acompanhamento */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Informações de Entrega</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="canhotoNota">Canhoto da Nota</Label>
+                        <div className="mt-2">
+                          <Input
+                            id="canhotoNota"
+                            type="file"
+                            accept=".pdf,.jpg,.jpeg,.png"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                setCanhotoNota(file);
+                              }
+                            }}
+                            className="cursor-pointer"
+                          />
+                          {canhotoNota && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Arquivo selecionado: {canhotoNota.name}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="feedbackEntrega">Feedback de Entrega</Label>
+                        <Select value={feedbackEntregaStatus} onValueChange={(value: any) => setFeedbackEntregaStatus(value)}>
+                          <SelectTrigger id="feedbackEntrega">
+                            <SelectValue placeholder="Selecione o status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ok">Recebido OK</SelectItem>
+                            <SelectItem value="com_avarias">Recebido com avarias</SelectItem>
+                            <SelectItem value="temperatura_errada">Recebido em temperatura errada</SelectItem>
+                            <SelectItem value="outros">Outros</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      {feedbackEntregaStatus === 'outros' && (
+                        <div>
+                          <Label htmlFor="feedbackEntregaOutros">Especificar</Label>
+                          <Input
+                            id="feedbackEntregaOutros"
+                            value={feedbackEntregaOutros}
+                            onChange={(e) => setFeedbackEntregaOutros(e.target.value)}
+                            placeholder="Descreva o feedback de entrega"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
                 <AcompanhamentoPedidoTab pedido={pedidoParaAcompanhamento} />
               </TabsContent>
 
