@@ -7,9 +7,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Search, Info } from "lucide-react";
+import { Search, Info, AlertTriangle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
+import VariaveisFiscaisDialog from "./VariaveisFiscaisDialog";
+import { extrairVariaveis, validarVariaveis, substituirVariaveis } from "@/data/variaveisFiscais";
 
 interface NaturezaOperacaoDialogProps {
   open: boolean;
@@ -112,6 +115,9 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
   const [situacaoTributariaImportacao, setSituacaoTributariaImportacao] = useState("");
   const [aliquotaImportacao, setAliquotaImportacao] = useState("0,00");
   const [observacoesImportacao, setObservacoesImportacao] = useState("");
+  
+  // Estados para modal de variáveis
+  const [variaveisDialogOpen, setVariaveisDialogOpen] = useState(false);
 
   const handleSalvar = () => {
     // Implementar lógica de salvamento
@@ -229,10 +235,67 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
               onChange={(e) => setObservacoes(e.target.value)}
               className="min-h-[100px] resize-none"
             />
-            <p className="text-sm text-muted-foreground">
-              Para exibir valores nas observações, usar as{" "}
-              <span className="text-primary cursor-pointer hover:underline">variáveis disponíveis</span>.
-            </p>
+            <div className="flex items-start justify-between gap-2">
+              <p className="text-sm text-muted-foreground">
+                Para exibir valores nas observações, usar as{" "}
+                <span 
+                  className="text-primary cursor-pointer hover:underline font-medium"
+                  onClick={() => setVariaveisDialogOpen(true)}
+                >
+                  variáveis disponíveis
+                </span>.
+              </p>
+              {observacoes && extrairVariaveis(observacoes).length > 0 && (
+                <div className="flex items-center gap-1 shrink-0">
+                  <Badge variant="secondary" className="text-xs">
+                    {extrairVariaveis(observacoes).length} variável(is) detectada(s)
+                  </Badge>
+                </div>
+              )}
+            </div>
+            
+            {/* Validação de variáveis */}
+            {observacoes && !validarVariaveis(observacoes).valido && (
+              <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+                <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                <div className="text-sm">
+                  <p className="font-medium text-destructive">Variáveis inválidas detectadas:</p>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {validarVariaveis(observacoes).variaveisInvalidas.map((v, i) => (
+                      <code key={i} className="px-1.5 py-0.5 bg-destructive/20 rounded text-xs">
+                        {v}
+                      </code>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Preview com dados mockados */}
+            {observacoes && extrairVariaveis(observacoes).length > 0 && validarVariaveis(observacoes).valido && (
+              <div className="p-3 bg-muted rounded-md space-y-2">
+                <p className="text-xs font-medium text-muted-foreground">Preview (com dados de exemplo):</p>
+                <p className="text-sm">
+                  {substituirVariaveis(observacoes, {
+                    baseCalculoIcms: 1000,
+                    baseCalculoDiferimento: 500,
+                    valorDiferimento: 60,
+                    valorCreditoIcms: 120,
+                    icmsPresumido: 85,
+                    aliquotaCreditoIcms: "12%",
+                    valorIcmsDesonerado: 75,
+                    numeroCupom: "123456",
+                    dataCupom: "01/01/2024",
+                    percentualIcmsDifalNaoContribuinte: "4%",
+                    valorIcmsDifalDestinoNaoContribuinte: 40,
+                    valorIcmsDifalOrigemNaoContribuinte: 20,
+                    valorFcpDestino: 15,
+                    baseCalculoIcmsStRetido: 1200,
+                    valorIcmsStRetido: 180
+                  })}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Tabs de tributação */}
@@ -331,10 +394,67 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
                   onChange={(e) => setObservacoesSimples(e.target.value)}
                   className="min-h-[80px] resize-none"
                 />
-                <p className="text-sm text-muted-foreground">
-                  Para exibir valores nas observações, usar as{" "}
-                  <span className="text-primary cursor-pointer hover:underline">variáveis disponíveis</span>.
-                </p>
+                <div className="flex items-start justify-between gap-2">
+                  <p className="text-sm text-muted-foreground">
+                    Para exibir valores nas observações, usar as{" "}
+                    <span 
+                      className="text-primary cursor-pointer hover:underline font-medium"
+                      onClick={() => setVariaveisDialogOpen(true)}
+                    >
+                      variáveis disponíveis
+                    </span>.
+                  </p>
+                  {observacoesSimples && extrairVariaveis(observacoesSimples).length > 0 && (
+                    <div className="flex items-center gap-1 shrink-0">
+                      <Badge variant="secondary" className="text-xs">
+                        {extrairVariaveis(observacoesSimples).length} variável(is)
+                      </Badge>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Validação */}
+                {observacoesSimples && !validarVariaveis(observacoesSimples).valido && (
+                  <div className="flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+                    <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 shrink-0" />
+                    <div className="text-sm">
+                      <p className="font-medium text-destructive">Variáveis inválidas:</p>
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {validarVariaveis(observacoesSimples).variaveisInvalidas.map((v, i) => (
+                          <code key={i} className="px-1.5 py-0.5 bg-destructive/20 rounded text-xs">
+                            {v}
+                          </code>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Preview */}
+                {observacoesSimples && extrairVariaveis(observacoesSimples).length > 0 && validarVariaveis(observacoesSimples).valido && (
+                  <div className="p-3 bg-muted rounded-md space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground">Preview:</p>
+                    <p className="text-sm">
+                      {substituirVariaveis(observacoesSimples, {
+                        baseCalculoIcms: 1000,
+                        baseCalculoDiferimento: 500,
+                        valorDiferimento: 60,
+                        valorCreditoIcms: 120,
+                        icmsPresumido: 85,
+                        aliquotaCreditoIcms: "12%",
+                        valorIcmsDesonerado: 75,
+                        numeroCupom: "123456",
+                        dataCupom: "01/01/2024",
+                        percentualIcmsDifalNaoContribuinte: "4%",
+                        valorIcmsDifalDestinoNaoContribuinte: 40,
+                        valorIcmsDifalOrigemNaoContribuinte: 20,
+                        valorFcpDestino: 15,
+                        baseCalculoIcmsStRetido: 1200,
+                        valorIcmsStRetido: 180
+                      })}
+                    </p>
+                  </div>
+                )}
               </div>
             </TabsContent>
 
@@ -1678,6 +1798,12 @@ const NaturezaOperacaoDialog = ({ open, onOpenChange }: NaturezaOperacaoDialogPr
           </div>
         </SheetContent>
       </Sheet>
+      
+      {/* Modal de variáveis fiscais */}
+      <VariaveisFiscaisDialog 
+        open={variaveisDialogOpen} 
+        onOpenChange={setVariaveisDialogOpen} 
+      />
     </Dialog>
   );
 };
