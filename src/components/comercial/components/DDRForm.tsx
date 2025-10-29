@@ -137,7 +137,7 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
       <Card>
         <CardHeader className="text-center border-b">
           <CardTitle className="text-xl font-bold text-purple-600">
-            DDR - DECLARAÇÃO DO DETENTOR DA REGULARIZAÇÃO
+            DDR - {modelosDDR.find(m => m.id === modeloDDR)?.nome.toUpperCase() || 'DECLARAÇÃO DO DETENTOR DA REGULARIZAÇÃO'}
           </CardTitle>
         </CardHeader>
         
