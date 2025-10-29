@@ -847,142 +847,92 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
 
               {/* Dados Bancários */}
               <div className="space-y-4">
-                <h3 className="font-semibold text-sm">DADOS BANCÁRIOS</h3>
-                
-                <div>
-                  <Label>Selecionar Banco</Label>
-                  <Select 
-                    value={comissao.invoiceServico.dadosBancarios.bancoId}
-                    onValueChange={handleBancoChange}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o banco para remessa" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {mockContasBancarias
-                        .filter(c => c.status === 'Ativa')
-                        .map(conta => (
-                          <SelectItem key={conta.id} value={conta.id}>
-                            {conta.banco} - Ag: {conta.agencia} - Conta: {conta.conta}
-                          </SelectItem>
-                        ))
-                      }
-                    </SelectContent>
-                  </Select>
-                </div>
+                <div className="space-y-4 border p-4 rounded-md bg-muted/20">
+                  <div>
+                    <Label className="text-muted-foreground">Payment Terms</Label>
+                    <Input 
+                      value="Net Cash"
+                      readOnly
+                      className="bg-muted"
+                    />
+                  </div>
 
-                {comissao.invoiceServico.dadosBancarios.bancoId && (
-                  <div className="space-y-4 border p-4 rounded-md bg-muted/20">
+                  <div>
+                    <Label className="text-muted-foreground">Please remit to</Label>
+                    <Input 
+                      value={comissao.invoiceServico.preparedBy}
+                      readOnly
+                      className="bg-muted"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-muted-foreground">Payment Terms</Label>
+                      <Label className="text-muted-foreground">Bank</Label>
                       <Input 
-                        value={comissao.invoiceServico.paymentTerms || comissao.formaPagamento}
+                        value="Banco do Brasil"
                         readOnly
                         className="bg-muted"
                       />
                     </div>
-
                     <div>
-                      <Label className="text-muted-foreground">Please remit to</Label>
+                      <Label className="text-muted-foreground">Address</Label>
                       <Input 
-                        value={comissao.invoiceServico.preparedBy}
+                        value="Av. Ernani do Amaral Peixoto, 347 - Centro, Niterói - RJ"
                         readOnly
                         className="bg-muted"
                       />
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-muted-foreground">Bank</Label>
-                        <Input 
-                          value={comissao.invoiceServico.dadosBancarios.bancoNome}
-                          readOnly
-                          className="bg-muted"
-                        />
-                      </div>
-                      <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                        <Label>Address</Label>
-                        <Input 
-                          value={comissao.invoiceServico.dadosBancarios.address}
-                          onChange={(e) => setComissao(prev => ({
-                            ...prev,
-                            invoiceServico: {
-                              ...prev.invoiceServico,
-                              dadosBancarios: {
-                                ...prev.invoiceServico.dadosBancarios,
-                                address: e.target.value
-                              }
+                    <div>
+                      <Label className="text-muted-foreground">ZIP Code</Label>
+                      <Input 
+                        value="24020-072"
+                        readOnly
+                        className="bg-muted"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-muted-foreground">Agency</Label>
+                      <Input 
+                        value="0072-8"
+                        readOnly
+                        className="bg-muted"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-muted-foreground">Account number</Label>
+                      <Input 
+                        value="19260-0"
+                        readOnly
+                        className="bg-muted"
+                      />
+                    </div>
+                    <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                      <Label>SWIFT</Label>
+                      <Input 
+                        value={comissao.invoiceServico.dadosBancarios.swift}
+                        onChange={(e) => setComissao(prev => ({
+                          ...prev,
+                          invoiceServico: {
+                            ...prev.invoiceServico,
+                            dadosBancarios: {
+                              ...prev.invoiceServico.dadosBancarios,
+                              swift: e.target.value
                             }
-                          }))}
-                        />
-                      </div>
-                      <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                        <Label>ZIP Code</Label>
-                        <Input 
-                          value={comissao.invoiceServico.dadosBancarios.zipCode}
-                          onChange={(e) => setComissao(prev => ({
-                            ...prev,
-                            invoiceServico: {
-                              ...prev.invoiceServico,
-                              dadosBancarios: {
-                                ...prev.invoiceServico.dadosBancarios,
-                                zipCode: e.target.value
-                              }
-                            }
-                          }))}
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-muted-foreground">Agency</Label>
-                        <Input 
-                          value={comissao.invoiceServico.dadosBancarios.agencia}
-                          readOnly
-                          className="bg-muted"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-muted-foreground">Account number</Label>
-                        <Input 
-                          value={comissao.invoiceServico.dadosBancarios.accountNumber}
-                          readOnly
-                          className="bg-muted"
-                        />
-                      </div>
-                      <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                        <Label>SWIFT</Label>
-                        <Input 
-                          value={comissao.invoiceServico.dadosBancarios.swift}
-                          onChange={(e) => setComissao(prev => ({
-                            ...prev,
-                            invoiceServico: {
-                              ...prev.invoiceServico,
-                              dadosBancarios: {
-                                ...prev.invoiceServico.dadosBancarios,
-                                swift: e.target.value
-                              }
-                            }
-                          }))}
-                        />
-                      </div>
-                      <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
-                        <Label>IBAN code</Label>
-                        <Input 
-                          value={comissao.invoiceServico.dadosBancarios.iban}
-                          onChange={(e) => setComissao(prev => ({
-                            ...prev,
-                            invoiceServico: {
-                              ...prev.invoiceServico,
-                              dadosBancarios: {
-                                ...prev.invoiceServico.dadosBancarios,
-                                iban: e.target.value
-                              }
-                            }
-                          }))}
-                        />
-                      </div>
+                          }
+                        }))}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-muted-foreground">IBAN code</Label>
+                      <Input 
+                        value="BR5600000000000072000019260C1"
+                        readOnly
+                        className="bg-muted"
+                      />
                     </div>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Rodapé */}
