@@ -602,21 +602,27 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
           </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent className="space-y-6">
-              {/* Swift da Fábrica */}
+              {/* Swift da Fábrica - Referência da Seção 3 */}
               <div className="space-y-2">
                 <Label>Swift da fábrica informando o pagamento</Label>
-                <div className="flex gap-2">
-                  <Input 
-                    type="file" 
-                    onChange={(e) => handleFileUpload(e, 'swiftFabrica')}
-                  />
-                  {comissao.swiftFabricaAnexo && (
-                    <Badge variant="secondary">
-                      <CheckCircle className="h-3 w-3 mr-1" />
-                      Anexado
+                {comissao.swiftFabricaAnexo ? (
+                  <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-950/20 rounded-md border border-green-200">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span className="text-sm text-green-700 dark:text-green-300">
+                      Arquivo anexado na seção "Swift da Fábrica"
+                    </span>
+                    <Badge variant="secondary" className="ml-auto">
+                      {comissao.swiftFabricaAnexo}
                     </Badge>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-md border border-yellow-200">
+                    <AlertCircle className="h-4 w-4 text-yellow-600" />
+                    <span className="text-sm text-yellow-700 dark:text-yellow-300">
+                      Anexe o Swift na seção "Swift da Fábrica" acima
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Invoice To */}
