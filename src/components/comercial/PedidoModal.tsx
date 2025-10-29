@@ -424,26 +424,30 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                         <Table>
                           <TableHeader>
                             <TableRow>
+                              <TableHead>Código</TableHead>
                               <TableHead>Produto</TableHead>
-                              <TableHead>Estoque</TableHead>
-                              <TableHead>Quantidade</TableHead>
-                              <TableHead>Unidade</TableHead>
+                              <TableHead>Un.</TableHead>
+                              <TableHead>Estoque Disponível</TableHead>
+                              <TableHead>Val. Mín. Exigida</TableHead>
+                              <TableHead>Qtd.</TableHead>
                               <TableHead>Preço Unit.</TableHead>
-                              <TableHead>Desconto%</TableHead>
-                              <TableHead>Total</TableHead>
-                              <TableHead>Validade Mín. Exigida</TableHead>
-                              <TableHead>Descritivo do Item (para NF)</TableHead>
-                              <TableHead>Observações</TableHead>
+                              <TableHead>Desc. %</TableHead>
+                              <TableHead>Preço Final</TableHead>
+                              <TableHead>Descr. NF</TableHead>
+                              <TableHead>Obs.</TableHead>
                               <TableHead className="w-20">Ações</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
                             {produtos.map((produto) => (
                               <TableRow key={produto.id}>
+                                <TableCell className="font-medium">{produto.codigo}</TableCell>
                                 <TableCell>
                                   <div>
-                                    <div className="font-medium">{produto.codigo}</div>
-                                    <div className="text-sm text-gray-500">{produto.descricao}</div>
+                                    <div className="text-sm">{produto.descricao}</div>
+                                    {produto.referencia && (
+                                      <div className="text-xs text-gray-500">Ref: {produto.referencia}</div>
+                                    )}
                                     {produto.estoqueDisponivel.alertas.length > 0 && (
                                       <div className="flex gap-1 mt-1">
                                         {produto.estoqueDisponivel.alertas.map((alerta, idx) => (
@@ -460,6 +464,11 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                                   </div>
                                 </TableCell>
                                 <TableCell>
+                                  <Badge variant="outline">
+                                    {getUnidadeLabel(produto.unidade)}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>
                                   <div className="text-sm">
                                     <div className="font-medium text-green-600">
                                       {produto.estoqueDisponivel.totalDisponivel} un
@@ -471,6 +480,16 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                                 </TableCell>
                                 <TableCell>
                                   <Input
+                                    type="date"
+                                    value={produto.validadeMinima || validadeMinimaGlobal}
+                                    onChange={(e) => handleAtualizarValidadeMinima(produto.id, e.target.value)}
+                                    className="w-36"
+                                    disabled={!temValidadeMinima}
+                                    min={validadeMinimaGlobal || new Date().toISOString().split('T')[0]}
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  <Input
                                     type="number"
                                     value={produto.quantidade}
                                     onChange={(e) => handleAtualizarQuantidade(produto.id, Number(e.target.value))}
@@ -478,11 +497,6 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                                     min="1"
                                     max={produto.estoqueDisponivel.totalDisponivel}
                                   />
-                                </TableCell>
-                                <TableCell>
-                                  <Badge variant="outline">
-                                    {getUnidadeLabel(produto.unidade)}
-                                  </Badge>
                                 </TableCell>
                                 <TableCell>
                                   <Input
@@ -510,18 +524,8 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                                     <span className="ml-1 text-gray-500">%</span>
                                   </div>
                                 </TableCell>
-                                <TableCell className="font-medium">
+                                <TableCell className="font-semibold text-green-600">
                                   {formatCurrency(produto.precoFinal)}
-                                </TableCell>
-                                <TableCell>
-                                  <Input
-                                    type="date"
-                                    value={produto.validadeMinima || validadeMinimaGlobal}
-                                    onChange={(e) => handleAtualizarValidadeMinima(produto.id, e.target.value)}
-                                    className="w-36"
-                                    disabled={!temValidadeMinima}
-                                    min={validadeMinimaGlobal || new Date().toISOString().split('T')[0]}
-                                  />
                                 </TableCell>
                                 <TableCell>
                                   <Input

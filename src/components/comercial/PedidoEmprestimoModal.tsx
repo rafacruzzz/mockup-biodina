@@ -646,13 +646,14 @@ const PedidoEmprestimoModal = ({
                           <TableHeader>
                             <TableRow>
                               <TableHead>Código</TableHead>
-                              <TableHead>Descrição</TableHead>
-                              <TableHead>Qtd</TableHead>
+                              <TableHead>Produto</TableHead>
                               <TableHead>Un.</TableHead>
+                              <TableHead>Estoque Disponível</TableHead>
+                              <TableHead>Val. Mín. Exigida</TableHead>
+                              <TableHead>Qtd.</TableHead>
                               <TableHead>Preço Unit.</TableHead>
                               <TableHead>Desc. %</TableHead>
                               <TableHead>Preço Final</TableHead>
-                              <TableHead>Val. Mín.</TableHead>
                               <TableHead>Descr. NF</TableHead>
                               <TableHead>Obs.</TableHead>
                               <TableHead className="w-20">Ações</TableHead>
@@ -663,48 +664,44 @@ const PedidoEmprestimoModal = ({
                               <TableRow key={produto.id}>
                                 <TableCell className="font-medium">{produto.codigo}</TableCell>
                                 <TableCell>
-                                  <div className="max-w-xs">
-                                    <div className="font-medium truncate">{produto.descricao}</div>
+                                  <div>
+                                    <div className="text-sm">{produto.descricao}</div>
                                     {produto.referencia && (
                                       <div className="text-xs text-gray-500">Ref: {produto.referencia}</div>
+                                    )}
+                                    {produto.estoqueDisponivel?.alertas && produto.estoqueDisponivel.alertas.length > 0 && (
+                                      <div className="flex gap-1 mt-1">
+                                        {produto.estoqueDisponivel.alertas.map((alerta, idx) => (
+                                          <Badge key={idx} variant="outline" className="text-xs">
+                                            <AlertTriangle className="h-3 w-3 mr-1" />
+                                            {alerta.tipo === 'validade_proxima' ? 'Validade' : 
+                                             alerta.tipo === 'multiplos_lotes' ? 'Multi-lotes' : 
+                                             alerta.tipo === 'estoque_baixo' ? 'Baixo' : 
+                                             alerta.tipo === 'numero_serie' ? 'Série' : 'Alerta'}
+                                          </Badge>
+                                        ))}
+                                      </div>
                                     )}
                                   </div>
                                 </TableCell>
                                 <TableCell>
-                                  <Input
-                                    type="number"
-                                    value={produto.quantidade}
-                                    onChange={(e) => handleAtualizarQuantidade(produto.id, Number(e.target.value))}
-                                    className="w-20"
-                                    min="1"
-                                  />
+                                  <Badge variant="outline">
+                                    {getUnidadeLabel(produto.unidade)}
+                                  </Badge>
                                 </TableCell>
                                 <TableCell>
-                                  <Badge variant="outline">{getUnidadeLabel(produto.unidade)}</Badge>
-                                </TableCell>
-                                <TableCell>
-                                  <Input
-                                    type="number"
-                                    value={produto.precoUnitario}
-                                    onChange={(e) => handleAtualizarPreco(produto.id, Number(e.target.value))}
-                                    className="w-28"
-                                    min="0"
-                                    step="0.01"
-                                  />
-                                </TableCell>
-                                <TableCell>
-                                  <Input
-                                    type="number"
-                                    value={produto.desconto || 0}
-                                    onChange={(e) => handleAtualizarDesconto(produto.id, Number(e.target.value))}
-                                    className="w-20"
-                                    min="0"
-                                    max="100"
-                                    step="0.01"
-                                  />
-                                </TableCell>
-                                <TableCell className="font-semibold text-green-600">
-                                  {formatCurrency(produto.precoFinal)}
+                                  {produto.estoqueDisponivel ? (
+                                    <div className="text-sm">
+                                      <div className="font-medium text-green-600">
+                                        {produto.estoqueDisponivel.totalDisponivel} un
+                                      </div>
+                                      <div className="text-gray-500">
+                                        Reservado: {produto.estoqueDisponivel.totalReservado}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="text-sm text-gray-400">-</div>
+                                  )}
                                 </TableCell>
                                 <TableCell>
                                   <Input
@@ -717,17 +714,56 @@ const PedidoEmprestimoModal = ({
                                 </TableCell>
                                 <TableCell>
                                   <Input
+                                    type="number"
+                                    value={produto.quantidade}
+                                    onChange={(e) => handleAtualizarQuantidade(produto.id, Number(e.target.value))}
+                                    className="w-20"
+                                    min="1"
+                                    max={produto.estoqueDisponivel?.totalDisponivel}
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  <Input
+                                    type="number"
+                                    value={produto.precoUnitario}
+                                    onChange={(e) => handleAtualizarPreco(produto.id, Number(e.target.value))}
+                                    className="w-28"
+                                    step="0.0001"
+                                    min="0"
+                                    placeholder="0.0000"
+                                  />
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center">
+                                    <Input
+                                      type="number"
+                                      value={produto.desconto || 0}
+                                      onChange={(e) => handleAtualizarDesconto(produto.id, Number(e.target.value))}
+                                      className="w-20"
+                                      step="0.01"
+                                      min="0"
+                                      max="100"
+                                      placeholder="0"
+                                    />
+                                    <span className="ml-1 text-gray-500">%</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="font-semibold text-green-600">
+                                  {formatCurrency(produto.precoFinal)}
+                                </TableCell>
+                                <TableCell>
+                                  <Input
                                     value={produto.descritivoNF || ''}
                                     onChange={(e) => handleAtualizarDescritivoNF(produto.id, e.target.value)}
-                                    placeholder="Descritivo da NF"
-                                    className="w-48"
+                                    placeholder="Descritivo para NF"
+                                    className="w-40"
                                   />
                                 </TableCell>
                                 <TableCell>
                                   <Textarea
                                     value={produto.observacoes || ''}
                                     onChange={(e) => handleAtualizarObservacoes(produto.id, e.target.value)}
-                                    placeholder="Observações"
+                                    placeholder="Observações do produto"
                                     className="w-48 min-h-[60px]"
                                     rows={2}
                                   />
