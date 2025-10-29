@@ -666,7 +666,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 {/* ATTENTION - Refrigerated Goods */}
                 <Textarea
                   id="attentionRefrigeratedGoods"
-                  value={formData.attentionRefrigeratedGoods || ''}
+                  value={formData.attentionRefrigeratedGoods || 'ATTENTION:\n\n"TO AVOID PROBLEMS WITH THE REFRIGERATED GOODS, PLEASE PACK THESE ITEMS (xxxx) IN BIG BOXES, DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE BETWEEN 2-8ºC, AS FOLLOWS:"\n\nTHE LABEL IN PORTUGUESE:\n"ESTAS CAIXAS CONTÊM PRODUTOS QUE DEVEM SER REFRIGERADOS ENTRE 2-8ºC."\n\nTHAT MEANS:\n"THESE BOXES CONTAIN PRODUCTS WHICH SHOULD BE REFRIGERATED BETWEEN 2-8ºC."'}
                   onChange={(e) => onInputChange('attentionRefrigeratedGoods', e.target.value)}
                   className="min-h-[220px] bg-yellow-50 border-yellow-200 text-sm font-mono"
                   placeholder="Instruções para produtos refrigerados..."
@@ -1007,7 +1007,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 {/* ATTENTION FOR FROZEN PRODUCTS */}
                 <Textarea
                   id="attentionFrozenItems"
-                  value={formData.attentionFrozenItems || ''}
+                  value={formData.attentionFrozenItems || 'ATTENTION:\n\n"TO AVOID PROBLEMS WITH THE FROZEN GOODS, PLEASE PACK THESE ITEMS (xxxx) IN BIG BOXES, DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE BETWEEN -18ºC, AS FOLLOWS:"\n\nTHE LABEL IN PORTUGUESE:\n"ESTAS CAIXAS CONTÊM PRODUTOS QUE DEVEM SER CONGELADOS A -18ºC."\n\nTHAT MEANS:\n"THESE BOXES CONTAIN PRODUCTS WHICH SHOULD BE FROZEN AT -18ºC."'}
                   onChange={(e) => onInputChange('attentionFrozenItems', e.target.value)}
                   className="min-h-[220px] bg-blue-50 border-blue-200 text-sm font-mono"
                   placeholder="Instruções para produtos congelados..."
