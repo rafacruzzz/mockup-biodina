@@ -64,7 +64,7 @@ export const mockComissoes: Comissao[] = [
         swift: 'BRASBRRJXXX',
         iban: 'BR1234567890123456789012345'
       },
-      rodape: 'RUA SAO PEDRO, 154 SALA 409 - CENTRO, Niteroi - RJ/ Brasil - ZIP CODE: 24020-058\nPhone: 55 (21) 2719-2419'
+      rodape: 'Biodina Instrumentos Científicos Ltda.\nRUA SÃO PEDRO, 154 SALA 409 - CENTRO, Niterói - RJ/ Brasil - ZIP CODE: 24020-058. Phone: 55 (21) 2719-2419'
     },
     faturaRecebimento: {
       numeroOrdem: '59114503',
@@ -185,7 +185,7 @@ export const mockComissoes: Comissao[] = [
         swift: 'ITAUBRSPXXX',
         iban: 'BR5555555555555555555555555'
       },
-      rodape: 'RUA SAO PEDRO, 154 SALA 409 - CENTRO, Niteroi - RJ/ Brasil - ZIP CODE: 24020-058\nPhone: 55 (21) 2719-2419'
+      rodape: 'Biodina Instrumentos Científicos Ltda.\nRUA SÃO PEDRO, 154 SALA 409 - CENTRO, Niterói - RJ/ Brasil - ZIP CODE: 24020-058. Phone: 55 (21) 2719-2419'
     },
     faturaRecebimento: {
       numeroOrdem: '59114503',
@@ -289,7 +289,7 @@ export const defaultInvoiceServico = {
     swift: '',
     iban: ''
   },
-  rodape: 'RUA SAO PEDRO, 154 SALA 409 - CENTRO, Niteroi - RJ/ Brasil - ZIP CODE: 24020-058\nPhone: 55 (21) 2719-2419'
+  rodape: 'Biodina Instrumentos Científicos Ltda.\nRUA SÃO PEDRO, 154 SALA 409 - CENTRO, Niterói - RJ/ Brasil - ZIP CODE: 24020-058. Phone: 55 (21) 2719-2419'
 };
 
 export const mockDadosBancariosInternacionais: Record<string, { address: string; zipCode: string; swift: string; iban: string }> = {
