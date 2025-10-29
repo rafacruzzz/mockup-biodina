@@ -1098,7 +1098,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       <Label htmlFor="ffOthers_congelado">5- Others:</Label>
                       <Textarea
                         id="ffOthers_congelado"
-                        value={formData.ffOthers_congelado || 'Please e-mail us (vanessa.hevia@biodina.com.br) a copy of AWB as soon as you have dispatched the goods.\n\nPLEASE SEND THE ORIGINAL COMMERCIAL INVOICE,PACKING LIST AND AWB TOGETHER WITH THE CARGO.'}
+                        value={formData.ffOthers_congelado || 'Please e-mail us (vanessa.hevia@biodina.com.br) a copy of AWB as soon as you have dispatched the goods.\n\nPLEASE SEND THE ORIGINAL COMMERCIAL INVOICE, PACKING LIST AND AWB TOGETHER WITH THE CARGO.'}
                         onChange={(e) => onInputChange('ffOthers_congelado', e.target.value)}
                         rows={3}
                         className="w-full"
