@@ -689,7 +689,23 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
               </TabsContent>
 
               <TabsContent value="informacoes-nf" className="space-y-6 mt-6">
-                <div className="space-y-6">
+                {/* Seção: Pagamento */}
+                <Card className="p-4">
+                  <h4 className="font-semibold mb-4">Pagamento</h4>
+                  <div>
+                    <Label htmlFor="condicoesPagamento">Condições (parcelas, vencimentos)</Label>
+                    <Input
+                      id="condicoesPagamento"
+                      value={formData.condicoesPagamento}
+                      onChange={(e) => setFormData({...formData, condicoesPagamento: e.target.value})}
+                      placeholder="Ex: 30/60/90 dias, À vista, etc."
+                    />
+                  </div>
+                </Card>
+
+                {/* Seção: Documentação para Envio junto à NF */}
+                <Card className="p-4">
+                  <h4 className="font-semibold mb-4">Documentação para Envio junto à NF</h4>
                   <div>
                     <Label htmlFor="informacoesComplementaresNF">Informações Complementares da NF</Label>
                     <Textarea
@@ -700,17 +716,7 @@ const PedidoForm = ({ onClose, onSave, oportunidade }: PedidoFormProps) => {
                       placeholder="Informações adicionais para a Nota Fiscal..."
                     />
                   </div>
-
-                  <div>
-                    <Label htmlFor="condicoesPagamento">Condições de Pagamento</Label>
-                    <Input
-                      id="condicoesPagamento"
-                      value={formData.condicoesPagamento}
-                      onChange={(e) => setFormData({...formData, condicoesPagamento: e.target.value})}
-                      placeholder="Ex: 30/60/90 dias, À vista, etc."
-                    />
-                  </div>
-                </div>
+                </Card>
               </TabsContent>
 
               <TabsContent value="frete" className="space-y-6 mt-6" key="frete-tab-updated">
