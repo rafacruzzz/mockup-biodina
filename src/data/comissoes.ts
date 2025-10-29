@@ -105,14 +105,31 @@ export const mockComissoes: Comissao[] = [
       swiftAnexo: ''
     },
     relatorioAgente: {
-      nomeAgente: 'BIOMEDICAL SOLUTIONS LTDA',
-      periodoInicio: '2025-01-01',
-      periodoFim: '2025-01-31',
-      totalVendas: 50000.00,
-      percentualComissao: 5,
-      valorComissaoTotal: 2500.00,
-      impostos: 375.00,
-      valorLiquido: 2125.00
+      dataFechamentoCambio: '2025-09-22',
+      taxaCambial: 5.295,
+      clientes: [
+        {
+          id: '1',
+          cliente: 'FUND. FAC. REG. DE MED. SJRP',
+          processo: 'DD-6800/RD-4918',
+          fatura: '3168902',
+          dataFatura: '2024-12-11',
+          valorFaturadoUSD: 173548.81,
+          uf: 'SP',
+          valorUSD: 32239.15,
+          valorRSRecebido: 170715.25
+        }
+      ],
+      totalUSD: 32239.15,
+      totalRS: 170715.25,
+      comissoesAgenteBiodinaUSD: 32239.15,
+      comissoesAgenteBiodinaRS: 170715.25,
+      comissoesMarketingUSD: 0,
+      comissoesMarketingRS: 0,
+      totalGeralUSD: 32239.15,
+      totalGeralRS: 170715.25,
+      nomeDistribuidor: '',
+      distribuidorComissoes: []
     },
     nfGerada: false,
     conciliadoBanco: false
@@ -226,14 +243,19 @@ export const mockComissoes: Comissao[] = [
       swiftAnexo: ''
     },
     relatorioAgente: {
-      nomeAgente: 'BIOMEDICAL SOLUTIONS LTDA',
-      periodoInicio: '2024-12-01',
-      periodoFim: '2024-12-31',
-      totalVendas: 32000.00,
-      percentualComissao: 6,
-      valorComissaoTotal: 1920.00,
-      impostos: 288.00,
-      valorLiquido: 1632.00
+      dataFechamentoCambio: '2024-12-22',
+      taxaCambial: 5.15,
+      clientes: [],
+      totalUSD: 0,
+      totalRS: 0,
+      comissoesAgenteBiodinaUSD: 0,
+      comissoesAgenteBiodinaRS: 0,
+      comissoesMarketingUSD: 0,
+      comissoesMarketingRS: 0,
+      totalGeralUSD: 0,
+      totalGeralRS: 0,
+      nomeDistribuidor: '',
+      distribuidorComissoes: []
     },
     nfGerada: true,
     numeroNF: 'NF-2025-0045',
