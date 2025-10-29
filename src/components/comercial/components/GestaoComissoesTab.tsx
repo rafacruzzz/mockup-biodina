@@ -26,6 +26,7 @@ import {
 import { StatusComissao, ItemInvoice } from '@/types/comissoes';
 import { mockComissoes, defaultInvoiceServico, defaultFaturaRecebimento, mockDadosBancariosInternacionais } from '@/data/comissoes';
 import { mockContasBancarias } from '@/data/tesouraria';
+import biodinaLogo from '@/assets/biodina-logo.png';
 
 interface GestaoComissoesTabProps {
   importacaoId: string;
@@ -1013,6 +1014,22 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
           </CollapsibleTrigger>
           <CollapsibleContent>
             <CardContent className="space-y-6">
+              {/* Logo e Dados do Beneficiário */}
+              <div className="space-y-4 border-b pb-6">
+                <div className="flex items-start gap-4">
+                  <img 
+                    src={biodinaLogo} 
+                    alt="Biodina Brasil" 
+                    className="h-16 w-auto"
+                  />
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-sm mb-2">Dados do beneficiário</h3>
+                    <p className="text-sm">BIODINA INSTRUMENTOS CIENTÍFICOS LTDA</p>
+                    <p className="text-sm">CNPJ: 29.375.441/0001-50</p>
+                  </div>
+                </div>
+              </div>
+
               {/* Dados da Ordem de Pagamento */}
               <div className="space-y-4">
                 <h3 className="font-semibold text-sm">DADOS DA ORDEM DE PAGAMENTO</h3>
@@ -1208,200 +1225,6 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 </div>
               </div>
 
-              {/* Transaction Details */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-sm uppercase text-muted-foreground">
-                  Transaction Details
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Transaction ID */}
-                  <div className="p-3 rounded-md">
-                    <Label>Transaction ID</Label>
-                    <Input 
-                      value={comissao.faturaRecebimento.transactionId || ''}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        faturaRecebimento: { ...prev.faturaRecebimento, transactionId: e.target.value }
-                      }))}
-                      placeholder="ID da transação"
-                    />
-                  </div>
-
-                  {/* Amount */}
-                  <div className="p-3 rounded-md">
-                    <Label>Amount</Label>
-                    <Input 
-                      type="number"
-                      step="0.01"
-                      value={comissao.faturaRecebimento.transactionAmount || ''}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        faturaRecebimento: { ...prev.faturaRecebimento, transactionAmount: parseFloat(e.target.value) || 0 }
-                      }))}
-                      placeholder="Valor da transação"
-                    />
-                  </div>
-
-                  {/* Booked date */}
-                  <div className="p-3 rounded-md">
-                    <Label>Booked date</Label>
-                    <Input 
-                      type="date"
-                      value={comissao.faturaRecebimento.transactionBookedDate || ''}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        faturaRecebimento: { ...prev.faturaRecebimento, transactionBookedDate: e.target.value }
-                      }))}
-                    />
-                  </div>
-
-                  {/* Transaction type */}
-                  <div className="p-3 rounded-md">
-                    <Label>Transaction type</Label>
-                    <Input 
-                      value={comissao.faturaRecebimento.transactionType || ''}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        faturaRecebimento: { ...prev.faturaRecebimento, transactionType: e.target.value }
-                      }))}
-                      placeholder="Tipo de transação"
-                    />
-                  </div>
-
-                  {/* Value date */}
-                  <div className="p-3 rounded-md">
-                    <Label>Value date</Label>
-                    <Input 
-                      type="date"
-                      value={comissao.faturaRecebimento.transactionValueDate || ''}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        faturaRecebimento: { ...prev.faturaRecebimento, transactionValueDate: e.target.value }
-                      }))}
-                    />
-                  </div>
-
-                  {/* Exchange rate */}
-                  <div className="p-3 rounded-md">
-                    <Label>Exchange rate</Label>
-                    <Input 
-                      type="number"
-                      step="0.0001"
-                      value={comissao.faturaRecebimento.transactionExchangeRate || ''}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        faturaRecebimento: { ...prev.faturaRecebimento, transactionExchangeRate: parseFloat(e.target.value) || 0 }
-                      }))}
-                      placeholder="Taxa de câmbio"
-                    />
-                  </div>
-
-                  {/* Beneficiary's account */}
-                  <div className="p-3 rounded-md">
-                    <Label>Beneficiary's account</Label>
-                    <Input 
-                      value={comissao.faturaRecebimento.beneficiaryAccount || ''}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        faturaRecebimento: { ...prev.faturaRecebimento, beneficiaryAccount: e.target.value }
-                      }))}
-                      placeholder="Conta do beneficiário"
-                    />
-                  </div>
-
-                  {/* Beneficiary's bank */}
-                  <div className="p-3 rounded-md">
-                    <Label>Beneficiary's bank</Label>
-                    <Input 
-                      value={comissao.faturaRecebimento.beneficiaryBank || ''}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        faturaRecebimento: { ...prev.faturaRecebimento, beneficiaryBank: e.target.value }
-                      }))}
-                      placeholder="Banco do beneficiário"
-                    />
-                  </div>
-
-                  {/* Beneficiary bank's address */}
-                  <div className="p-3 rounded-md">
-                    <Label>Beneficiary bank's address</Label>
-                    <Input 
-                      value={comissao.faturaRecebimento.beneficiaryBankAddress || ''}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        faturaRecebimento: { ...prev.faturaRecebimento, beneficiaryBankAddress: e.target.value }
-                      }))}
-                      placeholder="Endereço do banco"
-                    />
-                  </div>
-
-                  {/* Beneficiary's name */}
-                  <div className="p-3 rounded-md">
-                    <Label>Beneficiary's name</Label>
-                    <Input 
-                      value={comissao.faturaRecebimento.beneficiaryName || ''}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        faturaRecebimento: { ...prev.faturaRecebimento, beneficiaryName: e.target.value }
-                      }))}
-                      placeholder="Nome do beneficiário"
-                    />
-                  </div>
-
-                  {/* Beneficiary's address */}
-                  <div className="p-3 rounded-md">
-                    <Label>Beneficiary's address</Label>
-                    <Input 
-                      value={comissao.faturaRecebimento.beneficiaryAddress || ''}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        faturaRecebimento: { ...prev.faturaRecebimento, beneficiaryAddress: e.target.value }
-                      }))}
-                      placeholder="Endereço do beneficiário"
-                    />
-                  </div>
-
-                  {/* Message - ocupa 2 colunas */}
-                  <div className="p-3 rounded-md md:col-span-2">
-                    <Label>Message</Label>
-                    <Input 
-                      value={comissao.faturaRecebimento.transactionMessage || ''}
-                      onChange={(e) => setComissao(prev => ({
-                        ...prev,
-                        faturaRecebimento: { ...prev.faturaRecebimento, transactionMessage: e.target.value }
-                      }))}
-                      placeholder="Mensagem da transação"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Swift da Fábrica */}
-              <div className="space-y-4">
-                <h3 className="font-semibold text-sm uppercase text-muted-foreground">
-                  Anexo
-                </h3>
-                <div className="p-3 rounded-md border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 transition-colors">
-                  <Label htmlFor="swift-fatura-file" className="cursor-pointer">
-                    Swift da fábrica informando o pagamento
-                  </Label>
-                  <div className="flex items-center gap-3 mt-2">
-                    <Input
-                      id="swift-fatura-file"
-                      type="file"
-                      onChange={(e) => handleFileUpload(e, 'swiftFabricaFatura')}
-                      className="cursor-pointer"
-                      accept=".pdf,.jpg,.jpeg,.png"
-                    />
-                    {comissao.faturaRecebimento.swiftAnexo && (
-                      <Badge variant="secondary" className="flex items-center gap-1">
-                        <Paperclip className="h-3 w-3" />
-                        Anexado
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
 
               {/* Banking Information */}
               <div className="space-y-4">
@@ -1457,14 +1280,29 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                       }))}
                     />
                   </div>
-                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md md:col-span-2">
-                    <Label>SWIFT/IBAN code</Label>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>SWIFT</Label>
+                    <Input 
+                      value={comissao.faturaRecebimento.swiftIban?.split('BR')[0] || ''}
+                      onChange={(e) => setComissao(prev => ({
+                        ...prev,
+                        faturaRecebimento: { 
+                          ...prev.faturaRecebimento, 
+                          swiftIban: e.target.value + (prev.faturaRecebimento.swiftIban?.includes('BR') ? 'BR' + prev.faturaRecebimento.swiftIban.split('BR')[1] : '')
+                        }
+                      }))}
+                      placeholder="SWIFT code"
+                    />
+                  </div>
+                  <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
+                    <Label>IBAN code</Label>
                     <Input 
                       value={comissao.faturaRecebimento.swiftIban}
                       onChange={(e) => setComissao(prev => ({
                         ...prev,
                         faturaRecebimento: { ...prev.faturaRecebimento, swiftIban: e.target.value }
                       }))}
+                      placeholder="BR56 00000000000 720 0001 9260 0C1"
                     />
                   </div>
                 </div>
