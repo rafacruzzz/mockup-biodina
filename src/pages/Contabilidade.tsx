@@ -11,6 +11,15 @@ const Contabilidade = () => {
 
   const mainModules = [
     {
+      id: 'cadastros',
+      title: 'Cadastros Contábeis',
+      description: 'Cenários Fiscais e Configurações Tributárias',
+      icon: Settings,
+      subModules: [
+        { id: 'cenarios_fiscais', title: 'Cenários Fiscais' }
+      ]
+    },
+    {
       id: 'configuracoes',
       title: 'Configurações',
       description: 'Alíquotas por Estado, Parâmetros Fiscais, Regras Contábeis',
@@ -94,6 +103,25 @@ const Contabilidade = () => {
 
   const renderSubModuleContent = () => {
     switch (activeSubModule) {
+      case 'cenarios_fiscais':
+        const CenariosFiscaisConfig = lazy(() => import('@/components/financeiro/CenariosFiscaisConfig'));
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <Suspense fallback={<div>Carregando...</div>}>
+              <CenariosFiscaisConfig />
+            </Suspense>
+          </div>
+        );
       case 'aliquotas_estado':
         return (
           <div className="space-y-6">

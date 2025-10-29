@@ -207,6 +207,9 @@ const Cadastro = () => {
   const getButtonText = () => {
     if (activeModule === 'produtos' && activeSubModule === 'produtos') return "Nova Mercadoria para Revenda";
     if (activeModule === 'produtos' && activeSubModule === 'uso_consumo') return "Novo Produto de Uso e Consumo";
+    if (activeModule === 'cadastros_financeiros' && activeSubModule === 'cartoes') return "Novo Cartão";
+    if (activeModule === 'cadastros_financeiros' && activeSubModule === 'categorias_despesas') return "Nova Categoria";
+    if (activeModule === 'cadastros_financeiros' && activeSubModule === 'prazos') return "Novo Prazo";
     if (activeModule === 'entidades') return "Nova Entidade";
     if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') return "Novo Usuário";
     if (activeModule === 'usuarios' && activeSubModule === 'usuarios') return "Novo Usuário";

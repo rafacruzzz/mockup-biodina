@@ -337,5 +337,94 @@ export const modules: ModulesConfig = {
         ]
       }
     }
+  },
+  cadastros_financeiros: {
+    name: "Cadastros Financeiros",
+    icon: Tag,
+    subModules: {
+      cartoes: {
+        name: "Cartões Corporativos",
+        data: [
+          {
+            id: 1,
+            banco: "Banco do Brasil",
+            numero: "****1234",
+            titular: "João Silva",
+            limite: 15000.00,
+            usado: 3500.00,
+            vencimento: "15",
+            status: "Ativo"
+          },
+          {
+            id: 2,
+            banco: "Itaú",
+            numero: "****5678", 
+            titular: "Maria Santos",
+            limite: 10000.00,
+            usado: 1200.00,
+            vencimento: "20",
+            status: "Ativo"
+          },
+          {
+            id: 3,
+            banco: "Santander",
+            numero: "****9012",
+            titular: "Carlos Oliveira", 
+            limite: 8000.00,
+            usado: 5500.00,
+            vencimento: "05",
+            status: "Bloqueado"
+          }
+        ]
+      },
+      categorias_despesas: {
+        name: "Categorias de Despesas",
+        data: [
+          { id: 1, nome: "Material de Escritório", codigo: "MAT-ESC", tipo: "Operacional", status: "Ativa" },
+          { id: 2, nome: "Viagens e Hospedagem", codigo: "VIA-HOS", tipo: "Comercial", status: "Ativa" },
+          { id: 3, nome: "Equipamentos TI", codigo: "EQP-TI", tipo: "Investimento", status: "Ativa" },
+          { id: 4, nome: "Marketing e Publicidade", codigo: "MKT-PUB", tipo: "Comercial", status: "Inativa" },
+          { id: 5, nome: "Consultoria Jurídica", codigo: "CON-JUR", tipo: "Serviços", status: "Ativa" },
+          { id: 6, nome: "Energia Elétrica", codigo: "ENE-ELE", tipo: "Utilidade", status: "Ativa" }
+        ]
+      },
+      prazos: {
+        name: "Prazos de Pagamento",
+        data: [
+          {
+            id: 1,
+            nome: "À Vista",
+            codigo: "AV",
+            dias: 0,
+            descricao: "Pagamento imediato",
+            status: "Ativo"
+          },
+          {
+            id: 2,
+            nome: "30 Dias",
+            codigo: "30D",
+            dias: 30,
+            descricao: "Pagamento em 30 dias corridos",
+            status: "Ativo"
+          },
+          {
+            id: 3,
+            nome: "45 Dias",
+            codigo: "45D",
+            dias: 45,
+            descricao: "Pagamento em 45 dias corridos",
+            status: "Ativo"
+          },
+          {
+            id: 4,
+            nome: "60 Dias",
+            codigo: "60D",
+            dias: 60,
+            descricao: "Pagamento em 60 dias corridos",
+            status: "Inativo"
+          }
+        ]
+      }
+    }
   }
 };
