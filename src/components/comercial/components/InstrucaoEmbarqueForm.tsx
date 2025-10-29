@@ -475,7 +475,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 <Label htmlFor="aeroportoDestino">AEROPORTO DE DESTINO:</Label>
                 <Input
                   id="aeroportoDestino"
-                  value={formData.aeroportoDestino || ''}
+                  value={formData.aeroportoDestino || 'AEROPORTO INTERNACIONAL DE ______ -______ - Brazil'}
                   onChange={(e) => onInputChange('aeroportoDestino', e.target.value)}
                   className="w-full"
                 />
