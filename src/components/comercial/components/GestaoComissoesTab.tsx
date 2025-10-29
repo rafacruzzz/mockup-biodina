@@ -64,19 +64,14 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
     invoiceServico: comissaoExistente?.invoiceServico || { ...defaultInvoiceServico },
     faturaRecebimento: comissaoExistente?.faturaRecebimento || { ...defaultFaturaRecebimento },
     relatorioAgente: comissaoExistente?.relatorioAgente || {
-      dataFechamentoCambio: '',
-      taxaCambial: 0,
-      clientes: [],
-      totalUSD: 0,
-      totalRS: 0,
-      comissoesAgenteBiodinaUSD: 0,
-      comissoesAgenteBiodinaRS: 0,
-      comissoesMarketingUSD: 0,
-      comissoesMarketingRS: 0,
-      totalGeralUSD: 0,
-      totalGeralRS: 0,
-      nomeDistribuidor: '',
-      distribuidorComissoes: []
+      nomeAgente: '',
+      periodoInicio: '',
+      periodoFim: '',
+      totalVendas: 0,
+      percentualComissao: 0,
+      valorComissaoTotal: 0,
+      impostos: 0,
+      valorLiquido: 0
     },
     nfGerada: comissaoExistente?.nfGerada || false,
     numeroNF: comissaoExistente?.numeroNF || undefined,
@@ -198,39 +193,20 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
 
   // Simular extração de dados do câmbio
   const simularExtracaoCambio = () => {
-    // Extrair dados automaticamente das etapas anteriores
-    const taxaCambial = 5.295; // Exemplo - extrair do contrato de câmbio
-    const dataFechamento = new Date().toISOString().split('T')[0];
-    
-    // Criar cliente baseado nos dados da comissão
-    const clienteFechamento = {
-      id: '1',
-      cliente: comissao.fabricante,
-      processo: comissao.numeroImportacao,
-      fatura: comissao.numeroInvoice,
-      dataFatura: comissao.dataDI,
-      valorFaturadoUSD: comissao.valorInvoice,
-      uf: 'SP',
-      valorUSD: comissao.valorComissao,
-      valorRSRecebido: comissao.valorComissao * taxaCambial
-    };
+    const impostos = comissao.valorComissao * 0.15; // 15% de impostos simulados
+    const valorLiquido = comissao.valorComissao - impostos;
     
     setComissao(prev => ({
       ...prev,
       relatorioAgente: {
-        dataFechamentoCambio: dataFechamento,
-        taxaCambial: taxaCambial,
-        clientes: [clienteFechamento],
-        totalUSD: comissao.valorComissao,
-        totalRS: comissao.valorComissao * taxaCambial,
-        comissoesAgenteBiodinaUSD: comissao.valorComissao,
-        comissoesAgenteBiodinaRS: comissao.valorComissao * taxaCambial,
-        comissoesMarketingUSD: 0,
-        comissoesMarketingRS: 0,
-        totalGeralUSD: comissao.valorComissao,
-        totalGeralRS: comissao.valorComissao * taxaCambial,
-        nomeDistribuidor: '',
-        distribuidorComissoes: []
+        nomeAgente: prev.invoiceServico.preparedBy,
+        periodoInicio: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        periodoFim: new Date().toISOString().split('T')[0],
+        totalVendas: prev.valorInvoice,
+        percentualComissao: prev.percentualComissao,
+        valorComissaoTotal: prev.valorComissao,
+        impostos: impostos,
+        valorLiquido: valorLiquido
       }
     }));
     
@@ -1449,177 +1425,66 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
             </CardHeader>
           </CollapsibleTrigger>
           <CollapsibleContent>
-            <CardContent className="space-y-6">
-              {/* Cabeçalho com data e taxa */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg">
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label>Fechamento de Câmbio</Label>
+                  <Label>Nome do Agente</Label>
+                  <Input value={comissao.relatorioAgente.nomeAgente} disabled className="bg-muted" />
+                </div>
+                <div>
+                  <Label>Período</Label>
+                  <div className="flex gap-2">
+                    <Input type="date" value={comissao.relatorioAgente.periodoInicio} disabled className="bg-muted" />
+                    <Input type="date" value={comissao.relatorioAgente.periodoFim} disabled className="bg-muted" />
+                  </div>
+                </div>
+                <div>
+                  <Label>Total de Vendas (USD)</Label>
                   <Input 
-                    type="date"
-                    value={comissao.relatorioAgente.dataFechamentoCambio} 
+                    value={comissao.relatorioAgente.totalVendas.toFixed(2)} 
+                    disabled 
+                    className="bg-muted" 
+                  />
+                </div>
+                <div>
+                  <Label>Percentual Comissão (%)</Label>
+                  <Input 
+                    value={comissao.relatorioAgente.percentualComissao} 
+                    disabled 
+                    className="bg-muted" 
+                  />
+                </div>
+                <div>
+                  <Label>Valor Comissão Total (USD)</Label>
+                  <Input 
+                    value={comissao.relatorioAgente.valorComissaoTotal.toFixed(2)} 
                     disabled 
                     className="bg-muted font-semibold" 
                   />
                 </div>
                 <div>
-                  <Label>Taxa Cambial (R$)</Label>
+                  <Label>Impostos (USD)</Label>
                   <Input 
-                    value={comissao.relatorioAgente.taxaCambial.toFixed(3)} 
+                    value={comissao.relatorioAgente.impostos.toFixed(2)} 
                     disabled 
-                    className="bg-muted font-semibold" 
+                    className="bg-muted" 
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <Label>Valor Líquido (USD)</Label>
+                  <Input 
+                    value={comissao.relatorioAgente.valorLiquido.toFixed(2)} 
+                    disabled 
+                    className="bg-muted font-semibold text-lg" 
                   />
                 </div>
               </div>
-
-              {/* Tabela de Clientes */}
-              {comissao.relatorioAgente.clientes.length > 0 && (
-                <div className="space-y-3">
-                  <h3 className="font-semibold text-sm">DETALHAMENTO POR CLIENTE</h3>
-                  <div className="border rounded-lg overflow-hidden">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="bg-muted/50">
-                          <TableHead>Cliente</TableHead>
-                          <TableHead>Processo</TableHead>
-                          <TableHead>Fatura</TableHead>
-                          <TableHead>Data Fatura</TableHead>
-                          <TableHead className="text-right">Valor Faturado USD</TableHead>
-                          <TableHead className="text-center">UF</TableHead>
-                          <TableHead className="text-right">Valor USD</TableHead>
-                          <TableHead className="text-right">Valor R$ Receb.</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {comissao.relatorioAgente.clientes.map((cliente) => (
-                          <TableRow key={cliente.id}>
-                            <TableCell className="font-medium">{cliente.cliente}</TableCell>
-                            <TableCell>{cliente.processo}</TableCell>
-                            <TableCell>{cliente.fatura}</TableCell>
-                            <TableCell>{new Date(cliente.dataFatura).toLocaleDateString('pt-BR')}</TableCell>
-                            <TableCell className="text-right">{cliente.valorFaturadoUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                            <TableCell className="text-center">{cliente.uf}</TableCell>
-                            <TableCell className="text-right">{cliente.valorUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                            <TableCell className="text-right">{cliente.valorRSRecebido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                          </TableRow>
-                        ))}
-                        <TableRow className="bg-muted/50 font-semibold">
-                          <TableCell colSpan={6} className="text-right">Total</TableCell>
-                          <TableCell className="text-right">USD {comissao.relatorioAgente.totalUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                          <TableCell className="text-right">R$ {comissao.relatorioAgente.totalRS.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
-              )}
-
-              {/* Resumo de Comissões */}
-              {comissao.relatorioAgente.clientes.length > 0 && (
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3 p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
-                    <div className="font-semibold">COMISSÕES AGENTE BIODINA EMP. E PARTICIPAÇÕES</div>
-                    <div className="text-right font-semibold">
-                      <div>USD {comissao.relatorioAgente.comissoesAgenteBiodinaUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                      <div>R$ {comissao.relatorioAgente.comissoesAgenteBiodinaRS.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-3 p-4 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg border">
-                    <div className="font-semibold">COMISSÕES DE MARKETING</div>
-                    <div className="text-right font-semibold">
-                      <div>USD {comissao.relatorioAgente.comissoesMarketingUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                      <div>R$ {comissao.relatorioAgente.comissoesMarketingRS.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-3 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border-2 border-blue-400 dark:border-blue-600">
-                    <div className="font-bold text-lg">TOTAL GERAL</div>
-                    <div className="text-right font-bold text-lg">
-                      <div>USD {comissao.relatorioAgente.totalGeralUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                      <div>R$ {comissao.relatorioAgente.totalGeralRS.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Comissão para Distribuidores */}
-              {comissao.relatorioAgente.nomeDistribuidor && comissao.relatorioAgente.distribuidorComissoes.length > 0 && (
-                <div className="space-y-3">
-                  <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                    <h3 className="font-semibold text-sm">COMISSÃO PARA DISTRIBUIDORES:</h3>
-                    <p className="text-sm mt-1">Distribuidor: {comissao.relatorioAgente.nomeDistribuidor}</p>
-                  </div>
-                  
-                  <div className="border rounded-lg overflow-hidden">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="bg-muted/50">
-                          <TableHead>Cliente</TableHead>
-                          <TableHead>Processo</TableHead>
-                          <TableHead>Fatura</TableHead>
-                          <TableHead className="text-right">Valor Faturado</TableHead>
-                          <TableHead className="text-right">Comissão USD</TableHead>
-                          <TableHead className="text-right">Comissão Recebida R$</TableHead>
-                          <TableHead className="text-right">Comissão Distribuidor R$</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {comissao.relatorioAgente.distribuidorComissoes.map((dist) => (
-                          <TableRow key={dist.id}>
-                            <TableCell className="font-medium">{dist.cliente}</TableCell>
-                            <TableCell>{dist.processo}</TableCell>
-                            <TableCell>{dist.fatura}</TableCell>
-                            <TableCell className="text-right">{dist.valorFaturado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                            <TableCell className="text-right">{dist.comissaoUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                            <TableCell className="text-right">{dist.comissaoRecebidaRS.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                            <TableCell className="text-right">{dist.comissaoDistribuidorRS.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
-              )}
-
-              {/* Botões de ação */}
-              <div className="flex gap-3">
-                {comissao.relatorioAgente.clientes.length > 0 && !comissao.nfGerada && (
-                  <Button onClick={enviarAoFaturamento} className="flex-1">
-                    <Send className="h-4 w-4 mr-2" />
-                    Enviar ao Faturamento
-                  </Button>
-                )}
-                
-                {comissao.relatorioAgente.clientes.length > 0 && (
-                  <Button onClick={() => gerarPDF('Relatório de Comissão')} variant="outline" className="flex-1">
-                    <Download className="h-4 w-4 mr-2" />
-                    Gerar PDF
-                  </Button>
-                )}
-              </div>
-
-              {/* Status da comissão */}
-              {(comissao.nfGerada || comissao.conciliadoBanco) && (
-                <div className="p-4 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
-                    <div>
-                      <p className="font-semibold">
-                        {comissao.conciliadoBanco ? 'Comissão Paga' : 'NF Gerada'}
-                      </p>
-                      {comissao.nfGerada && (
-                        <p className="text-sm text-muted-foreground">
-                          NF: {comissao.numeroNF} - {new Date(comissao.dataNF || '').toLocaleDateString('pt-BR')}
-                        </p>
-                      )}
-                      {comissao.conciliadoBanco && comissao.dataConciliacao && (
-                        <p className="text-sm text-muted-foreground">
-                          Conciliação: {new Date(comissao.dataConciliacao).toLocaleDateString('pt-BR')}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div>
+              
+              {comissao.relatorioAgente.nomeAgente && !comissao.nfGerada && (
+                <Button onClick={enviarAoFaturamento} className="w-full">
+                  <Send className="h-4 w-4 mr-2" />
+                  Enviar ao Faturamento
+                </Button>
               )}
             </CardContent>
           </CollapsibleContent>
