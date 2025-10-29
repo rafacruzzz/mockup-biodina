@@ -81,7 +81,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
     // Campos editáveis de ATTENTION - Produto Refrigerado
     attentionRefrigeratedGoods: `ATTENTION:
 
-"TO AVOID PROBLEMS WITH THE REFRIGERATED GOODS, PLEASE PACK THESE ITEMS IN BIG BOXES, DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE BETWEEN 2-8ºC, AS FOLLOWS:"
+"TO AVOID PROBLEMS WITH THE REFRIGERATED GOODS, PLEASE PACK THESE ITEMS (xxxx) IN BIG BOXES, DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE BETWEEN 2-8ºC, AS FOLLOWS:"
 
 THE LABEL IN PORTUGUESE:
 "ESTAS CAIXAS CONTÊM PRODUTOS QUE DEVEM SER REFRIGERADOS ENTRE 2-8ºC."
@@ -103,7 +103,7 @@ ATTENTION:
     // Campos editáveis de ATTENTION - Produto Congelado
     attentionFrozenItems: `ATTENTION FOR FROZEN ITEMS:
 
-"TO AVOID PROBLEMS WITH THE FROZEN GOODS, PLEASE PACK THESE ITEMS IN BIG BOXES, DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE BETWEEN 2-8ºC, AS FOLLOWS:"
+"TO AVOID PROBLEMS WITH THE FROZEN GOODS, PLEASE PACK THESE ITEMS (xxxx) IN BIG BOXES, DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE BETWEEN 2-8ºC, AS FOLLOWS:"
 
 LABEL IN PORTUGUESE:
 "ESTAS CAIXAS TÉRMICAS DE ISOPOR CONTÊM PRODUTOS CONGELADOS COM GELO SECO A -18ºC (dezoito graus celsius negativos)".
@@ -153,11 +153,13 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
     aeroportoDestino: '',
     aeroportoDestino_congelado: '',
     
-    // FREIGHT FORWARD - Refrigerado e Congelado (campos específicos mantidos vazios)
-    ffDestination: '',
+    // FREIGHT FORWARD - Refrigerado e Congelado (campos específicos com valores padrão)
+    ffDestination: 'XXX International Airport -XX- Brazil.',
     ffNotify: '',
-    ffDestination_congelado: '',
+    ffAirWaybill: 'Consigned to: The customer above mentioned',
+    ffDestination_congelado: 'XXX International Airport -XX- Brazil.',
     ffNotify_congelado: '',
+    ffAirWaybill_congelado: 'Consigned to: The customer above mentioned',
     
     // Análise Técnica
     analiseTecnica: '',
