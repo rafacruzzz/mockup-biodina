@@ -177,7 +177,7 @@ export const modules: ModulesConfig = {
     }
   },
   produtos: {
-    name: "Mercadoria para Revenda",
+    name: "Produtos",
     icon: Package,
     subModules: {
       produtos: {
