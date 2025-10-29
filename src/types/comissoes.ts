@@ -131,15 +131,50 @@ export interface FaturaRecebimento {
   swiftAnexo?: string;
 }
 
+export interface ClienteComissao {
+  cliente: string;
+  processo: string;
+  fatura: string;
+  dataFatura: string;
+  valorFaturadoUSD: number;
+  uf: string;
+  valorUSD: number;
+  valorRealRecebido: number;
+}
+
+export interface DistribuidorComissao {
+  cliente: string;
+  processo: string;
+  fatura: string;
+  valorFaturado: number;
+  comissaoUSD: number;
+  comissaoRecebidaReal: number;
+  comissaoDistribuidorReal: number;
+}
+
 export interface RelatorioAgente {
-  nomeAgente: string;
-  periodoInicio: string;
-  periodoFim: string;
-  totalVendas: number;
-  percentualComissao: number;
-  valorComissaoTotal: number;
-  impostos: number;
-  valorLiquido: number;
+  // Fechamento de Câmbio
+  dataFechamentoCambio: string;
+  taxaCambial: number;
+  
+  // Tabela de Clientes
+  clientes: ClienteComissao[];
+  
+  // Totais da Tabela
+  totalUSD: number;
+  totalReal: number;
+  
+  // Comissões
+  comissoesBiodinaUSD: number;
+  comissoesBiodinaReal: number;
+  comissoesMarketingUSD: number;
+  comissoesMarketingReal: number;
+  totalGeralUSD: number;
+  totalGeralReal: number;
+  
+  // Distribuidor
+  nomeDistribuidor: string;
+  distribuidores: DistribuidorComissao[];
 }
 
 export interface Comissao {

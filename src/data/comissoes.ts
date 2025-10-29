@@ -105,14 +105,30 @@ export const mockComissoes: Comissao[] = [
       swiftAnexo: ''
     },
     relatorioAgente: {
-      nomeAgente: 'BIOMEDICAL SOLUTIONS LTDA',
-      periodoInicio: '2025-01-01',
-      periodoFim: '2025-01-31',
-      totalVendas: 50000.00,
-      percentualComissao: 5,
-      valorComissaoTotal: 2500.00,
-      impostos: 375.00,
-      valorLiquido: 2125.00
+      dataFechamentoCambio: '15.01.2025',
+      taxaCambial: 5.234,
+      clientes: [
+        {
+          cliente: 'RADIOMETER MEDICAL ApS',
+          processo: 'DD-2025/RD-001',
+          fatura: 'INV-2025-001',
+          dataFatura: '15/01/25',
+          valorFaturadoUSD: 50000.00,
+          uf: 'RJ',
+          valorUSD: 2500.00,
+          valorRealRecebido: 13085.00
+        }
+      ],
+      totalUSD: 2500.00,
+      totalReal: 13085.00,
+      comissoesBiodinaUSD: 2500.00,
+      comissoesBiodinaReal: 13085.00,
+      comissoesMarketingUSD: 0,
+      comissoesMarketingReal: 0,
+      totalGeralUSD: 2500.00,
+      totalGeralReal: 13085.00,
+      nomeDistribuidor: 'Distribuidor ABC Ltda',
+      distribuidores: []
     },
     nfGerada: false,
     conciliadoBanco: false
@@ -226,14 +242,40 @@ export const mockComissoes: Comissao[] = [
       swiftAnexo: ''
     },
     relatorioAgente: {
-      nomeAgente: 'BIOMEDICAL SOLUTIONS LTDA',
-      periodoInicio: '2024-12-01',
-      periodoFim: '2024-12-31',
-      totalVendas: 32000.00,
-      percentualComissao: 6,
-      valorComissaoTotal: 1920.00,
-      impostos: 288.00,
-      valorLiquido: 1632.00
+      dataFechamentoCambio: '10.12.2024',
+      taxaCambial: 5.125,
+      clientes: [
+        {
+          cliente: 'ACME MEDICAL INC',
+          processo: 'DD-2024/RD-087',
+          fatura: 'INV-2024-087',
+          dataFatura: '10/12/24',
+          valorFaturadoUSD: 32000.00,
+          uf: 'SP',
+          valorUSD: 1920.00,
+          valorRealRecebido: 9840.00
+        }
+      ],
+      totalUSD: 1920.00,
+      totalReal: 9840.00,
+      comissoesBiodinaUSD: 1920.00,
+      comissoesBiodinaReal: 9840.00,
+      comissoesMarketingUSD: 0,
+      comissoesMarketingReal: 0,
+      totalGeralUSD: 1920.00,
+      totalGeralReal: 9840.00,
+      nomeDistribuidor: 'Distribuidor XYZ Ltda',
+      distribuidores: [
+        {
+          cliente: 'ACME MEDICAL INC',
+          processo: 'DD-2024/RD-087',
+          fatura: 'INV-2024-087',
+          valorFaturado: 32000.00,
+          comissaoUSD: 1920.00,
+          comissaoRecebidaReal: 9840.00,
+          comissaoDistribuidorReal: 1968.00
+        }
+      ]
     },
     nfGerada: true,
     numeroNF: 'NF-2025-0045',
