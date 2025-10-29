@@ -597,7 +597,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   </div>
                   <div className="bg-yellow-50 border border-yellow-200 p-3 rounded text-sm">
                     <p className="font-medium">
-                      THE ORIGINAL INVOICE (PLUS 1 COPY) AND PACKING LIST (PLUS 1 COPY). MUST BE SENT TOGETHER WITH THE CARGO: 
+                      THE ORIGINAL INVOICE (PLUS 1 COPY) AND PACKING LIST (PLUS 1 COPY) MUST BE SENT TOGETHER WITH THE CARGO: 
                       DULY SIGNED (WITH THE RESPONSIBLE'S WHOLE NAME AND HIS/HER POSITION AT THE COMPANY) WITH BLUE INK PEN, 
                       STAMPED WITHOUT ANY KIND OF ERASURES, STAINS, OVERWRITING, CORRECTION FLUID OR OTHER.
                     </p>
@@ -943,7 +943,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     </label>
                   </div>
                   <div className="bg-blue-50 p-3 rounded border border-blue-200 text-sm">
-                    <p className="font-semibold">THE ORIGINAL INVOICE (PLUS 1 COPY) AND PACKING LIST (PLUS 1 COPY). MUST BE SENT TOGETHER WITH THE CARGO: DULY SIGNED (WITH THE RESPONSIBLE'S WHOLE NAME AND HIS/HER POSITION AT THE COMPANY) WITH BLUE INK PEN, STAMPED WITHOUT ANY KIND OF ERASURES, STAINS, OVERWRITING, CORRECTION FLUID OR OTHER.</p>
+                    <p className="font-semibold">THE ORIGINAL INVOICE (PLUS 1 COPY) AND PACKING LIST (PLUS 1 COPY) MUST BE SENT TOGETHER WITH THE CARGO: DULY SIGNED (WITH THE RESPONSIBLE'S WHOLE NAME AND HIS/HER POSITION AT THE COMPANY) WITH BLUE INK PEN, STAMPED WITHOUT ANY KIND OF ERASURES, STAINS, OVERWRITING, CORRECTION FLUID OR OTHER.</p>
                   </div>
                 </div>
 
