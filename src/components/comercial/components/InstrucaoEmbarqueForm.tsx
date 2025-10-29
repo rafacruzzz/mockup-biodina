@@ -19,11 +19,11 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
   const [tipoProduto, setTipoProduto] = useState<string>('refrigerado');
 
   // Function to generate dynamic text for "For each box" checkbox
-  const getForEachBoxText = () => {
-    const controlNo = formData.boxControlNo || '';
-    const temperature = formData.boxTemperature || '';
-    const dimension = formData.boxDimension || '';
-    const grossWeight = formData.boxGrossWeight || '';
+  const getForEachBoxText = (suffix = '') => {
+    const controlNo = formData[`boxControlNo${suffix}`] || '';
+    const temperature = formData[`boxTemperature${suffix}`] || '';
+    const dimension = formData[`boxDimension${suffix}`] || '';
+    const grossWeight = formData[`boxGrossWeight${suffix}`] || '';
 
     if (controlNo || temperature || dimension || grossWeight) {
       return `For each box, please include: control no.: ${controlNo}; Temperature: ${temperature}; Dimension: ${dimension}; Gross weight: ${grossWeight}`;
@@ -939,7 +939,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     </label>
                     <label className="flex items-center space-x-2">
                       <input type="checkbox" className="rounded" />
-                      <span className="text-sm">For each box, please include: control no.; Temperature; Dimension; Gross weight</span>
+                      <span className="text-sm">{getForEachBoxText('_congelado')}</span>
                     </label>
                   </div>
                   <div className="bg-blue-50 p-3 rounded border border-blue-200 text-sm">
