@@ -488,7 +488,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 <Label htmlFor="aeroportoDestino">AEROPORTO DE DESTINO:</Label>
                 <Input
                   id="aeroportoDestino"
-                  value={formData.aeroportoDestino || 'AEROPORTO INTERNACIONAL DE ______ -______ - Brazil'}
+                  value={formData.aeroportoDestino || 'AEROPORTO INTERNACIONAL DE _____________ - Brazil.'}
                   onChange={(e) => onInputChange('aeroportoDestino', e.target.value)}
                   className="w-full"
                 />
@@ -835,7 +835,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     <Label htmlFor="aeroportoDestino_congelado">AEROPORTO DE DESTINO:</Label>
                     <Input
                       id="aeroportoDestino_congelado"
-                      value={formData.aeroportoDestino_congelado || ''}
+                      value={formData.aeroportoDestino_congelado || 'AEROPORTO INTERNACIONAL DE _____________ - Brazil.'}
                       onChange={(e) => onInputChange('aeroportoDestino_congelado', e.target.value)}
                       className="w-full"
                     />

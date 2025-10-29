@@ -150,8 +150,8 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
     aoConsignedTo: 'HOSPITAL SÃO VICENTE DE PAULO',
     
     // SHIPPING DOCUMENTS - Refrigerado e Congelado (campos específicos com valores padrão)
-    aeroportoDestino: 'XXX International Airport -XX- Brazil.',
-    aeroportoDestino_congelado: 'XXX International Airport -XX- Brazil.',
+    aeroportoDestino: 'AEROPORTO INTERNACIONAL DE _____________ - Brazil.',
+    aeroportoDestino_congelado: 'AEROPORTO INTERNACIONAL DE _____________ - Brazil.',
     
     // FREIGHT FORWARD - Refrigerado e Congelado (campos específicos com valores padrão)
     ffDestination: 'XXX International Airport -XX- Brazil.',
