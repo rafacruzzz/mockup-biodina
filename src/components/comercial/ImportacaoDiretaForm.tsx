@@ -149,9 +149,9 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
     aoTermsPayment: 'International wire transfer, 30 days after shipment',
     aoConsignedTo: 'HOSPITAL SÃO VICENTE DE PAULO',
     
-    // SHIPPING DOCUMENTS - Refrigerado e Congelado (campos específicos mantidos vazios)
-    aeroportoDestino: '',
-    aeroportoDestino_congelado: '',
+    // SHIPPING DOCUMENTS - Refrigerado e Congelado (campos específicos com valores padrão)
+    aeroportoDestino: 'XXX International Airport -XX- Brazil.',
+    aeroportoDestino_congelado: 'XXX International Airport -XX- Brazil.',
     
     // FREIGHT FORWARD - Refrigerado e Congelado (campos específicos com valores padrão)
     ffDestination: 'XXX International Airport -XX- Brazil.',
