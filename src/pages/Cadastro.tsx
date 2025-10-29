@@ -87,6 +87,8 @@ const Cadastro = () => {
       setIsUserModalOpen(true);
     } else if (activeModule === 'servicos') {
       setIsServiceModalOpen(true);
+    } else if (activeModule === 'cadastros_financeiros' && activeSubModule === 'contas_bancarias') {
+      setIsContaBancariaModalOpen(true);
     } else if (activeModule === 'contas_bancarias') {
       setIsContaBancariaModalOpen(true);
     } else if (activeModule === 'registros_anvisa') {
@@ -210,6 +212,7 @@ const Cadastro = () => {
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'cartoes') return "Novo Cartão";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'categorias_despesas') return "Nova Categoria";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'prazos') return "Novo Prazo";
+    if (activeModule === 'cadastros_financeiros' && activeSubModule === 'contas_bancarias') return "Nova Conta Bancária";
     if (activeModule === 'entidades') return "Nova Entidade";
     if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') return "Novo Usuário";
     if (activeModule === 'usuarios' && activeSubModule === 'usuarios') return "Novo Usuário";

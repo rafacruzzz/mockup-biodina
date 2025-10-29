@@ -424,6 +424,47 @@ export const modules: ModulesConfig = {
             status: "Inativo"
           }
         ]
+      },
+      contas_bancarias: {
+        name: "Contas Bancárias",
+        data: [
+          {
+            id: 1,
+            banco: "001 - Banco do Brasil",
+            agencia: "1234-5",
+            conta: "12345-6",
+            tipo: "Conta Corrente",
+            saldo: 150000.00,
+            status: "Ativa",
+            possuiOfx: true,
+            gerente: "Carlos Silva",
+            telefoneGerente: "(11) 98765-4321"
+          },
+          {
+            id: 2,
+            banco: "341 - Itaú Unibanco",
+            agencia: "9876",
+            conta: "98765-4",
+            tipo: "Conta Corrente",
+            saldo: 85000.00,
+            status: "Ativa",
+            possuiOfx: true,
+            gerente: "Ana Santos",
+            telefoneGerente: "(11) 91234-5678"
+          },
+          {
+            id: 3,
+            banco: "033 - Santander",
+            agencia: "3456",
+            conta: "34567-8",
+            tipo: "Conta Poupança",
+            saldo: 50000.00,
+            status: "Ativa",
+            possuiOfx: false,
+            gerente: "Roberto Lima",
+            telefoneGerente: "(11) 92345-6789"
+          }
+        ]
       }
     }
   }
