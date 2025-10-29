@@ -10,7 +10,7 @@ import ContasPagarDashboard from "@/components/financeiro/ContasPagarDashboard";
 import APagarPagosView from "@/components/financeiro/APagarPagosView";
 import SuprimentosView from "@/components/financeiro/SuprimentosView";
 import DespesasViagemServicosView from "@/components/financeiro/DespesasViagemServicosView";
-import CadastrosFinanceirosView from "@/components/financeiro/CadastrosFinanceirosView";
+
 import DocumentosFiscaisView from "@/components/financeiro/DocumentosFiscaisView";
 import ComissoesPagarView from "@/components/financeiro/ComissoesPagarView";
 import FaturamentoDashboard from "@/components/faturamento/FaturamentoDashboard";
@@ -415,13 +415,6 @@ const Financeiro = () => {
         { id: 'relatorios_tesouraria', title: 'Relatórios' }
       ]
     },
-    {
-      id: 'cadastros_financeiros',
-      title: 'Cadastros Financeiros',
-      description: 'Contas Bancárias, Cartões Corporativos, Categorias de Despesas, Fornecedores',
-      icon: Wallet,
-      subModules: []
-    }
   ];
 
   const renderMainModules = () => (
@@ -569,22 +562,6 @@ const Financeiro = () => {
               </Button>
             </div>
             <DespesasViagemServicosView />
-          </div>
-        );
-      case 'cadastros_financeiros':
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveModule(null)}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-            </div>
-            <CadastrosFinanceirosView />
           </div>
         );
       case 'documentos_fiscais':
@@ -974,24 +951,6 @@ const Financeiro = () => {
     }
     
     if (activeModule) {
-      // Módulos sem submódulos renderizam diretamente
-      if (activeModule === 'cadastros_financeiros') {
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveModule(null)}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-            </div>
-            <CadastrosFinanceirosView />
-          </div>
-        );
-      }
       return renderSubModules();
     }
     
