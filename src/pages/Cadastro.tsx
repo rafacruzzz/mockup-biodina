@@ -205,7 +205,7 @@ const Cadastro = () => {
 
   // Get button text based on active module
   const getButtonText = () => {
-    if (activeModule === 'produtos' && activeSubModule === 'produtos') return "Novo Produto";
+    if (activeModule === 'produtos' && activeSubModule === 'produtos') return "Nova Mercadoria para Revenda";
     if (activeModule === 'produtos' && activeSubModule === 'uso_consumo') return "Novo Produto de Uso e Consumo";
     if (activeModule === 'entidades') return "Nova Entidade";
     if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') return "Novo Usuário";

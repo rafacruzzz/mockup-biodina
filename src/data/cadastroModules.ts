@@ -177,11 +177,11 @@ export const modules: ModulesConfig = {
     }
   },
   produtos: {
-    name: "Produtos",
+    name: "Mercadoria para Revenda",
     icon: Package,
     subModules: {
       produtos: {
-        name: "Produtos",
+        name: "Mercadoria para Revenda",
         data: [
           {
             id: 1,
