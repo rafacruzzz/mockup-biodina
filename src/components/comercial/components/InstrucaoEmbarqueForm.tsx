@@ -690,7 +690,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       <Label htmlFor="ffDestination">1- Destination:</Label>
                       <Input
                         id="ffDestination"
-                        value={formData.ffDestination || ''}
+                        value={formData.ffDestination || 'XXX International Airport -XX- Brazil.'}
                         onChange={(e) => onInputChange('ffDestination', e.target.value)}
                         className="w-full"
                       />
@@ -717,10 +717,10 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     </div>
 
                     <div>
-                      <Label htmlFor="ffAirWaybill">4- Air waybill: Consigned to:</Label>
+                      <Label htmlFor="ffAirWaybill">4- Air waybill:</Label>
                       <Input
                         id="ffAirWaybill"
-                        value={formData.ffAirWaybill || 'The customer above mentioned'}
+                        value={formData.ffAirWaybill || 'Consigned to: The customer above mentioned'}
                         onChange={(e) => onInputChange('ffAirWaybill', e.target.value)}
                         className="w-full"
                       />
@@ -1031,7 +1031,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       <Label htmlFor="ffDestination_congelado">1- Destination:</Label>
                       <Input
                         id="ffDestination_congelado"
-                        value={formData.ffDestination_congelado || ''}
+                        value={formData.ffDestination_congelado || 'XXX International Airport -XX- Brazil.'}
                         onChange={(e) => onInputChange('ffDestination_congelado', e.target.value)}
                         className="w-full"
                       />
@@ -1058,10 +1058,10 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     </div>
 
                     <div>
-                      <Label htmlFor="ffAirWaybill_congelado">4- Air waybill: Consigned to:</Label>
+                      <Label htmlFor="ffAirWaybill_congelado">4- Air waybill:</Label>
                       <Input
                         id="ffAirWaybill_congelado"
-                        value={formData.ffAirWaybill_congelado || 'The customer above mentioned'}
+                        value={formData.ffAirWaybill_congelado || 'Consigned to: The customer above mentioned'}
                         onChange={(e) => onInputChange('ffAirWaybill_congelado', e.target.value)}
                         className="w-full"
                       />
