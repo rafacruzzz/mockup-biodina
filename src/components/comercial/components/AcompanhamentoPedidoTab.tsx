@@ -537,13 +537,6 @@ const AcompanhamentoPedidoTab = ({ pedido }: AcompanhamentoPedidoTabProps) => {
                       <p className="text-sm text-muted-foreground">{pedido.faturamento.condicoesPagamento}</p>
                     </div>
                   )}
-                  
-                  {pedido.faturamento.documentacaoEnviada && (
-                    <div className="p-3 border rounded-lg">
-                      <h5 className="text-sm font-medium mb-2">Documentação enviada junto à NF</h5>
-                      <p className="text-sm text-muted-foreground">{pedido.faturamento.documentacaoEnviada}</p>
-                    </div>
-                  )}
                 </div>
               </div>
             )}

@@ -126,7 +126,6 @@ const PedidoEmprestimoModal = ({
   
   // Faturamento - Novos campos
   const [condicoesPagamentoFaturamento, setCondicoesPagamentoFaturamento] = useState(pedidoInicial?.condicoesPagamentoFaturamento || '');
-  const [documentacaoEnviadaNF, setDocumentacaoEnviadaNF] = useState(pedidoInicial?.documentacaoEnviadaNF || '');
 
   // Auto-preencher descritivo quando operação tem apenas 1 opção
   useEffect(() => {
@@ -304,7 +303,6 @@ const PedidoEmprestimoModal = ({
       documentosNF: documentosSelecionados,
       observacoesDocumentacao,
       condicoesPagamentoFaturamento,
-      documentacaoEnviadaNF,
       destacarIR,
       percentualIR,
       // Acompanhamento
@@ -487,7 +485,6 @@ const PedidoEmprestimoModal = ({
         linkGNRE: '/documentos/gnre/987654.pdf'
       },
       condicoesPagamento: condicoesPagamentoFaturamento || 'Entrada + 2x30/60 dias',
-      documentacaoEnviada: documentacaoEnviadaNF || 'Certificado de Qualidade, Manual de Uso',
       documentosAnexos: [
         {
           id: 'doc-1',
@@ -1191,6 +1188,18 @@ const PedidoEmprestimoModal = ({
                       </>
                     )}
                     
+                    <div>
+                      <Label htmlFor="condicoesPagamentoFaturamento">Condições (parcelas, vencimentos)</Label>
+                      <Textarea
+                        id="condicoesPagamentoFaturamento"
+                        value={condicoesPagamentoFaturamento}
+                        onChange={(e) => setCondicoesPagamentoFaturamento(e.target.value)}
+                        placeholder="Ex: Entrada + 2x30/60 dias, Vencimento: todo dia 10..."
+                        rows={2}
+                        className="mt-2"
+                      />
+                    </div>
+                    
                     <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
                       <div className="flex items-start gap-2">
                         <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
@@ -1308,30 +1317,6 @@ const PedidoEmprestimoModal = ({
                       />
                     </div>
                     
-                    {/* Novos campos */}
-                    <div>
-                      <Label htmlFor="condicoesPagamentoFaturamento">Condições (parcelas, vencimentos)</Label>
-                      <Textarea
-                        id="condicoesPagamentoFaturamento"
-                        value={condicoesPagamentoFaturamento}
-                        onChange={(e) => setCondicoesPagamentoFaturamento(e.target.value)}
-                        placeholder="Ex: Entrada + 2x30/60 dias, Vencimento: todo dia 10..."
-                        rows={2}
-                        className="mt-2"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="documentacaoEnviadaNF">Documentação enviada junto à NF</Label>
-                      <Textarea
-                        id="documentacaoEnviadaNF"
-                        value={documentacaoEnviadaNF}
-                        onChange={(e) => setDocumentacaoEnviadaNF(e.target.value)}
-                        placeholder="Liste a documentação que será enviada junto com a nota fiscal..."
-                        rows={2}
-                        className="mt-2"
-                      />
-                    </div>
                   </CardContent>
                 </Card>
 
