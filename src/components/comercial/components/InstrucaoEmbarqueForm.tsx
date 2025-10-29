@@ -18,6 +18,19 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
   const [comprovantePagamento, setComprovantePagamento] = useState<File | null>(null);
   const [tipoProduto, setTipoProduto] = useState<string>('refrigerado');
 
+  // Function to generate dynamic text for "For each box" checkbox
+  const getForEachBoxText = () => {
+    const controlNo = formData.boxControlNo || '';
+    const temperature = formData.boxTemperature || '';
+    const dimension = formData.boxDimension || '';
+    const grossWeight = formData.boxGrossWeight || '';
+
+    if (controlNo || temperature || dimension || grossWeight) {
+      return `For each box, please include: control no.: ${controlNo}; Temperature: ${temperature}; Dimension: ${dimension}; Gross weight: ${grossWeight}`;
+    }
+    return 'For each box, please include: control no.; Temperature; Dimension; Gross weight';
+  };
+
   const handleAnexarComprovante = () => {
     const input = document.createElement('input');
     input.type = 'file';
@@ -579,7 +592,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     </div>
                     <div className="flex items-start space-x-2">
                       <input type="checkbox" id="pl6" className="mt-1" />
-                      <Label htmlFor="pl6" className="cursor-pointer">For each box, please include: control no.; Temperature; Dimension; Gross weight</Label>
+                      <Label htmlFor="pl6" className="cursor-pointer">{getForEachBoxText()}</Label>
                     </div>
                   </div>
                   <div className="bg-yellow-50 border border-yellow-200 p-3 rounded text-sm">
