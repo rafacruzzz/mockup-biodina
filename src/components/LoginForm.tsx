@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, Mail, Key, ArrowRight, User } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useAuthDemo } from "@/hooks/useAuthDemo";
+import { Badge } from "@/components/ui/badge";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -13,19 +15,59 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { setCurrentUser } = useAuthDemo();
+
+  // Credenciais de demonstração
+  const demoAccounts = [
+    {
+      email: "ana.assessora@imuv.com.br",
+      password: "demo123",
+      profile: {
+        id: "resp-008",
+        email: "ana.assessora@imuv.com.br",
+        nome: "Ana Assessora",
+        role: 'assessor' as const
+      }
+    },
+    {
+      email: "mariana.gestora@imuv.com.br",
+      password: "demo123",
+      profile: {
+        id: "resp-009",
+        email: "mariana.gestora@imuv.com.br",
+        nome: "Mariana Gestora",
+        role: 'gestor_assessoria' as const
+      }
+    }
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Redireciona diretamente para BI sem verificação
+    // Verificar se é um dos usuários de demonstração
+    const demoUser = demoAccounts.find(
+      acc => acc.email === email && acc.password === password
+    );
+
     setTimeout(() => {
       setIsLoading(false);
-      toast({
-        title: "Login bem-sucedido",
-        description: "Você foi conectado com sucesso.",
-      });
-      navigate("/bi-geral");
+      
+      if (demoUser) {
+        setCurrentUser(demoUser.profile);
+        toast({
+          title: "Login bem-sucedido",
+          description: `Bem-vinda, ${demoUser.profile.nome}!`,
+        });
+        navigate("/comercial");
+      } else {
+        // Login genérico para qualquer outro email/senha
+        toast({
+          title: "Login bem-sucedido",
+          description: "Você foi conectado com sucesso.",
+        });
+        navigate("/bi-geral");
+      }
     }, 800);
   };
 
@@ -34,6 +76,24 @@ const LoginForm = () => {
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-biodina-blue mb-2">Bem-vindo</h1>
         <p className="text-gray-600">Acesse sua conta para continuar</p>
+      </div>
+
+      {/* Credenciais de Demonstração */}
+      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-sm font-semibold text-blue-900 mb-2">🎯 Credenciais de Demonstração:</p>
+        <div className="space-y-2 text-xs text-blue-800">
+          <div className="flex items-center justify-between">
+            <span>👤 <strong>Ana Assessora:</strong> ana.assessora@imuv.com.br</span>
+            <Badge variant="outline" className="text-[10px]">assessor</Badge>
+          </div>
+          <div className="flex items-center justify-between">
+            <span>👥 <strong>Mariana Gestora:</strong> mariana.gestora@imuv.com.br</span>
+            <Badge variant="outline" className="text-[10px]">gestor</Badge>
+          </div>
+          <div className="mt-2 pt-2 border-t border-blue-300">
+            <span>🔑 Senha para ambas: <strong>demo123</strong></span>
+          </div>
+        </div>
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-6">

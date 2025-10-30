@@ -2,13 +2,16 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Calendar, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Plus, LogOut } from "lucide-react";
 import { OrdemServico, FiltrosAgenda, StatusOS, DepartamentoOS } from "@/types/assessoria-cientifica";
-import { ordensServicoMock, getTipoOSIcon, getTipoOSLabel, getStatusColor, alertasMock } from "@/data/assessoria-cientifica";
+import { ordensServicoMock, getTipoOSIcon, getTipoOSLabel, getStatusColor, alertasMock, assessoresTecnicos } from "@/data/assessoria-cientifica";
 import { FiltrosAgendaOS } from "./FiltrosAgendaOS";
 import { DetalhesOSSheet } from "./DetalhesOSSheet";
 import { PainelAlertas } from "./PainelAlertas";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useAuthDemo } from "@/hooks/useAuthDemo";
+import { useNavigate } from "react-router-dom";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface DashboardAssessoriaProps {
   onNavigateToOS?: (filtroStatus?: StatusOS[]) => void;
@@ -18,12 +21,22 @@ const DashboardAssessoria = ({ onNavigateToOS }: DashboardAssessoriaProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedOS, setSelectedOS] = useState<OrdemServico | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [assessorFilter, setAssessorFilter] = useState<string>("todos");
   const [filtros, setFiltros] = useState<FiltrosAgenda>({
     departamentos: ["Assessoria Científica", "Departamento Técnico"],
     assessores: [],
     clientes: [],
     status: []
   });
+
+  const { getCurrentUser, logout, isGestor } = useAuthDemo();
+  const navigate = useNavigate();
+  const currentUser = getCurrentUser();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   const handleOSClick = (os: OrdemServico) => {
     setSelectedOS(os);
@@ -51,6 +64,20 @@ const DashboardAssessoria = ({ onNavigateToOS }: DashboardAssessoriaProps) => {
 
   // Aplicar filtros às OSs
   const aplicarFiltros = (os: OrdemServico): boolean => {
+    // FILTRO POR PERFIL: Assessor vê apenas suas OSs
+    if (currentUser && !isGestor()) {
+      if (os.responsavelId !== currentUser.id) {
+        return false;
+      }
+    }
+
+    // FILTRO POR ASSESSOR (para gestores)
+    if (isGestor() && assessorFilter !== "todos") {
+      if (os.responsavelId !== assessorFilter) {
+        return false;
+      }
+    }
+
     if (filtros.departamentos.length > 0 && !filtros.departamentos.includes(os.departamento)) {
       return false;
     }
@@ -135,6 +162,50 @@ const DashboardAssessoria = ({ onNavigateToOS }: DashboardAssessoriaProps) => {
 
   return (
     <TooltipProvider>
+      {/* Indicador de Perfil */}
+      {currentUser && (
+        <div className="flex items-center justify-between bg-muted/50 p-3 rounded-lg border mb-4">
+          <div className="flex items-center gap-3">
+            <Badge variant={isGestor() ? "default" : "secondary"} className="text-sm">
+              {isGestor() ? "👥 Gestora" : "👤 Assessora"}
+            </Badge>
+            <span className="text-sm font-medium">{currentUser.nome}</span>
+            <span className="text-xs text-muted-foreground">({currentUser.email})</span>
+          </div>
+          <Button variant="outline" size="sm" onClick={handleLogout}>
+            <LogOut className="h-4 w-4 mr-2" />
+            Trocar Perfil
+          </Button>
+        </div>
+      )}
+
+      {/* Filtro de Assessor (apenas para gestores) */}
+      {isGestor() && (
+        <div className="flex items-center gap-2 mb-4 p-3 bg-muted/30 rounded-lg border">
+          <label className="text-sm font-medium">Filtrar por Assessor:</label>
+          <Select value={assessorFilter} onValueChange={setAssessorFilter}>
+            <SelectTrigger className="w-[250px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os Assessores</SelectItem>
+              {assessoresTecnicos
+                .filter(a => a.departamento === "Assessoria Científica")
+                .map(assessor => (
+                  <SelectItem key={assessor.id} value={assessor.id}>
+                    {assessor.nome}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+          {assessorFilter !== "todos" && (
+            <Badge variant="secondary">
+              Mostrando: {assessoresTecnicos.find(a => a.id === assessorFilter)?.nome}
+            </Badge>
+          )}
+        </div>
+      )}
+
       {/* Painel de Alertas */}
       <PainelAlertas 
         alertas={alertasMock}
