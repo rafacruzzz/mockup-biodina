@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { gerarCertificadoTreinamento } from "@/utils/certificado-generator";
-import { ArrowLeft, Upload, Save } from "lucide-react";
+import { ArrowLeft, Upload, Save, Search, CheckCircle, XCircle, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +18,92 @@ import { OrdemServico, TipoOS, StatusOS, OpcaoAtendimento } from "@/types/assess
 import { getTipoOSLabel } from "@/data/assessoria-cientifica";
 import { AssinaturaDigital } from "./AssinaturaDigital";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+
+interface Projeto {
+  id: string;
+  numeroProcesso: string;
+  tipo: 'importacao' | 'contratacao';
+  cliente: string;
+  cnpj: string;
+  status: string;
+  valorTotal: number;
+  responsavel?: string;
+  segmento?: string;
+}
+
+const mockProjetos: Projeto[] = [
+  // IMPORTAÇÕES DIRETAS
+  {
+    id: "IMP-2024-001",
+    numeroProcesso: "001",
+    tipo: "importacao",
+    cliente: "Hospital Albert Einstein",
+    cnpj: "60.765.823/0001-30",
+    status: "Em Andamento",
+    valorTotal: 150000,
+    responsavel: "João Silva",
+    segmento: "Hospital Privado"
+  },
+  {
+    id: "IMP-2024-002",
+    numeroProcesso: "002",
+    tipo: "importacao",
+    cliente: "Hospital Sírio-Libanês",
+    cnpj: "61.870.001/0001-09",
+    status: "Concluída",
+    valorTotal: 250000,
+    responsavel: "Maria Santos",
+    segmento: "Hospital Privado"
+  },
+  {
+    id: "IMP-2024-003",
+    numeroProcesso: "003",
+    tipo: "importacao",
+    cliente: "INCA - Instituto Nacional de Câncer",
+    cnpj: "00.394.544/0124-52",
+    status: "Em Andamento",
+    valorTotal: 180000,
+    responsavel: "Pedro Costa",
+    segmento: "Hospital Público"
+  },
+  // CONTRATAÇÕES
+  {
+    id: "CON-2024-012",
+    numeroProcesso: "012",
+    tipo: "contratacao",
+    cliente: "Clínica São Camilo",
+    cnpj: "08.910.080/0001-55",
+    status: "Assinado",
+    valorTotal: 95000,
+    responsavel: "Roberto Alves",
+    segmento: "Clínica Privada"
+  },
+  {
+    id: "CON-2024-015",
+    numeroProcesso: "015",
+    tipo: "contratacao",
+    cliente: "Hospital Memorial",
+    cnpj: "02.558.157/0001-62",
+    status: "Em Negociação",
+    valorTotal: 175000,
+    responsavel: "Fernanda Rocha",
+    segmento: "Hospital Privado"
+  },
+  {
+    id: "CON-2024-020",
+    numeroProcesso: "020",
+    tipo: "contratacao",
+    cliente: "Centro Oncológico Integrado",
+    cnpj: "11.222.333/0001-44",
+    status: "Concluído",
+    valorTotal: 210000,
+    responsavel: "Lucas Ferreira",
+    segmento: "Centro Especializado"
+  }
+];
 
 interface FormularioOSProps {
   os: OrdemServico | null;
@@ -26,9 +112,13 @@ interface FormularioOSProps {
 }
 
 export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
+  const [tipoProjeto, setTipoProjeto] = useState<string>("");
+  const [projetoSearch, setProjetoSearch] = useState("");
+  const [selectedProjeto, setSelectedProjeto] = useState<Projeto | null>(null);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  
   const [formData, setFormData] = useState({
     cliente: os?.cliente || "",
-    projeto: os?.projeto || "",
     equipamento: os?.equipamento || "",
     numeroSerieLote: os?.numeroSerieLote || "",
     versaoSoftware: os?.versaoSoftware || "",
@@ -65,6 +155,71 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     "treinamento_nova_equipe",
     "analise_edital",
   ];
+
+  const normalizeId = (id: string) => {
+    return id.replace(/[^\d]/g, '').padStart(3, '0');
+  };
+
+  const searchProjetos = (searchTerm: string) => {
+    if (!tipoProjeto) return [];
+    
+    const filteredByType = mockProjetos.filter(p => p.tipo === tipoProjeto);
+    
+    if (!searchTerm) return filteredByType;
+    
+    const normalizedSearch = searchTerm.toLowerCase();
+    return filteredByType.filter(projeto => 
+      projeto.numeroProcesso.includes(normalizedSearch) ||
+      projeto.id.toLowerCase().includes(normalizedSearch) ||
+      projeto.cliente.toLowerCase().includes(normalizedSearch) ||
+      projeto.cnpj.includes(normalizedSearch)
+    );
+  };
+
+  const handleSelectProjeto = (projeto: Projeto) => {
+    setProjetoSearch(projeto.numeroProcesso);
+    setSelectedProjeto(projeto);
+    setShowSuggestions(false);
+    
+    // AUTO-PREENCHER CAMPOS
+    setFormData(prev => ({
+      ...prev,
+      cliente: projeto.cliente
+    }));
+  };
+
+  const handleProjetoSearch = (value: string) => {
+    setProjetoSearch(value);
+    setShowSuggestions(true);
+    
+    if (!value) {
+      setSelectedProjeto(null);
+      setFormData(prev => ({
+        ...prev,
+        cliente: ''
+      }));
+      return;
+    }
+    
+    const normalizedValue = normalizeId(value);
+    const found = searchProjetos(value).find(p => 
+      normalizeId(p.numeroProcesso) === normalizedValue
+    );
+    
+    if (found) {
+      handleSelectProjeto(found);
+    }
+  };
+
+  const getTipoProjetoLabel = (tipo: string) => {
+    switch (tipo) {
+      case 'importacao': return 'Importação Direta';
+      case 'contratacao': return 'Contratação';
+      default: return '';
+    }
+  };
+
+  const projetosDisponiveis = searchProjetos(projetoSearch);
 
   const handleTipoChange = (tipo: TipoOS) => {
     setFormData((prev) => ({
@@ -166,34 +321,144 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
         )}
       </div>
 
+      {/* Seção de Vinculação de Projeto */}
+      <Card className="bg-muted/30">
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            🔗 Vinculação de Projeto
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Tipo de Projeto *</Label>
+              <Select value={tipoProjeto} onValueChange={setTipoProjeto}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o tipo de projeto..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="importacao">Importação Direta</SelectItem>
+                  <SelectItem value="contratacao">Contratação</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {tipoProjeto && (
+              <div className="space-y-2">
+                <Label>Buscar Projeto *</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    value={projetoSearch}
+                    onChange={(e) => handleProjetoSearch(e.target.value)}
+                    onFocus={() => setShowSuggestions(true)}
+                    placeholder="Digite o número do processo ou nome do cliente..."
+                    className="pl-10"
+                  />
+                  {selectedProjeto && (
+                    <CheckCircle className="absolute right-3 top-3 h-4 w-4 text-green-600" />
+                  )}
+                  {projetoSearch && !selectedProjeto && projetosDisponiveis.length === 0 && (
+                    <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-600" />
+                  )}
+                </div>
+
+                {/* Sugestões rápidas */}
+                {!projetoSearch && projetosDisponiveis.length > 0 && (
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    <span className="text-xs text-muted-foreground">Sugestões:</span>
+                    {projetosDisponiveis.slice(0, 5).map((projeto) => (
+                      <Badge
+                        key={projeto.id}
+                        variant="outline"
+                        className="cursor-pointer hover:bg-accent"
+                        onClick={() => handleSelectProjeto(projeto)}
+                      >
+                        {projeto.numeroProcesso}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                {/* Dropdown de resultados */}
+                {showSuggestions && projetoSearch && projetosDisponiveis.length > 0 && (
+                  <div className="absolute z-10 mt-1 w-full bg-background border rounded-md shadow-lg max-h-60 overflow-y-auto">
+                    {projetosDisponiveis.map((projeto) => (
+                      <div
+                        key={projeto.id}
+                        className="p-3 hover:bg-accent cursor-pointer border-b last:border-b-0"
+                        onClick={() => handleSelectProjeto(projeto)}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium">{projeto.id}</p>
+                            <p className="text-sm text-muted-foreground">{projeto.cliente}</p>
+                          </div>
+                          <Badge variant="outline">{projeto.status}</Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Projeto selecionado */}
+            {selectedProjeto && (
+              <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                <div className="flex items-start gap-2">
+                  <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-medium text-green-900 dark:text-green-100">
+                      Vinculado: {selectedProjeto.id} - {selectedProjeto.cliente}
+                    </p>
+                    <p className="text-sm text-green-700 dark:text-green-300 mt-1">
+                      {getTipoProjetoLabel(selectedProjeto.tipo)} • {selectedProjeto.status}
+                    </p>
+                    {selectedProjeto.responsavel && (
+                      <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                        Responsável: {selectedProjeto.responsavel}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {!selectedProjeto && !tipoProjeto && (
+              <div className="text-sm text-muted-foreground bg-muted/50 rounded-lg p-3">
+                💡 Selecione o tipo de projeto para visualizar as opções disponíveis
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Separator />
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Coluna Esquerda */}
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="cliente">Cliente *</Label>
-            <Input
-              id="cliente"
-              value={formData.cliente}
-              onChange={(e) => setFormData({ ...formData, cliente: e.target.value })}
-              placeholder="Buscar cliente..."
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="projeto">Projeto</Label>
-            <Select
-              value={formData.projeto || ""}
-              onValueChange={(value) => setFormData({ ...formData, projeto: value })}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o projeto..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="proj-001">Projeto Hospitalar Central</SelectItem>
-                <SelectItem value="proj-002">Projeto Pesquisa Genômica</SelectItem>
-                <SelectItem value="proj-003">Expansão Clínica Premium</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="relative">
+              <Input
+                id="cliente"
+                value={formData.cliente}
+                onChange={(e) => setFormData({ ...formData, cliente: e.target.value })}
+                placeholder="Buscar cliente..."
+                disabled={selectedProjeto !== null}
+                className={selectedProjeto ? "bg-muted pr-10" : ""}
+              />
+              {selectedProjeto && (
+                <Lock className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
+              )}
+            </div>
+            {selectedProjeto && (
+              <p className="text-xs text-muted-foreground">
+                Preenchido automaticamente do projeto vinculado
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
