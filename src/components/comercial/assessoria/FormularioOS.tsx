@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { gerarCertificadoTreinamento } from "@/utils/certificado-generator";
 import { ArrowLeft, Upload, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -117,8 +118,16 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       return;
     }
 
-    // TODO: Integrar com template do repositório e gerar PDF
-    toast.success(`Certificado emitido para ${participantesArray.length} participante(s)`);
+    // Gerar o PDF do certificado
+    if (os) {
+      gerarCertificadoTreinamento({
+        ...os,
+        ...formData,
+        participantes: participantesArray,
+      });
+    }
+    
+    toast.success(`Certificado gerado com sucesso! O download foi iniciado automaticamente.`);
   };
 
   const canShowAssinatura =

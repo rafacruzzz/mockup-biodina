@@ -30,6 +30,8 @@ export function OrdensServicoTab({ statusFilterFromAlert }: OrdensServicoTabProp
   const [isNewOS, setIsNewOS] = useState(false);
   const [selectedForSignature, setSelectedForSignature] = useState<string[]>([]);
   const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
+  const [sortField, setSortField] = useState<keyof OrdemServico | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   // Aplicar filtro de status quando vem do alerta
   useEffect(() => {
@@ -38,19 +40,37 @@ export function OrdensServicoTab({ statusFilterFromAlert }: OrdensServicoTabProp
     }
   }, [statusFilterFromAlert]);
 
-  const filteredOS = ordensServicoMock.filter((os) => {
-    const searchLower = searchTerm.toLowerCase();
-    const matchSearch = (
-      os.numero.toLowerCase().includes(searchLower) ||
-      os.cliente.toLowerCase().includes(searchLower) ||
-      os.equipamento?.toLowerCase().includes(searchLower) ||
-      os.responsavel.toLowerCase().includes(searchLower)
-    );
+  const filteredOS = ordensServicoMock
+    .filter((os) => {
+      const searchLower = searchTerm.toLowerCase();
+      const matchSearch = (
+        os.numero.toLowerCase().includes(searchLower) ||
+        os.cliente.toLowerCase().includes(searchLower) ||
+        os.equipamento?.toLowerCase().includes(searchLower) ||
+        os.responsavel.toLowerCase().includes(searchLower)
+      );
 
-    const matchStatus = statusFilter.length === 0 || statusFilter.includes(os.status);
+      const matchStatus = statusFilter.length === 0 || statusFilter.includes(os.status);
 
-    return matchSearch && matchStatus;
-  });
+      return matchSearch && matchStatus;
+    })
+    .sort((a, b) => {
+      if (!sortField) return 0;
+      
+      const aValue = a[sortField];
+      const bValue = b[sortField];
+      
+      if (aValue === undefined || bValue === undefined) return 0;
+      
+      let comparison = 0;
+      if (aValue instanceof Date && bValue instanceof Date) {
+        comparison = aValue.getTime() - bValue.getTime();
+      } else if (typeof aValue === "string" && typeof bValue === "string") {
+        comparison = aValue.localeCompare(bValue);
+      }
+      
+      return sortDirection === "asc" ? comparison : -comparison;
+    });
 
   const handleNewOS = () => {
     setSelectedOS(null);
@@ -80,6 +100,20 @@ export function OrdensServicoTab({ statusFilterFromAlert }: OrdensServicoTabProp
     if (selectedForSignature.length > 0) {
       setIsSignatureModalOpen(true);
     }
+  };
+
+  const handleSort = (field: keyof OrdemServico) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("desc");
+    }
+  };
+
+  const SortIcon = ({ field }: { field: keyof OrdemServico }) => {
+    if (sortField !== field) return null;
+    return sortDirection === "asc" ? " ▲" : " ▼";
   };
 
   const getStatusBadge = (status: OrdemServico["status"]) => {
@@ -158,15 +192,40 @@ export function OrdensServicoTab({ statusFilterFromAlert }: OrdensServicoTabProp
               <TableHead className="w-12">
                 <Checkbox disabled />
               </TableHead>
-              <TableHead>Código OS</TableHead>
-              <TableHead>Cliente</TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-accent/50 transition-colors"
+                onClick={() => handleSort("numero")}
+              >
+                Código OS<SortIcon field="numero" />
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-accent/50 transition-colors"
+                onClick={() => handleSort("cliente")}
+              >
+                Cliente<SortIcon field="cliente" />
+              </TableHead>
               <TableHead>Equipamento</TableHead>
               <TableHead>Nº Série/Lote</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Aberto por</TableHead>
-              <TableHead>Responsável</TableHead>
-              <TableHead>Data Abertura</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-accent/50 transition-colors"
+                onClick={() => handleSort("responsavel")}
+              >
+                Responsável<SortIcon field="responsavel" />
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-accent/50 transition-colors"
+                onClick={() => handleSort("abertoEm")}
+              >
+                Data Abertura<SortIcon field="abertoEm" />
+              </TableHead>
+              <TableHead 
+                className="cursor-pointer hover:bg-accent/50 transition-colors"
+                onClick={() => handleSort("status")}
+              >
+                Status<SortIcon field="status" />
+              </TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
