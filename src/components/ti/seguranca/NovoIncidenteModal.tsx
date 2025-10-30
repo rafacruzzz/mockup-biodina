@@ -254,7 +254,7 @@ const NovoIncidenteModal: React.FC<NovoIncidenteModalProps> = ({
                 <Label htmlFor="sistemaAfetado">Sistema/Serviço Afetado</Label>
                 <Input
                   id="sistemaAfetado"
-                  placeholder="Ex: ERP Biodina, Servidor Principal..."
+                  placeholder="Ex: ERP Imuv, Servidor Principal..."
                   value={formData.sistemaAfetado}
                   onChange={(e) => setFormData({ ...formData, sistemaAfetado: e.target.value })}
                 />

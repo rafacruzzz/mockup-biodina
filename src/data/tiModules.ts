@@ -467,7 +467,7 @@ export const tiModules: TIModulesConfig = {
         id: 11,
         tipo: "auditoria",
         usuario: "joao.silva",
-        sistema: "ERP Biodina",
+        sistema: "ERP Imuv",
         dataHora: "2024-01-15T08:30:00",
         ip: "192.168.1.100",
         status: "sucesso"

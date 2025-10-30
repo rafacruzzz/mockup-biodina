@@ -64,7 +64,7 @@ export const mockComissoes: Comissao[] = [
         swift: 'BRASBRRJXXX',
         iban: 'BR1234567890123456789012345'
       },
-      rodape: 'Biodina Instrumentos Científicos Ltda.\nRUA SÃO PEDRO, 154 SALA 409 - CENTRO, Niterói - RJ/ Brasil - ZIP CODE: 24020-058. Phone: 55 (21) 2719-2419'
+      rodape: 'Imuv Instrumentos Científicos Ltda.\nRUA SÃO PEDRO, 154 SALA 409 - CENTRO, Niterói - RJ/ Brasil - ZIP CODE: 24020-058. Phone: 55 (21) 2719-2419'
     },
     faturaRecebimento: {
       numeroOrdem: '59114503',
@@ -92,7 +92,7 @@ export const mockComissoes: Comissao[] = [
       descriptionOfService: 'Comissões de agente referente a representações em geral',
       preparedBy: 'Thais Tolentino',
       phoneNumber: '+55 11 97638-9677',
-      emailBiodina: 'thais.tolentino@biodina.com.br',
+      emailBiodina: 'thais.tolentino@imuv.com.br',
       contactPersonRadiometer: 'André Borges',
       emailRadiometer: 'andre.borges-hansen@radiometer.dk',
       paymentTerms: 'Net Cash',
@@ -121,8 +121,8 @@ export const mockComissoes: Comissao[] = [
       ],
       totalUSD: 2500.00,
       totalReal: 13085.00,
-      comissoesBiodinaUSD: 2500.00,
-      comissoesBiodinaReal: 13085.00,
+      comissoesImuvUSD: 2500.00,
+      comissoesImuvReal: 13085.00,
       comissoesMarketingUSD: 0,
       comissoesMarketingReal: 0,
       totalGeralUSD: 2500.00,
@@ -201,7 +201,7 @@ export const mockComissoes: Comissao[] = [
         swift: 'ITAUBRSPXXX',
         iban: 'BR5555555555555555555555555'
       },
-      rodape: 'Biodina Instrumentos Científicos Ltda.\nRUA SÃO PEDRO, 154 SALA 409 - CENTRO, Niterói - RJ/ Brasil - ZIP CODE: 24020-058. Phone: 55 (21) 2719-2419'
+      rodape: 'Imuv Instrumentos Científicos Ltda.\nRUA SÃO PEDRO, 154 SALA 409 - CENTRO, Niterói - RJ/ Brasil - ZIP CODE: 24020-058. Phone: 55 (21) 2719-2419'
     },
     faturaRecebimento: {
       numeroOrdem: '59114503',
@@ -229,7 +229,7 @@ export const mockComissoes: Comissao[] = [
       descriptionOfService: 'Comissões de agente referente a representações em geral',
       preparedBy: 'Thais Tolentino',
       phoneNumber: '+55 11 97638-9677',
-      emailBiodina: 'thais.tolentino@biodina.com.br',
+      emailBiodina: 'thais.tolentino@imuv.com.br',
       contactPersonRadiometer: 'André Borges',
       emailRadiometer: 'andre.borges-hansen@radiometer.dk',
       paymentTerms: 'Net Cash',
@@ -258,8 +258,8 @@ export const mockComissoes: Comissao[] = [
       ],
       totalUSD: 1920.00,
       totalReal: 9840.00,
-      comissoesBiodinaUSD: 1920.00,
-      comissoesBiodinaReal: 9840.00,
+      comissoesImuvUSD: 1920.00,
+      comissoesImuvReal: 9840.00,
       comissoesMarketingUSD: 0,
       comissoesMarketingReal: 0,
       totalGeralUSD: 1920.00,
@@ -331,7 +331,7 @@ export const defaultInvoiceServico = {
     swift: '',
     iban: ''
   },
-  rodape: 'Biodina Instrumentos Científicos Ltda.\nRUA SÃO PEDRO, 154 SALA 409 - CENTRO, Niterói - RJ/ Brasil - ZIP CODE: 24020-058. Phone: 55 (21) 2719-2419'
+  rodape: 'Imuv Instrumentos Científicos Ltda.\nRUA SÃO PEDRO, 154 SALA 409 - CENTRO, Niterói - RJ/ Brasil - ZIP CODE: 24020-058. Phone: 55 (21) 2719-2419'
 };
 
 export const mockDadosBancariosInternacionais: Record<string, { address: string; zipCode: string; swift: string; iban: string }> = {
@@ -391,10 +391,10 @@ export const defaultFaturaRecebimento = {
   // PRÉ-PREENCHIDO
   descriptionOfService: 'Comissões de agente referente a representações em geral',
   
-  // PRÉ-PREENCHIDOS (Biodina)
+  // PRÉ-PREENCHIDOS (Imuv)
   preparedBy: 'Thais Tolentino',
   phoneNumber: '+55 11 97638-9677',
-  emailBiodina: 'thais.tolentino@biodina.com.br',
+  emailBiodina: 'thais.tolentino@imuv.com.br',
   
   // PRÉ-PREENCHIDOS (Radiometer)
   contactPersonRadiometer: 'André Borges',

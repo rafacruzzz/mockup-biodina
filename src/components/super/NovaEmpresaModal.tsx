@@ -171,7 +171,7 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas }: NovaE
                 id="nome"
                 value={formData.nome}
                 onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                placeholder="Ex: Biodina"
+                placeholder="Ex: Imuv"
               />
             </div>
 
@@ -181,7 +181,7 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas }: NovaE
                 id="razaoSocial"
                 value={formData.razaoSocial}
                 onChange={(e) => setFormData({ ...formData, razaoSocial: e.target.value })}
-                placeholder="Ex: Biodina Farmacêutica S.A."
+                placeholder="Ex: Imuv Farmacêutica S.A."
               />
             </div>
 
