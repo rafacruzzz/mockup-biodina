@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +19,26 @@ type SubAba = "visao-geral" | "ficha-tecnica" | "documentos" | "suporte-vendas" 
 
 export function DetalheProduto({ produto, onVoltar }: DetalheProdutoProps) {
   const [subAbaAtiva, setSubAbaAtiva] = useState<SubAba>("visao-geral");
+  const [highlightIncomplete, setHighlightIncomplete] = useState(false);
+
+  // Se o cadastro está incompleto, determina qual aba deve abrir primeiro
+  useEffect(() => {
+    if (produto.statusCadastro === "incompleto") {
+      setHighlightIncomplete(true);
+      
+      // Lógica para determinar qual aba tem campos incompletos
+      if (!produto.registroAnvisa || !produto.linkConsultaAnvisa) {
+        setSubAbaAtiva("regulatorio");
+      } else if (!produto.especificacoesTecnicas || !produto.peso || !produto.dimensoes) {
+        setSubAbaAtiva("ficha-tecnica");
+      }
+      
+      // Scroll suave para o topo após um breve delay
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
+    }
+  }, [produto]);
 
   return (
     <div className="space-y-6">
@@ -35,6 +55,18 @@ export function DetalheProduto({ produto, onVoltar }: DetalheProdutoProps) {
               <Badge variant={produto.status === "ativo" ? "default" : "secondary"}>
                 {produto.status === "ativo" ? "Ativo" : "Descontinuado"}
               </Badge>
+              {produto.statusCadastro && (
+                <Badge
+                  variant="outline"
+                  className={`${
+                    produto.statusCadastro === "completo"
+                      ? "bg-green-50 border-green-500 text-green-700"
+                      : "bg-yellow-50 border-yellow-500 text-yellow-700"
+                  }`}
+                >
+                  {produto.statusCadastro === "completo" ? "✓ Cadastro Completo" : "⚠ Cadastro Incompleto"}
+                </Badge>
+              )}
             </div>
             <p className="text-sm text-muted-foreground">{produto.codigo}</p>
           </div>
@@ -83,11 +115,11 @@ export function DetalheProduto({ produto, onVoltar }: DetalheProdutoProps) {
       {/* Conteúdo das Sub-abas */}
       <div>
         {subAbaAtiva === "visao-geral" && <VisaoGeralTab produto={produto} />}
-        {subAbaAtiva === "ficha-tecnica" && <FichaTecnicaTab produto={produto} />}
+        {subAbaAtiva === "ficha-tecnica" && <FichaTecnicaTab produto={produto} highlightIncomplete={highlightIncomplete} />}
         {subAbaAtiva === "documentos" && <DocumentosTab produto={produto} />}
         {subAbaAtiva === "suporte-vendas" && <SuporteVendasTab produto={produto} />}
         {subAbaAtiva === "midia" && <MidiaTab produto={produto} />}
-        {subAbaAtiva === "regulatorio" && <RegulatorioTab produto={produto} />}
+        {subAbaAtiva === "regulatorio" && <RegulatorioTab produto={produto} highlightIncomplete={highlightIncomplete} />}
       </div>
     </div>
   );

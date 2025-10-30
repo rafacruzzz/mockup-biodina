@@ -56,12 +56,32 @@ export function NavegacaoProdutos({
                     />
                   )}
                   <div className="space-y-2">
-                    <Badge
-                      variant={produto.status === "ativo" ? "default" : "secondary"}
-                      className="text-xs"
-                    >
-                      {produto.status === "ativo" ? "Ativo" : "Descontinuado"}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        variant={produto.status === "ativo" ? "default" : "secondary"}
+                        className="text-xs"
+                      >
+                        {produto.status === "ativo" ? "Ativo" : "Descontinuado"}
+                      </Badge>
+                      {produto.statusCadastro && (
+                        <Badge
+                          variant="outline"
+                          className={`text-xs cursor-pointer hover:shadow-md transition-shadow ${
+                            produto.statusCadastro === "completo"
+                              ? "bg-green-50 border-green-500 text-green-700"
+                              : "bg-yellow-50 border-yellow-500 text-yellow-700"
+                          }`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (produto.statusCadastro === "incompleto") {
+                              onSelectProduto(produto);
+                            }
+                          }}
+                        >
+                          {produto.statusCadastro === "completo" ? "✓ Cadastro Completo" : "⚠ Cadastro Incompleto"}
+                        </Badge>
+                      )}
+                    </div>
                     <h4 className="font-semibold">{produto.nome}</h4>
                     <p className="text-xs text-muted-foreground">{produto.codigo}</p>
                     <p className="text-sm line-clamp-2">{produto.descricao}</p>
@@ -117,12 +137,32 @@ export function NavegacaoProdutos({
                   </div>
                 )}
                 <div className="space-y-2">
-                  <Badge
-                    variant={produto.status === "ativo" ? "default" : "secondary"}
-                    className="text-xs"
-                  >
-                    {produto.status === "ativo" ? "Ativo" : "Descontinuado"}
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant={produto.status === "ativo" ? "default" : "secondary"}
+                      className="text-xs"
+                    >
+                      {produto.status === "ativo" ? "Ativo" : "Descontinuado"}
+                    </Badge>
+                    {produto.statusCadastro && (
+                      <Badge
+                        variant="outline"
+                        className={`text-xs cursor-pointer hover:shadow-md transition-shadow ${
+                          produto.statusCadastro === "completo"
+                            ? "bg-green-50 border-green-500 text-green-700"
+                            : "bg-yellow-50 border-yellow-500 text-yellow-700"
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (produto.statusCadastro === "incompleto") {
+                            onSelectProduto(produto);
+                          }
+                        }}
+                      >
+                        {produto.statusCadastro === "completo" ? "✓ Cadastro Completo" : "⚠ Cadastro Incompleto"}
+                      </Badge>
+                    )}
+                  </div>
                   <h4 className="font-semibold">{produto.nome}</h4>
                   <p className="text-xs text-muted-foreground">{produto.codigo}</p>
                   <p className="text-sm line-clamp-2">{produto.descricao}</p>

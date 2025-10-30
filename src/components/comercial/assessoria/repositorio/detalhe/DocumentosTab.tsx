@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,8 +12,9 @@ import {
 } from "@/components/ui/table";
 import { Produto } from "@/types/produto";
 import { getDocumentosPorProduto } from "@/data/produtos";
-import { Upload, Download, FileText } from "lucide-react";
+import { Upload, Download, FileText, Clock } from "lucide-react";
 import { format } from "date-fns";
+import { HistoricoVersaoModal } from "./HistoricoVersaoModal";
 
 interface DocumentosTabProps {
   produto: Produto;
@@ -20,6 +22,8 @@ interface DocumentosTabProps {
 
 export function DocumentosTab({ produto }: DocumentosTabProps) {
   const documentos = getDocumentosPorProduto(produto.id);
+  const [historicoOpen, setHistoricoOpen] = useState(false);
+  const [documentoSelecionado, setDocumentoSelecionado] = useState<any>(null);
 
   const getTipoLabel = (tipo: string) => {
     const labels: Record<string, string> = {
@@ -98,9 +102,24 @@ export function DocumentosTab({ produto }: DocumentosTabProps) {
                         {doc.uploadPor}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
-                          <Download className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-2">
+                          {doc.historicoVersoes && doc.historicoVersoes.length > 0 && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setDocumentoSelecionado(doc);
+                                setHistoricoOpen(true);
+                              }}
+                              title="Ver histórico de versões"
+                            >
+                              <Clock className="h-4 w-4" />
+                            </Button>
+                          )}
+                          <Button variant="ghost" size="sm">
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -110,6 +129,20 @@ export function DocumentosTab({ produto }: DocumentosTabProps) {
           )}
         </CardContent>
       </Card>
+
+      {/* Modal de Histórico de Versões */}
+      {documentoSelecionado && (
+        <HistoricoVersaoModal
+          open={historicoOpen}
+          onClose={() => {
+            setHistoricoOpen(false);
+            setDocumentoSelecionado(null);
+          }}
+          titulo={documentoSelecionado.titulo}
+          versaoAtual={documentoSelecionado.versao}
+          historicoVersoes={documentoSelecionado.historicoVersoes || []}
+        />
+      )}
     </div>
   );
 }

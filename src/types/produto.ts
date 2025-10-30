@@ -1,6 +1,7 @@
 // Tipos para o módulo de Repositório de Produtos
 
 export type StatusProduto = 'ativo' | 'descontinuado';
+export type StatusCadastro = 'completo' | 'incompleto';
 
 export interface Marca {
   id: string;
@@ -27,6 +28,7 @@ export interface Produto {
   aplicacoes: string[];
   palavrasChave: string[];
   status: StatusProduto;
+  statusCadastro?: StatusCadastro;
   imagem?: string;
   
   // Ficha técnica
@@ -43,6 +45,13 @@ export interface Produto {
   videos?: string[];
 }
 
+export interface VersaoDocumento {
+  versao: string;
+  dataAprovacao: Date;
+  aprovadoPor: string;
+  arquivo: string;
+}
+
 export interface DocumentoProduto {
   id: string;
   produtoId: string;
@@ -53,6 +62,7 @@ export interface DocumentoProduto {
   dataUpload: Date;
   uploadPor: string;
   arquivo: string;
+  historicoVersoes?: VersaoDocumento[];
 }
 
 export interface ComparativoProduto {

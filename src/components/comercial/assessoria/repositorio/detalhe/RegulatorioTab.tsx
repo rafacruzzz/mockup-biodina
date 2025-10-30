@@ -15,9 +15,10 @@ import { format } from "date-fns";
 
 interface RegulatorioTabProps {
   produto: Produto;
+  highlightIncomplete?: boolean;
 }
 
-export function RegulatorioTab({ produto }: RegulatorioTabProps) {
+export function RegulatorioTab({ produto, highlightIncomplete }: RegulatorioTabProps) {
   const historico = getHistoricoVersoesPorProduto(produto.id);
 
   const getTipoLabel = (tipo: string) => {
@@ -33,41 +34,47 @@ export function RegulatorioTab({ produto }: RegulatorioTabProps) {
   return (
     <div className="space-y-6">
       {/* Registro ANVISA */}
-      <Card>
+      <Card className={highlightIncomplete && (!produto.registroAnvisa || !produto.linkConsultaAnvisa) ? "border-2 border-red-500 animate-pulse" : ""}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
             Registro ANVISA
+            {highlightIncomplete && (!produto.registroAnvisa || !produto.linkConsultaAnvisa) && (
+              <span className="text-red-600 text-sm font-normal">• Campos Obrigatórios</span>
+            )}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {produto.registroAnvisa ? (
-              <>
-                <div>
-                  <p className="text-sm text-muted-foreground mb-1">
-                    Número de Registro
-                  </p>
-                  <p className="text-lg font-semibold">{produto.registroAnvisa}</p>
-                </div>
-                {produto.linkConsultaAnvisa && (
-                  <Button variant="outline" asChild>
-                    <a
-                      href={produto.linkConsultaAnvisa}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Consultar na ANVISA
-                    </a>
-                  </Button>
-                )}
-              </>
-            ) : (
-              <p className="text-muted-foreground">
-                Registro ANVISA não informado
+            <div className={highlightIncomplete && !produto.registroAnvisa ? "p-2 border-2 border-red-300 rounded" : ""}>
+              <p className="text-sm text-muted-foreground mb-1">
+                Número de Registro {highlightIncomplete && !produto.registroAnvisa && <span className="text-red-600">*</span>}
               </p>
-            )}
+              {produto.registroAnvisa ? (
+                <p className="text-lg font-semibold">{produto.registroAnvisa}</p>
+              ) : (
+                <p className="text-muted-foreground">Não cadastrado</p>
+              )}
+            </div>
+            <div className={highlightIncomplete && !produto.linkConsultaAnvisa ? "p-2 border-2 border-red-300 rounded" : ""}>
+              <p className="text-sm text-muted-foreground mb-1">
+                Link de Consulta {highlightIncomplete && !produto.linkConsultaAnvisa && <span className="text-red-600">*</span>}
+              </p>
+              {produto.linkConsultaAnvisa ? (
+                <Button variant="outline" asChild>
+                  <a
+                    href={produto.linkConsultaAnvisa}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    Consultar na ANVISA
+                  </a>
+                </Button>
+              ) : (
+                <p className="text-muted-foreground">Não cadastrado</p>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
