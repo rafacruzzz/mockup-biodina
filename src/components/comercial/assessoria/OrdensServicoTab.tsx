@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Search, Edit, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,27 +13,43 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ordensServicoMock, getTipoOSLabel, getStatusColor } from "@/data/assessoria-cientifica";
-import { OrdemServico } from "@/types/assessoria-cientifica";
+import { OrdemServico, StatusOS } from "@/types/assessoria-cientifica";
 import { FormularioOS } from "./FormularioOS";
 import { AssinaturaLoteModal } from "./AssinaturaLoteModal";
 import { format } from "date-fns";
 
-export function OrdensServicoTab() {
+interface OrdensServicoTabProps {
+  statusFilterFromAlert?: StatusOS[];
+}
+
+export function OrdensServicoTab({ statusFilterFromAlert }: OrdensServicoTabProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<StatusOS[]>([]);
   const [selectedOS, setSelectedOS] = useState<OrdemServico | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isNewOS, setIsNewOS] = useState(false);
   const [selectedForSignature, setSelectedForSignature] = useState<string[]>([]);
   const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
 
+  // Aplicar filtro de status quando vem do alerta
+  useEffect(() => {
+    if (statusFilterFromAlert) {
+      setStatusFilter(statusFilterFromAlert);
+    }
+  }, [statusFilterFromAlert]);
+
   const filteredOS = ordensServicoMock.filter((os) => {
     const searchLower = searchTerm.toLowerCase();
-    return (
+    const matchSearch = (
       os.numero.toLowerCase().includes(searchLower) ||
       os.cliente.toLowerCase().includes(searchLower) ||
       os.equipamento?.toLowerCase().includes(searchLower) ||
       os.responsavel.toLowerCase().includes(searchLower)
     );
+
+    const matchStatus = statusFilter.length === 0 || statusFilter.includes(os.status);
+
+    return matchSearch && matchStatus;
   });
 
   const handleNewOS = () => {
@@ -109,6 +125,17 @@ export function OrdensServicoTab() {
               className="pl-10"
             />
           </div>
+          {statusFilter.length > 0 && (
+            <Badge variant="secondary" className="gap-2">
+              Filtro Ativo: {statusFilter.map(s => s.replace("_", " ")).join(", ")}
+              <button 
+                onClick={() => setStatusFilter([])}
+                className="ml-1 hover:bg-secondary-foreground/20 rounded-full p-0.5"
+              >
+                ✕
+              </button>
+            </Badge>
+          )}
         </div>
         <div className="flex items-center gap-2">
           {selectedForSignature.length > 0 && (

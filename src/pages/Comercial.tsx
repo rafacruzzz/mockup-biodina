@@ -3,6 +3,7 @@ import DashboardAssessoria from "@/components/comercial/assessoria/DashboardAsse
 import { OrdensServicoTab } from "@/components/comercial/assessoria/OrdensServicoTab";
 import { RastreabilidadeTab } from "@/components/comercial/assessoria/RastreabilidadeTab";
 import { RepositorioProdutosTab } from "@/components/comercial/assessoria/RepositorioProdutosTab";
+import { StatusOS } from "@/types/assessoria-cientifica";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +36,7 @@ const Comercial = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'emprestimos' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeTab, setActiveTab] = useState('indicadores');
   const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "os" | "rastreabilidade" | "repositorio">("agenda");
+  const [osStatusFilter, setOsStatusFilter] = useState<StatusOS[] | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [showOportunidadeAvancadaForm, setShowOportunidadeAvancadaForm] = useState(false);
@@ -557,6 +559,11 @@ const Comercial = () => {
   );
 
   const renderAssessoriaModule = () => {
+    const handleNavigateToOS = (filtroStatus?: StatusOS[]) => {
+      setAssessoriaTab("os");
+      setOsStatusFilter(filtroStatus);
+    };
+
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -580,8 +587,8 @@ const Comercial = () => {
         </div>
 
         <div>
-          {assessoriaTab === "agenda" && <DashboardAssessoria />}
-          {assessoriaTab === "os" && <OrdensServicoTab />}
+          {assessoriaTab === "agenda" && <DashboardAssessoria onNavigateToOS={handleNavigateToOS} />}
+          {assessoriaTab === "os" && <OrdensServicoTab statusFilterFromAlert={osStatusFilter} />}
           {assessoriaTab === "rastreabilidade" && <RastreabilidadeTab />}
           {assessoriaTab === "repositorio" && <RepositorioProdutosTab />}
         </div>

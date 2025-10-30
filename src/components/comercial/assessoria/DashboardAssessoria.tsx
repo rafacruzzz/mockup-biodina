@@ -6,13 +6,18 @@ import { ChevronLeft, ChevronRight, Calendar, Plus } from "lucide-react";
 import { OrdemServico, FiltrosAgenda, StatusOS, DepartamentoOS } from "@/types/assessoria-cientifica";
 import { ordensServicoMock, getTipoOSIcon, getTipoOSLabel, getStatusColor, alertasMock } from "@/data/assessoria-cientifica";
 import { FiltrosAgendaOS } from "./FiltrosAgendaOS";
-import { DetalhesOSModal } from "./DetalhesOSModal";
+import { DetalhesOSSheet } from "./DetalhesOSSheet";
 import { PainelAlertas } from "./PainelAlertas";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-const DashboardAssessoria = () => {
+interface DashboardAssessoriaProps {
+  onNavigateToOS?: (filtroStatus?: StatusOS[]) => void;
+}
+
+const DashboardAssessoria = ({ onNavigateToOS }: DashboardAssessoriaProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedOS, setSelectedOS] = useState<OrdemServico | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [filtros, setFiltros] = useState<FiltrosAgenda>({
     departamentos: ["Assessoria Científica", "Departamento Técnico"],
     assessores: [],
@@ -22,7 +27,14 @@ const DashboardAssessoria = () => {
 
   const handleOSClick = (os: OrdemServico) => {
     setSelectedOS(os);
-    setIsModalOpen(true);
+    setIsSheetOpen(true);
+  };
+
+  const handleAlertaClick = (osIds?: string[]) => {
+    // Quando um alerta for clicado, navega para a aba OS com filtro
+    if (onNavigateToOS) {
+      onNavigateToOS(['URGENTE', 'ABERTA']);
+    }
   };
 
   const nextMonth = () => {
@@ -116,23 +128,31 @@ const DashboardAssessoria = () => {
   const calendarDays = generateCalendarGrid();
   const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
+  // Contar eventos filtrados no mês atual
+  const totalEventosNoMes = calendarDays
+    .filter(day => day.isCurrentMonth)
+    .reduce((total, day) => total + day.ordensServico.length, 0);
+
   return (
-    <>
+    <TooltipProvider>
       {/* Painel de Alertas */}
       <PainelAlertas 
         alertas={alertasMock}
-        onAlertaClick={(alerta) => {
-          console.log("Alerta clicado:", alerta);
-        }}
+        onAlertaClick={handleAlertaClick}
       />
 
       <Card className="shadow-lg">
         <CardHeader>
           <div className="flex items-center justify-between flex-wrap gap-4">
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              Agenda de Ordens de Serviço
-            </CardTitle>
+            <div className="flex items-center gap-3">
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Agenda de Ordens de Serviço
+              </CardTitle>
+              <Badge variant="secondary" className="text-sm">
+                {totalEventosNoMes} eventos este mês
+              </Badge>
+            </div>
             <div className="flex items-center gap-2">
               <Button 
                 variant="outline" 
@@ -175,11 +195,11 @@ const DashboardAssessoria = () => {
           </div>
           
           {/* Grade do calendário */}
-          <div className="grid grid-cols-7 gap-1">
+          <div className="grid grid-cols-7 gap-1 transition-opacity duration-300">
             {calendarDays.map((calendarDay, index) => (
               <div
                 key={index}
-                className={`min-h-[120px] border rounded-lg p-2 ${
+                className={`min-h-[120px] border rounded-lg p-2 transition-all duration-300 ${
                   calendarDay.isCurrentMonth 
                     ? 'bg-background border-border hover:bg-accent/5' 
                     : 'bg-muted/30 border-muted text-muted-foreground'
@@ -197,40 +217,51 @@ const DashboardAssessoria = () => {
                   {calendarDay.ordensServico.map((os) => {
                     const statusColor = getStatusColor(os.status);
                     return (
-                      <div
-                        key={os.id}
-                        className="text-xs p-2 rounded border cursor-pointer hover:shadow-md transition-shadow"
-                        style={{
-                          backgroundColor: statusColor.bg,
-                          borderColor: statusColor.border
-                        }}
-                        onClick={() => handleOSClick(os)}
-                      >
-                        <div className="flex items-start justify-between gap-1 mb-1">
-                          <span className="font-medium truncate flex-1" title={`${os.cliente} - ${getTipoOSLabel(os.tipo)}`}>
-                            {getTipoOSIcon(os.tipo)} {os.cliente}
-                          </span>
-                          <Badge 
-                            variant="outline" 
-                            className="text-[10px] px-1 py-0 h-4"
-                            style={{ 
-                              borderColor: statusColor.border,
-                              color: statusColor.text
+                      <Tooltip key={os.id}>
+                        <TooltipTrigger asChild>
+                          <div
+                            className="text-xs p-2 rounded border cursor-pointer hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
+                            style={{
+                              backgroundColor: statusColor.bg,
+                              borderColor: statusColor.border
                             }}
+                            onClick={() => handleOSClick(os)}
                           >
-                            {os.status === 'EM_ANDAMENTO' ? 'ANDAMENTO' : os.status}
-                          </Badge>
-                        </div>
-                        <div className="text-[10px] text-muted-foreground truncate" title={getTipoOSLabel(os.tipo)}>
-                          {getTipoOSLabel(os.tipo)}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground truncate mt-1" title={os.responsavel}>
-                          👤 {os.responsavel}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground truncate" title={os.departamento}>
-                          🏢 {os.departamento === 'Assessoria Científica' ? 'AS' : 'DT'}
-                        </div>
-                      </div>
+                            <div className="flex items-start justify-between gap-1 mb-1">
+                              <span className="font-medium truncate flex-1" title={`${os.cliente} - ${getTipoOSLabel(os.tipo)}`}>
+                                {getTipoOSIcon(os.tipo)} {os.cliente}
+                              </span>
+                              <Badge 
+                                variant="outline" 
+                                className="text-[10px] px-1 py-0 h-4"
+                                style={{ 
+                                  borderColor: statusColor.border,
+                                  color: statusColor.text
+                                }}
+                              >
+                                {os.status === 'EM_ANDAMENTO' ? 'ANDAMENTO' : os.status}
+                              </Badge>
+                            </div>
+                            <div className="text-[10px] text-muted-foreground truncate" title={getTipoOSLabel(os.tipo)}>
+                              {getTipoOSLabel(os.tipo)}
+                            </div>
+                            <div className="text-[10px] text-muted-foreground truncate mt-1" title={os.responsavel}>
+                              👤 {os.responsavel}
+                            </div>
+                            <div className="text-[10px] text-muted-foreground truncate" title={os.departamento}>
+                              🏢 {os.departamento === 'Assessoria Científica' ? 'AS' : 'DT'}
+                            </div>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="max-w-xs">
+                          <div className="space-y-1">
+                            <p className="font-semibold">OS: {os.numero}</p>
+                            <p className="text-xs">Equip: {os.equipamento || 'N/A'}</p>
+                            <p className="text-xs">Status: {os.status === 'EM_ANDAMENTO' ? 'Em Andamento' : os.status}</p>
+                            <p className="text-xs text-muted-foreground">Clique para ver detalhes completos</p>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
                     );
                   })}
                 </div>
@@ -240,18 +271,18 @@ const DashboardAssessoria = () => {
         </CardContent>
       </Card>
 
-      {/* Modal de Detalhes */}
+      {/* Sheet de Detalhes */}
       {selectedOS && (
-        <DetalhesOSModal
+        <DetalhesOSSheet
           os={selectedOS}
-          isOpen={isModalOpen}
+          isOpen={isSheetOpen}
           onClose={() => {
-            setIsModalOpen(false);
+            setIsSheetOpen(false);
             setSelectedOS(null);
           }}
         />
       )}
-    </>
+    </TooltipProvider>
   );
 };
 

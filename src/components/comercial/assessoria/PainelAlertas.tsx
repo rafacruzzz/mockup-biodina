@@ -6,7 +6,7 @@ import { Alerta, TipoAlerta } from "@/types/assessoria-cientifica";
 
 interface PainelAlertasProps {
   alertas: Alerta[];
-  onAlertaClick?: (alerta: Alerta) => void;
+  onAlertaClick?: () => void;
 }
 
 const getAlertaIcon = (tipo: TipoAlerta) => {
@@ -63,8 +63,8 @@ export function PainelAlertas({ alertas, onAlertaClick }: PainelAlertasProps) {
           {alertas.map((alerta) => (
             <div
               key={alerta.id}
-              className="flex items-center justify-between p-3 bg-background rounded-lg border hover:border-primary transition-colors cursor-pointer"
-              onClick={() => onAlertaClick?.(alerta)}
+              className="flex items-center justify-between p-3 bg-background rounded-lg border hover:border-primary hover:shadow-md transition-all duration-200 cursor-pointer group"
+              onClick={() => onAlertaClick?.()}
             >
               <div className="flex items-start gap-3 flex-1">
                 <div className="mt-1 text-muted-foreground">
@@ -80,8 +80,8 @@ export function PainelAlertas({ alertas, onAlertaClick }: PainelAlertasProps) {
                   <p className="text-sm text-muted-foreground">{alerta.descricao}</p>
                 </div>
               </div>
-              <Button variant="ghost" size="sm">
-                <ChevronRight className="h-4 w-4" />
+              <Button variant="ghost" size="sm" className="group-hover:bg-accent">
+                <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>
           ))}
