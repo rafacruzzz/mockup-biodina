@@ -215,7 +215,7 @@ const GestaoEmprestimosView = () => {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle>Gestão de Empréstimos</CardTitle>
-            <Button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-primary/90">
+            <Button onClick={() => setIsModalOpen(true)} className="bg-imuv-gold hover:bg-imuv-gold/90 text-white">
               <Plus className="h-4 w-4 mr-2" />
               Novo Empréstimo
             </Button>
