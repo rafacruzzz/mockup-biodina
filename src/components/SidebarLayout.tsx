@@ -109,7 +109,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
         <div className="flex h-16 items-center justify-between px-4 border-b border-gray-100">
           <div className={cn("flex items-center", !isSidebarOpen && "justify-center w-full")}>
             <span className={cn("text-xl font-bold text-biodina-blue", !isSidebarOpen && "hidden")}>
-              {empresaAtual?.nome || 'Biodina'}
+              {empresaAtual?.nome || 'iMuv'}
             </span>
             <span className={cn("text-sm text-biodina-gold ml-2", !isSidebarOpen && "hidden")}>
               Sistemas
@@ -164,7 +164,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
             <Menu size={20} />
           </button>
           <div className="flex items-center justify-between w-full">
-            <h2 className="text-xl font-semibold text-biodina-blue ml-4">Biodina Sistemas</h2>
+            <h2 className="text-xl font-semibold text-biodina-blue ml-4">iMuv Sistemas</h2>
             
             {/* User Profile Menu */}
             <div className="ml-auto flex items-center gap-4">

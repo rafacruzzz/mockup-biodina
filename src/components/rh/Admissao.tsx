@@ -140,7 +140,7 @@ const Admissao = () => {
       nome: item.curriculo.nome,
       cargo: item.cargoDefinitivo || item.curriculo.cargoDesejado,
       departamento: item.curriculo.departamento,
-      empresa: 'Biodina Indústria Farmacêutica',
+      empresa: 'iMuv Indústria Farmacêutica',
       email: item.curriculo.email,
       telefone: item.curriculo.telefone,
       dataAdmissao: new Date().toISOString(),

@@ -298,31 +298,31 @@ export const mockCNPJs = [
   {
     id: 1,
     codigo: "12.345.678/0001-90",
-    nome: "Biodina Matriz",
+    nome: "iMuv Matriz",
     estado: "SP"
   },
   {
     id: 2,
     codigo: "98.765.432/0001-01", 
-    nome: "Biodina Filial SP",
+    nome: "iMuv Filial SP",
     estado: "SP"
   },
   {
     id: 3,
     codigo: "11.222.333/0001-44",
-    nome: "Biodina Filial RJ",
+    nome: "iMuv Filial RJ",
     estado: "RJ"
   },
   {
     id: 4,
     codigo: "22.333.444/0001-55",
-    nome: "Biodina Filial MG",
+    nome: "iMuv Filial MG",
     estado: "MG"
   },
   {
     id: 5,
     codigo: "33.444.555/0001-66",
-    nome: "Biodina Filial PR",
+    nome: "iMuv Filial PR",
     estado: "PR"
   }
 ];

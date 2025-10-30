@@ -39,9 +39,9 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
   // Estados para DDR
   const [ddrData, setDdrData] = useState({
     // Campos do cabeçalho
-    razaoSocial: 'BIODINA INSTRUMENTOS CIENTÍFICOS LTDA',
+    razaoSocial: 'iMuv INSTRUMENTOS CIENTÍFICOS LTDA',
     cnpj: '29.375.441/0001-50',
-    nomeFantasia: 'BIODINA',
+    nomeFantasia: 'iMuv',
     atividadePrincipal: 'COMÉRCIO DE MATERIAIS CIENTÍFICOS',
     // Campos existentes
     autorizacaoAnvisa: '103.011-6',

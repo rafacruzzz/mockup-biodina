@@ -90,8 +90,8 @@ export const modulosDisponiveis: ModuloConfig[] = [
 export const empresasMock: Empresa[] = [
   {
     id: 'master-001',
-    nome: 'Biodina Master',
-    razaoSocial: 'Biodina Tecnologia Ltda',
+    nome: 'iMuv Master',
+    razaoSocial: 'iMuv Tecnologia Ltda',
     cnpj: '12.345.678/0001-99',
     tipo: 'master',
     status: 'ativa',
@@ -124,8 +124,8 @@ export const empresasMock: Empresa[] = [
   },
   {
     id: 'biodina-001',
-    nome: 'Biodina',
-    razaoSocial: 'Biodina Farmacêutica S.A.',
+    nome: 'iMuv',
+    razaoSocial: 'iMuv Farmacêutica S.A.',
     cnpj: '98.765.432/0001-10',
     tipo: 'filial',
     status: 'ativa',

@@ -84,7 +84,7 @@ const OVCTable = ({ items, onUpdateItems }: OVCTableProps) => {
             <TableHead className="border border-gray-300 text-center text-sm">Unit</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Total</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Manufacturer</TableHead>
-            <TableHead className="border border-gray-300 text-center text-sm">Biodina</TableHead>
+            <TableHead className="border border-gray-300 text-center text-sm">iMuv</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Total</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Unit</TableHead>
             <TableHead className="border border-gray-300 text-center text-sm">Total</TableHead>

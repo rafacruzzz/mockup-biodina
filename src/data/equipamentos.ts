@@ -110,7 +110,7 @@ export const movimentacoesEquipamentoMock: MovimentacaoEquipamento[] = [
     data: new Date(2025, 0, 25),
     tipo: "instalacao",
     destino: "Hospital Central - Ala Norte",
-    responsavel: "Equipe Técnica Biodina",
+    responsavel: "Equipe Técnica iMuv",
     observacoes: "Instalação inicial completa com treinamento",
   },
   {
@@ -136,7 +136,7 @@ export const movimentacoesEquipamentoMock: MovimentacaoEquipamento[] = [
     data: new Date(2023, 11, 1),
     tipo: "instalacao",
     destino: "Instituto de Biotecnologia",
-    responsavel: "Equipe Técnica Biodina",
+    responsavel: "Equipe Técnica iMuv",
   },
   {
     id: "mov-005",
