@@ -282,6 +282,60 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoEm: new Date(2025, 9, 9),
     observacoes: "URGENTE: Cliente reportou erro crítico. Atendimento prioritário necessário.",
     atualizadoEm: new Date(2025, 9, 9)
+  },
+  {
+    id: "os-156",
+    numero: "OS-2024-156",
+    tipo: ["suporte_operacional"],
+    status: "CONCLUÍDA",
+    departamento: "Departamento Técnico",
+    cliente: "Hospital Central",
+    clienteId: "cli-001",
+    equipamento: "ABL800",
+    equipamentoId: "eq-001",
+    numeroSerieLote: "SN-ABL800-123",
+    versaoSoftware: "v4.2.1",
+    versaoWindows: "Windows 10 Pro",
+    setorAlocacao: "UTI",
+    opcaoAtendimento: "presencial",
+    descricaoServico: "Manutenção preventiva trimestral - verificação completa dos sistemas, calibração e limpeza",
+    servicoRealizado: "Todas as verificações dentro dos parâmetros. Substituída solução de limpeza. Calibração realizada com sucesso.",
+    dataAgendada: new Date(2024, 6, 10, 9, 0),
+    dataInicio: new Date(2024, 6, 10, 9, 15),
+    dataConclusao: new Date(2024, 6, 10, 11, 30),
+    responsavel: "Téc. Carlos Santos",
+    responsavelId: "resp-009",
+    abertoPor: "DT",
+    abertoEm: new Date(2024, 6, 1),
+    observacoes: "Equipamento operando perfeitamente. Próxima manutenção preventiva em 3 meses.",
+    atualizadoEm: new Date(2024, 6, 10)
+  },
+  {
+    id: "os-203",
+    numero: "OS-2024-203",
+    tipo: ["suporte_operacional"],
+    status: "CONCLUÍDA",
+    departamento: "Departamento Técnico",
+    cliente: "Hospital Central",
+    clienteId: "cli-001",
+    equipamento: "ABL800",
+    equipamentoId: "eq-001",
+    numeroSerieLote: "SN-ABL800-123",
+    versaoSoftware: "v4.2.1",
+    versaoWindows: "Windows 10 Pro",
+    setorAlocacao: "UTI",
+    opcaoAtendimento: "presencial",
+    descricaoServico: "Manutenção corretiva - Correção de erro de leitura do sensor de pH",
+    servicoRealizado: "Substituído sensor de pH. Equipamento testado e aprovado. Peças utilizadas: SEN-PH-001. Realizados 10 testes de validação com resultados dentro dos parâmetros.",
+    dataAgendada: new Date(2024, 9, 5, 14, 0),
+    dataInicio: new Date(2024, 9, 5, 14, 20),
+    dataConclusao: new Date(2024, 9, 5, 16, 45),
+    responsavel: "Téc. Maria Oliveira",
+    responsavelId: "resp-010",
+    abertoPor: "DT",
+    abertoEm: new Date(2024, 9, 4),
+    observacoes: "Sensor de pH apresentou desgaste. Substituição realizada com sucesso. Cliente orientado sobre cuidados preventivos.",
+    atualizadoEm: new Date(2024, 9, 5)
   }
 ];
 
@@ -350,7 +404,9 @@ export const assessoresTecnicos = [
   { id: "resp-005", nome: "Téc. Rafael Alves", departamento: "Departamento Técnico" },
   { id: "resp-006", nome: "Eng. Paulo Mendes", departamento: "Departamento Técnico" },
   { id: "resp-007", nome: "Téc. Juliana Costa", departamento: "Departamento Técnico" },
-  { id: "resp-008", nome: "Ana Assessora", departamento: "Assessoria Científica" }
+  { id: "resp-008", nome: "Ana Assessora", departamento: "Assessoria Científica" },
+  { id: "resp-009", nome: "Téc. Carlos Santos", departamento: "Departamento Técnico" },
+  { id: "resp-010", nome: "Téc. Maria Oliveira", departamento: "Departamento Técnico" }
 ];
 
 // Alertas do sistema
