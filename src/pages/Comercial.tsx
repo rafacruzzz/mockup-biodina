@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DashboardAssessoria from "@/components/comercial/assessoria/DashboardAssessoria";
+import { OrdensServicoTab } from "@/components/comercial/assessoria/OrdensServicoTab";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +32,7 @@ import {
 const Comercial = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'emprestimos' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeTab, setActiveTab] = useState('indicadores');
+  const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "os" | "rastreabilidade" | "repositorio">("agenda");
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [showOportunidadeAvancadaForm, setShowOportunidadeAvancadaForm] = useState(false);
@@ -555,7 +557,6 @@ const Comercial = () => {
   const renderAssessoriaModule = () => {
     return (
       <div className="space-y-6">
-        {/* Cabeçalho do Módulo */}
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-biodina-blue">Comercial / Assessoria Científica</h2>
@@ -566,8 +567,22 @@ const Comercial = () => {
             Voltar
           </Button>
         </div>
-        
-        <DashboardAssessoria />
+
+        <div className="border-b">
+          <div className="flex gap-4">
+            <button onClick={() => setAssessoriaTab("agenda")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "agenda" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Agenda</button>
+            <button onClick={() => setAssessoriaTab("os")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "os" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Ordens de Serviço</button>
+            <button onClick={() => setAssessoriaTab("rastreabilidade")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "rastreabilidade" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Rastreabilidade</button>
+            <button onClick={() => setAssessoriaTab("repositorio")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "repositorio" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Repositório de Produtos</button>
+          </div>
+        </div>
+
+        <div>
+          {assessoriaTab === "agenda" && <DashboardAssessoria />}
+          {assessoriaTab === "os" && <OrdensServicoTab />}
+          {assessoriaTab === "rastreabilidade" && <div className="text-center py-12 text-muted-foreground">Em desenvolvimento</div>}
+          {assessoriaTab === "repositorio" && <div className="text-center py-12 text-muted-foreground">Em desenvolvimento</div>}
+        </div>
       </div>
     );
   };

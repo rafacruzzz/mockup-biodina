@@ -33,11 +33,15 @@ export const DetalhesOSModal = ({ os, isOpen, onClose }: DetalhesOSModalProps) =
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <DialogTitle className="text-xl mb-2">
-                {getTipoOSIcon(os.tipo)} {os.numero}
+                {os.tipo.map(t => getTipoOSIcon(t)).join(" ")} {os.numero}
               </DialogTitle>
-              <p className="text-sm text-muted-foreground">
-                {getTipoOSLabel(os.tipo)}
-              </p>
+              <div className="flex flex-wrap gap-1">
+                {os.tipo.map((t) => (
+                  <Badge key={t} variant="outline" className="text-xs">
+                    {getTipoOSLabel(t)}
+                  </Badge>
+                ))}
+              </div>
             </div>
             <Badge 
               variant="outline"
@@ -98,7 +102,7 @@ export const DetalhesOSModal = ({ os, isOpen, onClose }: DetalhesOSModalProps) =
             </div>
           )}
 
-          {/* Responsável e Local */}
+          {/* Responsável e Opção de Atendimento */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -107,15 +111,13 @@ export const DetalhesOSModal = ({ os, isOpen, onClose }: DetalhesOSModalProps) =
               </div>
               <p className="text-sm pl-6">{os.responsavel}</p>
             </div>
-            {os.local && (
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="h-4 w-4" />
-                  <span className="font-medium">Local</span>
-                </div>
-                <p className="text-sm pl-6">{os.local}</p>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                <span className="font-medium">Atendimento</span>
               </div>
-            )}
+              <p className="text-sm pl-6 capitalize">{os.opcaoAtendimento}</p>
+            </div>
           </div>
 
           <Separator />
@@ -148,14 +150,25 @@ export const DetalhesOSModal = ({ os, isOpen, onClose }: DetalhesOSModalProps) =
 
           <Separator />
 
-          {/* Descrição */}
+          {/* Descrição do Serviço */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <FileText className="h-4 w-4" />
-              <span className="font-medium">Descrição</span>
+              <span className="font-medium">Descrição do Serviço</span>
             </div>
-            <p className="text-sm pl-6">{os.descricao}</p>
+            <p className="text-sm pl-6">{os.descricaoServico}</p>
           </div>
+
+          {/* Serviço Realizado */}
+          {os.servicoRealizado && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <FileText className="h-4 w-4" />
+                <span className="font-medium">Serviço Realizado</span>
+              </div>
+              <p className="text-sm pl-6">{os.servicoRealizado}</p>
+            </div>
+          )}
 
           {/* Observações */}
           {os.observacoes && (
@@ -174,7 +187,7 @@ export const DetalhesOSModal = ({ os, isOpen, onClose }: DetalhesOSModalProps) =
           <div className="space-y-1 text-xs text-muted-foreground pl-6">
             <div className="flex items-center gap-2">
               <Clock className="h-3 w-3" />
-              <span>Criado por {os.criadoPor} em {formatDate(os.criadoEm)}</span>
+              <span>Aberto por {os.abertoPor} em {formatDate(os.abertoEm)}</span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="h-3 w-3" />

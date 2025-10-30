@@ -8,41 +8,55 @@ export type StatusOS =
   | 'CANCELADA';
 
 export type TipoOS = 
+  | 'suporte_operacional'
+  | 'acompanhamento_rotina'
   | 'treinamento_inicial'
-  | 'treinamento_avancado'
-  | 'suporte_tecnico'
-  | 'visita_rotina'
-  | 'manutencao_preventiva'
-  | 'manutencao_corretiva'
-  | 'instalacao'
-  | 'analise_tecnica'
-  | 'consultoria';
+  | 'treinamento_nova_equipe'
+  | 'analise_edital';
 
 export type DepartamentoOS = 'Assessoria Científica' | 'Departamento Técnico';
+
+export type OpcaoAtendimento = 'presencial' | 'remoto';
+
+export type AbertoPor = 'Comercial' | 'DT' | 'Assessor';
+
+export interface AssinaturaOS {
+  nomeCliente: string;
+  assinaturaCliente: string; // base64 da assinatura
+  nomeAssessor: string;
+  assinaturaAssessor: string; // base64 da assinatura
+  data: Date;
+}
 
 export interface OrdemServico {
   id: string;
   numero: string;
-  tipo: TipoOS;
+  tipo: TipoOS[];
   status: StatusOS;
   departamento: DepartamentoOS;
   cliente: string;
   clienteId?: string;
   equipamento?: string;
   equipamentoId?: string;
+  numeroSerieLote?: string;
+  versaoSoftware?: string;
+  versaoWindows?: string;
+  setorAlocacao?: string;
+  opcaoAtendimento: OpcaoAtendimento;
   projeto?: string;
   projetoId?: string;
-  descricao: string;
+  descricaoServico: string;
+  servicoRealizado?: string;
   dataAgendada: Date;
   dataInicio?: Date;
   dataConclusao?: Date;
   responsavel: string;
   responsavelId?: string;
-  local?: string;
+  abertoPor: AbertoPor;
+  abertoEm: Date;
   observacoes?: string;
   anexos?: string[];
-  criadoPor: string;
-  criadoEm: Date;
+  assinatura?: AssinaturaOS;
   atualizadoEm: Date;
 }
 
