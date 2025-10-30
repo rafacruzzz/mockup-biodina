@@ -1,6 +1,7 @@
 import { useState } from "react";
 import DashboardAssessoria from "@/components/comercial/assessoria/DashboardAssessoria";
 import { OrdensServicoTab } from "@/components/comercial/assessoria/OrdensServicoTab";
+import { RastreabilidadeTab } from "@/components/comercial/assessoria/RastreabilidadeTab";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -580,7 +581,7 @@ const Comercial = () => {
         <div>
           {assessoriaTab === "agenda" && <DashboardAssessoria />}
           {assessoriaTab === "os" && <OrdensServicoTab />}
-          {assessoriaTab === "rastreabilidade" && <div className="text-center py-12 text-muted-foreground">Em desenvolvimento</div>}
+          {assessoriaTab === "rastreabilidade" && <RastreabilidadeTab />}
           {assessoriaTab === "repositorio" && <div className="text-center py-12 text-muted-foreground">Em desenvolvimento</div>}
         </div>
       </div>
