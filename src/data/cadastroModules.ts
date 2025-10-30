@@ -482,8 +482,8 @@ export const modules: ModulesConfig = {
             id: 1,
             nomeProduto: "Equipamento Médico XYZ-100",
             numeroRegistro: "80125120001",
-            dataRegistro: "15/03/2023",
-            dataVencimento: "15/03/2028",
+            dataRegistro: "2023-03-15",
+            dataVencimento: "2028-03-15",
             fabricante: "ABC Medical Inc.",
             status: "Ativo"
           },
@@ -491,8 +491,8 @@ export const modules: ModulesConfig = {
             id: 2,
             nomeProduto: "Dispositivo ABC-200",
             numeroRegistro: "80125120002",
-            dataRegistro: "22/07/2022",
-            dataVencimento: "22/07/2027",
+            dataRegistro: "2022-07-22",
+            dataVencimento: "2027-07-22",
             fabricante: "DEF Healthcare",
             status: "Ativo"
           }
@@ -512,7 +512,7 @@ export const modules: ModulesConfig = {
             nomeArquivoPrincipal: "Manual de Instruções v2.0",
             numeroRegistroRelacionado: "80125120001",
             tipoAtualizacao: "Manual do Usuário",
-            dataPeticionamento: "10/01/2024",
+            dataPeticionamento: "2024-01-10",
             status: "Em Análise"
           }
         ]
@@ -528,19 +528,42 @@ export const modules: ModulesConfig = {
         data: [
           {
             id: 1,
+            idTriagem: "TRI-2024-001",
             nomeFornecedor: "Medical Supply Brasil",
-            cnpj: "56.789.012/0001-34",
-            dataTriagem: "15/02/2024",
-            status: "Aprovado",
-            score: 85
+            dataCriacao: "2024-02-15",
+            statusAtual: "Aprovado",
+            responsavel: "Ana Silva",
+            contatoPrincipal: "João Santos",
+            emailContato: "joao@medicalsupply.com.br",
+            telefoneContato: "(11) 6789-0123",
+            produtosInteresse: "Equipamentos Cirúrgicos",
+            protocoloInterno: "PROT-2024-001"
           },
           {
             id: 2,
+            idTriagem: "TRI-2024-002",
             nomeFornecedor: "HealthTech Distribuidora",
-            cnpj: "67.890.123/0001-45",
-            dataTriagem: "20/02/2024",
-            status: "Em Análise",
-            score: 72
+            dataCriacao: "2024-02-20",
+            statusAtual: "Em Análise Comercial",
+            responsavel: "Carlos Mendes",
+            contatoPrincipal: "Maria Costa",
+            emailContato: "maria@healthtech.com.br",
+            telefoneContato: "(61) 7890-1234",
+            produtosInteresse: "Dispositivos de Diagnóstico",
+            protocoloInterno: "PROT-2024-002"
+          },
+          {
+            id: 3,
+            idTriagem: "TRI-2024-003",
+            nomeFornecedor: "BioMed Solutions",
+            dataCriacao: "2024-03-01",
+            statusAtual: "Aguardando Documentos",
+            responsavel: "Ana Silva",
+            contatoPrincipal: "Roberto Lima",
+            emailContato: "roberto@biomed.com.br",
+            telefoneContato: "(21) 8901-2345",
+            produtosInteresse: "Material Laboratorial",
+            protocoloInterno: "PROT-2024-003"
           }
         ]
       }
