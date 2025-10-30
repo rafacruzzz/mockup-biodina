@@ -5,14 +5,16 @@ import { FileText } from 'lucide-react';
 import SPIForm from './components/SPIForm';
 import NOMainForm from './components/NOMainForm';
 import InstrucaoEmbarqueForm from './components/InstrucaoEmbarqueForm';
-import PackingListForm from './components/PackingListForm';
+import FaturaPackingCertificadosForm from './components/FaturaPackingCertificadosForm';
 import DDRForm from './components/DDRForm';
 import OVCForm from './components/OVCForm';
 import ComercialTabs from './components/ComercialTabs';
 import SPIEnvioModal from './components/SPIEnvioModal';
 import GestaoEmprestimosTab from './components/GestaoEmprestimosTab';
 import GestaoComissoesTab from './components/GestaoComissoesTab';
-import { AnexosForm } from './components/AnexosForm';
+import PIForm from './components/PIForm';
+import AOSOForm from './components/AOSOForm';
+import LIForm from './components/LIForm';
 import { generateSPIPDF } from './utils/spiUtils';
 import { PIHistoryItem, PIStatus } from '@/types/piHistory';
 
@@ -274,13 +276,15 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
     { id: 'comercial', label: 'COMERCIAL' },
     { id: 'spi', label: 'SPI' },
     { id: 'ovc', label: 'OVC' },
+    { id: 'pi', label: 'PI' },
     { id: 'no', label: 'NO' },
+    { id: 'ao-so', label: 'AO/SO' },
     { id: 'instrucao-embarque', label: 'INSTRUÇÃO DE EMBARQUE' },
-    { id: 'packing-list', label: 'PACKING LIST' },
+    { id: 'fatura-packing-certificados', label: 'FATURA, PACKING LIST, CERTIFICADOS' },
+    { id: 'li', label: 'LI' },
     { id: 'ddr', label: 'DDR' },
     { id: 'gestao-emprestimos', label: 'GESTÃO DE EMPRÉSTIMOS' },
-    { id: 'gestao-comissoes', label: 'GESTÃO DE COMISSÕES' },
-    { id: 'anexos', label: 'ANEXOS' }
+    { id: 'gestao-comissoes', label: 'GESTÃO DE COMISSÕES' }
   ];
 
   // Computar o ID da importação atual
@@ -377,6 +381,18 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
   };
 
   const renderMasterTabContent = () => {
+    if (activeMasterTab === 'comercial') {
+      return (
+        <ComercialTabs
+          activeTab={activeToolTab}
+          onTabChange={setActiveToolTab}
+          formData={formData}
+          onInputChange={handleInputChange}
+          oportunidade={oportunidade}
+        />
+      );
+    }
+
     if (activeMasterTab === 'spi') {
       return (
         <SPIForm
@@ -399,6 +415,15 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
         />
       );
     }
+
+    if (activeMasterTab === 'pi') {
+      return (
+        <PIForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
     
     if (activeMasterTab === 'no') {
       return (
@@ -408,10 +433,10 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
         />
       );
     }
-    
-    if (activeMasterTab === 'anexos') {
+
+    if (activeMasterTab === 'ao-so') {
       return (
-        <AnexosForm
+        <AOSOForm
           formData={formData}
           onInputChange={handleInputChange}
         />
@@ -427,9 +452,18 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
       );
     }
     
-    if (activeMasterTab === 'packing-list') {
+    if (activeMasterTab === 'fatura-packing-certificados') {
       return (
-        <PackingListForm
+        <FaturaPackingCertificadosForm
+          formData={formData}
+          onInputChange={handleInputChange}
+        />
+      );
+    }
+
+    if (activeMasterTab === 'li') {
+      return (
+        <LIForm
           formData={formData}
           onInputChange={handleInputChange}
         />
@@ -459,18 +493,6 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
           importacaoId={getImportacaoId()}
           formData={formData}
           onInputChange={handleInputChange}
-        />
-      );
-    }
-    
-    if (activeMasterTab === 'comercial') {
-      return (
-        <ComercialTabs
-          activeTab={activeToolTab}
-          onTabChange={setActiveToolTab}
-          formData={formData}
-          onInputChange={handleInputChange}
-          oportunidade={oportunidade}
         />
       );
     }
