@@ -1,4 +1,5 @@
 import { useState } from "react";
+import DashboardAssessoria from "@/components/comercial/assessoria/DashboardAssessoria";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -554,22 +555,19 @@ const Comercial = () => {
   const renderAssessoriaModule = () => {
     return (
       <div className="space-y-6">
-        <div className="flex items-center gap-4 mb-6">
-          <Button 
-            variant="outline" 
-            onClick={() => setActiveModule('main')}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
+        {/* Cabeçalho do Módulo */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-biodina-blue">Comercial / Assessoria Científica</h2>
+            <p className="text-muted-foreground mt-1">Gestão de Ordens de Serviço e Agenda de Campo</p>
+          </div>
+          <Button variant="outline" onClick={() => setActiveModule('main')}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
             Voltar
           </Button>
-          <h2 className="text-2xl font-bold text-biodina-blue">Comercial / Assessoria Científica</h2>
         </div>
-        <Card>
-          <CardContent className="p-8 text-center">
-            <p className="text-gray-600">Módulo de Assessoria Científica em desenvolvimento</p>
-          </CardContent>
-        </Card>
+        
+        <DashboardAssessoria />
       </div>
     );
   };
