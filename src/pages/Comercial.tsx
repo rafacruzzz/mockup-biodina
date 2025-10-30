@@ -2,6 +2,7 @@ import { useState } from "react";
 import DashboardAssessoria from "@/components/comercial/assessoria/DashboardAssessoria";
 import { OrdensServicoTab } from "@/components/comercial/assessoria/OrdensServicoTab";
 import { RastreabilidadeTab } from "@/components/comercial/assessoria/RastreabilidadeTab";
+import { RepositorioProdutosTab } from "@/components/comercial/assessoria/RepositorioProdutosTab";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -582,7 +583,7 @@ const Comercial = () => {
           {assessoriaTab === "agenda" && <DashboardAssessoria />}
           {assessoriaTab === "os" && <OrdensServicoTab />}
           {assessoriaTab === "rastreabilidade" && <RastreabilidadeTab />}
-          {assessoriaTab === "repositorio" && <div className="text-center py-12 text-muted-foreground">Em desenvolvimento</div>}
+          {assessoriaTab === "repositorio" && <RepositorioProdutosTab />}
         </div>
       </div>
     );
