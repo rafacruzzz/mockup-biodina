@@ -63,11 +63,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				biodina: {
-					blue: '#0A2342',
-					gold: '#D5A021',
-					darkblue: '#061325',
-				}
+			imuv: {
+				blue: '#0A2342',
+				gold: '#D5A021',
+				darkblue: '#061325',
+			}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

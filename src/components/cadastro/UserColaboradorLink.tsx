@@ -21,12 +21,12 @@ const UserColaboradorLink = ({ colaboradorId, onViewColaborador }: UserColaborad
   }
 
   return (
-    <Card className="border-biodina-gold/20 bg-biodina-gold/5">
+    <Card className="border-imuv-gold/20 bg-imuv-gold/5">
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-biodina-gold" />
+              <User className="h-4 w-4 text-imuv-gold" />
               <span className="font-medium">{colaborador.nome}</span>
               <Badge variant="outline" className="text-xs">
                 {colaborador.status}
@@ -57,7 +57,7 @@ const UserColaboradorLink = ({ colaboradorId, onViewColaborador }: UserColaborad
             variant="outline"
             size="sm"
             onClick={onViewColaborador}
-            className="border-biodina-gold text-biodina-gold hover:bg-biodina-gold hover:text-white"
+            className="border-imuv-gold text-imuv-gold hover:bg-imuv-gold hover:text-white"
           >
             <ExternalLink className="h-4 w-4 mr-1" />
             Ver Dados Completos

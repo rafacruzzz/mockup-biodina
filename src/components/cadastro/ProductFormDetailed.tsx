@@ -50,7 +50,7 @@ const ProductFormDetailed = ({ isOpen, onClose }: ProductFormDetailedProps) => {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-2xl font-bold text-biodina-blue">Cadastro de Produto</h2>
+          <h2 className="text-2xl font-bold text-imuv-blue">Cadastro de Produto</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-5 w-5" />
           </Button>
@@ -229,7 +229,7 @@ const ProductFormDetailed = ({ isOpen, onClose }: ProductFormDetailedProps) => {
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
+          <Button onClick={handleSave} className="bg-imuv-gold hover:bg-imuv-gold/90">
             <Save className="h-4 w-4 mr-2" />
             Salvar Produto
           </Button>

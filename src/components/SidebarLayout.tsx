@@ -108,16 +108,16 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
       >
         <div className="flex h-16 items-center justify-between px-4 border-b border-gray-100">
           <div className={cn("flex items-center", !isSidebarOpen && "justify-center w-full")}>
-            <span className={cn("text-xl font-bold text-biodina-blue", !isSidebarOpen && "hidden")}>
-              {empresaAtual?.nome || 'Biodina'}
+            <span className={cn("text-xl font-bold text-imuv-blue", !isSidebarOpen && "hidden")}>
+              {empresaAtual?.nome || 'Imuv'}
             </span>
-            <span className={cn("text-sm text-biodina-gold ml-2", !isSidebarOpen && "hidden")}>
+            <span className={cn("text-sm text-imuv-gold ml-2", !isSidebarOpen && "hidden")}>
               Sistemas
             </span>
           </div>
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-            className="text-gray-400 hover:text-biodina-blue p-2 rounded-lg hover:bg-gray-50 transition-colors"
+            className="text-gray-400 hover:text-imuv-blue p-2 rounded-lg hover:bg-gray-50 transition-colors"
           >
             {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -131,7 +131,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
                   to={item.path}
                   className={cn(
                     "flex items-center p-3 text-sm font-medium rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 transition-all duration-200",
-                    location.pathname === item.path && "bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md",
+                    location.pathname === item.path && "bg-gradient-to-r from-imuv-blue to-imuv-blue/90 text-white shadow-md",
                     !isSidebarOpen && "justify-center"
                   )}
                 >
@@ -159,18 +159,18 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
         <header className="bg-white h-16 shadow-sm flex items-center px-6 border-b border-gray-100">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-gray-600 hover:text-biodina-blue p-2 lg:hidden rounded-lg hover:bg-gray-50"
+            className="text-gray-600 hover:text-imuv-blue p-2 lg:hidden rounded-lg hover:bg-gray-50"
           >
             <Menu size={20} />
           </button>
           <div className="flex items-center justify-between w-full">
-            <h2 className="text-xl font-semibold text-biodina-blue ml-4">Biodina Sistemas</h2>
+            <h2 className="text-xl font-semibold text-imuv-blue ml-4">Imuv Sistemas</h2>
             
             {/* User Profile Menu */}
             <div className="ml-auto flex items-center gap-4">
               <button 
                 onClick={() => setIsSidebarOpen(false)}
-                className="p-2 text-gray-600 hover:text-biodina-blue rounded-lg hover:bg-gray-50 transition-colors"
+                className="p-2 text-gray-600 hover:text-imuv-blue rounded-lg hover:bg-gray-50 transition-colors"
                 title="Fechar menu"
               >
                 <X size={20} />

@@ -32,7 +32,7 @@ const LoginForm = () => {
   return (
     <div className="w-full max-w-md">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-biodina-blue mb-2">Bem-vindo</h1>
+        <h1 className="text-3xl font-bold text-imuv-blue mb-2">Bem-vindo</h1>
         <p className="text-gray-600">Acesse sua conta para continuar</p>
       </div>
       
@@ -43,7 +43,7 @@ const LoginForm = () => {
             <Input
               type="email"
               placeholder="Seu e-mail"
-              className="pl-12 h-12 bg-gray-50 border-gray-200 text-biodina-blue placeholder:text-gray-400 focus:border-biodina-gold focus:ring-biodina-gold rounded-xl"
+              className="pl-12 h-12 bg-gray-50 border-gray-200 text-imuv-blue placeholder:text-gray-400 focus:border-imuv-gold focus:ring-imuv-gold rounded-xl"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -55,7 +55,7 @@ const LoginForm = () => {
             <Input
               type={showPassword ? "text" : "password"}
               placeholder="Sua senha"
-              className="pl-12 pr-12 h-12 bg-gray-50 border-gray-200 text-biodina-blue placeholder:text-gray-400 focus:border-biodina-gold focus:ring-biodina-gold rounded-xl"
+              className="pl-12 pr-12 h-12 bg-gray-50 border-gray-200 text-imuv-blue placeholder:text-gray-400 focus:border-imuv-gold focus:ring-imuv-gold rounded-xl"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -75,7 +75,7 @@ const LoginForm = () => {
         </div>
         
         <div className="flex justify-end">
-          <a href="#" className="text-sm text-biodina-gold hover:text-biodina-gold/80 font-medium transition-colors">
+          <a href="#" className="text-sm text-imuv-gold hover:text-imuv-gold/80 font-medium transition-colors">
             Esqueci minha senha
           </a>
         </div>
@@ -83,7 +83,7 @@ const LoginForm = () => {
         <Button 
           type="submit" 
           disabled={isLoading} 
-          className="w-full bg-biodina-gold hover:bg-biodina-gold/90 text-white font-semibold flex items-center justify-center gap-2 h-12 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+          className="w-full bg-imuv-gold hover:bg-imuv-gold/90 text-white font-semibold flex items-center justify-center gap-2 h-12 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
         >
           {isLoading ? "Entrando..." : "Entrar"}
           {!isLoading && <ArrowRight className="h-4 w-4" />}

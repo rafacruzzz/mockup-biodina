@@ -17,11 +17,11 @@ const Login = () => {
       />
       
       {/* Subtle overlay for better contrast */}
-      <div className="absolute inset-0 bg-gradient-to-br from-biodina-darkblue/40 via-transparent to-biodina-darkblue/40 z-0" />
+      <div className="absolute inset-0 bg-gradient-to-br from-imuv-darkblue/40 via-transparent to-imuv-darkblue/40 z-0" />
       
       {/* Header with company branding */}
       <div className="absolute top-8 left-8 z-10">
-        <h2 className="text-3xl font-bold text-white tracking-tight drop-shadow-lg">Biodina</h2>
+        <h2 className="text-3xl font-bold text-white tracking-tight drop-shadow-lg">Imuv</h2>
         <p className="text-gray-200 text-sm mt-1 drop-shadow">Sistemas Inteligentes</p>
       </div>
       
@@ -32,7 +32,7 @@ const Login = () => {
       
       {/* Footer */}
       <div className="absolute bottom-6 text-center w-full z-10">
-        <p className="text-gray-200 text-sm drop-shadow">© 2025 Biodina. Todos os direitos reservados.</p>
+        <p className="text-gray-200 text-sm drop-shadow">© 2025 Imuv. Todos os direitos reservados.</p>
       </div>
     </div>
   );
