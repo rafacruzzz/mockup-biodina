@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,12 +13,14 @@ import { Produto } from "@/types/produto";
 import { getComparativosPorProduto } from "@/data/produtos";
 import { Plus, FileText, Download, Upload } from "lucide-react";
 import { format } from "date-fns";
+import { ComparativoDialog } from "./ComparativoDialog";
 
 interface SuporteVendasTabProps {
   produto: Produto;
 }
 
 export function SuporteVendasTab({ produto }: SuporteVendasTabProps) {
+  const [comparativoDialogOpen, setComparativoDialogOpen] = useState(false);
   const comparativos = getComparativosPorProduto(produto.id);
 
   return (
@@ -30,7 +33,7 @@ export function SuporteVendasTab({ produto }: SuporteVendasTabProps) {
               <FileText className="h-5 w-5" />
               Comparativos Técnicos
             </CardTitle>
-            <Button>
+            <Button onClick={() => setComparativoDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Criar Comparativo
             </Button>
@@ -135,6 +138,13 @@ export function SuporteVendasTab({ produto }: SuporteVendasTabProps) {
           </div>
         </CardContent>
       </Card>
+
+      {/* Dialog de Comparativo */}
+      <ComparativoDialog
+        open={comparativoDialogOpen}
+        onOpenChange={setComparativoDialogOpen}
+        produto={produto}
+      />
     </div>
   );
 }
