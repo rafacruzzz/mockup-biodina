@@ -4,7 +4,10 @@ import {
   Building2, 
   Warehouse,
   Wrench,
-  Tag
+  Tag,
+  FileCheck,
+  RefreshCw,
+  UserCheck
 } from "lucide-react";
 import type { ModulesConfig } from "@/types/cadastro";
 
@@ -463,6 +466,81 @@ export const modules: ModulesConfig = {
             possuiOfx: false,
             gerente: "Roberto Lima",
             telefoneGerente: "(11) 92345-6789"
+          }
+        ]
+      }
+    }
+  },
+  registros_anvisa: {
+    name: "Registros ANVISA",
+    icon: FileCheck,
+    subModules: {
+      registros: {
+        name: "Registros",
+        data: [
+          {
+            id: 1,
+            nomeProduto: "Equipamento Médico XYZ-100",
+            numeroRegistro: "80125120001",
+            dataRegistro: "15/03/2023",
+            dataVencimento: "15/03/2028",
+            fabricante: "ABC Medical Inc.",
+            status: "Ativo"
+          },
+          {
+            id: 2,
+            nomeProduto: "Dispositivo ABC-200",
+            numeroRegistro: "80125120002",
+            dataRegistro: "22/07/2022",
+            dataVencimento: "22/07/2027",
+            fabricante: "DEF Healthcare",
+            status: "Ativo"
+          }
+        ]
+      }
+    }
+  },
+  atualizacoes_anvisa: {
+    name: "Atualizações ANVISA",
+    icon: RefreshCw,
+    subModules: {
+      atualizacoes: {
+        name: "Atualizações",
+        data: [
+          {
+            id: 1,
+            nomeArquivoPrincipal: "Manual de Instruções v2.0",
+            numeroRegistroRelacionado: "80125120001",
+            tipoAtualizacao: "Manual do Usuário",
+            dataPeticionamento: "10/01/2024",
+            status: "Em Análise"
+          }
+        ]
+      }
+    }
+  },
+  due_diligence_fornecedor: {
+    name: "Due Diligence Fornecedor",
+    icon: UserCheck,
+    subModules: {
+      triagens: {
+        name: "Triagens",
+        data: [
+          {
+            id: 1,
+            nomeFornecedor: "Medical Supply Brasil",
+            cnpj: "56.789.012/0001-34",
+            dataTriagem: "15/02/2024",
+            status: "Aprovado",
+            score: 85
+          },
+          {
+            id: 2,
+            nomeFornecedor: "HealthTech Distribuidora",
+            cnpj: "67.890.123/0001-45",
+            dataTriagem: "20/02/2024",
+            status: "Em Análise",
+            score: 72
           }
         ]
       }
