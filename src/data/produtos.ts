@@ -149,6 +149,82 @@ export const documentosProdutoMock: DocumentoProduto[] = [
     uploadPor: "Dra. Maria Santos",
     arquivo: "artigo-clinico-abl800.pdf",
   },
+  // Documentos ABL800 BASIC
+  {
+    id: "doc-005",
+    produtoId: "prod-002",
+    tipo: "manual",
+    titulo: "Manual de Operação (IFU) - PT-BR",
+    versao: "2.1",
+    idioma: "PT-BR",
+    dataUpload: new Date(2025, 1, 10),
+    uploadPor: "Ana Costa",
+    arquivo: "manual-operacao-abl800-basic-v2.1-pt.pdf",
+    historicoVersoes: [
+      {
+        versao: "2.0",
+        dataAprovacao: new Date(2024, 10, 20),
+        aprovadoPor: "Dr. Ricardo Almeida",
+        arquivo: "manual-operacao-abl800-basic-v2.0-pt.pdf",
+      },
+      {
+        versao: "1.8",
+        dataAprovacao: new Date(2024, 5, 15),
+        aprovadoPor: "Ana Costa",
+        arquivo: "manual-operacao-abl800-basic-v1.8-pt.pdf",
+      },
+      {
+        versao: "1.5",
+        dataAprovacao: new Date(2023, 11, 1),
+        aprovadoPor: "Mariana Silva",
+        arquivo: "manual-operacao-abl800-basic-v1.5-pt.pdf",
+      },
+    ],
+  },
+  {
+    id: "doc-006",
+    produtoId: "prod-002",
+    tipo: "catalogo",
+    titulo: "Catálogo ABL800 BASIC 2025",
+    versao: "1.0",
+    idioma: "PT-BR",
+    dataUpload: new Date(2025, 0, 5),
+    uploadPor: "Dr. Carlos Mendes",
+    arquivo: "catalogo-abl800-basic-2025.pdf",
+    historicoVersoes: [
+      {
+        versao: "2024",
+        dataAprovacao: new Date(2024, 0, 10),
+        aprovadoPor: "Equipe Marketing",
+        arquivo: "catalogo-abl800-basic-2024.pdf",
+      },
+    ],
+  },
+  {
+    id: "doc-007",
+    produtoId: "prod-002",
+    tipo: "manual",
+    titulo: "Ficha Técnica Detalhada",
+    versao: "3.2",
+    idioma: "PT-BR",
+    dataUpload: new Date(2025, 1, 15),
+    uploadPor: "Equipe Técnica",
+    arquivo: "ficha-tecnica-abl800-basic-v3.2.pdf",
+    historicoVersoes: [
+      {
+        versao: "3.1",
+        dataAprovacao: new Date(2024, 8, 20),
+        aprovadoPor: "Eng. Paulo Santos",
+        arquivo: "ficha-tecnica-abl800-basic-v3.1.pdf",
+      },
+      {
+        versao: "3.0",
+        dataAprovacao: new Date(2024, 3, 10),
+        aprovadoPor: "Eng. Paulo Santos",
+        arquivo: "ficha-tecnica-abl800-basic-v3.0.pdf",
+      },
+    ],
+  },
 ];
 
 export const comparativosMock: ComparativoProduto[] = [
