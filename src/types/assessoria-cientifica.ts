@@ -58,6 +58,8 @@ export interface OrdemServico {
   anexos?: string[];
   assinatura?: AssinaturaOS;
   atualizadoEm: Date;
+  participantes?: string[]; // Para treinamentos
+  editalAnexo?: string; // Para análise de edital
 }
 
 export interface FiltrosAgenda {
@@ -67,4 +69,18 @@ export interface FiltrosAgenda {
   status: StatusOS[];
   dataInicio?: Date;
   dataFim?: Date;
+}
+
+export type TipoAlerta = 'prazo' | 'acompanhamento' | 'urgente';
+
+export interface Alerta {
+  id: string;
+  tipo: TipoAlerta;
+  titulo: string;
+  descricao: string;
+  prioridade: 'baixa' | 'media' | 'alta';
+  link?: string;
+  osId?: string;
+  clienteId?: string;
+  dataCriacao: Date;
 }

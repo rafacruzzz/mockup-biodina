@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, Calendar, Plus } from "lucide-react";
 import { OrdemServico, FiltrosAgenda, StatusOS, DepartamentoOS } from "@/types/assessoria-cientifica";
-import { ordensServicoMock, getTipoOSIcon, getTipoOSLabel, getStatusColor } from "@/data/assessoria-cientifica";
+import { ordensServicoMock, getTipoOSIcon, getTipoOSLabel, getStatusColor, alertasMock } from "@/data/assessoria-cientifica";
 import { FiltrosAgendaOS } from "./FiltrosAgendaOS";
 import { DetalhesOSModal } from "./DetalhesOSModal";
+import { PainelAlertas } from "./PainelAlertas";
 
 const DashboardAssessoria = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -117,6 +118,14 @@ const DashboardAssessoria = () => {
 
   return (
     <>
+      {/* Painel de Alertas */}
+      <PainelAlertas 
+        alertas={alertasMock}
+        onAlertaClick={(alerta) => {
+          console.log("Alerta clicado:", alerta);
+        }}
+      />
+
       <Card className="shadow-lg">
         <CardHeader>
           <div className="flex items-center justify-between flex-wrap gap-4">

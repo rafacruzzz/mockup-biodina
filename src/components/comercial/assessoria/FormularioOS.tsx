@@ -39,9 +39,22 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     observacoes: os?.observacoes || "",
     status: (os?.status || "ABERTA") as StatusOS,
     responsavel: os?.responsavel || "",
+    participantes: os?.participantes || [],
+    editalAnexo: os?.editalAnexo || "",
   });
 
   const [showAssinatura, setShowAssinatura] = useState(false);
+  const [participantesText, setParticipantesText] = useState(
+    os?.participantes?.join(", ") || ""
+  );
+
+  // Verificar se é análise de edital
+  const isAnaliseEdital = formData.tipos.includes("analise_edital");
+  
+  // Verificar se é treinamento
+  const isTreinamento = formData.tipos.some(tipo => 
+    tipo === "treinamento_inicial" || tipo === "treinamento_nova_equipe"
+  );
 
   const tiposOS: TipoOS[] = [
     "suporte_operacional",
@@ -72,9 +85,40 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       return;
     }
 
+    // Converter participantes de texto para array
+    const participantesArray = participantesText
+      .split(",")
+      .map(p => p.trim())
+      .filter(p => p.length > 0);
+
     // Aqui implementar salvamento (localStorage para offline, sync depois)
     toast.success(isNew ? "OS criada com sucesso" : "OS atualizada com sucesso");
     onClose();
+  };
+
+  const handleEmitirCertificado = () => {
+    if (!isTreinamento) {
+      toast.error("Esta funcionalidade é apenas para OS de treinamento");
+      return;
+    }
+    
+    if (formData.status !== "CONCLUÍDA") {
+      toast.error("O treinamento precisa estar concluído para emitir certificado");
+      return;
+    }
+
+    const participantesArray = participantesText
+      .split(",")
+      .map(p => p.trim())
+      .filter(p => p.length > 0);
+
+    if (participantesArray.length === 0) {
+      toast.error("Adicione pelo menos um participante");
+      return;
+    }
+
+    // TODO: Integrar com template do repositório e gerar PDF
+    toast.success(`Certificado emitido para ${participantesArray.length} participante(s)`);
   };
 
   const canShowAssinatura =
@@ -105,6 +149,11 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
           <Save className="h-4 w-4 mr-2" />
           Salvar
         </Button>
+        {isTreinamento && formData.status === "CONCLUÍDA" && (
+          <Button onClick={handleEmitirCertificado} variant="secondary">
+            Emitir Certificado
+          </Button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -127,45 +176,65 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
               value={formData.equipamento}
               onChange={(e) => setFormData({ ...formData, equipamento: e.target.value })}
               placeholder="Selecionar equipamento..."
+              disabled={isAnaliseEdital}
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="numeroSerieLote">Nº de Série/Lote</Label>
-            <Input
-              id="numeroSerieLote"
-              value={formData.numeroSerieLote}
-              onChange={(e) => setFormData({ ...formData, numeroSerieLote: e.target.value })}
-            />
-          </div>
+          {!isAnaliseEdital && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="numeroSerieLote">Nº de Série/Lote</Label>
+                <Input
+                  id="numeroSerieLote"
+                  value={formData.numeroSerieLote}
+                  onChange={(e) => setFormData({ ...formData, numeroSerieLote: e.target.value })}
+                />
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="versaoSoftware">Versão Software</Label>
+                  <Input
+                    id="versaoSoftware"
+                    value={formData.versaoSoftware}
+                    onChange={(e) => setFormData({ ...formData, versaoSoftware: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="versaoWindows">Versão do Windows</Label>
+                  <Input
+                    id="versaoWindows"
+                    value={formData.versaoWindows}
+                    onChange={(e) => setFormData({ ...formData, versaoWindows: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="setorAlocacao">Setor de Alocação</Label>
+                <Input
+                  id="setorAlocacao"
+                  value={formData.setorAlocacao}
+                  onChange={(e) => setFormData({ ...formData, setorAlocacao: e.target.value })}
+                />
+              </div>
+            </>
+          )}
+
+          {isAnaliseEdital && (
             <div className="space-y-2">
-              <Label htmlFor="versaoSoftware">Versão Software</Label>
-              <Input
-                id="versaoSoftware"
-                value={formData.versaoSoftware}
-                onChange={(e) => setFormData({ ...formData, versaoSoftware: e.target.value })}
-              />
+              <Label htmlFor="editalAnexo">Anexar Edital *</Label>
+              <div className="border-2 border-dashed border-primary rounded-lg p-6 text-center bg-primary/5">
+                <Upload className="h-8 w-8 mx-auto mb-2 text-primary" />
+                <p className="text-sm text-muted-foreground mb-2">
+                  Arraste o edital ou clique para selecionar
+                </p>
+                <Button variant="outline" size="sm">
+                  Selecionar Edital
+                </Button>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="versaoWindows">Versão do Windows</Label>
-              <Input
-                id="versaoWindows"
-                value={formData.versaoWindows}
-                onChange={(e) => setFormData({ ...formData, versaoWindows: e.target.value })}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="setorAlocacao">Setor de Alocação</Label>
-            <Input
-              id="setorAlocacao"
-              value={formData.setorAlocacao}
-              onChange={(e) => setFormData({ ...formData, setorAlocacao: e.target.value })}
-            />
-          </div>
+          )}
 
           <div className="space-y-2">
             <Label>Opção de Atendimento *</Label>
@@ -272,18 +341,38 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>Anexos</Label>
-            <div className="border-2 border-dashed rounded-lg p-6 text-center">
-              <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground mb-2">
-                Arraste arquivos ou clique para selecionar
+          {isTreinamento && (
+            <div className="space-y-2">
+              <Label htmlFor="participantes">
+                Participantes do Treinamento {formData.status === "CONCLUÍDA" && "*"}
+              </Label>
+              <Textarea
+                id="participantes"
+                value={participantesText}
+                onChange={(e) => setParticipantesText(e.target.value)}
+                rows={3}
+                placeholder="Digite os nomes separados por vírgula&#10;Ex: João Silva, Maria Santos, Pedro Oliveira"
+              />
+              <p className="text-xs text-muted-foreground">
+                Necessário para emissão de certificados
               </p>
-              <Button variant="outline" size="sm">
-                Selecionar Arquivos
-              </Button>
             </div>
-          </div>
+          )}
+
+          {!isAnaliseEdital && (
+            <div className="space-y-2">
+              <Label>Anexos</Label>
+              <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground mb-2">
+                  Arraste arquivos ou clique para selecionar
+                </p>
+                <Button variant="outline" size="sm">
+                  Selecionar Arquivos
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

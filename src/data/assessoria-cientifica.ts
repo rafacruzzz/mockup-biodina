@@ -1,4 +1,9 @@
-import { OrdemServico, StatusOS, TipoOS } from "@/types/assessoria-cientifica";
+import { 
+  OrdemServico, 
+  StatusOS, 
+  TipoOS, 
+  Alerta 
+} from "@/types/assessoria-cientifica";
 
 // Mock data para Ordens de Serviço
 export const ordensServicoMock: OrdemServico[] = [
@@ -248,4 +253,41 @@ export const assessoresTecnicos = [
   { id: "resp-005", nome: "Téc. Rafael Alves", departamento: "Departamento Técnico" },
   { id: "resp-006", nome: "Eng. Paulo Mendes", departamento: "Departamento Técnico" },
   { id: "resp-007", nome: "Téc. Juliana Costa", departamento: "Departamento Técnico" }
+];
+
+// Alertas do sistema
+export const alertasMock: Alerta[] = [
+  {
+    id: "alerta-001",
+    tipo: "prazo",
+    titulo: "3 OS próximas do prazo de fechamento",
+    descricao: "OS #1234, #1235 e #1236 vencem nos próximos 3 dias",
+    prioridade: "alta",
+    dataCriacao: new Date(),
+  },
+  {
+    id: "alerta-002",
+    tipo: "acompanhamento",
+    titulo: "Cliente sem visita de acompanhamento há 90 dias",
+    descricao: "Hospital Santa Maria - Última visita em 15/10/2024",
+    prioridade: "media",
+    clienteId: "cliente-001",
+    dataCriacao: new Date(),
+  },
+  {
+    id: "alerta-003",
+    tipo: "urgente",
+    titulo: "2 OS urgentes aguardando atendimento",
+    descricao: "Hospital São José e Clínica Vida requerem atendimento imediato",
+    prioridade: "alta",
+    dataCriacao: new Date(),
+  },
+  {
+    id: "alerta-004",
+    tipo: "prazo",
+    titulo: "Certificados de treinamento pendentes",
+    descricao: "5 treinamentos concluídos sem certificado emitido",
+    prioridade: "baixa",
+    dataCriacao: new Date(),
+  },
 ];
