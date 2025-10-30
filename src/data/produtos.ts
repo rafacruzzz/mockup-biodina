@@ -7,18 +7,6 @@ export const marcasMock: Marca[] = [
     logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=200&h=100&fit=crop",
     descricao: "Líder mundial em gasometria e análises de ponto de atendimento",
   },
-  {
-    id: "marca-002",
-    nome: "Nova Biomedical",
-    logo: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=200&h=100&fit=crop",
-    descricao: "Especialista em análises clínicas e diagnóstico",
-  },
-  {
-    id: "marca-003",
-    nome: "BioTech Systems",
-    logo: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=200&h=100&fit=crop",
-    descricao: "Soluções inovadoras para biotecnologia",
-  },
 ];
 
 export const linhasMock: Linha[] = [
@@ -35,20 +23,6 @@ export const linhasMock: Linha[] = [
     marcaId: "marca-001",
     descricao: "Analisadores compactos para laboratórios menores",
     imagem: "https://images.unsplash.com/photo-1583912086096-8c60d75a53f6?w=400&h=300&fit=crop",
-  },
-  {
-    id: "linha-003",
-    nome: "StatProfile",
-    marcaId: "marca-002",
-    descricao: "Análise completa de eletrólitos e gases",
-    imagem: "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=400&h=300&fit=crop",
-  },
-  {
-    id: "linha-004",
-    nome: "BioReactor",
-    marcaId: "marca-003",
-    descricao: "Sistemas avançados de cultivo celular",
-    imagem: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=400&h=300&fit=crop",
   },
 ];
 
@@ -102,34 +76,6 @@ export const produtosMock: Produto[] = [
     imagem: "https://images.unsplash.com/photo-1583911860205-72f8ac8ddcbe?w=400&h=300&fit=crop",
     peso: "15 kg",
     dimensoes: "30 x 35 x 40 cm",
-  },
-  {
-    id: "prod-004",
-    codigo: "STAT-PROFILE-PRIME",
-    nome: "StatProfile Prime",
-    linhaId: "linha-003",
-    marcaId: "marca-002",
-    descricao: "Análise completa de eletrólitos, gases e metabólitos",
-    aplicacoes: ["Laboratório Central", "UTI", "Emergência"],
-    palavrasChave: ["eletrólitos", "gases", "lactato", "análise completa"],
-    status: "ativo",
-    imagem: "https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=400&h=300&fit=crop",
-    especificacoesTecnicas: "Capacidade: 80 amostras/hora\nParâmetros expandidos incluindo metabólitos",
-    registroAnvisa: "80285620015",
-  },
-  {
-    id: "prod-005",
-    codigo: "BIOREACTOR-DX",
-    nome: "BioReactor Delta-X",
-    linhaId: "linha-004",
-    marcaId: "marca-003",
-    descricao: "Sistema avançado para cultivo celular com controle automatizado",
-    aplicacoes: ["Pesquisa", "Produção de vacinas", "Terapia celular"],
-    palavrasChave: ["cultivo celular", "bioreator", "automação"],
-    status: "ativo",
-    imagem: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=400&h=300&fit=crop",
-    peso: "120 kg",
-    dimensoes: "80 x 70 x 100 cm",
   },
   {
     id: "prod-006",
