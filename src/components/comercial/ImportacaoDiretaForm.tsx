@@ -529,7 +529,13 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
           <div className="flex flex-col h-full min-h-0">
             {/* Abas Masters */}
             <div className="mb-6 flex-shrink-0">
-              <div className="flex space-x-4 bg-gray-50 p-2 rounded-lg overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              <div 
+                className="flex space-x-4 bg-gray-50 p-2 rounded-lg overflow-x-auto"
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#9CA3AF #F3F4F6'
+                }}
+              >
                 {masterTabs.map((tab) => (
                   <button
                     key={tab.id}

@@ -3,6 +3,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom scrollbar styles */
+.overflow-x-auto::-webkit-scrollbar {
+  height: 8px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #F3F4F6;
+  border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: #9CA3AF;
+  border-radius: 4px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: #6B7280;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
