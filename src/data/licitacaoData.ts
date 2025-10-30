@@ -23,7 +23,7 @@ export const licitacoes: Licitacao[] = [
     estrategiaValorFinal: 780000,
     estrategiaObjetivo: "Estabelecer presença no mercado universitário paulista e criar referência para futuras licitações do setor educacional",
     estrategiaRisco: "medio",
-    observacoes: "Cliente interessado em soluções Imuv. Contato estabelecido com departamento de compras.",
+    observacoes: "Cliente interessado em soluções Biodina. Contato estabelecido com departamento de compras.",
     dataAbertura: "2025-01-15",
     createdAt: "2025-01-10",
     inclusao: "2025-01-10",

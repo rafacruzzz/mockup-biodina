@@ -88,7 +88,7 @@ const ContaBancariaModal = ({ isOpen, onClose }: ContaBancariaModalProps) => {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-bold text-imuv-blue">Cadastro de Conta Bancária</h2>
+          <h2 className="text-xl font-bold text-biodina-blue">Cadastro de Conta Bancária</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
@@ -274,7 +274,7 @@ const ContaBancariaModal = ({ isOpen, onClose }: ContaBancariaModalProps) => {
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} className="bg-imuv-gold hover:bg-imuv-gold/90">
+          <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
             <Save className="h-4 w-4 mr-2" />
             Salvar
           </Button>

@@ -88,7 +88,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 <Label htmlFor="companyName">Company Name</Label>
                 <Input
                   id="companyName"
-                  value={formData.companyName || 'Imuv Instrumentos Científicos LTDA'}
+                  value={formData.companyName || 'Biodina Instrumentos Científicos LTDA'}
                   onChange={(e) => onInputChange('companyName', e.target.value)}
                   className="w-full font-bold"
                 />

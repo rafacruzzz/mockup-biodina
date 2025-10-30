@@ -124,7 +124,7 @@ const EmprestimosTable = () => {
             Exportar
           </Button>
           <Button 
-            className="bg-biodina-gold hover:bg-biodina-gold/90 text-white"
+            className="bg-biodina-gold hover:bg-biodina-gold/90"
             onClick={() => setIsModalOpen(true)}
           >
             <Plus className="h-4 w-4 mr-2" />

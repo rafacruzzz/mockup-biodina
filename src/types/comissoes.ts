@@ -165,8 +165,8 @@ export interface RelatorioAgente {
   totalReal: number;
   
   // Comissões
-  comissoesImuvUSD: number;
-  comissoesImuvReal: number;
+  comissoesBiodinaUSD: number;
+  comissoesBiodinaReal: number;
   comissoesMarketingUSD: number;
   comissoesMarketingReal: number;
   totalGeralUSD: number;

@@ -190,7 +190,7 @@ const AdmissaoDetailsModal = ({
       nome: curriculo.nome,
       cargo: cargoFinal || candidatoAdmissao.cargoDefinitivo || curriculo.cargoDesejado,
       departamento: curriculo.departamento,
-      empresa: 'Imuv Indústria Farmacêutica',
+      empresa: 'Biodina Indústria Farmacêutica',
       email: curriculo.email,
       telefone: curriculo.telefone,
       dataAdmissao: new Date().toISOString(),

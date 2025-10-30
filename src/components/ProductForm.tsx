@@ -102,11 +102,11 @@ const ProductForm = ({ onClose }: { onClose: () => void }) => {
         <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-2xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-imuv-gold/10 rounded-lg">
-                <Package className="h-6 w-6 text-imuv-gold" />
+              <div className="p-2 bg-biodina-gold/10 rounded-lg">
+                <Package className="h-6 w-6 text-biodina-gold" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-imuv-blue">Cadastro de Produto</h2>
+                <h2 className="text-2xl font-bold text-biodina-blue">Cadastro de Produto</h2>
                 <p className="text-gray-600">Cadastre um novo produto no sistema</p>
               </div>
             </div>
@@ -152,7 +152,7 @@ const ProductForm = ({ onClose }: { onClose: () => void }) => {
             <Button type="button" variant="outline" onClick={onClose} className="px-8">
               Cancelar
             </Button>
-            <Button type="submit" className="bg-imuv-gold hover:bg-imuv-gold/90 px-8">
+            <Button type="submit" className="bg-biodina-gold hover:bg-biodina-gold/90 px-8">
               <Save className="h-4 w-4 mr-2" />
               Salvar Produto
             </Button>

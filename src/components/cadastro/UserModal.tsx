@@ -97,11 +97,11 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
         <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
           <DialogHeader className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-imuv-gold/10 rounded-lg">
-                <User className="h-6 w-6 text-imuv-gold" />
+              <div className="p-2 bg-biodina-gold/10 rounded-lg">
+                <User className="h-6 w-6 text-biodina-gold" />
               </div>
               <div>
-                <DialogTitle className="text-2xl font-bold text-imuv-blue">
+                <DialogTitle className="text-2xl font-bold text-biodina-blue">
                   {editMode ? `Editar Usuário - ${formData.nome}` : 'Novo Usuário'}
                 </DialogTitle>
                 <p className="text-gray-600">
@@ -315,7 +315,7 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
             <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
-            <Button onClick={handleSave} className="bg-imuv-gold hover:bg-imuv-gold/90">
+            <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
               <Save className="h-4 w-4 mr-2" />
               {editMode ? 'Salvar Alterações' : 'Salvar Usuário'}
             </Button>

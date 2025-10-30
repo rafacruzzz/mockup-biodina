@@ -608,7 +608,7 @@ const Comercial = () => {
             <ArrowLeft className="h-4 w-4" />
             Voltar
           </Button>
-          <h2 className="text-2xl font-bold text-imuv-blue">Comercial / Departamento Técnico</h2>
+          <h2 className="text-2xl font-bold text-biodina-blue">Comercial / Departamento Técnico</h2>
         </div>
         <Card>
           <CardContent className="p-8 text-center">
@@ -689,7 +689,7 @@ const Comercial = () => {
             <ArrowLeft className="h-4 w-4" />
             Voltar
           </Button>
-          <h1 className="text-2xl font-bold text-imuv-blue">Comercial / Empréstimos</h1>
+          <h1 className="text-2xl font-bold text-biodina-blue">Comercial / Empréstimos</h1>
         </div>
 
         <EmprestimosTable />
@@ -756,7 +756,7 @@ const Comercial = () => {
                 </Button>
               )}
               <Button 
-                className="bg-biodina-gold hover:bg-biodina-gold/90 text-white"
+                className="bg-biodina-gold hover:bg-biodina-gold/90"
                 onClick={() => handleNovaOportunidade(modalidade as 'licitacao' | 'contratacao_simples' | 'importacao_direta')}
               >
                 <Plus className="h-4 w-4 mr-2" />

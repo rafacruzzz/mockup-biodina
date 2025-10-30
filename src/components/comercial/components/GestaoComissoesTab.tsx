@@ -69,8 +69,8 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
       clientes: [],
       totalUSD: 0,
       totalReal: 0,
-      comissoesImuvUSD: 0,
-      comissoesImuvReal: 0,
+      comissoesBiodinaUSD: 0,
+      comissoesBiodinaReal: 0,
       comissoesMarketingUSD: 0,
       comissoesMarketingReal: 0,
       totalGeralUSD: 0,
@@ -220,8 +220,8 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
         ],
         totalUSD: prev.valorComissao,
         totalReal: valorRealRecebido,
-        comissoesImuvUSD: prev.valorComissao,
-        comissoesImuvReal: valorRealRecebido,
+        comissoesBiodinaUSD: prev.valorComissao,
+        comissoesBiodinaReal: valorRealRecebido,
         comissoesMarketingUSD: 0,
         comissoesMarketingReal: 0,
         totalGeralUSD: prev.valorComissao,
@@ -1040,12 +1040,12 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 <div className="flex items-start gap-4">
                   <img 
                     src={biodinaLogo} 
-                    alt="Imuv Brasil" 
+                    alt="Biodina Brasil" 
                     className="h-16 w-auto"
                   />
                   <div className="flex-1">
                     <h3 className="font-semibold text-sm mb-2">Dados do beneficiário</h3>
-                    <p className="text-sm">IMUV INSTRUMENTOS CIENTÍFICOS LTDA</p>
+                    <p className="text-sm">BIODINA INSTRUMENTOS CIENTÍFICOS LTDA</p>
                     <p className="text-sm">CNPJ: 29.375.441/0001-50</p>
                   </div>
                 </div>
@@ -1180,9 +1180,9 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 </div>
               </div>
 
-              {/* Contact Person (Imuv) */}
+              {/* Contact Person (Biodina) */}
               <div className="space-y-4">
-                <h3 className="font-semibold text-sm">CONTACT PERSON (IMUV)</h3>
+                <h3 className="font-semibold text-sm">CONTACT PERSON (BIODINA)</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-md">
                     <Label>Prepared by</Label>
@@ -1521,12 +1521,12 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 <h3 className="font-semibold mb-3">Comissões e Total Geral</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="flex justify-between items-center p-2 bg-background rounded">
-                    <span className="font-medium">Comissões Agente Imuv Emp. e Participações USD:</span>
-                    <span className="font-semibold">{comissao.relatorioAgente.comissoesImuvUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                    <span className="font-medium">Comissões Agente Biodina Emp. e Participações USD:</span>
+                    <span className="font-semibold">{comissao.relatorioAgente.comissoesBiodinaUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between items-center p-2 bg-background rounded">
                     <span className="font-medium">R$:</span>
-                    <span className="font-semibold">{comissao.relatorioAgente.comissoesImuvReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                    <span className="font-semibold">{comissao.relatorioAgente.comissoesBiodinaReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                   </div>
                   <div className="flex justify-between items-center p-2 bg-background rounded">
                     <span className="font-medium">Comissões de Marketing USD:</span>
