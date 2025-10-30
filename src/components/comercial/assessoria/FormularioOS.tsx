@@ -28,6 +28,7 @@ interface FormularioOSProps {
 export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [formData, setFormData] = useState({
     cliente: os?.cliente || "",
+    projeto: os?.projeto || "",
     equipamento: os?.equipamento || "",
     numeroSerieLote: os?.numeroSerieLote || "",
     versaoSoftware: os?.versaoSoftware || "",
@@ -176,6 +177,23 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
               onChange={(e) => setFormData({ ...formData, cliente: e.target.value })}
               placeholder="Buscar cliente..."
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="projeto">Projeto</Label>
+            <Select
+              value={formData.projeto || ""}
+              onValueChange={(value) => setFormData({ ...formData, projeto: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o projeto..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="proj-001">Projeto Hospitalar Central</SelectItem>
+                <SelectItem value="proj-002">Projeto Pesquisa Genômica</SelectItem>
+                <SelectItem value="proj-003">Expansão Clínica Premium</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
