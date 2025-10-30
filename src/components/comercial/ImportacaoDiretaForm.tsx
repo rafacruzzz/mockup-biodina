@@ -529,12 +529,12 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
           <div className="flex flex-col h-full min-h-0">
             {/* Abas Masters */}
             <div className="mb-6 flex-shrink-0">
-              <div className="flex space-x-4 bg-gray-50 p-2 rounded-lg overflow-x-auto">
+              <div className="flex space-x-4 bg-gray-50 p-2 rounded-lg overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                 {masterTabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => handleMasterTabChange(tab.id)}
-                    className={`px-6 py-3 rounded-md font-medium transition-colors whitespace-nowrap ${
+                    className={`px-6 py-3 rounded-md font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
                       activeMasterTab === tab.id
                         ? 'bg-purple-600 text-white'
                         : 'bg-white text-gray-700 hover:bg-gray-100'
