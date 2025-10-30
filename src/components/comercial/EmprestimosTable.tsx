@@ -115,7 +115,7 @@ const EmprestimosTable = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-imuv-blue">Empréstimos</h2>
+          <h2 className="text-2xl font-bold text-biodina-blue">Empréstimos</h2>
           <p className="text-gray-600">Gestão de empréstimos</p>
         </div>
         <div className="flex gap-2">
@@ -124,7 +124,7 @@ const EmprestimosTable = () => {
             Exportar
           </Button>
           <Button 
-            className="bg-imuv-gold hover:bg-imuv-gold/90 text-white"
+            className="bg-biodina-gold hover:bg-biodina-gold/90 text-white"
             onClick={() => setIsModalOpen(true)}
           >
             <Plus className="h-4 w-4 mr-2" />
@@ -137,7 +137,7 @@ const EmprestimosTable = () => {
       <div className="grid grid-cols-1 md:grid-cols-8 gap-4">
         <Card>
           <CardContent className="p-4">
-            <div className="text-2xl font-bold text-imuv-blue">{statsGeral.total}</div>
+            <div className="text-2xl font-bold text-biodina-blue">{statsGeral.total}</div>
             <div className="text-sm text-gray-600">Total Geral</div>
           </CardContent>
         </Card>
@@ -179,7 +179,7 @@ const EmprestimosTable = () => {
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="text-sm font-bold text-imuv-gold">Multi-Moeda</div>
+            <div className="text-sm font-bold text-biodina-gold">Multi-Moeda</div>
             <div className="text-xs text-gray-600">R$ + USD</div>
           </CardContent>
         </Card>

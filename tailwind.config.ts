@@ -67,6 +67,12 @@ export default {
 				blue: '#0A2342',
 				gold: '#D5A021',
 				darkblue: '#061325',
+			},
+			biodina: {
+				blue: '#0A2342',
+				gold: '#D5A021',
+				darkblue: '#061325',
+			}
 			}
 			},
 			borderRadius: {
