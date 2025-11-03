@@ -35,11 +35,11 @@ interface Module {
   id: string;
   name: string;
   icon: React.ComponentType<any>;
-  isFixed?: boolean; // For Aplicativos and Personalizar Navegação
+  isFixed?: boolean; // For Personalizar Navegação
 }
 
 const initialModules: Module[] = [
-  { id: 'aplicativos', name: 'Aplicativos', icon: Home, isFixed: true },
+  // { id: 'aplicativos', name: 'Aplicativos', icon: Home, isFixed: true }, // Escondido temporariamente
   { id: 'pessoal', name: 'Pessoal', icon: Users },
   { id: 'bi', name: 'BI', icon: BarChart2 },
   { id: 'cadastro', name: 'Cadastro', icon: FileText },
@@ -55,7 +55,7 @@ const initialModules: Module[] = [
 ];
 
 const initialTreeStructure: Record<string, TreeItem[]> = {
-  aplicativos: [],
+  // aplicativos: [], // Escondido temporariamente
   cadastro: [
     {
       id: 'entidades-group',
@@ -435,10 +435,9 @@ const PersonalizarNavegacaoContent = () => {
           const reorderedModules = arrayMove(reorderableModules, oldReorderableIndex, newReorderableIndex);
           
           // Reconstruct the full list with fixed modules in correct positions
-          const aplicativos = fixedModules.find(m => m.id === 'aplicativos');
           const personalizar = fixedModules.find(m => m.id === 'personalizar-navegacao');
           
-          setModules([aplicativos!, ...reorderedModules, personalizar!]);
+          setModules([...reorderedModules, personalizar!]);
         }
       }
     }

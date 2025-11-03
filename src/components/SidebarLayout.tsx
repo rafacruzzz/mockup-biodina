@@ -27,7 +27,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
   const { empresaAtual, isMasterUser, modulosDisponiveis } = useEmpresa();
 
   const defaultMenuItems = [
-    { name: "Aplicativos", path: "/home", icon: <Home size={20} />, id: "aplicativos" },
+    // { name: "Aplicativos", path: "/home", icon: <Home size={20} />, id: "aplicativos" }, // Escondido temporariamente
     // { name: "SUPER", path: "/super", icon: <Crown size={20} />, id: "super" }, // Temporariamente escondido
     { name: "Pessoal", path: "/pessoal", icon: <Users size={20} />, id: "pessoal" },
     { name: "BI", path: "/bi-geral", icon: <BarChart2 size={20} />, id: "bi" },
@@ -48,14 +48,12 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
   const getMenuItems = () => {
     if (!navOverrides) return defaultMenuItems;
 
-    // Keep "Aplicativos", "Solicitações" and "Personalizar Navegação" as fixed items
-    const aplicativos = defaultMenuItems.find(item => item.id === "aplicativos");
+    // Keep "Solicitações" and "Personalizar Navegação" as fixed items
     const solicitacoes = defaultMenuItems.find(item => item.id === "solicitacoes");
     const personalizar = defaultMenuItems.find(item => item.id === "personalizar-navegacao");
     
     // Get the module items (excluding fixed items)
     const moduleItems = defaultMenuItems.filter(item => 
-      item.id !== "aplicativos" && 
       item.id !== "solicitacoes" && 
       item.id !== "personalizar-navegacao"
     );
@@ -77,7 +75,6 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
     }
 
     return [
-      aplicativos!,
       ...orderedModuleItems,
       solicitacoes!,
       personalizar!
@@ -85,8 +82,8 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
   };
 
   const menuItems = getMenuItems().filter(item => {
-    // Sempre mostrar: Aplicativos, Solicitações, Personalizar
-    if (['aplicativos', 'solicitacoes', 'personalizar-navegacao'].includes(item.id)) {
+    // Sempre mostrar: Solicitações, Personalizar
+    if (['solicitacoes', 'personalizar-navegacao'].includes(item.id)) {
       return true;
     }
     // SUPER apenas para Master
