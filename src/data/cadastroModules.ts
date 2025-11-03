@@ -8,6 +8,23 @@ import {
 import type { ModulesConfig } from "@/types/cadastro";
 
 export const modules: ModulesConfig = {
+  usuarios: {
+    name: "Usuários",
+    icon: Users,
+    subModules: {
+      usuarios: {
+        name: "Usuários",
+        data: [
+          {
+            id: 1,
+            nome: "João Silva",
+            email: "joao@email.com",
+            perfil: "Administrador"
+          }
+        ]
+      }
+    }
+  },
   entidades: {
     name: "Entidades",
     icon: Building2,
@@ -281,23 +298,6 @@ export const modules: ModulesConfig = {
             nome: "Manutenção Preventiva",
             descricao: "Manutenção preventiva de equipamentos médicos",
             valor: 500.00
-          }
-        ]
-      }
-    }
-  },
-  usuarios: {
-    name: "Usuários",
-    icon: Users,
-    subModules: {
-      usuarios: {
-        name: "Usuários",
-        data: [
-          {
-            id: 1,
-            nome: "João Silva",
-            email: "joao@email.com",
-            perfil: "Administrador"
           }
         ]
       }
