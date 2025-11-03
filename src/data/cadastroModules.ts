@@ -2,7 +2,6 @@ import {
   Users, 
   Package, 
   Building2, 
-  Warehouse,
   Wrench,
   Tag
 } from "lucide-react";
@@ -265,24 +264,6 @@ export const modules: ModulesConfig = {
             nome: "Álcool em Gel 500ml",
             categoria: "Higiene",
             unidade: "frasco"
-          }
-        ]
-      }
-    }
-  },
-  estoque: {
-    name: "Estoque",
-    icon: Warehouse,
-    subModules: {
-      estoque: {
-        name: "Estoque",
-        data: [
-          {
-            id: 1,
-            nome: "Produto A",
-            quantidade: 150,
-            minimo: 50,
-            localizacao: "A-01-15"
           }
         ]
       }
