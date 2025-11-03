@@ -96,19 +96,6 @@ const initialTreeStructure: Record<string, TreeItem[]> = {
       ]
     },
     {
-      id: 'estoque-group',
-      name: 'Estoque',
-      type: 'group',
-      children: [
-        {
-          id: 'estoque-item',
-          name: 'Estoque',
-          type: 'item',
-          parentId: 'estoque-group'
-        }
-      ]
-    },
-    {
       id: 'servicos-group',
       name: 'Serviços',
       type: 'group',
