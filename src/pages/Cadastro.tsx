@@ -11,7 +11,6 @@ import ColaboradorModal from "@/components/rh/ColaboradorModal";
 import ServiceModal from "@/components/cadastro/ServiceModal";
 import ContaBancariaModal from "@/components/cadastro/ContaBancariaModal";
 import GenericModal from "@/components/cadastro/GenericModal";
-import { RegistroAnvisaModal } from "@/components/cadastro/RegistroAnvisaModal";
 import ProdutoUsoConsumoModal from "@/components/cadastro/ProdutoUsoConsumoModal";
 import { modules } from "@/data/cadastroModules";
 
@@ -29,7 +28,6 @@ const Cadastro = () => {
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [isContaBancariaModalOpen, setIsContaBancariaModalOpen] = useState(false);
   const [isGenericModalOpen, setIsGenericModalOpen] = useState(false);
-  const [isRegistroAnvisaModalOpen, setIsRegistroAnvisaModalOpen] = useState(false);
   const [isProdutoUsoConsumoModalOpen, setIsProdutoUsoConsumoModalOpen] = useState(false);
 
   // Estado para tipo de entidade
@@ -91,8 +89,6 @@ const Cadastro = () => {
       setIsContaBancariaModalOpen(true);
     } else if (activeModule === 'contas_bancarias') {
       setIsContaBancariaModalOpen(true);
-    } else if (activeModule === 'registros_anvisa') {
-      setIsRegistroAnvisaModalOpen(true);
     } else {
       setIsGenericModalOpen(true);
     }
@@ -318,15 +314,6 @@ const Cadastro = () => {
         onClose={() => setIsGenericModalOpen(false)}
         title={`Novo ${currentSubModule?.name || 'Registro'}`}
         moduleName={currentSubModule?.name || ''}
-      />
-
-      <RegistroAnvisaModal
-        isOpen={isRegistroAnvisaModalOpen}
-        onClose={() => setIsRegistroAnvisaModalOpen(false)}
-        onSave={(registro) => {
-          console.log('Registro ANVISA salvo:', registro);
-          setIsRegistroAnvisaModalOpen(false);
-        }}
       />
 
       <ProdutoUsoConsumoModal

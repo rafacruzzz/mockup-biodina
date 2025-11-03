@@ -4,10 +4,7 @@ import {
   Building2, 
   Warehouse,
   Wrench,
-  Tag,
-  FileCheck,
-  RefreshCw,
-  UserCheck
+  Tag
 } from "lucide-react";
 import type { ModulesConfig } from "@/types/cadastro";
 
@@ -466,104 +463,6 @@ export const modules: ModulesConfig = {
             possuiOfx: false,
             gerente: "Roberto Lima",
             telefoneGerente: "(11) 92345-6789"
-          }
-        ]
-      }
-    }
-  },
-  registros_anvisa: {
-    name: "Registros ANVISA",
-    icon: FileCheck,
-    subModules: {
-      registros: {
-        name: "Registros",
-        data: [
-          {
-            id: 1,
-            nomeProduto: "Equipamento Médico XYZ-100",
-            numeroRegistro: "80125120001",
-            dataRegistro: "2023-03-15",
-            dataVencimento: "2028-03-15",
-            fabricante: "ABC Medical Inc.",
-            status: "Ativo"
-          },
-          {
-            id: 2,
-            nomeProduto: "Dispositivo ABC-200",
-            numeroRegistro: "80125120002",
-            dataRegistro: "2022-07-22",
-            dataVencimento: "2027-07-22",
-            fabricante: "DEF Healthcare",
-            status: "Ativo"
-          }
-        ]
-      }
-    }
-  },
-  atualizacoes_anvisa: {
-    name: "Atualizações ANVISA",
-    icon: RefreshCw,
-    subModules: {
-      atualizacoes: {
-        name: "Atualizações",
-        data: [
-          {
-            id: 1,
-            nomeArquivoPrincipal: "Manual de Instruções v2.0",
-            numeroRegistroRelacionado: "80125120001",
-            tipoAtualizacao: "Manual do Usuário",
-            dataPeticionamento: "2024-01-10",
-            status: "Em Análise"
-          }
-        ]
-      }
-    }
-  },
-  due_diligence_fornecedor: {
-    name: "Due Diligence Fornecedor",
-    icon: UserCheck,
-    subModules: {
-      triagens: {
-        name: "Triagens",
-        data: [
-          {
-            id: 1,
-            idTriagem: "TRI-2024-001",
-            nomeFornecedor: "Medical Supply Brasil",
-            dataCriacao: "2024-02-15",
-            statusAtual: "Aprovado",
-            responsavel: "Ana Silva",
-            contatoPrincipal: "João Santos",
-            emailContato: "joao@medicalsupply.com.br",
-            telefoneContato: "(11) 6789-0123",
-            produtosInteresse: "Equipamentos Cirúrgicos",
-            protocoloInterno: "PROT-2024-001"
-          },
-          {
-            id: 2,
-            idTriagem: "TRI-2024-002",
-            nomeFornecedor: "HealthTech Distribuidora",
-            dataCriacao: "2024-02-20",
-            statusAtual: "Em Análise Comercial",
-            responsavel: "Carlos Mendes",
-            contatoPrincipal: "Maria Costa",
-            emailContato: "maria@healthtech.com.br",
-            telefoneContato: "(61) 7890-1234",
-            produtosInteresse: "Dispositivos de Diagnóstico",
-            protocoloInterno: "PROT-2024-002"
-          },
-          {
-            id: 3,
-            idTriagem: "TRI-2024-003",
-            nomeFornecedor: "BioMed Solutions",
-            dataCriacao: "2024-03-01",
-            statusAtual: "Aguardando Documentos",
-            responsavel: "Ana Silva",
-            contatoPrincipal: "Roberto Lima",
-            emailContato: "roberto@biomed.com.br",
-            telefoneContato: "(21) 8901-2345",
-            produtosInteresse: "Material Laboratorial",
-            protocoloInterno: "PROT-2024-003"
           }
         ]
       }
