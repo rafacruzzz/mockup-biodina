@@ -2,6 +2,7 @@ import { useState } from "react";
 import DashboardAssessoria from "@/components/comercial/assessoria/DashboardAssessoria";
 import { OrdensServicoTab } from "@/components/comercial/assessoria/OrdensServicoTab";
 import { RastreabilidadeTab } from "@/components/comercial/assessoria/RastreabilidadeTab";
+import { AnaliseEditaisTab } from "@/components/comercial/assessoria/AnaliseEditaisTab";
 import { RepositorioProdutosTab } from "@/components/comercial/assessoria/RepositorioProdutosTab";
 import { StatusOS } from "@/types/assessoria-cientifica";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,7 +36,7 @@ import {
 const Comercial = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'emprestimos' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeTab, setActiveTab] = useState('indicadores');
-  const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "os" | "rastreabilidade" | "repositorio">("agenda");
+  const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "os" | "rastreabilidade" | "analise-editais" | "repositorio">("agenda");
   const [osStatusFilter, setOsStatusFilter] = useState<StatusOS[] | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
@@ -582,6 +583,7 @@ const Comercial = () => {
             <button onClick={() => setAssessoriaTab("agenda")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "agenda" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Agenda</button>
             <button onClick={() => setAssessoriaTab("os")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "os" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Ordens de Serviço</button>
             <button onClick={() => setAssessoriaTab("rastreabilidade")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "rastreabilidade" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Rastreabilidade</button>
+            <button onClick={() => setAssessoriaTab("analise-editais")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "analise-editais" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Análise de Editais</button>
             <button onClick={() => setAssessoriaTab("repositorio")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "repositorio" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Repositório de Produtos</button>
           </div>
         </div>
@@ -590,6 +592,7 @@ const Comercial = () => {
           {assessoriaTab === "agenda" && <DashboardAssessoria onNavigateToOS={handleNavigateToOS} />}
           {assessoriaTab === "os" && <OrdensServicoTab statusFilterFromAlert={osStatusFilter} />}
           {assessoriaTab === "rastreabilidade" && <RastreabilidadeTab />}
+          {assessoriaTab === "analise-editais" && <AnaliseEditaisTab />}
           {assessoriaTab === "repositorio" && <RepositorioProdutosTab />}
         </div>
       </div>
