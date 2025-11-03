@@ -58,6 +58,19 @@ const initialTreeStructure: Record<string, TreeItem[]> = {
   // aplicativos: [], // Escondido temporariamente
   cadastro: [
     {
+      id: 'usuarios-group',
+      name: 'Usuários',
+      type: 'group',
+      children: [
+        {
+          id: 'usuarios-item',
+          name: 'Usuários',
+          type: 'item',
+          parentId: 'usuarios-group'
+        }
+      ]
+    },
+    {
       id: 'entidades-group',
       name: 'Entidades',
       type: 'group',
@@ -80,18 +93,6 @@ const initialTreeStructure: Record<string, TreeItem[]> = {
           name: 'Produtos',
           type: 'item',
           parentId: 'produtos-group'
-        },
-        {
-          id: 'tabela-preco-item',
-          name: 'Tabela de Preço',
-          type: 'item',
-          parentId: 'produtos-group'
-        },
-        {
-          id: 'kits-item',
-          name: 'Kits',
-          type: 'item',
-          parentId: 'produtos-group'
         }
       ]
     },
@@ -109,32 +110,6 @@ const initialTreeStructure: Record<string, TreeItem[]> = {
       ]
     },
     {
-      id: 'usuarios-group',
-      name: 'Usuários',
-      type: 'group',
-      children: [
-        {
-          id: 'usuarios-item',
-          name: 'Usuários',
-          type: 'item',
-          parentId: 'usuarios-group'
-        }
-      ]
-    },
-    {
-      id: 'contas-bancarias-group',
-      name: 'Contas Bancárias',
-      type: 'group',
-      children: [
-        {
-          id: 'contas-bancarias-item',
-          name: 'Contas Bancárias',
-          type: 'item',
-          parentId: 'contas-bancarias-group'
-        }
-      ]
-    },
-    {
       id: 'categorias-group',
       name: 'Categorias',
       type: 'group',
@@ -148,15 +123,21 @@ const initialTreeStructure: Record<string, TreeItem[]> = {
       ]
     },
     {
-      id: 'prazos-pagamento-group',
-      name: 'Prazos de Pagamento',
+      id: 'cadastros-financeiros-group',
+      name: 'Cadastros Financeiros',
       type: 'group',
       children: [
+        {
+          id: 'contas-bancarias-item',
+          name: 'Contas Bancárias',
+          type: 'item',
+          parentId: 'cadastros-financeiros-group'
+        },
         {
           id: 'prazos-pagamento-item',
           name: 'Prazos de Pagamento',
           type: 'item',
-          parentId: 'prazos-pagamento-group'
+          parentId: 'cadastros-financeiros-group'
         }
       ]
     }
