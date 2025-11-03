@@ -11,8 +11,7 @@ export type TipoOS =
   | 'suporte_operacional'
   | 'acompanhamento_rotina'
   | 'treinamento_inicial'
-  | 'treinamento_nova_equipe'
-  | 'analise_edital';
+  | 'treinamento_nova_equipe';
 
 export type DepartamentoOS = 'Assessoria Científica' | 'Departamento Técnico';
 
@@ -59,7 +58,6 @@ export interface OrdemServico {
   assinatura?: AssinaturaOS;
   atualizadoEm: Date;
   participantes?: string[]; // Para treinamentos
-  editalAnexo?: string; // Para análise de edital
 }
 
 export interface FiltrosAgenda {

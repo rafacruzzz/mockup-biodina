@@ -131,8 +131,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     observacoes: os?.observacoes || "",
     status: (os?.status || "ABERTA") as StatusOS,
     responsavel: os?.responsavel || "",
-    participantes: os?.participantes || [],
-    editalAnexo: os?.editalAnexo || "",
+    participantes: os?.participantes || []
   });
 
   const [showAssinatura, setShowAssinatura] = useState(false);
@@ -140,9 +139,6 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     os?.participantes?.join(", ") || ""
   );
 
-  // Verificar se é análise de edital
-  const isAnaliseEdital = formData.tipos.includes("analise_edital");
-  
   // Verificar se é treinamento
   const isTreinamento = formData.tipos.some(tipo => 
     tipo === "treinamento_inicial" || tipo === "treinamento_nova_equipe"
@@ -152,8 +148,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     "suporte_operacional",
     "acompanhamento_rotina",
     "treinamento_inicial",
-    "treinamento_nova_equipe",
-    "analise_edital",
+    "treinamento_nova_equipe"
   ];
 
   const normalizeId = (id: string) => {
@@ -468,65 +463,45 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
               value={formData.equipamento}
               onChange={(e) => setFormData({ ...formData, equipamento: e.target.value })}
               placeholder="Selecionar equipamento..."
-              disabled={isAnaliseEdital}
             />
           </div>
 
-          {!isAnaliseEdital && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="numeroSerieLote">Nº de Série/Lote</Label>
-                <Input
-                  id="numeroSerieLote"
-                  value={formData.numeroSerieLote}
-                  onChange={(e) => setFormData({ ...formData, numeroSerieLote: e.target.value })}
-                />
-              </div>
+          <div className="space-y-2">
+            <Label htmlFor="numeroSerieLote">Nº de Série/Lote</Label>
+            <Input
+              id="numeroSerieLote"
+              value={formData.numeroSerieLote}
+              onChange={(e) => setFormData({ ...formData, numeroSerieLote: e.target.value })}
+            />
+          </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="versaoSoftware">Versão Software</Label>
-                  <Input
-                    id="versaoSoftware"
-                    value={formData.versaoSoftware}
-                    onChange={(e) => setFormData({ ...formData, versaoSoftware: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="versaoWindows">Versão do Windows</Label>
-                  <Input
-                    id="versaoWindows"
-                    value={formData.versaoWindows}
-                    onChange={(e) => setFormData({ ...formData, versaoWindows: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="setorAlocacao">Setor de Alocação</Label>
-                <Input
-                  id="setorAlocacao"
-                  value={formData.setorAlocacao}
-                  onChange={(e) => setFormData({ ...formData, setorAlocacao: e.target.value })}
-                />
-              </div>
-            </>
-          )}
-
-          {isAnaliseEdital && (
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="editalAnexo">Anexar Edital *</Label>
-              <div className="border-2 border-dashed border-primary rounded-lg p-6 text-center bg-primary/5">
-                <Upload className="h-8 w-8 mx-auto mb-2 text-primary" />
-                <p className="text-sm text-muted-foreground mb-2">
-                  Arraste o edital ou clique para selecionar
-                </p>
-                <Button variant="outline" size="sm">
-                  Selecionar Edital
-                </Button>
-              </div>
+              <Label htmlFor="versaoSoftware">Versão Software</Label>
+              <Input
+                id="versaoSoftware"
+                value={formData.versaoSoftware}
+                onChange={(e) => setFormData({ ...formData, versaoSoftware: e.target.value })}
+              />
             </div>
-          )}
+            <div className="space-y-2">
+              <Label htmlFor="versaoWindows">Versão do Windows</Label>
+              <Input
+                id="versaoWindows"
+                value={formData.versaoWindows}
+                onChange={(e) => setFormData({ ...formData, versaoWindows: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="setorAlocacao">Setor de Alocação</Label>
+            <Input
+              id="setorAlocacao"
+              value={formData.setorAlocacao}
+              onChange={(e) => setFormData({ ...formData, setorAlocacao: e.target.value })}
+            />
+          </div>
 
           <div className="space-y-2">
             <Label>Opção de Atendimento *</Label>
@@ -651,20 +626,18 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
             </div>
           )}
 
-          {!isAnaliseEdital && (
-            <div className="space-y-2">
-              <Label>Anexos</Label>
-              <div className="border-2 border-dashed rounded-lg p-6 text-center">
-                <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground mb-2">
-                  Arraste arquivos ou clique para selecionar
-                </p>
-                <Button variant="outline" size="sm">
-                  Selecionar Arquivos
-                </Button>
-              </div>
+          <div className="space-y-2">
+            <Label>Anexos</Label>
+            <div className="border-2 border-dashed rounded-lg p-6 text-center">
+              <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground mb-2">
+                Arraste arquivos ou clique para selecionar
+              </p>
+              <Button variant="outline" size="sm">
+                Selecionar Arquivos
+              </Button>
             </div>
-          )}
+          </div>
         </div>
       </div>
 

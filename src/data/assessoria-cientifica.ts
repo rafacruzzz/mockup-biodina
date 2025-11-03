@@ -149,24 +149,6 @@ export const ordensServicoMock: OrdemServico[] = [
     atualizadoEm: new Date(2025, 9, 10)
   },
   {
-    id: "os-007",
-    numero: "OS-2025-007",
-    tipo: ["analise_edital"],
-    status: "ABERTA",
-    departamento: "Assessoria Científica",
-    cliente: "Universidade Federal",
-    clienteId: "cli-007",
-    opcaoAtendimento: "remoto",
-    descricaoServico: "Consultoria para desenvolvimento de protocolo experimental",
-    dataAgendada: new Date(2025, 9, 15, 14, 0),
-    responsavel: "Dr. Carlos Mendes",
-    responsavelId: "resp-001",
-    abertoPor: "Comercial",
-    abertoEm: new Date(2025, 9, 1),
-    observacoes: "Reunião com equipe de pesquisadores para definir metodologia",
-    atualizadoEm: new Date(2025, 9, 1)
-  },
-  {
     id: "os-008",
     numero: "OS-2025-008",
     tipo: ["suporte_operacional"],
@@ -345,8 +327,7 @@ export const getTipoOSLabel = (tipo: TipoOS): string => {
     suporte_operacional: "Suporte Operacional",
     acompanhamento_rotina: "Acompanhamento de Rotina",
     treinamento_inicial: "Treinamento Inicial",
-    treinamento_nova_equipe: "Treinamento de Nova Equipe",
-    analise_edital: "Análise de Edital"
+    treinamento_nova_equipe: "Treinamento de Nova Equipe"
   };
   return labels[tipo];
 };
@@ -357,8 +338,7 @@ export const getTipoOSIcon = (tipo: TipoOS): string => {
     suporte_operacional: "🔧",
     acompanhamento_rotina: "👁️",
     treinamento_inicial: "🎓",
-    treinamento_nova_equipe: "📚",
-    analise_edital: "📋"
+    treinamento_nova_equipe: "📚"
   };
   return icons[tipo];
 };
