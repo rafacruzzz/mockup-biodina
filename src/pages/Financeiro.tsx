@@ -20,6 +20,7 @@ import DevolucaoFaturamento from "@/components/faturamento/DevolucaoFaturamento"
 import CancelamentoFaturamento from "@/components/faturamento/CancelamentoFaturamento";
 import ServicosFaturamento from "@/components/faturamento/ServicosFaturamento";
 import RelatoriosFaturamento from "@/components/faturamento/RelatoriosFaturamento";
+import IndicadoresFaturamento from "@/components/faturamento/IndicadoresFaturamento";
 import { 
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
@@ -467,6 +468,8 @@ const Financeiro = () => {
             <p className="text-muted-foreground">{currentModule.description}</p>
           </div>
         </div>
+
+        {activeModule === 'faturamento' && <IndicadoresFaturamento />}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {currentModule.subModules.map((subModule) => (
