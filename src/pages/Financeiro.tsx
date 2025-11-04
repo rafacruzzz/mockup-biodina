@@ -24,7 +24,8 @@ import IndicadoresFaturamento from "@/components/faturamento/IndicadoresFaturame
 import { 
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
-  AlertTriangle, Clock, Vault, ArrowLeft, Receipt
+  AlertTriangle, Clock, Vault, ArrowLeft, Receipt, Download, Upload,
+  RefreshCw, X, Briefcase, BarChart3
 } from "lucide-react";
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -452,6 +453,101 @@ const Financeiro = () => {
     const currentModule = mainModules.find(m => m.id === activeModule);
     if (!currentModule) return null;
 
+    // Renderização especial para Faturamento com seções organizadas
+    if (activeModule === 'faturamento') {
+      const faturamentoProdutos = [
+        { id: 'entrada', title: 'Entrada', description: 'Lançar NF-e de compra ou importação', icon: Download },
+        { id: 'saida', title: 'Saída', description: 'Emitir NF-e de venda ou remessa', icon: Upload },
+        { id: 'devolucao', title: 'Devolução', description: 'Registrar devolução (cliente/fornecedor)', icon: RefreshCw },
+        { id: 'cancelamento', title: 'Cancelamento', description: 'Cancelar nota ou inutilizar numeração', icon: X },
+      ];
+
+      const faturamentoServicos = [
+        { id: 'servicos', title: 'Serviços (NFS-e)', description: 'Emitir notas de serviço', icon: Briefcase },
+        { id: 'relatorios', title: 'Relatórios', description: 'Listar notas emitidas, impostos, rejeições', icon: BarChart3 },
+      ];
+
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setActiveModule(null)}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar
+            </Button>
+            <div>
+              <h2 className="text-2xl font-bold text-biodina-blue">{currentModule.title}</h2>
+              <p className="text-muted-foreground">{currentModule.description}</p>
+            </div>
+          </div>
+
+          <IndicadoresFaturamento />
+
+          {/* Faturamento de Produtos */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold text-biodina-blue">Faturamento de Produtos</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {faturamentoProdutos.map((modulo) => {
+                const IconComponent = modulo.icon;
+                return (
+                  <Card 
+                    key={modulo.id}
+                    className="shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-biodina-gold/50"
+                    onClick={() => setActiveSubModule(modulo.id)}
+                  >
+                    <CardContent className="p-6 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-biodina-blue">
+                          {modulo.title}
+                        </h3>
+                        <IconComponent className="h-5 w-5 text-biodina-gold" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {modulo.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Faturamento de Serviços */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold text-biodina-blue">Faturamento de Serviços</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {faturamentoServicos.map((modulo) => {
+                const IconComponent = modulo.icon;
+                return (
+                  <Card 
+                    key={modulo.id}
+                    className="shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-biodina-gold/50"
+                    onClick={() => setActiveSubModule(modulo.id)}
+                  >
+                    <CardContent className="p-6 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-biodina-blue">
+                          {modulo.title}
+                        </h3>
+                        <IconComponent className="h-5 w-5 text-biodina-gold" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {modulo.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Renderização padrão para outros módulos
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
@@ -468,8 +564,6 @@ const Financeiro = () => {
             <p className="text-muted-foreground">{currentModule.description}</p>
           </div>
         </div>
-
-        {activeModule === 'faturamento' && <IndicadoresFaturamento />}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {currentModule.subModules.map((subModule) => (
