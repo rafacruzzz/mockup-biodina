@@ -8,6 +8,7 @@ import DevolucaoFaturamento from "@/components/faturamento/DevolucaoFaturamento"
 import CancelamentoFaturamento from "@/components/faturamento/CancelamentoFaturamento";
 import ServicosFaturamento from "@/components/faturamento/ServicosFaturamento";
 import RelatoriosFaturamento from "@/components/faturamento/RelatoriosFaturamento";
+import IndicadoresFaturamento from "@/components/faturamento/IndicadoresFaturamento";
 
 const Faturamento = () => {
   const [activeModule, setActiveModule] = useState('dashboard');
@@ -42,6 +43,7 @@ const Faturamento = () => {
         />
         <div className="flex-1 overflow-auto">
           <div className="p-6">
+            <IndicadoresFaturamento />
             {renderContent()}
           </div>
         </div>
