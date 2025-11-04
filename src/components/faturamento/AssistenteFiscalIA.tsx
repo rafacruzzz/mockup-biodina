@@ -1,7 +1,9 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, CheckCircle, Lightbulb, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AlertTriangle, CheckCircle, Lightbulb, Clock, Bell } from "lucide-react";
+import { toast } from "sonner";
 
 interface AlertaFiscal {
   tipo: 'info' | 'warning' | 'success' | 'suggestion';
@@ -10,6 +12,12 @@ interface AlertaFiscal {
 }
 
 const AssistenteFiscalIA = () => {
+  const osPendentesBaixaFiscal: any[] = [];
+  
+  const notificarGestor = () => {
+    toast.success("Gestor notificado sobre OSs pendentes");
+  };
+
   const alertas: AlertaFiscal[] = [
     {
       tipo: 'warning',
@@ -68,6 +76,21 @@ const AssistenteFiscalIA = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
+        {osPendentesBaixaFiscal.length > 0 && (
+          <div className="p-4 bg-red-50 border-2 border-red-500 rounded-lg space-y-2">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              <Badge variant="destructive">BLOQUEIO ATIVO</Badge>
+            </div>
+            <p className="text-sm font-semibold text-red-800">
+              ⚠️ {osPendentesBaixaFiscal.length} OS(s) Pendente(s) de Baixa Fiscal
+            </p>
+            <Button variant="destructive" size="sm" className="w-full" onClick={notificarGestor}>
+              <Bell className="h-4 w-4 mr-2" />
+              Notificar Gestor
+            </Button>
+          </div>
+        )}
         {alertas.map((alerta, index) => (
           <div 
             key={index}

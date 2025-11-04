@@ -1,3 +1,17 @@
+export type TipoOperacaoFiscal = 
+  | 'Venda'
+  | 'Remessa'
+  | 'Devolucao'
+  | 'AutoConsumo'
+  | 'Comodato'
+  | 'Locacao'
+  | 'Perda'
+  | 'Servico';
+
+export type StatusRegimeEspecial = 'Com Regime' | 'Sem Regime' | 'Nacional';
+
+export type StatusDocumento = 'Rascunho' | 'Emitido' | 'Autorizado' | 'Cancelado' | 'Rejeitado';
+
 export interface DocumentoFiscal {
   id: string;
   numero: string;
@@ -10,11 +24,49 @@ export interface DocumentoFiscal {
   valorTotal: number;
   emissao: string;
   vencimento?: string;
-  status: 'Rascunho' | 'Emitido' | 'Autorizado' | 'Cancelado' | 'Rejeitado';
+  status: StatusDocumento;
   protocolo?: string;
   chaveAcesso?: string;
   cfop: string;
   naturezaOperacao: string;
+  
+  // Novos campos para integração
+  tipoOperacao?: TipoOperacaoFiscal;
+  osVinculadaId?: string;
+  equipamentoId?: string;
+  statusRegimeEspecial?: StatusRegimeEspecial;
+  requerProcedimentoFiscal?: boolean;
+  itemsApontamento?: ItemApontamento[];
+}
+
+export interface ParametrosFiscais {
+  id: string;
+  dataConcessaoRegimeEspecial: Date;
+  prazoMaximoBaixaFiscalOS: number; // em horas
+  mapeamentosFiscais: MapeamentoFiscal[];
+  atualizadoEm: Date;
+  atualizadoPor: string;
+}
+
+export interface MapeamentoFiscal {
+  id: string;
+  tipoOperacao: TipoOperacaoFiscal;
+  ufDestino: string;
+  tipoCliente: 'Contribuinte' | 'Nao Contribuinte' | 'Pessoa Fisica';
+  cfopSugerido: string;
+  cstSugerido: string;
+  naturezaOperacao: string;
+  aliquotaICMS?: number;
+  observacoes?: string;
+}
+
+export interface ItemApontamento {
+  itemId: string;
+  descricao: string;
+  quantidadeRemessa: number;
+  quantidadeUtilizada: number;
+  quantidadeNaoUtilizada: number;
+  statusUso: 'Utilizado' | 'Nao Utilizado' | 'Parcial';
   observacoes?: string;
 }
 
@@ -28,24 +80,18 @@ export interface ChecklistVenda {
   estoqueValidado: boolean;
   servicosConcluidos: boolean;
   documentacaoCompleta: boolean;
-  status: 'Aguardando' | 'Validando' | 'Liberado' | 'Rejeitado';
-  observacoes?: string;
+  status: 'Liberado' | 'Validando' | 'Aguardando';
 }
 
-export interface ValidacaoFiscal {
-  cfop: string;
-  cst: string;
-  aliquotaIcms: number;
-  aliquotaIpi: number;
-  aliquotaPis: number;
-  aliquotaCofins: number;
-  retencaoIss: number;
-  retencaoIr: number;
-  retencaoPis: number;
-  retencaoCofins: number;
-  regimeTributario: 'Simples' | 'Presumido' | 'Real';
-  estado: string;
-  municipio: string;
+export interface ServicoFaturamento {
+  id: string;
+  descricao: string;
+  cliente: string;
+  valor: number;
+  dataInicio: string;
+  dataConclusao?: string;
+  responsavel: string;
+  status: 'Concluído' | 'Em Andamento' | 'Aprovado';
 }
 
 export interface ProtocoloSefaz {
@@ -54,7 +100,7 @@ export interface ProtocoloSefaz {
   protocolo: string;
   dataEnvio: string;
   dataRetorno?: string;
-  status: 'Enviando' | 'Processando' | 'Autorizado' | 'Rejeitado' | 'Erro';
+  status: 'Autorizado' | 'Enviando' | 'Rejeitado';
   mensagem?: string;
   tentativas: number;
 }
@@ -71,34 +117,38 @@ export interface TituloReceber {
   condicoesPagamento: string;
 }
 
-export interface ServicoFaturamento {
-  id: string;
-  descricao: string;
-  cliente: string;
-  valor: number;
-  dataInicio: string;
-  dataConclusao?: string;
-  responsavel: string;
-  status: 'Iniciado' | 'Em Andamento' | 'Concluído' | 'Aprovado' | 'Faturado';
-  observacoes?: string;
-}
-
-export interface RelatorioFaturamento {
-  periodo: string;
-  totalFaturado: number;
-  totalCancelado: number;
+export interface RelatorioFaturamentoDetalhado {
+  periodo: { inicio: Date; fim: Date };
+  totalFaturadoBruto: number;
+  totalDevolucoes: number;
+  totalFaturadoLiquido: number;
   totalImpostos: number;
-  documentosEmitidos: number;
-  documentosCancelados: number;
-  tempoMedioEmissao: number;
-  faturamentoPorCliente: Array<{
-    cliente: string;
-    valor: number;
-    documentos: number;
-  }>;
-  faturamentoPorProduto: Array<{
-    produto: string;
-    valor: number;
+  
+  porTipoOperacao: {
+    venda: { quantidade: number; valor: number };
+    servico: { quantidade: number; valor: number };
+    locacao: { quantidade: number; valor: number };
+    outros: { quantidade: number; valor: number };
+  };
+  
+  devolucoes: {
     quantidade: number;
+    valorTotal: number;
+    porMotivo: Array<{ motivo: string; quantidade: number; valor: number }>;
+  };
+  
+  rejeicoesReincidentes: Array<{
+    cfop: string;
+    motivoRejeicao: string;
+    ocorrencias: number;
+    ultimaOcorrencia: Date;
   }>;
+  
+  complianceFiscal: {
+    osTotais: number;
+    osEmDia: number;
+    osAtrasadas: number;
+    equipamentosComRegime: number;
+    equipamentosSemRegime: number;
+  };
 }

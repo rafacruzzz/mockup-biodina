@@ -32,7 +32,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoPor: "Comercial",
     abertoEm: new Date(2025, 8, 15),
     observacoes: "Treinamento para 8 profissionais. Duração estimada: 4 horas",
-    atualizadoEm: new Date(2025, 8, 15)
+    atualizadoEm: new Date(2025, 8, 15),
+    statusBaixaFiscal: 'Nao Aplicavel'
   },
   {
     id: "os-002",
@@ -54,7 +55,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoPor: "DT",
     abertoEm: new Date(2025, 9, 2),
     observacoes: "URGENTE: Sistema apresentando erros críticos de calibração",
-    atualizadoEm: new Date(2025, 9, 2)
+    atualizadoEm: new Date(2025, 9, 2),
+    statusBaixaFiscal: 'Nao Aplicavel'
   },
   {
     id: "os-003",
@@ -80,7 +82,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoPor: "Assessor",
     abertoEm: new Date(2025, 8, 20),
     observacoes: "Verificar se há necessidade de treinamento adicional",
-    atualizadoEm: new Date(2025, 9, 8)
+    atualizadoEm: new Date(2025, 9, 8),
+    statusBaixaFiscal: 'Nao Aplicavel'
   },
   {
     id: "os-004",
@@ -100,7 +103,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoPor: "Assessor",
     abertoEm: new Date(2025, 8, 18),
     observacoes: "Treinamento de 2 dias para equipe de 5 pesquisadores",
-    atualizadoEm: new Date(2025, 8, 18)
+    atualizadoEm: new Date(2025, 8, 18),
+    statusBaixaFiscal: 'Nao Aplicavel'
   },
   {
     id: "os-005",
@@ -123,7 +127,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoPor: "DT",
     abertoEm: new Date(2025, 7, 25),
     observacoes: "Todos os sistemas operacionais",
-    atualizadoEm: new Date(2025, 8, 25)
+    atualizadoEm: new Date(2025, 8, 25),
+    statusBaixaFiscal: 'Nao Aplicavel'
   },
   {
     id: "os-006",
@@ -146,7 +151,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoPor: "DT",
     abertoEm: new Date(2025, 8, 10),
     observacoes: "Instalação prevista para 3 dias. Equipe de 4 técnicos",
-    atualizadoEm: new Date(2025, 9, 10)
+    atualizadoEm: new Date(2025, 9, 10),
+    statusBaixaFiscal: 'Nao Aplicavel'
   },
   {
     id: "os-008",
@@ -166,7 +172,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoPor: "DT",
     abertoEm: new Date(2025, 8, 28),
     observacoes: "Cancelado a pedido do cliente - reagentes não disponíveis",
-    atualizadoEm: new Date(2025, 9, 6)
+    atualizadoEm: new Date(2025, 9, 6),
+    statusBaixaFiscal: 'Nao Aplicavel'
   },
   // OSs da Ana Assessora
   {
@@ -196,7 +203,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoEm: new Date(2025, 8, 20),
     observacoes: "Treinamento realizado com sucesso. Certificados emitidos.",
     participantes: ["Dr. João Silva", "Dra. Maria Oliveira", "Téc. Pedro Santos", "Téc. Ana Costa", "Téc. Carlos Souza", "Téc. Juliana Lima"],
-    atualizadoEm: new Date(2025, 9, 2)
+    atualizadoEm: new Date(2025, 9, 2),
+    statusBaixaFiscal: 'Nao Aplicavel'
   },
   {
     id: "os-010",
@@ -219,7 +227,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoPor: "Assessor",
     abertoEm: new Date(2025, 9, 1),
     observacoes: "Cliente solicitou revisão de procedimentos operacionais padrão",
-    atualizadoEm: new Date(2025, 9, 1)
+    atualizadoEm: new Date(2025, 9, 1),
+    statusBaixaFiscal: 'Nao Aplicavel'
   },
   {
     id: "os-011",
@@ -241,7 +250,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoEm: new Date(2025, 9, 5),
     observacoes: "Treinamento em andamento para 3 novos técnicos",
     participantes: ["Téc. Ricardo Almeida", "Téc. Fernanda Costa", "Téc. Bruno Lima"],
-    atualizadoEm: new Date(2025, 9, 11)
+    atualizadoEm: new Date(2025, 9, 11),
+    statusBaixaFiscal: 'Nao Aplicavel'
   },
   {
     id: "os-012",
@@ -263,7 +273,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoPor: "DT",
     abertoEm: new Date(2025, 9, 9),
     observacoes: "URGENTE: Cliente reportou erro crítico. Atendimento prioritário necessário.",
-    atualizadoEm: new Date(2025, 9, 9)
+    atualizadoEm: new Date(2025, 9, 9),
+    statusBaixaFiscal: 'Nao Aplicavel'
   },
   {
     id: "os-156",
@@ -290,7 +301,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoPor: "DT",
     abertoEm: new Date(2024, 6, 1),
     observacoes: "Equipamento operando perfeitamente. Próxima manutenção preventiva em 3 meses.",
-    atualizadoEm: new Date(2024, 6, 10)
+    atualizadoEm: new Date(2024, 6, 10),
+    statusBaixaFiscal: 'Nao Aplicavel'
   },
   {
     id: "os-203",
@@ -317,7 +329,8 @@ export const ordensServicoMock: OrdemServico[] = [
     abertoPor: "DT",
     abertoEm: new Date(2024, 9, 4),
     observacoes: "Sensor de pH apresentou desgaste. Substituição realizada com sucesso. Cliente orientado sobre cuidados preventivos.",
-    atualizadoEm: new Date(2024, 9, 5)
+    atualizadoEm: new Date(2024, 9, 5),
+    statusBaixaFiscal: 'Nao Aplicavel'
   }
 ];
 

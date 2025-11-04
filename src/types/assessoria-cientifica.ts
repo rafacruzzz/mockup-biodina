@@ -27,6 +27,46 @@ export interface AssinaturaOS {
   data: Date;
 }
 
+export interface ApontamentoUsoOS {
+  osId: string;
+  dataApontamento: Date;
+  tecnicoId: string;
+  itensUtilizados: ItemApontamento[];
+  itensNaoUtilizados: ItemApontamento[];
+  observacoes?: string;
+  statusAprovacao: 'Pendente' | 'Aprovado' | 'Rejeitado';
+}
+
+export interface ItemApontamento {
+  itemId: string;
+  descricao: string;
+  quantidadeRemessa: number;
+  quantidadeUtilizada: number;
+  quantidadeNaoUtilizada: number;
+  statusUso: 'Utilizado' | 'Nao Utilizado' | 'Parcial';
+  observacoes?: string;
+}
+
+export interface VinculoOSRemessa {
+  osId: string;
+  numeroOS: string;
+  dataRemessa: Date;
+  itensRemessa: ItemApontamento[];
+  statusBaixaFiscal: 'Pendente' | 'Concluida' | 'Vencida';
+  prazoLimite: Date;
+}
+
+export interface OSPendenteBaixaFiscal {
+  osId: string;
+  numeroOS: string;
+  tecnicoId: string;
+  nomeTecnico: string;
+  dataRemessa: Date;
+  prazoLimite: Date;
+  horasVencidas: number;
+  statusBloqueio: 'Alerta' | 'Bloqueado' | 'Critico';
+}
+
 export interface OrdemServico {
   id: string;
   numero: string;
@@ -58,6 +98,16 @@ export interface OrdemServico {
   assinatura?: AssinaturaOS;
   atualizadoEm: Date;
   participantes?: string[]; // Para treinamentos
+  
+  // Novos campos para integração fiscal
+  remessaFiscalId?: string;
+  statusBaixaFiscal: 'Pendente' | 'Concluida' | 'Vencida' | 'Nao Aplicavel';
+  dataRemessa?: Date;
+  prazoLimiteBaixaFiscal?: Date;
+  apontamentoUso?: ApontamentoUsoOS;
+  nfRemessaId?: string;
+  nfDevolucaoId?: string;
+  nfAutoConsumoId?: string;
 }
 
 export interface FiltrosAgenda {
