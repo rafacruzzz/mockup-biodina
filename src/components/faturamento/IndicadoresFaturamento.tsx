@@ -5,8 +5,8 @@ import { FileText, AlertTriangle, DollarSign, FileCheck, TrendingUp } from 'luci
 const IndicadoresFaturamento = () => {
   // Mock data - em produção virá de API/state
   const indicadores = {
-    notasPendentes: 5,
-    rejeicoesFiscais: 2,
+    notasPendentes: 5, // 3 NF-e, 2 NFS-e
+    rejeicoesFiscais: 2, // 1 NF-e, 1 NFS-e
     totalNFE: 245800.00,
     totalNFS: 82300.00,
     totalFaturado: 328100.00

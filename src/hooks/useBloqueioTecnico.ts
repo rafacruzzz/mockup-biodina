@@ -14,17 +14,17 @@ export const useBloqueioTecnico = (usuarioId: string) => {
       // Simular busca de OSs pendentes de baixa fiscal
       // Em produção, isso seria uma chamada à API
       const mockOsPendentes: OSPendenteBaixaFiscal[] = [
-        // Descomente para testar o bloqueio
-        // {
-        //   osId: "OS001",
-        //   numeroOS: "OS-2025-001",
-        //   tecnicoId: usuarioId,
-        //   nomeTecnico: "João Silva",
-        //   dataRemessa: new Date(Date.now() - 26 * 60 * 60 * 1000), // 26 horas atrás
-        //   prazoLimite: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        //   horasVencidas: 2,
-        //   statusBloqueio: "Bloqueado"
-        // }
+        // BLOQUEIO ATIVO - OS Pendente de Baixa Fiscal
+        {
+          osId: "OS-2025-001-ID",
+          numeroOS: "OS-2025-001",
+          tecnicoId: usuarioId,
+          nomeTecnico: "João Silva",
+          dataRemessa: new Date(Date.now() - 26 * 60 * 60 * 1000), // 26 horas atrás
+          prazoLimite: new Date(Date.now() - 2 * 60 * 60 * 1000),
+          horasVencidas: 2,
+          statusBloqueio: "Bloqueado"
+        }
       ];
 
       setOsPendentes(mockOsPendentes);

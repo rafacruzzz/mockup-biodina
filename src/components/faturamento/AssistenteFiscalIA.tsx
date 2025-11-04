@@ -12,10 +12,22 @@ interface AlertaFiscal {
 }
 
 const AssistenteFiscalIA = () => {
-  const osPendentesBaixaFiscal: any[] = [];
+  // Mock data - OS pendente de baixa fiscal
+  const osPendentesBaixaFiscal = [
+    {
+      osId: 'OS-2025-001-ID',
+      numeroOS: 'OS-2025-001',
+      tecnicoId: 'TEC001',
+      nomeTecnico: 'João Silva',
+      dataRemessa: new Date(Date.now() - 26 * 60 * 60 * 1000), // 26 horas atrás
+      prazoLimite: new Date(Date.now() - 2 * 60 * 60 * 1000), // venceu há 2 horas
+      horasVencidas: 2,
+      statusBloqueio: 'Bloqueado'
+    }
+  ];
   
   const notificarGestor = () => {
-    toast.success("Gestor notificado sobre OSs pendentes");
+    toast.success("Gestor notificado sobre OSs pendentes de baixa fiscal");
   };
 
   const alertas: AlertaFiscal[] = [
@@ -83,7 +95,7 @@ const AssistenteFiscalIA = () => {
               <Badge variant="destructive">BLOQUEIO ATIVO</Badge>
             </div>
             <p className="text-sm font-semibold text-red-800">
-              ⚠️ {osPendentesBaixaFiscal.length} OS(s) Pendente(s) de Baixa Fiscal
+              ⚠️ {osPendentesBaixaFiscal.length} OS Pendente de Baixa Fiscal. O usuário {osPendentesBaixaFiscal[0]?.nomeTecnico} está bloqueado.
             </p>
             <Button variant="destructive" size="sm" className="w-full" onClick={notificarGestor}>
               <Bell className="h-4 w-4 mr-2" />

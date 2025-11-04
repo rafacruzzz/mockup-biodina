@@ -276,6 +276,58 @@ export const ordensServicoMock: OrdemServico[] = [
     atualizadoEm: new Date(2025, 9, 9),
     statusBaixaFiscal: 'Nao Aplicavel'
   },
+  // OS PENDENTE DE BAIXA FISCAL - SIMULAÇÃO DE BLOQUEIO
+  {
+    id: 'OS-2025-001-ID',
+    numero: 'OS-2025-001',
+    tipo: ['suporte_operacional'],
+    status: 'EM_ANDAMENTO',
+    departamento: 'Assessoria Científica',
+    cliente: 'Hospital São Lucas',
+    clienteId: 'CLI-001',
+    equipamento: 'Analisador X1',
+    equipamentoId: 'EQ001',
+    numeroSerieLote: 'SN-12345-2023',
+    opcaoAtendimento: 'presencial',
+    descricaoServico: 'Manutenção preventiva e calibração do equipamento',
+    dataAgendada: new Date('2025-01-20'),
+    dataInicio: new Date('2025-01-20'),
+    responsavel: 'João Silva',
+    responsavelId: 'TEC001',
+    abertoPor: 'DT',
+    abertoEm: new Date('2025-01-15'),
+    statusBaixaFiscal: 'Pendente',
+    dataRemessa: new Date(Date.now() - 26 * 60 * 60 * 1000), // 26 horas atrás
+    prazoLimiteBaixaFiscal: new Date(Date.now() - 2 * 60 * 60 * 1000), // venceu há 2 horas
+    nfRemessaId: 'DF-REM-001',
+    apontamentoUso: {
+      osId: 'OS-2025-001-ID',
+      dataApontamento: new Date(),
+      tecnicoId: 'TEC001',
+      itensUtilizados: [
+        {
+          itemId: 'ITEM-001',
+          descricao: 'Kit Manutenção Tipo A',
+          quantidadeRemessa: 3,
+          quantidadeUtilizada: 3,
+          quantidadeNaoUtilizada: 0,
+          statusUso: 'Utilizado'
+        }
+      ],
+      itensNaoUtilizados: [
+        {
+          itemId: 'ITEM-002',
+          descricao: 'Kit Manutenção Tipo B',
+          quantidadeRemessa: 2,
+          quantidadeUtilizada: 0,
+          quantidadeNaoUtilizada: 2,
+          statusUso: 'Nao Utilizado'
+        }
+      ],
+      statusAprovacao: 'Pendente'
+    },
+    atualizadoEm: new Date()
+  },
   {
     id: "os-156",
     numero: "OS-2024-156",

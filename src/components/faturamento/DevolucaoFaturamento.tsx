@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import DevolucaoOSModal from "@/components/faturamento/modals/DevolucaoOSModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,7 @@ interface DevolucaoItem {
 const DevolucaoFaturamento = () => {
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [pesquisa, setPesquisa] = useState('');
+  const [modalDevolucaoOSOpen, setModalDevolucaoOSOpen] = useState(false);
 
   // Mock data para devolucoes
   const devolucoes: DevolucaoItem[] = [
@@ -116,9 +118,12 @@ const DevolucaoFaturamento = () => {
           <h1 className="text-2xl font-bold text-gray-900">Devolução de Faturamento</h1>
           <p className="text-gray-600">Gestão de devoluções e notas fiscais de entrada</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button 
+          className="bg-primary hover:bg-primary/90"
+          onClick={() => setModalDevolucaoOSOpen(true)}
+        >
           <Plus className="h-4 w-4 mr-2" />
-          Nova Devolução
+          Nova Devolução (OS)
         </Button>
       </div>
 
@@ -311,6 +316,12 @@ const DevolucaoFaturamento = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Modal de Devolução OS */}
+      <DevolucaoOSModal 
+        isOpen={modalDevolucaoOSOpen} 
+        onClose={() => setModalDevolucaoOSOpen(false)} 
+      />
     </div>
   );
 };

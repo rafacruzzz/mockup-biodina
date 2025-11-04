@@ -23,6 +23,7 @@ import RelatoriosFaturamento from "@/components/faturamento/RelatoriosFaturament
 import IndicadoresFaturamento from "@/components/faturamento/IndicadoresFaturamento";
 import AssistenteFiscalIA from "@/components/faturamento/AssistenteFiscalIA";
 import RodapeFaturamento from "@/components/faturamento/RodapeFaturamento";
+import ParametrosFiscais from "@/components/faturamento/ParametrosFiscais";
 import { 
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
@@ -39,6 +40,17 @@ const Financeiro = () => {
   const [activeSubModule, setActiveSubModule] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState('todos');
   const [filterPeriodo, setFilterPeriodo] = useState('mes');
+
+  // Listener para navegação de configurações fiscais
+  React.useEffect(() => {
+    const handleNavConfigFiscais = () => {
+      setActiveModule('faturamento');
+      setActiveSubModule('configuracoes_fiscais');
+    };
+    
+    window.addEventListener('navigate-config-fiscais', handleNavConfigFiscais);
+    return () => window.removeEventListener('navigate-config-fiscais', handleNavConfigFiscais);
+  }, []);
 
   // Dados das contas a pagar
   const contasPagar = [
@@ -370,7 +382,8 @@ const Financeiro = () => {
         { id: 'devolucao', title: 'Devolução' },
         { id: 'cancelamento', title: 'Cancelamento' },
         { id: 'servicos', title: 'Serviços' },
-        { id: 'relatorios', title: 'Relatórios' }
+        { id: 'relatorios', title: 'Relatórios' },
+        { id: 'configuracoes_fiscais', title: 'Configurações Fiscais' }
       ]
     },
     {
@@ -1025,6 +1038,22 @@ const Financeiro = () => {
               </Button>
             </div>
             <RelatoriosFaturamento />
+          </div>
+        );
+      case 'configuracoes_fiscais':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <ParametrosFiscais />
           </div>
         );
       default:

@@ -12,6 +12,11 @@ const RodapeFaturamento = () => {
     console.log(`Abrindo chamado para: ${departamento}`);
   };
 
+  const handleConfigFiscais = () => {
+    // Navega para configurações fiscais
+    window.dispatchEvent(new CustomEvent('navigate-config-fiscais'));
+  };
+
   return (
     <div className="mt-8 pt-6 border-t bg-muted/30 rounded-lg p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -40,6 +45,7 @@ const RodapeFaturamento = () => {
               variant="outline" 
               size="sm"
               className="text-xs"
+              onClick={handleConfigFiscais}
             >
               <Settings className="h-3 w-3 mr-1" />
               Configurações Fiscais

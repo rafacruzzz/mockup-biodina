@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import EmissaoNFeModal from "@/components/faturamento/modals/EmissaoNFeModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +16,7 @@ const SaidaFaturamento = () => {
   const [filtroTipo, setFiltroTipo] = useState('todos');
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [pesquisa, setPesquisa] = useState('');
+  const [modalEmissaoOpen, setModalEmissaoOpen] = useState(false);
 
   const statusColors = {
     'Rascunho': 'bg-gray-500',
@@ -68,7 +70,10 @@ const SaidaFaturamento = () => {
           <h1 className="text-2xl font-bold text-gray-900">Saída de Faturamento</h1>
           <p className="text-gray-600">Emissão e transmissão de documentos fiscais</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button 
+          className="bg-primary hover:bg-primary/90"
+          onClick={() => setModalEmissaoOpen(true)}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Nova NF-e
         </Button>
@@ -265,6 +270,12 @@ const SaidaFaturamento = () => {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Modal de Emissão de NF-e */}
+      <EmissaoNFeModal 
+        isOpen={modalEmissaoOpen} 
+        onClose={() => setModalEmissaoOpen(false)} 
+      />
     </div>
   );
 };
