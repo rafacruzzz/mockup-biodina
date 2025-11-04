@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ordensServicoMock, getTipoOSLabel, getStatusColor, assessoresTecnicos } from "@/data/assessoria-cientifica";
-import { OrdemServico, StatusOS } from "@/types/assessoria-cientifica";
+import { OrdemServico, StatusOS, DepartamentoOS } from "@/types/assessoria-cientifica";
 import { FormularioOS } from "./FormularioOS";
 import { AssinaturaLoteModal } from "./AssinaturaLoteModal";
 import { format } from "date-fns";
@@ -23,9 +23,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 interface OrdensServicoTabProps {
   statusFilterFromAlert?: StatusOS[];
+  departamento?: DepartamentoOS;
 }
 
-export function OrdensServicoTab({ statusFilterFromAlert }: OrdensServicoTabProps) {
+export function OrdensServicoTab({ statusFilterFromAlert, departamento }: OrdensServicoTabProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusOS[]>([]);
   const [selectedOS, setSelectedOS] = useState<OrdemServico | null>(null);
@@ -55,6 +56,11 @@ export function OrdensServicoTab({ statusFilterFromAlert }: OrdensServicoTabProp
 
   const filteredOS = ordensServicoMock
     .filter((os) => {
+      // FILTRO POR DEPARTAMENTO (se especificado)
+      if (departamento && os.departamento !== departamento) {
+        return false;
+      }
+
       // FILTRO POR PERFIL: Assessor vê apenas suas OSs
       if (currentUser && !isGestor()) {
         if (os.responsavelId !== currentUser.id) {

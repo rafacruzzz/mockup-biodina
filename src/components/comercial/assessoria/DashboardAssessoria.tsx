@@ -15,15 +15,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 interface DashboardAssessoriaProps {
   onNavigateToOS?: (filtroStatus?: StatusOS[]) => void;
+  departamento?: DepartamentoOS; // Define qual departamento visualizar
+  labelAssessor?: string; // Label para o filtro de assessor/técnico
 }
 
-const DashboardAssessoria = ({ onNavigateToOS }: DashboardAssessoriaProps) => {
+const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Científica", labelAssessor = "Assessor" }: DashboardAssessoriaProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedOS, setSelectedOS] = useState<OrdemServico | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [assessorFilter, setAssessorFilter] = useState<string>("todos");
   const [filtros, setFiltros] = useState<FiltrosAgenda>({
-    departamentos: ["Assessoria Científica", "Departamento Técnico"],
+    departamentos: [departamento], // Fixo no departamento específico
     assessores: [],
     clientes: [],
     status: []
@@ -254,7 +256,12 @@ const DashboardAssessoria = ({ onNavigateToOS }: DashboardAssessoriaProps) => {
         </CardHeader>
         <CardContent className="p-4">
           {/* Filtros */}
-          <FiltrosAgendaOS filtros={filtros} onFiltrosChange={setFiltros} />
+          <FiltrosAgendaOS 
+            filtros={filtros} 
+            onFiltrosChange={setFiltros}
+            labelAssessor={labelAssessor}
+            departamento={departamento}
+          />
           
           {/* Cabeçalho com dias da semana */}
           <div className="grid grid-cols-7 gap-1 mb-2 mt-4">

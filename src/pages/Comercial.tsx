@@ -37,6 +37,7 @@ const Comercial = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'emprestimos' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeTab, setActiveTab] = useState('indicadores');
   const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "os" | "rastreabilidade" | "analise-editais" | "repositorio">("agenda");
+  const [departamentoTecnicoTab, setDepartamentoTecnicoTab] = useState<"agenda" | "os" | "rastreabilidade">("agenda");
   const [osStatusFilter, setOsStatusFilter] = useState<StatusOS[] | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
@@ -589,8 +590,8 @@ const Comercial = () => {
         </div>
 
         <div>
-          {assessoriaTab === "agenda" && <DashboardAssessoria onNavigateToOS={handleNavigateToOS} />}
-          {assessoriaTab === "os" && <OrdensServicoTab statusFilterFromAlert={osStatusFilter} />}
+          {assessoriaTab === "agenda" && <DashboardAssessoria onNavigateToOS={handleNavigateToOS} departamento="Assessoria Científica" labelAssessor="Assessor" />}
+          {assessoriaTab === "os" && <OrdensServicoTab statusFilterFromAlert={osStatusFilter} departamento="Assessoria Científica" />}
           {assessoriaTab === "rastreabilidade" && <RastreabilidadeTab />}
           {assessoriaTab === "analise-editais" && <AnaliseEditaisTab />}
           {assessoriaTab === "repositorio" && <RepositorioProdutosTab />}
@@ -600,24 +601,37 @@ const Comercial = () => {
   };
 
   const renderDepartamentoTecnicoModule = () => {
+    const handleNavigateToOS = (filtroStatus?: StatusOS[]) => {
+      setDepartamentoTecnicoTab("os");
+      setOsStatusFilter(filtroStatus);
+    };
+
     return (
       <div className="space-y-6">
-        <div className="flex items-center gap-4 mb-6">
-          <Button 
-            variant="outline" 
-            onClick={() => setActiveModule('main')}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-biodina-blue">Comercial / Departamento Técnico</h2>
+            <p className="text-muted-foreground mt-1">Gestão de Ordens de Serviço e Agenda de Campo</p>
+          </div>
+          <Button variant="outline" onClick={() => setActiveModule('main')}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
             Voltar
           </Button>
-          <h2 className="text-2xl font-bold text-biodina-blue">Comercial / Departamento Técnico</h2>
         </div>
-        <Card>
-          <CardContent className="p-8 text-center">
-            <p className="text-gray-600">Módulo de Departamento Técnico em desenvolvimento</p>
-          </CardContent>
-        </Card>
+
+        <div className="border-b">
+          <div className="flex gap-4">
+            <button onClick={() => setDepartamentoTecnicoTab("agenda")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "agenda" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Agenda</button>
+            <button onClick={() => setDepartamentoTecnicoTab("os")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "os" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Ordens de Serviço</button>
+            <button onClick={() => setDepartamentoTecnicoTab("rastreabilidade")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "rastreabilidade" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Rastreabilidade</button>
+          </div>
+        </div>
+
+        <div>
+          {departamentoTecnicoTab === "agenda" && <DashboardAssessoria onNavigateToOS={handleNavigateToOS} departamento="Departamento Técnico" labelAssessor="Técnico" />}
+          {departamentoTecnicoTab === "os" && <OrdensServicoTab statusFilterFromAlert={osStatusFilter} departamento="Departamento Técnico" />}
+          {departamentoTecnicoTab === "rastreabilidade" && <RastreabilidadeTab />}
+        </div>
       </div>
     );
   };

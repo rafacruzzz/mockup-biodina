@@ -8,21 +8,21 @@ import { Filter } from "lucide-react";
 interface FiltrosAgendaOSProps {
   filtros: FiltrosAgenda;
   onFiltrosChange: (filtros: FiltrosAgenda) => void;
+  labelAssessor?: string; // "Assessor" ou "Técnico"
+  departamento?: DepartamentoOS; // Departamento fixo para filtrar
 }
 
-export const FiltrosAgendaOS = ({ filtros, onFiltrosChange }: FiltrosAgendaOSProps) => {
+export const FiltrosAgendaOS = ({ filtros, onFiltrosChange, labelAssessor = "Assessor/Técnico", departamento }: FiltrosAgendaOSProps) => {
   const statusOptions: StatusOS[] = ['ABERTA', 'EM_ANDAMENTO', 'CONCLUÍDA', 'URGENTE', 'CANCELADA'];
-  const departamentoOptions: DepartamentoOS[] = ['Assessoria Científica', 'Departamento Técnico'];
   
-  // Obter lista única de clientes
-  const clientes = Array.from(new Set(ordensServicoMock.map(os => os.cliente))).sort();
-
-  const toggleDepartamento = (dept: DepartamentoOS) => {
-    const newDepts = filtros.departamentos.includes(dept)
-      ? filtros.departamentos.filter(d => d !== dept)
-      : [...filtros.departamentos, dept];
-    onFiltrosChange({ ...filtros, departamentos: newDepts });
-  };
+  // Obter lista única de clientes, filtrados por departamento se especificado
+  const clientes = Array.from(
+    new Set(
+      ordensServicoMock
+        .filter(os => !departamento || os.departamento === departamento)
+        .map(os => os.cliente)
+    )
+  ).sort();
 
   const toggleAssessor = (assessor: string) => {
     const newAssessores = filtros.assessores.includes(assessor)
@@ -52,32 +52,10 @@ export const FiltrosAgendaOS = ({ filtros, onFiltrosChange }: FiltrosAgendaOSPro
         <h3 className="font-semibold text-sm">Filtros da Agenda</h3>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Filtro Departamento */}
-        <div className="space-y-2">
-          <Label className="text-xs font-semibold">Departamento</Label>
-          <div className="space-y-2">
-            {departamentoOptions.map((dept) => (
-              <div key={dept} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`dept-${dept}`}
-                  checked={filtros.departamentos.includes(dept)}
-                  onCheckedChange={() => toggleDepartamento(dept)}
-                />
-                <label
-                  htmlFor={`dept-${dept}`}
-                  className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                >
-                  {dept}
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
-
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Filtro Assessor/Técnico */}
         <div className="space-y-2">
-          <Label className="text-xs font-semibold">Assessor/Técnico</Label>
+          <Label className="text-xs font-semibold">{labelAssessor}</Label>
           <div className="space-y-2 max-h-32 overflow-y-auto">
             {assessoresTecnicos.map((assessor) => (
               <div key={assessor.id} className="flex items-center space-x-2">
