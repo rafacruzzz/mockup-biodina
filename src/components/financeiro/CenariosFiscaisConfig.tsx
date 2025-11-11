@@ -4,40 +4,61 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Edit, Trash2, FileText } from "lucide-react";
+import NovoCenarioModal from "./modals/NovoCenarioModal";
+import { useToast } from "@/hooks/use-toast";
+import type { CenarioFiscal } from "@/types/cenariosFiscais";
 
 const CenariosFiscaisConfig = () => {
-  const [cenariosFiscais] = useState([
+  const { toast } = useToast();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [cenariosFiscais, setCenariosFiscais] = useState<CenarioFiscal[]>([
     {
       id: 1,
       nome: "Nota Fiscal Eletrônica - NFe",
-      codigo: "NFE",
       tipo: "Produto",
-      aliquotaICMS: "18%",
-      aliquotaPIS: "1.65%",
-      aliquotaCOFINS: "7.6%",
+      regime: "1",
+      aliquotaICMS: 18,
+      aliquotaPIS: 1.65,
+      aliquotaCOFINS: 7.6,
+      aliquotaIPI: 0,
       status: "Ativo"
     },
     {
       id: 2,
       nome: "Nota Fiscal de Serviço - NFSe",
-      codigo: "NFSE",
       tipo: "Serviço",
-      aliquotaISS: "5%",
-      aliquotaPIS: "1.65%",
-      aliquotaCOFINS: "7.6%",
+      regime: "1",
+      aliquotaICMS: 0,
+      aliquotaPIS: 1.65,
+      aliquotaCOFINS: 7.6,
+      aliquotaIPI: 0,
       status: "Ativo"
     },
     {
       id: 3,
       nome: "Simples Nacional",
-      codigo: "SN",
-      tipo: "Simplificado",
-      aliquotaTotal: "6%",
-      aliquotaPIS: "-",
-      aliquotaCOFINS: "-",
+      tipo: "Produto",
+      regime: "0",
+      aliquotaICMS: 0,
+      aliquotaPIS: 0,
+      aliquotaCOFINS: 0,
+      aliquotaIPI: 0,
       status: "Ativo"
     }
   ]);
+
+  const handleSalvarCenario = (novoCenario: any) => {
+    const novoId = Math.max(...cenariosFiscais.map(c => c.id)) + 1;
+    
+    setCenariosFiscais([
+      ...cenariosFiscais,
+      {
+        id: novoId,
+        ...novoCenario,
+        status: "Ativo" as const
+      }
+    ]);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -50,6 +71,19 @@ const CenariosFiscaisConfig = () => {
     }
   };
 
+  const getRegimeLabel = (regime: string) => {
+    switch (regime) {
+      case '0':
+        return 'Simples';
+      case '1':
+        return 'Normal';
+      case '2':
+        return 'MEI';
+      default:
+        return '-';
+    }
+  };
+
   return (
     <div className="space-y-6">
       <Card>
@@ -59,7 +93,7 @@ const CenariosFiscaisConfig = () => {
               <FileText className="h-5 w-5" />
               Cenários Fiscais
             </CardTitle>
-            <Button>
+            <Button onClick={() => setModalOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Novo Cenário
             </Button>
@@ -70,8 +104,8 @@ const CenariosFiscaisConfig = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Nome</TableHead>
-                <TableHead>Código</TableHead>
                 <TableHead>Tipo</TableHead>
+                <TableHead>Regime</TableHead>
                 <TableHead>Alíquotas</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Ações</TableHead>
@@ -81,14 +115,17 @@ const CenariosFiscaisConfig = () => {
               {cenariosFiscais.map((cenario) => (
                 <TableRow key={cenario.id}>
                   <TableCell className="font-medium">{cenario.nome}</TableCell>
-                  <TableCell>{cenario.codigo}</TableCell>
                   <TableCell>{cenario.tipo}</TableCell>
+                  <TableCell>{getRegimeLabel(cenario.regime)}</TableCell>
                   <TableCell>
-                    <div className="text-sm">
-                      {cenario.aliquotaICMS && <div>ICMS: {cenario.aliquotaICMS}</div>}
-                      {cenario.aliquotaISS && <div>ISS: {cenario.aliquotaISS}</div>}
-                      {cenario.aliquotaTotal && <div>Total: {cenario.aliquotaTotal}</div>}
-                      <div>PIS: {cenario.aliquotaPIS} | COFINS: {cenario.aliquotaCOFINS}</div>
+                    <div className="text-sm space-y-1">
+                      {cenario.aliquotaICMS > 0 && <div>ICMS: {cenario.aliquotaICMS}%</div>}
+                      {cenario.aliquotaPIS > 0 && <div>PIS: {cenario.aliquotaPIS}%</div>}
+                      {cenario.aliquotaCOFINS > 0 && <div>COFINS: {cenario.aliquotaCOFINS}%</div>}
+                      {cenario.aliquotaIPI > 0 && <div>IPI: {cenario.aliquotaIPI}%</div>}
+                      {cenario.aliquotaICMS === 0 && cenario.aliquotaPIS === 0 && cenario.aliquotaCOFINS === 0 && cenario.aliquotaIPI === 0 && (
+                        <div className="text-muted-foreground">-</div>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -112,6 +149,12 @@ const CenariosFiscaisConfig = () => {
           </Table>
         </CardContent>
       </Card>
+
+      <NovoCenarioModal 
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={handleSalvarCenario}
+      />
     </div>
   );
 };
