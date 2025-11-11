@@ -7,13 +7,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Settings, Search, Filter, Plus, FileText, 
-  CheckCircle, Clock, AlertTriangle, User, Eye, Send
+  CheckCircle, Clock, AlertTriangle, User, Eye, Send, XCircle
 } from "lucide-react";
 import { mockServicosFaturamento } from "@/data/faturamentoModules";
+import CancelamentoNotaServicoModal from "./modals/CancelamentoNotaServicoModal";
 
 const ServicosFaturamento = () => {
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [pesquisa, setPesquisa] = useState('');
+  const [modalCancelamentoOpen, setModalCancelamentoOpen] = useState(false);
+  const [servicoSelecionado, setServicoSelecionado] = useState<any>(null);
 
   const statusColors = {
     'Iniciado': 'bg-blue-500',
@@ -217,6 +220,20 @@ const ServicosFaturamento = () => {
                         <Button size="sm" variant="outline">
                           <Eye className="h-4 w-4" />
                         </Button>
+                        {(servico.status === 'Concluído' || servico.status === 'Aprovado' || servico.status === 'Faturado') && servico.numeroNFSe && (
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
+                            onClick={() => {
+                              setServicoSelecionado(servico);
+                              setModalCancelamentoOpen(true);
+                            }}
+                          >
+                            <XCircle className="h-4 w-4" />
+                            Cancelar Nota
+                          </Button>
+                        )}
                         {servico.status === 'Aprovado' && (
                           <Button size="sm" className="bg-green-600 hover:bg-green-700">
                             <FileText className="h-4 w-4" />
@@ -301,6 +318,17 @@ const ServicosFaturamento = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Modal de Cancelamento de Nota */}
+      <CancelamentoNotaServicoModal
+        isOpen={modalCancelamentoOpen}
+        onClose={() => {
+          setModalCancelamentoOpen(false);
+          setServicoSelecionado(null);
+        }}
+        numeroNFSe={servicoSelecionado?.numeroNFSe}
+        descricaoServico={servicoSelecionado?.descricao}
+      />
     </div>
   );
 };

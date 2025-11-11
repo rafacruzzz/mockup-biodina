@@ -363,6 +363,7 @@ export const mockServicosFaturamento: ServicoFaturamento[] = [
     dataConclusao: '2025-01-25',
     responsavel: 'Dr. Pedro Alvares',
     status: 'Concluído',
+    numeroNFSe: '12345',
   },
   {
     id: 'SF002',

@@ -238,7 +238,8 @@ export interface ServicoFaturamento {
   dataInicio: string;
   dataConclusao?: string;
   responsavel: string;
-  status: 'Concluído' | 'Em Andamento' | 'Aprovado';
+  status: 'Iniciado' | 'Concluído' | 'Em Andamento' | 'Aprovado' | 'Faturado';
+  numeroNFSe?: string;
 }
 
 export interface ProtocoloSefaz {
