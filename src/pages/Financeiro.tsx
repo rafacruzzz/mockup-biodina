@@ -473,8 +473,6 @@ const Financeiro = () => {
       const faturamentoProdutos = [
         { id: 'entrada', title: 'Entrada', description: 'Lançar NF-e de compra ou importação', icon: Download },
         { id: 'saida', title: 'Saída', description: 'Emitir NF-e de venda ou remessa', icon: Upload },
-        { id: 'devolucao', title: 'Devolução', description: 'Registrar devolução (cliente/fornecedor)', icon: RefreshCw },
-        { id: 'cancelamento', title: 'Cancelamento', description: 'Cancelar nota ou inutilizar numeração', icon: X },
       ];
 
       const faturamentoServicos = [
