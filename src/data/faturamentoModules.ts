@@ -357,32 +357,139 @@ export const mockServicosFaturamento: ServicoFaturamento[] = [
   {
     id: 'SF001',
     descricao: 'Consultoria Regulatória ANVISA',
+    descricaoDetalhada: 'Consultoria completa para adequação de processos às normas da ANVISA, incluindo análise documental e plano de ação.',
     cliente: 'Laboratório XYZ',
+    cnpjCliente: '12.345.678/0001-90',
     valor: 12000.00,
     dataInicio: '2025-01-10',
     dataConclusao: '2025-01-25',
     responsavel: 'Dr. Pedro Alvares',
-    status: 'Concluído',
+    emailResponsavel: 'pedro.alvares@empresa.com',
+    status: 'Faturado',
+    
+    escopo: 'Análise completa da documentação atual, identificação de não conformidades, elaboração de plano de ação corretivo e acompanhamento da implementação das melhorias.',
+    
+    deliverables: [
+      'Relatório de Análise Documental',
+      'Plano de Ação Corretivo',
+      'Manual de Procedimentos Atualizado',
+      'Certificado de Conformidade'
+    ],
+    
+    observacoes: 'Cliente prioritário. Serviço executado com excelência.',
+    
     numeroNFSe: '12345',
+    serieNFSe: 'A1',
+    dataEmissaoNFSe: '2025-01-25',
+    chaveVerificacao: 'A1B2C3D4',
+    codigoVerificacao: '9876',
+    linkPrefeitura: 'https://nfse.prefeitura.sp.gov.br/consulta',
+    
+    valorISS: 600.00,
+    aliquotaISS: 5,
+    valorPIS: 78.00,
+    valorCOFINS: 360.00,
+    valorIR: 180.00,
+    valorLiquido: 10782.00,
+    
+    arquivos: [
+      {
+        id: 'ARQ001',
+        tipo: 'XML',
+        nomeArquivo: 'nfse_12345.xml',
+        tamanho: 15360,
+        dataUpload: '2025-01-25T14:30:00',
+        uploadPor: 'João Silva',
+        url: '/downloads/nfse_12345.xml'
+      },
+      {
+        id: 'ARQ002',
+        tipo: 'PDF',
+        nomeArquivo: 'danfse_12345.pdf',
+        tamanho: 250880,
+        dataUpload: '2025-01-25T14:32:00',
+        uploadPor: 'João Silva',
+        url: '/downloads/danfse_12345.pdf'
+      }
+    ],
+    
+    solicitacoesAlteracao: [
+      {
+        id: 'SOL001',
+        servicoId: 'SF001',
+        solicitadoPor: 'Carlos Silva',
+        emailSolicitante: 'carlos@laboratorioxyz.com',
+        dataSolicitacao: '2025-01-20',
+        horaSolicitacao: '15:45',
+        motivoAlteracao: 'Revisão de Escopo',
+        detalhesAlteracao: 'Necessário incluir análise adicional de processos de validação conforme solicitado pelo time técnico.',
+        status: 'aceita',
+        respostaDo: 'Dr. Pedro Alvares',
+        dataResposta: '2025-01-21',
+        justificativaResposta: 'Alteração aceita. Prazo adicional de 3 dias será necessário para conclusão da análise complementar.'
+      }
+    ]
   },
   {
     id: 'SF002',
     descricao: 'Assessoria Técnica em Registros',
+    descricaoDetalhada: 'Assessoria especializada para registro de produtos na ANVISA.',
     cliente: 'Indústria Farmacêutica ABC',
+    cnpjCliente: '98.765.432/0001-10',
     valor: 8500.00,
     dataInicio: '2025-01-15',
     responsavel: 'Dra. Ana Costa',
+    emailResponsavel: 'ana.costa@empresa.com',
     status: 'Em Andamento',
+    escopo: 'Preparação e submissão de documentação para registro de novos produtos.',
+    deliverables: [
+      'Dossiê Técnico Completo',
+      'Protocolo de Registro'
+    ],
+    observacoes: 'Em andamento conforme cronograma.',
+    solicitacoesAlteracao: []
   },
   {
     id: 'SF003',
     descricao: 'Treinamento Boas Práticas',
+    descricaoDetalhada: 'Treinamento completo sobre Boas Práticas de Fabricação (BPF).',
     cliente: 'Hospital Regional',
+    cnpjCliente: '11.222.333/0001-44',
     valor: 3200.00,
     dataInicio: '2025-01-22',
     dataConclusao: '2025-01-24',
     responsavel: 'Prof. Ricardo Lima',
-    status: 'Aprovado',
+    emailResponsavel: 'ricardo.lima@empresa.com',
+    status: 'Faturado',
+    escopo: 'Treinamento presencial de 16 horas sobre BPF para equipe técnica.',
+    deliverables: [
+      'Material Didático',
+      'Certificados de Participação',
+      'Relatório de Avaliação'
+    ],
+    numeroNFSe: '12346',
+    serieNFSe: 'A1',
+    dataEmissaoNFSe: '2025-01-24',
+    chaveVerificacao: 'E5F6G7H8',
+    codigoVerificacao: '5432',
+    linkPrefeitura: 'https://nfse.prefeitura.sp.gov.br/consulta',
+    valorISS: 160.00,
+    aliquotaISS: 5,
+    valorPIS: 20.80,
+    valorCOFINS: 96.00,
+    valorLiquido: 2923.20,
+    arquivos: [
+      {
+        id: 'ARQ003',
+        tipo: 'PDF',
+        nomeArquivo: 'danfse_12346.pdf',
+        tamanho: 180000,
+        dataUpload: '2025-01-24T16:00:00',
+        uploadPor: 'Ana Silva',
+        url: '/downloads/danfse_12346.pdf'
+      }
+    ],
+    solicitacoesAlteracao: []
   }
 ];
 

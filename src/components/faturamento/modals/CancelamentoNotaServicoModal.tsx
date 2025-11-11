@@ -14,15 +14,22 @@ import { useToast } from '@/hooks/use-toast';
 interface CancelamentoNotaServicoModalProps {
   isOpen: boolean;
   onClose: () => void;
-  numeroNFSe?: string;
-  descricaoServico?: string;
+  servico?: {
+    servicoId: string;
+    descricaoServico: string;
+    cliente: string;
+    valor: number;
+    numeroNFSe?: string;
+    dataEmissao?: string;
+  };
+  onCancelar?: (dados: any) => void;
 }
 
 const CancelamentoNotaServicoModal = ({ 
   isOpen, 
   onClose, 
-  numeroNFSe,
-  descricaoServico 
+  servico,
+  onCancelar
 }: CancelamentoNotaServicoModalProps) => {
   const [justificativa, setJustificativa] = useState('');
   const { toast } = useToast();
@@ -49,8 +56,12 @@ const CancelamentoNotaServicoModal = ({
     // Simular envio para aprovação do gestor
     toast({
       title: "Solicitação enviada para aprovação!",
-      description: `A solicitação de cancelamento da NFS-e ${numeroNFSe || ''} foi enviada para aprovação do gestor.`,
+      description: `A solicitação de cancelamento da NFS-e ${servico?.numeroNFSe || ''} foi enviada para aprovação do gestor.`,
     });
+
+    if (onCancelar) {
+      onCancelar({ justificativa, servico });
+    }
 
     setJustificativa('');
     onClose();
@@ -62,15 +73,16 @@ const CancelamentoNotaServicoModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <XCircle className="h-6 w-6 text-red-600" />
-            Cancelamento de NFS-e {numeroNFSe && `- ${numeroNFSe}`}
+            Cancelamento de NFS-e {servico?.numeroNFSe && `- ${servico.numeroNFSe}`}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          {descricaoServico && (
+          {servico?.descricaoServico && (
             <div className="p-3 bg-gray-50 rounded-md">
               <p className="text-sm text-gray-600">Serviço:</p>
-              <p className="font-medium">{descricaoServico}</p>
+              <p className="font-medium">{servico.descricaoServico}</p>
+              <p className="text-sm text-gray-600 mt-1">Cliente: {servico.cliente}</p>
             </div>
           )}
 

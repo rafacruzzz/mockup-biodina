@@ -10,13 +10,16 @@ import {
   CheckCircle, Clock, AlertTriangle, User, Eye, Send, XCircle
 } from "lucide-react";
 import { mockServicosFaturamento } from "@/data/faturamentoModules";
+import { ServicoFaturamento } from "@/types/faturamento";
 import CancelamentoNotaServicoModal from "./modals/CancelamentoNotaServicoModal";
+import VisualizarServicoModal from "./modals/VisualizarServicoModal";
 
 const ServicosFaturamento = () => {
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [pesquisa, setPesquisa] = useState('');
   const [modalCancelamentoOpen, setModalCancelamentoOpen] = useState(false);
-  const [servicoSelecionado, setServicoSelecionado] = useState<any>(null);
+  const [modalVisualizarOpen, setModalVisualizarOpen] = useState(false);
+  const [servicoSelecionado, setServicoSelecionado] = useState<ServicoFaturamento | null>(null);
 
   const statusColors = {
     'Iniciado': 'bg-blue-500',
@@ -215,11 +218,18 @@ const ServicosFaturamento = () => {
                         {servico.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => {
+                              setServicoSelecionado(servico);
+                              setModalVisualizarOpen(true);
+                            }}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
                         {(servico.status === 'Concluído' || servico.status === 'Aprovado' || servico.status === 'Faturado') && servico.numeroNFSe && (
                           <Button 
                             size="sm" 
@@ -319,16 +329,38 @@ const ServicosFaturamento = () => {
         </CardContent>
       </Card>
 
-      {/* Modal de Cancelamento de Nota */}
-      <CancelamentoNotaServicoModal
-        isOpen={modalCancelamentoOpen}
-        onClose={() => {
-          setModalCancelamentoOpen(false);
-          setServicoSelecionado(null);
-        }}
-        numeroNFSe={servicoSelecionado?.numeroNFSe}
-        descricaoServico={servicoSelecionado?.descricao}
-      />
+      {/* Modals */}
+      {servicoSelecionado && (
+        <>
+          <CancelamentoNotaServicoModal
+            isOpen={modalCancelamentoOpen}
+            onClose={() => {
+              setModalCancelamentoOpen(false);
+              setServicoSelecionado(null);
+            }}
+            servico={{
+              servicoId: servicoSelecionado.id,
+              descricaoServico: servicoSelecionado.descricao,
+              cliente: servicoSelecionado.cliente,
+              valor: servicoSelecionado.valor,
+              numeroNFSe: servicoSelecionado.numeroNFSe,
+              dataEmissao: servicoSelecionado.dataConclusao
+            }}
+            onCancelar={(dados) => {
+              console.log('Cancelamento solicitado:', dados);
+            }}
+          />
+          
+          <VisualizarServicoModal
+            isOpen={modalVisualizarOpen}
+            onClose={() => {
+              setModalVisualizarOpen(false);
+              setServicoSelecionado(null);
+            }}
+            servico={servicoSelecionado}
+          />
+        </>
+      )}
     </div>
   );
 };

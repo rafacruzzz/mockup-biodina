@@ -234,12 +234,66 @@ export interface ServicoFaturamento {
   id: string;
   descricao: string;
   cliente: string;
+  cnpjCliente?: string;
   valor: number;
   dataInicio: string;
   dataConclusao?: string;
   responsavel: string;
+  emailResponsavel?: string;
   status: 'Iniciado' | 'Concluído' | 'Em Andamento' | 'Aprovado' | 'Faturado';
+  
+  // Detalhes do Serviço
+  descricaoDetalhada?: string;
+  escopo?: string;
+  deliverables?: string[];
+  observacoes?: string;
+  
+  // NFS-e
   numeroNFSe?: string;
+  serieNFSe?: string;
+  dataEmissaoNFSe?: string;
+  chaveVerificacao?: string;
+  codigoVerificacao?: string;
+  linkPrefeitura?: string;
+  
+  // Arquivos da NFS-e
+  arquivos?: ArquivoNFSe[];
+  
+  // Retenções
+  valorISS?: number;
+  aliquotaISS?: number;
+  valorPIS?: number;
+  valorCOFINS?: number;
+  valorIR?: number;
+  valorLiquido?: number;
+  
+  // Histórico de Solicitações
+  solicitacoesAlteracao?: SolicitacaoAlteracaoServico[];
+}
+
+export interface ArquivoNFSe {
+  id: string;
+  tipo: 'XML' | 'PDF' | 'DANFSE';
+  nomeArquivo: string;
+  tamanho: number;
+  dataUpload: string;
+  uploadPor: string;
+  url?: string;
+}
+
+export interface SolicitacaoAlteracaoServico {
+  id: string;
+  servicoId: string;
+  solicitadoPor: string;
+  emailSolicitante: string;
+  dataSolicitacao: string;
+  horaSolicitacao: string;
+  motivoAlteracao: string;
+  detalhesAlteracao: string;
+  status: 'pendente' | 'em_analise' | 'aceita' | 'recusada';
+  respostaDo?: string;
+  dataResposta?: string;
+  justificativaResposta?: string;
 }
 
 export interface ProtocoloSefaz {
