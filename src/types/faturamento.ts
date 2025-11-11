@@ -296,6 +296,135 @@ export interface SolicitacaoAlteracaoServico {
   justificativaResposta?: string;
 }
 
+// Dashboard e Relatórios
+export interface DashboardData {
+  // Totalizadores
+  faturamentoTotal: number;
+  faturamentoProdutos: number;
+  faturamentoServicos: number;
+  totalNotas: number;
+  pendenciasFiscais: number;
+  
+  // Comparativos
+  variacaoMensal: number;
+  variacaoAnual: number;
+  
+  // Por período
+  faturamentoPorMes: FaturamentoMensal[];
+  faturamentoPorAno: FaturamentoAnual[];
+  
+  // Análise de documentos
+  notasEmitidas: NotaFiscalResumo;
+  notasCanceladas: NotaCancelada[];
+  notasDevolvidas: NotaDevolvida[];
+  cartasCorrecao: CartaCorrecao[];
+  
+  // Detalhamentos
+  faturamentoPorCliente: FaturamentoCliente[];
+  faturamentoPorProduto: FaturamentoProduto[];
+  faturamentoPorRegiao: FaturamentoRegiao[];
+  
+  // Impostos
+  impostos: ImpostoDetalhado[];
+  
+  // Performance
+  tempoMedioEmissao: TempoEmissao[];
+  taxaAprovacao: number;
+}
+
+export interface NotaFiscalResumo {
+  total: number;
+  nfe: number;
+  nfse: number;
+  autorizadas: number;
+  pendentes: number;
+  rejeitadas: number;
+  canceladas: number;
+}
+
+export interface NotaCancelada {
+  numero: string;
+  tipo: 'NF-e' | 'NFS-e';
+  cliente: string;
+  valor: number;
+  dataCancelamento: string;
+  motivoCancelamento: string;
+  justificativa: string;
+}
+
+export interface NotaDevolvida {
+  numero: string;
+  tipo: 'NF-e' | 'NFS-e';
+  cliente: string;
+  valor: number;
+  dataDevolucao: string;
+  motivoDevolucao: string;
+  statusProcessamento: 'processada' | 'em_processamento';
+}
+
+export interface CartaCorrecao {
+  id: string;
+  numeroNFe: string;
+  cliente: string;
+  valor: number;
+  motivoCorrecao: string;
+  dataCorrecao: string;
+  numeroProtocolo: string;
+}
+
+export interface FaturamentoMensal {
+  mes: string;
+  ano: number;
+  faturamento: number;
+  quantidadeNotas: number;
+  tempoMedio: number;
+}
+
+export interface FaturamentoAnual {
+  ano: number;
+  faturamento: number;
+  quantidadeNotas: number;
+  crescimento: number;
+}
+
+export interface FaturamentoCliente {
+  cliente: string;
+  cnpj: string;
+  valorTotal: number;
+  quantidadeNotas: number;
+  ticketMedio: number;
+  percentualTotal: number;
+}
+
+export interface FaturamentoProduto {
+  descricao: string;
+  codigo: string;
+  quantidade: number;
+  valorTotal: number;
+  margem: number;
+  percentualTotal: number;
+}
+
+export interface FaturamentoRegiao {
+  regiao: string;
+  quantidadeNotas: number;
+  valorTotal: number;
+  percentualTotal: number;
+}
+
+export interface ImpostoDetalhado {
+  tipo: string;
+  aliquotaMedia: number;
+  valor: number;
+  percentualTotal: number;
+}
+
+export interface TempoEmissao {
+  mes: string;
+  tempoMedio: number;
+  meta: number;
+}
+
 export interface ProtocoloSefaz {
   id: string;
   documentoId: string;
@@ -353,7 +482,7 @@ export interface PedidoEntradaMercadoria {
   
   // Campos de NF Complementar e Carta de Correção
   nfComplementar?: NFComplementar[];
-  cartaCorrecao?: CartaCorrecao[];
+  cartaCorrecao?: CartaCorrecaoEntrada[];
 }
 
 export interface ItemEntradaMercadoria {
@@ -391,7 +520,7 @@ export interface NFComplementar {
   status: 'Pendente Aprovacao' | 'Aprovado' | 'Rejeitado' | 'Emitido';
 }
 
-export interface CartaCorrecao {
+export interface CartaCorrecaoEntrada {
   id: string;
   numeroCC: string;
   dataEmissao: string;

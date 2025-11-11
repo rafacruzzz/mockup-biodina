@@ -1,36 +1,26 @@
 import React, { useState } from "react";
 import SidebarLayout from "@/components/SidebarLayout";
 import FaturamentoSidebar from "@/components/faturamento/FaturamentoSidebar";
-import FaturamentoDashboard from "@/components/faturamento/FaturamentoDashboard";
+import DashboardRelatorios from "@/components/faturamento/DashboardRelatorios";
 import EntradaFaturamento from "@/components/faturamento/EntradaFaturamento";
 import SaidaFaturamento from "@/components/faturamento/SaidaFaturamento";
-import DevolucaoFaturamento from "@/components/faturamento/DevolucaoFaturamento";
-import CancelamentoFaturamento from "@/components/faturamento/CancelamentoFaturamento";
 import ServicosFaturamento from "@/components/faturamento/ServicosFaturamento";
-import RelatoriosFaturamento from "@/components/faturamento/RelatoriosFaturamento";
-import IndicadoresFaturamento from "@/components/faturamento/IndicadoresFaturamento";
 
 const Faturamento = () => {
-  const [activeModule, setActiveModule] = useState('dashboard');
+  const [activeModule, setActiveModule] = useState('dashboard-relatorios');
 
   const renderContent = () => {
     switch (activeModule) {
-      case 'dashboard':
-        return <FaturamentoDashboard />;
+      case 'dashboard-relatorios':
+        return <DashboardRelatorios />;
       case 'entrada':
         return <EntradaFaturamento />;
       case 'saida':
         return <SaidaFaturamento />;
-      case 'devolucao':
-        return <DevolucaoFaturamento />;
-      case 'cancelamento':
-        return <CancelamentoFaturamento />;
       case 'servicos':
         return <ServicosFaturamento />;
-      case 'relatorios':
-        return <RelatoriosFaturamento />;
       default:
-        return <FaturamentoDashboard />;
+        return <DashboardRelatorios />;
     }
   };
 
@@ -43,7 +33,6 @@ const Faturamento = () => {
         />
         <div className="flex-1 overflow-auto">
           <div className="p-6">
-            <IndicadoresFaturamento />
             {renderContent()}
           </div>
         </div>
