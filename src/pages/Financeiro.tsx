@@ -21,7 +21,8 @@ import IndicadoresFaturamento from "@/components/faturamento/IndicadoresFaturame
 import AssistenteFiscalIA from "@/components/faturamento/AssistenteFiscalIA";
 import RodapeFaturamento from "@/components/faturamento/RodapeFaturamento";
 import ParametrosFiscais from "@/components/faturamento/ParametrosFiscais";
-import { 
+import CartasFaturamento from "@/components/faturamento/CartasFaturamento";
+import {
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
   AlertTriangle, Clock, Vault, ArrowLeft, Receipt, Download, Upload,
@@ -377,6 +378,7 @@ const Financeiro = () => {
         { id: 'entrada', title: 'Entrada' },
         { id: 'saida', title: 'Saída' },
         { id: 'servicos', title: 'Serviços' },
+        { id: 'cartas_faturamento', title: 'Cartas de Faturamento' },
         { id: 'configuracoes_fiscais', title: 'Configurações Fiscais' }
       ]
     },
@@ -477,6 +479,10 @@ const Financeiro = () => {
         { id: 'servicos', title: 'Serviços (NFS-e)', description: 'Emitir notas de serviço', icon: Briefcase },
       ];
 
+      const documentosDeclaracoes = [
+        { id: 'cartas_faturamento', title: 'Cartas de Faturamento', description: 'Declarações mensais com assinatura digital', icon: FileText },
+      ];
+
       return (
         <div className="flex gap-6">
           {/* Conteúdo Principal */}
@@ -561,6 +567,35 @@ const Financeiro = () => {
               <h3 className="text-xl font-semibold text-biodina-blue">Faturamento de Serviços</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {faturamentoServicos.map((modulo) => {
+                  const IconComponent = modulo.icon;
+                  return (
+                    <Card 
+                      key={modulo.id}
+                      className="shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-biodina-gold/50"
+                      onClick={() => setActiveSubModule(modulo.id)}
+                    >
+                      <CardContent className="p-6 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-semibold text-biodina-blue">
+                            {modulo.title}
+                          </h3>
+                          <IconComponent className="h-5 w-5 text-biodina-gold" />
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {modulo.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Documentos e Declarações */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-biodina-blue">Documentos e Declarações</h3>
+              <div className="grid grid-cols-1 gap-4">
+                {documentosDeclaracoes.map((modulo) => {
                   const IconComponent = modulo.icon;
                   return (
                     <Card 
@@ -1014,6 +1049,22 @@ const Financeiro = () => {
               </Button>
             </div>
             <ServicosFaturamento />
+          </div>
+        );
+      case 'cartas_faturamento':
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <CartasFaturamento />
           </div>
         );
       case 'configuracoes_fiscais':
