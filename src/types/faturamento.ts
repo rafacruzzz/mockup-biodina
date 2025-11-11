@@ -80,6 +80,37 @@ export interface ItemApontamento {
   observacoes?: string;
 }
 
+export interface ProdutoPedidoVenda {
+  id: number;
+  codigo: string;
+  descricao: string;
+  referencia?: string;
+  unidade: string;
+  quantidade: number;
+  precoUnitario: number;
+  desconto: number;
+  precoFinal: number;
+  subtotal: number;
+  observacoes?: string;
+}
+
+export interface ItemUsoConsumoPedido {
+  id: number;
+  codigo: string;
+  descricao: string;
+  quantidade: number;
+  categoria: string;
+}
+
+export interface AlertaPedidoVenda {
+  tipo: 'mudanca_status' | 'emissao_nf' | 'atualizacao_entrega' | 'divergencia' | 'atraso';
+  titulo: string;
+  mensagem: string;
+  dataAlerta: string;
+  horaAlerta: string;
+  prioridade: 'normal' | 'alta' | 'urgente';
+}
+
 export interface ChecklistVenda {
   id: string;
   numeroPedido: string;
@@ -97,6 +128,90 @@ export interface ChecklistVenda {
   creditoAprovado: boolean;
   
   observacoes?: string;
+  
+  // Dados expandidos para visualização
+  produtos?: ProdutoPedidoVenda[];
+  itensUsoConsumo?: ItemUsoConsumoPedido[];
+  
+  // Informações NF
+  deveEmitirNF?: boolean;
+  naturezaOperacao?: string;
+  descritivoOperacao?: string;
+  finalidadeNF?: string;
+  formaPagamento?: string;
+  emailsNF?: string;
+  condicoesPagamento?: string;
+  destacarIR?: boolean;
+  percentualIR?: number;
+  informacoesComplementares?: string;
+  contaBancariaRecebimento?: string;
+  numeroParcelas?: number;
+  instrucoesBoleto?: string;
+  documentosNF?: string[];
+  
+  // Destinatário
+  destinatario?: {
+    razaoSocial: string;
+    cnpjCpf: string;
+    ieRg?: string;
+    endereco: string;
+    telefone: string;
+    email: string;
+  };
+  
+  // Frete
+  tipoFrete?: string;
+  prazoEntrega?: string;
+  dataEntrega?: string;
+  fretePagarPor?: string;
+  freteRetirarPor?: string;
+  entregarRetirarCuidados?: string;
+  nomeCompletoRecebedor?: string;
+  cpfRecebedor?: string;
+  telefoneRecebedor?: string;
+  emailRecebedor?: string;
+  horariosPermitidos?: string;
+  locaisEntrega?: string;
+  enderecoEntrega?: string;
+  maisInformacoesEntrega?: string;
+  
+  // Urgência
+  solicitarUrgencia?: boolean;
+  justificativaUrgencia?: string;
+  urgenciaStatus?: 'pendente' | 'aprovada' | 'rejeitada';
+  autorizadoPor?: string;
+  dataAutorizacao?: string;
+  emailAutorizador?: string;
+  
+  // Nota Fiscal (se já emitida)
+  notaFiscal?: {
+    numeroNF: string;
+    serieNF: string;
+    dataEmissao: string;
+    valorTotal: number;
+    chaveAcesso: string;
+    protocoloSEFAZ: string;
+    linkXML?: string;
+    linkDANFE?: string;
+  };
+  
+  // Logística
+  logistica?: {
+    transportadora: {
+      nome: string;
+      cnpj: string;
+    };
+    codigoRastreamento?: string;
+    linkRastreamento?: string;
+    statusEntrega: 'aguardando_coleta' | 'em_transito' | 'em_rota_entrega' | 'entregue' | 'devolvido';
+    prazoEstimado: string;
+    dataSaida?: string;
+    previsaoEntrega?: string;
+    dataEntregaEfetiva?: string;
+  };
+  
+  // Alertas
+  alertas?: AlertaPedidoVenda[];
 }
 
 export interface ServicoFaturamento {

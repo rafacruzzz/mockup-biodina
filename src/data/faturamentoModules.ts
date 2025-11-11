@@ -14,7 +14,136 @@ export const mockChecklistVendas: ChecklistVenda[] = [
     estoqueValidado: true,
     servicosConcluidos: true,
     documentacaoCompleta: true,
-    creditoAprovado: true
+    creditoAprovado: true,
+    observacoes: 'Cliente prioritário. Equipamento com garantia estendida de 3 anos.',
+    
+    produtos: [
+      {
+        id: 1,
+        codigo: 'CAT024',
+        descricao: 'Analisador Bioquímico XYZ-500',
+        referencia: 'REF-XYZ-500-2024',
+        unidade: 'UN',
+        quantidade: 1,
+        precoUnitario: 15000.00,
+        desconto: 5,
+        precoFinal: 14250.00,
+        subtotal: 14250.00,
+        observacoes: 'Equipamento com garantia estendida'
+      },
+      {
+        id: 2,
+        codigo: 'REA-001',
+        descricao: 'Kit Reagentes Bioquímicos - 200 testes',
+        unidade: 'KT',
+        quantidade: 10,
+        precoUnitario: 150.00,
+        desconto: 0,
+        precoFinal: 150.00,
+        subtotal: 1500.00
+      }
+    ],
+    
+    itensUsoConsumo: [
+      {
+        id: 1,
+        codigo: 'USB-001',
+        descricao: 'Cabo USB para conexão',
+        quantidade: 2,
+        categoria: 'Acessórios'
+      }
+    ],
+    
+    deveEmitirNF: true,
+    naturezaOperacao: 'Venda de Mercadoria',
+    descritivoOperacao: 'Venda para fora do estado',
+    finalidadeNF: 'Normal',
+    formaPagamento: 'Boleto Bancário',
+    emailsNF: 'financeiro@farmaciacentral.com.br',
+    condicoesPagamento: '30/60/90 dias',
+    destacarIR: false,
+    informacoesComplementares: 'Equipamento sujeito a substituição tributária. Garantia de 3 anos.',
+    contaBancariaRecebimento: 'Banco do Brasil - Ag. 1234-5 / CC 56789-0',
+    numeroParcelas: 3,
+    instrucoesBoleto: 'Não receber após vencimento',
+    documentosNF: ['Certificado de Calibração', 'Manual do Usuário', 'Termo de Garantia'],
+    
+    destinatario: {
+      razaoSocial: 'Farmácia Central Ltda',
+      cnpjCpf: '12.345.678/0001-90',
+      ieRg: '123.456.789.123',
+      endereco: 'Rua das Flores, 123 - Centro - São Paulo/SP - CEP 01000-000',
+      telefone: '(11) 3333-4444',
+      email: 'contato@farmaciacentral.com.br'
+    },
+    
+    tipoFrete: 'CIF - Pago pelo Remetente',
+    prazoEntrega: '10 dias úteis',
+    dataEntrega: '2025-02-05',
+    fretePagarPor: 'Fornecedor',
+    entregarRetirarCuidados: 'Equipamento frágil. Manusear com cuidado.',
+    nomeCompletoRecebedor: 'Carlos Alberto dos Santos',
+    cpfRecebedor: '123.456.789-00',
+    telefoneRecebedor: '(11) 98765-4321',
+    emailRecebedor: 'carlos.santos@farmaciacentral.com.br',
+    horariosPermitidos: '8h às 17h',
+    locaisEntrega: 'Recepção - entrada principal',
+    enderecoEntrega: 'Rua das Flores, 123 - Centro - São Paulo/SP - CEP 01000-000',
+    maisInformacoesEntrega: 'Ligar com 1 dia de antecedência para agendar a entrega',
+    
+    solicitarUrgencia: false,
+    
+    notaFiscal: {
+      numeroNF: '000012345',
+      serieNF: '001',
+      dataEmissao: '2025-01-19',
+      valorTotal: 15750.00,
+      chaveAcesso: '35250112345678000190550010000123451234567890',
+      protocoloSEFAZ: '135250000012345',
+      linkXML: '/downloads/nf-12345.xml',
+      linkDANFE: '/downloads/danfe-12345.pdf'
+    },
+    
+    logistica: {
+      transportadora: {
+        nome: 'Transportadora Rápida Ltda',
+        cnpj: '98.765.432/0001-10'
+      },
+      codigoRastreamento: 'TR123456789BR',
+      linkRastreamento: 'https://rastreamento.transportadorarapida.com.br/TR123456789BR',
+      statusEntrega: 'entregue',
+      prazoEstimado: '5 dias úteis',
+      dataSaida: '2025-01-20',
+      previsaoEntrega: '2025-01-25',
+      dataEntregaEfetiva: '2025-01-24'
+    },
+    
+    alertas: [
+      {
+        tipo: 'mudanca_status',
+        titulo: 'Pedido Liberado',
+        mensagem: 'Pedido aprovado e liberado para faturamento.',
+        dataAlerta: '2025-01-18',
+        horaAlerta: '16:45',
+        prioridade: 'normal'
+      },
+      {
+        tipo: 'emissao_nf',
+        titulo: 'Nota Fiscal Emitida',
+        mensagem: 'NF-e nº 000012345 emitida com sucesso e autorizada pela SEFAZ.',
+        dataAlerta: '2025-01-19',
+        horaAlerta: '14:30',
+        prioridade: 'alta'
+      },
+      {
+        tipo: 'atualizacao_entrega',
+        titulo: 'Entrega Realizada',
+        mensagem: 'Pedido entregue e assinado por Carlos Alberto dos Santos.',
+        dataAlerta: '2025-01-24',
+        horaAlerta: '10:15',
+        prioridade: 'normal'
+      }
+    ]
   },
   {
     id: 'CHK002',
@@ -53,12 +182,121 @@ export const mockChecklistVendas: ChecklistVenda[] = [
     cnpjCliente: '22.333.444/0001-55',
     vendedor: 'Ana Paula',
     dataEmissaoPedido: '2025-01-22',
+    dataFaturamento: undefined,
     valorTotal: 45200.00,
     status: 'Liberado',
     estoqueValidado: true,
     servicosConcluidos: true,
     documentacaoCompleta: true,
-    creditoAprovado: true
+    creditoAprovado: true,
+    observacoes: 'Pedido urgente aprovado pela diretoria. Cliente VIP.',
+    
+    produtos: [
+      {
+        id: 1,
+        codigo: 'EQP-055',
+        descricao: 'Ultrassom Doppler Colorido Premium',
+        referencia: 'ULT-DOP-2024-PRO',
+        unidade: 'UN',
+        quantidade: 1,
+        precoUnitario: 42000.00,
+        desconto: 0,
+        precoFinal: 42000.00,
+        subtotal: 42000.00,
+        observacoes: 'Modelo top de linha com todos os transdutores'
+      },
+      {
+        id: 2,
+        codigo: 'TRN-001',
+        descricao: 'Transdutor Linear 7.5 MHz',
+        unidade: 'UN',
+        quantidade: 2,
+        precoUnitario: 1600.00,
+        desconto: 0,
+        precoFinal: 1600.00,
+        subtotal: 3200.00
+      }
+    ],
+    
+    itensUsoConsumo: [
+      {
+        id: 1,
+        codigo: 'GEL-001',
+        descricao: 'Gel para ultrassom - 5L',
+        quantidade: 10,
+        categoria: 'Consumíveis'
+      },
+      {
+        id: 2,
+        codigo: 'CAP-001',
+        descricao: 'Capa protetora para transdutor',
+        quantidade: 5,
+        categoria: 'Acessórios'
+      }
+    ],
+    
+    deveEmitirNF: true,
+    naturezaOperacao: 'Venda de Mercadoria',
+    descritivoOperacao: 'Venda dentro do estado',
+    finalidadeNF: 'Normal',
+    formaPagamento: 'Transferência Bancária',
+    emailsNF: 'financeiro@clinicavidanova.com.br; compras@clinicavidanova.com.br',
+    condicoesPagamento: 'À vista com 5% de desconto ou 60/90 dias',
+    destacarIR: false,
+    informacoesComplementares: 'Equipamento importado. Inclui treinamento técnico gratuito de 8 horas.',
+    contaBancariaRecebimento: 'Itaú - Ag. 5678 / CC 12345-6',
+    numeroParcelas: 2,
+    instrucoesBoleto: 'Aceitar até 5 dias após vencimento com multa de 2%',
+    documentosNF: ['Manual Técnico', 'Certificado de Importação', 'Termo de Garantia', 'Contrato de Treinamento'],
+    
+    destinatario: {
+      razaoSocial: 'Clínica Vida Nova Ltda',
+      cnpjCpf: '22.333.444/0001-55',
+      ieRg: '987.654.321.098',
+      endereco: 'Av. Paulista, 1500 - Bela Vista - São Paulo/SP - CEP 01310-100',
+      telefone: '(11) 2222-3333',
+      email: 'contato@clinicavidanova.com.br'
+    },
+    
+    tipoFrete: 'FOB - Pago pelo Destinatário',
+    prazoEntrega: '15 dias úteis',
+    dataEntrega: '2025-02-15',
+    fretePagarPor: 'Cliente',
+    entregarRetirarCuidados: 'URGENTE - Equipamento de alto valor. Requer escolta e seguro.',
+    nomeCompletoRecebedor: 'Dr. Roberto Mendes Silva',
+    cpfRecebedor: '987.654.321-00',
+    telefoneRecebedor: '(11) 99999-8888',
+    emailRecebedor: 'roberto.mendes@clinicavidanova.com.br',
+    horariosPermitidos: '7h às 19h',
+    locaisEntrega: 'Centro Cirúrgico - 3º andar - Ala B',
+    enderecoEntrega: 'Av. Paulista, 1500 - Bela Vista - São Paulo/SP - CEP 01310-100',
+    maisInformacoesEntrega: 'Agendar entrega com 48h de antecedência. Necessário acesso de carga com elevador. Técnico disponível para instalação imediata.',
+    
+    solicitarUrgencia: true,
+    justificativaUrgencia: 'Clínica inaugurando nova ala de diagnóstico por imagem. Equipamento essencial para início das operações programado para 01/03/2025.',
+    urgenciaStatus: 'aprovada',
+    autorizadoPor: 'Diretor Comercial - Ricardo Almeida',
+    dataAutorizacao: '2025-01-22',
+    emailAutorizador: 'ricardo.almeida@empresa.com.br',
+    
+    alertas: [
+      {
+        tipo: 'mudanca_status',
+        titulo: 'Pedido Urgente Aprovado',
+        mensagem: 'Solicitação de urgência aprovada pela diretoria comercial.',
+        dataAlerta: '2025-01-22',
+        horaAlerta: '11:30',
+        prioridade: 'urgente'
+      },
+      {
+        tipo: 'mudanca_status',
+        titulo: 'Pedido Liberado para Faturamento',
+        mensagem: 'Todas as validações concluídas. Pedido pronto para emissão de NF-e.',
+        dataAlerta: '2025-01-22',
+        horaAlerta: '17:00',
+        prioridade: 'alta'
+      }
+    ]
   }
 ];
 

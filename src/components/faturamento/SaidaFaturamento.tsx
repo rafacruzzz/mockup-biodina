@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import EmissaoNFeModal from "@/components/faturamento/modals/EmissaoNFeModal";
+import VisualizarPedidoModal from "@/components/faturamento/modals/VisualizarPedidoModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,11 +12,19 @@ import {
   CheckCircle, Clock, AlertTriangle, Eye, Users, DollarSign
 } from "lucide-react";
 import { mockChecklistVendas } from "@/data/faturamentoModules";
+import { ChecklistVenda } from "@/types/faturamento";
 
 const SaidaFaturamento = () => {
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [pesquisa, setPesquisa] = useState('');
   const [modalEmissaoOpen, setModalEmissaoOpen] = useState(false);
+  const [modalVisualizarOpen, setModalVisualizarOpen] = useState(false);
+  const [pedidoSelecionado, setPedidoSelecionado] = useState<ChecklistVenda | null>(null);
+
+  const handleVisualizarPedido = (pedido: ChecklistVenda) => {
+    setPedidoSelecionado(pedido);
+    setModalVisualizarOpen(true);
+  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -242,7 +251,11 @@ const SaidaFaturamento = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleVisualizarPedido(venda)}
+                      >
                         <Eye className="h-4 w-4" />
                       </Button>
                       {venda.status === 'Liberado' && (
@@ -269,6 +282,18 @@ const SaidaFaturamento = () => {
         isOpen={modalEmissaoOpen} 
         onClose={() => setModalEmissaoOpen(false)} 
       />
+
+      {/* Modal de Visualização de Pedido */}
+      {pedidoSelecionado && (
+        <VisualizarPedidoModal
+          isOpen={modalVisualizarOpen}
+          onClose={() => {
+            setModalVisualizarOpen(false);
+            setPedidoSelecionado(null);
+          }}
+          pedido={pedidoSelecionado}
+        />
+      )}
     </div>
   );
 };
