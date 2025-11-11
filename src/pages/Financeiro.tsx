@@ -477,7 +477,6 @@ const Financeiro = () => {
 
       const faturamentoServicos = [
         { id: 'servicos', title: 'Serviços (NFS-e)', description: 'Emitir notas de serviço', icon: Briefcase },
-        { id: 'relatorios', title: 'Relatórios', description: 'Listar notas emitidas, impostos, rejeições', icon: BarChart3 },
       ];
 
       return (
@@ -504,7 +503,7 @@ const Financeiro = () => {
             {/* Faturamento de Produtos */}
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-biodina-blue">Faturamento de Produtos</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {faturamentoProdutos.map((modulo) => {
                   const IconComponent = modulo.icon;
                   return (
@@ -533,7 +532,7 @@ const Financeiro = () => {
             {/* Faturamento de Serviços */}
             <div className="space-y-4">
               <h3 className="text-xl font-semibold text-biodina-blue">Faturamento de Serviços</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {faturamentoServicos.map((modulo) => {
                   const IconComponent = modulo.icon;
                   return (
