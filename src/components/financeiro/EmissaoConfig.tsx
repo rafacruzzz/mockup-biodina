@@ -73,8 +73,22 @@ const EmissaoConfig = () => {
     console.log("NF-e Config:", nfeConfig);
   };
 
+  const handleSalvarTudo = () => {
+    toast.success("Todas as configurações de Emissão foram salvas com sucesso!");
+    console.log("Certificado Config:", { ambiente, certificadoData, nomeArquivo });
+    console.log("NF-e Config:", nfeConfig);
+  };
+
   return (
     <div className="space-y-6">
+      {/* Título do Submódulo */}
+      <div>
+        <h2 className="text-2xl font-bold text-biodina-blue">Emissão</h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Configure o certificado digital e as notas fiscais eletrônicas
+        </p>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Módulo Certificado */}
         <Card className="shadow-lg">
@@ -264,17 +278,19 @@ const EmissaoConfig = () => {
               </div>
             </div>
 
-            {/* Botão Salvar */}
-            <div className="pt-4">
-              <Button
-                onClick={handleSalvarNfe}
-                className="w-full bg-biodina-blue hover:bg-biodina-blue/90"
-              >
-                Salvar
-              </Button>
-            </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Botão Salvar Geral */}
+      <div className="flex justify-end">
+        <Button
+          onClick={handleSalvarTudo}
+          className="bg-biodina-blue hover:bg-biodina-blue/90 px-8"
+          size="lg"
+        >
+          Salvar
+        </Button>
       </div>
     </div>
   );
