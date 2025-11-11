@@ -79,7 +79,7 @@ export const modulosDisponiveis: ModuloConfig[] = [
     cor: 'teal'
   },
   {
-    id: 'bi-geral',
+    id: 'bi',
     nome: 'BI Geral',
     descricao: 'Business Intelligence e relatórios',
     icon: '📈',
@@ -99,7 +99,7 @@ export const empresasMock: Empresa[] = [
     modulosHabilitados: [
       'cadastro', 'comercial', 'compras', 'estoque',
       'financeiro', 'contabilidade', 'faturamento', 'rh', 'ti',
-      'administrativo', 'solicitacoes', 'bi-geral'
+      'administrativo', 'solicitacoes', 'bi'
     ],
     usuarioMaster: {
       id: 'user-master',
@@ -132,7 +132,7 @@ export const empresasMock: Empresa[] = [
     dataCriacao: '2020-06-15',
     modulosHabilitados: [
       'cadastro', 'comercial', 'estoque',
-      'financeiro', 'contabilidade', 'solicitacoes', 'bi-geral'
+      'financeiro', 'contabilidade', 'solicitacoes', 'bi'
     ],
     usuarioMaster: {
       id: 'user-biodina',

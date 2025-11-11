@@ -50,7 +50,7 @@ export type ModuloSistema =
   | 'ti'
   | 'administrativo'
   | 'solicitacoes'
-  | 'bi-geral';
+  | 'bi';
 
 export interface ModuloConfig {
   id: ModuloSistema;
