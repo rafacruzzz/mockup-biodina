@@ -271,7 +271,6 @@ const SaidaFaturamento = () => {
             <TableBody>
               {documentos.map((documento) => {
                 const StatusIcon = statusIcons[documento.status as keyof typeof statusIcons];
-                const protocolo = mockProtocolosSefaz.find(p => p.documentoId === documento.id);
                 
                 return (
                   <TableRow key={documento.id}>
@@ -299,12 +298,12 @@ const SaidaFaturamento = () => {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {protocolo ? (
+                      {documento.protocolo ? (
                         <div className="text-sm">
-                          <div className="font-medium">{protocolo.protocolo}</div>
+                          <div className="font-medium">{documento.protocolo}</div>
                           <div className="text-gray-500">
-                            {protocolo.dataRetorno ? 
-                              new Date(protocolo.dataRetorno).toLocaleString('pt-BR') : 
+                            {documento.emissao ? 
+                              new Date(documento.emissao).toLocaleString('pt-BR') : 
                               'Processando...'}
                           </div>
                         </div>
