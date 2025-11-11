@@ -14,10 +14,10 @@ interface FaturamentoSidebarProps {
 const FaturamentoSidebar = ({ activeModule, onModuleChange }: FaturamentoSidebarProps) => {
   const modules = [
     {
-      id: 'dashboard',
-      title: 'Dashboard',
+      id: 'dashboard-relatorios',
+      title: 'Dashboard & Relatórios',
       icon: BarChart3,
-      description: 'Visão geral do faturamento'
+      description: 'Análise completa e exportações'
     },
     {
       id: 'entrada',
@@ -32,28 +32,10 @@ const FaturamentoSidebar = ({ activeModule, onModuleChange }: FaturamentoSidebar
       description: 'Emissão de documentos fiscais'
     },
     {
-      id: 'devolucao',
-      title: 'Devolução',
-      icon: RotateCcw,
-      description: 'Gestão de devoluções'
-    },
-    {
-      id: 'cancelamento',
-      title: 'Cancelamento', 
-      icon: XCircle,
-      description: 'Cancelamento de documentos'
-    },
-    {
       id: 'servicos',
       title: 'Serviços',
       icon: Settings,
       description: 'Faturamento de serviços (NFS-e)'
-    },
-    {
-      id: 'relatorios',
-      title: 'Relatórios',
-      icon: FileText,
-      description: 'Relatórios e indicadores'
     }
   ];
 
