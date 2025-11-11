@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import EmissaoNFeModal from "@/components/faturamento/modals/EmissaoNFeModal";
 import VisualizarPedidoModal from "@/components/faturamento/modals/VisualizarPedidoModal";
+import NFComplementarModal from "@/components/faturamento/modals/NFComplementarModal";
+import CartaCorrecaoModal from "@/components/faturamento/modals/CartaCorrecaoModal";
+import DevolucaoModal from "@/components/faturamento/modals/DevolucaoModal";
+import CancelamentoModal from "@/components/faturamento/modals/CancelamentoModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +13,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Plus, Search, Filter, FileText, 
-  CheckCircle, Clock, AlertTriangle, Eye, Users, DollarSign
+  CheckCircle, Clock, AlertTriangle, Eye, Users, DollarSign,
+  FilePlus, FileEdit, PackageX, XCircle
 } from "lucide-react";
 import { mockChecklistVendas } from "@/data/faturamentoModules";
 import { ChecklistVenda } from "@/types/faturamento";
@@ -19,11 +24,35 @@ const SaidaFaturamento = () => {
   const [pesquisa, setPesquisa] = useState('');
   const [modalEmissaoOpen, setModalEmissaoOpen] = useState(false);
   const [modalVisualizarOpen, setModalVisualizarOpen] = useState(false);
+  const [modalNFComplementarOpen, setModalNFComplementarOpen] = useState(false);
+  const [modalCartaCorrecaoOpen, setModalCartaCorrecaoOpen] = useState(false);
+  const [modalDevolucaoOpen, setModalDevolucaoOpen] = useState(false);
+  const [modalCancelamentoOpen, setModalCancelamentoOpen] = useState(false);
   const [pedidoSelecionado, setPedidoSelecionado] = useState<ChecklistVenda | null>(null);
 
   const handleVisualizarPedido = (pedido: ChecklistVenda) => {
     setPedidoSelecionado(pedido);
     setModalVisualizarOpen(true);
+  };
+
+  const handleNFComplementar = (pedido: ChecklistVenda) => {
+    setPedidoSelecionado(pedido);
+    setModalNFComplementarOpen(true);
+  };
+
+  const handleCartaCorrecao = (pedido: ChecklistVenda) => {
+    setPedidoSelecionado(pedido);
+    setModalCartaCorrecaoOpen(true);
+  };
+
+  const handleDevolucao = (pedido: ChecklistVenda) => {
+    setPedidoSelecionado(pedido);
+    setModalDevolucaoOpen(true);
+  };
+
+  const handleCancelamento = (pedido: ChecklistVenda) => {
+    setPedidoSelecionado(pedido);
+    setModalCancelamentoOpen(true);
   };
 
   const formatCurrency = (value: number) => {
@@ -250,14 +279,16 @@ const SaidaFaturamento = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1 flex-wrap">
                       <Button 
                         size="sm" 
                         variant="outline"
                         onClick={() => handleVisualizarPedido(venda)}
+                        title="Visualizar Pedido"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
+                      
                       {venda.status === 'Liberado' && (
                         <Button 
                           size="sm" 
@@ -267,6 +298,50 @@ const SaidaFaturamento = () => {
                           <FileText className="h-4 w-4 mr-1" />
                           Faturar
                         </Button>
+                      )}
+
+                      {venda.status === 'Faturado' && (
+                        <>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleNFComplementar(venda)}
+                            title="NF Complementar"
+                            className="border-blue-600 text-blue-700 hover:bg-blue-50"
+                          >
+                            <FilePlus className="h-4 w-4" />
+                          </Button>
+                          
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleCartaCorrecao(venda)}
+                            title="Carta de Correção"
+                            className="border-purple-600 text-purple-700 hover:bg-purple-50"
+                          >
+                            <FileEdit className="h-4 w-4" />
+                          </Button>
+                          
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleDevolucao(venda)}
+                            title="Devolução"
+                            className="border-orange-600 text-orange-700 hover:bg-orange-50"
+                          >
+                            <PackageX className="h-4 w-4" />
+                          </Button>
+                          
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleCancelamento(venda)}
+                            title="Cancelamento"
+                            className="border-red-600 text-red-700 hover:bg-red-50"
+                          >
+                            <XCircle className="h-4 w-4" />
+                          </Button>
+                        </>
                       )}
                     </div>
                   </TableCell>
@@ -285,14 +360,52 @@ const SaidaFaturamento = () => {
 
       {/* Modal de Visualização de Pedido */}
       {pedidoSelecionado && (
-        <VisualizarPedidoModal
-          isOpen={modalVisualizarOpen}
-          onClose={() => {
-            setModalVisualizarOpen(false);
-            setPedidoSelecionado(null);
-          }}
-          pedido={pedidoSelecionado}
-        />
+        <>
+          <VisualizarPedidoModal
+            isOpen={modalVisualizarOpen}
+            onClose={() => {
+              setModalVisualizarOpen(false);
+              setPedidoSelecionado(null);
+            }}
+            pedido={pedidoSelecionado}
+          />
+
+          <NFComplementarModal
+            isOpen={modalNFComplementarOpen}
+            onClose={() => {
+              setModalNFComplementarOpen(false);
+              setPedidoSelecionado(null);
+            }}
+            numeroPedido={pedidoSelecionado.numeroPedido}
+          />
+
+          <CartaCorrecaoModal
+            isOpen={modalCartaCorrecaoOpen}
+            onClose={() => {
+              setModalCartaCorrecaoOpen(false);
+              setPedidoSelecionado(null);
+            }}
+            numeroPedido={pedidoSelecionado.numeroPedido}
+          />
+
+          <DevolucaoModal
+            isOpen={modalDevolucaoOpen}
+            onClose={() => {
+              setModalDevolucaoOpen(false);
+              setPedidoSelecionado(null);
+            }}
+            numeroPedido={pedidoSelecionado.numeroPedido}
+          />
+
+          <CancelamentoModal
+            isOpen={modalCancelamentoOpen}
+            onClose={() => {
+              setModalCancelamentoOpen(false);
+              setPedidoSelecionado(null);
+            }}
+            numeroPedido={pedidoSelecionado.numeroPedido}
+          />
+        </>
       )}
     </div>
   );

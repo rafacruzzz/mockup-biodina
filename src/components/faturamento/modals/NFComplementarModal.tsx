@@ -1,67 +1,81 @@
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { FileText, AlertCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { AlertCircle, FileText } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface NFComplementarModalProps {
   isOpen: boolean;
   onClose: () => void;
-  pedidoId: string;
-  numeroNF: string;
-  onSolicitar: (data: any) => void;
+  numeroPedido?: string;
+  pedidoId?: string;
+  numeroNF?: string;
+  onSolicitar?: (data: any) => void;
 }
 
-const NFComplementarModal = ({ isOpen, onClose, pedidoId, numeroNF, onSolicitar }: NFComplementarModalProps) => {
-  const [valorComplementar, setValorComplementar] = useState('');
-  const [motivo, setMotivo] = useState('');
-  const [justificativa, setJustificativa] = useState('');
-  const { toast } = useToast();
+const NFComplementarModal = ({ 
+  isOpen, 
+  onClose, 
+  numeroPedido, 
+  pedidoId, 
+  numeroNF, 
+  onSolicitar 
+}: NFComplementarModalProps) => {
+  const displayNumber = numeroPedido || numeroNF || '';
 
-  const handleSolicitar = () => {
+  const { toast } = useToast();
+  const [justificativa, setJustificativa] = useState("");
+  const [valorComplementar, setValorComplementar] = useState("");
+  const [observacoes, setObservacoes] = useState("");
+
+  const handleSubmit = () => {
+    if (!justificativa.trim()) {
+      toast({
+        title: "Justificativa obrigatória",
+        description: "Por favor, informe a justificativa para a NF complementar.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!valorComplementar || parseFloat(valorComplementar) <= 0) {
       toast({
-        title: "Erro",
-        description: "Informe um valor complementar válido.",
-        variant: "destructive"
+        title: "Valor inválido",
+        description: "Por favor, informe um valor válido para a NF complementar.",
+        variant: "destructive",
       });
       return;
     }
 
-    if (!motivo.trim() || !justificativa.trim()) {
-      toast({
-        title: "Erro",
-        description: "Motivo e justificativa são obrigatórios.",
-        variant: "destructive"
+    // Callback se fornecido (para Entrada)
+    if (onSolicitar) {
+      onSolicitar({
+        pedidoId,
+        numeroNF,
+        valorComplementar: parseFloat(valorComplementar),
+        justificativa,
+        observacoes
       });
-      return;
     }
 
-    const dados = {
-      pedidoId,
-      numeroNF,
-      valorComplementar: parseFloat(valorComplementar),
-      motivo: motivo.trim(),
-      justificativa: justificativa.trim(),
-      solicitadoPor: 'Usuário Atual', // Em produção, pegar do contexto de autenticação
-      dataSolicitacao: new Date().toISOString(),
-      status: 'Pendente Aprovacao'
-    };
-
-    onSolicitar(dados);
-    
+    // Toast e limpeza
     toast({
-      title: "Solicitação Enviada",
-      description: "A solicitação de NF Complementar foi enviada para aprovação do gestor.",
+      title: "Solicitação enviada",
+      description: "A solicitação de NF complementar foi enviada para aprovação do gestor.",
     });
 
-    // Resetar formulário
-    setValorComplementar('');
-    setMotivo('');
-    setJustificativa('');
+    setJustificativa("");
+    setValorComplementar("");
+    setObservacoes("");
     onClose();
   };
 
@@ -71,76 +85,74 @@ const NFComplementarModal = ({ isOpen, onClose, pedidoId, numeroNF, onSolicitar 
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Solicitar NF Complementar
+            Solicitar NF Complementar {displayNumber && `- ${displayNumber}`}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          <div className="bg-muted p-4 rounded-lg">
-            <p className="text-sm">
-              <span className="font-medium">NF Original:</span> {numeroNF}
-            </p>
-          </div>
-
-          <div className="bg-amber-50 dark:bg-amber-950 p-4 rounded-lg border border-amber-200 dark:border-amber-800 flex gap-3">
-            <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-amber-800 dark:text-amber-200">
-              <p className="font-medium mb-1">Aprovação Obrigatória</p>
-              <p>Esta solicitação precisa ser aprovada por um gestor antes da emissão da NF Complementar.</p>
+        <div className="space-y-4">
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex gap-3">
+            <AlertCircle className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-orange-800">
+              <p className="font-medium">Esta solicitação requer aprovação do gestor</p>
+              <p className="mt-1">
+                A NF complementar é emitida quando há necessidade de complementar valores ou informações
+                da nota fiscal original. Após enviar, aguarde a aprovação do gestor para prosseguir.
+              </p>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="valor">Valor Complementar (R$) *</Label>
+            <Label htmlFor="valor">Valor Complementar *</Label>
             <Input
               id="valor"
               type="number"
               step="0.01"
-              min="0.01"
+              min="0"
+              placeholder="0,00"
               value={valorComplementar}
               onChange={(e) => setValorComplementar(e.target.value)}
-              placeholder="0,00"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="motivo">Motivo da Complementação *</Label>
-            <Input
-              id="motivo"
-              value={motivo}
-              onChange={(e) => setMotivo(e.target.value)}
-              placeholder="Ex: Diferença de preço, Item não faturado, etc."
-              maxLength={100}
+            <Label htmlFor="justificativa">Justificativa *</Label>
+            <Textarea
+              id="justificativa"
+              placeholder="Descreva detalhadamente o motivo da necessidade de emitir uma NF complementar..."
+              value={justificativa}
+              onChange={(e) => setJustificativa(e.target.value)}
+              rows={4}
+              maxLength={1000}
             />
             <p className="text-xs text-muted-foreground">
-              {motivo.length}/100 caracteres
+              {justificativa.length}/1000 caracteres
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="justificativa">Justificativa Detalhada *</Label>
+            <Label htmlFor="observacoes">Observações Adicionais</Label>
             <Textarea
-              id="justificativa"
-              value={justificativa}
-              onChange={(e) => setJustificativa(e.target.value)}
-              placeholder="Descreva detalhadamente o motivo da emissão da NF Complementar..."
-              rows={6}
+              id="observacoes"
+              placeholder="Informações complementares..."
+              value={observacoes}
+              onChange={(e) => setObservacoes(e.target.value)}
+              rows={3}
               maxLength={500}
             />
             <p className="text-xs text-muted-foreground">
-              {justificativa.length}/500 caracteres
+              {observacoes.length}/500 caracteres
             </p>
           </div>
         </div>
 
-        <div className="flex justify-end gap-2">
+        <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSolicitar}>
-            Solicitar Aprovação
+          <Button onClick={handleSubmit}>
+            Enviar para Aprovação
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

@@ -111,6 +111,22 @@ export interface AlertaPedidoVenda {
   prioridade: 'normal' | 'alta' | 'urgente';
 }
 
+export interface SolicitacaoAcaoFiscal {
+  id: string;
+  pedidoId: string;
+  numeroPedido: string;
+  tipo: 'nf_complementar' | 'carta_correcao' | 'devolucao' | 'cancelamento';
+  justificativa: string;
+  solicitadoPor: string;
+  dataSolicitacao: string;
+  horaSolicitacao: string;
+  status: 'pendente' | 'aprovada' | 'rejeitada';
+  aprovadoPor?: string;
+  dataAprovacao?: string;
+  motivoRejeicao?: string;
+  observacoes?: string;
+}
+
 export interface ChecklistVenda {
   id: string;
   numeroPedido: string;
