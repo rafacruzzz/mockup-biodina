@@ -2,40 +2,48 @@ import { DocumentoFiscal, ChecklistVenda, ServicoFaturamento, ProtocoloSefaz, Ti
 
 export const mockChecklistVendas: ChecklistVenda[] = [
   {
-    id: 'CV001',
-    pedidoId: 'PED-2024-001',
+    id: 'CHK001',
+    numeroPedido: 'PED-2024-001',
     cliente: 'Farmácia Central Ltda',
+    cnpjCliente: '12.345.678/0001-90',
     vendedor: 'João Silva',
-    valor: 15750.00,
-    dataConfirmacao: '2025-01-20',
+    dataVenda: '2025-01-19',
+    valorTotal: 15750.00,
+    status: 'Liberado',
     estoqueValidado: true,
     servicosConcluidos: true,
     documentacaoCompleta: true,
-    status: 'Liberado',
+    creditoAprovado: true
   },
   {
-    id: 'CV002', 
-    pedidoId: 'PED-2024-002',
+    id: 'CHK002',
+    numeroPedido: 'PED-2024-002',
     cliente: 'Hospital São Lucas',
+    cnpjCliente: '98.765.432/0001-10',
     vendedor: 'Maria Santos',
-    valor: 32400.00,
-    dataConfirmacao: '2025-01-22',
+    dataVenda: '2025-01-21',
+    valorTotal: 32400.00,
+    status: 'Validando',
     estoqueValidado: true,
     servicosConcluidos: false,
     documentacaoCompleta: true,
-    status: 'Validando',
+    creditoAprovado: true,
+    observacoes: 'Aguardando conclusão do serviço de instalação'
   },
   {
-    id: 'CV003',
-    pedidoId: 'PED-2024-003',
+    id: 'CHK003',
+    numeroPedido: 'PED-2024-003',
     cliente: 'Drogaria Moderna',
+    cnpjCliente: '11.222.333/0001-44',
     vendedor: 'Carlos Oliveira',
-    valor: 8900.00,
-    dataConfirmacao: '2025-01-23',
-    estoqueValidado: false,
-    servicosConcluidos: true,
-    documentacaoCompleta: false,
+    dataVenda: '2025-01-22',
+    valorTotal: 8900.00,
     status: 'Aguardando',
+    estoqueValidado: false,
+    servicosConcluidos: false,
+    documentacaoCompleta: false,
+    creditoAprovado: true,
+    observacoes: 'Estoque em separação, documentação em revisão'
   }
 ];
 
@@ -180,6 +188,13 @@ export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
     numeroNF: 'INV-US-2025-456',
     dataEmissao: '2025-01-10',
     dataEntrada: '2025-01-25',
+    
+    statusImportacao: 'Canal Verde',
+    numeroDI: '25/0012345-6',
+    dataRegistroDI: '2025-01-20',
+    canalParametrizacao: 'Verde',
+    dataDesembaraco: '2025-01-21',
+    
     valorTotal: 85000.00,
     valorImpostos: 15300.00,
     categoria: 'Produto',
@@ -196,71 +211,86 @@ export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
         cfop: '3102'
       }
     ],
-    observacoes: 'Equipamento com regime especial de ICMS'
+    observacoes: 'Equipamento com regime especial de ICMS. Desembaraço rápido.'
   },
   {
     id: 'ENT002',
-    numeroPedido: 'PED-2025-045',
-    tipo: 'Compra Revenda',
-    fornecedor: 'Distribuidora Pharma Brasil',
-    cnpjFornecedor: '12.345.678/0001-90',
-    numeroNF: '000123456',
-    chaveAcesso: '35250112345678000190550010001234561234567890',
-    dataEmissao: '2025-01-20',
-    dataEntrada: '2025-01-22',
-    valorTotal: 32500.00,
-    valorImpostos: 5850.00,
+    numeroPedido: 'IMP-2025-002',
+    tipo: 'Importacao',
+    fornecedor: 'BioLab Germany GmbH',
+    cnpjFornecedor: '11.222.333/0001-44',
+    numeroNF: 'INV-DE-2025-789',
+    dataEmissao: '2025-01-15',
+    dataEntrada: '2025-02-10',
+    
+    statusImportacao: 'Aguardando DI',
+    
+    valorTotal: 125000.00,
+    valorImpostos: 22500.00,
+    categoria: 'Produto',
+    status: 'Aguardando Entrada',
+    itens: [
+      {
+        id: 'ITEM002',
+        codigo: 'REA-BIO-500',
+        descricao: 'Kit Reagentes Bioquímicos - 500 testes',
+        quantidade: 10,
+        valorUnitario: 12500.00,
+        valorTotal: 125000.00,
+        ncm: '38220000',
+        cfop: '3102'
+      }
+    ],
+    observacoes: 'Aguardando chegada da mercadoria para registrar DI'
+  },
+  {
+    id: 'ENT003',
+    numeroPedido: 'NAC-2025-010',
+    tipo: 'Compra Nacional',
+    fornecedor: 'Distribuidora Nacional Ltda',
+    cnpjFornecedor: '55.666.777/0001-88',
+    numeroNF: '000456789',
+    chaveAcesso: '35250155666777000188550010004567891234567890',
+    xmlNF: '/uploads/nf/35250155666777000188550010004567891234567890.xml',
+    dataEmissao: '2025-01-22',
+    dataEntrada: '2025-01-24',
+    
+    statusImportacao: 'N/A',
+    
+    valorTotal: 15000.00,
+    valorImpostos: 2700.00,
     categoria: 'Produto',
     status: 'NF Recebida',
     itens: [
       {
-        id: 'ITEM002',
-        codigo: 'MED-001',
-        descricao: 'Kit Reagente Tipo A - cx 100un',
-        quantidade: 50,
-        valorUnitario: 650.00,
-        valorTotal: 32500.00,
-        ncm: '38220000',
+        id: 'ITEM003',
+        codigo: 'KIT-001',
+        descricao: 'Kit Diagnóstico Rápido',
+        quantidade: 100,
+        valorUnitario: 150.00,
+        valorTotal: 15000.00,
+        ncm: '30021000',
         cfop: '1102'
       }
     ]
   },
   {
-    id: 'ENT003',
-    numeroPedido: 'SERV-2025-012',
-    tipo: 'Compra Revenda',
-    fornecedor: 'Tech Solutions Ltda',
-    cnpjFornecedor: '98.765.432/0001-10',
-    numeroNF: '000000789',
-    dataEmissao: '2025-01-18',
-    dataEntrada: '2025-01-20',
-    valorTotal: 8500.00,
-    valorImpostos: 850.00,
-    categoria: 'Servico',
-    status: 'Entrada Confirmada',
-    itens: [
-      {
-        id: 'ITEM003',
-        codigo: 'SERV-TI-001',
-        descricao: 'Consultoria em TI - 40h',
-        quantidade: 1,
-        valorUnitario: 8500.00,
-        valorTotal: 8500.00,
-        cfop: '1933'
-      }
-    ]
-  },
-  {
     id: 'ENT004',
-    numeroPedido: 'IMP-2025-002',
+    numeroPedido: 'IMP-2025-003',
     tipo: 'Importacao',
     fornecedor: 'Global Instruments Ltd',
     cnpjFornecedor: '11.111.111/0001-11',
-    numeroNF: 'INV-GL-2025-789',
-    dataEmissao: '2025-01-22',
+    numeroNF: 'INV-GL-2025-990',
+    dataEmissao: '2025-01-18',
     dataEntrada: '2025-01-28',
-    valorTotal: 125000.00,
-    valorImpostos: 22500.00,
+    
+    statusImportacao: 'Canal Amarelo',
+    numeroDI: '25/0012346-7',
+    dataRegistroDI: '2025-01-24',
+    canalParametrizacao: 'Amarelo',
+    
+    valorTotal: 145000.00,
+    valorImpostos: 26100.00,
     categoria: 'Produto',
     status: 'Aguardando Entrada',
     itens: [
@@ -269,12 +299,47 @@ export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
         codigo: 'SP-2024',
         descricao: 'Espectrofotômetro UV-VIS',
         quantidade: 2,
-        valorUnitario: 62500.00,
-        valorTotal: 125000.00,
+        valorUnitario: 72500.00,
+        valorTotal: 145000.00,
         ncm: '90278099',
         cfop: '3102'
       }
-    ]
+    ],
+    observacoes: 'Canal Amarelo - Aguardando conferência documental'
+  },
+  {
+    id: 'ENT005',
+    numeroPedido: 'IMP-2025-004',
+    tipo: 'Importacao',
+    fornecedor: 'Japan MedEquip Corp.',
+    cnpjFornecedor: '22.333.444/0001-55',
+    numeroNF: 'INV-JP-2025-112',
+    dataEmissao: '2025-01-12',
+    dataEntrada: '2025-01-26',
+    
+    statusImportacao: 'Desembaraçado',
+    numeroDI: '25/0012344-5',
+    dataRegistroDI: '2025-01-19',
+    canalParametrizacao: 'Verde',
+    dataDesembaraco: '2025-01-20',
+    
+    valorTotal: 98000.00,
+    valorImpostos: 17640.00,
+    categoria: 'Produto',
+    status: 'NF Recebida',
+    itens: [
+      {
+        id: 'ITEM005',
+        codigo: 'MICRO-JP-01',
+        descricao: 'Microscópio Digital Avançado',
+        quantidade: 3,
+        valorUnitario: 32666.67,
+        valorTotal: 98000.00,
+        ncm: '90118000',
+        cfop: '3102'
+      }
+    ],
+    observacoes: 'Desembaraçado. Mercadoria pronta para entrada no estoque.'
   }
 ];
 
@@ -326,8 +391,8 @@ export const faturamentoModules = [
   },
   {
     id: 'entrada',
-    title: 'Entrada de Mercadorias',
-    description: 'Gestão de NF de Importação e Compras para Revenda',
+    title: 'Entrada',
+    description: 'Gestão de compras para revenda (nacional e internacional) com controle de DI e desembaraço',
     icon: 'PackageCheck'
   },
   {

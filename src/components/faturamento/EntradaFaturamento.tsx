@@ -125,10 +125,10 @@ const EntradaFaturamento = () => {
       <div>
         <h2 className="text-3xl font-bold flex items-center gap-2">
           <PackageCheck className="h-8 w-8" />
-          Entrada de Mercadorias
+          Entrada
         </h2>
         <p className="text-muted-foreground mt-1">
-          Gestão de NF de Importação e Compras para Revenda
+          Gestão de compras para revenda (nacional e internacional) com controle de DI e desembaraço
         </p>
       </div>
 

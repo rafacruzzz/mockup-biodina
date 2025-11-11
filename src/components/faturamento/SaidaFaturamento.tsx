@@ -8,9 +8,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Plus, Search, Filter, FileText, Send, Download, 
-  CheckCircle, Clock, AlertTriangle, XCircle, Eye
+  CheckCircle, Clock, AlertTriangle, XCircle, Eye, Users
 } from "lucide-react";
-import { mockDocumentosFiscais, mockProtocolosSefaz } from "@/data/faturamentoModules";
+import { mockDocumentosFiscais, mockChecklistVendas } from "@/data/faturamentoModules";
 
 const SaidaFaturamento = () => {
   const [filtroTipo, setFiltroTipo] = useState('todos');
@@ -78,6 +78,72 @@ const SaidaFaturamento = () => {
           Nova NF-e
         </Button>
       </div>
+
+      {/* Checklist de Vendas */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            Checklist de Vendas Confirmadas
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nº Pedido</TableHead>
+                <TableHead>Cliente</TableHead>
+                <TableHead>Vendedor</TableHead>
+                <TableHead>Valor</TableHead>
+                <TableHead>Data</TableHead>
+                <TableHead>Validações</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {mockChecklistVendas.map((venda) => (
+                <TableRow key={venda.id}>
+                  <TableCell className="font-medium">{venda.numeroPedido}</TableCell>
+                  <TableCell>{venda.cliente}</TableCell>
+                  <TableCell>{venda.vendedor}</TableCell>
+                  <TableCell>{formatCurrency(venda.valorTotal)}</TableCell>
+                  <TableCell>{new Date(venda.dataVenda).toLocaleDateString('pt-BR')}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-1 flex-wrap">
+                      <Badge variant={venda.estoqueValidado ? "default" : "secondary"} className="text-xs">
+                        {venda.estoqueValidado ? "✓" : "✗"} Estoque
+                      </Badge>
+                      <Badge variant={venda.servicosConcluidos ? "default" : "secondary"} className="text-xs">
+                        {venda.servicosConcluidos ? "✓" : "✗"} Serviços
+                      </Badge>
+                      <Badge variant={venda.documentacaoCompleta ? "default" : "secondary"} className="text-xs">
+                        {venda.documentacaoCompleta ? "✓" : "✗"} Docs
+                      </Badge>
+                      <Badge variant={venda.creditoAprovado ? "default" : "secondary"} className="text-xs">
+                        {venda.creditoAprovado ? "✓" : "✗"} Crédito
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={venda.status === 'Liberado' ? 'default' : venda.status === 'Validando' ? 'secondary' : 'outline'}>
+                      {venda.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {venda.status === 'Liberado' && (
+                      <Button size="sm" onClick={() => setModalEmissaoOpen(true)}>
+                        <FileText className="h-4 w-4 mr-1" />
+                        Faturar
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

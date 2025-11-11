@@ -12,6 +12,16 @@ export type StatusRegimeEspecial = 'Com Regime' | 'Sem Regime' | 'Nacional';
 
 export type StatusDocumento = 'Rascunho' | 'Emitido' | 'Autorizado' | 'Cancelado' | 'Rejeitado';
 
+export type StatusImportacao = 
+  | 'Aguardando DI'
+  | 'DI Registrada'
+  | 'Canal Verde'
+  | 'Canal Amarelo'
+  | 'Canal Vermelho'
+  | 'Canal Cinza'
+  | 'Desembaraçado'
+  | 'N/A';
+
 export interface DocumentoFiscal {
   id: string;
   numero: string;
@@ -72,15 +82,20 @@ export interface ItemApontamento {
 
 export interface ChecklistVenda {
   id: string;
-  pedidoId: string;
+  numeroPedido: string;
   cliente: string;
+  cnpjCliente: string;
   vendedor: string;
-  valor: number;
-  dataConfirmacao: string;
+  dataVenda: string;
+  valorTotal: number;
+  status: 'Aguardando' | 'Validando' | 'Liberado' | 'Faturado';
+  
   estoqueValidado: boolean;
   servicosConcluidos: boolean;
   documentacaoCompleta: boolean;
-  status: 'Liberado' | 'Validando' | 'Aguardando';
+  creditoAprovado: boolean;
+  
+  observacoes?: string;
 }
 
 export interface ServicoFaturamento {
@@ -120,19 +135,38 @@ export interface TituloReceber {
 export interface PedidoEntradaMercadoria {
   id: string;
   numeroPedido: string;
-  tipo: 'Importacao' | 'Compra Revenda';
+  tipo: 'Importacao' | 'Compra Nacional';
   fornecedor: string;
   cnpjFornecedor: string;
+  
+  // Campos de NF
   numeroNF?: string;
   chaveAcesso?: string;
+  xmlNF?: string;
   dataEmissao: string;
   dataEntrada: string;
+  
+  // Campos específicos de importação
+  statusImportacao?: StatusImportacao;
+  numeroDI?: string;
+  dataRegistroDI?: string;
+  canalParametrizacao?: string;
+  dataDesembaraco?: string;
+  
+  // Valores
   valorTotal: number;
   valorImpostos: number;
   categoria: 'Produto' | 'Servico';
+  
+  // Status do processo
   status: 'Aguardando Entrada' | 'NF Recebida' | 'Entrada Confirmada' | 'Cancelado';
+  
   itens: ItemEntradaMercadoria[];
   observacoes?: string;
+  
+  // Campos de NF Complementar e Carta de Correção
+  nfComplementar?: NFComplementar[];
+  cartaCorrecao?: CartaCorrecao[];
 }
 
 export interface ItemEntradaMercadoria {
@@ -154,6 +188,34 @@ export interface NotificacaoEntrada {
   mensagem: string;
   dataNotificacao: Date;
   lida: boolean;
+}
+
+export interface NFComplementar {
+  id: string;
+  numeroNF: string;
+  chaveAcesso: string;
+  dataEmissao: string;
+  motivo: string;
+  valorComplementar: number;
+  solicitadoPor: string;
+  dataSolicitacao: string;
+  aprovadoPor?: string;
+  dataAprovacao?: string;
+  status: 'Pendente Aprovacao' | 'Aprovado' | 'Rejeitado' | 'Emitido';
+}
+
+export interface CartaCorrecao {
+  id: string;
+  numeroCC: string;
+  dataEmissao: string;
+  justificativa: string;
+  correcao: string;
+  solicitadoPor: string;
+  dataSolicitacao: string;
+  aprovadoPor?: string;
+  dataAprovacao?: string;
+  status: 'Pendente Aprovacao' | 'Aprovado' | 'Rejeitado' | 'Emitido';
+  protocolo?: string;
 }
 
 export interface RelatorioFaturamentoDetalhado {
