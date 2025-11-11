@@ -86,7 +86,8 @@ export interface ChecklistVenda {
   cliente: string;
   cnpjCliente: string;
   vendedor: string;
-  dataVenda: string;
+  dataEmissaoPedido: string;
+  dataFaturamento?: string;
   valorTotal: number;
   status: 'Aguardando' | 'Validando' | 'Liberado' | 'Faturado';
   

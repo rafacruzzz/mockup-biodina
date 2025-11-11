@@ -7,32 +7,15 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
-  Plus, Search, Filter, FileText, Send, Download, 
-  CheckCircle, Clock, AlertTriangle, XCircle, Eye, Users
+  Plus, Search, Filter, FileText, 
+  CheckCircle, Clock, AlertTriangle, Eye, Users, DollarSign
 } from "lucide-react";
-import { mockDocumentosFiscais, mockChecklistVendas } from "@/data/faturamentoModules";
+import { mockChecklistVendas } from "@/data/faturamentoModules";
 
 const SaidaFaturamento = () => {
-  const [filtroTipo, setFiltroTipo] = useState('todos');
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [pesquisa, setPesquisa] = useState('');
   const [modalEmissaoOpen, setModalEmissaoOpen] = useState(false);
-
-  const statusColors = {
-    'Rascunho': 'bg-gray-500',
-    'Emitido': 'bg-blue-500',
-    'Autorizado': 'bg-green-500',
-    'Cancelado': 'bg-red-500',
-    'Rejeitado': 'bg-orange-500'
-  };
-
-  const statusIcons = {
-    'Rascunho': FileText,
-    'Emitido': Clock,
-    'Autorizado': CheckCircle,
-    'Cancelado': XCircle,
-    'Rejeitado': AlertTriangle
-  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -41,25 +24,24 @@ const SaidaFaturamento = () => {
     }).format(value);
   };
 
-  const documentos = mockDocumentosFiscais.filter(doc => {
-    if (filtroTipo !== 'todos' && doc.tipo !== filtroTipo) {
+  const vendasFiltradas = mockChecklistVendas.filter(venda => {
+    if (filtroStatus !== 'todos' && venda.status.toLowerCase() !== filtroStatus.toLowerCase()) {
       return false;
     }
-    if (filtroStatus !== 'todos' && doc.status.toLowerCase() !== filtroStatus.toLowerCase()) {
-      return false;
-    }
-    if (pesquisa && !doc.cliente.toLowerCase().includes(pesquisa.toLowerCase()) && 
-        !doc.numero.includes(pesquisa)) {
+    if (pesquisa && 
+        !venda.numeroPedido.toLowerCase().includes(pesquisa.toLowerCase()) && 
+        !venda.cliente.toLowerCase().includes(pesquisa.toLowerCase())) {
       return false;
     }
     return true;
   });
 
-  const totais = {
-    rascunho: mockDocumentosFiscais.filter(d => d.status === 'Rascunho').length,
-    emitido: mockDocumentosFiscais.filter(d => d.status === 'Emitido').length,
-    autorizado: mockDocumentosFiscais.filter(d => d.status === 'Autorizado').length,
-    valorTotal: mockDocumentosFiscais.reduce((sum, d) => sum + d.valorTotal, 0)
+  const stats = {
+    aguardando: mockChecklistVendas.filter(v => v.status === 'Aguardando').length,
+    validando: mockChecklistVendas.filter(v => v.status === 'Validando').length,
+    liberado: mockChecklistVendas.filter(v => v.status === 'Liberado').length,
+    faturado: mockChecklistVendas.filter(v => v.status === 'Faturado').length,
+    valorTotal: mockChecklistVendas.reduce((sum, v) => sum + v.valorTotal, 0)
   };
 
   return (
@@ -67,8 +49,8 @@ const SaidaFaturamento = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Saída de Faturamento</h1>
-          <p className="text-gray-600">Emissão e transmissão de documentos fiscais</p>
+          <h1 className="text-2xl font-bold text-gray-900">Saída</h1>
+          <p className="text-gray-600">Checklist de vendas e emissão de documentos fiscais</p>
         </div>
         <Button 
           className="bg-primary hover:bg-primary/90"
@@ -79,82 +61,16 @@ const SaidaFaturamento = () => {
         </Button>
       </div>
 
-      {/* Checklist de Vendas */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Checklist de Vendas Confirmadas
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nº Pedido</TableHead>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Vendedor</TableHead>
-                <TableHead>Valor</TableHead>
-                <TableHead>Data</TableHead>
-                <TableHead>Validações</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {mockChecklistVendas.map((venda) => (
-                <TableRow key={venda.id}>
-                  <TableCell className="font-medium">{venda.numeroPedido}</TableCell>
-                  <TableCell>{venda.cliente}</TableCell>
-                  <TableCell>{venda.vendedor}</TableCell>
-                  <TableCell>{formatCurrency(venda.valorTotal)}</TableCell>
-                  <TableCell>{new Date(venda.dataVenda).toLocaleDateString('pt-BR')}</TableCell>
-                  <TableCell>
-                    <div className="flex gap-1 flex-wrap">
-                      <Badge variant={venda.estoqueValidado ? "default" : "secondary"} className="text-xs">
-                        {venda.estoqueValidado ? "✓" : "✗"} Estoque
-                      </Badge>
-                      <Badge variant={venda.servicosConcluidos ? "default" : "secondary"} className="text-xs">
-                        {venda.servicosConcluidos ? "✓" : "✗"} Serviços
-                      </Badge>
-                      <Badge variant={venda.documentacaoCompleta ? "default" : "secondary"} className="text-xs">
-                        {venda.documentacaoCompleta ? "✓" : "✗"} Docs
-                      </Badge>
-                      <Badge variant={venda.creditoAprovado ? "default" : "secondary"} className="text-xs">
-                        {venda.creditoAprovado ? "✓" : "✗"} Crédito
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={venda.status === 'Liberado' ? 'default' : venda.status === 'Validando' ? 'secondary' : 'outline'}>
-                      {venda.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {venda.status === 'Liberado' && (
-                      <Button size="sm" onClick={() => setModalEmissaoOpen(true)}>
-                        <FileText className="h-4 w-4 mr-1" />
-                        Faturar
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Rascunhos</p>
-                <p className="text-2xl font-bold text-gray-600">{totais.rascunho}</p>
+                <p className="text-sm font-medium text-gray-600">Aguardando</p>
+                <p className="text-2xl font-bold text-gray-600">{stats.aguardando}</p>
               </div>
-              <FileText className="h-8 w-8 text-gray-600" />
+              <Clock className="h-8 w-8 text-gray-600" />
             </div>
           </CardContent>
         </Card>
@@ -163,10 +79,10 @@ const SaidaFaturamento = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Emitidos</p>
-                <p className="text-2xl font-bold text-blue-600">{totais.emitido}</p>
+                <p className="text-sm font-medium text-gray-600">Validando</p>
+                <p className="text-2xl font-bold text-orange-600">{stats.validando}</p>
               </div>
-              <Clock className="h-8 w-8 text-blue-600" />
+              <AlertTriangle className="h-8 w-8 text-orange-600" />
             </div>
           </CardContent>
         </Card>
@@ -175,8 +91,8 @@ const SaidaFaturamento = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Autorizados</p>
-                <p className="text-2xl font-bold text-green-600">{totais.autorizado}</p>
+                <p className="text-sm font-medium text-gray-600">Liberado</p>
+                <p className="text-2xl font-bold text-green-600">{stats.liberado}</p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
@@ -187,10 +103,22 @@ const SaidaFaturamento = () => {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Valor Total</p>
-                <p className="text-xl font-bold text-gray-900">{formatCurrency(totais.valorTotal)}</p>
+                <p className="text-sm font-medium text-gray-600">Faturado</p>
+                <p className="text-2xl font-bold text-blue-600">{stats.faturado}</p>
               </div>
-              <Send className="h-8 w-8 text-gray-600" />
+              <FileText className="h-8 w-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Valor Total</p>
+                <p className="text-xl font-bold text-gray-900">{formatCurrency(stats.valorTotal)}</p>
+              </div>
+              <DollarSign className="h-8 w-8 text-gray-600" />
             </div>
           </CardContent>
         </Card>
@@ -210,127 +138,127 @@ const SaidaFaturamento = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input 
-                  placeholder="Pesquisar por cliente ou número..." 
+                  placeholder="Pesquisar por pedido ou cliente..." 
                   className="pl-10"
                   value={pesquisa}
                   onChange={(e) => setPesquisa(e.target.value)}
                 />
               </div>
             </div>
-            <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Tipo de Documento" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos os Tipos</SelectItem>
-                <SelectItem value="NF-e">NF-e</SelectItem>
-                <SelectItem value="NFS-e">NFS-e</SelectItem>
-                <SelectItem value="CT-e">CT-e</SelectItem>
-                <SelectItem value="Fatura">Fatura</SelectItem>
-              </SelectContent>
-            </Select>
             <Select value={filtroStatus} onValueChange={setFiltroStatus}>
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos os Status</SelectItem>
-                <SelectItem value="rascunho">Rascunho</SelectItem>
-                <SelectItem value="emitido">Emitido</SelectItem>
-                <SelectItem value="autorizado">Autorizado</SelectItem>
-                <SelectItem value="cancelado">Cancelado</SelectItem>
-                <SelectItem value="rejeitado">Rejeitado</SelectItem>
+                <SelectItem value="aguardando">Aguardando</SelectItem>
+                <SelectItem value="validando">Validando</SelectItem>
+                <SelectItem value="liberado">Liberado</SelectItem>
+                <SelectItem value="faturado">Faturado</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </CardContent>
       </Card>
 
-      {/* Tabela de Documentos */}
+      {/* Checklist de Vendas */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Documentos Fiscais
+            <Users className="h-5 w-5" />
+            Checklist de Vendas
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Número/Série</TableHead>
-                <TableHead>Tipo</TableHead>
+                <TableHead>Nº Pedido</TableHead>
                 <TableHead>Cliente</TableHead>
-                <TableHead>Emissão</TableHead>
-                <TableHead>Valor Total</TableHead>
+                <TableHead>Vendedor</TableHead>
+                <TableHead>Valor</TableHead>
+                <TableHead>Data Emissão Pedido</TableHead>
+                <TableHead>Data Faturamento</TableHead>
+                <TableHead>Validações</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Protocolo</TableHead>
                 <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {documentos.map((documento) => {
-                const StatusIcon = statusIcons[documento.status as keyof typeof statusIcons];
-                
-                return (
-                  <TableRow key={documento.id}>
-                    <TableCell>
-                      <div>
-                        <span className="font-medium">{documento.numero}</span>
-                        <div className="text-sm text-gray-500">Série: {documento.serie}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{documento.tipo}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <span className="font-medium">{documento.cliente}</span>
-                        <div className="text-sm text-gray-500">{documento.cnpjCpf}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell>{new Date(documento.emissao).toLocaleDateString('pt-BR')}</TableCell>
-                    <TableCell>{formatCurrency(documento.valorTotal)}</TableCell>
-                    <TableCell>
-                      <Badge className={`${statusColors[documento.status as keyof typeof statusColors]} text-white flex items-center gap-1 w-fit`}>
-                        <StatusIcon className="h-3 w-3" />
-                        {documento.status}
+              {vendasFiltradas.map((venda) => (
+                <TableRow key={venda.id}>
+                  <TableCell className="font-medium">{venda.numeroPedido}</TableCell>
+                  <TableCell>
+                    <div>
+                      <span className="font-medium">{venda.cliente}</span>
+                      <div className="text-sm text-gray-500">{venda.cnpjCliente}</div>
+                    </div>
+                  </TableCell>
+                  <TableCell>{venda.vendedor}</TableCell>
+                  <TableCell>{formatCurrency(venda.valorTotal)}</TableCell>
+                  <TableCell>
+                    {new Date(venda.dataEmissaoPedido).toLocaleDateString('pt-BR')}
+                  </TableCell>
+                  <TableCell>
+                    {venda.dataFaturamento ? (
+                      <span className="text-green-600 font-medium">
+                        {new Date(venda.dataFaturamento).toLocaleDateString('pt-BR')}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400">-</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1 flex-wrap">
+                      <Badge variant={venda.estoqueValidado ? "default" : "secondary"} className="text-xs">
+                        {venda.estoqueValidado ? "✓" : "✗"} Estoque
                       </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {documento.protocolo ? (
-                        <div className="text-sm">
-                          <div className="font-medium">{documento.protocolo}</div>
-                          <div className="text-gray-500">
-                            {documento.emissao ? 
-                              new Date(documento.emissao).toLocaleString('pt-BR') : 
-                              'Processando...'}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
-                          <Eye className="h-4 w-4" />
+                      <Badge variant={venda.servicosConcluidos ? "default" : "secondary"} className="text-xs">
+                        {venda.servicosConcluidos ? "✓" : "✗"} Serviços
+                      </Badge>
+                      <Badge variant={venda.documentacaoCompleta ? "default" : "secondary"} className="text-xs">
+                        {venda.documentacaoCompleta ? "✓" : "✗"} Docs
+                      </Badge>
+                      <Badge variant={venda.creditoAprovado ? "default" : "secondary"} className="text-xs">
+                        {venda.creditoAprovado ? "✓" : "✗"} Crédito
+                      </Badge>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge 
+                      variant={
+                        venda.status === 'Liberado' ? 'default' : 
+                        venda.status === 'Faturado' ? 'default' :
+                        venda.status === 'Validando' ? 'secondary' : 
+                        'outline'
+                      }
+                      className={
+                        venda.status === 'Faturado' ? 'bg-blue-600' :
+                        venda.status === 'Liberado' ? 'bg-green-600' : ''
+                      }
+                    >
+                      {venda.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      {venda.status === 'Liberado' && (
+                        <Button 
+                          size="sm" 
+                          className="bg-primary hover:bg-primary/90"
+                          onClick={() => setModalEmissaoOpen(true)}
+                        >
+                          <FileText className="h-4 w-4 mr-1" />
+                          Faturar
                         </Button>
-                        {documento.status === 'Autorizado' && (
-                          <Button size="sm" variant="outline">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        )}
-                        {documento.status === 'Emitido' && (
-                          <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                            <Send className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </CardContent>

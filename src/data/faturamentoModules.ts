@@ -7,9 +7,10 @@ export const mockChecklistVendas: ChecklistVenda[] = [
     cliente: 'Farmácia Central Ltda',
     cnpjCliente: '12.345.678/0001-90',
     vendedor: 'João Silva',
-    dataVenda: '2025-01-19',
+    dataEmissaoPedido: '2025-01-15',
+    dataFaturamento: '2025-01-19',
     valorTotal: 15750.00,
-    status: 'Liberado',
+    status: 'Faturado',
     estoqueValidado: true,
     servicosConcluidos: true,
     documentacaoCompleta: true,
@@ -21,7 +22,7 @@ export const mockChecklistVendas: ChecklistVenda[] = [
     cliente: 'Hospital São Lucas',
     cnpjCliente: '98.765.432/0001-10',
     vendedor: 'Maria Santos',
-    dataVenda: '2025-01-21',
+    dataEmissaoPedido: '2025-01-18',
     valorTotal: 32400.00,
     status: 'Validando',
     estoqueValidado: true,
@@ -36,7 +37,7 @@ export const mockChecklistVendas: ChecklistVenda[] = [
     cliente: 'Drogaria Moderna',
     cnpjCliente: '11.222.333/0001-44',
     vendedor: 'Carlos Oliveira',
-    dataVenda: '2025-01-22',
+    dataEmissaoPedido: '2025-01-20',
     valorTotal: 8900.00,
     status: 'Aguardando',
     estoqueValidado: false,
@@ -44,6 +45,20 @@ export const mockChecklistVendas: ChecklistVenda[] = [
     documentacaoCompleta: false,
     creditoAprovado: true,
     observacoes: 'Estoque em separação, documentação em revisão'
+  },
+  {
+    id: 'CHK004',
+    numeroPedido: 'PED-2024-004',
+    cliente: 'Clínica Vida Nova',
+    cnpjCliente: '22.333.444/0001-55',
+    vendedor: 'Ana Paula',
+    dataEmissaoPedido: '2025-01-22',
+    valorTotal: 45200.00,
+    status: 'Liberado',
+    estoqueValidado: true,
+    servicosConcluidos: true,
+    documentacaoCompleta: true,
+    creditoAprovado: true
   }
 ];
 
