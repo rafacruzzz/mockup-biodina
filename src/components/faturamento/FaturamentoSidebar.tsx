@@ -36,6 +36,12 @@ const FaturamentoSidebar = ({ activeModule, onModuleChange }: FaturamentoSidebar
       title: 'Serviços',
       icon: Settings,
       description: 'Faturamento de serviços (NFS-e)'
+    },
+    {
+      id: 'cartas-faturamento',
+      title: 'Cartas de Faturamento',
+      icon: FileText,
+      description: 'Declarações mensais com assinatura'
     }
   ];
 

@@ -569,3 +569,87 @@ export interface RelatorioFaturamentoDetalhado {
     equipamentosSemRegime: number;
   };
 }
+
+// ============= CARTA DE FATURAMENTO =============
+
+export interface CartaFaturamento {
+  id: string;
+  competencia: string; // "Janeiro/2025"
+  dataEmissao: string;
+  dataGeracao: string;
+  status: 'rascunho' | 'pendente_assinatura' | 'assinado' | 'enviado_tesouraria';
+  
+  // Dados da empresa
+  dadosEmpresa: {
+    razaoSocial: string;
+    cnpj: string;
+    endereco: string;
+    cidade: string;
+    estado: string;
+    cep: string;
+    logoUrl?: string;
+  };
+  
+  // Dados do sócio/titular
+  titular: {
+    nome: string;
+    cpf: string;
+    cargo: string;
+  };
+  
+  // Dados do contador
+  contador: {
+    nome: string;
+    cargo: string;
+    crc: string;
+  };
+  
+  // Dados de faturamento (últimos 12 meses)
+  faturamentoPeriodo: FaturamentoMensal[];
+  totalPeriodo: number;
+  
+  // Arquivos
+  arquivoPdfOriginal?: string;
+  arquivoPdfAssinado?: string;
+  
+  // Signatários
+  signatarios: SignatarioCartaFaturamento[];
+  
+  // Histórico
+  historicoEnvios: HistoricoEnvioEmail[];
+}
+
+export interface SignatarioCartaFaturamento {
+  id: string;
+  nome: string;
+  email: string;
+  cargo: 'socio' | 'contador';
+  ordem: number;
+  status: 'pendente' | 'assinado' | 'rejeitado';
+  dataAssinatura?: string;
+  ipAssinatura?: string;
+  assinaturaDigitalUrl?: string;
+}
+
+export interface HistoricoEnvioEmail {
+  id: string;
+  tipo: 'solicitacao_assinatura' | 'lembrete' | 'conclusao' | 'envio_tesouraria';
+  destinatario: string;
+  dataEnvio: string;
+  statusEntrega: 'enviado' | 'entregue' | 'erro';
+  mensagemErro?: string;
+}
+
+export interface ConfiguracaoCartaFaturamento {
+  envioAutomatico: boolean;
+  diaEnvioMensal: number; // 1-31
+  horaEnvio: string; // "08:00"
+  emailsDestinatarios: {
+    socios: string[];
+    contadores: string[];
+    tesouraria: string[];
+  };
+  prazoAssinatura: number; // dias
+  lembreteAutomatico: boolean;
+  diasLembrete: number;
+}

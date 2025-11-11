@@ -5,6 +5,7 @@ import DashboardRelatorios from "@/components/faturamento/DashboardRelatorios";
 import EntradaFaturamento from "@/components/faturamento/EntradaFaturamento";
 import SaidaFaturamento from "@/components/faturamento/SaidaFaturamento";
 import ServicosFaturamento from "@/components/faturamento/ServicosFaturamento";
+import CartasFaturamento from "@/components/faturamento/CartasFaturamento";
 
 const Faturamento = () => {
   const [activeModule, setActiveModule] = useState('dashboard-relatorios');
@@ -19,6 +20,8 @@ const Faturamento = () => {
         return <SaidaFaturamento />;
       case 'servicos':
         return <ServicosFaturamento />;
+      case 'cartas-faturamento':
+        return <CartasFaturamento />;
       default:
         return <DashboardRelatorios />;
     }
