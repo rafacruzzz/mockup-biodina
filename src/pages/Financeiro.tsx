@@ -13,13 +13,10 @@ import DespesasViagemServicosView from "@/components/financeiro/DespesasViagemSe
 
 import DocumentosFiscaisView from "@/components/financeiro/DocumentosFiscaisView";
 import ComissoesPagarView from "@/components/financeiro/ComissoesPagarView";
-import FaturamentoDashboard from "@/components/faturamento/FaturamentoDashboard";
+import DashboardRelatorios from "@/components/faturamento/DashboardRelatorios";
 import EntradaFaturamento from "@/components/faturamento/EntradaFaturamento";
 import SaidaFaturamento from "@/components/faturamento/SaidaFaturamento";
-import DevolucaoFaturamento from "@/components/faturamento/DevolucaoFaturamento";
-import CancelamentoFaturamento from "@/components/faturamento/CancelamentoFaturamento";
 import ServicosFaturamento from "@/components/faturamento/ServicosFaturamento";
-import RelatoriosFaturamento from "@/components/faturamento/RelatoriosFaturamento";
 import IndicadoresFaturamento from "@/components/faturamento/IndicadoresFaturamento";
 import AssistenteFiscalIA from "@/components/faturamento/AssistenteFiscalIA";
 import RodapeFaturamento from "@/components/faturamento/RodapeFaturamento";
@@ -373,16 +370,13 @@ const Financeiro = () => {
     {
       id: 'faturamento',
       title: 'Faturamento',
-      description: 'Entrada, Saída, Devolução, Cancelamento, Serviços, Relatórios',
+      description: 'Entrada, Saída, Serviços, Dashboard & Relatórios',
       icon: Receipt,
       subModules: [
-        { id: 'dashboard_faturamento', title: 'Dashboard' },
+        { id: 'dashboard_relatorios', title: 'Dashboard & Relatórios' },
         { id: 'entrada', title: 'Entrada' },
         { id: 'saida', title: 'Saída' },
-        { id: 'devolucao', title: 'Devolução' },
-        { id: 'cancelamento', title: 'Cancelamento' },
         { id: 'servicos', title: 'Serviços' },
-        { id: 'relatorios', title: 'Relatórios' },
         { id: 'configuracoes_fiscais', title: 'Configurações Fiscais' }
       ]
     },
@@ -470,6 +464,10 @@ const Financeiro = () => {
 
     // Renderização especial para Faturamento com seções organizadas
     if (activeModule === 'faturamento') {
+      const dashboardRelatorios = [
+        { id: 'dashboard_relatorios', title: 'Dashboard & Relatórios', description: 'Análise completa e exportações', icon: BarChart3 },
+      ];
+
       const faturamentoProdutos = [
         { id: 'entrada', title: 'Entrada', description: 'Lançar NF-e de compra ou importação', icon: Download },
         { id: 'saida', title: 'Saída', description: 'Emitir NF-e de venda ou remessa', icon: Upload },
@@ -499,6 +497,35 @@ const Financeiro = () => {
             </div>
 
             <IndicadoresFaturamento />
+
+            {/* Dashboard & Relatórios */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-biodina-blue">Dashboard & Relatórios</h3>
+              <div className="grid grid-cols-1 gap-4">
+                {dashboardRelatorios.map((modulo) => {
+                  const IconComponent = modulo.icon;
+                  return (
+                    <Card 
+                      key={modulo.id}
+                      className="shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-biodina-gold/50"
+                      onClick={() => setActiveSubModule(modulo.id)}
+                    >
+                      <CardContent className="p-6 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-semibold text-biodina-blue">
+                            {modulo.title}
+                          </h3>
+                          <IconComponent className="h-5 w-5 text-biodina-gold" />
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                          {modulo.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
 
             {/* Faturamento de Produtos */}
             <div className="space-y-4">
@@ -925,7 +952,7 @@ const Financeiro = () => {
             </div>
           </div>
         );
-      case 'dashboard_faturamento':
+      case 'dashboard_relatorios':
         return (
           <div className="space-y-6">
             <div className="flex items-center gap-4">
@@ -938,7 +965,7 @@ const Financeiro = () => {
                 Voltar
               </Button>
             </div>
-            <FaturamentoDashboard />
+            <DashboardRelatorios />
           </div>
         );
       case 'entrada':
@@ -973,38 +1000,6 @@ const Financeiro = () => {
             <SaidaFaturamento />
           </div>
         );
-      case 'devolucao':
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveSubModule(null)}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-            </div>
-            <DevolucaoFaturamento />
-          </div>
-        );
-      case 'cancelamento':
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveSubModule(null)}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-            </div>
-            <CancelamentoFaturamento />
-          </div>
-        );
       case 'servicos':
         return (
           <div className="space-y-6">
@@ -1019,22 +1014,6 @@ const Financeiro = () => {
               </Button>
             </div>
             <ServicosFaturamento />
-          </div>
-        );
-      case 'relatorios':
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveSubModule(null)}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-            </div>
-            <RelatoriosFaturamento />
           </div>
         );
       case 'configuracoes_fiscais':
