@@ -1,4 +1,4 @@
-import { DocumentoFiscal, ChecklistVenda, ServicoFaturamento, ProtocoloSefaz, TituloReceber } from '@/types/faturamento';
+import { DocumentoFiscal, ChecklistVenda, ServicoFaturamento, ProtocoloSefaz, TituloReceber, PedidoEntradaMercadoria, NotificacaoEntrada } from '@/types/faturamento';
 
 export const mockChecklistVendas: ChecklistVenda[] = [
   {
@@ -170,6 +170,153 @@ export const mockTitulosReceber: TituloReceber[] = [
   }
 ];
 
+export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
+  {
+    id: 'ENT001',
+    numeroPedido: 'IMP-2025-001',
+    tipo: 'Importacao',
+    fornecedor: 'MedTech USA Inc.',
+    cnpjFornecedor: '00.000.000/0001-00',
+    numeroNF: 'INV-US-2025-456',
+    dataEmissao: '2025-01-10',
+    dataEntrada: '2025-01-25',
+    valorTotal: 85000.00,
+    valorImpostos: 15300.00,
+    categoria: 'Produto',
+    status: 'Aguardando Entrada',
+    itens: [
+      {
+        id: 'ITEM001',
+        codigo: 'AN-X1-2023',
+        descricao: 'Analisador Bioquímico X1',
+        quantidade: 1,
+        valorUnitario: 85000.00,
+        valorTotal: 85000.00,
+        ncm: '90278099',
+        cfop: '3102'
+      }
+    ],
+    observacoes: 'Equipamento com regime especial de ICMS'
+  },
+  {
+    id: 'ENT002',
+    numeroPedido: 'PED-2025-045',
+    tipo: 'Compra Revenda',
+    fornecedor: 'Distribuidora Pharma Brasil',
+    cnpjFornecedor: '12.345.678/0001-90',
+    numeroNF: '000123456',
+    chaveAcesso: '35250112345678000190550010001234561234567890',
+    dataEmissao: '2025-01-20',
+    dataEntrada: '2025-01-22',
+    valorTotal: 32500.00,
+    valorImpostos: 5850.00,
+    categoria: 'Produto',
+    status: 'NF Recebida',
+    itens: [
+      {
+        id: 'ITEM002',
+        codigo: 'MED-001',
+        descricao: 'Kit Reagente Tipo A - cx 100un',
+        quantidade: 50,
+        valorUnitario: 650.00,
+        valorTotal: 32500.00,
+        ncm: '38220000',
+        cfop: '1102'
+      }
+    ]
+  },
+  {
+    id: 'ENT003',
+    numeroPedido: 'SERV-2025-012',
+    tipo: 'Compra Revenda',
+    fornecedor: 'Tech Solutions Ltda',
+    cnpjFornecedor: '98.765.432/0001-10',
+    numeroNF: '000000789',
+    dataEmissao: '2025-01-18',
+    dataEntrada: '2025-01-20',
+    valorTotal: 8500.00,
+    valorImpostos: 850.00,
+    categoria: 'Servico',
+    status: 'Entrada Confirmada',
+    itens: [
+      {
+        id: 'ITEM003',
+        codigo: 'SERV-TI-001',
+        descricao: 'Consultoria em TI - 40h',
+        quantidade: 1,
+        valorUnitario: 8500.00,
+        valorTotal: 8500.00,
+        cfop: '1933'
+      }
+    ]
+  },
+  {
+    id: 'ENT004',
+    numeroPedido: 'IMP-2025-002',
+    tipo: 'Importacao',
+    fornecedor: 'Global Instruments Ltd',
+    cnpjFornecedor: '11.111.111/0001-11',
+    numeroNF: 'INV-GL-2025-789',
+    dataEmissao: '2025-01-22',
+    dataEntrada: '2025-01-28',
+    valorTotal: 125000.00,
+    valorImpostos: 22500.00,
+    categoria: 'Produto',
+    status: 'Aguardando Entrada',
+    itens: [
+      {
+        id: 'ITEM004',
+        codigo: 'SP-2024',
+        descricao: 'Espectrofotômetro UV-VIS',
+        quantidade: 2,
+        valorUnitario: 62500.00,
+        valorTotal: 125000.00,
+        ncm: '90278099',
+        cfop: '3102'
+      }
+    ]
+  }
+];
+
+export const mockNotificacoesEntrada: NotificacaoEntrada[] = [
+  {
+    id: 'NOT001',
+    pedidoId: 'ENT001',
+    tipo: 'Produto',
+    prioridade: 'Alta',
+    mensagem: 'NF de Importação IMP-2025-001 aguardando entrada no sistema',
+    dataNotificacao: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    lida: false
+  },
+  {
+    id: 'NOT002',
+    pedidoId: 'ENT002',
+    tipo: 'Produto',
+    prioridade: 'Media',
+    mensagem: 'NF PED-2025-045 recebida, aguardando confirmação de entrada',
+    dataNotificacao: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    lida: false
+  },
+  {
+    id: 'NOT003',
+    pedidoId: 'ENT003',
+    tipo: 'Servico',
+    prioridade: 'Baixa',
+    mensagem: 'Entrada de serviço SERV-2025-012 confirmada com sucesso',
+    dataNotificacao: new Date(Date.now() - 5 * 60 * 60 * 1000),
+    lida: true
+  },
+  {
+    id: 'NOT004',
+    pedidoId: 'ENT004',
+    tipo: 'Produto',
+    prioridade: 'Alta',
+    mensagem: 'Importação IMP-2025-002 com prazo de entrada próximo',
+    dataNotificacao: new Date(Date.now() - 3 * 60 * 60 * 1000),
+    lida: false
+  }
+];
+
 export const faturamentoModules = [
   {
     id: 'dashboard',
@@ -179,9 +326,9 @@ export const faturamentoModules = [
   },
   {
     id: 'entrada',
-    title: 'Entrada',
-    description: 'Checklist de vendas e validações',
-    icon: 'ArrowDownCircle'
+    title: 'Entrada de Mercadorias',
+    description: 'Gestão de NF de Importação e Compras para Revenda',
+    icon: 'PackageCheck'
   },
   {
     id: 'saida',

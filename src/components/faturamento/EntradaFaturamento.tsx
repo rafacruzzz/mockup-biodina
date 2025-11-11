@@ -1,33 +1,49 @@
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Search, Filter, CheckCircle, AlertTriangle, Clock, 
-  Eye, FileText, Package, Users
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {
+  PackageCheck,
+  Package,
+  Wrench,
+  Search,
+  Eye,
+  CheckCircle,
+  XCircle,
+  FileText,
+  TrendingUp
 } from "lucide-react";
-import { mockChecklistVendas } from "@/data/faturamentoModules";
+import { mockPedidosEntrada } from "@/data/faturamentoModules";
+import { PedidoEntradaMercadoria } from "@/types/faturamento";
+import PainelNotificacoesEntrada from "./PainelNotificacoesEntrada";
+import DetalhesEntradaModal from "./DetalhesEntradaModal";
+import { useToast } from "@/hooks/use-toast";
 
 const EntradaFaturamento = () => {
-  const [filtroStatus, setFiltroStatus] = useState('todos');
+  const [filtroTipo, setFiltroTipo] = useState<string>('todos');
+  const [filtroCategoria, setFiltroCategoria] = useState<string>('todos');
+  const [filtroStatus, setFiltroStatus] = useState<string>('todos');
   const [pesquisa, setPesquisa] = useState('');
-
-  const statusColors = {
-    'Liberado': 'bg-green-500',
-    'Validando': 'bg-yellow-500', 
-    'Aguardando': 'bg-blue-500',
-    'Rejeitado': 'bg-red-500'
-  };
-
-  const statusIcons = {
-    'Liberado': CheckCircle,
-    'Validando': Clock,
-    'Aguardando': AlertTriangle,
-    'Rejeitado': AlertTriangle
-  };
+  const [pedidoSelecionado, setPedidoSelecionado] = useState<PedidoEntradaMercadoria | null>(null);
+  const [modalDetalhesOpen, setModalDetalhesOpen] = useState(false);
+  const [pedidos, setPedidos] = useState<PedidoEntradaMercadoria[]>(mockPedidosEntrada);
+  const { toast } = useToast();
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -36,195 +52,268 @@ const EntradaFaturamento = () => {
     }).format(value);
   };
 
-  const checklists = mockChecklistVendas.filter(checklist => {
-    if (filtroStatus !== 'todos' && checklist.status.toLowerCase() !== filtroStatus.toLowerCase()) {
-      return false;
-    }
-    if (pesquisa && !checklist.cliente.toLowerCase().includes(pesquisa.toLowerCase()) && 
-        !checklist.pedidoId.toLowerCase().includes(pesquisa.toLowerCase())) {
-      return false;
-    }
-    return true;
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('pt-BR');
+  };
+
+  const pedidosFiltrados = pedidos.filter(pedido => {
+    const matchTipo = filtroTipo === 'todos' || pedido.tipo === filtroTipo;
+    const matchCategoria = filtroCategoria === 'todos' || pedido.categoria === filtroCategoria;
+    const matchStatus = filtroStatus === 'todos' || pedido.status === filtroStatus;
+    const matchPesquisa = pesquisa === '' || 
+      pedido.numeroPedido.toLowerCase().includes(pesquisa.toLowerCase()) ||
+      pedido.fornecedor.toLowerCase().includes(pesquisa.toLowerCase()) ||
+      (pedido.numeroNF && pedido.numeroNF.toLowerCase().includes(pesquisa.toLowerCase()));
+    
+    return matchTipo && matchCategoria && matchStatus && matchPesquisa;
   });
 
   const totais = {
-    aguardando: mockChecklistVendas.filter(c => c.status === 'Aguardando').length,
-    validando: mockChecklistVendas.filter(c => c.status === 'Validando').length,
-    liberado: mockChecklistVendas.filter(c => c.status === 'Liberado').length,
-    valorTotal: mockChecklistVendas.reduce((sum, c) => sum + c.valor, 0)
+    aguardandoProdutos: pedidos.filter(p => p.status === 'Aguardando Entrada' && p.categoria === 'Produto').length,
+    aguardandoServicos: pedidos.filter(p => p.status === 'Aguardando Entrada' && p.categoria === 'Servico').length,
+    nfRecebidasHoje: pedidos.filter(p => {
+      const hoje = new Date().toISOString().split('T')[0];
+      return p.dataEmissao === hoje && p.status === 'NF Recebida';
+    }).length,
+    valorPendente: pedidos
+      .filter(p => p.status !== 'Entrada Confirmada' && p.status !== 'Cancelado')
+      .reduce((acc, p) => acc + p.valorTotal, 0)
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Aguardando Entrada':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'NF Recebida':
+        return 'bg-blue-100 text-blue-800';
+      case 'Entrada Confirmada':
+        return 'bg-green-100 text-green-800';
+      case 'Cancelado':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const handleVerDetalhes = (pedidoId: string) => {
+    const pedido = pedidos.find(p => p.id === pedidoId);
+    if (pedido) {
+      setPedidoSelecionado(pedido);
+      setModalDetalhesOpen(true);
+    }
+  };
+
+  const handleConfirmarEntrada = (pedidoId: string) => {
+    setPedidos(prev =>
+      prev.map(p =>
+        p.id === pedidoId ? { ...p, status: 'Entrada Confirmada' as const } : p
+      )
+    );
+  };
+
+  const handleCancelar = (pedidoId: string) => {
+    setPedidos(prev =>
+      prev.map(p =>
+        p.id === pedidoId ? { ...p, status: 'Cancelado' as const } : p
+      )
+    );
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Entrada de Faturamento</h1>
-          <p className="text-gray-600">Checklist de vendas confirmadas aguardando faturamento</p>
-        </div>
+      <div>
+        <h2 className="text-3xl font-bold flex items-center gap-2">
+          <PackageCheck className="h-8 w-8" />
+          Entrada de Mercadorias
+        </h2>
+        <p className="text-muted-foreground mt-1">
+          Gestão de NF de Importação e Compras para Revenda
+        </p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Aguardando</p>
-                <p className="text-2xl font-bold text-blue-600">{totais.aguardando}</p>
-              </div>
-              <Clock className="h-8 w-8 text-blue-600" />
+      {/* Indicadores Rápidos */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Aguardando (Produtos)</p>
+              <p className="text-2xl font-bold">{totais.aguardandoProdutos}</p>
             </div>
-          </CardContent>
+            <Package className="h-8 w-8 text-yellow-600" />
+          </div>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Validando</p>
-                <p className="text-2xl font-bold text-yellow-600">{totais.validando}</p>
-              </div>
-              <AlertTriangle className="h-8 w-8 text-yellow-600" />
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Aguardando (Serviços)</p>
+              <p className="text-2xl font-bold">{totais.aguardandoServicos}</p>
             </div>
-          </CardContent>
+            <Wrench className="h-8 w-8 text-blue-600" />
+          </div>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Liberados</p>
-                <p className="text-2xl font-bold text-green-600">{totais.liberado}</p>
-              </div>
-              <CheckCircle className="h-8 w-8 text-green-600" />
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">NFs Recebidas Hoje</p>
+              <p className="text-2xl font-bold">{totais.nfRecebidasHoje}</p>
             </div>
-          </CardContent>
+            <FileText className="h-8 w-8 text-green-600" />
+          </div>
         </Card>
 
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Valor Total</p>
-                <p className="text-xl font-bold text-gray-900">{formatCurrency(totais.valorTotal)}</p>
-              </div>
-              <FileText className="h-8 w-8 text-gray-600" />
+        <Card className="p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-muted-foreground">Valor Pendente</p>
+              <p className="text-2xl font-bold">{formatCurrency(totais.valorPendente)}</p>
             </div>
-          </CardContent>
+            <TrendingUp className="h-8 w-8 text-purple-600" />
+          </div>
         </Card>
       </div>
+
+      {/* Painel de Notificações */}
+      <PainelNotificacoesEntrada onVerDetalhes={handleVerDetalhes} />
 
       {/* Filtros */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Filtros e Pesquisa
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input 
-                  placeholder="Pesquisar por cliente ou pedido..." 
-                  className="pl-10"
-                  value={pesquisa}
-                  onChange={(e) => setPesquisa(e.target.value)}
-                />
-              </div>
-            </div>
-            <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos os Status</SelectItem>
-                <SelectItem value="aguardando">Aguardando</SelectItem>
-                <SelectItem value="validando">Validando</SelectItem>
-                <SelectItem value="liberado">Liberado</SelectItem>
-                <SelectItem value="rejeitado">Rejeitado</SelectItem>
-              </SelectContent>
-            </Select>
+      <Card className="p-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por pedido, fornecedor, NF..."
+              value={pesquisa}
+              onChange={(e) => setPesquisa(e.target.value)}
+              className="pl-9"
+            />
           </div>
-        </CardContent>
+          
+          <Select value={filtroTipo} onValueChange={setFiltroTipo}>
+            <SelectTrigger>
+              <SelectValue placeholder="Tipo de Entrada" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os Tipos</SelectItem>
+              <SelectItem value="Importacao">Importação</SelectItem>
+              <SelectItem value="Compra Revenda">Compra Revenda</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={filtroCategoria} onValueChange={setFiltroCategoria}>
+            <SelectTrigger>
+              <SelectValue placeholder="Categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todas Categorias</SelectItem>
+              <SelectItem value="Produto">Produto</SelectItem>
+              <SelectItem value="Servico">Serviço</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={filtroStatus} onValueChange={setFiltroStatus}>
+            <SelectTrigger>
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os Status</SelectItem>
+              <SelectItem value="Aguardando Entrada">Aguardando Entrada</SelectItem>
+              <SelectItem value="NF Recebida">NF Recebida</SelectItem>
+              <SelectItem value="Entrada Confirmada">Entrada Confirmada</SelectItem>
+              <SelectItem value="Cancelado">Cancelado</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </Card>
 
-      {/* Tabela de Checklists */}
+      {/* Tabela de Pedidos */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Checklist de Vendas
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nº Pedido</TableHead>
+              <TableHead>Tipo</TableHead>
+              <TableHead>Fornecedor</TableHead>
+              <TableHead>Nº NF</TableHead>
+              <TableHead>Categoria</TableHead>
+              <TableHead>Data Entrada</TableHead>
+              <TableHead className="text-right">Valor Total</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-center">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {pedidosFiltrados.length === 0 ? (
               <TableRow>
-                <TableHead>Pedido ID</TableHead>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Vendedor</TableHead>
-                <TableHead>Valor</TableHead>
-                <TableHead>Data Confirmação</TableHead>
-                <TableHead>Validações</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Ações</TableHead>
+                <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
+                  Nenhum pedido de entrada encontrado
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {checklists.map((checklist) => {
-                const StatusIcon = statusIcons[checklist.status as keyof typeof statusIcons];
-                return (
-                  <TableRow key={checklist.id}>
-                    <TableCell className="font-medium">{checklist.pedidoId}</TableCell>
-                    <TableCell>{checklist.cliente}</TableCell>
-                    <TableCell>{checklist.vendedor}</TableCell>
-                    <TableCell>{formatCurrency(checklist.valor)}</TableCell>
-                    <TableCell>{new Date(checklist.dataConfirmacao).toLocaleDateString('pt-BR')}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Badge variant={checklist.estoqueValidado ? "default" : "secondary"} className="text-xs">
-                          <Package className="h-3 w-3 mr-1" />
-                          {checklist.estoqueValidado ? "Estoque OK" : "Pendente"}
-                        </Badge>
-                        <Badge variant={checklist.servicosConcluidos ? "default" : "secondary"} className="text-xs">
-                          <CheckCircle className="h-3 w-3 mr-1" />
-                          {checklist.servicosConcluidos ? "Serviços OK" : "Pendente"}
-                        </Badge>
-                        <Badge variant={checklist.documentacaoCompleta ? "default" : "secondary"} className="text-xs">
-                          <FileText className="h-3 w-3 mr-1" />
-                          {checklist.documentacaoCompleta ? "Docs OK" : "Pendente"}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={`${statusColors[checklist.status as keyof typeof statusColors]} text-white flex items-center gap-1 w-fit`}>
-                        <StatusIcon className="h-3 w-3" />
-                        {checklist.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">
-                          <Eye className="h-4 w-4" />
+            ) : (
+              pedidosFiltrados.map((pedido) => (
+                <TableRow key={pedido.id}>
+                  <TableCell className="font-medium">{pedido.numeroPedido}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{pedido.tipo}</Badge>
+                  </TableCell>
+                  <TableCell>{pedido.fornecedor}</TableCell>
+                  <TableCell>{pedido.numeroNF || '-'}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary">{pedido.categoria}</Badge>
+                  </TableCell>
+                  <TableCell>{formatDate(pedido.dataEntrada)}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(pedido.valorTotal)}</TableCell>
+                  <TableCell>
+                    <Badge className={getStatusColor(pedido.status)}>
+                      {pedido.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center justify-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleVerDetalhes(pedido.id)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      {pedido.status === 'NF Recebida' && (
+                        <Button
+                          size="sm"
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={() => handleConfirmarEntrada(pedido.id)}
+                        >
+                          <CheckCircle className="h-4 w-4" />
                         </Button>
-                        {checklist.status === 'Liberado' && (
-                          <Button size="sm" className="bg-green-600 hover:bg-green-700">
-                            Faturar
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </CardContent>
+                      )}
+                      {pedido.status !== 'Cancelado' && pedido.status !== 'Entrada Confirmada' && (
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleCancelar(pedido.id)}
+                        >
+                          <XCircle className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </Card>
+
+      {/* Modal de Detalhes */}
+      <DetalhesEntradaModal
+        isOpen={modalDetalhesOpen}
+        onOpenChange={setModalDetalhesOpen}
+        pedido={pedidoSelecionado}
+        onConfirmarEntrada={handleConfirmarEntrada}
+        onCancelar={handleCancelar}
+      />
     </div>
   );
 };

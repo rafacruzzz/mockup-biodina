@@ -117,6 +117,45 @@ export interface TituloReceber {
   condicoesPagamento: string;
 }
 
+export interface PedidoEntradaMercadoria {
+  id: string;
+  numeroPedido: string;
+  tipo: 'Importacao' | 'Compra Revenda';
+  fornecedor: string;
+  cnpjFornecedor: string;
+  numeroNF?: string;
+  chaveAcesso?: string;
+  dataEmissao: string;
+  dataEntrada: string;
+  valorTotal: number;
+  valorImpostos: number;
+  categoria: 'Produto' | 'Servico';
+  status: 'Aguardando Entrada' | 'NF Recebida' | 'Entrada Confirmada' | 'Cancelado';
+  itens: ItemEntradaMercadoria[];
+  observacoes?: string;
+}
+
+export interface ItemEntradaMercadoria {
+  id: string;
+  codigo: string;
+  descricao: string;
+  quantidade: number;
+  valorUnitario: number;
+  valorTotal: number;
+  ncm?: string;
+  cfop: string;
+}
+
+export interface NotificacaoEntrada {
+  id: string;
+  pedidoId: string;
+  tipo: 'Produto' | 'Servico';
+  prioridade: 'Alta' | 'Media' | 'Baixa';
+  mensagem: string;
+  dataNotificacao: Date;
+  lida: boolean;
+}
+
 export interface RelatorioFaturamentoDetalhado {
   periodo: { inicio: Date; fim: Date };
   totalFaturadoBruto: number;
