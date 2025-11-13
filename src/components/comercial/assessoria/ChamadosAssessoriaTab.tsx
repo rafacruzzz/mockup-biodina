@@ -103,21 +103,16 @@ export function ChamadosAssessoriaTab({ departamento }: ChamadosAssessoriaTabPro
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Avatar className="h-10 w-10">
-            <AvatarFallback className="bg-biodina-blue text-white">
-              {currentUser?.nome ? currentUser.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'U'}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="font-medium">{currentUser?.nome || 'Usuário'}</p>
-            <p className="text-sm text-muted-foreground">{isUserGestor ? 'Gestor' : 'Assessor'} - {departamento}</p>
-          </div>
+      <div className="flex items-center gap-4">
+        <Avatar className="h-10 w-10">
+          <AvatarFallback className="bg-biodina-blue text-white">
+            {currentUser?.nome ? currentUser.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : 'U'}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <p className="font-medium">{currentUser?.nome || 'Usuário'}</p>
+          <p className="text-sm text-muted-foreground">{isUserGestor ? 'Gestor' : 'Assessor'} - {departamento}</p>
         </div>
-        <Button variant="outline" size="sm" onClick={handleLogout}>
-          <LogOut className="h-4 w-4 mr-2" />Sair
-        </Button>
       </div>
 
       {isDemoMode && (
