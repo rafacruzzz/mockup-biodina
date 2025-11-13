@@ -630,7 +630,7 @@ const Comercial = () => {
         </div>
 
         <div>
-          {departamentoTecnicoTab === "agenda" && <DashboardAssessoria onNavigateToOS={handleNavigateDTToOS} departamento="Departamento Técnico" labelAssessor="Técnico" />}
+          {departamentoTecnicoTab === "agenda" && <DashboardAssessoria onNavigateToOS={handleNavigateToOS} departamento="Departamento Técnico" labelAssessor="Técnico" />}
           {departamentoTecnicoTab === "chamados" && <ChamadosAssessoriaTab departamento="Departamento Técnico" />}
           {departamentoTecnicoTab === "os" && <OrdensServicoTab statusFilterFromAlert={osStatusFilter} departamento="Departamento Técnico" />}
           {departamentoTecnicoTab === "rastreabilidade" && <RastreabilidadeTab />}
