@@ -127,8 +127,9 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
                 <Link
                   to={item.path}
                   className={cn(
-                    "flex items-center p-3 text-sm font-medium rounded-xl hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 transition-all duration-200",
-                    location.pathname === item.path && "bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md",
+                    "flex items-center p-3 text-sm font-medium rounded-xl transition-all duration-200",
+                    location.pathname === item.path && "bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md hover:from-biodina-blue/90 hover:to-biodina-blue/80",
+                    location.pathname !== item.path && "hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100",
                     !isSidebarOpen && "justify-center"
                   )}
                 >
