@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { gerarCertificadoTreinamento } from "@/utils/certificado-generator";
-import { ArrowLeft, Upload, Save, Search, CheckCircle, XCircle, Lock, FileText } from "lucide-react";
+import { ArrowLeft, Upload, Save, Search, CheckCircle, XCircle, Lock, FileText, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { OrdemServico, TipoOS, StatusOS, OpcaoAtendimento } from "@/types/assessoria-cientifica";
-import { getTipoOSLabel } from "@/data/assessoria-cientifica";
 import { AssinaturaDigital } from "./AssinaturaDigital";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +42,6 @@ interface Projeto {
 }
 
 const mockProjetos: Projeto[] = [
-  // IMPORTAÇÕES DIRETAS
   {
     id: "IMP-2024-001",
     numeroProcesso: "001",
@@ -77,7 +75,6 @@ const mockProjetos: Projeto[] = [
     responsavel: "Pedro Costa",
     segmento: "Hospital Público"
   },
-  // CONTRATAÇÕES
   {
     id: "CON-2024-012",
     numeroProcesso: "012",
@@ -144,31 +141,22 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     versaoSoftware: os?.versaoSoftware || "",
     versaoWindows: os?.versaoWindows || "",
     setorAlocacao: os?.setorAlocacao || "",
-    opcaoAtendimento: (os?.opcaoAtendimento || "presencial") as OpcaoAtendimento,
-    tipos: os?.tipo || [],
     descricaoServico: os?.descricaoServico || "",
-    servicoRealizado: os?.servicoRealizado || "",
-    observacoes: os?.observacoes || "",
-    status: (os?.status || "ABERTA") as StatusOS,
+    status: os?.status || "ABERTA" as StatusOS,
+    opcaoAtendimento: os?.opcaoAtendimento || "presencial" as OpcaoAtendimento,
     responsavel: os?.responsavel || "",
-    participantes: os?.participantes || []
+    observacoes: os?.observacoes || "",
   });
 
-  const [showAssinatura, setShowAssinatura] = useState(false);
-  const [participantesText, setParticipantesText] = useState(
-    os?.participantes?.join(", ") || ""
-  );
+  const [tiposSelecionados, setTiposSelecionados] = useState<TipoOS[]>(os?.tipo || []);
+  const [participante, setParticipante] = useState("");
+  const [listaParticipantes, setListaParticipantes] = useState<string[]>(os?.participantes || []);
 
-  // Verificar se é treinamento
-  const isTreinamento = formData.tipos.some(tipo => 
-    tipo === "treinamento_inicial" || tipo === "treinamento_nova_equipe"
-  );
-
-  const tiposOS: TipoOS[] = [
-    "suporte_operacional",
-    "acompanhamento_rotina",
-    "treinamento_inicial",
-    "treinamento_nova_equipe"
+  const tiposOS: { value: TipoOS; label: string }[] = [
+    { value: "suporte_operacional", label: "Suporte Operacional" },
+    { value: "acompanhamento_rotina", label: "Acompanhamento de Rotina" },
+    { value: "treinamento_inicial", label: "Treinamento Inicial" },
+    { value: "treinamento_nova_equipe", label: "Treinamento de Nova Equipe" },
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
@@ -196,189 +184,171 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     }
   }, [formData.status, dataHoraFechamento]);
 
-  const normalizeId = (id: string) => {
-    return id.replace(/[^\d]/g, '').padStart(3, '0');
-  };
-
-  const searchProjetos = (searchTerm: string) => {
-    if (!tipoProjeto) return [];
-    
-    const filteredByType = mockProjetos.filter(p => p.tipo === tipoProjeto);
-    
-    if (!searchTerm) return filteredByType;
-    
-    const normalizedSearch = searchTerm.toLowerCase();
-    return filteredByType.filter(projeto => 
-      projeto.numeroProcesso.includes(normalizedSearch) ||
-      projeto.id.toLowerCase().includes(normalizedSearch) ||
-      projeto.cliente.toLowerCase().includes(normalizedSearch) ||
-      projeto.cnpj.includes(normalizedSearch)
+  const handleTipoToggle = (tipo: TipoOS) => {
+    setTiposSelecionados(prev => 
+      prev.includes(tipo) ? prev.filter(t => t !== tipo) : [...prev, tipo]
     );
   };
 
-  const handleSelectProjeto = (projeto: Projeto) => {
-    setProjetoSearch(projeto.numeroProcesso);
+  const handleVincularProjeto = (projeto: Projeto) => {
     setSelectedProjeto(projeto);
+    setFormData({
+      ...formData,
+      cliente: projeto.cliente,
+      clienteId: projeto.id,
+    });
     setShowSuggestions(false);
-    
-    // AUTO-PREENCHER CAMPOS
-    setFormData(prev => ({
-      ...prev,
-      cliente: projeto.cliente
-    }));
+    setProjetoSearch("");
   };
 
-  const handleProjetoSearch = (value: string) => {
-    setProjetoSearch(value);
-    setShowSuggestions(true);
-    
-    if (!value) {
-      setSelectedProjeto(null);
-      setFormData(prev => ({
-        ...prev,
-        cliente: ''
-      }));
-      return;
-    }
-    
-    const normalizedValue = normalizeId(value);
-    const found = searchProjetos(value).find(p => 
-      normalizeId(p.numeroProcesso) === normalizedValue
-    );
-    
-    if (found) {
-      handleSelectProjeto(found);
-    }
+  const handleDesvincular = () => {
+    setSelectedProjeto(null);
+    setFormData({
+      ...formData,
+      cliente: "",
+      clienteId: undefined,
+    });
   };
+
+  const projetosFiltrados = mockProjetos.filter(projeto => {
+    if (tipoProjeto && projeto.tipo !== tipoProjeto) return false;
+    if (projetoSearch) {
+      const search = projetoSearch.toLowerCase();
+      return (
+        projeto.id.toLowerCase().includes(search) ||
+        projeto.cliente.toLowerCase().includes(search) ||
+        projeto.numeroProcesso.toLowerCase().includes(search)
+      );
+    }
+    return true;
+  });
 
   const getTipoProjetoLabel = (tipo: string) => {
-    switch (tipo) {
-      case 'importacao': return 'Importação Direta';
-      case 'contratacao': return 'Contratação';
-      default: return '';
-    }
-  };
-
-  const projetosDisponiveis = searchProjetos(projetoSearch);
-
-  const handleTipoChange = (tipo: TipoOS) => {
-    setFormData((prev) => ({
-      ...prev,
-      tipos: prev.tipos.includes(tipo)
-        ? prev.tipos.filter((t) => t !== tipo)
-        : [...prev.tipos, tipo],
-    }));
+    return tipo === "importacao" ? "Importação Direta" : "Contratação Simples";
   };
 
   const handleSave = () => {
-    // Validações básicas
-    if (!formData.cliente || !formData.descricaoServico) {
-      toast.error("Preencha os campos obrigatórios");
+    if (!formData.cliente) {
+      toast.error("Cliente é obrigatório");
       return;
     }
 
-    if (formData.tipos.length === 0) {
-      toast.error("Selecione pelo menos um tipo de OS");
+    if (tiposSelecionados.length === 0) {
+      toast.error("Selecione ao menos um tipo de OS");
       return;
     }
 
-    // Converter participantes de texto para array
-    const participantesArray = participantesText
-      .split(",")
-      .map(p => p.trim())
-      .filter(p => p.length > 0);
+    const ehTreinamento = tiposSelecionados.some(t => 
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe"
+    );
 
-    // Aqui implementar salvamento (localStorage para offline, sync depois)
-    toast.success(isNew ? "OS criada com sucesso" : "OS atualizada com sucesso");
+    if (ehTreinamento && listaParticipantes.length === 0) {
+      toast.error("Treinamentos requerem ao menos um participante");
+      return;
+    }
+
+    console.log("Salvando OS...", {
+      numeroOS,
+      dataHoraAbertura,
+      dataHoraFechamento,
+      formData,
+      tiposSelecionados,
+      participantes: listaParticipantes,
+    });
+    
+    toast.success(isNew ? "OS criada com sucesso!" : "OS atualizada com sucesso!");
     onClose();
   };
 
-  const handleEmitirCertificado = () => {
-    if (!isTreinamento) {
-      toast.error("Esta funcionalidade é apenas para OS de treinamento");
-      return;
+  const handleAdicionarParticipante = () => {
+    if (participante.trim()) {
+      setListaParticipantes([...listaParticipantes, participante.trim()]);
+      setParticipante("");
     }
-    
-    if (formData.status !== "CONCLUÍDA") {
-      toast.error("O treinamento precisa estar concluído para emitir certificado");
-      return;
-    }
-
-    const participantesArray = participantesText
-      .split(",")
-      .map(p => p.trim())
-      .filter(p => p.length > 0);
-
-    if (participantesArray.length === 0) {
-      toast.error("Adicione pelo menos um participante");
-      return;
-    }
-
-    // Gerar o PDF do certificado
-    if (os) {
-      gerarCertificadoTreinamento({
-        ...os,
-        ...formData,
-        participantes: participantesArray,
-      });
-    }
-    
-    toast.success(`Certificado gerado com sucesso! O download foi iniciado automaticamente.`);
   };
 
-  const canShowAssinatura =
-    formData.opcaoAtendimento === "presencial" && 
-    (formData.status === "CONCLUÍDA" || !isNew);
+  const handleRemoverParticipante = (index: number) => {
+    setListaParticipantes(listaParticipantes.filter((_, i) => i !== index));
+  };
+
+  const handleEmitirCertificado = () => {
+    if (listaParticipantes.length === 0) {
+      toast.error("Adicione participantes antes de emitir o certificado");
+      return;
+    }
+
+    const osParaCertificado: OrdemServico = {
+      id: os?.id || "temp-id",
+      numero: numeroOS,
+      tipo: tiposSelecionados,
+      status: formData.status,
+      departamento: "Assessoria Científica",
+      cliente: formData.cliente,
+      equipamento: formData.equipamento,
+      numeroSerieLote: formData.numeroSerieLote,
+      descricaoServico: formData.descricaoServico,
+      responsavel: formData.responsavel,
+      abertoEm: dataHoraAbertura,
+      participantes: listaParticipantes,
+      opcaoAtendimento: formData.opcaoAtendimento,
+      abertoPor: "Assessor",
+      dataAgendada: dataHoraAbertura,
+      atualizadoEm: new Date(),
+      statusBaixaFiscal: "Nao Aplicavel",
+    };
+
+    gerarCertificadoTreinamento(osParaCertificado);
+    toast.success("Certificado gerado com sucesso!");
+  };
 
   const renderTemplateTrainamento = () => {
-    const ehTreinamento = formData.tipos.some(t => 
+    const ehTreinamento = tiposSelecionados.some(t => 
       t === "treinamento_inicial" || t === "treinamento_nova_equipe"
     );
+
     if (!ehTreinamento || !formData.equipamento) return null;
+
     const equipamentoNome = formData.equipamento.toUpperCase();
-    if (equipamentoNome.includes("DXH 520")) return <TemplateTrainamentoDxH520 />;
-    if (equipamentoNome.includes("ABL800")) return <TemplateTrainamentoABL800 />;
-    if (equipamentoNome.includes("ABL90")) return <TemplateTrainamentoABL90 />;
-    if (equipamentoNome.includes("ABL9")) return <TemplateTrainamentoABL9 />;
-    if (equipamentoNome.includes("AQT90")) return <TemplateTrainamentoAQT90 />;
+
+    if (equipamentoNome.includes("DXH 520") || equipamentoNome.includes("DXH520")) {
+      return <TemplateTrainamentoDxH520 />;
+    } else if (equipamentoNome.includes("ABL800")) {
+      return <TemplateTrainamentoABL800 />;
+    } else if (equipamentoNome.includes("ABL90")) {
+      return <TemplateTrainamentoABL90 />;
+    } else if (equipamentoNome.includes("ABL9") && !equipamentoNome.includes("ABL90")) {
+      return <TemplateTrainamentoABL9 />;
+    } else if (equipamentoNome.includes("AQT90") || equipamentoNome.includes("AQT 90")) {
+      return <TemplateTrainamentoAQT90 />;
+    }
+
     return null;
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={onClose}>
+        <div>
+          <Button variant="ghost" onClick={onClose} className="mb-2">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Voltar
           </Button>
-          <div>
-            <h2 className="text-2xl font-bold">
-              {isNew ? "Nova Ordem de Serviço" : `OS ${os?.numero}`}
-            </h2>
-            {!isNew && (
-              <p className="text-sm text-muted-foreground">
-                Aberta em {os?.abertoEm ? new Date(os.abertoEm).toLocaleDateString() : ""}
-              </p>
-            )}
-          </div>
+          <h2 className="text-2xl font-bold">
+            {isNew ? "Nova Ordem de Serviço" : "Editar Ordem de Serviço"}
+          </h2>
         </div>
         <Button onClick={handleSave}>
           <Save className="h-4 w-4 mr-2" />
           Salvar
         </Button>
-        {isTreinamento && formData.status === "CONCLUÍDA" && (
-          <Button onClick={handleEmitirCertificado} variant="secondary">
-            Emitir Certificado
-          </Button>
-        )}
       </div>
 
+      {/* Campos Automáticos */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <FileText className="h-5 w-5" />Informações Automáticas da OS
+            <FileText className="h-5 w-5" />
+            Informações Automáticas da OS
           </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -392,98 +362,93 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
           <div className="space-y-2">
             <Label>Data/Hora de Abertura</Label>
             <div className="flex items-center gap-2">
-              <Input value={format(dataHoraAbertura, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })} readOnly className="bg-muted" />
+              <Input 
+                value={format(dataHoraAbertura, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })} 
+                readOnly 
+                className="bg-muted" 
+              />
               <Badge variant="secondary">Auto</Badge>
             </div>
           </div>
           <div className="space-y-2">
             <Label>Data/Hora de Fechamento</Label>
             <div className="flex items-center gap-2">
-              <Input value={dataHoraFechamento ? format(dataHoraFechamento, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR }) : "Não concluída"} readOnly className="bg-muted" />
+              <Input 
+                value={dataHoraFechamento 
+                  ? format(dataHoraFechamento, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+                  : "Não concluída"
+                } 
+                readOnly 
+                className="bg-muted" 
+              />
               <Badge variant="secondary">Auto</Badge>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Seção de Vinculação de Projeto */}
-      <Card className="bg-muted/30">
+      {/* Vinculação de Projeto */}
+      <Card>
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            🔗 Vinculação de Projeto
-          </CardTitle>
+          <CardTitle>Vinculação de Projeto (Opcional)</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent>
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Tipo de Projeto *</Label>
-              <Select value={tipoProjeto} onValueChange={setTipoProjeto}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o tipo de projeto..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="importacao">Importação Direta</SelectItem>
-                  <SelectItem value="contratacao">Contratação</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Tipo de Projeto</Label>
+                <Select value={tipoProjeto} onValueChange={setTipoProjeto}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    <SelectItem value="importacao">Importação Direta</SelectItem>
+                    <SelectItem value="contratacao">Contratação Simples</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Buscar Projeto</Label>
+                <div className="relative">
+                  <Input
+                    placeholder="Buscar por ID, processo ou cliente..."
+                    value={projetoSearch}
+                    onChange={(e) => setProjetoSearch(e.target.value)}
+                    onFocus={() => setShowSuggestions(true)}
+                    disabled={!tipoProjeto}
+                  />
+                  <Search className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
+                </div>
+              </div>
             </div>
 
-            {tipoProjeto && (
-              <div className="space-y-2">
-                <Label>Buscar Projeto *</Label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    value={projetoSearch}
-                    onChange={(e) => handleProjetoSearch(e.target.value)}
-                    onFocus={() => setShowSuggestions(true)}
-                    placeholder="Digite o número do processo ou nome do cliente..."
-                    className="pl-10"
-                  />
-                  {selectedProjeto && (
-                    <CheckCircle className="absolute right-3 top-3 h-4 w-4 text-green-600" />
-                  )}
-                  {projetoSearch && !selectedProjeto && projetosDisponiveis.length === 0 && (
-                    <XCircle className="absolute right-3 top-3 h-4 w-4 text-red-600" />
-                  )}
-                </div>
-
-                {/* Sugestões rápidas */}
-                {!projetoSearch && projetosDisponiveis.length > 0 && (
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    <span className="text-xs text-muted-foreground">Sugestões:</span>
-                    {projetosDisponiveis.slice(0, 5).map((projeto) => (
-                      <Badge
-                        key={projeto.id}
-                        variant="outline"
-                        className="cursor-pointer hover:bg-accent"
-                        onClick={() => handleSelectProjeto(projeto)}
-                      >
-                        {projeto.numeroProcesso}
-                      </Badge>
-                    ))}
+            {/* Sugestões de projetos */}
+            {showSuggestions && tipoProjeto && (
+              <div className="border rounded-lg max-h-64 overflow-y-auto bg-background z-50">
+                {projetosFiltrados.length === 0 ? (
+                  <div className="p-4 text-center text-muted-foreground">
+                    Nenhum projeto encontrado
                   </div>
-                )}
-
-                {/* Dropdown de resultados */}
-                {showSuggestions && projetoSearch && projetosDisponiveis.length > 0 && (
-                  <div className="absolute z-10 mt-1 w-full bg-background border rounded-md shadow-lg max-h-60 overflow-y-auto">
-                    {projetosDisponiveis.map((projeto) => (
-                      <div
-                        key={projeto.id}
-                        className="p-3 hover:bg-accent cursor-pointer border-b last:border-b-0"
-                        onClick={() => handleSelectProjeto(projeto)}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-medium">{projeto.id}</p>
-                            <p className="text-sm text-muted-foreground">{projeto.cliente}</p>
-                          </div>
-                          <Badge variant="outline">{projeto.status}</Badge>
+                ) : (
+                  projetosFiltrados.map((projeto) => (
+                    <div
+                      key={projeto.id}
+                      className="p-3 hover:bg-muted cursor-pointer border-b last:border-b-0"
+                      onClick={() => handleVincularProjeto(projeto)}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-medium">{projeto.id}</p>
+                          <p className="text-sm text-muted-foreground">{projeto.cliente}</p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {getTipoProjetoLabel(projeto.tipo)} • {projeto.status}
+                          </p>
                         </div>
+                        <Badge variant="outline">{projeto.numeroProcesso}</Badge>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))
                 )}
               </div>
             )}
@@ -506,6 +471,13 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                       </p>
                     )}
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleDesvincular}
+                  >
+                    <XCircle className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
             )}
@@ -548,14 +520,14 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
 
           <div className="space-y-2">
             <Label htmlFor="equipamento">Equipamento</Label>
-            <Select
-              value={formData.equipamentoId}
+            <Select 
+              value={formData.equipamentoId} 
               onValueChange={handleEquipamentoChange}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecionar equipamento..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background z-50">
                 {equipamentosDisponiveis.map((eq) => (
                   <SelectItem key={eq.id} value={eq.id}>
                     {eq.modelo} - {eq.numeroSerie}
@@ -563,6 +535,11 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                 ))}
               </SelectContent>
             </Select>
+            {formData.clienteId && equipamentosDisponiveis.length === 0 && (
+              <p className="text-xs text-muted-foreground">
+                Nenhum equipamento vinculado a este cliente
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -570,10 +547,12 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
             <Input
               id="numeroSerieLote"
               value={formData.numeroSerieLote}
-              onChange={(e) => setFormData({ ...formData, numeroSerieLote: e.target.value })}
-              readOnly={!!formData.equipamentoId}
-              className={formData.equipamentoId ? "bg-muted" : ""}
+              readOnly
+              className="bg-muted"
             />
+            <p className="text-xs text-muted-foreground">
+              Preenchido automaticamente ao selecionar o equipamento
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -582,9 +561,8 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
               <Input
                 id="versaoSoftware"
                 value={formData.versaoSoftware}
-                onChange={(e) => setFormData({ ...formData, versaoSoftware: e.target.value })}
-                readOnly={!!formData.equipamentoId}
-                className={formData.equipamentoId ? "bg-muted" : ""}
+                readOnly
+                className="bg-muted"
               />
             </div>
             <div className="space-y-2">
@@ -592,88 +570,67 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
               <Input
                 id="versaoWindows"
                 value={formData.versaoWindows}
-                onChange={(e) => setFormData({ ...formData, versaoWindows: e.target.value })}
-                readOnly={!!formData.equipamentoId}
-                className={formData.equipamentoId ? "bg-muted" : ""}
+                readOnly
+                className="bg-muted"
               />
             </div>
           </div>
+          <p className="text-xs text-muted-foreground -mt-2">
+            Informações técnicas preenchidas automaticamente
+          </p>
 
           <div className="space-y-2">
             <Label htmlFor="setorAlocacao">Setor de Alocação</Label>
             <Input
               id="setorAlocacao"
               value={formData.setorAlocacao}
-              onChange={(e) => setFormData({ ...formData, setorAlocacao: e.target.value })}
-              readOnly={!!formData.equipamentoId}
-              className={formData.equipamentoId ? "bg-muted" : ""}
+              readOnly
+              className="bg-muted"
             />
+            <p className="text-xs text-muted-foreground">
+              Preenchido automaticamente ao selecionar o equipamento
+            </p>
           </div>
 
           <div className="space-y-2">
-            <Label>Opção de Atendimento *</Label>
-            <RadioGroup
-              value={formData.opcaoAtendimento}
-              onValueChange={(value) =>
-                setFormData({ ...formData, opcaoAtendimento: value as OpcaoAtendimento })
-              }
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="presencial" id="presencial" />
-                <Label htmlFor="presencial" className="cursor-pointer">
-                  Presencial
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="remoto" id="remoto" />
-                <Label htmlFor="remoto" className="cursor-pointer">
-                  Remoto
-                </Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Tipo da OS * (Múltipla escolha)</Label>
-            <div className="space-y-2 border rounded-lg p-4">
-              {tiposOS.map((tipo) => (
-                <div key={tipo} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={tipo}
-                    checked={formData.tipos.includes(tipo)}
-                    onCheckedChange={() => handleTipoChange(tipo)}
-                  />
-                  <Label htmlFor={tipo} className="cursor-pointer">
-                    {getTipoOSLabel(tipo)}
-                  </Label>
-                </div>
-              ))}
-            </div>
+            <Label htmlFor="descricaoServico">Descrição do Serviço *</Label>
+            <Textarea
+              id="descricaoServico"
+              value={formData.descricaoServico}
+              onChange={(e) => setFormData({ ...formData, descricaoServico: e.target.value })}
+              placeholder="Descreva o serviço a ser realizado..."
+              rows={4}
+            />
           </div>
         </div>
 
         {/* Coluna Direita */}
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="responsavel">Responsável</Label>
-            <Input
-              id="responsavel"
-              value={formData.responsavel}
-              onChange={(e) => setFormData({ ...formData, responsavel: e.target.value })}
-              placeholder="Selecionar responsável..."
-            />
+          <div className="space-y-3">
+            <Label>Tipo de OS *</Label>
+            <div className="space-y-2">
+              {tiposOS.map((tipo) => (
+                <div key={tipo.value} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={tipo.value}
+                    checked={tiposSelecionados.includes(tipo.value)}
+                    onCheckedChange={() => handleTipoToggle(tipo.value)}
+                  />
+                  <Label htmlFor={tipo.value} className="font-normal cursor-pointer">
+                    {tipo.label}
+                  </Label>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
-            <Select
-              value={formData.status}
-              onValueChange={(value) => setFormData({ ...formData, status: value as StatusOS })}
-            >
+            <Label>Status</Label>
+            <Select value={formData.status} onValueChange={(value: StatusOS) => setFormData({ ...formData, status: value })}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-background z-50">
                 <SelectItem value="ABERTA">Aberta</SelectItem>
                 <SelectItem value="EM_ANDAMENTO">Em Andamento</SelectItem>
                 <SelectItem value="CONCLUÍDA">Concluída</SelectItem>
@@ -684,108 +641,166 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="descricaoServico">Descrição do Serviço *</Label>
-            <Textarea
-              id="descricaoServico"
-              value={formData.descricaoServico}
-              onChange={(e) => setFormData({ ...formData, descricaoServico: e.target.value })}
-              rows={4}
-              placeholder="Descreva o motivo da abertura da OS..."
+            <Label>Opção de Atendimento</Label>
+            <RadioGroup
+              value={formData.opcaoAtendimento}
+              onValueChange={(value: OpcaoAtendimento) =>
+                setFormData({ ...formData, opcaoAtendimento: value })
+              }
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="presencial" id="presencial" />
+                <Label htmlFor="presencial" className="font-normal cursor-pointer">
+                  Presencial
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="remoto" id="remoto" />
+                <Label htmlFor="remoto" className="font-normal cursor-pointer">
+                  Remoto
+                </Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="responsavel">Responsável</Label>
+            <Input
+              id="responsavel"
+              value={formData.responsavel}
+              onChange={(e) => setFormData({ ...formData, responsavel: e.target.value })}
+              placeholder="Nome do responsável"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="servicoRealizado">Serviço Realizado</Label>
-            <Textarea
-              id="servicoRealizado"
-              value={formData.servicoRealizado}
-              onChange={(e) => setFormData({ ...formData, servicoRealizado: e.target.value })}
-              rows={4}
-              placeholder="Descreva o que foi realizado..."
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="observacoes">Observações Gerais</Label>
+            <Label htmlFor="observacoes">Observações</Label>
             <Textarea
               id="observacoes"
               value={formData.observacoes}
               onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
+              placeholder="Observações adicionais..."
               rows={3}
             />
           </div>
-
-          {isTreinamento && (
-            <div className="space-y-2">
-              <Label htmlFor="participantes">
-                Participantes do Treinamento {formData.status === "CONCLUÍDA" && "*"}
-              </Label>
-              <Textarea
-                id="participantes"
-                value={participantesText}
-                onChange={(e) => setParticipantesText(e.target.value)}
-                rows={3}
-                placeholder="Digite os nomes separados por vírgula&#10;Ex: João Silva, Maria Santos, Pedro Oliveira"
-              />
-              <p className="text-xs text-muted-foreground">
-                Necessário para emissão de certificados
-              </p>
-            </div>
-          )}
         </div>
       </div>
 
+      {/* Template de Treinamento */}
       {renderTemplateTrainamento()}
 
+      {/* Participantes */}
+      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe") && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Participantes do Treinamento</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                value={participante}
+                onChange={(e) => setParticipante(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && handleAdicionarParticipante()}
+                placeholder="Nome do participante..."
+              />
+              <Button onClick={handleAdicionarParticipante}>
+                <Plus className="h-4 w-4 mr-2" />
+                Adicionar
+              </Button>
+            </div>
+
+            {listaParticipantes.length > 0 && (
+              <div className="space-y-2">
+                {listaParticipantes.map((p, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                  >
+                    <span>{p}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoverParticipante(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <Button
+              variant="outline"
+              onClick={handleEmitirCertificado}
+              disabled={listaParticipantes.length === 0}
+              className="w-full"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              Emitir Certificado de Treinamento
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Anexos Categorizados */}
       <Card>
-        <CardHeader><CardTitle>Anexos</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Anexos</CardTitle>
+        </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label className="text-base font-semibold">Foto do Problema</Label>
             <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
               <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Clique para fazer upload</p>
+              <p className="text-sm text-muted-foreground">
+                Clique para fazer upload ou arraste imagens aqui
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                PNG, JPG até 10MB
+              </p>
             </div>
           </div>
+
           <div className="space-y-2">
             <Label className="text-base font-semibold">Foto do Treinamento</Label>
             <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
               <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Clique para fazer upload</p>
+              <p className="text-sm text-muted-foreground">
+                Clique para fazer upload ou arraste imagens aqui
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                PNG, JPG até 10MB
+              </p>
             </div>
           </div>
+
           <div className="space-y-2">
             <Label className="text-base font-semibold">Foto da Lista de Presença / Treinamento</Label>
             <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
               <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Clique para fazer upload</p>
+              <p className="text-sm text-muted-foreground">
+                Clique para fazer upload ou arraste imagens aqui
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                PNG, JPG até 10MB
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Seção de Assinatura */}
-      {canShowAssinatura && (
-        <div className="border-t pt-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Assinatura Digital</h3>
-            {!showAssinatura && (
-              <Button onClick={() => setShowAssinatura(true)} variant="outline">
-                Adicionar Assinatura
-              </Button>
-            )}
-          </div>
-          {showAssinatura && (
-            <AssinaturaDigital
-              onSave={(assinatura) => {
-                console.log("Assinatura salva:", assinatura);
-                toast.success("Assinatura registrada com sucesso");
-                setShowAssinatura(false);
-              }}
-              onCancel={() => setShowAssinatura(false)}
-            />
-          )}
-        </div>
+      {/* Assinatura Digital */}
+      {formData.opcaoAtendimento === "presencial" && 
+       formData.status === "CONCLUÍDA" && (
+        <AssinaturaDigital 
+          onSave={(assinatura) => {
+            console.log("Assinatura salva:", assinatura);
+            toast.success("Assinatura registrada com sucesso!");
+          }}
+          onCancel={() => {
+            console.log("Assinatura cancelada");
+          }}
+        />
       )}
     </div>
   );
