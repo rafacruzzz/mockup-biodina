@@ -70,6 +70,7 @@ export interface OSPendenteBaixaFiscal {
 export interface OrdemServico {
   id: string;
   numero: string;
+  numeroOS?: string; // Número automático da OS (formato: OS-YYYY-XXXX)
   tipo: TipoOS[];
   status: StatusOS;
   departamento: DepartamentoOS;
@@ -89,12 +90,19 @@ export interface OrdemServico {
   dataAgendada: Date;
   dataInicio?: Date;
   dataConclusao?: Date;
+  dataHoraAbertura?: Date; // Data/hora automática de abertura
+  dataHoraFechamento?: Date; // Data/hora automática de fechamento
   responsavel: string;
   responsavelId?: string;
   abertoPor: AbertoPor;
   abertoEm: Date;
   observacoes?: string;
-  anexos?: string[];
+  // Anexos categorizados
+  anexos?: {
+    fotoProblema?: string[];
+    fotoTreinamento?: string[];
+    fotoListaPresenca?: string[];
+  };
   assinatura?: AssinaturaOS;
   atualizadoEm: Date;
   participantes?: string[]; // Para treinamentos
