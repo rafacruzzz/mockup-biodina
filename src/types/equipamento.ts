@@ -21,6 +21,10 @@ export interface Equipamento {
   dataImportacao: Date;
   statusOrigem: 'novo' | 'refurbished';
   
+  // Informações técnicas
+  versaoSoftware?: string;
+  versaoWindows?: string;
+  
   // Para busca
   searchableText?: string;
 }

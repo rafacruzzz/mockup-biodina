@@ -17,6 +17,8 @@ export const equipamentosMock: Equipamento[] = [
     dataValidade: new Date(2029, 10, 15),
     dataImportacao: new Date(2025, 0, 20),
     statusOrigem: "novo",
+    versaoSoftware: "v2.1.5",
+    versaoWindows: "Windows 10 Pro",
   },
   {
     id: "eq-002",
@@ -33,6 +35,8 @@ export const equipamentosMock: Equipamento[] = [
     dataFabricacao: new Date(2024, 5, 10),
     dataImportacao: new Date(2024, 7, 15),
     statusOrigem: "novo",
+    versaoSoftware: "v1.8.3",
+    versaoWindows: "Windows 7 Embedded",
   },
   {
     id: "eq-003",
@@ -50,6 +54,8 @@ export const equipamentosMock: Equipamento[] = [
     dataValidade: new Date(2029, 11, 5),
     dataImportacao: new Date(2025, 0, 8),
     statusOrigem: "novo",
+    versaoSoftware: "v3.4.2",
+    versaoWindows: "Windows 10 IoT",
   },
   {
     id: "eq-004",
@@ -66,6 +72,8 @@ export const equipamentosMock: Equipamento[] = [
     dataFabricacao: new Date(2023, 8, 20),
     dataImportacao: new Date(2023, 10, 15),
     statusOrigem: "refurbished",
+    versaoSoftware: "v2.7.1",
+    versaoWindows: "Windows 10 Pro",
   },
   {
     id: "eq-005",
@@ -83,6 +91,8 @@ export const equipamentosMock: Equipamento[] = [
     dataValidade: new Date(2029, 3, 10),
     dataImportacao: new Date(2024, 5, 5),
     statusOrigem: "novo",
+    versaoSoftware: "v4.0.8",
+    versaoWindows: "Windows 10 IoT Enterprise",
   },
   {
     id: "eq-006",
@@ -100,6 +110,8 @@ export const equipamentosMock: Equipamento[] = [
     dataValidade: new Date(2030, 0, 15),
     dataImportacao: new Date(2025, 1, 1),
     statusOrigem: "novo",
+    versaoSoftware: "v5.2.0",
+    versaoWindows: "Windows 11 Pro",
   },
 ];
 

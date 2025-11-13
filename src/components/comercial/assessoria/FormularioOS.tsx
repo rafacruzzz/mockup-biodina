@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { gerarCertificadoTreinamento } from "@/utils/certificado-generator";
-import { ArrowLeft, Upload, Save, Search, CheckCircle, XCircle, Lock } from "lucide-react";
+import { ArrowLeft, Upload, Save, Search, CheckCircle, XCircle, Lock, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,6 +21,14 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { buscarEquipamentos } from "@/data/equipamentos";
+import { TemplateTrainamentoDxH520 } from "./templates/TemplateTrainamentoDxH520";
+import { TemplateTrainamentoABL800 } from "./templates/TemplateTrainamentoABL800";
+import { TemplateTrainamentoABL90 } from "./templates/TemplateTrainamentoABL90";
+import { TemplateTrainamentoABL9 } from "./templates/TemplateTrainamentoABL9";
+import { TemplateTrainamentoAQT90 } from "./templates/TemplateTrainamentoAQT90";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface Projeto {
   id: string;
@@ -111,15 +119,27 @@ interface FormularioOSProps {
   onClose: () => void;
 }
 
+const gerarNumeroOS = (): string => {
+  const ano = new Date().getFullYear();
+  const sequencial = Math.floor(Math.random() * 9999) + 1;
+  return `OS-${ano}-${sequencial.toString().padStart(4, '0')}`;
+};
+
 export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [tipoProjeto, setTipoProjeto] = useState<string>("");
   const [projetoSearch, setProjetoSearch] = useState("");
   const [selectedProjeto, setSelectedProjeto] = useState<Projeto | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
   
+  const [numeroOS] = useState(isNew ? gerarNumeroOS() : os?.numeroOS || gerarNumeroOS());
+  const [dataHoraAbertura] = useState(new Date());
+  const [dataHoraFechamento, setDataHoraFechamento] = useState<Date | undefined>(os?.dataHoraFechamento);
+  
   const [formData, setFormData] = useState({
     cliente: os?.cliente || "",
+    clienteId: os?.clienteId,
     equipamento: os?.equipamento || "",
+    equipamentoId: os?.equipamentoId,
     numeroSerieLote: os?.numeroSerieLote || "",
     versaoSoftware: os?.versaoSoftware || "",
     versaoWindows: os?.versaoWindows || "",
@@ -150,6 +170,31 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     "treinamento_inicial",
     "treinamento_nova_equipe"
   ];
+
+  const equipamentosDisponiveis = formData.clienteId 
+    ? buscarEquipamentos("").filter(eq => eq.clienteAtualId === formData.clienteId)
+    : buscarEquipamentos("");
+
+  const handleEquipamentoChange = (equipamentoId: string) => {
+    const equipamento = buscarEquipamentos("").find(eq => eq.id === equipamentoId);
+    if (equipamento) {
+      setFormData({
+        ...formData,
+        equipamentoId: equipamento.id,
+        equipamento: equipamento.modelo,
+        numeroSerieLote: equipamento.numeroSerie,
+        versaoSoftware: equipamento.versaoSoftware || "",
+        versaoWindows: equipamento.versaoWindows || "",
+        setorAlocacao: equipamento.setorAlocacao,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (formData.status === "CONCLUÍDA" && !dataHoraFechamento) {
+      setDataHoraFechamento(new Date());
+    }
+  }, [formData.status, dataHoraFechamento]);
 
   const normalizeId = (id: string) => {
     return id.replace(/[^\d]/g, '').padStart(3, '0');
@@ -285,6 +330,20 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     formData.opcaoAtendimento === "presencial" && 
     (formData.status === "CONCLUÍDA" || !isNew);
 
+  const renderTemplateTrainamento = () => {
+    const ehTreinamento = formData.tipos.some(t => 
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe"
+    );
+    if (!ehTreinamento || !formData.equipamento) return null;
+    const equipamentoNome = formData.equipamento.toUpperCase();
+    if (equipamentoNome.includes("DXH 520")) return <TemplateTrainamentoDxH520 />;
+    if (equipamentoNome.includes("ABL800")) return <TemplateTrainamentoABL800 />;
+    if (equipamentoNome.includes("ABL90")) return <TemplateTrainamentoABL90 />;
+    if (equipamentoNome.includes("ABL9")) return <TemplateTrainamentoABL9 />;
+    if (equipamentoNome.includes("AQT90")) return <TemplateTrainamentoAQT90 />;
+    return null;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -315,6 +374,37 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
           </Button>
         )}
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <FileText className="h-5 w-5" />Informações Automáticas da OS
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label>Número da OS</Label>
+            <div className="flex items-center gap-2">
+              <Input value={numeroOS} readOnly className="bg-muted" />
+              <Badge variant="secondary">Auto</Badge>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Data/Hora de Abertura</Label>
+            <div className="flex items-center gap-2">
+              <Input value={format(dataHoraAbertura, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })} readOnly className="bg-muted" />
+              <Badge variant="secondary">Auto</Badge>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Data/Hora de Fechamento</Label>
+            <div className="flex items-center gap-2">
+              <Input value={dataHoraFechamento ? format(dataHoraFechamento, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR }) : "Não concluída"} readOnly className="bg-muted" />
+              <Badge variant="secondary">Auto</Badge>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Seção de Vinculação de Projeto */}
       <Card className="bg-muted/30">
@@ -458,12 +548,21 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
 
           <div className="space-y-2">
             <Label htmlFor="equipamento">Equipamento</Label>
-            <Input
-              id="equipamento"
-              value={formData.equipamento}
-              onChange={(e) => setFormData({ ...formData, equipamento: e.target.value })}
-              placeholder="Selecionar equipamento..."
-            />
+            <Select
+              value={formData.equipamentoId}
+              onValueChange={handleEquipamentoChange}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecionar equipamento..." />
+              </SelectTrigger>
+              <SelectContent>
+                {equipamentosDisponiveis.map((eq) => (
+                  <SelectItem key={eq.id} value={eq.id}>
+                    {eq.modelo} - {eq.numeroSerie}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
@@ -472,6 +571,8 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
               id="numeroSerieLote"
               value={formData.numeroSerieLote}
               onChange={(e) => setFormData({ ...formData, numeroSerieLote: e.target.value })}
+              readOnly={!!formData.equipamentoId}
+              className={formData.equipamentoId ? "bg-muted" : ""}
             />
           </div>
 
@@ -482,6 +583,8 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                 id="versaoSoftware"
                 value={formData.versaoSoftware}
                 onChange={(e) => setFormData({ ...formData, versaoSoftware: e.target.value })}
+                readOnly={!!formData.equipamentoId}
+                className={formData.equipamentoId ? "bg-muted" : ""}
               />
             </div>
             <div className="space-y-2">
@@ -490,6 +593,8 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                 id="versaoWindows"
                 value={formData.versaoWindows}
                 onChange={(e) => setFormData({ ...formData, versaoWindows: e.target.value })}
+                readOnly={!!formData.equipamentoId}
+                className={formData.equipamentoId ? "bg-muted" : ""}
               />
             </div>
           </div>
@@ -500,6 +605,8 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
               id="setorAlocacao"
               value={formData.setorAlocacao}
               onChange={(e) => setFormData({ ...formData, setorAlocacao: e.target.value })}
+              readOnly={!!formData.equipamentoId}
+              className={formData.equipamentoId ? "bg-muted" : ""}
             />
           </div>
 
@@ -625,21 +732,37 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
               </p>
             </div>
           )}
-
-          <div className="space-y-2">
-            <Label>Anexos</Label>
-            <div className="border-2 border-dashed rounded-lg p-6 text-center">
-              <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground mb-2">
-                Arraste arquivos ou clique para selecionar
-              </p>
-              <Button variant="outline" size="sm">
-                Selecionar Arquivos
-              </Button>
-            </div>
-          </div>
         </div>
       </div>
+
+      {renderTemplateTrainamento()}
+
+      <Card>
+        <CardHeader><CardTitle>Anexos</CardTitle></CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label className="text-base font-semibold">Foto do Problema</Label>
+            <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
+              <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">Clique para fazer upload</p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label className="text-base font-semibold">Foto do Treinamento</Label>
+            <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
+              <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">Clique para fazer upload</p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label className="text-base font-semibold">Foto da Lista de Presença / Treinamento</Label>
+            <div className="border-2 border-dashed rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
+              <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">Clique para fazer upload</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Seção de Assinatura */}
       {canShowAssinatura && (
