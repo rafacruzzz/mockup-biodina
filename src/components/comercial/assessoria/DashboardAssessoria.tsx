@@ -7,6 +7,7 @@ import { OrdemServico, FiltrosAgenda, StatusOS, DepartamentoOS } from "@/types/a
 import { ordensServicoMock, getTipoOSIcon, getTipoOSLabel, getStatusColor, alertasMock, assessoresTecnicos } from "@/data/assessoria-cientifica";
 import { FiltrosAgendaOS } from "./FiltrosAgendaOS";
 import { DetalhesOSSheet } from "./DetalhesOSSheet";
+import { FormularioOS } from "./FormularioOS";
 import { PainelAlertas } from "./PainelAlertas";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuthDemo } from "@/hooks/useAuthDemo";
@@ -23,11 +24,14 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedOS, setSelectedOS] = useState<OrdemServico | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isNewOS, setIsNewOS] = useState(false);
   const [assessorFilter, setAssessorFilter] = useState<string>("todos");
   const [filtros, setFiltros] = useState<FiltrosAgenda>({
     departamentos: [departamento], // Fixo no departamento espec√≠fico
     assessores: [],
     clientes: [],
+    equipamentos: [],
     status: []
   });
 
@@ -42,7 +46,14 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
 
   const handleOSClick = (os: OrdemServico) => {
     setSelectedOS(os);
+    setIsNewOS(false);
     setIsSheetOpen(true);
+  };
+
+  const handleNovaOS = () => {
+    setSelectedOS(null);
+    setIsNewOS(true);
+    setIsFormOpen(true);
   };
 
   const handleAlertaClick = (osIds?: string[]) => {
@@ -61,7 +72,9 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
   };
 
   const getMonthName = () => {
-    return currentMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    const monthYear = currentMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    // Capitalizar primeira letra do m√™s e garantir "de" min√∫sculo
+    return monthYear.charAt(0).toUpperCase() + monthYear.slice(1).replace(' De ', ' de ');
   };
 
   // Aplicar filtros √†s OSs
@@ -87,6 +100,9 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
       return false;
     }
     if (filtros.clientes.length > 0 && !filtros.clientes.includes(os.cliente)) {
+      return false;
+    }
+    if (filtros.equipamentos.length > 0 && !filtros.equipamentos.includes(os.equipamentoId || '')) {
       return false;
     }
     if (filtros.status.length > 0 && !filtros.status.includes(os.status)) {
@@ -247,6 +263,7 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
               <Button 
                 className="ml-4"
                 size="sm"
+                onClick={handleNovaOS}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Nova OS
@@ -348,6 +365,15 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
           </div>
         </CardContent>
       </Card>
+
+      {/* Formul√°rio de Nova OS */}
+      {isFormOpen && (
+        <FormularioOS 
+          os={selectedOS}
+          isNew={isNewOS}
+          onClose={() => setIsFormOpen(false)}
+        />
+      )}
 
       {/* Sheet de Detalhes */}
       {selectedOS && (

@@ -571,7 +571,6 @@ const Comercial = () => {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-biodina-blue">Comercial / Assessoria Científica</h2>
-            <p className="text-muted-foreground mt-1">Gestão de Ordens de Serviço e Agenda de Campo</p>
           </div>
           <Button variant="outline" onClick={() => setActiveModule('main')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -611,7 +610,6 @@ const Comercial = () => {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-biodina-blue">Comercial / Departamento Técnico</h2>
-            <p className="text-muted-foreground mt-1">Gestão de Ordens de Serviço e Agenda de Campo</p>
           </div>
           <Button variant="outline" onClick={() => setActiveModule('main')}>
             <ArrowLeft className="h-4 w-4 mr-2" />

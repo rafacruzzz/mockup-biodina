@@ -114,6 +114,7 @@ export interface FiltrosAgenda {
   departamentos: DepartamentoOS[];
   assessores: string[];
   clientes: string[];
+  equipamentos: string[];
   status: StatusOS[];
   dataInicio?: Date;
   dataFim?: Date;
