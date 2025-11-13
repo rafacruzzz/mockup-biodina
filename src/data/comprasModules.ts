@@ -59,16 +59,6 @@ export const comprasModules: ComprasModulesConfig = {
       }
     }
   },
-  compra_fiscal: {
-    name: "Compra Fiscal",
-    icon: FileText,
-    subModules: {
-      compra_fiscal: {
-        name: "Compra Fiscal",
-        data: []
-      }
-    }
-  },
   di: {
     name: "Importação/DI",
     icon: Ship,
