@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, AlertCircle, Eye, LogOut } from "lucide-react";
+import { Search, AlertCircle, Eye, LogOut, UserCircle } from "lucide-react";
 import { chamadosAssessoriaMock, isStatusAtivo } from "@/data/assessoria-cientifica";
 import { 
   ChamadoAssessoria, 
@@ -18,20 +18,33 @@ import { DetalhesChamadoSheet } from "./DetalhesChamadoSheet";
 import { useAuthDemo } from "@/hooks/useAuthDemo";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ChamadosAssessoriaTabProps {
   departamento: "Assessoria Científica" | "Departamento Técnico";
 }
 
+const ASSESSORES_DEMO = [
+  { id: 'resp-001', nome: 'Dr. Carlos Mendes', departamento: 'Assessoria Científica' },
+  { id: 'resp-003', nome: 'Dra. Maria Santos', departamento: 'Assessoria Científica' },
+  { id: 'resp-004', nome: 'Dr. Fernando Souza', departamento: 'Assessoria Científica' },
+];
+
 export function ChamadosAssessoriaTab({ departamento }: ChamadosAssessoriaTabProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedChamado, setSelectedChamado] = useState<ChamadoAssessoria | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [demoUserId, setDemoUserId] = useState<string>('resp-001');
+  const [viewMode, setViewMode] = useState<'assessor' | 'gestor'>('assessor');
   
   const { getCurrentUser, isGestor } = useAuthDemo();
   const currentUser = getCurrentUser();
   const navigate = useNavigate();
   const isUserGestor = isGestor();
+  
+  const effectiveUserId = viewMode === 'gestor' ? null : demoUserId;
+  const selectedAssessor = ASSESSORES_DEMO.find(a => a.id === demoUserId);
+  const isDemoMode = true;
 
   const handleLogout = () => {
     localStorage.removeItem('currentUser');
@@ -66,8 +79,15 @@ export function ChamadosAssessoriaTab({ departamento }: ChamadosAssessoriaTabPro
   };
 
   const chamadosAtivos = chamadosAssessoriaMock.filter(chamado => {
+    // Filtro 1: Apenas status ATIVO
     if (!isStatusAtivo(chamado.status)) return false;
-    if (!isUserGestor && chamado.assessorVinculadoId !== currentUser?.id) return false;
+    
+    // Filtro 2: Por assessor (com modo gestor)
+    if (viewMode === 'assessor' && effectiveUserId) {
+      if (chamado.assessorVinculadoId !== effectiveUserId) return false;
+    }
+    
+    // Filtro 3: Busca textual
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       return (
@@ -99,6 +119,57 @@ export function ChamadosAssessoriaTab({ departamento }: ChamadosAssessoriaTabPro
           <LogOut className="h-4 w-4 mr-2" />Sair
         </Button>
       </div>
+
+      {isDemoMode && (
+        <Card className="bg-blue-50 border-blue-200">
+          <CardContent className="py-4">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <UserCircle className="h-5 w-5 text-blue-600" />
+                <div>
+                  <p className="text-sm font-medium text-blue-900">🎭 Modo Demonstração</p>
+                  <p className="text-xs text-blue-700">Visualizar chamados como:</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <Select value={demoUserId} onValueChange={setDemoUserId} disabled={viewMode === 'gestor'}>
+                  <SelectTrigger className="w-[250px] bg-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ASSESSORES_DEMO.map(assessor => (
+                      <SelectItem key={assessor.id} value={assessor.id}>
+                        {assessor.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                
+                <Button 
+                  variant={viewMode === 'gestor' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode(viewMode === 'gestor' ? 'assessor' : 'gestor')}
+                  className="whitespace-nowrap"
+                >
+                  {viewMode === 'gestor' ? '✓ Ver Todos' : 'Ver Todos'}
+                </Button>
+              </div>
+            </div>
+            
+            {viewMode === 'assessor' && selectedAssessor && (
+              <p className="text-xs text-blue-600 mt-2">
+                Mostrando {chamadosAtivos.length} chamado(s) atribuído(s) a {selectedAssessor.nome}
+              </p>
+            )}
+            {viewMode === 'gestor' && (
+              <p className="text-xs text-blue-600 mt-2">
+                Mostrando todos os {chamadosAtivos.length} chamados ativos (Modo Gestor)
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
