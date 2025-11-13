@@ -71,15 +71,15 @@ const initialTreeStructure: Record<string, TreeItem[]> = {
       ]
     },
     {
-      id: 'entidades-group',
-      name: 'Entidades',
+      id: 'pessoas-group',
+      name: 'Pessoas',
       type: 'group',
       children: [
         {
-          id: 'entidades-item',
-          name: 'Entidades',
+          id: 'pessoas-item',
+          name: 'Pessoas',
           type: 'item',
-          parentId: 'entidades-group'
+          parentId: 'pessoas-group'
         }
       ]
     },

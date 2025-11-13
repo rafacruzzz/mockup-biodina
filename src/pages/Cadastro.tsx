@@ -72,7 +72,7 @@ const Cadastro = () => {
       setIsProductModalOpen(true);
     } else if (activeModule === 'produtos' && activeSubModule === 'uso_consumo') {
       setIsProdutoUsoConsumoModalOpen(true);
-    } else if (activeModule === 'entidades') {
+    } else if (activeModule === 'pessoas') {
       setCurrentEntidadeType(activeSubModule);
       setIsEntidadeModalOpen(true);
     } else if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') {
@@ -186,9 +186,9 @@ const Cadastro = () => {
   };
 
   const handleGetStarted = () => {
-    setActiveModule('entidades');
-    setActiveSubModule('entidades');
-    setExpandedModules(['entidades']);
+    setActiveModule('pessoas');
+    setActiveSubModule('pessoas');
+    setExpandedModules(['pessoas']);
   };
 
   const currentSubModule = activeModule && activeSubModule ? 
@@ -209,7 +209,7 @@ const Cadastro = () => {
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'categorias_despesas') return "Nova Categoria";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'prazos') return "Novo Prazo";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'contas_bancarias') return "Nova Conta Bancária";
-    if (activeModule === 'entidades') return "Nova Entidade";
+    if (activeModule === 'pessoas') return "Novo";
     if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') return "Novo Usuário";
     if (activeModule === 'usuarios' && activeSubModule === 'usuarios') return "Novo Usuário";
     if (activeModule === 'servicos') return "Novo Serviço";
