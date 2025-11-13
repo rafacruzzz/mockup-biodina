@@ -27,12 +27,14 @@ import {
   CheckCircle,
   XCircle,
   FileText,
-  TrendingUp
+  TrendingUp,
+  Upload
 } from "lucide-react";
 import { mockPedidosEntrada } from "@/data/faturamentoModules";
 import { PedidoEntradaMercadoria } from "@/types/faturamento";
 import PainelNotificacoesEntrada from "./PainelNotificacoesEntrada";
 import DetalhesEntradaModal from "./DetalhesEntradaModal";
+import UploadXMLModal from "./UploadXMLModal";
 import { useToast } from "@/hooks/use-toast";
 
 const EntradaFaturamento = () => {
@@ -42,6 +44,7 @@ const EntradaFaturamento = () => {
   const [pesquisa, setPesquisa] = useState('');
   const [pedidoSelecionado, setPedidoSelecionado] = useState<PedidoEntradaMercadoria | null>(null);
   const [modalDetalhesOpen, setModalDetalhesOpen] = useState(false);
+  const [modalXMLOpen, setModalXMLOpen] = useState(false);
   const [pedidos, setPedidos] = useState<PedidoEntradaMercadoria[]>(mockPedidosEntrada);
   const { toast } = useToast();
 
@@ -109,6 +112,42 @@ const EntradaFaturamento = () => {
         p.id === pedidoId ? { ...p, status: 'Entrada Confirmada' as const } : p
       )
     );
+  };
+
+  const handleUploadXML = (xmlData: any) => {
+    // Criar nova entrada de importação a partir dos dados do XML
+    const novaEntrada: PedidoEntradaMercadoria = {
+      id: `IMP-${Date.now()}`,
+      numeroPedido: xmlData.numeroNF,
+      fornecedor: xmlData.fornecedor,
+      cnpjFornecedor: xmlData.cnpjFornecedor || '00.000.000/0000-00',
+      tipo: 'Compra Nacional',
+      categoria: 'Produto',
+      dataEmissao: xmlData.dataEmissao,
+      dataEntrada: new Date().toISOString().split('T')[0],
+      valorTotal: xmlData.valorTotal,
+      valorImpostos: xmlData.valorImpostos || 0,
+      status: 'NF Recebida',
+      numeroNF: xmlData.numeroNF,
+      chaveAcesso: xmlData.chaveAcesso,
+      itens: xmlData.itens?.map((item: any, index: number) => ({
+        id: `item-${index}`,
+        codigo: item.codigo || '',
+        descricao: item.descricao || '',
+        quantidade: item.quantidade || 0,
+        valorUnitario: item.valorUnitario || 0,
+        valorTotal: (item.quantidade || 0) * (item.valorUnitario || 0),
+        ncm: item.ncm || '',
+        cfop: '5102'
+      })) || []
+    };
+
+    setPedidos(prev => [novaEntrada, ...prev]);
+    
+    toast({
+      title: "Importação realizada com sucesso",
+      description: `Entrada ${xmlData.numeroNF} adicionada à lista`,
+    });
   };
 
   const handleCancelar = (pedidoId: string) => {
@@ -180,51 +219,61 @@ const EntradaFaturamento = () => {
 
       {/* Filtros */}
       <Card className="p-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar por pedido, fornecedor, NF..."
-              value={pesquisa}
-              onChange={(e) => setPesquisa(e.target.value)}
-              className="pl-9"
-            />
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por pedido, fornecedor, NF..."
+                value={pesquisa}
+                onChange={(e) => setPesquisa(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            
+            <Select value={filtroTipo} onValueChange={setFiltroTipo}>
+              <SelectTrigger>
+                <SelectValue placeholder="Tipo de Entrada" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos os Tipos</SelectItem>
+                <SelectItem value="Importacao">Importação</SelectItem>
+                <SelectItem value="Compra Revenda">Compra Revenda</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={filtroCategoria} onValueChange={setFiltroCategoria}>
+              <SelectTrigger>
+                <SelectValue placeholder="Categoria" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todas Categorias</SelectItem>
+                <SelectItem value="Produto">Produto</SelectItem>
+                <SelectItem value="Servico">Serviço</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={filtroStatus} onValueChange={setFiltroStatus}>
+              <SelectTrigger>
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos os Status</SelectItem>
+                <SelectItem value="Aguardando Entrada">Aguardando Entrada</SelectItem>
+                <SelectItem value="NF Recebida">NF Recebida</SelectItem>
+                <SelectItem value="Entrada Confirmada">Entrada Confirmada</SelectItem>
+                <SelectItem value="Cancelado">Cancelado</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           
-          <Select value={filtroTipo} onValueChange={setFiltroTipo}>
-            <SelectTrigger>
-              <SelectValue placeholder="Tipo de Entrada" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todos">Todos os Tipos</SelectItem>
-              <SelectItem value="Importacao">Importação</SelectItem>
-              <SelectItem value="Compra Revenda">Compra Revenda</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={filtroCategoria} onValueChange={setFiltroCategoria}>
-            <SelectTrigger>
-              <SelectValue placeholder="Categoria" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todos">Todas Categorias</SelectItem>
-              <SelectItem value="Produto">Produto</SelectItem>
-              <SelectItem value="Servico">Serviço</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={filtroStatus} onValueChange={setFiltroStatus}>
-            <SelectTrigger>
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todos">Todos os Status</SelectItem>
-              <SelectItem value="Aguardando Entrada">Aguardando Entrada</SelectItem>
-              <SelectItem value="NF Recebida">NF Recebida</SelectItem>
-              <SelectItem value="Entrada Confirmada">Entrada Confirmada</SelectItem>
-              <SelectItem value="Cancelado">Cancelado</SelectItem>
-            </SelectContent>
-          </Select>
+          <Button 
+            onClick={() => setModalXMLOpen(true)}
+            className="bg-biodina-blue hover:bg-biodina-blue/90"
+          >
+            <Upload className="h-4 w-4 mr-2" />
+            Importar XML
+          </Button>
         </div>
       </Card>
 
@@ -313,6 +362,13 @@ const EntradaFaturamento = () => {
         pedido={pedidoSelecionado}
         onConfirmarEntrada={handleConfirmarEntrada}
         onCancelar={handleCancelar}
+      />
+      
+      {/* Modal de Upload XML */}
+      <UploadXMLModal
+        isOpen={modalXMLOpen}
+        onClose={() => setModalXMLOpen(false)}
+        onUpload={handleUploadXML}
       />
     </div>
   );

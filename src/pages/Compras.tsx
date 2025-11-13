@@ -6,8 +6,6 @@ import ContentHeader from "@/components/cadastro/ContentHeader";
 import DataTable from "@/components/cadastro/DataTable";
 import PedidoDetalhesModal from "@/components/compras/PedidoDetalhesModal";
 import NovoPedidoModal from "@/components/compras/NovoPedidoModal";
-import ImportarXMLModal from "@/components/compras/ImportarXMLModal";
-import ReviewXMLData from "@/components/compras/ReviewXMLData";
 import PagamentosImportacaoView from "@/components/compras/importacao/PagamentosImportacaoView";
 import FechamentoCambioView from "@/components/compras/importacao/FechamentoCambioView";
 import CustosImportacaoView from "@/components/compras/importacao/CustosImportacaoView";
@@ -22,8 +20,6 @@ const Compras = () => {
   const [showPedidoDetalhes, setShowPedidoDetalhes] = useState(false);
   const [selectedPedido, setSelectedPedido] = useState<Pedido | null>(null);
   const [showNovoPedido, setShowNovoPedido] = useState(false);
-  const [showImportarXML, setShowImportarXML] = useState(false);
-  const [xmlData, setXmlData] = useState(null);
 
   // Reset state when no module is selected
   useEffect(() => {
@@ -60,24 +56,14 @@ const Compras = () => {
   };
 
   const handleNewRecord = () => {
-    // Para compra fiscal, abre o modal de importar XML
-    if (activeModule === 'compra_fiscal' && activeSubModule === 'compra_fiscal') {
-      setShowImportarXML(true);
-    }
     // Para pedidos, abre o modal de novo pedido
-    else if (activeModule === 'pedidos' && activeSubModule === 'pedidos') {
+    if (activeModule === 'pedidos' && activeSubModule === 'pedidos') {
       setShowNovoPedido(true);
     }
     // Para submódulos de importação, ações específicas podem ser implementadas futuramente
     else if (activeModule === 'di') {
       console.log(`Novo registro para: ${activeSubModule}`);
     }
-  };
-
-  const handleImportarXML = (dadosXML: any) => {
-    console.log('XML importado:', dadosXML);
-    setXmlData(dadosXML);
-    setShowImportarXML(false);
   };
 
   const handleRowClick = (item: any) => {
@@ -89,9 +75,6 @@ const Compras = () => {
   };
 
   const getButtonText = () => {
-    if (activeModule === 'compra_fiscal' && activeSubModule === 'compra_fiscal') {
-      return 'Importar XML';
-    }
     if (activeModule === 'pedidos' && activeSubModule === 'pedidos') {
       return 'Novo Pedido';
     }
@@ -111,31 +94,6 @@ const Compras = () => {
     comprasModules[activeModule as keyof typeof comprasModules]?.subModules[activeSubModule] : null;
 
   const renderContent = () => {
-    // Para compra fiscal, renderiza interface específica
-    if (activeModule === 'compra_fiscal' && activeSubModule === 'compra_fiscal') {
-      return (
-        <div className="flex-1 p-6 min-h-0">
-          {xmlData ? (
-            <ReviewXMLData 
-              data={xmlData} 
-              onFinalize={() => setXmlData(null)}
-            />
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-center">
-              <div className="max-w-md">
-                <h3 className="text-xl font-semibold text-biodina-blue mb-4">
-                  Nenhum XML importado
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  Clique em "Importar XML" para começar a importar uma nota fiscal
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
     // Para submódulos de importação, renderiza componentes específicos
     if (activeModule === 'di') {
       if (activeSubModule === 'pagamentos_importacao') {
@@ -218,13 +176,6 @@ const Compras = () => {
       {showNovoPedido && (
         <NovoPedidoModal 
           onClose={() => setShowNovoPedido(false)}
-        />
-      )}
-
-      {showImportarXML && (
-        <ImportarXMLModal 
-          onClose={() => setShowImportarXML(false)}
-          onImport={handleImportarXML}
         />
       )}
     </SidebarLayout>
