@@ -1,9 +1,11 @@
+import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { FiltrosAgenda, StatusOS, DepartamentoOS } from "@/types/assessoria-cientifica";
 import { assessoresTecnicos, ordensServicoMock } from "@/data/assessoria-cientifica";
-import { Filter } from "lucide-react";
+import { Filter, ChevronRight } from "lucide-react";
 
 interface FiltrosAgendaOSProps {
   filtros: FiltrosAgenda;
@@ -15,14 +17,38 @@ interface FiltrosAgendaOSProps {
 export const FiltrosAgendaOS = ({ filtros, onFiltrosChange, labelAssessor = "Assessor/Técnico", departamento }: FiltrosAgendaOSProps) => {
   const statusOptions: StatusOS[] = ['ABERTA', 'EM_ANDAMENTO', 'CONCLUÍDA', 'URGENTE', 'CANCELADA'];
   
-  // Obter lista única de clientes, filtrados por departamento se especificado
-  const clientes = Array.from(
-    new Set(
-      ordensServicoMock
-        .filter(os => !departamento || os.departamento === departamento)
-        .map(os => os.cliente)
-    )
-  ).sort();
+  // Criar estrutura de dados para clientes e seus equipamentos
+  const clientesComEquipamentos = React.useMemo(() => {
+    const clientesMap = new Map();
+    
+    ordensServicoMock
+      .filter(os => !departamento || os.departamento === departamento)
+      .forEach(os => {
+        if (!clientesMap.has(os.clienteId)) {
+          clientesMap.set(os.clienteId, {
+            id: os.clienteId,
+            nome: os.cliente,
+            equipamentos: []
+          });
+        }
+        
+        const cliente = clientesMap.get(os.clienteId);
+        const equipamentoExiste = cliente.equipamentos.some(
+          (eq: any) => eq.id === os.equipamentoId
+        );
+        
+        if (!equipamentoExiste && os.equipamento) {
+          cliente.equipamentos.push({
+            id: os.equipamentoId,
+            modelo: os.equipamento,
+            numeroSerie: os.numeroSerieLote || 'N/A',
+            setor: os.setorAlocacao || 'Não especificado'
+          });
+        }
+      });
+    
+    return Array.from(clientesMap.values()).sort((a, b) => a.nome.localeCompare(b.nome));
+  }, [departamento]);
 
   const toggleAssessor = (assessor: string) => {
     const newAssessores = filtros.assessores.includes(assessor)
@@ -36,6 +62,13 @@ export const FiltrosAgendaOS = ({ filtros, onFiltrosChange, labelAssessor = "Ass
       ? filtros.clientes.filter(c => c !== cliente)
       : [...filtros.clientes, cliente];
     onFiltrosChange({ ...filtros, clientes: newClientes });
+  };
+
+  const toggleEquipamento = (equipamentoId: string) => {
+    const newEquipamentos = filtros.equipamentos.includes(equipamentoId)
+      ? filtros.equipamentos.filter(e => e !== equipamentoId)
+      : [...filtros.equipamentos, equipamentoId];
+    onFiltrosChange({ ...filtros, equipamentos: newEquipamentos });
   };
 
   const toggleStatus = (status: StatusOS) => {
@@ -75,24 +108,48 @@ export const FiltrosAgendaOS = ({ filtros, onFiltrosChange, labelAssessor = "Ass
           </div>
         </div>
 
-        {/* Filtro Cliente */}
+        {/* Filtro Cliente/Equipamento */}
         <div className="space-y-2">
-          <Label className="text-xs font-semibold">Cliente</Label>
-          <div className="space-y-2 max-h-32 overflow-y-auto">
-            {clientes.map((cliente) => (
-              <div key={cliente} className="flex items-center space-x-2">
-                <Checkbox
-                  id={`cliente-${cliente}`}
-                  checked={filtros.clientes.includes(cliente)}
-                  onCheckedChange={() => toggleCliente(cliente)}
-                />
-                <label
-                  htmlFor={`cliente-${cliente}`}
-                  className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                >
-                  {cliente}
-                </label>
-              </div>
+          <Label className="text-xs font-semibold">Cliente/Equipamento</Label>
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {clientesComEquipamentos.map((cliente: any) => (
+              <Collapsible key={cliente.id} className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`cliente-${cliente.id}`}
+                    checked={filtros.clientes.includes(cliente.nome)}
+                    onCheckedChange={() => toggleCliente(cliente.nome)}
+                  />
+                  <CollapsibleTrigger className="flex items-center justify-between w-full hover:bg-accent/50 rounded px-1 transition-colors">
+                    <label 
+                      htmlFor={`cliente-${cliente.id}`}
+                      className="text-xs font-medium cursor-pointer flex-1"
+                    >
+                      {cliente.nome}
+                    </label>
+                    <ChevronRight className="h-3 w-3 transition-transform data-[state=open]:rotate-90" />
+                  </CollapsibleTrigger>
+                </div>
+                <CollapsibleContent className="ml-6 space-y-1">
+                  {cliente.equipamentos.map((eq: any) => (
+                    <div key={eq.id} className="flex items-start space-x-2 py-1 pl-2 border-l-2 border-muted">
+                      <Checkbox
+                        id={`equipamento-${eq.id}`}
+                        checked={filtros.equipamentos.includes(eq.id)}
+                        onCheckedChange={() => toggleEquipamento(eq.id)}
+                      />
+                      <label 
+                        htmlFor={`equipamento-${eq.id}`}
+                        className="text-xs cursor-pointer flex flex-col"
+                      >
+                        <span className="font-medium">{eq.modelo}</span>
+                        <span className="text-muted-foreground">S/N: {eq.numeroSerie}</span>
+                        <span className="text-muted-foreground">Setor: {eq.setor}</span>
+                      </label>
+                    </div>
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
             ))}
           </div>
         </div>
