@@ -25,8 +25,8 @@ export const modules: ModulesConfig = {
       }
     }
   },
-  entidades: {
-    name: "Entidades",
+  pessoas: {
+    name: "Pessoas",
     icon: Building2,
     subModules: {
       leads: {

@@ -56,7 +56,7 @@ const AccessProfileSelector = ({ onProfileSelect }: AccessProfileSelectorProps) 
         icon: 'Users',
         enabled: false,
         subModules: [
-          { key: 'entidades', name: 'Entidades', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
+          { key: 'pessoas', name: 'Pessoas', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
           { key: 'produtos', name: 'Produtos', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
           { key: 'servicos', name: 'Serviços', permissions: { view: false, create: false, edit: false, delete: false, admin: false } },
           { key: 'usuarios', name: 'Usuários', permissions: { view: false, create: false, edit: false, delete: false, admin: false } }
