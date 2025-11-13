@@ -1,6 +1,7 @@
 import { useState } from "react";
 import DashboardAssessoria from "@/components/comercial/assessoria/DashboardAssessoria";
 import { OrdensServicoTab } from "@/components/comercial/assessoria/OrdensServicoTab";
+import { ChamadosAssessoriaTab } from "@/components/comercial/assessoria/ChamadosAssessoriaTab";
 import { RastreabilidadeTab } from "@/components/comercial/assessoria/RastreabilidadeTab";
 import { AnaliseEditaisTab } from "@/components/comercial/assessoria/AnaliseEditaisTab";
 import { RepositorioProdutosTab } from "@/components/comercial/assessoria/RepositorioProdutosTab";
@@ -36,8 +37,8 @@ import {
 const Comercial = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'emprestimos' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeTab, setActiveTab] = useState('indicadores');
-  const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "os" | "rastreabilidade" | "analise-editais" | "repositorio">("agenda");
-  const [departamentoTecnicoTab, setDepartamentoTecnicoTab] = useState<"agenda" | "os" | "rastreabilidade">("agenda");
+  const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade" | "analise-editais" | "repositorio">("agenda");
+  const [departamentoTecnicoTab, setDepartamentoTecnicoTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade">("agenda");
   const [osStatusFilter, setOsStatusFilter] = useState<StatusOS[] | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
@@ -581,6 +582,7 @@ const Comercial = () => {
         <div className="border-b">
           <div className="flex gap-4">
             <button onClick={() => setAssessoriaTab("agenda")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "agenda" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Agenda</button>
+            <button onClick={() => setAssessoriaTab("chamados")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "chamados" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Chamados Ativos por Assessor</button>
             <button onClick={() => setAssessoriaTab("os")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "os" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Ordens de Serviço</button>
             <button onClick={() => setAssessoriaTab("rastreabilidade")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "rastreabilidade" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Rastreabilidade</button>
             <button onClick={() => setAssessoriaTab("analise-editais")} className={`px-4 py-2 border-b-2 transition-colors ${assessoriaTab === "analise-editais" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Análise de Editais</button>
@@ -590,6 +592,7 @@ const Comercial = () => {
 
         <div>
           {assessoriaTab === "agenda" && <DashboardAssessoria onNavigateToOS={handleNavigateToOS} departamento="Assessoria Científica" labelAssessor="Assessor" />}
+          {assessoriaTab === "chamados" && <ChamadosAssessoriaTab departamento="Assessoria Científica" />}
           {assessoriaTab === "os" && <OrdensServicoTab statusFilterFromAlert={osStatusFilter} departamento="Assessoria Científica" />}
           {assessoriaTab === "rastreabilidade" && <RastreabilidadeTab />}
           {assessoriaTab === "analise-editais" && <AnaliseEditaisTab />}
@@ -620,13 +623,15 @@ const Comercial = () => {
         <div className="border-b">
           <div className="flex gap-4">
             <button onClick={() => setDepartamentoTecnicoTab("agenda")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "agenda" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Agenda</button>
+            <button onClick={() => setDepartamentoTecnicoTab("chamados")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "chamados" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Chamados Ativos por Assessor</button>
             <button onClick={() => setDepartamentoTecnicoTab("os")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "os" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Ordens de Serviço</button>
             <button onClick={() => setDepartamentoTecnicoTab("rastreabilidade")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "rastreabilidade" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Rastreabilidade</button>
           </div>
         </div>
 
         <div>
-          {departamentoTecnicoTab === "agenda" && <DashboardAssessoria onNavigateToOS={handleNavigateToOS} departamento="Departamento Técnico" labelAssessor="Técnico" />}
+          {departamentoTecnicoTab === "agenda" && <DashboardAssessoria onNavigateToOS={handleNavigateDTToOS} departamento="Departamento Técnico" labelAssessor="Técnico" />}
+          {departamentoTecnicoTab === "chamados" && <ChamadosAssessoriaTab departamento="Departamento Técnico" />}
           {departamentoTecnicoTab === "os" && <OrdensServicoTab statusFilterFromAlert={osStatusFilter} departamento="Departamento Técnico" />}
           {departamentoTecnicoTab === "rastreabilidade" && <RastreabilidadeTab />}
         </div>

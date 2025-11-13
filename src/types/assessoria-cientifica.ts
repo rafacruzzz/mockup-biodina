@@ -133,3 +133,140 @@ export interface Alerta {
   clienteId?: string;
   dataCriacao: Date;
 }
+
+// ========== TIPOS PARA CHAMADOS ==========
+
+export type StatusChamado = 
+  | 'ABERTO'
+  | 'EM_ANALISE'
+  | 'EM_EXECUCAO'
+  | 'AGUARDANDO_CLIENTE'
+  | 'AGUARDANDO_AREA'
+  | 'RESOLVIDO'
+  | 'FECHADO'
+  | 'ENCERRADO';
+
+export type OrigemChamado = 'Vendas' | 'Assessoria Científica' | 'Departamento Técnico';
+export type DestinoChamado = 'Vendas' | 'Assessoria Científica' | 'Departamento Técnico';
+
+export type TipoChamado =
+  | 'tecnico'
+  | 'cientifico'
+  | 'comercial'
+  | 'treinamento_inicial'
+  | 'treinamento_reciclagem'
+  | 'calibracao'
+  | 'manutencao'
+  | 'software'
+  | 'contratual'
+  | 'movimentacao_material'
+  | 'outro';
+
+export type UrgenciaChamado = 'BAIXA' | 'MEDIA' | 'ALTA' | 'URGENTE';
+
+export interface EvidenciaChamado {
+  id: string;
+  tipo: 'foto' | 'video' | 'log' | 'documento';
+  url: string;
+  nomeArquivo: string;
+  descricao?: string;
+  dataUpload: Date;
+  uploadPorNome: string;
+}
+
+export interface InteracaoChamado {
+  id: string;
+  autorNome: string;
+  autorId: string;
+  autorDepartamento: OrigemChamado;
+  acao: string;
+  mensagem: string;
+  data: Date;
+  statusAnterior?: StatusChamado;
+  statusNovo?: StatusChamado;
+  evidencias?: EvidenciaChamado[];
+}
+
+export interface ChamadoAssessoria {
+  id: string;
+  numeroChamado: string;
+  numeroOS: string;
+  
+  projetoId: string;
+  projetoMaeNumero: string;
+  clienteId: string;
+  clienteNome: string;
+  equipamentoId?: string;
+  equipamentoModelo?: string;
+  numeroSerieLote?: string;
+  
+  origem: OrigemChamado;
+  destino: DestinoChamado;
+  abertoPorNome: string;
+  abertoPorId: string;
+  abertoPorDepartamento: OrigemChamado;
+  responsavelAtualNome?: string;
+  responsavelAtualId?: string;
+  assessorVinculadoId?: string;
+  assessorVinculadoNome?: string;
+  
+  tipo: TipoChamado;
+  motivoDescricao: string;
+  urgencia: UrgenciaChamado;
+  estrategiaResolucao?: string;
+  resultadoFinal?: string;
+  
+  status: StatusChamado;
+  dataAbertura: Date;
+  dataAtribuicao?: Date;
+  dataResolucao?: Date;
+  dataEncerramento?: Date;
+  prazoEstimado?: Date;
+  
+  interacoes: InteracaoChamado[];
+  evidencias?: EvidenciaChamado[];
+  
+  assinaturaCliente?: string;
+  assinaturaAssessor?: string;
+  dataAssinaturaCliente?: Date;
+  dataAssinaturaAssessor?: Date;
+  
+  criadoEm: Date;
+  atualizadoEm: Date;
+}
+
+export const TIPO_CHAMADO_LABELS: Record<TipoChamado, string> = {
+  tecnico: 'Técnico',
+  cientifico: 'Científico',
+  comercial: 'Comercial',
+  treinamento_inicial: 'Treinamento Inicial',
+  treinamento_reciclagem: 'Treinamento Reciclagem',
+  calibracao: 'Calibração',
+  manutencao: 'Manutenção',
+  software: 'Software',
+  contratual: 'Contratual',
+  movimentacao_material: 'Movimentação de Material',
+  outro: 'Outro'
+};
+
+export const STATUS_CHAMADO_LABELS: Record<StatusChamado, string> = {
+  ABERTO: 'Aberto',
+  EM_ANALISE: 'Em Análise',
+  EM_EXECUCAO: 'Em Execução',
+  AGUARDANDO_CLIENTE: 'Aguardando Cliente',
+  AGUARDANDO_AREA: 'Aguardando Área',
+  RESOLVIDO: 'Resolvido',
+  FECHADO: 'Fechado',
+  ENCERRADO: 'Encerrado'
+};
+
+export const URGENCIA_CHAMADO_LABELS: Record<UrgenciaChamado, string> = {
+  BAIXA: 'Baixa',
+  MEDIA: 'Média',
+  ALTA: 'Alta',
+  URGENTE: 'Urgente'
+};
+
+export const isStatusAtivo = (status: StatusChamado): boolean => {
+  return status !== 'FECHADO' && status !== 'ENCERRADO';
+};
