@@ -21,6 +21,7 @@ import { NovaAtualizacaoModal } from '@/components/administrativo/NovaAtualizaca
 import { DueDiligenceTable } from '@/components/administrativo/components/DueDiligenceTable';
 import { NovaTriagemModal } from '@/components/administrativo/NovaTriagemModal';
 import { DocumentacaoTab } from '@/components/administrativo/rt/DocumentacaoTab';
+import { EstruturaEPadroesTab } from '@/components/administrativo/qualidade/EstruturaEPadroesTab';
 import { modules } from '@/data/cadastroModules';
 import { toast } from '@/components/ui/use-toast';
 import { parse, subDays, differenceInDays, format } from 'date-fns';
@@ -734,34 +735,80 @@ const Administrativo = () => {
     </div>
   );
 
-  const renderBibliotecaModule = () => (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <Button
-          variant="outline"
-          onClick={() => setActiveModule('main')}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Voltar
-        </Button>
-        <h2 className="text-2xl font-bold text-biodina-blue">Qualidade</h2>
+  const renderBibliotecaModule = () => {
+    const [qualidadeTab, setQualidadeTab] = useState("estrutura");
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4 mb-6">
+          <Button
+            variant="outline"
+            onClick={() => setActiveModule('main')}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar
+          </Button>
+          <h2 className="text-2xl font-bold text-biodina-blue">Qualidade</h2>
+        </div>
+        
+        <Tabs value={qualidadeTab} onValueChange={setQualidadeTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="estrutura">Estrutura e Padrões</TabsTrigger>
+            <TabsTrigger value="coleta">Coleta de Dados e Inspeção</TabsTrigger>
+            <TabsTrigger value="nao-conformidades">Gestão de Não Conformidades</TabsTrigger>
+            <TabsTrigger value="analise">Análise de Dados e Indicadores</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="estrutura" className="mt-6">
+            <EstruturaEPadroesTab />
+          </TabsContent>
+
+          <TabsContent value="coleta" className="mt-6">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center py-12">
+                  <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-semibold mb-2">Em breve</h3>
+                  <p className="text-muted-foreground">
+                    Aba em desenvolvimento
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="nao-conformidades" className="mt-6">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center py-12">
+                  <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-semibold mb-2">Em breve</h3>
+                  <p className="text-muted-foreground">
+                    Aba em desenvolvimento
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="analise" className="mt-6">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="text-center py-12">
+                  <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                  <h3 className="text-lg font-semibold mb-2">Em breve</h3>
+                  <p className="text-muted-foreground">
+                    Aba em desenvolvimento
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Módulo em Desenvolvimento</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-600">
-            O módulo de Qualidade está em desenvolvimento. 
-            Em breve você poderá gerenciar documentos, 
-            processos de qualidade e indicadores.
-          </p>
-        </CardContent>
-      </Card>
-    </div>
-  );
+    );
+  };
 
   const renderContent = () => {
     switch (activeModule) {
