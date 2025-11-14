@@ -24,6 +24,7 @@ import { DocumentacaoTab } from '@/components/administrativo/rt/DocumentacaoTab'
 import { EstruturaEPadroesTab } from '@/components/administrativo/qualidade/EstruturaEPadroesTab';
 import { ColetaDadosTab } from '@/components/administrativo/qualidade/ColetaDadosTab';
 import { GestaoNCTab } from '@/components/administrativo/qualidade/GestaoNCTab';
+import { AnaliseIndicadoresTab } from '@/components/administrativo/qualidade/AnaliseIndicadoresTab';
 import { modules } from '@/data/cadastroModules';
 import { toast } from '@/components/ui/use-toast';
 import { parse, subDays, differenceInDays, format } from 'date-fns';
@@ -773,17 +774,7 @@ const Administrativo = () => {
           </TabsContent>
 
           <TabsContent value="analise" className="mt-6">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="text-center py-12">
-                  <FileText className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-lg font-semibold mb-2">Em breve</h3>
-                  <p className="text-muted-foreground">
-                    Aba em desenvolvimento
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <AnaliseIndicadoresTab />
           </TabsContent>
         </Tabs>
       </div>

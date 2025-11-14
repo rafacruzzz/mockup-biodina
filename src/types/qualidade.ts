@@ -70,3 +70,42 @@ export interface NaoConformidade {
   dataCriacao: Date;
   dataAtualizacao?: Date;
 }
+
+// Tipos para Análise de Dados e Indicadores
+export interface DadosNCMensal {
+  mes: string;
+  quantidade: number;
+}
+
+export interface DadosRetrabalho {
+  tipo: string;
+  valor: number;
+  percentual: number;
+}
+
+export interface DadosEficienciaCAPA {
+  tipo: string;
+  quantidade: number;
+}
+
+export interface IndiceQualidadeFornecedor {
+  id: string;
+  nome: string;
+  indiceQualidade: number;
+  materiaisNaoConformes: number;
+  totalMateriais: number;
+}
+
+export type StatusIntegracao = 'OK' | 'Alerta' | 'Erro' | 'Desativado';
+
+export interface IntegracaoSensor {
+  id: string;
+  nome: string;
+  tipo: string;
+  status: StatusIntegracao;
+  valor?: string;
+  unidade?: string;
+  limiteMin?: number;
+  limiteMax?: number;
+  ultimaAtualizacao: Date;
+}
