@@ -20,6 +20,7 @@ import { AtualizacoesAnvisaTable } from '@/components/administrativo/components/
 import { NovaAtualizacaoModal } from '@/components/administrativo/NovaAtualizacaoModal';
 import { DueDiligenceTable } from '@/components/administrativo/components/DueDiligenceTable';
 import { NovaTriagemModal } from '@/components/administrativo/NovaTriagemModal';
+import { DocumentacaoTab } from '@/components/administrativo/rt/DocumentacaoTab';
 import { modules } from '@/data/cadastroModules';
 import { toast } from '@/components/ui/use-toast';
 import { parse, subDays, differenceInDays, format } from 'date-fns';
@@ -165,18 +166,15 @@ const Administrativo = () => {
         <h2 className="text-2xl font-bold text-biodina-blue">Responsabilidade Técnica</h2>
       </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Módulo em Desenvolvimento</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-600">
-            O módulo de Responsabilidade Técnica está em desenvolvimento. 
-            Em breve você poderá gerenciar profissionais habilitados, 
-            certificações e responsabilidades técnicas.
-          </p>
-        </CardContent>
-      </Card>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-1">
+          <TabsTrigger value="documentacoes">DOCUMENTAÇÕES</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="documentacoes" className="mt-6">
+          <DocumentacaoTab />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 
