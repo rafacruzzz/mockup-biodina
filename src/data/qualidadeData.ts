@@ -1,4 +1,14 @@
-import { AuditoriaQualidade, PesquisaSatisfacao, RegistroRastreabilidade, NaoConformidade } from '@/types/qualidade';
+import { 
+  AuditoriaQualidade, 
+  PesquisaSatisfacao, 
+  RegistroRastreabilidade, 
+  NaoConformidade,
+  DadosNCMensal,
+  DadosRetrabalho,
+  DadosEficienciaCAPA,
+  IndiceQualidadeFornecedor,
+  IntegracaoSensor
+} from '@/types/qualidade';
 
 export const auditoresDisponiveis = [
   'Dr. Carlos Silva',
@@ -198,5 +208,96 @@ export const naoConformidadesMockadas: NaoConformidade[] = [
     descricao: 'Cliente relatou documentação incompleta na entrega',
     acaoImediata: 'Envio imediato da documentação faltante',
     dataCriacao: new Date('2024-11-13')
+  }
+];
+
+// Dados para Análise de Dados e Indicadores
+
+export const dadosNCMensal: DadosNCMensal[] = [
+  { mes: 'Jun/24', quantidade: 8 },
+  { mes: 'Jul/24', quantidade: 7 },
+  { mes: 'Ago/24', quantidade: 6 },
+  { mes: 'Set/24', quantidade: 5 },
+  { mes: 'Out/24', quantidade: 4 },
+  { mes: 'Nov/24', quantidade: 3 }
+];
+
+export const dadosRetrabalho: DadosRetrabalho[] = [
+  { tipo: 'Reenvio de Material', valor: 60, percentual: 60 },
+  { tipo: 'Retreinamento de Equipes', valor: 40, percentual: 40 }
+];
+
+export const dadosEficienciaCAPA: DadosEficienciaCAPA[] = [
+  { tipo: 'Ações Preventivas', quantidade: 70 },
+  { tipo: 'Ações Corretivas', quantidade: 30 }
+];
+
+export const indicesQualidadeFornecedores: IndiceQualidadeFornecedor[] = [
+  {
+    id: '1',
+    nome: 'Fornecedor A',
+    indiceQualidade: 98,
+    materiaisNaoConformes: 2,
+    totalMateriais: 100
+  },
+  {
+    id: '2',
+    nome: 'Fornecedor B',
+    indiceQualidade: 92,
+    materiaisNaoConformes: 8,
+    totalMateriais: 100
+  },
+  {
+    id: '3',
+    nome: 'Fornecedor C',
+    indiceQualidade: 85,
+    materiaisNaoConformes: 15,
+    totalMateriais: 100
+  },
+  {
+    id: '4',
+    nome: 'Fornecedor D',
+    indiceQualidade: 95,
+    materiaisNaoConformes: 5,
+    totalMateriais: 100
+  }
+];
+
+export const integracoesSensores: IntegracaoSensor[] = [
+  {
+    id: '1',
+    nome: 'Câmara Fria',
+    tipo: 'Temperatura',
+    status: 'OK',
+    valor: '-18',
+    unidade: '°C',
+    limiteMin: -20,
+    limiteMax: -15,
+    ultimaAtualizacao: new Date()
+  },
+  {
+    id: '2',
+    nome: 'Controle de Umidade',
+    tipo: 'Umidade',
+    status: 'Alerta',
+    valor: '75',
+    unidade: '%',
+    limiteMin: 40,
+    limiteMax: 70,
+    ultimaAtualizacao: new Date()
+  },
+  {
+    id: '3',
+    nome: 'Sistema de Logística',
+    tipo: 'Sistema',
+    status: 'OK',
+    ultimaAtualizacao: new Date()
+  },
+  {
+    id: '4',
+    nome: 'Alarme de Segurança',
+    tipo: 'Alarme',
+    status: 'Desativado',
+    ultimaAtualizacao: new Date()
   }
 ];
