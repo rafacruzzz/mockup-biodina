@@ -21,6 +21,7 @@ import { NovaAtualizacaoModal } from '@/components/administrativo/NovaAtualizaca
 import { DueDiligenceTable } from '@/components/administrativo/components/DueDiligenceTable';
 import { NovaTriagemModal } from '@/components/administrativo/NovaTriagemModal';
 import { DocumentacaoTab } from '@/components/administrativo/rt/DocumentacaoTab';
+import { GestaoNCTab as GestaoNCTabRT } from '@/components/administrativo/rt/GestaoNCTab';
 import { EstruturaEPadroesTab } from '@/components/administrativo/qualidade/EstruturaEPadroesTab';
 import { ColetaDadosTab } from '@/components/administrativo/qualidade/ColetaDadosTab';
 import { GestaoNCTab } from '@/components/administrativo/qualidade/GestaoNCTab';
@@ -172,12 +173,17 @@ const Administrativo = () => {
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-1">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="documentacoes">DOCUMENTAÇÕES</TabsTrigger>
+          <TabsTrigger value="gestao-nc">GESTÃO DE NÃO CONFORMIDADES</TabsTrigger>
         </TabsList>
 
         <TabsContent value="documentacoes" className="mt-6">
           <DocumentacaoTab />
+        </TabsContent>
+
+        <TabsContent value="gestao-nc" className="mt-6">
+          <GestaoNCTabRT />
         </TabsContent>
       </Tabs>
     </div>

@@ -72,3 +72,34 @@ export interface DocumentacaoRT {
   nomeArquivoPrincipal: string;
   estruturaPastas: PastaRT[];
 }
+
+// Gestão de Não Conformidades RT
+export type OrigemNCRT = 'Auditoria' | 'Treinamento' | 'Liberação de Produto' | 'Documentação' | 'Outro';
+export type TipoNCRT = 'Documentação Desatualizada' | 'Treinamento Inadequado' | 'Falha de Processo' | 'Produto Não Liberado' | 'Não Conformidade Regulatória' | 'Outro';
+export type ImpactoNCRT = 'Crítico' | 'Moderado' | 'Baixo';
+export type StatusNCRT = 'Aberta' | 'Em Análise' | 'Aguardando Ação' | 'Resolvida' | 'Fechada';
+export type StatusCAPART = 'Pendente' | 'Em Andamento' | 'Concluída' | 'Verificada';
+
+export interface AcaoCAPART {
+  id: string;
+  acaoPreventiva: string;
+  acaoCorretiva: string;
+  prazoFinal: string;
+  status: StatusCAPART;
+  responsavel: string;
+}
+
+export interface NaoConformidadeRT {
+  id: string;
+  data: string;
+  origem: OrigemNCRT;
+  tipo: TipoNCRT;
+  impacto: ImpactoNCRT;
+  descricao: string;
+  acaoImediata: string;
+  responsavel: string;
+  prazoExecucao: string;
+  status: StatusNCRT;
+  observacoes?: string;
+  capa: AcaoCAPART;
+}
