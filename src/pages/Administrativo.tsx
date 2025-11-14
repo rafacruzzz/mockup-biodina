@@ -34,6 +34,7 @@ const Administrativo = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'rt' | 'regulatorio' | 'institucional' | 'juridico' | 'compliance' | 'biblioteca'>('main');
   const [activeTab, setActiveTab] = useState('dashboard');
   const [qualidadeTab, setQualidadeTab] = useState('estrutura');
+  const [rtTab, setRtTab] = useState('documentacoes');
   const [showNovoRegistroModal, setShowNovoRegistroModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [selectedRegistroHistory, setSelectedRegistroHistory] = useState<any>(null);
@@ -172,7 +173,7 @@ const Administrativo = () => {
         <h2 className="text-2xl font-bold text-biodina-blue">Responsabilidade Técnica</h2>
       </div>
       
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs value={rtTab} onValueChange={setRtTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="documentacoes">DOCUMENTAÇÕES</TabsTrigger>
           <TabsTrigger value="gestao-nc">GESTÃO DE NÃO CONFORMIDADES</TabsTrigger>
