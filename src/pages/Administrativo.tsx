@@ -29,6 +29,7 @@ import { parse, subDays, differenceInDays, format } from 'date-fns';
 const Administrativo = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'rt' | 'regulatorio' | 'institucional' | 'juridico' | 'compliance' | 'biblioteca'>('main');
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [qualidadeTab, setQualidadeTab] = useState('estrutura');
   const [showNovoRegistroModal, setShowNovoRegistroModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [selectedRegistroHistory, setSelectedRegistroHistory] = useState<any>(null);
@@ -735,10 +736,7 @@ const Administrativo = () => {
     </div>
   );
 
-  const renderBibliotecaModule = () => {
-    const [qualidadeTab, setQualidadeTab] = useState("estrutura");
-
-    return (
+  const renderBibliotecaModule = () => (
       <div className="space-y-6">
         <div className="flex items-center gap-4 mb-6">
           <Button
@@ -808,7 +806,6 @@ const Administrativo = () => {
         </Tabs>
       </div>
     );
-  };
 
   const renderContent = () => {
     switch (activeModule) {
