@@ -172,25 +172,20 @@ const Administrativo = () => {
         <h2 className="text-2xl font-bold text-biodina-blue">Responsabilidade Técnica</h2>
       </div>
       
-      {/* Seção de Documentações */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-bold text-biodina-blue">Documentações</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DocumentacaoTab />
-        </CardContent>
-      </Card>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="documentacoes">DOCUMENTAÇÕES</TabsTrigger>
+          <TabsTrigger value="gestao-nc">GESTÃO DE NÃO CONFORMIDADES</TabsTrigger>
+        </TabsList>
 
-      {/* Seção de Gestão de Não Conformidades */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-xl font-bold text-biodina-blue">Gestão de Não Conformidades</CardTitle>
-        </CardHeader>
-        <CardContent>
+        <TabsContent value="documentacoes" className="mt-6">
+          <DocumentacaoTab />
+        </TabsContent>
+
+        <TabsContent value="gestao-nc" className="mt-6">
           <GestaoNCTabRT />
-        </CardContent>
-      </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 
