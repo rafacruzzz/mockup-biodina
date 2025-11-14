@@ -39,3 +39,34 @@ export interface RegistroRastreabilidade {
   responsavel: string;
   observacoes?: string;
 }
+
+export type OrigemNC = 'Pesquisa' | 'Auditoria' | 'Outro';
+export type TipoNC = 'Material Não Conforme' | 'Atendimento' | 'Treinamento Falho';
+export type ImpactoNC = 'Crítico' | 'Moderado' | 'Baixo';
+export type StatusNC = 'Aberta' | 'Em Análise' | 'Aguardando CAPA' | 'Resolvida' | 'Fechada';
+export type StatusCAPA = 'Pendente' | 'Em Andamento' | 'Concluída';
+
+export interface AcaoCAPA {
+  id: string;
+  acaoPreventiva: string;
+  acaoCorretiva: string;
+  prazoFinal: Date;
+  status: StatusCAPA;
+  responsavel: string;
+}
+
+export interface NaoConformidade {
+  id: string;
+  numeroNC: string;
+  origem: OrigemNC;
+  tipo: TipoNC;
+  impacto: ImpactoNC;
+  responsavel: string;
+  prazo: Date;
+  status: StatusNC;
+  descricao: string;
+  acaoImediata?: string;
+  capa?: AcaoCAPA;
+  dataCriacao: Date;
+  dataAtualizacao?: Date;
+}
