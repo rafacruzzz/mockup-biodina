@@ -100,9 +100,13 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
     const modeloSelecionado = modelosDDR.find(m => m.id === modeloDDR);
     console.log('Baixando DDR...', {
       modelo: modeloSelecionado?.nome,
-      titulo: modeloSelecionado?.titulo
+      titulo: modeloSelecionado?.titulo,
+      // Apenas inclui campos adicionais se estiverem preenchidos
+      cnpjAdicional: ddrData.cnpjAdicional || 'não incluído',
+      finalidadeImportacaoAdicional: ddrData.finalidadeImportacaoAdicional || 'não incluído'
     });
     // Aqui seria implementada a lógica de download do DDR baseada no modelo selecionado
+    // Os campos cnpjAdicional e finalidadeImportacaoAdicional só serão incluídos no PDF se tiverem valores
   };
 
   return (
@@ -113,7 +117,7 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
           <CardTitle className="text-lg">Selecionar Modelo DDR</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
+          <div className="space-y-4">
             <Label htmlFor="modeloDDR">Tipo de DDR</Label>
             <Select 
               value={modeloDDR} 
@@ -134,74 +138,71 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
         </CardContent>
       </Card>
 
+      {/* Formulário DDR */}
       <Card>
-        <CardHeader className="text-center border-b">
-          <CardTitle className="text-xl font-bold text-purple-600">
+        <CardHeader>
+          <CardTitle className="text-center text-sm">
             DDR - {modelosDDR.find(m => m.id === modeloDDR)?.nome.toUpperCase() || 'DECLARAÇÃO DO DETENTOR DA REGULARIZAÇÃO'}
           </CardTitle>
         </CardHeader>
-        
-        <CardContent className="p-6 space-y-6">
-          {/* 1. Cabeçalho */}
-          <div className="border p-4 rounded">
-            <h3 className="font-semibold mb-4 border-b pb-2">1. CABEÇALHO (Editável)</h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="razaoSocial">Razão Social</Label>
-                <Input
-                  id="razaoSocial"
-                  value={ddrData.razaoSocial}
-                  onChange={(e) => handleDdrInputChange('razaoSocial', e.target.value)}
-                  className="w-full font-semibold"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="cnpj">CNPJ</Label>
-                <Input
-                  id="cnpj"
-                  value={ddrData.cnpj}
-                  onChange={(e) => handleDdrInputChange('cnpj', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="nomeFantasia">Nome Fantasia</Label>
-                <Input
-                  id="nomeFantasia"
-                  value={ddrData.nomeFantasia}
-                  onChange={(e) => handleDdrInputChange('nomeFantasia', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="atividadePrincipal">Atividade Principal</Label>
-                <Input
-                  id="atividadePrincipal"
-                  value={ddrData.atividadePrincipal}
-                  onChange={(e) => handleDdrInputChange('atividadePrincipal', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* 2. Informações da Regularização e Importação */}
-          <div className="border p-4 rounded">
-            <h3 className="font-semibold mb-4 border-b pb-2">2. INFORMAÇÕES DA REGULARIZAÇÃO E IMPORTAÇÃO</h3>
-            <div className="overflow-x-auto">
+        <CardContent>
+          <div className="space-y-6">
+            {/* Seção: Dados do Detentor */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-base">DADOS DO DETENTOR DA REGULARIZAÇÃO</h3>
               <table className="w-full border-collapse border border-gray-300">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border border-gray-300 p-2 text-left">Campo</th>
-                    <th className="border border-gray-300 p-2 text-left">Valor</th>
-                  </tr>
-                </thead>
                 <tbody>
                   <tr>
-                    <td className="border border-gray-300 p-2">Autorização ANVISA (AFE nº)</td>
+                    <td className="border border-gray-300 p-2 font-medium w-1/3">Razão Social</td>
+                    <td className="border border-gray-300 p-2">
+                      <Input
+                        value={ddrData.razaoSocial}
+                        onChange={(e) => handleDdrInputChange('razaoSocial', e.target.value)}
+                        className="w-full"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 p-2 font-medium">CNPJ</td>
+                    <td className="border border-gray-300 p-2">
+                      <Input
+                        value={ddrData.cnpj}
+                        onChange={(e) => handleDdrInputChange('cnpj', e.target.value)}
+                        className="w-full"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 p-2 font-medium">Nome Fantasia</td>
+                    <td className="border border-gray-300 p-2">
+                      <Input
+                        value={ddrData.nomeFantasia}
+                        onChange={(e) => handleDdrInputChange('nomeFantasia', e.target.value)}
+                        className="w-full"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 p-2 font-medium">Atividade Principal</td>
+                    <td className="border border-gray-300 p-2">
+                      <Input
+                        value={ddrData.atividadePrincipal}
+                        onChange={(e) => handleDdrInputChange('atividadePrincipal', e.target.value)}
+                        className="w-full"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Seção: Informações Regulatórias e da Unidade de Saúde */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-base">INFORMAÇÕES REGULATÓRIAS E DA UNIDADE DE SAÚDE</h3>
+              <table className="w-full border-collapse border border-gray-300">
+                <tbody>
+                  <tr>
+                    <td className="border border-gray-300 p-2 font-medium w-1/3">Autorização ANVISA</td>
                     <td className="border border-gray-300 p-2">
                       <Input
                         value={ddrData.autorizacaoAnvisa}
@@ -211,7 +212,7 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-gray-300 p-2">Licenciamento de Importação nº</td>
+                    <td className="border border-gray-300 p-2 font-medium">Licenciamento de Importação</td>
                     <td className="border border-gray-300 p-2">
                       <Input
                         value={ddrData.licenciamentoImportacao}
@@ -221,7 +222,7 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-gray-300 p-2">Resolução da Diretoria Colegiada (RDC nº)</td>
+                    <td className="border border-gray-300 p-2 font-medium">RDC Nº</td>
                     <td className="border border-gray-300 p-2">
                       <Input
                         value={ddrData.rdcNumero}
@@ -231,7 +232,7 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-gray-300 p-2">Data da RDC</td>
+                    <td className="border border-gray-300 p-2 font-medium">Data da RDC</td>
                     <td className="border border-gray-300 p-2">
                       <Input
                         value={ddrData.dataRdc}
@@ -241,7 +242,7 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-gray-300 p-2">Unidade de saúde autorizada</td>
+                    <td className="border border-gray-300 p-2 font-medium">Unidade de Saúde</td>
                     <td className="border border-gray-300 p-2">
                       <Input
                         value={ddrData.unidadeSaude}
@@ -251,7 +252,7 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-gray-300 p-2">CNPJ da unidade de saúde</td>
+                    <td className="border border-gray-300 p-2 font-medium">CNPJ da Unidade de Saúde</td>
                     <td className="border border-gray-300 p-2">
                       <Input
                         value={ddrData.cnpjUnidadeSaude}
@@ -261,7 +262,7 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-gray-300 p-2">Finalidade da importação</td>
+                    <td className="border border-gray-300 p-2 font-medium">Finalidade da Importação</td>
                     <td className="border border-gray-300 p-2">
                       <Select 
                         value={ddrData.finalidadeImportacao} 
@@ -285,7 +286,7 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                   {modeloDDR === 'modelo1' && (
                     <>
                       <tr>
-                        <td className="border border-gray-300 p-2">Empresa</td>
+                        <td className="border border-gray-300 p-2 font-medium">Empresa</td>
                         <td className="border border-gray-300 p-2">
                           <Input
                             value={ddrData.empresa}
@@ -295,7 +296,7 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                         </td>
                       </tr>
                       <tr>
-                        <td className="border border-gray-300 p-2">Entidade Vinculada</td>
+                        <td className="border border-gray-300 p-2 font-medium">Entidade Vinculada</td>
                         <td className="border border-gray-300 p-2">
                           <Input
                             value={ddrData.entidadeVinculada}
@@ -305,24 +306,25 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                         </td>
                       </tr>
                       <tr>
-                        <td className="border border-gray-300 p-2">CNPJ (Adicional)</td>
+                        <td className="border border-gray-300 p-2 font-medium">CNPJ (Adicional)</td>
                         <td className="border border-gray-300 p-2">
                           <Input
                             value={ddrData.cnpjAdicional}
                             onChange={(e) => handleDdrInputChange('cnpjAdicional', e.target.value)}
                             className="w-full"
+                            placeholder="Opcional - não aparece no PDF se vazio"
                           />
                         </td>
                       </tr>
                       <tr>
-                        <td className="border border-gray-300 p-2">Finalidade de Importação (Adicional)</td>
+                        <td className="border border-gray-300 p-2 font-medium">Finalidade da Importação (Adicional)</td>
                         <td className="border border-gray-300 p-2">
                           <Select 
                             value={ddrData.finalidadeImportacaoAdicional} 
                             onValueChange={(value) => handleDdrInputChange('finalidadeImportacaoAdicional', value)}
                           >
                             <SelectTrigger className="w-full">
-                              <SelectValue />
+                              <SelectValue placeholder="Opcional - não aparece no PDF se vazio" />
                             </SelectTrigger>
                             <SelectContent>
                               {finalidadesImportacao.map((finalidade) => (
@@ -339,194 +341,191 @@ const DDRForm = ({ formData, onInputChange }: DDRFormProps) => {
                 </tbody>
               </table>
             </div>
-          </div>
 
-          {/* 3. Informações do Produto */}
-          <div className="border p-4 rounded">
-            <h3 className="font-semibold mb-4 border-b pb-2">3. INFORMAÇÕES DO PRODUTO</h3>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="codigoInterno">Código interno</Label>
-                <Input
-                  id="codigoInterno"
-                  value={ddrData.codigoInterno}
-                  onChange={(e) => handleDdrInputChange('codigoInterno', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="apresentacaoComercial">Apresentação Comercial</Label>
-                <Input
-                  id="apresentacaoComercial"
-                  value={ddrData.apresentacaoComercial}
-                  onChange={(e) => handleDdrInputChange('apresentacaoComercial', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div className="lg:col-span-2">
-                <Label htmlFor="nomeComercial">Nome Comercial do Produto</Label>
-                <Textarea
-                  id="nomeComercial"
-                  value={ddrData.nomeComercial}
-                  onChange={(e) => handleDdrInputChange('nomeComercial', e.target.value)}
-                  rows={3}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="registroMS">Registro no Ministério da Saúde nº</Label>
-                <Input
-                  id="registroMS"
-                  value={ddrData.registroMS}
-                  onChange={(e) => handleDdrInputChange('registroMS', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-            </div>
-            <p className="text-sm text-gray-600 mt-4 italic">
-              (Essas informações podem ser preenchidas a partir do XML da DI ou ficha técnica do produto no sistema)
-            </p>
-          </div>
-
-          {/* 4. Declarações Legais */}
-          <div className="border p-4 rounded">
-            <h3 className="font-semibold mb-4 border-b pb-2">4. DECLARAÇÕES LEGAIS (Checkbox no sistema)</h3>
+            {/* Seção: Informações do Produto */}
             <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="naoComercio"
-                  checked={ddrData.naoComercio}
-                  onCheckedChange={(checked) => handleDdrInputChange('naoComercio', checked)}
-                />
-                <Label htmlFor="naoComercio">Produtos não serão destinados ao comércio</Label>
-              </div>
+              <h3 className="font-semibold text-base">INFORMAÇÕES DO PRODUTO</h3>
+              <table className="w-full border-collapse border border-gray-300">
+                <tbody>
+                  <tr>
+                    <td className="border border-gray-300 p-2 font-medium w-1/3">Código Interno</td>
+                    <td className="border border-gray-300 p-2">
+                      <Input
+                        value={ddrData.codigoInterno}
+                        onChange={(e) => handleDdrInputChange('codigoInterno', e.target.value)}
+                        className="w-full"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 p-2 font-medium">Apresentação Comercial</td>
+                    <td className="border border-gray-300 p-2">
+                      <Input
+                        value={ddrData.apresentacaoComercial}
+                        onChange={(e) => handleDdrInputChange('apresentacaoComercial', e.target.value)}
+                        className="w-full"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 p-2 font-medium">Nome Comercial</td>
+                    <td className="border border-gray-300 p-2">
+                      <Textarea
+                        value={ddrData.nomeComercial}
+                        onChange={(e) => handleDdrInputChange('nomeComercial', e.target.value)}
+                        className="w-full min-h-[60px]"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-300 p-2 font-medium">Registro MS</td>
+                    <td className="border border-gray-300 p-2">
+                      <Input
+                        value={ddrData.registroMS}
+                        onChange={(e) => handleDdrInputChange('registroMS', e.target.value)}
+                        className="w-full"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Seção: Declarações Obrigatórias */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-base">DECLARAÇÕES OBRIGATÓRIAS</h3>
               
-              <div className="space-y-2">
+              <div className="space-y-2 p-4 border border-gray-300 rounded">
                 <div className="flex items-center space-x-2">
-                  <Checkbox
+                  <Checkbox 
+                    id="naoComercio"
+                    checked={ddrData.naoComercio}
+                    onCheckedChange={(checked) => handleDdrInputChange('naoComercio', checked)}
+                  />
+                  <Label htmlFor="naoComercio" className="text-sm">
+                    Declara que o produto não se destina à comercialização
+                  </Label>
+                </div>
+              </div>
+
+              <div className="space-y-2 p-4 border border-gray-300 rounded">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
                     id="rastreabilidade"
                     checked={ddrData.rastreabilidade}
                     onCheckedChange={(checked) => handleDdrInputChange('rastreabilidade', checked)}
                   />
-                  <Label htmlFor="rastreabilidade">Texto da declaração de rastreabilidade:</Label>
+                  <Label htmlFor="rastreabilidade" className="text-sm font-semibold">
+                    Declara rastreabilidade do produto
+                  </Label>
                 </div>
-                <Input
-                  value={ddrData.textoRastreabilidade}
-                  onChange={(e) => handleDdrInputChange('textoRastreabilidade', e.target.value)}
-                  className="w-full"
-                  placeholder="Rastreabilidade garantida conforme Lei nº..."
-                />
+                {ddrData.rastreabilidade && (
+                  <Textarea
+                    value={ddrData.textoRastreabilidade}
+                    onChange={(e) => handleDdrInputChange('textoRastreabilidade', e.target.value)}
+                    className="mt-2 text-sm"
+                    rows={2}
+                  />
+                )}
               </div>
-              
-              <div className="space-y-2">
+
+              <div className="space-y-2 p-4 border border-gray-300 rounded">
                 <div className="flex items-center space-x-2">
-                  <Checkbox
+                  <Checkbox 
                     id="normasSanitarias"
                     checked={ddrData.normasSanitarias}
                     onCheckedChange={(checked) => handleDdrInputChange('normasSanitarias', checked)}
                   />
-                  <Label htmlFor="normasSanitarias">Texto das normas sanitárias:</Label>
+                  <Label htmlFor="normasSanitarias" className="text-sm font-semibold">
+                    Declara observância das normas sanitárias
+                  </Label>
                 </div>
-                <Input
-                  value={ddrData.textoNormasSanitarias}
-                  onChange={(e) => handleDdrInputChange('textoNormasSanitarias', e.target.value)}
-                  className="w-full"
-                  placeholder="Observância das normas sanitárias conforme Lei nº..."
-                />
+                {ddrData.normasSanitarias && (
+                  <Textarea
+                    value={ddrData.textoNormasSanitarias}
+                    onChange={(e) => handleDdrInputChange('textoNormasSanitarias', e.target.value)}
+                    className="mt-2 text-sm"
+                    rows={2}
+                  />
+                )}
               </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="declaracaoValida"
-                  checked={ddrData.declaracaoValida}
-                  onCheckedChange={(checked) => handleDdrInputChange('declaracaoValida', checked)}
-                />
-                <Label htmlFor="declaracaoValida">Declaração válida por 90 dias a partir da assinatura</Label>
+
+              <div className="space-y-2 p-4 border border-gray-300 rounded">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="declaracaoValida"
+                    checked={ddrData.declaracaoValida}
+                    onCheckedChange={(checked) => handleDdrInputChange('declaracaoValida', checked)}
+                  />
+                  <Label htmlFor="declaracaoValida" className="text-sm">
+                    Declara que esta declaração é válida
+                  </Label>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* 5. Assinatura do Responsável */}
-          <div className="border p-4 rounded">
-            <h3 className="font-semibold mb-4 border-b pb-2">5. ASSINATURA DO RESPONSÁVEL</h3>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="responsavelNome">Nome do responsável técnico/legal</Label>
-                <Input
-                  id="responsavelNome"
-                  value={ddrData.responsavelNome}
-                  onChange={(e) => handleDdrInputChange('responsavelNome', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="responsavelFuncao">Função</Label>
-                <Input
-                  id="responsavelFuncao"
-                  value={ddrData.responsavelFuncao}
-                  onChange={(e) => handleDdrInputChange('responsavelFuncao', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="responsavelCrq">C.R.Q.</Label>
-                <Input
-                  id="responsavelCrq"
-                  value={ddrData.responsavelCrq}
-                  onChange={(e) => handleDdrInputChange('responsavelCrq', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* 6. Outros Campos do Sistema */}
-          <div className="border p-4 rounded">
-            <h3 className="font-semibold mb-4 border-b pb-2">6. OUTROS CAMPOS DO SISTEMA</h3>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="dataDeclaracao">Data da Declaração</Label>
-                <Input
-                  id="dataDeclaracao"
-                  value={ddrData.dataDeclaracao}
-                  onChange={(e) => handleDdrInputChange('dataDeclaracao', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="cidadeEstado">Cidade e Estado</Label>
-                <Input
-                  id="cidadeEstado"
-                  value={ddrData.cidadeEstado}
-                  onChange={(e) => handleDdrInputChange('cidadeEstado', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="statusDocumento">Status do Documento</Label>
-                <Select 
-                  value={ddrData.statusDocumento} 
-                  onValueChange={(value) => handleDdrInputChange('statusDocumento', value)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {statusDocumento.map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {status}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            {/* Seção: Assinatura e Informações do Responsável */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-base">ASSINATURA E INFORMAÇÕES DO RESPONSÁVEL</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="responsavelNome">Nome do Responsável</Label>
+                  <Input
+                    id="responsavelNome"
+                    value={ddrData.responsavelNome}
+                    onChange={(e) => handleDdrInputChange('responsavelNome', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="responsavelFuncao">Função</Label>
+                  <Input
+                    id="responsavelFuncao"
+                    value={ddrData.responsavelFuncao}
+                    onChange={(e) => handleDdrInputChange('responsavelFuncao', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="responsavelCrq">CRQ</Label>
+                  <Input
+                    id="responsavelCrq"
+                    value={ddrData.responsavelCrq}
+                    onChange={(e) => handleDdrInputChange('responsavelCrq', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dataDeclaracao">Data da Declaração</Label>
+                  <Input
+                    id="dataDeclaracao"
+                    value={ddrData.dataDeclaracao}
+                    onChange={(e) => handleDdrInputChange('dataDeclaracao', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cidadeEstado">Cidade - Estado</Label>
+                  <Input
+                    id="cidadeEstado"
+                    value={ddrData.cidadeEstado}
+                    onChange={(e) => handleDdrInputChange('cidadeEstado', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="statusDocumento">Status do Documento</Label>
+                  <Select 
+                    value={ddrData.statusDocumento} 
+                    onValueChange={(value) => handleDdrInputChange('statusDocumento', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {statusDocumento.map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           </div>
