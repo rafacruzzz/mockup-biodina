@@ -530,10 +530,11 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
             {/* Abas Masters */}
             <div className="mb-6 flex-shrink-0">
               <div 
-                className="flex space-x-4 bg-gray-50 p-2 rounded-lg overflow-x-auto"
+                className="flex space-x-4 bg-gray-50 p-2 rounded-lg overflow-x-auto overflow-y-visible pb-2"
                 style={{
                   scrollbarWidth: 'thin',
-                  scrollbarColor: '#9CA3AF #F3F4F6'
+                  scrollbarColor: '#9333EA #F3F4F6',
+                  scrollbarGutter: 'stable'
                 }}
               >
                 {masterTabs.map((tab) => (
