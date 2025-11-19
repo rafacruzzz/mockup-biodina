@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 import SPIForm from './components/SPIForm';
 import NOMainForm from './components/NOMainForm';
 import InstrucaoEmbarqueForm from './components/InstrucaoEmbarqueForm';
@@ -529,28 +531,32 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
           <div className="flex flex-col h-full min-h-0">
             {/* Abas Masters */}
             <div className="mb-6 flex-shrink-0">
-              <div 
-                className="flex gap-4 bg-gray-50 p-2 rounded-lg overflow-x-auto pb-3"
+              <PerfectScrollbar
+                options={{
+                  suppressScrollY: true,
+                  wheelPropagation: false
+                }}
+                className="bg-gray-50 p-2 rounded-lg"
                 style={{
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: '#9333EA #F3F4F6',
-                  scrollbarGutter: 'stable'
+                  maxWidth: '100%'
                 }}
               >
-                {masterTabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => handleMasterTabChange(tab.id)}
-                    className={`px-6 py-3 rounded-md font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
-                      activeMasterTab === tab.id
-                        ? 'bg-purple-600 text-white'
-                        : 'bg-white text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
+                <div className="flex gap-4 pb-3">
+                  {masterTabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => handleMasterTabChange(tab.id)}
+                      className={`px-6 py-3 rounded-md font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
+                        activeMasterTab === tab.id
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-white text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+              </PerfectScrollbar>
             </div>
 
             {/* Conteúdo da aba master ativa com scroll */}
