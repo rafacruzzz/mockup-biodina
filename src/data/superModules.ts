@@ -135,6 +135,7 @@ export const empresasMock: Empresa[] = [
     tipo: 'filial',
     status: 'ativa',
     dataCriacao: '2020-06-15',
+    planoId: 'plano-1',
     origem: {
       tipo: 'manual',
       dataRegistro: '2020-06-15'
