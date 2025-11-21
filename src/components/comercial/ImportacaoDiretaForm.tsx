@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FileText } from 'lucide-react';
@@ -33,6 +33,7 @@ const ImportacaoDiretaForm = ({ isOpen, onClose, onSave, oportunidade }: Importa
   const [showSPIEnvioModal, setShowSPIEnvioModal] = useState(false);
   const [piHistory, setPiHistory] = useState<PIHistoryItem[]>([]);
   const [piStatus, setPiStatus] = useState<PIStatus>('draft');
+  const scrollbarRef = useRef<any>(null);
 
   const [formData, setFormData] = useState({
     // Informações Básicas do Cliente
@@ -532,20 +533,23 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
             {/* Abas Masters */}
             <div className="mb-6 flex-shrink-0">
               <PerfectScrollbar
+                ref={scrollbarRef}
                 options={{
                   suppressScrollY: true,
                   wheelPropagation: false,
                   useBothWheelAxes: false,
                   handlers: ['click-rail', 'drag-thumb', 'keyboard', 'wheel', 'touch'],
-                  wheelSpeed: 0.5
+                  wheelSpeed: 0.5,
+                  swipeEasing: true,
+                  minScrollbarLength: 50
                 }}
                 className="bg-gray-50 p-2 rounded-lg"
                 style={{
-                  maxWidth: '100%',
+                  maxWidth: 'calc(95vw - 100px)',
                   width: '100%'
                 }}
               >
-                <div className="inline-flex gap-4 pb-3" style={{ minWidth: 'max-content' }}>
+                <div className="inline-flex gap-4 pb-3 pr-5" style={{ minWidth: 'max-content' }}>
                   {masterTabs.map((tab) => (
                     <button
                       key={tab.id}
