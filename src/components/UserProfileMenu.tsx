@@ -18,6 +18,8 @@ const UserProfileMenu = () => {
   const { isMaster } = useIsMasterUser();
   const navigate = useNavigate();
 
+  console.log('🔍 DEBUG UserProfileMenu:', { user, isMaster });
+
   if (!user) return null;
 
   const handleEditProfile = () => {
