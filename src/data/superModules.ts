@@ -1,4 +1,4 @@
-import { Empresa, ModuloConfig, ModuloSistema } from "@/types/super";
+import { Empresa, ModuloConfig, ModuloSistema, PerfilAcesso } from "@/types/super";
 
 export const modulosDisponiveis: ModuloConfig[] = [
   {
@@ -186,6 +186,32 @@ export const empresasMock: Empresa[] = [
       totalVendas: 890,
       espacoUtilizado: '12.8 GB'
     }
+  }
+];
+
+// Perfis de acesso mockados
+export const perfisAcessoMock: PerfilAcesso[] = [
+  {
+    id: 'perfil-master',
+    nome: 'Perfil Master',
+    modulosHabilitados: [
+      'cadastro', 'comercial', 'compras', 'estoque',
+      'financeiro', 'contabilidade', 'faturamento', 'rh',
+      'ti', 'administrativo', 'solicitacoes', 'bi'
+    ],
+    dataCriacao: '2024-01-01'
+  },
+  {
+    id: 'perfil-vendedor',
+    nome: 'Perfil Vendedor',
+    modulosHabilitados: ['cadastro', 'comercial', 'estoque'],
+    dataCriacao: '2024-02-15'
+  },
+  {
+    id: 'perfil-financeiro',
+    nome: 'Perfil Financeiro',
+    modulosHabilitados: ['financeiro', 'contabilidade', 'faturamento'],
+    dataCriacao: '2024-03-10'
   }
 ];
 

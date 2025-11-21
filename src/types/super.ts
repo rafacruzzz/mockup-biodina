@@ -59,3 +59,11 @@ export interface ModuloConfig {
   icon: string;
   cor: string;
 }
+
+export interface PerfilAcesso {
+  id: string;
+  nome: string;
+  modulosHabilitados: ModuloSistema[];
+  dataCriacao: string;
+  dataAtualizacao?: string;
+}

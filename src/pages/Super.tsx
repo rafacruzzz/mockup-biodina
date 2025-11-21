@@ -7,10 +7,13 @@ import { Crown, Plus } from "lucide-react";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { SuperStats } from "@/components/super/SuperStats";
 import { GestaoEmpresas } from "@/components/super/GestaoEmpresas";
+import { GestaoPerfis } from "@/components/super/GestaoPerfis";
 import { NovaEmpresaModal } from "@/components/super/NovaEmpresaModal";
+import { PerfilModal } from "@/components/super/PerfilModal";
 import { SuperSidebar } from "@/components/super/SuperSidebar";
 import { EmptyStateSuper } from "@/components/super/EmptyStateSuper";
-import { Empresa } from "@/types/super";
+import { Empresa, PerfilAcesso } from "@/types/super";
+import { perfisAcessoMock } from "@/data/superModules";
 import { useToast } from "@/hooks/use-toast";
 
 const Super = () => {
@@ -27,6 +30,9 @@ const Super = () => {
   } = useEmpresa();
   
   const [novaEmpresaOpen, setNovaEmpresaOpen] = useState(false);
+  const [perfilModalOpen, setPerfilModalOpen] = useState(false);
+  const [perfilParaEditar, setPerfilParaEditar] = useState<PerfilAcesso | undefined>();
+  const [perfis, setPerfis] = useState<PerfilAcesso[]>(perfisAcessoMock);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeModule, setActiveModule] = useState("empresas");
   const [activeSubModule, setActiveSubModule] = useState("gestao");
@@ -69,6 +75,46 @@ const Super = () => {
     adicionarEmpresa(empresa);
   };
 
+  // Handlers para Perfis
+  const handleNovoPerfil = () => {
+    setPerfilParaEditar(undefined);
+    setPerfilModalOpen(true);
+  };
+
+  const handleEditarPerfil = (perfil: PerfilAcesso) => {
+    setPerfilParaEditar(perfil);
+    setPerfilModalOpen(true);
+  };
+
+  const handleSalvarPerfil = (perfilData: Omit<PerfilAcesso, "id" | "dataCriacao">) => {
+    if (perfilParaEditar) {
+      // Editar perfil existente
+      setPerfis((prev) =>
+        prev.map((p) =>
+          p.id === perfilParaEditar.id
+            ? { ...p, ...perfilData, dataAtualizacao: new Date().toISOString() }
+            : p
+        )
+      );
+    } else {
+      // Criar novo perfil
+      const novoPerfil: PerfilAcesso = {
+        id: `perfil-${Date.now()}`,
+        ...perfilData,
+        dataCriacao: new Date().toISOString(),
+      };
+      setPerfis((prev) => [...prev, novoPerfil]);
+    }
+  };
+
+  const handleExcluirPerfil = (perfilId: string) => {
+    setPerfis((prev) => prev.filter((p) => p.id !== perfilId));
+    toast({
+      title: "Perfil Excluído",
+      description: "O perfil foi removido com sucesso",
+    });
+  };
+
   const handleModuleToggle = (moduleId: string) => {
     setExpandedModules((prev) =>
       prev.includes(moduleId)
@@ -87,7 +133,7 @@ const Super = () => {
   };
 
   const renderContent = () => {
-    // Conteúdo baseado no módulo/submódulo ativo
+    // Gestão de Empresas
     if (activeModule === "empresas" && activeSubModule === "gestao") {
       return (
         <>
@@ -113,6 +159,18 @@ const Super = () => {
             </CardContent>
           </Card>
         </>
+      );
+    }
+
+    // Gestão de Perfis
+    if (activeModule === "empresas" && activeSubModule === "perfis") {
+      return (
+        <GestaoPerfis
+          perfis={perfis}
+          onNovoPerfil={handleNovoPerfil}
+          onEditarPerfil={handleEditarPerfil}
+          onExcluirPerfil={handleExcluirPerfil}
+        />
       );
     }
 
@@ -164,6 +222,12 @@ const Super = () => {
                   Criar Nova Empresa
                 </Button>
               )}
+              {activeModule === "empresas" && activeSubModule === "perfis" && (
+                <Button onClick={handleNovoPerfil}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Perfil
+                </Button>
+              )}
             </div>
 
             {/* Dynamic Content */}
@@ -175,6 +239,14 @@ const Super = () => {
               onOpenChange={setNovaEmpresaOpen}
               onSave={handleNovaEmpresa}
               empresas={empresas}
+            />
+
+            {/* Modal Perfil */}
+            <PerfilModal
+              open={perfilModalOpen}
+              onOpenChange={setPerfilModalOpen}
+              onSave={handleSalvarPerfil}
+              perfilParaEditar={perfilParaEditar}
             />
           </div>
         </div>
