@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useEmpresa } from "@/contexts/EmpresaContext";
 import DashboardAssessoria from "@/components/comercial/assessoria/DashboardAssessoria";
 import { OrdensServicoTab } from "@/components/comercial/assessoria/OrdensServicoTab";
 import { ChamadosAssessoriaTab } from "@/components/comercial/assessoria/ChamadosAssessoriaTab";
@@ -29,7 +27,7 @@ import {
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
   ShoppingCart, Headphones, ArrowLeft, Package, Truck, ClipboardList,
   AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal,
-  Gavel, Building2, Globe, HandCoins, FileSpreadsheet, Crown // FileSignature COMENTADO - NÃO USAR NO MOMENTO
+  Gavel, Building2, Globe, HandCoins, FileSpreadsheet // FileSignature COMENTADO - NÃO USAR NO MOMENTO
 } from "lucide-react";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -37,9 +35,6 @@ import {
 } from 'recharts';
 
 const Comercial = () => {
-  const navigate = useNavigate();
-  const { isMasterUser } = useEmpresa();
-  
   const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'emprestimos' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeTab, setActiveTab] = useState('indicadores');
   const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade" | "analise-editais" | "repositorio">("agenda");
@@ -1137,18 +1132,6 @@ const Comercial = () => {
 
   return (
     <SidebarLayout>
-      {/* Botão Discreto para Módulo SUPER - Apenas para Master */}
-      {isMasterUser && (
-        <Button
-          onClick={() => navigate('/super')}
-          variant="ghost"
-          size="icon"
-          className="fixed top-4 right-20 z-50 opacity-30 hover:opacity-100 transition-opacity"
-          title="Acessar Módulo SUPER"
-        >
-          <Crown className="h-5 w-5 text-primary" />
-        </Button>
-      )}
       
       <div className="p-4 space-y-4 bg-gray-50 min-h-screen">
         {activeModule === 'main' && (

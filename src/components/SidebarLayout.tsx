@@ -28,7 +28,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
 
   const defaultMenuItems = [
     // { name: "Aplicativos", path: "/home", icon: <Home size={20} />, id: "aplicativos" }, // Escondido temporariamente
-    // { name: "SUPER", path: "/super", icon: <Crown size={20} />, id: "super" }, // Temporariamente escondido
+    { name: "SUPER", path: "/super", icon: <Crown size={20} />, id: "super" }, // Temporariamente escondido
     { name: "Pessoal", path: "/pessoal", icon: <Users size={20} />, id: "pessoal" },
     { name: "BI", path: "/bi-geral", icon: <BarChart2 size={20} />, id: "bi" },
     { name: "Cadastro", path: "/cadastro", icon: <FileText size={20} />, id: "cadastro" },
