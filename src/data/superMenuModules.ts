@@ -20,6 +20,9 @@ export const superModules: SuperModulesConfig = {
       gestao: {
         name: "Gestão de Empresas",
       },
+      perfis: {
+        name: "Perfis",
+      },
     },
   },
 };
