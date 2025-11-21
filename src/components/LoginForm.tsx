@@ -62,8 +62,27 @@ const LoginForm = () => {
           description: `Bem-vinda, ${demoUser.profile.nome}!`,
         });
         navigate("/comercial");
+      } else if (email === "super@super.com.br" && password === "super") {
+        // Login do usuário SUPER (acesso ao módulo SUPER)
+        updateUser({
+          id: 'user-master',
+          name: 'Admin Master',
+          email: 'super@super.com.br',
+          username: 'admin.master',
+          empresaId: 'master-001',
+          role: 'Super Admin',
+        });
+        
+        // Definir empresa master para acesso ao SUPER
+        localStorage.setItem('empresaAtualId', 'master-001');
+        
+        toast({
+          title: "Login SUPER bem-sucedido",
+          description: "Bem-vindo, Admin Master!",
+        });
+        navigate("/super");
       } else if (email === "danilo@tecnologiadc.com.br" && password === "123") {
-        // Login do usuário master Danilo Silva
+        // Login do usuário master Danilo Silva (empresa iMuv)
         updateUser({
           id: 'user-biodina',
           name: 'Danilo Silva',
@@ -81,13 +100,30 @@ const LoginForm = () => {
           description: "Bem-vindo de volta, Danilo!",
         });
         navigate("/home");
-      } else {
-        // Login genérico para qualquer outro email/senha
-        toast({
-          title: "Login bem-sucedido",
-          description: "Você foi conectado com sucesso.",
+      } else if (email === "admin@biodina.com.br" && password === "admin123") {
+        // Login alternativo para o usuário master
+        updateUser({
+          id: 'user-master',
+          name: 'Admin Master',
+          email: 'admin@biodina.com.br',
+          username: 'admin.master',
+          empresaId: 'master-001',
+          role: 'Super Admin',
         });
-        navigate("/bi-geral");
+        
+        localStorage.setItem('empresaAtualId', 'master-001');
+        
+        toast({
+          title: "Login SUPER bem-sucedido",
+          description: "Bem-vindo, Admin Master!",
+        });
+        navigate("/super");
+      } else {
+        toast({
+          title: "Erro ao fazer login",
+          description: "Email ou senha incorretos.",
+          variant: "destructive",
+        });
       }
     }, 800);
   };
@@ -104,6 +140,10 @@ const LoginForm = () => {
         <p className="text-sm font-semibold text-blue-900 mb-2">🎯 Credenciais de Teste:</p>
         <div className="space-y-2 text-xs text-blue-800">
           <div className="flex items-center justify-between">
+            <span>👑 <strong>SUPER Admin:</strong> super@super.com.br</span>
+            <Badge variant="outline" className="text-[10px] bg-purple-100">SUPER</Badge>
+          </div>
+          <div className="flex items-center justify-between">
             <span>👤 <strong>Danilo Silva (Master):</strong> danilo@tecnologiadc.com.br</span>
             <Badge variant="outline" className="text-[10px]">master</Badge>
           </div>
@@ -116,7 +156,7 @@ const LoginForm = () => {
             <Badge variant="outline" className="text-[10px]">gestor</Badge>
           </div>
           <div className="mt-2 pt-2 border-t border-blue-300">
-            <span>🔑 Danilo: <strong>123</strong> | Outras: <strong>demo123</strong></span>
+            <span>🔑 SUPER: <strong>super</strong> | Danilo: <strong>123</strong> | Outras: <strong>demo123</strong></span>
           </div>
         </div>
       </div>
