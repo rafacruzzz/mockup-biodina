@@ -170,10 +170,12 @@ export const GestaoEmpresas = ({
                     <TableCell>
                       {empresa.origem ? (
                         <Badge variant={empresa.origem.tipo === 'manual' ? 'secondary' : 'default'}>
-                          {empresa.origem.tipo === 'manual' ? '📝 Manual' : `🌐 ${empresa.origem.webformNome}`}
+                          {empresa.origem.tipo === 'manual' && '🔧 Manual'}
+                          {empresa.origem.tipo === 'webform' && `📝 ${empresa.origem.webformNome}`}
+                          {empresa.origem.tipo === 'landpage' && `🌐 ${empresa.origem.webformNome}`}
                         </Badge>
                       ) : (
-                        <Badge variant="secondary">📝 Manual</Badge>
+                        <Badge variant="secondary">🔧 Manual</Badge>
                       )}
                     </TableCell>
                     <TableCell>
