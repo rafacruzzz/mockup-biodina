@@ -9,6 +9,14 @@ export interface Empresa {
   logoUrl?: string;
   planoId?: string;
   
+  // Rastreamento de origem
+  origem?: {
+    tipo: 'manual' | 'webform';
+    webformId?: string;
+    webformNome?: string;
+    dataRegistro: string;
+  };
+  
   // Módulos habilitados
   modulosHabilitados: ModuloSistema[];
   
@@ -100,4 +108,20 @@ export interface Plano {
   beneficios: string[];
   dataCriacao: string;
   dataAtualizacao?: string;
+}
+
+export interface Webform {
+  id: string;
+  titulo: string;
+  status: 'ativo' | 'inativo';
+  tipo: 'criar_base';
+  trial: boolean;
+  diasTrial: number;
+  descricao: string;
+  linkUnico: string;
+  dataCriacao: string;
+  dataAtualizacao?: string;
+  totalAcessos: number;
+  totalCadastros: number;
+  ultimoAcesso?: string;
 }

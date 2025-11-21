@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Empresa, ModuloSistema, Filial } from '@/types/super';
-import { empresasMock, filiaisMock } from '@/data/superModules';
+import { Empresa, ModuloSistema, Filial, Webform } from '@/types/super';
+import { empresasMock, filiaisMock, webformsMock } from '@/data/superModules';
 
 interface EmpresaContextType {
   empresaAtual: Empresa | null;
@@ -23,6 +23,14 @@ interface EmpresaContextType {
   trocarFilial: (filialId: string | null) => void;
   isPrincipal: boolean;
   modulosDisponiveisFilial: ModuloSistema[];
+  
+  // Gestão de webforms
+  webforms: Webform[];
+  adicionarWebform: (webform: Webform) => void;
+  atualizarWebform: (webformId: string, dados: Partial<Webform>) => void;
+  excluirWebform: (webformId: string) => void;
+  ativarWebform: (webformId: string) => void;
+  desativarWebform: (webformId: string) => void;
 }
 
 const EmpresaContext = createContext<EmpresaContextType | undefined>(undefined);
@@ -32,6 +40,7 @@ export const EmpresaProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [empresaAtual, setEmpresaAtual] = useState<Empresa | null>(null);
   const [filiais, setFiliais] = useState<Filial[]>(filiaisMock);
   const [filialAtual, setFilialAtual] = useState<Filial | null>(null);
+  const [webforms, setWebforms] = useState<Webform[]>(webformsMock);
 
   useEffect(() => {
     // Por padrão, carregar a empresa Master ao iniciar
@@ -132,6 +141,29 @@ export const EmpresaProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [filiais]);
 
+  // Gestão de webforms
+  const adicionarWebform = (webform: Webform) => {
+    setWebforms(prev => [...prev, webform]);
+  };
+
+  const atualizarWebform = (webformId: string, dados: Partial<Webform>) => {
+    setWebforms(prev =>
+      prev.map((w) => (w.id === webformId ? { ...w, ...dados, dataAtualizacao: new Date().toISOString() } : w))
+    );
+  };
+
+  const excluirWebform = (webformId: string) => {
+    setWebforms(prev => prev.filter((w) => w.id !== webformId));
+  };
+
+  const ativarWebform = (webformId: string) => {
+    atualizarWebform(webformId, { status: 'ativo' });
+  };
+
+  const desativarWebform = (webformId: string) => {
+    atualizarWebform(webformId, { status: 'inativo' });
+  };
+
   // Filtrar filiais da empresa atual
   const filiaisEmpresaAtual = filiais.filter(f => f.empresaPrincipalId === empresaAtual?.id);
 
@@ -160,7 +192,13 @@ export const EmpresaProvider: React.FC<{ children: React.ReactNode }> = ({ child
         ativarFilial,
         trocarFilial,
         isPrincipal,
-        modulosDisponiveisFilial
+        modulosDisponiveisFilial,
+        webforms,
+        adicionarWebform,
+        atualizarWebform,
+        excluirWebform,
+        ativarWebform,
+        desativarWebform,
       }}
     >
       {children}

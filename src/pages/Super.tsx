@@ -9,12 +9,15 @@ import { SuperStats } from "@/components/super/SuperStats";
 import { GestaoEmpresas } from "@/components/super/GestaoEmpresas";
 import { GestaoPerfis } from "@/components/super/GestaoPerfis";
 import { GestaoPlanos } from "@/components/super/GestaoPlanos";
+import { GestaoWebforms } from "@/components/super/GestaoWebforms";
 import { NovaEmpresaModal } from "@/components/super/NovaEmpresaModal";
 import { PerfilModal } from "@/components/super/PerfilModal";
 import { PlanoModal } from "@/components/super/PlanoModal";
+import { WebformModal } from "@/components/super/WebformModal";
+import { WebformStatsModal } from "@/components/super/WebformStatsModal";
 import { SuperSidebar } from "@/components/super/SuperSidebar";
 import { EmptyStateSuper } from "@/components/super/EmptyStateSuper";
-import { Empresa, PerfilAcesso, Plano } from "@/types/super";
+import { Empresa, PerfilAcesso, Plano, Webform } from "@/types/super";
 import { perfisAcessoMock, planosMock } from "@/data/superModules";
 import { useToast } from "@/hooks/use-toast";
 
@@ -28,7 +31,13 @@ const Super = () => {
     adicionarEmpresa,
     atualizarEmpresa,
     suspenderEmpresa,
-    ativarEmpresa
+    ativarEmpresa,
+    webforms,
+    adicionarWebform,
+    atualizarWebform,
+    excluirWebform,
+    ativarWebform,
+    desativarWebform,
   } = useEmpresa();
   
   const [novaEmpresaOpen, setNovaEmpresaOpen] = useState(false);
@@ -38,6 +47,10 @@ const Super = () => {
   const [planoModalOpen, setPlanoModalOpen] = useState(false);
   const [planoParaEditar, setPlanoParaEditar] = useState<Plano | undefined>();
   const [planos, setPlanos] = useState<Plano[]>(planosMock);
+  const [webformModalOpen, setWebformModalOpen] = useState(false);
+  const [webformParaEditar, setWebformParaEditar] = useState<Webform | undefined>();
+  const [webformStatsOpen, setWebformStatsOpen] = useState(false);
+  const [webformParaStats, setWebformParaStats] = useState<Webform | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeModule, setActiveModule] = useState("empresas");
   const [activeSubModule, setActiveSubModule] = useState("gestao");
@@ -156,6 +169,39 @@ const Super = () => {
     setPlanos((prev) => prev.filter((p) => p.id !== planoId));
   };
 
+  // Handlers para Webforms
+  const handleNovoWebform = () => {
+    setWebformParaEditar(undefined);
+    setWebformModalOpen(true);
+  };
+
+  const handleEditarWebform = (webform: Webform) => {
+    setWebformParaEditar(webform);
+    setWebformModalOpen(true);
+  };
+
+  const handleSalvarWebform = (webformData: Omit<Webform, "id" | "dataCriacao" | "totalAcessos" | "totalCadastros">) => {
+    if (webformParaEditar) {
+      // Editar webform existente
+      atualizarWebform(webformParaEditar.id, webformData);
+    } else {
+      // Criar novo webform
+      const novoWebform: Webform = {
+        id: `wf-${Date.now()}`,
+        ...webformData,
+        dataCriacao: new Date().toISOString(),
+        totalAcessos: 0,
+        totalCadastros: 0,
+      };
+      adicionarWebform(novoWebform);
+    }
+  };
+
+  const handleVerStatsWebform = (webform: Webform) => {
+    setWebformParaStats(webform);
+    setWebformStatsOpen(true);
+  };
+
   const handleModuleToggle = (moduleId: string) => {
     setExpandedModules((prev) =>
       prev.includes(moduleId)
@@ -229,6 +275,21 @@ const Super = () => {
       );
     }
 
+    // Gestão de Webforms
+    if (activeModule === "empresas" && activeSubModule === "webforms") {
+      return (
+        <GestaoWebforms
+          webforms={webforms}
+          onNovo={handleNovoWebform}
+          onEditar={handleEditarWebform}
+          onExcluir={excluirWebform}
+          onAtivar={ativarWebform}
+          onDesativar={desativarWebform}
+          onVerStats={handleVerStatsWebform}
+        />
+      );
+    }
+
     // Estado vazio para outros módulos (preparado para futuro)
     return <EmptyStateSuper />;
   };
@@ -289,6 +350,12 @@ const Super = () => {
                   Novo Plano
                 </Button>
               )}
+              {activeModule === "empresas" && activeSubModule === "webforms" && (
+                <Button onClick={handleNovoWebform}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Webform
+                </Button>
+              )}
             </div>
 
             {/* Dynamic Content */}
@@ -319,6 +386,21 @@ const Super = () => {
               onSave={handleSalvarPlano}
               perfis={perfis}
               planoParaEditar={planoParaEditar}
+            />
+
+            {/* Modal Webform */}
+            <WebformModal
+              open={webformModalOpen}
+              onOpenChange={setWebformModalOpen}
+              onSave={handleSalvarWebform}
+              webformParaEditar={webformParaEditar}
+            />
+
+            {/* Modal Estatísticas Webform */}
+            <WebformStatsModal
+              open={webformStatsOpen}
+              onOpenChange={setWebformStatsOpen}
+              webform={webformParaStats}
             />
           </div>
         </div>

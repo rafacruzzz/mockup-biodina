@@ -26,6 +26,9 @@ export const superModules: SuperModulesConfig = {
       planos: {
         name: "Planos",
       },
+      webforms: {
+        name: "Webforms",
+      },
     },
   },
 };

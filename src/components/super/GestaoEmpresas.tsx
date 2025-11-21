@@ -121,6 +121,7 @@ export const GestaoEmpresas = ({
                 <TableHead>CNPJ</TableHead>
                 <TableHead>Plano</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Origem</TableHead>
                 <TableHead>Módulos</TableHead>
                 <TableHead>Usuários</TableHead>
                 <TableHead>Storage</TableHead>
@@ -166,6 +167,15 @@ export const GestaoEmpresas = ({
                       )}
                     </TableCell>
                     <TableCell>{getStatusBadge(empresa.status)}</TableCell>
+                    <TableCell>
+                      {empresa.origem ? (
+                        <Badge variant={empresa.origem.tipo === 'manual' ? 'secondary' : 'default'}>
+                          {empresa.origem.tipo === 'manual' ? '📝 Manual' : `🌐 ${empresa.origem.webformNome}`}
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary">📝 Manual</Badge>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <Badge variant="outline">{empresa.modulosHabilitados.length}</Badge>
                     </TableCell>

@@ -28,6 +28,14 @@ const Login = () => {
       {/* Login form container */}
       <div className="w-full max-w-md bg-white/95 backdrop-blur-md p-8 md:p-10 rounded-2xl border border-white/20 shadow-2xl z-10 animate-fade-in">
         <LoginForm />
+        
+        {/* Link para Cadastro */}
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          Ainda não tem conta?{" "}
+          <a href="/register/wf-1" className="text-primary hover:underline font-medium">
+            Cadastre-se
+          </a>
+        </p>
       </div>
       
       {/* Footer */}
