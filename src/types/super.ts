@@ -7,6 +7,7 @@ export interface Empresa {
   status: 'ativa' | 'inativa' | 'suspensa';
   dataCriacao: string;
   logoUrl?: string;
+  planoId?: string;
   
   // Módulos habilitados
   modulosHabilitados: ModuloSistema[];
@@ -64,6 +65,17 @@ export interface PerfilAcesso {
   id: string;
   nome: string;
   modulosHabilitados: ModuloSistema[];
+  dataCriacao: string;
+  dataAtualizacao?: string;
+}
+
+export interface Plano {
+  id: string;
+  nome: string;
+  valor: number;
+  perfilId: string;
+  descricao?: string;
+  beneficios: string[];
   dataCriacao: string;
   dataAtualizacao?: string;
 }

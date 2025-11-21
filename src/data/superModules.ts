@@ -1,4 +1,4 @@
-import { Empresa, ModuloConfig, ModuloSistema, PerfilAcesso } from "@/types/super";
+import { Empresa, ModuloConfig, ModuloSistema, PerfilAcesso, Plano } from "@/types/super";
 
 export const modulosDisponiveis: ModuloConfig[] = [
   {
@@ -212,6 +212,54 @@ export const perfisAcessoMock: PerfilAcesso[] = [
     nome: 'Perfil Financeiro',
     modulosHabilitados: ['financeiro', 'contabilidade', 'faturamento'],
     dataCriacao: '2024-03-10'
+  }
+];
+
+// Planos mockados
+export const planosMock: Plano[] = [
+  {
+    id: 'plano-basico',
+    nome: 'Plano Básico',
+    valor: 99.90,
+    perfilId: 'perfil-vendedor',
+    descricao: 'Plano ideal para pequenas empresas',
+    beneficios: [
+      'Banco de questões',
+      'Estatísticas básicas',
+      'Criação de listas'
+    ],
+    dataCriacao: '2024-01-01'
+  },
+  {
+    id: 'plano-premium',
+    nome: 'Plano Premium',
+    valor: 199.90,
+    perfilId: 'perfil-financeiro',
+    descricao: 'Plano completo para empresas em crescimento',
+    beneficios: [
+      'Banco de questões',
+      'Estatísticas avançadas',
+      'Performance de acertos',
+      'Criação de provas',
+      'Relatórios customizados'
+    ],
+    dataCriacao: '2024-01-15'
+  },
+  {
+    id: 'plano-enterprise',
+    nome: 'Plano Enterprise',
+    valor: 499.90,
+    perfilId: 'perfil-master',
+    descricao: 'Plano corporativo com todos os recursos',
+    beneficios: [
+      'Todos os módulos',
+      'Suporte prioritário',
+      'Backup automático',
+      'Armazenamento ilimitado',
+      'Usuários ilimitados',
+      'API completa'
+    ],
+    dataCriacao: '2024-02-01'
   }
 ];
 
