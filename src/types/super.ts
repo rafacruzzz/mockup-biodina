@@ -127,3 +127,24 @@ export interface Webform {
   totalCadastros: number;
   ultimoAcesso?: string;
 }
+
+export interface HistoricoPagamento {
+  id: string;
+  data: string;
+  valor: number;
+  planoNome: string;
+  status: 'pago' | 'pendente' | 'cancelado';
+  metodoPagamento: 'cartao' | 'boleto' | 'pix';
+  numeroFatura: string;
+}
+
+export interface InformacaoPagamento {
+  metodoPagamento: 'cartao' | 'boleto' | 'pix';
+  cartao?: {
+    numero: string; // Últimos 4 dígitos
+    bandeira: string;
+    validade: string;
+  };
+  proximaCobranca: string;
+  diaVencimento: number;
+}

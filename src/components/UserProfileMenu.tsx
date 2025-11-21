@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Settings, LogOut, User } from 'lucide-react';
+import { Settings, LogOut, User, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { 
@@ -11,15 +11,21 @@ import {
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useUser } from '@/contexts/UserContext';
+import { useIsMasterUser } from '@/hooks/useIsMasterUser';
 
 const UserProfileMenu = () => {
   const { user, logout } = useUser();
+  const { isMaster } = useIsMasterUser();
   const navigate = useNavigate();
 
   if (!user) return null;
 
   const handleEditProfile = () => {
     navigate('/editar-perfil');
+  };
+
+  const handleMyPlan = () => {
+    navigate('/meu-plano');
   };
 
   const handleLogout = () => {
@@ -75,9 +81,20 @@ const UserProfileMenu = () => {
               Alterar meus Dados
             </Button>
             
+            {isMaster && (
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start h-10 px-3"
+                onClick={handleMyPlan}
+              >
+                <CreditCard className="mr-3 h-4 w-4" />
+                Meu Plano
+              </Button>
+            )}
+            
             <Button 
               variant="ghost" 
-              className="w-full justify-start h-10 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="w-full justify-start h-10 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950/20"
               onClick={handleLogout}
             >
               <LogOut className="mr-3 h-4 w-4" />
