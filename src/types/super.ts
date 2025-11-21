@@ -11,7 +11,7 @@ export interface Empresa {
   
   // Rastreamento de origem
   origem?: {
-    tipo: 'manual' | 'webform';
+    tipo: 'manual' | 'webform' | 'landpage';
     webformId?: string;
     webformNome?: string;
     dataRegistro: string;

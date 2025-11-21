@@ -131,6 +131,10 @@ export const empresasMock: Empresa[] = [
     tipo: 'filial',
     status: 'ativa',
     dataCriacao: '2020-06-15',
+    origem: {
+      tipo: 'manual',
+      dataRegistro: '2020-06-15'
+    },
     modulosHabilitados: [
       'cadastro', 'comercial', 'estoque',
       'financeiro', 'contabilidade', 'solicitacoes', 'bi'
@@ -165,6 +169,13 @@ export const empresasMock: Empresa[] = [
     tipo: 'filial',
     status: 'ativa',
     dataCriacao: '2023-01-10',
+    planoId: 'plano-2',
+    origem: {
+      tipo: 'webform',
+      webformId: 'wf-evento-2025',
+      webformNome: 'Evento 2025',
+      dataRegistro: '2023-01-10'
+    },
     modulosHabilitados: [
       'cadastro', 'comercial', 'compras', 'estoque', 'solicitacoes'
     ],
@@ -188,6 +199,45 @@ export const empresasMock: Empresa[] = [
       totalClientes: 120,
       totalVendas: 890,
       espacoUtilizado: '12.8 GB'
+    }
+  },
+  {
+    id: 'empresa-xyz-003',
+    nome: 'TechSolutions',
+    razaoSocial: 'TechSolutions Tecnologia Ltda',
+    cnpj: '22.333.444/0001-55',
+    tipo: 'filial',
+    status: 'ativa',
+    dataCriacao: '2024-03-15',
+    planoId: 'plano-1',
+    origem: {
+      tipo: 'landpage',
+      webformNome: 'Land Page',
+      dataRegistro: '2024-03-15'
+    },
+    modulosHabilitados: [
+      'cadastro', 'comercial', 'estoque', 'financeiro'
+    ],
+    usuarioMaster: {
+      id: 'user-tech',
+      nome: 'Ana Paula Santos',
+      email: 'ana@techsolutions.com.br',
+      username: 'ana.santos',
+      dataCriacao: '2024-03-15'
+    },
+    configuracoes: {
+      limiteUsuarios: 15,
+      espacoArmazenamento: '30GB',
+      backup: true,
+      suporte: 'basico',
+      quantidadeFiliais: 2
+    },
+    estatisticas: {
+      totalUsuarios: 8,
+      totalProdutos: 180,
+      totalClientes: 45,
+      totalVendas: 320,
+      espacoUtilizado: '8.5 GB'
     }
   }
 ];
