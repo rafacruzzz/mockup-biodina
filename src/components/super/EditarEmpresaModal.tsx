@@ -28,6 +28,7 @@ export const EditarEmpresaModal = ({ open, onOpenChange, empresa, planos = [], o
     razaoSocial: '',
     cnpj: '',
     planoId: '',
+    quantidadeFiliais: 1,
     modulosHabilitados: [] as ModuloSistema[],
     configuracoes: {
       limiteUsuarios: 25,
@@ -39,16 +40,18 @@ export const EditarEmpresaModal = ({ open, onOpenChange, empresa, planos = [], o
 
   useEffect(() => {
     if (empresa) {
+      const plano = planos.find(p => p.id === empresa.planoId);
       setFormData({
         nome: empresa.nome,
         razaoSocial: empresa.razaoSocial,
         cnpj: empresa.cnpj,
         planoId: empresa.planoId || '',
+        quantidadeFiliais: plano?.quantidadeFiliais || 1,
         modulosHabilitados: empresa.modulosHabilitados,
         configuracoes: empresa.configuracoes
       });
     }
-  }, [empresa]);
+  }, [empresa, planos]);
 
   const planoSelecionado = planos.find(p => p.id === formData.planoId);
 
@@ -130,7 +133,14 @@ export const EditarEmpresaModal = ({ open, onOpenChange, empresa, planos = [], o
               <Label htmlFor="plano">Plano</Label>
               <Select
                 value={formData.planoId}
-                onValueChange={(value) => setFormData({ ...formData, planoId: value })}
+                onValueChange={(value) => {
+                  const plano = planos.find(p => p.id === value);
+                  setFormData({ 
+                    ...formData, 
+                    planoId: value,
+                    quantidadeFiliais: plano?.quantidadeFiliais || 1
+                  });
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione um plano" />
@@ -189,6 +199,30 @@ export const EditarEmpresaModal = ({ open, onOpenChange, empresa, planos = [], o
           </TabsContent>
 
           <TabsContent value="config" className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="quantidadeFiliais">Quantidade de Filiais</Label>
+              <Select
+                value={formData.quantidadeFiliais.toString()}
+                onValueChange={(value) => setFormData({
+                  ...formData,
+                  quantidadeFiliais: parseInt(value)
+                })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1 filial</SelectItem>
+                  <SelectItem value="3">3 filiais</SelectItem>
+                  <SelectItem value="5">5 filiais</SelectItem>
+                  <SelectItem value="10">10 filiais</SelectItem>
+                  <SelectItem value="25">25 filiais</SelectItem>
+                  <SelectItem value="50">50 filiais</SelectItem>
+                  <SelectItem value="-1">Ilimitadas</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="limiteUsuarios">Limite de Usuários</Label>
               <Select
