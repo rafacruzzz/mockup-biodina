@@ -151,7 +151,7 @@ const SelectPlan = () => {
       </div>
 
       {/* Footer Link */}
-      <p className="text-center text-sm text-gray-400 mt-8">
+      <p className="text-center text-sm text-white mt-8">
         Já tem uma conta?{" "}
         <a href="/login" className="text-biodina-blue hover:underline font-medium">
           Fazer Login
