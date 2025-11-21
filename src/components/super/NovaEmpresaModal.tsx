@@ -126,7 +126,8 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas, planos,
         limiteUsuarios: formData.configuracoes.limiteUsuarios,
         espacoArmazenamento: formData.configuracoes.espacoArmazenamento,
         backup: formData.configuracoes.backup,
-        suporte: formData.configuracoes.suporte
+        suporte: formData.configuracoes.suporte,
+        quantidadeFiliais: planoSelecionado?.quantidadeFiliais || 1
       },
       estatisticas: {
         totalUsuarios: 1,

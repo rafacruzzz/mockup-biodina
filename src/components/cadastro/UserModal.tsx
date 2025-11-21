@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Save, User, Shield } from "lucide-react";
 import { useColaboradores } from "@/hooks/useColaboradores";
 import { ModuleAccess } from "@/types/permissions";
+import { useEmpresa } from "@/contexts/EmpresaContext";
 import ColaboradorSelector from "./ColaboradorSelector";
 import UserColaboradorLink from "./UserColaboradorLink";
 import ColaboradorModal from "../rh/ColaboradorModal";
@@ -32,6 +33,9 @@ interface UserData {
   isActive: boolean;
   userType: string;
   moduleAccess: ModuleAccess[];
+  // Vínculo com empresa/filial
+  empresaId: string;
+  filialId: string | null;
 }
 
 interface UserModalProps {
@@ -43,6 +47,7 @@ interface UserModalProps {
 
 const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalProps) => {
   const { colaboradores } = useColaboradores();
+  const { empresaAtual, filiais, isPrincipal } = useEmpresa();
   const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
   const [formData, setFormData] = useState<UserData>({
     username: userData?.username || '',
@@ -55,7 +60,9 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
     colaboradorId: userData?.colaboradorId || '',
     isActive: userData?.isActive ?? true,
     userType: userData?.userType || '',
-    moduleAccess: userData?.moduleAccess || []
+    moduleAccess: userData?.moduleAccess || [],
+    empresaId: userData?.empresaId || empresaAtual?.id || '',
+    filialId: userData?.filialId || null
   });
 
   const handleColaboradorChange = (colaboradorId: string) => {
@@ -256,6 +263,49 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
                         />
                       </div>
                     </div>
+                  </div>
+
+                  {/* Vínculo Empresa/Filial */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-gray-900 border-b pb-2">
+                      Empresa/Filial
+                    </h3>
+                    
+                    {isPrincipal ? (
+                      <div className="space-y-2">
+                        <Label htmlFor="filialVinculo">Vincular usuário à *</Label>
+                        <Select 
+                          value={formData.filialId || 'principal'} 
+                          onValueChange={(value) => handleInputChange('filialId', value === 'principal' ? null : value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione a empresa ou filial" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="principal">
+                              {empresaAtual?.nome} (Principal)
+                            </SelectItem>
+                            {filiais.map((filial) => (
+                              <SelectItem key={filial.id} value={filial.id}>
+                                {filial.nome} (Filial)
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground">
+                          Este usuário terá acesso apenas aos dados da empresa/filial selecionada
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="p-4 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-600">
+                          <strong>Empresa:</strong> {empresaAtual?.nome}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          Usuários criados nesta filial são automaticamente vinculados a ela
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   {/* Status */}

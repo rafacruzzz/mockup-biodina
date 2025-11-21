@@ -27,6 +27,7 @@ export interface Empresa {
     espacoArmazenamento: string; // "10GB", "50GB", "ilimitado"
     backup: boolean;
     suporte: 'basico' | 'premium' | 'enterprise';
+    quantidadeFiliais: number; // -1 = ilimitado
   };
   
   // Estatísticas mockadas
@@ -36,6 +37,26 @@ export interface Empresa {
     totalClientes: number;
     totalVendas: number;
     espacoUtilizado: string;
+  };
+}
+
+export interface Filial {
+  id: string;
+  nome: string;
+  razaoSocial: string;
+  cnpj: string;
+  empresaPrincipalId: string;
+  modulosHabilitados: ModuloSistema[];
+  status: 'ativa' | 'inativa' | 'suspensa';
+  dataCriacao: string;
+  endereco?: {
+    cep: string;
+    logradouro: string;
+    numero: string;
+    complemento?: string;
+    bairro: string;
+    cidade: string;
+    uf: string;
   };
 }
 

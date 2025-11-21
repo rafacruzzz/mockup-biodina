@@ -7,9 +7,18 @@ import { Badge } from "@/components/ui/badge";
 interface SeletorModulosProps {
   modulosSelecionados: ModuloSistema[];
   onChange: (modulos: ModuloSistema[]) => void;
+  modulosDisponiveis?: ModuloSistema[];
 }
 
-export const SeletorModulos = ({ modulosSelecionados, onChange }: SeletorModulosProps) => {
+export const SeletorModulos = ({ 
+  modulosSelecionados, 
+  onChange, 
+  modulosDisponiveis: modulosDisponiveisProp 
+}: SeletorModulosProps) => {
+  const modulosParaMostrar = modulosDisponiveisProp 
+    ? modulosDisponiveis.filter(m => modulosDisponiveisProp.includes(m.id))
+    : modulosDisponiveis;
+
   const toggleModulo = (moduloId: ModuloSistema) => {
     if (modulosSelecionados.includes(moduloId)) {
       onChange(modulosSelecionados.filter(m => m !== moduloId));
@@ -23,12 +32,12 @@ export const SeletorModulos = ({ modulosSelecionados, onChange }: SeletorModulos
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium">Selecione os módulos habilitados</h3>
         <Badge variant="outline">
-          {modulosSelecionados.length} de {modulosDisponiveis.length} selecionados
+          {modulosSelecionados.length} de {modulosParaMostrar.length} selecionados
         </Badge>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {modulosDisponiveis.map((modulo) => {
+        {modulosParaMostrar.map((modulo) => {
           const isSelected = modulosSelecionados.includes(modulo.id);
           
           return (
