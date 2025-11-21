@@ -6,6 +6,7 @@ import { Eye, EyeOff, Mail, Key, ArrowRight, User } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthDemo } from "@/hooks/useAuthDemo";
+import { useUser } from "@/contexts/UserContext";
 import { Badge } from "@/components/ui/badge";
 
 const LoginForm = () => {
@@ -16,6 +17,7 @@ const LoginForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { setCurrentUser } = useAuthDemo();
+  const { updateUser } = useUser();
 
   // Credenciais de demonstração
   const demoAccounts = [
@@ -60,6 +62,25 @@ const LoginForm = () => {
           description: `Bem-vinda, ${demoUser.profile.nome}!`,
         });
         navigate("/comercial");
+      } else if (email === "danilo@tecnologiadc.com.br" && password === "123") {
+        // Login do usuário master Danilo Silva
+        updateUser({
+          id: 'user-biodina',
+          name: 'Danilo Silva',
+          email: 'danilo@tecnologiadc.com.br',
+          username: 'danilo.silva',
+          empresaId: 'biodina-001',
+          role: 'Gerente de TI',
+        });
+        
+        // Garantir que a empresa correta seja carregada
+        localStorage.setItem('empresaAtualId', 'biodina-001');
+        
+        toast({
+          title: "Login bem-sucedido",
+          description: "Bem-vindo de volta, Danilo!",
+        });
+        navigate("/home");
       } else {
         // Login genérico para qualquer outro email/senha
         toast({
@@ -80,8 +101,12 @@ const LoginForm = () => {
 
       {/* Credenciais de Demonstração */}
       <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <p className="text-sm font-semibold text-blue-900 mb-2">🎯 Credenciais de Demonstração:</p>
+        <p className="text-sm font-semibold text-blue-900 mb-2">🎯 Credenciais de Teste:</p>
         <div className="space-y-2 text-xs text-blue-800">
+          <div className="flex items-center justify-between">
+            <span>👤 <strong>Danilo Silva (Master):</strong> danilo@tecnologiadc.com.br</span>
+            <Badge variant="outline" className="text-[10px]">master</Badge>
+          </div>
           <div className="flex items-center justify-between">
             <span>👤 <strong>Ana Assessora:</strong> ana.assessora@imuv.com.br</span>
             <Badge variant="outline" className="text-[10px]">assessor</Badge>
@@ -91,7 +116,7 @@ const LoginForm = () => {
             <Badge variant="outline" className="text-[10px]">gestor</Badge>
           </div>
           <div className="mt-2 pt-2 border-t border-blue-300">
-            <span>🔑 Senha para ambas: <strong>demo123</strong></span>
+            <span>🔑 Danilo: <strong>123</strong> | Outras: <strong>demo123</strong></span>
           </div>
         </div>
       </div>
