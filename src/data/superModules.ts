@@ -1,4 +1,4 @@
-import { Empresa, ModuloConfig, ModuloSistema, PerfilAcesso, Plano, Filial } from "@/types/super";
+import { Empresa, ModuloConfig, ModuloSistema, PerfilAcesso, Plano, Filial, Webform } from "@/types/super";
 
 export const modulosDisponiveis: ModuloConfig[] = [
   {
@@ -293,6 +293,51 @@ export const dadosEmpresasMock: Record<string, any> = {
 };
 
 // Filiais mockadas
+export const webformsMock: Webform[] = [
+  {
+    id: 'wf-1',
+    titulo: 'Teste evento old',
+    status: 'ativo',
+    tipo: 'criar_base',
+    trial: true,
+    diasTrial: 7,
+    descricao: 'Webform para evento de lançamento',
+    linkUnico: '/register/wf-1',
+    dataCriacao: '2024-01-10',
+    totalAcessos: 247,
+    totalCadastros: 28,
+    ultimoAcesso: '2025-11-20'
+  },
+  {
+    id: 'wf-2',
+    titulo: 'Site Institucional',
+    status: 'inativo',
+    tipo: 'criar_base',
+    trial: false,
+    diasTrial: 0,
+    descricao: 'Cadastros vindos do site',
+    linkUnico: '/register/wf-2',
+    dataCriacao: '2024-02-01',
+    totalAcessos: 89,
+    totalCadastros: 5,
+    ultimoAcesso: '2025-11-15'
+  },
+  {
+    id: 'wf-3',
+    titulo: 'Instagram Promo',
+    status: 'ativo',
+    tipo: 'criar_base',
+    trial: true,
+    diasTrial: 14,
+    descricao: 'Promoção de lançamento no Instagram',
+    linkUnico: '/register/wf-3',
+    dataCriacao: '2024-03-01',
+    totalAcessos: 456,
+    totalCadastros: 67,
+    ultimoAcesso: '2025-11-21'
+  },
+];
+
 export const filiaisMock: Filial[] = [
   {
     id: 'filial-sp-001',
