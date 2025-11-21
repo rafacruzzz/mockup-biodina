@@ -10,6 +10,7 @@ interface User {
   username: string;
   profilePicture?: string;
   role: string;
+  empresaId?: string;
   colaboradorId?: string;
   fotoPerfil?: File;
   colaboradorData?: ColaboradorData;
@@ -38,12 +39,13 @@ interface UserProviderProps {
 export const UserProvider = ({ children }: UserProviderProps) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>({
-    id: '1',
+    id: 'user-biodina',
     name: 'Danilo Silva',
     email: 'danilo@tecnologiadc.com.br',
     username: 'danilo.silva',
     profilePicture: '/placeholder.svg',
     role: 'Gerente de TI',
+    empresaId: 'biodina-001',
     colaboradorId: '1',
     fotoPerfil: undefined,
     colaboradorData: {

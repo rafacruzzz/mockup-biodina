@@ -488,3 +488,53 @@ export const filiaisMock: Filial[] = [
     }
   }
 ];
+
+export const historicoPagamentosMock = [
+  {
+    id: 'pag-001',
+    data: '2025-11-01',
+    valor: 179.00,
+    planoNome: 'Plano Básico',
+    status: 'pago' as const,
+    metodoPagamento: 'cartao' as const,
+    numeroFatura: 'NF-2025-11-001'
+  },
+  {
+    id: 'pag-002',
+    data: '2025-10-01',
+    valor: 179.00,
+    planoNome: 'Plano Básico',
+    status: 'pago' as const,
+    metodoPagamento: 'cartao' as const,
+    numeroFatura: 'NF-2025-10-001'
+  },
+  {
+    id: 'pag-003',
+    data: '2025-09-01',
+    valor: 179.00,
+    planoNome: 'Plano Básico',
+    status: 'pago' as const,
+    metodoPagamento: 'pix' as const,
+    numeroFatura: 'NF-2025-09-001'
+  },
+  {
+    id: 'pag-004',
+    data: '2025-08-01',
+    valor: 0.00,
+    planoNome: 'Plano Básico (Trial)',
+    status: 'pago' as const,
+    metodoPagamento: 'cartao' as const,
+    numeroFatura: 'NF-2025-08-001'
+  }
+];
+
+export const informacaoPagamentoMock = {
+  metodoPagamento: 'cartao' as const,
+  cartao: {
+    numero: '•••• 4532',
+    bandeira: 'Visa',
+    validade: '12/2027'
+  },
+  proximaCobranca: '2025-12-01',
+  diaVencimento: 1
+};
