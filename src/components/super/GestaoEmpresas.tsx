@@ -3,7 +3,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Empresa } from "@/types/super";
+import { Empresa, Plano } from "@/types/super";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Eye, Edit, Ban, CheckCircle, Crown, Building2, Search, LogIn } from "lucide-react";
 import { DetalhesEmpresaModal } from "./DetalhesEmpresaModal";
 import { EditarEmpresaModal } from "./EditarEmpresaModal";
@@ -20,6 +21,7 @@ import {
 
 interface GestaoEmpresasProps {
   empresas: Empresa[];
+  planos?: Plano[];
   onAcessarEmpresa: (empresaId: string) => void;
   onAtualizarEmpresa: (empresaId: string, empresa: Partial<Empresa>) => void;
   onSuspenderEmpresa: (empresaId: string) => void;
@@ -28,6 +30,7 @@ interface GestaoEmpresasProps {
 
 export const GestaoEmpresas = ({
   empresas,
+  planos = [],
   onAcessarEmpresa,
   onAtualizarEmpresa,
   onSuspenderEmpresa,
@@ -89,6 +92,12 @@ export const GestaoEmpresas = ({
     setAtivarOpen(false);
   };
 
+  const getPlanoNome = (planoId?: string) => {
+    if (!planoId) return '-';
+    const plano = planos.find(p => p.id === planoId);
+    return plano?.nome || 'Plano não encontrado';
+  };
+
   return (
     <>
       <div className="space-y-4">
@@ -111,6 +120,7 @@ export const GestaoEmpresas = ({
                 <TableHead>Empresa</TableHead>
                 <TableHead>CNPJ</TableHead>
                 <TableHead>Tipo</TableHead>
+                <TableHead>Plano</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Módulos</TableHead>
                 <TableHead>Usuários</TableHead>
@@ -121,7 +131,7 @@ export const GestaoEmpresas = ({
             <TableBody>
               {empresasFiltradas.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center text-muted-foreground">
+                  <TableCell colSpan={9} className="text-center text-muted-foreground">
                     Nenhuma empresa encontrada
                   </TableCell>
                 </TableRow>
@@ -146,6 +156,24 @@ export const GestaoEmpresas = ({
                         </Badge>
                       ) : (
                         <Badge variant="secondary">Filial</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {empresa.planoId ? (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Badge variant="outline" className="cursor-help">
+                                {getPlanoNome(empresa.planoId)}
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="text-xs">Clique em Detalhes para ver informações do plano</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">-</span>
                       )}
                     </TableCell>
                     <TableCell>{getStatusBadge(empresa.status)}</TableCell>

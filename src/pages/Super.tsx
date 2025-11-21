@@ -8,12 +8,14 @@ import { useEmpresa } from "@/contexts/EmpresaContext";
 import { SuperStats } from "@/components/super/SuperStats";
 import { GestaoEmpresas } from "@/components/super/GestaoEmpresas";
 import { GestaoPerfis } from "@/components/super/GestaoPerfis";
+import { GestaoPlanos } from "@/components/super/GestaoPlanos";
 import { NovaEmpresaModal } from "@/components/super/NovaEmpresaModal";
 import { PerfilModal } from "@/components/super/PerfilModal";
+import { PlanoModal } from "@/components/super/PlanoModal";
 import { SuperSidebar } from "@/components/super/SuperSidebar";
 import { EmptyStateSuper } from "@/components/super/EmptyStateSuper";
-import { Empresa, PerfilAcesso } from "@/types/super";
-import { perfisAcessoMock } from "@/data/superModules";
+import { Empresa, PerfilAcesso, Plano } from "@/types/super";
+import { perfisAcessoMock, planosMock } from "@/data/superModules";
 import { useToast } from "@/hooks/use-toast";
 
 const Super = () => {
@@ -33,6 +35,9 @@ const Super = () => {
   const [perfilModalOpen, setPerfilModalOpen] = useState(false);
   const [perfilParaEditar, setPerfilParaEditar] = useState<PerfilAcesso | undefined>();
   const [perfis, setPerfis] = useState<PerfilAcesso[]>(perfisAcessoMock);
+  const [planoModalOpen, setPlanoModalOpen] = useState(false);
+  const [planoParaEditar, setPlanoParaEditar] = useState<Plano | undefined>();
+  const [planos, setPlanos] = useState<Plano[]>(planosMock);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeModule, setActiveModule] = useState("empresas");
   const [activeSubModule, setActiveSubModule] = useState("gestao");
@@ -115,6 +120,42 @@ const Super = () => {
     });
   };
 
+  // Handlers para Planos
+  const handleNovoPlano = () => {
+    setPlanoParaEditar(undefined);
+    setPlanoModalOpen(true);
+  };
+
+  const handleEditarPlano = (plano: Plano) => {
+    setPlanoParaEditar(plano);
+    setPlanoModalOpen(true);
+  };
+
+  const handleSalvarPlano = (planoData: Omit<Plano, "id" | "dataCriacao">) => {
+    if (planoParaEditar) {
+      // Editar plano existente
+      setPlanos((prev) =>
+        prev.map((p) =>
+          p.id === planoParaEditar.id
+            ? { ...p, ...planoData, dataAtualizacao: new Date().toISOString() }
+            : p
+        )
+      );
+    } else {
+      // Criar novo plano
+      const novoPlano: Plano = {
+        id: `plano-${Date.now()}`,
+        ...planoData,
+        dataCriacao: new Date().toISOString(),
+      };
+      setPlanos((prev) => [...prev, novoPlano]);
+    }
+  };
+
+  const handleExcluirPlano = (planoId: string) => {
+    setPlanos((prev) => prev.filter((p) => p.id !== planoId));
+  };
+
   const handleModuleToggle = (moduleId: string) => {
     setExpandedModules((prev) =>
       prev.includes(moduleId)
@@ -151,6 +192,7 @@ const Super = () => {
             <CardContent>
               <GestaoEmpresas
                 empresas={empresas}
+                planos={planos}
                 onAcessarEmpresa={handleAcessarEmpresa}
                 onAtualizarEmpresa={atualizarEmpresa}
                 onSuspenderEmpresa={suspenderEmpresa}
@@ -170,6 +212,19 @@ const Super = () => {
           onNovoPerfil={handleNovoPerfil}
           onEditarPerfil={handleEditarPerfil}
           onExcluirPerfil={handleExcluirPerfil}
+        />
+      );
+    }
+
+    // Gestão de Planos
+    if (activeModule === "empresas" && activeSubModule === "planos") {
+      return (
+        <GestaoPlanos
+          planos={planos}
+          perfis={perfis}
+          onNovoPlano={handleNovoPlano}
+          onEditarPlano={handleEditarPlano}
+          onExcluirPlano={handleExcluirPlano}
         />
       );
     }
@@ -228,6 +283,12 @@ const Super = () => {
                   Novo Perfil
                 </Button>
               )}
+              {activeModule === "empresas" && activeSubModule === "planos" && (
+                <Button onClick={handleNovoPlano}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Novo Plano
+                </Button>
+              )}
             </div>
 
             {/* Dynamic Content */}
@@ -239,6 +300,8 @@ const Super = () => {
               onOpenChange={setNovaEmpresaOpen}
               onSave={handleNovaEmpresa}
               empresas={empresas}
+              planos={planos}
+              perfis={perfis}
             />
 
             {/* Modal Perfil */}
@@ -247,6 +310,15 @@ const Super = () => {
               onOpenChange={setPerfilModalOpen}
               onSave={handleSalvarPerfil}
               perfilParaEditar={perfilParaEditar}
+            />
+
+            {/* Modal Plano */}
+            <PlanoModal
+              open={planoModalOpen}
+              onOpenChange={setPlanoModalOpen}
+              onSave={handleSalvarPlano}
+              perfis={perfis}
+              planoParaEditar={planoParaEditar}
             />
           </div>
         </div>

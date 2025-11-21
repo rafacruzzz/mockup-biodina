@@ -23,6 +23,9 @@ export const superModules: SuperModulesConfig = {
       perfis: {
         name: "Perfis",
       },
+      planos: {
+        name: "Planos",
+      },
     },
   },
 };

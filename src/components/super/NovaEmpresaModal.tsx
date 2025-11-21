@@ -8,17 +8,21 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { SeletorModulos } from "./SeletorModulos";
-import { Empresa, ModuloSistema } from "@/types/super";
+import { Empresa, ModuloSistema, Plano, PerfilAcesso } from "@/types/super";
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle } from "lucide-react";
 
 interface NovaEmpresaModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (empresa: Empresa) => void;
   empresas: Empresa[];
+  planos: Plano[];
+  perfis: PerfilAcesso[];
 }
 
-export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas }: NovaEmpresaModalProps) => {
+export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas, planos, perfis }: NovaEmpresaModalProps) => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("info");
   
@@ -29,6 +33,7 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas }: NovaE
     razaoSocial: '',
     cnpj: '',
     tipo: 'filial' as 'master' | 'filial',
+    planoId: '',
     usuarioMaster: {
       nome: '',
       email: '',
@@ -44,6 +49,9 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas }: NovaE
       suporte: 'basico' as 'basico' | 'premium' | 'enterprise'
     }
   });
+
+  const planoSelecionado = planos.find(p => p.id === formData.planoId);
+  const perfilDoPlano = perfis.find(p => p.id === planoSelecionado?.perfilId);
 
   const handleSave = () => {
     // Validações
@@ -77,6 +85,16 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas }: NovaE
       return;
     }
 
+    if (!formData.planoId && formData.tipo === 'filial') {
+      toast({
+        title: "Erro",
+        description: "Selecione um plano para a empresa",
+        variant: "destructive"
+      });
+      setActiveTab("info");
+      return;
+    }
+
     if (formData.modulosHabilitados.length === 0) {
       toast({
         title: "Erro",
@@ -95,6 +113,7 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas }: NovaE
       tipo: formData.tipo,
       status: 'ativa',
       dataCriacao: new Date().toISOString().split('T')[0],
+      planoId: formData.planoId || undefined,
       modulosHabilitados: formData.modulosHabilitados,
       usuarioMaster: {
         id: `user-${Date.now()}`,
@@ -131,6 +150,7 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas }: NovaE
       razaoSocial: '',
       cnpj: '',
       tipo: 'filial',
+      planoId: '',
       usuarioMaster: {
         nome: '',
         email: '',
@@ -213,6 +233,54 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas }: NovaE
                 </div>
               </RadioGroup>
             </div>
+
+            {formData.tipo === 'filial' && (
+              <div className="space-y-2">
+                <Label htmlFor="plano">Plano *</Label>
+                <Select
+                  value={formData.planoId}
+                  onValueChange={(value) => setFormData({ ...formData, planoId: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione um plano" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {planos.map(plano => (
+                      <SelectItem key={plano.id} value={plano.id}>
+                        {plano.nome} - R$ {plano.valor.toFixed(2)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {planoSelecionado && perfilDoPlano && (
+                  <div className="mt-4 p-4 border rounded-lg bg-muted/50 space-y-3">
+                    <div>
+                      <p className="text-sm font-semibold mb-2">Perfil: {perfilDoPlano.nome}</p>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        {perfilDoPlano.modulosHabilitados.length} módulos inclusos
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold mb-2">Benefícios do Plano:</p>
+                      <ul className="space-y-1">
+                        {planoSelecionado.beneficios.slice(0, 4).map((beneficio, index) => (
+                          <li key={index} className="flex items-start gap-2 text-xs">
+                            <CheckCircle className="h-3 w-3 text-green-500 flex-shrink-0 mt-0.5" />
+                            <span>{beneficio}</span>
+                          </li>
+                        ))}
+                        {planoSelecionado.beneficios.length > 4 && (
+                          <li className="text-xs text-muted-foreground pl-5">
+                            +{planoSelecionado.beneficios.length - 4} benefícios...
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="usuario" className="space-y-4">
