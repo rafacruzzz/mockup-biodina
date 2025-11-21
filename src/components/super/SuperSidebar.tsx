@@ -1,4 +1,4 @@
-import { ChevronRight, X } from "lucide-react";
+import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { superModules } from "@/data/superMenuModules";
 
@@ -19,7 +19,7 @@ export const SuperSidebar = ({
   onSubModuleSelect,
   onClose,
 }: SuperSidebarProps) => {
-  const handleCollapseModule = (e: React.MouseEvent, moduleId: string) => {
+  const handleCollapseModule = (moduleId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     onModuleToggle(moduleId);
   };
@@ -29,52 +29,68 @@ export const SuperSidebar = ({
   };
 
   return (
-    <div className="w-64 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 flex flex-col h-screen">
-      {/* Header */}
-      <div className="p-4 border-b flex items-center justify-between">
-        <h2 className="font-semibold text-lg">SUPER</h2>
+    <div className="w-80 bg-white border-r border-gray-200/80 overflow-y-auto shadow-sm">
+      <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-primary mb-2">SUPER</h2>
+          <p className="text-gray-600 text-sm">Gestão Multi-Tenant do Sistema</p>
+        </div>
         <button
           onClick={onClose}
-          className="p-1 hover:bg-accent rounded-md transition-colors"
-          aria-label="Fechar sidebar"
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          title="Fechar SUPER"
         >
-          <X className="h-4 w-4" />
+          <X className="h-5 w-5 text-gray-500" />
         </button>
       </div>
-
-      {/* Modules List */}
-      <div className="flex-1 overflow-y-auto py-2">
+      
+      <div className="p-4 space-y-2">
         {Object.entries(superModules).map(([moduleId, module]) => {
           const isExpanded = expandedModules.includes(moduleId);
           const isActive = activeModule === moduleId;
           const Icon = module.icon;
 
           return (
-            <div key={moduleId} className="mb-1">
-              {/* Module Header */}
+            <div key={moduleId} className="space-y-1">
               <button
                 onClick={() => onModuleToggle(moduleId)}
                 className={cn(
-                  "w-full px-4 py-2 flex items-center justify-between hover:bg-accent transition-colors",
-                  isActive && "bg-accent"
+                  "w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200",
+                  isActive 
+                    ? 'bg-gradient-to-r from-primary to-primary/90 text-white shadow-md' 
+                    : 'hover:bg-gray-50 text-gray-700 hover:shadow-sm'
                 )}
               >
-                <div className="flex items-center gap-2">
-                  <Icon className="h-4 w-4" />
-                  <span className="font-medium text-sm">{module.name}</span>
+                <div className="flex items-center gap-3">
+                  <div className={cn(
+                    "p-2 rounded-lg",
+                    isActive ? 'bg-white/20' : 'bg-primary/10'
+                  )}>
+                    <Icon className={cn(
+                      "h-5 w-5",
+                      isActive ? 'text-white' : 'text-primary'
+                    )} />
+                  </div>
+                  <span className="font-medium">{module.name}</span>
                 </div>
-                <ChevronRight
-                  className={cn(
-                    "h-4 w-4 transition-transform",
-                    isExpanded && "rotate-90"
+                <div className="flex items-center gap-1">
+                  {isExpanded && (
+                    <button
+                      onClick={(e) => handleCollapseModule(moduleId, e)}
+                      className="p-1 rounded-md hover:bg-white/20 transition-colors"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
                   )}
-                  onClick={(e) => handleCollapseModule(e, moduleId)}
-                />
+                  {isExpanded ? 
+                    <ChevronDown className="h-4 w-4" /> : 
+                    <ChevronRight className="h-4 w-4" />
+                  }
+                </div>
               </button>
-
-              {/* SubModules */}
+              
               {isExpanded && (
-                <div className="ml-6 mt-1 space-y-1">
+                <div className="ml-4 space-y-1 animate-fade-in">
                   {Object.entries(module.subModules).map(([subModuleId, subModule]) => {
                     const isSubActive =
                       activeModule === moduleId && activeSubModule === subModuleId;
@@ -84,11 +100,21 @@ export const SuperSidebar = ({
                         key={subModuleId}
                         onClick={() => handleSubModuleSelect(moduleId, subModuleId)}
                         className={cn(
-                          "w-full px-4 py-2 text-left text-sm hover:bg-accent/50 transition-colors rounded-md",
-                          isSubActive && "bg-primary/10 text-primary font-medium"
+                          "w-full text-left p-3 rounded-lg text-sm transition-all duration-200",
+                          isSubActive
+                            ? 'bg-primary text-white shadow-sm'
+                            : 'hover:bg-gray-50 text-gray-600'
                         )}
                       >
-                        {subModule.name}
+                        <div className="flex items-center gap-2">
+                          <div className={cn(
+                            "w-2 h-2 rounded-full",
+                            isSubActive
+                              ? 'bg-white'
+                              : 'bg-primary/60'
+                          )} />
+                          {subModule.name}
+                        </div>
                       </button>
                     );
                   })}
