@@ -242,6 +242,12 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas, planos,
                       </p>
                     </div>
                     <div>
+                      <p className="text-sm text-muted-foreground">Filiais Permitidas</p>
+                      <p className="text-sm font-medium">
+                        {planoSelecionado.quantidadeFiliais === -1 ? 'Ilimitadas' : planoSelecionado.quantidadeFiliais}
+                      </p>
+                    </div>
+                    <div>
                       <p className="text-sm font-semibold mb-2">Benefícios do Plano:</p>
                       <ul className="space-y-1">
                         {planoSelecionado.beneficios.slice(0, 4).map((beneficio, index) => (

@@ -222,6 +222,7 @@ export const planosMock: Plano[] = [
     nome: 'Plano Básico',
     valor: 99.90,
     perfilId: 'perfil-vendedor',
+    quantidadeFiliais: 3,
     descricao: 'Plano ideal para pequenas empresas',
     beneficios: [
       'Banco de questões',
@@ -235,6 +236,7 @@ export const planosMock: Plano[] = [
     nome: 'Plano Premium',
     valor: 199.90,
     perfilId: 'perfil-financeiro',
+    quantidadeFiliais: 10,
     descricao: 'Plano completo para empresas em crescimento',
     beneficios: [
       'Banco de questões',
@@ -250,6 +252,7 @@ export const planosMock: Plano[] = [
     nome: 'Plano Enterprise',
     valor: 499.90,
     perfilId: 'perfil-master',
+    quantidadeFiliais: -1,
     descricao: 'Plano corporativo com todos os recursos',
     beneficios: [
       'Todos os módulos',
