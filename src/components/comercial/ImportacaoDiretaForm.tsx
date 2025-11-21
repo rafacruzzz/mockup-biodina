@@ -535,11 +535,17 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
                 options={{
                   suppressScrollY: true,
                   wheelPropagation: false,
-                  useBothWheelAxes: false
+                  useBothWheelAxes: false,
+                  handlers: ['click-rail', 'drag-thumb', 'keyboard', 'wheel', 'touch'],
+                  wheelSpeed: 0.5
                 }}
                 className="bg-gray-50 p-2 rounded-lg"
+                style={{
+                  maxWidth: '100%',
+                  width: '100%'
+                }}
               >
-                <div className="flex gap-4 pb-3" style={{ minWidth: 'max-content' }}>
+                <div className="inline-flex gap-4 pb-3" style={{ minWidth: 'max-content' }}>
                   {masterTabs.map((tab) => (
                     <button
                       key={tab.id}
