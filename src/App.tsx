@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Super from "./pages/Super";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import SelectPlan from "./pages/SelectPlan";
 import BIGeral from "./pages/BIGeral";
 import Cadastro from "./pages/Cadastro";
 import Comercial from "./pages/Comercial";
@@ -68,6 +69,8 @@ const App: React.FC = () => {
               <Route path="/personalizar-navegacao" element={<PersonalizarNavegacao />} />
               {/* Rota pública para candidatura */}
               <Route path="/candidatura/:linkId" element={<CandidaturaPublica />} />
+              {/* Rota pública para seleção de planos */}
+              <Route path="/select-plan/:webformId" element={<SelectPlan />} />
               {/* Rota pública para registro via webform */}
               <Route path="/register/:webformId" element={<Register />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

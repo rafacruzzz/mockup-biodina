@@ -24,6 +24,7 @@ export const PlanoModal = ({ open, onOpenChange, onSave, perfis, planoParaEditar
     valor: '',
     perfilId: '',
     quantidadeFiliais: '',
+    diasTrialGratuito: '7',
     descricao: '',
     beneficios: [] as string[]
   });
@@ -36,6 +37,7 @@ export const PlanoModal = ({ open, onOpenChange, onSave, perfis, planoParaEditar
         valor: planoParaEditar.valor.toString(),
         perfilId: planoParaEditar.perfilId,
         quantidadeFiliais: planoParaEditar.quantidadeFiliais.toString(),
+        diasTrialGratuito: planoParaEditar.diasTrialGratuito.toString(),
         descricao: planoParaEditar.descricao || '',
         beneficios: [...planoParaEditar.beneficios]
       });
@@ -45,6 +47,7 @@ export const PlanoModal = ({ open, onOpenChange, onSave, perfis, planoParaEditar
         valor: '',
         perfilId: '',
         quantidadeFiliais: '',
+        diasTrialGratuito: '7',
         descricao: '',
         beneficios: []
       });
@@ -108,6 +111,16 @@ export const PlanoModal = ({ open, onOpenChange, onSave, perfis, planoParaEditar
       return;
     }
 
+    const diasTrialGratuito = parseInt(formData.diasTrialGratuito);
+    if (isNaN(diasTrialGratuito) || diasTrialGratuito < 0 || diasTrialGratuito > 365) {
+      toast({
+        title: "Erro",
+        description: "Os dias de trial devem estar entre 0 e 365",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (formData.beneficios.length === 0) {
       toast({
         title: "Erro",
@@ -122,6 +135,7 @@ export const PlanoModal = ({ open, onOpenChange, onSave, perfis, planoParaEditar
       valor: valor,
       perfilId: formData.perfilId,
       quantidadeFiliais: quantidadeFiliais,
+      diasTrialGratuito: diasTrialGratuito,
       descricao: formData.descricao || undefined,
       beneficios: formData.beneficios,
       dataAtualizacao: planoParaEditar ? new Date().toISOString() : undefined
@@ -187,6 +201,22 @@ export const PlanoModal = ({ open, onOpenChange, onSave, perfis, planoParaEditar
                 placeholder="5"
               />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="diasTrialGratuito">Dias de Trial Gratuito *</Label>
+            <Input
+              id="diasTrialGratuito"
+              type="number"
+              min="0"
+              max="365"
+              value={formData.diasTrialGratuito}
+              onChange={(e) => setFormData({ ...formData, diasTrialGratuito: e.target.value })}
+              placeholder="7"
+            />
+            <p className="text-xs text-muted-foreground">
+              Período de teste gratuito oferecido neste plano (0 = sem trial)
+            </p>
           </div>
 
           <div className="space-y-2">

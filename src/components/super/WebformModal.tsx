@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Webform } from "@/types/super";
+import { Webform, Plano } from "@/types/super";
 import { useToast } from "@/hooks/use-toast";
 import { gerarLinkWebform, copiarLinkWebform } from "@/utils/webformUtils";
 import { Copy, ExternalLink } from "lucide-react";
@@ -16,14 +16,16 @@ interface WebformModalProps {
   onOpenChange: (open: boolean) => void;
   onSave: (webformData: Omit<Webform, "id" | "dataCriacao" | "totalAcessos" | "totalCadastros">) => void;
   webformParaEditar?: Webform;
+  planos: Plano[];
 }
 
-export const WebformModal = ({ open, onOpenChange, onSave, webformParaEditar }: WebformModalProps) => {
+export const WebformModal = ({ open, onOpenChange, onSave, webformParaEditar, planos }: WebformModalProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     titulo: "",
     status: "ativo" as "ativo" | "inativo",
     tipo: "criar_base" as const,
+    planoId: undefined as string | undefined,
     trial: true,
     diasTrial: 7,
     descricao: "",
@@ -38,6 +40,7 @@ export const WebformModal = ({ open, onOpenChange, onSave, webformParaEditar }: 
         titulo: webformParaEditar.titulo,
         status: webformParaEditar.status,
         tipo: webformParaEditar.tipo,
+        planoId: webformParaEditar.planoId,
         trial: webformParaEditar.trial,
         diasTrial: webformParaEditar.diasTrial,
         descricao: webformParaEditar.descricao,
@@ -49,6 +52,7 @@ export const WebformModal = ({ open, onOpenChange, onSave, webformParaEditar }: 
         titulo: "",
         status: "ativo",
         tipo: "criar_base",
+        planoId: undefined,
         trial: true,
         diasTrial: 7,
         descricao: "",
@@ -168,40 +172,93 @@ export const WebformModal = ({ open, onOpenChange, onSave, webformParaEditar }: 
             </div>
           </div>
 
-          {/* Seção Trial */}
+          {/* Seção Plano Atrelado */}
           <div className="space-y-4 border-t pt-4">
             <div className="space-y-2">
-              <Label>Trial *</Label>
+              <Label>Tem plano atrelado?</Label>
               <RadioGroup
-                value={formData.trial ? "sim" : "nao"}
-                onValueChange={(value) => setFormData({ ...formData, trial: value === "sim" })}
+                value={formData.planoId !== undefined ? "sim" : "nao"}
+                onValueChange={(value) => {
+                  if (value === "nao") {
+                    setFormData({ ...formData, planoId: undefined });
+                  } else {
+                    setFormData({ ...formData, planoId: "" });
+                  }
+                }}
                 className="flex gap-4"
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="sim" id="trial-sim" />
-                  <Label htmlFor="trial-sim" className="font-normal cursor-pointer">Sim</Label>
+                  <RadioGroupItem value="sim" id="plano-sim" />
+                  <Label htmlFor="plano-sim" className="font-normal cursor-pointer">Sim</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="nao" id="trial-nao" />
-                  <Label htmlFor="trial-nao" className="font-normal cursor-pointer">Não</Label>
+                  <RadioGroupItem value="nao" id="plano-nao" />
+                  <Label htmlFor="plano-nao" className="font-normal cursor-pointer">Não</Label>
                 </div>
               </RadioGroup>
             </div>
 
-            {formData.trial && (
+            {formData.planoId !== undefined && (
               <div className="space-y-2">
-                <Label htmlFor="diasTrial">Dias do Trial</Label>
-                <Input
-                  id="diasTrial"
-                  type="number"
-                  min={1}
-                  max={365}
-                  value={formData.diasTrial}
-                  onChange={(e) => setFormData({ ...formData, diasTrial: parseInt(e.target.value) || 7 })}
-                />
+                <Label htmlFor="planoId">Qual plano? *</Label>
+                <Select
+                  value={formData.planoId || ""}
+                  onValueChange={(value) => setFormData({ ...formData, planoId: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione um plano" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {planos.map(plano => (
+                      <SelectItem key={plano.id} value={plano.id}>
+                        {plano.nome} - R$ {plano.valor.toFixed(2)}/mês
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  O trial será baseado no plano selecionado ({planos.find(p => p.id === formData.planoId)?.diasTrialGratuito || 0} dias)
+                </p>
               </div>
             )}
           </div>
+
+          {/* Seção Trial - Apenas se não tiver plano */}
+          {formData.planoId === undefined && (
+            <div className="space-y-4 border-t pt-4">
+              <div className="space-y-2">
+                <Label>Trial *</Label>
+                <RadioGroup
+                  value={formData.trial ? "sim" : "nao"}
+                  onValueChange={(value) => setFormData({ ...formData, trial: value === "sim" })}
+                  className="flex gap-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="sim" id="trial-sim" />
+                    <Label htmlFor="trial-sim" className="font-normal cursor-pointer">Sim</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="nao" id="trial-nao" />
+                    <Label htmlFor="trial-nao" className="font-normal cursor-pointer">Não</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {formData.trial && (
+                <div className="space-y-2">
+                  <Label htmlFor="diasTrial">Dias do Trial</Label>
+                  <Input
+                    id="diasTrial"
+                    type="number"
+                    min={1}
+                    max={365}
+                    value={formData.diasTrial}
+                    onChange={(e) => setFormData({ ...formData, diasTrial: parseInt(e.target.value) || 7 })}
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Seção Descrição */}
           <div className="space-y-2 border-t pt-4">
