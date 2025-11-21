@@ -104,6 +104,7 @@ export interface Plano {
   valor: number;
   perfilId: string;
   quantidadeFiliais: number;
+  diasTrialGratuito: number;
   descricao?: string;
   beneficios: string[];
   dataCriacao: string;
@@ -115,6 +116,7 @@ export interface Webform {
   titulo: string;
   status: 'ativo' | 'inativo';
   tipo: 'criar_base';
+  planoId?: string;
   trial: boolean;
   diasTrial: number;
   descricao: string;

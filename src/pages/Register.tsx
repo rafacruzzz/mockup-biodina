@@ -1,24 +1,27 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Webform } from "@/types/super";
+import { Webform, Plano } from "@/types/super";
 import { useToast } from "@/hooks/use-toast";
 import { formatarCNPJCPF, validarCNPJ, validarCPF, validarSenhaForte } from "@/utils/webformUtils";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 // Mock - Em produção, buscar do backend
-import { webformsMock } from "@/data/superModules";
+import { webformsMock, planosMock } from "@/data/superModules";
 
 const Register = () => {
   const { webformId } = useParams<{ webformId: string }>();
+  const [searchParams] = useSearchParams();
+  const planIdFromUrl = searchParams.get('planId');
   const navigate = useNavigate();
   const { toast } = useToast();
   
   const [webform, setWebform] = useState<Webform | null>(null);
+  const [planoSelecionado, setPlanoSelecionado] = useState<Plano | null>(null);
   const [loading, setLoading] = useState(false);
   const [senhaVisivel, setSenhaVisivel] = useState(false);
   
@@ -56,10 +59,41 @@ const Register = () => {
     }
 
     setWebform(webformEncontrado);
+
+    // ====== LÓGICA DE PLANOS ======
+    
+    // Se webform TEM plano atrelado
+    if (webformEncontrado.planoId) {
+      const plano = planosMock.find(p => p.id === webformEncontrado.planoId);
+      if (plano) {
+        setPlanoSelecionado(plano);
+      }
+    } 
+    // Se webform NÃO tem plano E não veio planId na URL
+    else if (!planIdFromUrl) {
+      // Redireciona para seleção de planos
+      navigate(`/select-plan/${webformId}`);
+      return;
+    }
+    // Se veio planId na URL
+    else {
+      const plano = planosMock.find(p => p.id === planIdFromUrl);
+      if (plano) {
+        setPlanoSelecionado(plano);
+      } else {
+        toast({
+          title: "Plano Inválido",
+          description: "O plano selecionado não existe.",
+          variant: "destructive",
+        });
+        navigate(`/select-plan/${webformId}`);
+        return;
+      }
+    }
     
     // Incrementar contador de acessos (em produção, fazer via API)
     console.log("Acesso ao webform:", webformEncontrado.titulo);
-  }, [webformId, navigate, toast]);
+  }, [webformId, planIdFromUrl, navigate, toast]);
 
   const handleEmailChange = (email: string) => {
     setFormData({
@@ -132,11 +166,13 @@ const Register = () => {
 
     // Simular criação de empresa
     setTimeout(() => {
+      const diasTrial = planoSelecionado?.diasTrialGratuito || 0;
+      
       toast({
         title: "Cadastro Realizado com Sucesso! 🎉",
-        description: webform?.trial 
-          ? `Sua conta foi criada com ${webform.diasTrial} dias de trial gratuito.`
-          : "Sua conta foi criada com sucesso. Faça login para acessar.",
+        description: diasTrial > 0
+          ? `Sua conta foi criada com ${diasTrial} dias de trial gratuito no plano ${planoSelecionado?.nome}.`
+          : `Sua conta foi criada com sucesso no plano ${planoSelecionado?.nome}. Faça login para acessar.`,
       });
       
       setLoading(false);
@@ -182,10 +218,17 @@ const Register = () => {
           <p className="text-sm text-muted-foreground mt-1">
             Cadastre sua empresa e comece a usar agora
           </p>
-          {webform.trial && (
-            <Badge className="mt-3 bg-green-500">
-              🎁 Trial Gratuito de {webform.diasTrial} dias
-            </Badge>
+          {planoSelecionado && (
+            <div className="flex flex-col gap-2 mt-3">
+              <Badge className="bg-biodina-blue">
+                📦 Plano {planoSelecionado.nome} - R$ {planoSelecionado.valor.toFixed(2)}/mês
+              </Badge>
+              {planoSelecionado.diasTrialGratuito > 0 && (
+                <Badge className="bg-green-500">
+                  🎁 Trial Gratuito de {planoSelecionado.diasTrialGratuito} dias
+                </Badge>
+              )}
+            </div>
           )}
         </div>
 

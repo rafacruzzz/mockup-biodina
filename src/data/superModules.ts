@@ -221,49 +221,70 @@ export const perfisAcessoMock: PerfilAcesso[] = [
 // Planos mockados
 export const planosMock: Plano[] = [
   {
-    id: 'plano-basico',
-    nome: 'Plano Básico',
-    valor: 99.90,
+    id: 'plano-1',
+    nome: 'Básico',
+    valor: 179.00,
     perfilId: 'perfil-vendedor',
-    quantidadeFiliais: 3,
-    descricao: 'Plano ideal para pequenas empresas',
+    quantidadeFiliais: 5,
+    diasTrialGratuito: 7,
+    descricao: 'Ideal para pequenas empresas',
     beneficios: [
-      'Banco de questões',
-      'Estatísticas básicas',
-      'Criação de listas'
-    ],
-    dataCriacao: '2024-01-01'
-  },
-  {
-    id: 'plano-premium',
-    nome: 'Plano Premium',
-    valor: 199.90,
-    perfilId: 'perfil-financeiro',
-    quantidadeFiliais: 10,
-    descricao: 'Plano completo para empresas em crescimento',
-    beneficios: [
-      'Banco de questões',
-      'Estatísticas avançadas',
-      'Performance de acertos',
-      'Criação de provas',
-      'Relatórios customizados'
+      'Diagnóstico psicossocial automático',
+      'PGR Psicossocial e Plano de Ação',
+      'Dashboard em tempo real',
+      'Laudo técnico assinado por psicólogo'
     ],
     dataCriacao: '2024-01-15'
   },
   {
-    id: 'plano-enterprise',
-    nome: 'Plano Enterprise',
-    valor: 499.90,
+    id: 'plano-2',
+    nome: 'Intermediário',
+    valor: 249.00,
+    perfilId: 'perfil-financeiro',
+    quantidadeFiliais: 10,
+    diasTrialGratuito: 14,
+    descricao: 'Plano completo para empresas em crescimento',
+    beneficios: [
+      'Todos os recursos do Básico',
+      'Análise de tendências',
+      'Relatórios personalizados',
+      'Suporte prioritário',
+      'API de integração'
+    ],
+    dataCriacao: '2024-01-15'
+  },
+  {
+    id: 'plano-3',
+    nome: 'Avançado',
+    valor: 329.00,
+    perfilId: 'perfil-financeiro',
+    quantidadeFiliais: 15,
+    diasTrialGratuito: 14,
+    descricao: 'Para empresas com necessidades avançadas',
+    beneficios: [
+      'Todos os recursos do Intermediário',
+      'Consultoria especializada mensal',
+      'White label',
+      'Múltiplas filiais',
+      'Backup automático diário'
+    ],
+    dataCriacao: '2024-02-01'
+  },
+  {
+    id: 'plano-4',
+    nome: 'Premium',
+    valor: 399.00,
     perfilId: 'perfil-master',
-    quantidadeFiliais: -1,
+    quantidadeFiliais: 20,
+    diasTrialGratuito: 30,
     descricao: 'Plano corporativo com todos os recursos',
     beneficios: [
-      'Todos os módulos',
-      'Suporte prioritário',
-      'Backup automático',
-      'Armazenamento ilimitado',
-      'Usuários ilimitados',
-      'API completa'
+      'Todos os recursos do Avançado',
+      'Consultoria ilimitada',
+      'Treinamento da equipe',
+      'Customizações sob demanda',
+      'Gerente de conta dedicado',
+      'SLA de 99.9%'
     ],
     dataCriacao: '2024-02-01'
   }
@@ -292,16 +313,17 @@ export const dadosEmpresasMock: Record<string, any> = {
   }
 };
 
-// Filiais mockadas
+// Webforms mockados
 export const webformsMock: Webform[] = [
   {
     id: 'wf-1',
     titulo: 'Teste evento old',
     status: 'ativo',
     tipo: 'criar_base',
+    planoId: undefined,
     trial: true,
     diasTrial: 7,
-    descricao: 'Webform para evento de lançamento',
+    descricao: 'Webform para evento de lançamento - usuário escolhe plano',
     linkUnico: '/register/wf-1',
     dataCriacao: '2024-01-10',
     totalAcessos: 247,
@@ -311,11 +333,12 @@ export const webformsMock: Webform[] = [
   {
     id: 'wf-2',
     titulo: 'Site Institucional',
-    status: 'inativo',
+    status: 'ativo',
     tipo: 'criar_base',
+    planoId: 'plano-2',
     trial: false,
     diasTrial: 0,
-    descricao: 'Cadastros vindos do site',
+    descricao: 'Cadastros vindos do site - Plano Intermediário pré-selecionado',
     linkUnico: '/register/wf-2',
     dataCriacao: '2024-02-01',
     totalAcessos: 89,
@@ -327,13 +350,29 @@ export const webformsMock: Webform[] = [
     titulo: 'Instagram Promo',
     status: 'ativo',
     tipo: 'criar_base',
+    planoId: undefined,
     trial: true,
     diasTrial: 14,
-    descricao: 'Promoção de lançamento no Instagram',
+    descricao: 'Promoção de lançamento no Instagram - usuário escolhe plano',
     linkUnico: '/register/wf-3',
     dataCriacao: '2024-03-01',
     totalAcessos: 456,
     totalCadastros: 67,
+    ultimoAcesso: '2025-11-21'
+  },
+  {
+    id: 'wf-4',
+    titulo: 'Evento Corporativo Premium',
+    status: 'ativo',
+    tipo: 'criar_base',
+    planoId: 'plano-4',
+    trial: false,
+    diasTrial: 0,
+    descricao: 'Evento corporativo - Plano Premium com 30 dias de trial',
+    linkUnico: '/register/wf-4',
+    dataCriacao: '2024-03-15',
+    totalAcessos: 123,
+    totalCadastros: 15,
     ultimoAcesso: '2025-11-21'
   },
 ];

@@ -394,6 +394,7 @@ const Super = () => {
               onOpenChange={setWebformModalOpen}
               onSave={handleSalvarWebform}
               webformParaEditar={webformParaEditar}
+              planos={planos}
             />
 
             {/* Modal Estatísticas Webform */}
