@@ -534,14 +534,12 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
               <PerfectScrollbar
                 options={{
                   suppressScrollY: true,
-                  wheelPropagation: false
+                  wheelPropagation: false,
+                  useBothWheelAxes: false
                 }}
                 className="bg-gray-50 p-2 rounded-lg"
-                style={{
-                  maxWidth: '100%'
-                }}
               >
-                <div className="flex gap-4 pb-3">
+                <div className="flex gap-4 pb-3" style={{ minWidth: 'max-content' }}>
                   {masterTabs.map((tab) => (
                     <button
                       key={tab.id}
