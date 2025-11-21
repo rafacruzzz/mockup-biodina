@@ -1,4 +1,4 @@
-import { Building2, Users, Package, Settings } from "lucide-react";
+import { Building2 } from "lucide-react";
 
 export interface SuperSubModule {
   name: string;
@@ -19,33 +19,6 @@ export const superModules: SuperModulesConfig = {
     subModules: {
       gestao: {
         name: "Gestão de Empresas",
-      },
-    },
-  },
-  usuarios: {
-    name: "Usuários",
-    icon: Users,
-    subModules: {
-      lista: {
-        name: "Lista de Usuários",
-      },
-    },
-  },
-  modulos: {
-    name: "Módulos",
-    icon: Package,
-    subModules: {
-      disponiveis: {
-        name: "Módulos Disponíveis",
-      },
-    },
-  },
-  configuracoes: {
-    name: "Configurações",
-    icon: Settings,
-    subModules: {
-      sistema: {
-        name: "Sistema",
       },
     },
   },
