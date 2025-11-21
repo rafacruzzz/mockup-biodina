@@ -201,26 +201,18 @@ export const EditarEmpresaModal = ({ open, onOpenChange, empresa, planos = [], o
           <TabsContent value="config" className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="quantidadeFiliais">Quantidade de Filiais</Label>
-              <Select
-                value={formData.quantidadeFiliais.toString()}
-                onValueChange={(value) => setFormData({
+              <Input
+                id="quantidadeFiliais"
+                type="number"
+                min="-1"
+                value={formData.quantidadeFiliais}
+                onChange={(e) => setFormData({
                   ...formData,
-                  quantidadeFiliais: parseInt(value)
+                  quantidadeFiliais: parseInt(e.target.value) || 0
                 })}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">1 filial</SelectItem>
-                  <SelectItem value="3">3 filiais</SelectItem>
-                  <SelectItem value="5">5 filiais</SelectItem>
-                  <SelectItem value="10">10 filiais</SelectItem>
-                  <SelectItem value="25">25 filiais</SelectItem>
-                  <SelectItem value="50">50 filiais</SelectItem>
-                  <SelectItem value="-1">Ilimitadas</SelectItem>
-                </SelectContent>
-              </Select>
+                placeholder="Digite -1 para ilimitadas"
+              />
+              <p className="text-xs text-muted-foreground">Use -1 para filiais ilimitadas</p>
             </div>
 
             <div className="space-y-2">
