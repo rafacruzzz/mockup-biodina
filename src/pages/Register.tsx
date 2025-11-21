@@ -89,14 +89,10 @@ const Register = () => {
       return;
     }
 
-    const cnpjCpfLimpo = formData.cnpjCpf.replace(/\D/g, '');
-    const isCNPJ = cnpjCpfLimpo.length === 14;
-    const isCPF = cnpjCpfLimpo.length === 11;
-
-    if (!validarCNPJ(formData.cnpjCpf) && !validarCPF(formData.cnpjCpf)) {
+    if (!validarCNPJ(formData.cnpjCpf)) {
       toast({
-        title: "CNPJ/CPF Inválido",
-        description: "Por favor, insira um CNPJ (14 dígitos) ou CPF (11 dígitos) válido.",
+        title: "CNPJ Inválido",
+        description: "Por favor, insira um CNPJ válido com 14 dígitos.",
         variant: "destructive",
       });
       setLoading(false);
@@ -210,10 +206,10 @@ const Register = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="cnpjCpf">CNPJ ou CPF *</Label>
+              <Label htmlFor="cnpjCpf">CNPJ *</Label>
               <Input
                 id="cnpjCpf"
-                placeholder="Enter CNPJ Or CPF"
+                placeholder="00.000.000/0000-00"
                 value={formData.cnpjCpf}
                 onChange={(e) => handleCnpjCpfChange(e.target.value)}
                 maxLength={18}

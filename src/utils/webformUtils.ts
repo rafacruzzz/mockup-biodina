@@ -26,20 +26,12 @@ export const validarCPF = (cpf: string): boolean => {
 export const formatarCNPJCPF = (value: string): string => {
   const cleaned = value.replace(/\D/g, '');
   
-  if (cleaned.length <= 11) {
-    // CPF: 000.000.000-00
-    return cleaned
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-  } else {
-    // CNPJ: 00.000.000/0000-00
-    return cleaned
-      .replace(/(\d{2})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1/$2')
-      .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
-  }
+  // CNPJ: 00.000.000/0000-00
+  return cleaned
+    .replace(/(\d{2})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1/$2')
+    .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
 };
 
 export const validarSenhaForte = (senha: string): { valida: boolean; mensagem: string } => {
