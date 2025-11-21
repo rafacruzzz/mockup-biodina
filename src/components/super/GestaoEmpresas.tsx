@@ -119,7 +119,6 @@ export const GestaoEmpresas = ({
               <TableRow>
                 <TableHead>Empresa</TableHead>
                 <TableHead>CNPJ</TableHead>
-                <TableHead>Tipo</TableHead>
                 <TableHead>Plano</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Módulos</TableHead>
@@ -131,7 +130,7 @@ export const GestaoEmpresas = ({
             <TableBody>
               {empresasFiltradas.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center text-muted-foreground">
                     Nenhuma empresa encontrada
                   </TableCell>
                 </TableRow>
@@ -148,16 +147,6 @@ export const GestaoEmpresas = ({
                       </div>
                     </TableCell>
                     <TableCell className="font-mono text-sm">{empresa.cnpj}</TableCell>
-                    <TableCell>
-                      {empresa.tipo === 'master' ? (
-                        <Badge variant="default" className="gap-1">
-                          <Crown className="h-3 w-3" />
-                          Master
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary">Filial</Badge>
-                      )}
-                    </TableCell>
                     <TableCell>
                       {empresa.planoId ? (
                         <TooltipProvider>
@@ -245,12 +234,14 @@ export const GestaoEmpresas = ({
         open={detalhesOpen}
         onOpenChange={setDetalhesOpen}
         empresa={empresaSelecionada}
+        planos={planos}
       />
 
       <EditarEmpresaModal
         open={editarOpen}
         onOpenChange={setEditarOpen}
         empresa={empresaSelecionada}
+        planos={planos}
         onSave={onAtualizarEmpresa}
       />
 

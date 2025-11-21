@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Empresa } from "@/types/super";
+import { Empresa, Plano } from "@/types/super";
 import { modulosDisponiveis } from "@/data/superModules";
 import { Building2, User, Calendar, Mail, CheckCircle2, XCircle } from "lucide-react";
 
@@ -9,10 +9,13 @@ interface DetalhesEmpresaModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   empresa: Empresa | null;
+  planos?: Plano[];
 }
 
-export const DetalhesEmpresaModal = ({ open, onOpenChange, empresa }: DetalhesEmpresaModalProps) => {
+export const DetalhesEmpresaModal = ({ open, onOpenChange, empresa, planos = [] }: DetalhesEmpresaModalProps) => {
   if (!empresa) return null;
+
+  const planoEmpresa = planos.find(p => p.id === empresa.planoId);
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, "default" | "secondary" | "destructive"> = {
@@ -60,12 +63,6 @@ export const DetalhesEmpresaModal = ({ open, onOpenChange, empresa }: DetalhesEm
                 <p className="font-medium">{empresa.cnpj}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Tipo</p>
-                <Badge variant={empresa.tipo === 'master' ? 'default' : 'secondary'}>
-                  {empresa.tipo === 'master' ? '👑 Master' : 'Filial'}
-                </Badge>
-              </div>
-              <div>
                 <p className="text-sm text-muted-foreground">Data de Criação</p>
                 <p className="font-medium flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
@@ -73,6 +70,42 @@ export const DetalhesEmpresaModal = ({ open, onOpenChange, empresa }: DetalhesEm
                 </p>
               </div>
             </div>
+
+            {planoEmpresa && (
+              <div className="border-t pt-4">
+                <h3 className="font-semibold mb-3">Plano Contratado</h3>
+                <div className="p-4 border rounded-lg space-y-3 bg-muted/50">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Nome do Plano</p>
+                      <p className="text-lg font-semibold">{planoEmpresa.nome}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-muted-foreground">Valor Mensal</p>
+                      <p className="text-lg font-semibold text-primary">R$ {planoEmpresa.valor.toFixed(2)}</p>
+                    </div>
+                  </div>
+                  {planoEmpresa.descricao && (
+                    <div>
+                      <p className="text-sm text-muted-foreground">Descrição</p>
+                      <p className="text-sm">{planoEmpresa.descricao}</p>
+                    </div>
+                  )}
+                  {planoEmpresa.beneficios.length > 0 && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-2">Benefícios Inclusos</p>
+                      <div className="flex flex-wrap gap-2">
+                        {planoEmpresa.beneficios.map((beneficio, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            ✓ {beneficio}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="border-t pt-4">
               <h3 className="font-semibold mb-3">Estatísticas</h3>
