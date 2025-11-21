@@ -168,13 +168,16 @@ export const GestaoEmpresas = ({
                     </TableCell>
                     <TableCell>{getStatusBadge(empresa.status)}</TableCell>
                     <TableCell>
-                      {empresa.origem ? (
-                        <Badge variant={empresa.origem.tipo === 'manual' ? 'secondary' : 'default'}>
-                          {empresa.origem.tipo === 'manual' && '🔧 Manual'}
-                          {empresa.origem.tipo === 'webform' && `📝 ${empresa.origem.webformNome}`}
-                          {empresa.origem.tipo === 'landpage' && `🌐 ${empresa.origem.webformNome}`}
-                        </Badge>
-                      ) : (
+                      {empresa.origem?.tipo === 'manual' && (
+                        <Badge variant="secondary">🔧 Manual</Badge>
+                      )}
+                      {empresa.origem?.tipo === 'webform' && (
+                        <Badge variant="default">📝 {empresa.origem.webformNome}</Badge>
+                      )}
+                      {empresa.origem?.tipo === 'landpage' && (
+                        <Badge variant="default">🌐 {empresa.origem.webformNome}</Badge>
+                      )}
+                      {!empresa.origem && (
                         <Badge variant="secondary">🔧 Manual</Badge>
                       )}
                     </TableCell>

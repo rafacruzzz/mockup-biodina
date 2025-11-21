@@ -96,6 +96,10 @@ export const empresasMock: Empresa[] = [
     tipo: 'master',
     status: 'ativa',
     dataCriacao: '2020-01-01',
+    origem: {
+      tipo: 'manual',
+      dataRegistro: '2020-01-01'
+    },
     modulosHabilitados: [
       'cadastro', 'comercial', 'compras', 'estoque',
       'financeiro', 'contabilidade', 'faturamento', 'rh', 'ti',
