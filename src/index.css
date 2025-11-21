@@ -125,31 +125,43 @@
   background-size: cover;
 }
 
-/* Customização do PerfectScrollbar */
+/* PerfectScrollbar customization for horizontal scroll */
 .ps__rail-x {
-  height: 10px !important;
-  background-color: hsl(var(--muted)) !important;
+  height: 12px !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
   opacity: 1 !important;
-  border-radius: 6px;
-  margin-top: 4px;
+  bottom: 0 !important;
+  display: block !important;
+  z-index: 10 !important;
+}
+
+.ps__rail-x:hover,
+.ps__rail-x:focus {
+  background-color: rgba(0, 0, 0, 0.08) !important;
 }
 
 .ps__thumb-x {
-  height: 8px !important;
-  background-color: #9333EA !important;
-  border-radius: 6px;
-  cursor: pointer;
+  height: 10px !important;
+  min-width: 40px !important;
+  background-color: #9333ea !important;
+  border-radius: 6px !important;
   bottom: 1px !important;
-  transition: background-color 0.2s ease;
+  cursor: grab !important;
+  transition: all 0.2s ease !important;
+  z-index: 11 !important;
 }
 
-.ps__rail-x:hover .ps__thumb-x,
-.ps__rail-x:focus .ps__thumb-x,
 .ps__thumb-x:hover {
-  background-color: #7C3AED !important;
+  background-color: #7c3aed !important;
+  height: 12px !important;
+}
+
+.ps__thumb-x:active {
+  background-color: #6b21a8 !important;
+  cursor: grabbing !important;
 }
 
 .ps--active-x > .ps__rail-x {
   display: block !important;
-  background-color: hsl(var(--muted)) !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
 }
