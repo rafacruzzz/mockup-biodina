@@ -61,7 +61,7 @@ const LoginForm = () => {
           title: "Login bem-sucedido",
           description: `Bem-vinda, ${demoUser.profile.nome}!`,
         });
-        navigate("/comercial");
+        navigate("/bi-geral");
       } else if (email === "super@super.com.br" && password === "super") {
         // Login do usuário SUPER (acesso ao módulo SUPER)
         updateUser({
@@ -99,7 +99,7 @@ const LoginForm = () => {
           title: "Login bem-sucedido",
           description: "Bem-vindo de volta, Danilo!",
         });
-        navigate("/home");
+        navigate("/bi-geral");
       } else if (email === "admin@biodina.com.br" && password === "admin123") {
         // Login alternativo para o usuário master
         updateUser({
