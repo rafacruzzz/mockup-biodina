@@ -28,9 +28,7 @@ const Register = () => {
   const [formData, setFormData] = useState({
     nome: "",
     cnpjCpf: "",
-    usuario: "",
     email: "",
-    base: "",
     senha: "",
   });
 
@@ -99,7 +97,6 @@ const Register = () => {
     setFormData({
       ...formData,
       email,
-      usuario: email, // Auto-preencher usuário com o email
     });
   };
 
@@ -137,16 +134,6 @@ const Register = () => {
       toast({
         title: "E-mail Inválido",
         description: "Por favor, insira um e-mail válido.",
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
-    }
-
-    if (!formData.base.trim()) {
-      toast({
-        title: "Base Obrigatória",
-        description: "Por favor, defina um nome para a base de dados.",
         variant: "destructive",
       });
       setLoading(false);
@@ -276,37 +263,10 @@ const Register = () => {
                 required
               />
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="usuario">Usuário *</Label>
-              <Input
-                id="usuario"
-                placeholder="clari@imuv.me"
-                value={formData.usuario}
-                readOnly
-                className="bg-muted"
-              />
-              <p className="text-xs text-muted-foreground">
-                Gerado automaticamente a partir do seu e-mail
-              </p>
-            </div>
           </div>
 
-          {/* Base e Senha */}
+          {/* Senha */}
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="base">Base *</Label>
-              <Input
-                id="base"
-                placeholder="Enter newcrm"
-                value={formData.base}
-                onChange={(e) => setFormData({ ...formData, base: e.target.value.toLowerCase().replace(/\s/g, '') })}
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Nome da base de dados da sua empresa (sem espaços)
-              </p>
-            </div>
 
             <div className="space-y-2">
               <Label htmlFor="senha">Senha *</Label>
