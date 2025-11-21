@@ -43,24 +43,24 @@ export const EmpresaProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [webforms, setWebforms] = useState<Webform[]>(webformsMock);
 
   useEffect(() => {
-    // Por padrão, carregar a empresa Master ao iniciar
-    const empresaMaster = empresas.find(e => e.tipo === 'master');
-    if (empresaMaster) {
-      setEmpresaAtual(empresaMaster);
-      localStorage.setItem('empresaAtualId', empresaMaster.id);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Recuperar empresa salva no localStorage
-    const empresaId = localStorage.getItem('empresaAtualId');
-    if (empresaId) {
-      const empresa = empresas.find(e => e.id === empresaId);
+    // Tentar recuperar empresa salva no localStorage primeiro
+    const savedEmpresaId = localStorage.getItem('empresaAtualId');
+    if (savedEmpresaId) {
+      const empresa = empresas.find(e => e.id === savedEmpresaId);
       if (empresa) {
         setEmpresaAtual(empresa);
+        return;
       }
     }
+    
+    // Se não houver empresa salva, carregar a empresa iMuv (biodina-001) por padrão
+    const empresaPadrao = empresas.find(e => e.id === 'biodina-001');
+    if (empresaPadrao) {
+      setEmpresaAtual(empresaPadrao);
+      localStorage.setItem('empresaAtualId', empresaPadrao.id);
+    }
   }, [empresas]);
+
 
   const trocarEmpresa = (empresaId: string) => {
     const empresa = empresas.find(e => e.id === empresaId);
