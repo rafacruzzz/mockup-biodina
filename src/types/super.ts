@@ -74,6 +74,7 @@ export interface Plano {
   nome: string;
   valor: number;
   perfilId: string;
+  quantidadeFiliais: number;
   descricao?: string;
   beneficios: string[];
   dataCriacao: string;

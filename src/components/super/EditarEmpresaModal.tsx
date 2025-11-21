@@ -151,6 +151,12 @@ export const EditarEmpresaModal = ({ open, onOpenChange, empresa, planos = [], o
                   <p className="text-sm text-muted-foreground">Valor Mensal</p>
                   <p className="text-lg font-semibold">R$ {planoSelecionado.valor.toFixed(2)}</p>
                 </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Filiais Permitidas</p>
+                  <p className="text-sm font-medium">
+                    {planoSelecionado.quantidadeFiliais === -1 ? 'Ilimitadas' : planoSelecionado.quantidadeFiliais}
+                  </p>
+                </div>
                 {planoSelecionado.descricao && (
                   <div>
                     <p className="text-sm text-muted-foreground">Descrição</p>

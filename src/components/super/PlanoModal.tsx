@@ -23,6 +23,7 @@ export const PlanoModal = ({ open, onOpenChange, onSave, perfis, planoParaEditar
     nome: '',
     valor: '',
     perfilId: '',
+    quantidadeFiliais: '',
     descricao: '',
     beneficios: [] as string[]
   });
@@ -34,6 +35,7 @@ export const PlanoModal = ({ open, onOpenChange, onSave, perfis, planoParaEditar
         nome: planoParaEditar.nome,
         valor: planoParaEditar.valor.toString(),
         perfilId: planoParaEditar.perfilId,
+        quantidadeFiliais: planoParaEditar.quantidadeFiliais.toString(),
         descricao: planoParaEditar.descricao || '',
         beneficios: [...planoParaEditar.beneficios]
       });
@@ -42,6 +44,7 @@ export const PlanoModal = ({ open, onOpenChange, onSave, perfis, planoParaEditar
         nome: '',
         valor: '',
         perfilId: '',
+        quantidadeFiliais: '',
         descricao: '',
         beneficios: []
       });
@@ -95,6 +98,16 @@ export const PlanoModal = ({ open, onOpenChange, onSave, perfis, planoParaEditar
       return;
     }
 
+    const quantidadeFiliais = parseInt(formData.quantidadeFiliais);
+    if (isNaN(quantidadeFiliais) || quantidadeFiliais <= 0) {
+      toast({
+        title: "Erro",
+        description: "A quantidade de filiais deve ser maior que zero",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (formData.beneficios.length === 0) {
       toast({
         title: "Erro",
@@ -108,6 +121,7 @@ export const PlanoModal = ({ open, onOpenChange, onSave, perfis, planoParaEditar
       nome: formData.nome,
       valor: valor,
       perfilId: formData.perfilId,
+      quantidadeFiliais: quantidadeFiliais,
       descricao: formData.descricao || undefined,
       beneficios: formData.beneficios,
       dataAtualizacao: planoParaEditar ? new Date().toISOString() : undefined
@@ -148,17 +162,31 @@ export const PlanoModal = ({ open, onOpenChange, onSave, perfis, planoParaEditar
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="valor">Valor Mensal (R$) *</Label>
-            <Input
-              id="valor"
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.valor}
-              onChange={(e) => setFormData({ ...formData, valor: e.target.value })}
-              placeholder="199.90"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="valor">Valor Mensal (R$) *</Label>
+              <Input
+                id="valor"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.valor}
+                onChange={(e) => setFormData({ ...formData, valor: e.target.value })}
+                placeholder="199.90"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="quantidadeFiliais">Quantidade de Filiais *</Label>
+              <Input
+                id="quantidadeFiliais"
+                type="number"
+                min="1"
+                value={formData.quantidadeFiliais}
+                onChange={(e) => setFormData({ ...formData, quantidadeFiliais: e.target.value })}
+                placeholder="5"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
