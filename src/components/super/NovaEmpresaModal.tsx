@@ -85,7 +85,7 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas, planos,
       return;
     }
 
-    if (!formData.planoId && formData.tipo === 'filial') {
+    if (!formData.planoId) {
       toast({
         title: "Erro",
         description: "Selecione um plano para a empresa",
@@ -110,10 +110,10 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas, planos,
       nome: formData.nome,
       razaoSocial: formData.razaoSocial,
       cnpj: formData.cnpj,
-      tipo: formData.tipo,
+      tipo: 'filial',
       status: 'ativa',
       dataCriacao: new Date().toISOString().split('T')[0],
-      planoId: formData.planoId || undefined,
+      planoId: formData.planoId,
       modulosHabilitados: formData.modulosHabilitados,
       usuarioMaster: {
         id: `user-${Date.now()}`,
@@ -216,27 +216,7 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas, planos,
             </div>
 
             <div className="space-y-2">
-              <Label>Tipo de Empresa *</Label>
-              <RadioGroup
-                value={formData.tipo}
-                onValueChange={(value: 'master' | 'filial') => setFormData({ ...formData, tipo: value })}
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="master" id="master" disabled={temEmpresaMaster} />
-                  <Label htmlFor="master" className={temEmpresaMaster ? 'text-muted-foreground' : ''}>
-                    Master {temEmpresaMaster && '(Já existe empresa Master)'}
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="filial" id="filial" />
-                  <Label htmlFor="filial">Filial</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            {formData.tipo === 'filial' && (
-              <div className="space-y-2">
-                <Label htmlFor="plano">Plano *</Label>
+              <Label htmlFor="plano">Plano *</Label>
                 <Select
                   value={formData.planoId}
                   onValueChange={(value) => setFormData({ ...formData, planoId: value })}
@@ -280,7 +260,6 @@ export const NovaEmpresaModal = ({ open, onOpenChange, onSave, empresas, planos,
                   </div>
                 )}
               </div>
-            )}
           </TabsContent>
 
           <TabsContent value="usuario" className="space-y-4">

@@ -7,17 +7,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { SeletorModulos } from "./SeletorModulos";
-import { Empresa, ModuloSistema } from "@/types/super";
+import { Empresa, ModuloSistema, Plano } from "@/types/super";
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 interface EditarEmpresaModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   empresa: Empresa | null;
+  planos?: Plano[];
   onSave: (empresaId: string, empresa: Partial<Empresa>) => void;
 }
 
-export const EditarEmpresaModal = ({ open, onOpenChange, empresa, onSave }: EditarEmpresaModalProps) => {
+export const EditarEmpresaModal = ({ open, onOpenChange, empresa, planos = [], onSave }: EditarEmpresaModalProps) => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("info");
   
@@ -25,6 +27,7 @@ export const EditarEmpresaModal = ({ open, onOpenChange, empresa, onSave }: Edit
     nome: '',
     razaoSocial: '',
     cnpj: '',
+    planoId: '',
     modulosHabilitados: [] as ModuloSistema[],
     configuracoes: {
       limiteUsuarios: 25,
@@ -40,11 +43,14 @@ export const EditarEmpresaModal = ({ open, onOpenChange, empresa, onSave }: Edit
         nome: empresa.nome,
         razaoSocial: empresa.razaoSocial,
         cnpj: empresa.cnpj,
+        planoId: empresa.planoId || '',
         modulosHabilitados: empresa.modulosHabilitados,
         configuracoes: empresa.configuracoes
       });
     }
   }, [empresa]);
+
+  const planoSelecionado = planos.find(p => p.id === formData.planoId);
 
   const handleSave = () => {
     if (!empresa) return;
@@ -119,6 +125,52 @@ export const EditarEmpresaModal = ({ open, onOpenChange, empresa, onSave }: Edit
                 onChange={(e) => setFormData({ ...formData, cnpj: e.target.value })}
               />
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="plano">Plano</Label>
+              <Select
+                value={formData.planoId}
+                onValueChange={(value) => setFormData({ ...formData, planoId: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione um plano" />
+                </SelectTrigger>
+                <SelectContent>
+                  {planos.map(plano => (
+                    <SelectItem key={plano.id} value={plano.id}>
+                      {plano.nome} - R$ {plano.valor.toFixed(2)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {planoSelecionado && (
+              <div className="p-4 border rounded-lg space-y-3 bg-muted/50">
+                <div>
+                  <p className="text-sm text-muted-foreground">Valor Mensal</p>
+                  <p className="text-lg font-semibold">R$ {planoSelecionado.valor.toFixed(2)}</p>
+                </div>
+                {planoSelecionado.descricao && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Descrição</p>
+                    <p className="text-sm">{planoSelecionado.descricao}</p>
+                  </div>
+                )}
+                {planoSelecionado.beneficios.length > 0 && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">Benefícios</p>
+                    <div className="flex flex-wrap gap-2">
+                      {planoSelecionado.beneficios.map((beneficio, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          ✓ {beneficio}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="modulos">
