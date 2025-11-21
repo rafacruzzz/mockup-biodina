@@ -77,7 +77,13 @@ export const EditarEmpresaModal = ({ open, onOpenChange, empresa, planos = [], o
       return;
     }
 
-    onSave(empresa.id, formData);
+    onSave(empresa.id, {
+      ...formData,
+      configuracoes: {
+        ...formData.configuracoes,
+        quantidadeFiliais: formData.quantidadeFiliais
+      }
+    });
     toast({
       title: "Sucesso",
       description: "Empresa atualizada com sucesso!"

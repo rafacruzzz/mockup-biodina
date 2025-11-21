@@ -6,7 +6,8 @@ import {
   Tag,
   FileCheck,
   RefreshCw,
-  Shield
+  Shield,
+  Building
 } from "lucide-react";
 import type { ModulesConfig } from "@/types/cadastro";
 
@@ -449,6 +450,16 @@ export const modules: ModulesConfig = {
             telefoneGerente: "(11) 92345-6789"
           }
         ]
+      }
+    }
+  },
+  empresas: {
+    name: "Empresas",
+    icon: Building,
+    subModules: {
+      filiais: {
+        name: "Filiais",
+        data: []
       }
     }
   },

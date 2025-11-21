@@ -1,4 +1,4 @@
-import { Empresa, ModuloConfig, ModuloSistema, PerfilAcesso, Plano } from "@/types/super";
+import { Empresa, ModuloConfig, ModuloSistema, PerfilAcesso, Plano, Filial } from "@/types/super";
 
 export const modulosDisponiveis: ModuloConfig[] = [
   {
@@ -112,7 +112,8 @@ export const empresasMock: Empresa[] = [
       limiteUsuarios: -1,
       espacoArmazenamento: 'ilimitado',
       backup: true,
-      suporte: 'enterprise'
+      suporte: 'enterprise',
+      quantidadeFiliais: -1
     },
     estatisticas: {
       totalUsuarios: 150,
@@ -145,7 +146,8 @@ export const empresasMock: Empresa[] = [
       limiteUsuarios: 100,
       espacoArmazenamento: '100GB',
       backup: true,
-      suporte: 'premium'
+      suporte: 'premium',
+      quantidadeFiliais: 10
     },
     estatisticas: {
       totalUsuarios: 45,
@@ -177,7 +179,8 @@ export const empresasMock: Empresa[] = [
       limiteUsuarios: 25,
       espacoArmazenamento: '50GB',
       backup: true,
-      suporte: 'basico'
+      suporte: 'basico',
+      quantidadeFiliais: 3
     },
     estatisticas: {
       totalUsuarios: 18,
@@ -288,3 +291,62 @@ export const dadosEmpresasMock: Record<string, any> = {
     ]
   }
 };
+
+// Filiais mockadas
+export const filiaisMock: Filial[] = [
+  {
+    id: 'filial-sp-001',
+    nome: 'iMuv - Filial São Paulo',
+    razaoSocial: 'iMuv Farmacêutica SP Ltda',
+    cnpj: '98.765.432/0002-01',
+    empresaPrincipalId: 'biodina-001',
+    modulosHabilitados: ['cadastro', 'comercial', 'financeiro', 'estoque'],
+    status: 'ativa',
+    dataCriacao: '2023-01-15',
+    endereco: {
+      cep: '01310-100',
+      logradouro: 'Av. Paulista',
+      numero: '1000',
+      bairro: 'Bela Vista',
+      cidade: 'São Paulo',
+      uf: 'SP'
+    }
+  },
+  {
+    id: 'filial-rj-001',
+    nome: 'iMuv - Filial Rio de Janeiro',
+    razaoSocial: 'iMuv Farmacêutica RJ Ltda',
+    cnpj: '98.765.432/0003-92',
+    empresaPrincipalId: 'biodina-001',
+    modulosHabilitados: ['cadastro', 'comercial', 'financeiro'],
+    status: 'ativa',
+    dataCriacao: '2023-06-20',
+    endereco: {
+      cep: '20040-020',
+      logradouro: 'Av. Rio Branco',
+      numero: '156',
+      complemento: 'Sala 801',
+      bairro: 'Centro',
+      cidade: 'Rio de Janeiro',
+      uf: 'RJ'
+    }
+  },
+  {
+    id: 'filial-mg-001',
+    nome: 'iMuv - Filial Belo Horizonte',
+    razaoSocial: 'iMuv Farmacêutica MG Ltda',
+    cnpj: '98.765.432/0004-73',
+    empresaPrincipalId: 'biodina-001',
+    modulosHabilitados: ['cadastro', 'comercial', 'estoque', 'bi'],
+    status: 'ativa',
+    dataCriacao: '2024-02-10',
+    endereco: {
+      cep: '30130-100',
+      logradouro: 'Av. Afonso Pena',
+      numero: '1500',
+      bairro: 'Centro',
+      cidade: 'Belo Horizonte',
+      uf: 'MG'
+    }
+  }
+];

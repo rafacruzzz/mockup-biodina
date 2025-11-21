@@ -12,9 +12,12 @@ import ServiceModal from "@/components/cadastro/ServiceModal";
 import ContaBancariaModal from "@/components/cadastro/ContaBancariaModal";
 import GenericModal from "@/components/cadastro/GenericModal";
 import ProdutoUsoConsumoModal from "@/components/cadastro/ProdutoUsoConsumoModal";
+import GestaoFiliais from "@/components/cadastro/GestaoFiliais";
 import { modules } from "@/data/cadastroModules";
+import { useEmpresa } from "@/contexts/EmpresaContext";
 
 const Cadastro = () => {
+  const { isPrincipal } = useEmpresa();
   const [activeModule, setActiveModule] = useState('');
   const [activeSubModule, setActiveSubModule] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -246,7 +249,22 @@ const Cadastro = () => {
         />
 
         <div className="flex-1 flex flex-col min-h-0">
-          {activeSubModule ? (
+          {activeModule === 'empresas' && activeSubModule === 'filiais' ? (
+            <div className="flex-1 p-6 overflow-y-auto">
+              {isPrincipal ? (
+                <GestaoFiliais />
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Acesso Restrito</h3>
+                    <p className="text-gray-600">
+                      Apenas a empresa principal pode gerenciar filiais.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : activeSubModule ? (
             <>
               <ContentHeader
                 title={currentSubModule?.name || ''}
