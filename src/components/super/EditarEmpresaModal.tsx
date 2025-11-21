@@ -147,15 +147,17 @@ export const EditarEmpresaModal = ({ open, onOpenChange, empresa, planos = [], o
 
             {planoSelecionado && (
               <div className="p-4 border rounded-lg space-y-3 bg-muted/50">
-                <div>
-                  <p className="text-sm text-muted-foreground">Valor Mensal</p>
-                  <p className="text-lg font-semibold">R$ {planoSelecionado.valor.toFixed(2)}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Filiais Permitidas</p>
-                  <p className="text-sm font-medium">
-                    {planoSelecionado.quantidadeFiliais === -1 ? 'Ilimitadas' : planoSelecionado.quantidadeFiliais}
-                  </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Valor Mensal</p>
+                    <p className="text-lg font-semibold">R$ {planoSelecionado.valor.toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">Filiais Permitidas</p>
+                    <p className="text-lg font-semibold">
+                      {planoSelecionado.quantidadeFiliais === -1 ? 'Ilimitadas' : planoSelecionado.quantidadeFiliais}
+                    </p>
+                  </div>
                 </div>
                 {planoSelecionado.descricao && (
                   <div>
