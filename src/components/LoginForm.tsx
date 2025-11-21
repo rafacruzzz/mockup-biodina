@@ -134,32 +134,6 @@ const LoginForm = () => {
         <h1 className="text-3xl font-bold text-biodina-blue mb-2">Bem-vindo</h1>
         <p className="text-gray-600">Acesse sua conta para continuar</p>
       </div>
-
-      {/* Credenciais de Demonstração */}
-      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <p className="text-sm font-semibold text-blue-900 mb-2">🎯 Credenciais de Teste:</p>
-        <div className="space-y-2 text-xs text-blue-800">
-          <div className="flex items-center justify-between">
-            <span>👑 <strong>SUPER Admin:</strong> super@super.com.br</span>
-            <Badge variant="outline" className="text-[10px] bg-purple-100">SUPER</Badge>
-          </div>
-          <div className="flex items-center justify-between">
-            <span>👤 <strong>Danilo Silva (Master):</strong> danilo@tecnologiadc.com.br</span>
-            <Badge variant="outline" className="text-[10px]">master</Badge>
-          </div>
-          <div className="flex items-center justify-between">
-            <span>👤 <strong>Ana Assessora:</strong> ana.assessora@imuv.com.br</span>
-            <Badge variant="outline" className="text-[10px]">assessor</Badge>
-          </div>
-          <div className="flex items-center justify-between">
-            <span>👥 <strong>Mariana Gestora:</strong> mariana.gestora@imuv.com.br</span>
-            <Badge variant="outline" className="text-[10px]">gestor</Badge>
-          </div>
-          <div className="mt-2 pt-2 border-t border-blue-300">
-            <span>🔑 SUPER: <strong>super</strong> | Danilo: <strong>123</strong> | Outras: <strong>demo123</strong></span>
-          </div>
-        </div>
-      </div>
       
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
