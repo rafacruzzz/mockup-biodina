@@ -141,8 +141,9 @@ export const empresasMock: Empresa[] = [
       dataRegistro: '2020-06-15'
     },
     modulosHabilitados: [
-      'cadastro', 'comercial', 'estoque',
-      'financeiro', 'contabilidade', 'solicitacoes', 'bi'
+      'cadastro', 'comercial', 'compras', 'estoque',
+      'financeiro', 'contabilidade', 'faturamento', 'rh', 'ti',
+      'administrativo', 'solicitacoes', 'bi'
     ],
     usuarioMaster: {
       id: 'user-biodina',
