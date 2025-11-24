@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Empresa, ModuloSistema, Filial, Webform } from '@/types/super';
 import { empresasMock, filiaisMock, webformsMock } from '@/data/superModules';
 
@@ -36,6 +37,7 @@ interface EmpresaContextType {
 const EmpresaContext = createContext<EmpresaContextType | undefined>(undefined);
 
 export const EmpresaProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const location = useLocation();
   const [empresas, setEmpresas] = useState<Empresa[]>(empresasMock);
   const [empresaAtual, setEmpresaAtual] = useState<Empresa | null>(null);
   const [filiais, setFiliais] = useState<Filial[]>(filiaisMock);
@@ -61,6 +63,18 @@ export const EmpresaProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [empresas]);
 
+  // Garantir que ao navegar para /super, a empresa correta seja carregada do localStorage
+  useEffect(() => {
+    if (location.pathname === '/super' || location.pathname.startsWith('/super/')) {
+      const savedEmpresaId = localStorage.getItem('empresaAtualId');
+      if (savedEmpresaId && savedEmpresaId !== empresaAtual?.id) {
+        const empresa = empresas.find(e => e.id === savedEmpresaId);
+        if (empresa) {
+          setEmpresaAtual(empresa);
+        }
+      }
+    }
+  }, [location.pathname, empresas, empresaAtual?.id]);
 
   const trocarEmpresa = (empresaId: string) => {
     const empresa = empresas.find(e => e.id === empresaId);
