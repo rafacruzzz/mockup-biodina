@@ -6,6 +6,8 @@ export enum TipoDocumentoAcaoCampo {
   FAC1_CUSTOMER_ADVISORY = 'fac1_customer_advisory',
   FAC2_CUSTOMER_RESPONSE = 'fac2_customer_response',
   FAC3 = 'fac3',
+  PROTOCOLO_ABERTURA_ANVISA = 'protocolo_abertura_anvisa',
+  PROTOCOLO_ENCERRAMENTO_ANVISA = 'protocolo_encerramento_anvisa',
   ADICIONAL = 'adicional'
 }
 

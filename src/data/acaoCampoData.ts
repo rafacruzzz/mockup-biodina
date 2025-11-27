@@ -7,6 +7,8 @@ export const tipoDocumentoLabels: Record<TipoDocumentoAcaoCampo, string> = {
   [TipoDocumentoAcaoCampo.FAC1_CUSTOMER_ADVISORY]: 'FAC1 - Customer Advisory Letter',
   [TipoDocumentoAcaoCampo.FAC2_CUSTOMER_RESPONSE]: 'FAC2 - Customer Response',
   [TipoDocumentoAcaoCampo.FAC3]: 'FAC3',
+  [TipoDocumentoAcaoCampo.PROTOCOLO_ABERTURA_ANVISA]: 'Protocolo de Abertura na Anvisa',
+  [TipoDocumentoAcaoCampo.PROTOCOLO_ENCERRAMENTO_ANVISA]: 'Protocolo de Encerramento na Anvisa',
   [TipoDocumentoAcaoCampo.ADICIONAL]: 'Documento Adicional'
 };
 
@@ -79,5 +81,33 @@ export const acoesCampoMock: AcaoCampo[] = [
         requerAssinatura: false
       }
     ]
+  },
+  {
+    id: '2',
+    titulo: 'Envio de documentos para Anvisa',
+    empresaRepresentada: '',
+    dataCriacao: '2024-01-15',
+    status: StatusAcaoCampo.EM_ANDAMENTO,
+    documentos: [
+      {
+        id: 'doc-anvisa-1',
+        tipo: TipoDocumentoAcaoCampo.CARTA_CLIENTE,
+        nome: 'Carta ao Cliente',
+        requerAssinatura: false
+      },
+      {
+        id: 'doc-anvisa-2',
+        tipo: TipoDocumentoAcaoCampo.PROTOCOLO_ABERTURA_ANVISA,
+        nome: 'Protocolo de Abertura na Anvisa',
+        requerAssinatura: false
+      },
+      {
+        id: 'doc-anvisa-3',
+        tipo: TipoDocumentoAcaoCampo.PROTOCOLO_ENCERRAMENTO_ANVISA,
+        nome: 'Protocolo de Encerramento na Anvisa',
+        requerAssinatura: false
+      }
+    ],
+    documentosAdicionais: []
   }
 ];
