@@ -44,9 +44,10 @@ export interface Licitante {
   cnpj: string;
   marca: string;
   modelo: string;
+  valorUnitario: number;
   valorFinal: number;
   ranking: number;
-  status: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor';
+  status: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor' | 'adjudicada' | 'aceita_habilitada' | 'homologada';
   observacoes?: string;
   atendeEdital: boolean;
 }

@@ -38,8 +38,9 @@ const TabelaLicitantes = ({
     cnpj: string;
     marca: string;
     modelo: string;
+    valorUnitario: number;
     valorFinal: number;
-    status: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor';
+    status: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor' | 'adjudicada' | 'aceita_habilitada' | 'homologada';
     observacoes: string;
     atendeEdital: boolean;
   }>({
@@ -47,6 +48,7 @@ const TabelaLicitantes = ({
     cnpj: '',
     marca: '',
     modelo: '',
+    valorUnitario: 0,
     valorFinal: 0,
     status: 'habilitado',
     observacoes: '',
@@ -80,6 +82,9 @@ const TabelaLicitantes = ({
       case 'inabilitado': return 'bg-red-500';
       case 'desclassificado': return 'bg-gray-500';
       case 'vencedor': return 'bg-green-500';
+      case 'adjudicada': return 'bg-purple-500';
+      case 'aceita_habilitada': return 'bg-teal-500';
+      case 'homologada': return 'bg-emerald-500';
       default: return 'bg-gray-500';
     }
   };
@@ -89,7 +94,10 @@ const TabelaLicitantes = ({
       habilitado: 'Habilitado',
       inabilitado: 'Inabilitado',
       desclassificado: 'Desclassificado',
-      vencedor: 'Vencedor'
+      vencedor: 'Vencedor',
+      adjudicada: 'Adjudicada',
+      aceita_habilitada: 'Aceita e Habilitada',
+      homologada: 'Homologada'
     };
     return labels[status as keyof typeof labels] || status;
   };
@@ -132,6 +140,7 @@ const TabelaLicitantes = ({
       cnpj: '',
       marca: '',
       modelo: '',
+      valorUnitario: 0,
       valorFinal: 0,
       status: 'habilitado',
       observacoes: '',
@@ -147,6 +156,7 @@ const TabelaLicitantes = ({
       cnpj: licitante.cnpj,
       marca: licitante.marca,
       modelo: licitante.modelo,
+      valorUnitario: licitante.valorUnitario,
       valorFinal: licitante.valorFinal,
       status: licitante.status,
       observacoes: licitante.observacoes || '',
@@ -305,6 +315,20 @@ const TabelaLicitantes = ({
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
+                          <Label htmlFor="valorUnitario">Valor Unitário</Label>
+                          <Input
+                            id="valorUnitario"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            value={licitanteForm.valorUnitario}
+                            onChange={(e) => setLicitanteForm({...licitanteForm, valorUnitario: parseFloat(e.target.value) || 0})}
+                          />
+                          <p className="text-sm text-gray-500 mt-1">
+                            {formatCurrency(licitanteForm.valorUnitario)}
+                          </p>
+                        </div>
+                        <div>
                           <Label htmlFor="valorFinal">Valor Final</Label>
                           <Input
                             id="valorFinal"
@@ -318,30 +342,31 @@ const TabelaLicitantes = ({
                             {formatCurrency(licitanteForm.valorFinal)}
                           </p>
                         </div>
-                        <div>
-                          <Label htmlFor="atendeEdital">Atende ao Edital?</Label>
-                          <Select 
-                            value={licitanteForm.atendeEdital.toString()} 
-                            onValueChange={(value) => 
-                              setLicitanteForm({...licitanteForm, atendeEdital: value === 'true'})
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="true">Sim</SelectItem>
-                              <SelectItem value="false">Não</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="atendeEdital">Atende ao Edital?</Label>
+                        <Select 
+                          value={licitanteForm.atendeEdital.toString()} 
+                          onValueChange={(value) => 
+                            setLicitanteForm({...licitanteForm, atendeEdital: value === 'true'})
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="true">Sim</SelectItem>
+                            <SelectItem value="false">Não</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
 
                       <div>
                         <Label htmlFor="status">Status</Label>
                         <Select 
                           value={licitanteForm.status} 
-                          onValueChange={(value: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor') => 
+                          onValueChange={(value: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor' | 'adjudicada' | 'aceita_habilitada' | 'homologada') => 
                             setLicitanteForm({...licitanteForm, status: value})
                           }
                         >
@@ -353,6 +378,9 @@ const TabelaLicitantes = ({
                             <SelectItem value="inabilitado">Inabilitado</SelectItem>
                             <SelectItem value="desclassificado">Desclassificado</SelectItem>
                             <SelectItem value="vencedor">Vencedor</SelectItem>
+                            <SelectItem value="adjudicada">Adjudicada</SelectItem>
+                            <SelectItem value="aceita_habilitada">Aceita e Habilitada</SelectItem>
+                            <SelectItem value="homologada">Homologada</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -390,6 +418,7 @@ const TabelaLicitantes = ({
                       <TableHead>CNPJ</TableHead>
                       <TableHead>Marca</TableHead>
                       <TableHead>Modelo</TableHead>
+                      <TableHead>Valor Unitário</TableHead>
                       <TableHead>Valor Final</TableHead>
                       <TableHead>Atende Edital?</TableHead>
                       <TableHead>Status</TableHead>
@@ -419,6 +448,7 @@ const TabelaLicitantes = ({
                           <TableCell>{formatCNPJ(licitante.cnpj)}</TableCell>
                           <TableCell>{licitante.marca}</TableCell>
                           <TableCell>{licitante.modelo}</TableCell>
+                          <TableCell className="font-medium">{formatCurrency(licitante.valorUnitario)}</TableCell>
                           <TableCell className="font-bold">{formatCurrency(licitante.valorFinal)}</TableCell>
                           <TableCell>
                             <Badge className={licitante.atendeEdital ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}>
