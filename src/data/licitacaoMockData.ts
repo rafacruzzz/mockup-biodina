@@ -16,7 +16,8 @@ export const licitantes = [
     valorFinal: 145000.00,
     unidade: 'un',
     ranking: 1,
-    atendeEdital: true
+    atendeEdital: true,
+    status: 'adjudicada'
   },
   {
     id: 2,
@@ -27,7 +28,8 @@ export const licitantes = [
     valorFinal: 148000.00,
     unidade: 'un',
     ranking: 2,
-    atendeEdital: false
+    atendeEdital: false,
+    status: 'desclassificado'
   },
   {
     id: 3,
@@ -38,7 +40,8 @@ export const licitantes = [
     valorFinal: 155000.00,
     unidade: 'un', 
     ranking: 3,
-    atendeEdital: true
+    atendeEdital: true,
+    status: 'aceita_habilitada'
   },
   {
     id: 4,
@@ -49,7 +52,8 @@ export const licitantes = [
     valorFinal: 160000.00,
     unidade: 'un',
     ranking: 4,
-    atendeEdital: false
+    atendeEdital: false,
+    status: 'homologada'
   }
 ];
 
