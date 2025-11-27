@@ -26,6 +26,7 @@ import { EstruturaEPadroesTab } from '@/components/administrativo/qualidade/Estr
 import { ColetaDadosTab } from '@/components/administrativo/qualidade/ColetaDadosTab';
 import { GestaoNCTab } from '@/components/administrativo/qualidade/GestaoNCTab';
 import { AnaliseIndicadoresTab } from '@/components/administrativo/qualidade/AnaliseIndicadoresTab';
+import { AcaoCampoTab } from '@/components/administrativo/qualidade/AcaoCampoTab';
 import { ProcessosTab } from '@/components/administrativo/juridico/ProcessosTab';
 import { ChamadosJuridicoTab } from '@/components/administrativo/juridico/ChamadosJuridicoTab';
 import { modules } from '@/data/cadastroModules';
@@ -771,11 +772,12 @@ const Administrativo = () => {
         </div>
         
         <Tabs value={qualidadeTab} onValueChange={setQualidadeTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="estrutura">Estrutura e Padrões</TabsTrigger>
             <TabsTrigger value="coleta">Coleta de Dados e Inspeção</TabsTrigger>
             <TabsTrigger value="nao-conformidades">Gestão de Não Conformidades</TabsTrigger>
             <TabsTrigger value="analise">Análise de Dados e Indicadores</TabsTrigger>
+            <TabsTrigger value="acao-campo">Ação de Campo</TabsTrigger>
           </TabsList>
 
           <TabsContent value="estrutura" className="mt-6">
@@ -792,6 +794,10 @@ const Administrativo = () => {
 
           <TabsContent value="analise" className="mt-6">
             <AnaliseIndicadoresTab />
+          </TabsContent>
+
+          <TabsContent value="acao-campo" className="mt-6">
+            <AcaoCampoTab />
           </TabsContent>
         </Tabs>
       </div>
