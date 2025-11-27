@@ -49,6 +49,33 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   const { toast } = useToast();
   const { segmentos } = useSegmentoLeadManager();
   const [activeTab, setActiveTab] = useState('dados-gerais');
+  
+  // Funções auxiliares para status de licitantes
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'habilitado': return 'bg-blue-500 text-white';
+      case 'inabilitado': return 'bg-red-500 text-white';
+      case 'desclassificado': return 'bg-gray-500 text-white';
+      case 'vencedor': return 'bg-green-500 text-white';
+      case 'adjudicada': return 'bg-purple-500 text-white';
+      case 'aceita_habilitada': return 'bg-teal-500 text-white';
+      case 'homologada': return 'bg-emerald-500 text-white';
+      default: return 'bg-gray-500 text-white';
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    const labels: Record<string, string> = {
+      habilitado: 'Habilitado',
+      inabilitado: 'Inabilitado',
+      desclassificado: 'Desclassificado',
+      vencedor: 'Vencedor',
+      adjudicada: 'Adjudicada',
+      aceita_habilitada: 'Aceita e Habilitada',
+      homologada: 'Homologada'
+    };
+    return labels[status] || status;
+  };
   const [showEmprestimoAlert, setShowEmprestimoAlert] = useState(false);
   const [showSolicitacaoCadastro, setShowSolicitacaoCadastro] = useState(false);
   const [showGerenciarSegmentos, setShowGerenciarSegmentos] = useState(false);
@@ -812,10 +839,12 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                   <TableHead>Empresa</TableHead>
                   <TableHead>Marca</TableHead>
                   <TableHead>Modelo</TableHead>
+                  <TableHead>Valor Unitário</TableHead>
                   <TableHead>Valor Final</TableHead>
                   <TableHead>Qnt Unidade</TableHead>
                   <TableHead>Atende ao Edital?</TableHead>
                   <TableHead>Ranking</TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -824,6 +853,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                     <TableCell className="font-medium">{licitante.empresa}</TableCell>
                     <TableCell>{licitante.marca}</TableCell>
                     <TableCell>{licitante.modelo}</TableCell>
+                    <TableCell>{formatCurrency(licitante.valorUnitario)}</TableCell>
                     <TableCell>{formatCurrency(licitante.valorFinal)}</TableCell>
                     <TableCell>
                       <Badge className={getUnidadeColor(licitante.unidade)}>
@@ -838,6 +868,11 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                     <TableCell>
                       <Badge className={getRankingColor(licitante.ranking)}>
                         {licitante.ranking}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getStatusColor(licitante.status)}>
+                        {getStatusLabel(licitante.status)}
                       </Badge>
                     </TableCell>
                   </TableRow>
