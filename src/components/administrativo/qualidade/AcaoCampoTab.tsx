@@ -279,10 +279,6 @@ export const AcaoCampoTab = () => {
               ← Voltar
             </Button>
             <h2 className="text-2xl font-bold mt-4">{acaoSelecionada.titulo}</h2>
-            <p className="text-muted-foreground">
-              Empresa: {acaoSelecionada.empresaRepresentada} • Criado em{' '}
-              {new Date(acaoSelecionada.dataCriacao).toLocaleDateString('pt-BR')}
-            </p>
           </div>
           <Badge className={`${getStatusColor(acaoSelecionada.status)} text-white`}>
             {getStatusIcon(acaoSelecionada.status)}
