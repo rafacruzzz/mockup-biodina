@@ -4,6 +4,7 @@ export const tipoDocumentoLabels: Record<TipoDocumentoAcaoCampo, string> = {
   [TipoDocumentoAcaoCampo.CARTA_CLIENTE]: 'Carta ao Cliente',
   [TipoDocumentoAcaoCampo.FAN]: 'FAN',
   [TipoDocumentoAcaoCampo.FIELD_ACTION_EFFECTIVENESS]: 'Field Action Effectiveness Data Sheet',
+  [TipoDocumentoAcaoCampo.FIELD_ACTION_EFFECTIVENESS_PREENCHIVEL]: 'Field Action Effectiveness Data Sheet (Preenchível)',
   [TipoDocumentoAcaoCampo.FAC1_CUSTOMER_ADVISORY]: 'FAC1 - Customer Advisory Letter',
   [TipoDocumentoAcaoCampo.FAC2_CUSTOMER_RESPONSE]: 'FAC2 - Customer Response',
   [TipoDocumentoAcaoCampo.FAC3]: 'FAC3',
@@ -103,6 +104,28 @@ export const acoesCampoMock: AcaoCampo[] = [
       },
       {
         id: 'doc-anvisa-3',
+        tipo: TipoDocumentoAcaoCampo.PROTOCOLO_ENCERRAMENTO_ANVISA,
+        nome: 'Protocolo de Encerramento na Anvisa',
+        requerAssinatura: false
+      }
+    ],
+    documentosAdicionais: []
+  },
+  {
+    id: '3',
+    titulo: 'Envio de documentos para a empresa que a Biodina representa',
+    empresaRepresentada: '',
+    dataCriacao: '2024-01-15',
+    status: StatusAcaoCampo.EM_ANDAMENTO,
+    documentos: [
+      {
+        id: 'doc-empresa-1',
+        tipo: TipoDocumentoAcaoCampo.FIELD_ACTION_EFFECTIVENESS_PREENCHIVEL,
+        nome: 'Field Action Effectiveness Data Sheet',
+        requerAssinatura: false
+      },
+      {
+        id: 'doc-empresa-2',
         tipo: TipoDocumentoAcaoCampo.PROTOCOLO_ENCERRAMENTO_ANVISA,
         nome: 'Protocolo de Encerramento na Anvisa',
         requerAssinatura: false
