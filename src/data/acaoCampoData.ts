@@ -20,7 +20,7 @@ export const statusAcaoCampoLabels: Record<StatusAcaoCampo, string> = {
 export const acoesCampoMock: AcaoCampo[] = [
   {
     id: '1',
-    titulo: 'Ação de Campo - Lote ABC123',
+    titulo: 'Recebimento dos documentos da empresa',
     empresaRepresentada: 'Fabricante XYZ Ltda',
     dataCriacao: '2024-01-15',
     dataAtualizacao: '2024-01-20',
