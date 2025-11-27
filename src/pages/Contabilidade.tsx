@@ -11,20 +11,12 @@ const Contabilidade = () => {
 
   const mainModules = [
     {
-      id: 'cadastros',
-      title: 'Cadastros Contábeis',
-      description: 'Cenários Fiscais e Configurações Tributárias',
-      icon: Settings,
-      subModules: [
-        { id: 'cenarios_fiscais', title: 'Cenários Fiscais' }
-      ]
-    },
-    {
       id: 'configuracoes',
       title: 'Configurações',
-      description: 'Alíquotas por Estado, Parâmetros Fiscais, Regras Contábeis',
+      description: 'Alíquotas por Estado, Parâmetros Fiscais, Regras Contábeis, Cenários Fiscais',
       icon: Settings,
       subModules: [
+        { id: 'cenarios_fiscais', title: 'Cenários Fiscais' },
         { id: 'aliquotas_estado', title: 'ICMS DIFAL para não contribuinte' },
         { id: 'naturezas_operacao', title: 'Naturezas de operação de entrada (tributação)' },
         { id: 'naturezas_operacao_saida', title: 'Naturezas de operação de saída (tributação)' },
