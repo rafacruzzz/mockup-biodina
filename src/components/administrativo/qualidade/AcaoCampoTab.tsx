@@ -409,10 +409,6 @@ export const AcaoCampoTab = () => {
                   <FileText className="h-5 w-5 text-primary mt-1" />
                   <div>
                     <p className="font-medium">{acao.titulo}</p>
-                    <p className="text-sm text-muted-foreground">{acao.empresaRepresentada}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Criado em {new Date(acao.dataCriacao).toLocaleDateString('pt-BR')}
-                    </p>
                   </div>
                 </div>
                 <Badge className={`${getStatusColor(acao.status)} text-white`}>
