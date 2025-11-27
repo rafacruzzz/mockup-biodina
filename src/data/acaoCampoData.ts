@@ -79,51 +79,5 @@ export const acoesCampoMock: AcaoCampo[] = [
         requerAssinatura: false
       }
     ]
-  },
-  {
-    id: '2',
-    titulo: 'Ação de Campo - Recall Produto DEF456',
-    empresaRepresentada: 'MediTech Solutions',
-    dataCriacao: '2024-02-10',
-    status: StatusAcaoCampo.EM_ANDAMENTO,
-    documentos: [
-      {
-        id: 'doc7',
-        tipo: TipoDocumentoAcaoCampo.CARTA_CLIENTE,
-        nome: 'Carta ao Cliente',
-        requerAssinatura: false
-      },
-      {
-        id: 'doc8',
-        tipo: TipoDocumentoAcaoCampo.FAN,
-        nome: 'FAN',
-        requerAssinatura: false
-      },
-      {
-        id: 'doc9',
-        tipo: TipoDocumentoAcaoCampo.FIELD_ACTION_EFFECTIVENESS,
-        nome: 'Field Action Effectiveness Data Sheet',
-        requerAssinatura: false
-      },
-      {
-        id: 'doc10',
-        tipo: TipoDocumentoAcaoCampo.FAC1_CUSTOMER_ADVISORY,
-        nome: 'FAC1 - Customer Advisory Letter',
-        requerAssinatura: true
-      },
-      {
-        id: 'doc11',
-        tipo: TipoDocumentoAcaoCampo.FAC2_CUSTOMER_RESPONSE,
-        nome: 'FAC2 - Customer Response',
-        requerAssinatura: true
-      },
-      {
-        id: 'doc12',
-        tipo: TipoDocumentoAcaoCampo.FAC3,
-        nome: 'FAC3',
-        requerAssinatura: true
-      }
-    ],
-    documentosAdicionais: []
   }
 ];
