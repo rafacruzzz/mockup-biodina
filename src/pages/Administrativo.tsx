@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import SidebarLayout from "@/components/SidebarLayout";
 import { 
   Shield, FileCheck, Building2, Scale, CheckCircle2, BookOpen, ArrowLeft,
-  BarChart3, FileText, RefreshCw, UserCheck, Route, Shield as ShieldIcon, Plus
+  BarChart3, FileText, RefreshCw, UserCheck, Route, Shield as ShieldIcon, Plus, Gavel, MessageSquare
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +26,8 @@ import { EstruturaEPadroesTab } from '@/components/administrativo/qualidade/Estr
 import { ColetaDadosTab } from '@/components/administrativo/qualidade/ColetaDadosTab';
 import { GestaoNCTab } from '@/components/administrativo/qualidade/GestaoNCTab';
 import { AnaliseIndicadoresTab } from '@/components/administrativo/qualidade/AnaliseIndicadoresTab';
+import { ProcessosTab } from '@/components/administrativo/juridico/ProcessosTab';
+import { ChamadosJuridicoTab } from '@/components/administrativo/juridico/ChamadosJuridicoTab';
 import { modules } from '@/data/cadastroModules';
 import { toast } from '@/components/ui/use-toast';
 import { parse, subDays, differenceInDays, format } from 'date-fns';
@@ -699,21 +701,29 @@ const Administrativo = () => {
           <ArrowLeft className="h-4 w-4" />
           Voltar
         </Button>
-        <h2 className="text-2xl font-bold text-biodina-blue">Jurídico</h2>
+        <h2 className="text-2xl font-bold text-biodina-blue">Administrativo / Jurídico</h2>
       </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Módulo em Desenvolvimento</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-600">
-            O módulo Jurídico está em desenvolvimento. 
-            Em breve você poderá gerenciar contratos, 
-            assessoria legal e processos jurídicos.
-          </p>
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="processos" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="processos" className="flex items-center gap-2">
+            <Gavel className="h-4 w-4" />
+            PROCESSOS
+          </TabsTrigger>
+          <TabsTrigger value="chamados" className="flex items-center gap-2">
+            <MessageSquare className="h-4 w-4" />
+            CHAMADOS JURÍDICOS
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="processos" className="mt-6">
+          <ProcessosTab />
+        </TabsContent>
+
+        <TabsContent value="chamados" className="mt-6">
+          <ChamadosJuridicoTab />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 
