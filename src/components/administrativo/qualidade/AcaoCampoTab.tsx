@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DocumentoAcaoCampoCard } from "./DocumentoAcaoCampoCard";
+import { DocumentoPreenchívelCard } from "./DocumentoPreenchívelCard";
 import { NovoDocumentoAdicionalModal } from "./NovoDocumentoAdicionalModal";
-import { AcaoCampo, DocumentoAcaoCampo, StatusAcaoCampo, TipoDocumentoAcaoCampo } from "@/types/acaoCampo";
+import { AcaoCampo, DocumentoAcaoCampo, StatusAcaoCampo, TipoDocumentoAcaoCampo, FieldActionEffectivenessData } from "@/types/acaoCampo";
 import { acoesCampoMock, statusAcaoCampoLabels, tipoDocumentoLabels } from "@/data/acaoCampoData";
 import { Plus, FileText, CheckCircle, Clock, AlertCircle, Archive } from "lucide-react";
 import { toast } from "sonner";
@@ -223,6 +224,54 @@ export const AcaoCampoTab = () => {
     toast.success("Documento assinado com sucesso!");
   };
 
+  const handleSalvarFormulario = (acaoId: string, docId: string, dados: FieldActionEffectivenessData) => {
+    setAcoesCampo(acoes =>
+      acoes.map(acao => {
+        if (acao.id !== acaoId) return acao;
+
+        const documentos = acao.documentos.map(doc => {
+          if (doc.id !== docId) return doc;
+          return {
+            ...doc,
+            dadosFormulario: dados
+          };
+        });
+
+        const acaoAtualizada = { ...acao, documentos };
+        if (acaoSelecionada?.id === acaoId) {
+          setAcaoSelecionada(acaoAtualizada);
+        }
+        return acaoAtualizada;
+      })
+    );
+  };
+
+  const handleGerarPDF = (acaoId: string, docId: string) => {
+    setAcoesCampo(acoes =>
+      acoes.map(acao => {
+        if (acao.id !== acaoId) return acao;
+
+        const documentos = acao.documentos.map(doc => {
+          if (doc.id !== docId || !doc.dadosFormulario) return doc;
+          return {
+            ...doc,
+            dadosFormulario: {
+              ...doc.dadosFormulario,
+              pdfGerado: true,
+              dataPdfGerado: new Date().toISOString()
+            }
+          };
+        });
+
+        const acaoAtualizada = { ...acao, documentos };
+        if (acaoSelecionada?.id === acaoId) {
+          setAcaoSelecionada(acaoAtualizada);
+        }
+        return acaoAtualizada;
+      })
+    );
+  };
+
   const handleAdicionarDocumento = (
     nome: string,
     descricao: string,
@@ -289,17 +338,29 @@ export const AcaoCampoTab = () => {
         <div>
           <h3 className="text-lg font-semibold mb-4">Documentos Obrigatórios</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {acaoSelecionada.documentos.map(doc => (
-              <DocumentoAcaoCampoCard
-                key={doc.id}
-                documento={doc}
-                onUpload={(file) => handleUploadDocumento(acaoSelecionada.id, doc.id, file)}
-                onRemove={() => handleRemoverDocumento(acaoSelecionada.id, doc.id)}
-                onSign={(nome, assinatura, cargo) =>
-                  handleAssinarDocumento(acaoSelecionada.id, doc.id, nome, assinatura, cargo)
-                }
-              />
-            ))}
+            {acaoSelecionada.documentos.map(doc => {
+              if (doc.tipo === TipoDocumentoAcaoCampo.FIELD_ACTION_EFFECTIVENESS_PREENCHIVEL) {
+                return (
+                  <DocumentoPreenchívelCard
+                    key={doc.id}
+                    documento={doc}
+                    onSave={(dados) => handleSalvarFormulario(acaoSelecionada.id, doc.id, dados)}
+                    onGeneratePDF={() => handleGerarPDF(acaoSelecionada.id, doc.id)}
+                  />
+                );
+              }
+              return (
+                <DocumentoAcaoCampoCard
+                  key={doc.id}
+                  documento={doc}
+                  onUpload={(file) => handleUploadDocumento(acaoSelecionada.id, doc.id, file)}
+                  onRemove={() => handleRemoverDocumento(acaoSelecionada.id, doc.id)}
+                  onSign={(nome, assinatura, cargo) =>
+                    handleAssinarDocumento(acaoSelecionada.id, doc.id, nome, assinatura, cargo)
+                  }
+                />
+              );
+            })}
           </div>
         </div>
 

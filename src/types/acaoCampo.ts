@@ -3,12 +3,29 @@ export enum TipoDocumentoAcaoCampo {
   CARTA_CLIENTE = 'carta_cliente',
   FAN = 'fan',
   FIELD_ACTION_EFFECTIVENESS = 'field_action_effectiveness',
+  FIELD_ACTION_EFFECTIVENESS_PREENCHIVEL = 'field_action_effectiveness_preenchivel',
   FAC1_CUSTOMER_ADVISORY = 'fac1_customer_advisory',
   FAC2_CUSTOMER_RESPONSE = 'fac2_customer_response',
   FAC3 = 'fac3',
   PROTOCOLO_ABERTURA_ANVISA = 'protocolo_abertura_anvisa',
   PROTOCOLO_ENCERRAMENTO_ANVISA = 'protocolo_encerramento_anvisa',
   ADICIONAL = 'adicional'
+}
+
+// Dados do Formulário Field Action Effectiveness
+export interface FieldActionEffectivenessData {
+  productName: string;
+  productModel: string;
+  serialNumber: string;
+  lotNumber: string;
+  customerName: string;
+  customerCity: string;
+  fieldActionDescription: string;
+  actionDate: string;
+  effectivenessResult: 'effective' | 'partially_effective' | 'not_effective';
+  observations: string;
+  pdfGerado?: boolean;
+  dataPdfGerado?: string;
 }
 
 // Assinatura do Documento
@@ -31,6 +48,7 @@ export interface DocumentoAcaoCampo {
   tamanho?: number;
   requerAssinatura: boolean;
   assinatura?: AssinaturaDocumento;
+  dadosFormulario?: FieldActionEffectivenessData;
 }
 
 // Status da Ação de Campo
