@@ -29,6 +29,10 @@ import { AnaliseIndicadoresTab } from '@/components/administrativo/qualidade/Ana
 import { AcaoCampoTab } from '@/components/administrativo/qualidade/AcaoCampoTab';
 import { ProcessosTab } from '@/components/administrativo/juridico/ProcessosTab';
 import { ChamadosJuridicoTab } from '@/components/administrativo/juridico/ChamadosJuridicoTab';
+import { LinksSMTab } from '@/components/administrativo/institucional/LinksSMTab';
+import { ControleImoveisTab } from '@/components/administrativo/institucional/ControleImoveisTab';
+import { ControleVeiculosTab } from '@/components/administrativo/institucional/ControleVeiculosTab';
+import { DocumentosEmpresaTab } from '@/components/administrativo/institucional/DocumentosEmpresaTab';
 import { modules } from '@/data/cadastroModules';
 import { toast } from '@/components/ui/use-toast';
 import { parse, subDays, differenceInDays, format } from 'date-fns';
@@ -38,6 +42,7 @@ const Administrativo = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [qualidadeTab, setQualidadeTab] = useState('estrutura');
   const [rtTab, setRtTab] = useState('documentacoes');
+  const [institucionalTab, setInstitucionalTab] = useState('links-sm');
   const [showNovoRegistroModal, setShowNovoRegistroModal] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [selectedRegistroHistory, setSelectedRegistroHistory] = useState<any>(null);
@@ -676,18 +681,30 @@ const Administrativo = () => {
         <h2 className="text-2xl font-bold text-biodina-blue">Institucional</h2>
       </div>
       
-      <Card>
-        <CardHeader>
-          <CardTitle>Módulo em Desenvolvimento</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-600">
-            O módulo Institucional está em desenvolvimento. 
-            Em breve você poderá gerenciar relações corporativas, 
-            comunicação institucional e parcerias estratégicas.
-          </p>
-        </CardContent>
-      </Card>
+      <Tabs value={institucionalTab} onValueChange={setInstitucionalTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="links-sm">Links SM</TabsTrigger>
+          <TabsTrigger value="imoveis">Controle de Imóveis</TabsTrigger>
+          <TabsTrigger value="veiculos">Controle de Veículos</TabsTrigger>
+          <TabsTrigger value="documentos">Documentos da Empresa</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="links-sm" className="mt-6">
+          <LinksSMTab />
+        </TabsContent>
+
+        <TabsContent value="imoveis" className="mt-6">
+          <ControleImoveisTab />
+        </TabsContent>
+
+        <TabsContent value="veiculos" className="mt-6">
+          <ControleVeiculosTab />
+        </TabsContent>
+
+        <TabsContent value="documentos" className="mt-6">
+          <DocumentosEmpresaTab />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 
