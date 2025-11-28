@@ -456,7 +456,7 @@ export const QueixaTecnicaTab = () => {
           {/* Informações do Fabricante */}
           <Card>
             <CardHeader>
-              <CardTitle>Informações do Fabricante/Importador</CardTitle>
+              <CardTitle>7 - Informações do Fabricante/Importador</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -499,48 +499,53 @@ export const QueixaTecnicaTab = () => {
             </CardContent>
           </Card>
 
-          {/* Informações Complementares */}
+          {/* Outras informações importantes */}
           <Card>
             <CardHeader>
-              <CardTitle>Informações Complementares</CardTitle>
+              <CardTitle>8 – Outras informações importantes</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>8.1. A utilização do produto seguiu as instruções do fabricante?</Label>
-                  <Input value={queixaTecnicaMockada.seguiuInstrucoes ? 'Sim' : 'Não'} readOnly />
+                  <Input value={queixaTecnicaMockada.seguiuInstrucoes ? 'Sim' : 'Não'} readOnly className="bg-muted/50" />
                 </div>
                 <div>
                   <Label>8.2. Local de aquisição do produto</Label>
-                  <Input value={queixaTecnicaMockada.localAquisicao} readOnly />
+                  <Input value={queixaTecnicaMockada.localAquisicao} readOnly className="bg-muted/50" />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>8.3. Possui nota fiscal da compra do produto?</Label>
-                  <Input value={queixaTecnicaMockada.possuiNotaFiscal ? 'Sim' : 'Não'} readOnly />
+                  <Input value={queixaTecnicaMockada.possuiNotaFiscal ? 'Sim' : 'Não'} readOnly className="bg-muted/50" />
                 </div>
                 <div>
                   <Label>8.4. Houve comunicação à indústria/distribuidor?</Label>
-                  <Input value={queixaTecnicaMockada.comunicacaoIndustria} readOnly />
+                  <Input value={queixaTecnicaMockada.comunicacaoIndustria} readOnly className="bg-muted/50" />
                 </div>
               </div>
 
               <div>
                 <Label>8.5. Foram adotadas outras providências após a identificação do problema?</Label>
-                <Input value={queixaTecnicaMockada.providenciasAdotadas || ''} readOnly />
+                <Input value={queixaTecnicaMockada.providenciasAdotadas || ''} readOnly className="bg-muted/50" />
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>8.6. Existem amostras íntegras para a coleta?</Label>
-                  <Input value={queixaTecnicaMockada.existemAmostras ? `Sim - ${queixaTecnicaMockada.quantidadeAmostras}` : 'Não'} readOnly />
+                  <Input value={queixaTecnicaMockada.existemAmostras ? `Sim - ${queixaTecnicaMockada.quantidadeAmostras}` : 'Não'} readOnly className="bg-muted/50" />
                 </div>
                 <div>
                   <Label>8.7. Existem rótulos do produto para a coleta?</Label>
-                  <Input value={queixaTecnicaMockada.existemRotulos ? 'Sim' : 'Não'} readOnly />
+                  <Input value={queixaTecnicaMockada.existemRotulos ? 'Sim' : 'Não'} readOnly className="bg-muted/50" />
                 </div>
+              </div>
+
+              <div>
+                <Label>8.8. Observações:</Label>
+                <Textarea value={queixaTecnicaMockada.observacoes || ''} readOnly className="bg-muted/50" rows={3} />
               </div>
             </CardContent>
           </Card>
