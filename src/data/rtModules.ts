@@ -313,6 +313,7 @@ export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[
       id: "CAPA-RT-001",
       acaoPreventiva: "Implementar sistema de revisão automática de documentação a cada 6 meses",
       acaoCorretiva: "Revisar e atualizar todos os POPs de treinamento conforme novas diretrizes ANVISA",
+      gerenciamentoTarefas: "Atribuir equipe de documentação para revisão semanal. Criar checklist de atualização. Acompanhamento quinzenal com RT.",
       prazoFinal: "2024-12-15",
       status: "Em Andamento",
       responsavel: "Dr. Carlos Silva"
@@ -334,6 +335,7 @@ export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[
       id: "CAPA-RT-002",
       acaoPreventiva: "Criar módulo prático adicional com simulações de situações reais",
       acaoCorretiva: "Realizar treinamento complementar focado em práticas de manuseio",
+      gerenciamentoTarefas: "Desenvolver material prático em 5 dias. Agendar sessões de treinamento. Avaliar competências pós-treinamento.",
       prazoFinal: "2024-11-25",
       status: "Pendente",
       responsavel: "Dra. Ana Paula"
@@ -355,6 +357,7 @@ export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[
       id: "CAPA-RT-003",
       acaoPreventiva: "Implementar dupla verificação automatizada no sistema de expedição",
       acaoCorretiva: "Revisar e fortalecer processo de liberação de produtos",
+      gerenciamentoTarefas: "Reunião com TI para desenvolver validação automática. Treinar equipe de expedição. Implementar testes em ambiente de homologação.",
       prazoFinal: "2024-12-01",
       status: "Pendente",
       responsavel: "Eng. Roberto Santos"
@@ -376,6 +379,7 @@ export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[
       id: "CAPA-RT-004",
       acaoPreventiva: "Criar guia visual de preenchimento de formulários",
       acaoCorretiva: "Realizar sessão de orientação sobre preenchimento de documentos",
+      gerenciamentoTarefas: "Criar infográfico explicativo. Distribuir para equipe. Realizar workshop de 2 horas. Avaliar compreensão com exercícios práticos.",
       prazoFinal: "2024-11-20",
       status: "Concluída",
       responsavel: "João Silva"
@@ -397,6 +401,7 @@ export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[
       id: "CAPA-RT-005",
       acaoPreventiva: "Estabelecer monitoramento semanal de publicações ANVISA",
       acaoCorretiva: "Atualizar procedimentos conforme nova RDC e comunicar equipe",
+      gerenciamentoTarefas: "Criar alerta automático de publicações. Designar responsável por análise semanal. Planejar atualização de documentos. Comunicar mudanças em reunião geral.",
       prazoFinal: "2024-11-30",
       status: "Em Andamento",
       responsavel: "Maria Santos"
