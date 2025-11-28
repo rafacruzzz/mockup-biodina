@@ -38,8 +38,8 @@ export function GestaoNCTab() {
       case "Moderado":
         return (
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse" />
-            <Badge className="bg-yellow-500 hover:bg-yellow-600 text-yellow-950">Moderado</Badge>
+            <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse" />
+            <Badge className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950">Moderado</Badge>
           </div>
         );
       case "Leve":
