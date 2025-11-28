@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus, Trash2 } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 
@@ -93,50 +94,52 @@ export const DocumentosEmpresaTab = () => {
         </div>
       </div>
       
-      <div className="overflow-x-auto border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="min-w-[200px]">Documentos para Controlar</TableHead>
-              <TableHead className="min-w-[120px]">Validade</TableHead>
-              <TableHead className="min-w-[120px]">Emissão</TableHead>
-              <TableHead className="min-w-[120px]">Vencimento</TableHead>
-              <TableHead className="min-w-[150px]">Responsável</TableHead>
-              <TableHead className="min-w-[200px]">Observação</TableHead>
-              <TableHead className="min-w-[150px]">Site</TableHead>
-              <TableHead className="min-w-[150px]">Login</TableHead>
-              <TableHead className="min-w-[150px]">Senha</TableHead>
-              <TableHead className="min-w-[200px]">Histórico de Documentos</TableHead>
-              <TableHead className="min-w-[180px]">Documento Atualizado</TableHead>
-              <TableHead className="min-w-[180px]">Anexar Documento Atual</TableHead>
-              <TableHead className="w-[80px]">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell><Input value={row.documentosControlar} onChange={(e) => updateRow(row.id, 'documentosControlar', e.target.value)} placeholder="Documento" /></TableCell>
-                <TableCell><Input type="date" value={row.validade} onChange={(e) => updateRow(row.id, 'validade', e.target.value)} /></TableCell>
-                <TableCell><Input type="date" value={row.emissao} onChange={(e) => updateRow(row.id, 'emissao', e.target.value)} /></TableCell>
-                <TableCell><Input type="date" value={row.vencimento} onChange={(e) => updateRow(row.id, 'vencimento', e.target.value)} /></TableCell>
-                <TableCell><Input value={row.responsavel} onChange={(e) => updateRow(row.id, 'responsavel', e.target.value)} placeholder="Responsável" /></TableCell>
-                <TableCell><Input value={row.observacao} onChange={(e) => updateRow(row.id, 'observacao', e.target.value)} placeholder="Observação" /></TableCell>
-                <TableCell><Input value={row.site} onChange={(e) => updateRow(row.id, 'site', e.target.value)} placeholder="Site" /></TableCell>
-                <TableCell><Input value={row.login} onChange={(e) => updateRow(row.id, 'login', e.target.value)} placeholder="Login" /></TableCell>
-                <TableCell><Input type="password" value={row.senha} onChange={(e) => updateRow(row.id, 'senha', e.target.value)} placeholder="Senha" /></TableCell>
-                <TableCell><Input value={row.historicoDocumentos} onChange={(e) => updateRow(row.id, 'historicoDocumentos', e.target.value)} placeholder="Histórico" /></TableCell>
-                <TableCell><Input value={row.documentoAtualizado} onChange={(e) => updateRow(row.id, 'documentoAtualizado', e.target.value)} placeholder="Doc. Atualizado" /></TableCell>
-                <TableCell><Input type="file" onChange={(e) => updateRow(row.id, 'anexarDocumento', e.target.value)} /></TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="icon" onClick={() => removeRow(row.id)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </TableCell>
+      <ScrollArea className="h-[calc(100vh-280px)] border rounded-lg">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="min-w-[200px]">Documentos para Controlar</TableHead>
+                <TableHead className="min-w-[120px]">Validade</TableHead>
+                <TableHead className="min-w-[120px]">Emissão</TableHead>
+                <TableHead className="min-w-[120px]">Vencimento</TableHead>
+                <TableHead className="min-w-[150px]">Responsável</TableHead>
+                <TableHead className="min-w-[200px]">Observação</TableHead>
+                <TableHead className="min-w-[150px]">Site</TableHead>
+                <TableHead className="min-w-[150px]">Login</TableHead>
+                <TableHead className="min-w-[150px]">Senha</TableHead>
+                <TableHead className="min-w-[200px]">Histórico de Documentos</TableHead>
+                <TableHead className="min-w-[180px]">Documento Atualizado</TableHead>
+                <TableHead className="min-w-[180px]">Anexar Documento Atual</TableHead>
+                <TableHead className="w-[80px]">Ações</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell><Input value={row.documentosControlar} onChange={(e) => updateRow(row.id, 'documentosControlar', e.target.value)} placeholder="Documento" /></TableCell>
+                  <TableCell><Input type="date" value={row.validade} onChange={(e) => updateRow(row.id, 'validade', e.target.value)} /></TableCell>
+                  <TableCell><Input type="date" value={row.emissao} onChange={(e) => updateRow(row.id, 'emissao', e.target.value)} /></TableCell>
+                  <TableCell><Input type="date" value={row.vencimento} onChange={(e) => updateRow(row.id, 'vencimento', e.target.value)} /></TableCell>
+                  <TableCell><Input value={row.responsavel} onChange={(e) => updateRow(row.id, 'responsavel', e.target.value)} placeholder="Responsável" /></TableCell>
+                  <TableCell><Input value={row.observacao} onChange={(e) => updateRow(row.id, 'observacao', e.target.value)} placeholder="Observação" /></TableCell>
+                  <TableCell><Input value={row.site} onChange={(e) => updateRow(row.id, 'site', e.target.value)} placeholder="Site" /></TableCell>
+                  <TableCell><Input value={row.login} onChange={(e) => updateRow(row.id, 'login', e.target.value)} placeholder="Login" /></TableCell>
+                  <TableCell><Input type="password" value={row.senha} onChange={(e) => updateRow(row.id, 'senha', e.target.value)} placeholder="Senha" /></TableCell>
+                  <TableCell><Input value={row.historicoDocumentos} onChange={(e) => updateRow(row.id, 'historicoDocumentos', e.target.value)} placeholder="Histórico" /></TableCell>
+                  <TableCell><Input value={row.documentoAtualizado} onChange={(e) => updateRow(row.id, 'documentoAtualizado', e.target.value)} placeholder="Doc. Atualizado" /></TableCell>
+                  <TableCell><Input type="file" onChange={(e) => updateRow(row.id, 'anexarDocumento', e.target.value)} /></TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="icon" onClick={() => removeRow(row.id)}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </ScrollArea>
     </div>
   );
 };
