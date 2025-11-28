@@ -34,6 +34,7 @@ import { ControleImoveisTab } from '@/components/administrativo/institucional/Co
 import { ControleVeiculosTab } from '@/components/administrativo/institucional/ControleVeiculosTab';
 import { DocumentosEmpresaTab } from '@/components/administrativo/institucional/DocumentosEmpresaTab';
 import { RastreabilidadeRegulatorioTab } from '@/components/administrativo/regulatorio/rastreabilidade/RastreabilidadeRegulatorioTab';
+import { BoasPraticasTab } from '@/components/administrativo/regulatorio/boas-praticas/BoasPraticasTab';
 import { modules } from '@/data/cadastroModules';
 import { toast } from '@/components/ui/use-toast';
 import { parse, subDays, differenceInDays, format } from 'date-fns';
@@ -283,7 +284,7 @@ const Administrativo = () => {
         case 'atualizacoes': return renderAtualizacoesTab();
         case 'due-diligence': return renderDueDiligenceTab();
         case 'rastreabilidade': return <RastreabilidadeRegulatorioTab />;
-        case 'boas-praticas': return renderEmptyTab('BOAS PRÁTICAS', 'Gestão de boas práticas regulatórias');
+        case 'boas-praticas': return <BoasPraticasTab />;
         default: return renderRegulatorioIndicadores();
       }
     };
