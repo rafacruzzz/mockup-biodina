@@ -15,8 +15,15 @@ export const queixaTecnicaMockada: QueixaTecnica = {
   tipoQueixaEvento: 'Queixa Técnica',
   covidRelacionado: false,
   vacinaCovidRelacionado: false,
+  // Tipo de Queixa Técnica (Seção 3)
+  voceENotificante: 'Confidencial',
+  razaoSocialNotificante: 'Confidencial',
+  cnpjNotificante: 'Confidencial',
+  telefoneNotificante: 'Confidencial',
+  enderecoNotificante: 'Confidencial',
   tipoQueixaTecnica: 'Produto com suspeita de desvio da qualidade',
   alteracoesApresentadas: '',
+  // Queixa Técnica (Seção 4)
   descricaoObjetiva: 'Lactato não estava calibrando após várias tentativas precisei fazer a troca do sensor cassete pack por um novo.',
   classificacaoNivel1: '1000 - Implante, ativação',
   classificacaoNivel2: '1002 - Falha para ativar',

@@ -148,74 +148,114 @@ export const QueixaTecnicaTab = () => {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Identificação da Notificação</CardTitle>
+                <CardTitle>2 - Identificação da Notificação</CardTitle>
                 {getStatusBadge(queixaTecnicaMockada.status)}
               </div>
             </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Dados Básicos */}
+            <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Número da Notificação</Label>
+                  <Label>2.1. Número da Notificação:</Label>
                   <Input value={queixaTecnicaMockada.numeroNotificacao} readOnly />
                 </div>
                 <div>
-                  <Label>Data da Identificação/Ocorrência</Label>
+                  <Label>2.2. Data da Identificação/Ocorrência:</Label>
                   <Input value={format(queixaTecnicaMockada.dataIdentificacao, 'dd/MM/yyyy')} readOnly />
                 </div>
               </div>
 
-              {/* Produto e Tipo */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Produto motivo da notificação</Label>
+                  <Label>2.3. Produto motivo da notificação:</Label>
                   <Input value={queixaTecnicaMockada.produtoMotivo} readOnly />
                 </div>
                 <div>
-                  <Label>Queixa Técnica/Evento Adverso</Label>
+                  <Label>2.4. Queixa Técnica/Evento Adverso:</Label>
                   <Input value={queixaTecnicaMockada.tipoQueixaEvento} readOnly />
                 </div>
               </div>
 
-              {/* COVID-19 */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>Utilizado no manejo do Covid-19?</Label>
+                  <Label>2.5. Utilizado no manejo do Covid-19?</Label>
                   <Input value={queixaTecnicaMockada.covidRelacionado ? 'Sim' : 'Não'} readOnly />
                 </div>
                 <div>
-                  <Label>Utilizado na aplicação da vacina contra a Covid-19?</Label>
+                  <Label>2.6. Utilizado na aplicação da vacina contra a Covid-19?</Label>
                   <Input value={queixaTecnicaMockada.vacinaCovidRelacionado ? 'Sim' : 'Não'} readOnly />
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Tipo de Queixa */}
+          {/* Tipo de Queixa Técnica */}
+          <Card>
+            <CardHeader>
+              <CardTitle>3 - Tipo de Queixa Técnica</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div>
-                <Label>3.6. Tipo de Queixa Técnica</Label>
+                <Label>3.1. Você é notificante:</Label>
+                <Input value={queixaTecnicaMockada.voceENotificante || ''} readOnly />
+              </div>
+
+              <div>
+                <Label>3.2. Razão Social:</Label>
+                <Input value={queixaTecnicaMockada.razaoSocialNotificante || ''} readOnly />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>3.3. CNPJ:</Label>
+                  <Input value={queixaTecnicaMockada.cnpjNotificante || ''} readOnly />
+                </div>
+                <div>
+                  <Label>3.4. Telefone:</Label>
+                  <Input value={queixaTecnicaMockada.telefoneNotificante || ''} readOnly />
+                </div>
+              </div>
+
+              <div>
+                <Label>3.5. Endereço:</Label>
+                <Input value={queixaTecnicaMockada.enderecoNotificante || ''} readOnly />
+              </div>
+
+              <div>
+                <Label>3.6. Tipo de Queixa Técnica:</Label>
                 <Input value={queixaTecnicaMockada.tipoQueixaTecnica} readOnly />
               </div>
 
-              {/* Descrição */}
               <div>
-                <Label>4.1. Descrição objetivamente a Queixa Técnica</Label>
+                <Label>3.6.1. Alterações apresentadas pelo produto:</Label>
+                <Textarea value={queixaTecnicaMockada.alteracoesApresentadas || ''} readOnly rows={2} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Queixa Técnica */}
+          <Card>
+            <CardHeader>
+              <CardTitle>4 - Queixa Técnica</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label>4.1. Descrição objetivamente a Queixa Técnica:</Label>
                 <Textarea value={queixaTecnicaMockada.descricaoObjetiva} readOnly rows={3} />
               </div>
 
-              {/* Classificação */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>4.2. Classificação da Ocorrência (Nível 1)</Label>
+                  <Label>4.2. Classificação da Ocorrência (Nível 1):</Label>
                   <Input value={queixaTecnicaMockada.classificacaoNivel1} readOnly />
                 </div>
                 <div>
-                  <Label>4.2. Classificação da Ocorrência (Nível 2)</Label>
+                  <Label>4.2. Classificação da Ocorrência (Nível 2):</Label>
                   <Input value={queixaTecnicaMockada.classificacaoNivel2} readOnly />
                 </div>
               </div>
 
-              {/* Local */}
               <div>
-                <Label>4.15. Especifique o setor</Label>
+                <Label>4.15. Especifique o setor:</Label>
                 <Input value={queixaTecnicaMockada.setorEspecifico} readOnly />
               </div>
             </CardContent>
