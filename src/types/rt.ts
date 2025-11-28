@@ -91,6 +91,7 @@ export interface AcaoCAPART {
   id: string;
   acaoPreventiva: string;
   acaoCorretiva: string;
+  gerenciamentoTarefas?: string;
   prazoFinal: string;
   status: StatusCAPART;
   responsavel: string;

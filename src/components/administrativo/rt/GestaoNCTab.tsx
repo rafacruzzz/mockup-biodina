@@ -324,6 +324,17 @@ export function GestaoNCTab() {
                     />
                   </div>
 
+                  {selectedNC.capa.gerenciamentoTarefas && (
+                    <div>
+                      <Label>Gerenciamento da Execução de Tarefas</Label>
+                      <Textarea 
+                        value={selectedNC.capa.gerenciamentoTarefas} 
+                        disabled 
+                        className="min-h-[80px]"
+                      />
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                       <Label>Prazo Final</Label>
