@@ -378,73 +378,76 @@ export const QueixaTecnicaTab = () => {
             </CardContent>
           </Card>
 
-          {/* Informações do Produto */}
+          {/* 5 - Produto e Empresa */}
           <Card>
             <CardHeader>
-              <CardTitle>Informações do Produto</CardTitle>
+              <CardTitle>5 - Produto e Empresa</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Registro ANVISA */}
+            <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>5.1. Número do registro ou cadastro na ANVISA</Label>
-                  <Input value={queixaTecnicaMockada.numeroRegistroAnvisa} readOnly />
+                  <Input value={queixaTecnicaMockada.numeroRegistroAnvisa} readOnly className="bg-muted/50" />
                 </div>
                 <div>
                   <Label>5.2. CNPJ da empresa fabricante ou importador</Label>
-                  <Input value={queixaTecnicaMockada.cnpjFabricanteImportador} readOnly />
+                  <Input value={queixaTecnicaMockada.cnpjFabricanteImportador} readOnly className="bg-muted/50" />
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              {/* Nome Comercial e Produto */}
+          {/* 6 - Dados do Produto */}
+          <Card>
+            <CardHeader>
+              <CardTitle>6 - Dados do Produto</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>6.1. Nome comercial do produto</Label>
-                  <Input value={queixaTecnicaMockada.nomeComercial} readOnly />
+                  <Input value={queixaTecnicaMockada.nomeComercial} readOnly className="bg-muted/50" />
                 </div>
                 <div>
                   <Label>6.2. Produto</Label>
-                  <Input value={queixaTecnicaMockada.produto} readOnly />
+                  <Input value={queixaTecnicaMockada.produto} readOnly className="bg-muted/50" />
                 </div>
               </div>
 
-              {/* Datas */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label>6.3. Data de fabricação</Label>
-                  <Input value={format(queixaTecnicaMockada.dataFabricacao, 'dd/MM/yyyy')} readOnly />
+                  <Input value={format(queixaTecnicaMockada.dataFabricacao, 'dd/MM/yyyy')} readOnly className="bg-muted/50" />
                 </div>
                 <div>
                   <Label>6.4. Número do lote</Label>
-                  <Input value={queixaTecnicaMockada.numeroLote} readOnly />
+                  <Input value={queixaTecnicaMockada.numeroLote} readOnly className="bg-muted/50" />
                 </div>
                 <div>
                   <Label>6.5. Data de validade</Label>
-                  <Input value={format(queixaTecnicaMockada.dataValidade, 'dd/MM/yyyy')} readOnly />
+                  <Input value={format(queixaTecnicaMockada.dataValidade, 'dd/MM/yyyy')} readOnly className="bg-muted/50" />
                 </div>
               </div>
 
-              {/* Características */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>6.6. Produto Reprocessado</Label>
-                  <Input value={queixaTecnicaMockada.produtoReprocessado ? 'Sim' : 'Não'} readOnly />
+                  <Input value={queixaTecnicaMockada.produtoReprocessado ? 'Sim' : 'Não'} readOnly className="bg-muted/50" />
                 </div>
                 <div>
                   <Label>6.7. Produto importado?</Label>
-                  <Input value={queixaTecnicaMockada.produtoImportado ? 'Sim' : 'Não'} readOnly />
+                  <Input value={queixaTecnicaMockada.produtoImportado ? 'Sim' : 'Não'} readOnly className="bg-muted/50" />
                 </div>
               </div>
 
-              {/* Classe e Nome Técnico */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>6.8. Classe de Risco</Label>
-                  <Input value={queixaTecnicaMockada.classeRisco} readOnly />
+                  <Input value={queixaTecnicaMockada.classeRisco} readOnly className="bg-muted/50" />
                 </div>
                 <div>
                   <Label>6.9. Nome Técnico</Label>
-                  <Input value={queixaTecnicaMockada.nomeTecnico} readOnly />
+                  <Input value={queixaTecnicaMockada.nomeTecnico} readOnly className="bg-muted/50" />
                 </div>
               </div>
             </CardContent>
