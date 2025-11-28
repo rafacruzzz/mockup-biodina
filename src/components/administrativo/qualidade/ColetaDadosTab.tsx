@@ -4,6 +4,8 @@ import { AuditoriaQualidadeForm } from './AuditoriaQualidadeForm';
 import { PesquisaSatisfacaoTab } from './PesquisaSatisfacaoTab';
 import { RastreabilidadeTab } from './RastreabilidadeTab';
 import { QueixaTecnicaTab } from './QueixaTecnicaTab';
+import { EmailsTelefonemesTab } from './EmailsTelefonemesTab';
+import { IntegracaoSensoresTab } from './IntegracaoSensoresTab';
 
 export const ColetaDadosTab = () => {
   const [subTab, setSubTab] = useState('auditoria');
@@ -11,11 +13,13 @@ export const ColetaDadosTab = () => {
   return (
     <div className="space-y-6">
       <Tabs value={subTab} onValueChange={setSubTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="auditoria">Auditoria da Qualidade</TabsTrigger>
           <TabsTrigger value="pesquisa">Pesquisa de Satisfação</TabsTrigger>
           <TabsTrigger value="rastreabilidade">Rastreabilidade</TabsTrigger>
           <TabsTrigger value="queixa-tecnica">Queixa Técnica (Notivisa/ANVISA)</TabsTrigger>
+          <TabsTrigger value="emails-telefonemas">E-mails e Telefonemas</TabsTrigger>
+          <TabsTrigger value="sensores">Integração Sensores/Máquinas</TabsTrigger>
         </TabsList>
 
         <TabsContent value="auditoria">
@@ -32,6 +36,14 @@ export const ColetaDadosTab = () => {
 
         <TabsContent value="queixa-tecnica">
           <QueixaTecnicaTab />
+        </TabsContent>
+
+        <TabsContent value="emails-telefonemas">
+          <EmailsTelefonemesTab />
+        </TabsContent>
+
+        <TabsContent value="sensores">
+          <IntegracaoSensoresTab />
         </TabsContent>
       </Tabs>
     </div>
