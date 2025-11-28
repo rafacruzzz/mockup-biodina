@@ -15,8 +15,15 @@ export interface QueixaTecnica {
   tipoQueixaEvento: 'Queixa Técnica' | 'Evento Adverso';
   covidRelacionado: boolean;
   vacinaCovidRelacionado: boolean;
+  // Tipo de Queixa Técnica (Seção 3)
+  voceENotificante?: string;
+  razaoSocialNotificante?: string;
+  cnpjNotificante?: string;
+  telefoneNotificante?: string;
+  enderecoNotificante?: string;
   tipoQueixaTecnica: string;
   alteracoesApresentadas?: string;
+  // Queixa Técnica (Seção 4)
   descricaoObjetiva: string;
   classificacaoNivel1: string;
   classificacaoNivel2: string;
