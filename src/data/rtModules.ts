@@ -4,7 +4,10 @@ import {
   Mudanca, 
   Treinamento, 
   LiberacaoProduto,
-  DocumentacaoRT 
+  DocumentacaoRT,
+  AlertaRT,
+  KPIRT,
+  RegistroAuditoria
 } from "@/types/rt";
 
 // Mock de arquivos
@@ -398,5 +401,196 @@ export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[
       status: "Em Andamento",
       responsavel: "Maria Santos"
     }
+  }
+];
+
+// Função auxiliar para verificar se CAPA está atrasado
+const isCapaAtrasado = (prazoFinal: string): boolean => {
+  const hoje = new Date();
+  const prazo = new Date(prazoFinal);
+  return hoje > prazo;
+};
+
+// Função auxiliar para contar NCs do mês atual
+const contarNCsMesAtual = (): number => {
+  const hoje = new Date();
+  const mesAtual = hoje.getMonth();
+  const anoAtual = hoje.getFullYear();
+  
+  return naoConformidadesRTMockadas.filter(nc => {
+    const dataNc = new Date(nc.data);
+    return dataNc.getMonth() === mesAtual && dataNc.getFullYear() === anoAtual;
+  }).length;
+};
+
+// Mock de Alertas RT
+export const alertasRTMockados: AlertaRT[] = [
+  // Alertas de NCs Críticas
+  ...naoConformidadesRTMockadas
+    .filter(nc => nc.impacto === 'Crítico' && nc.status !== 'Fechada')
+    .map(nc => ({
+      id: `alerta-nc-${nc.id}`,
+      tipo: 'nc_critica' as const,
+      titulo: 'Não Conformidade Crítica Aberta',
+      mensagem: `${nc.id}: ${nc.descricao.substring(0, 80)}...`,
+      prioridade: 'critica' as const,
+      dataCriacao: nc.data,
+      lido: false,
+      origem: nc.id
+    })),
+  
+  // Alerta de Limite de NCs Mensais
+  ...(contarNCsMesAtual() >= 8 ? [{
+    id: 'alerta-limite-nc',
+    tipo: 'limite_nc_mensal' as const,
+    titulo: 'Limite de NCs Mensal Próximo',
+    mensagem: `${contarNCsMesAtual()} não conformidades registradas neste mês. Limite de 10 está próximo.`,
+    prioridade: 'alta' as const,
+    dataCriacao: new Date().toISOString().split('T')[0],
+    lido: false
+  }] : []),
+  
+  // Alertas de CAPAs Atrasados
+  ...naoConformidadesRTMockadas
+    .filter(nc => nc.capa.status !== 'Concluída' && nc.capa.status !== 'Verificada' && isCapaAtrasado(nc.capa.prazoFinal))
+    .map(nc => ({
+      id: `alerta-capa-${nc.capa.id}`,
+      tipo: 'capa_atrasado' as const,
+      titulo: 'CAPA Atrasado',
+      mensagem: `${nc.capa.id} com prazo vencido em ${nc.capa.prazoFinal}. Responsável: ${nc.capa.responsavel}`,
+      prioridade: 'alta' as const,
+      dataCriacao: new Date().toISOString().split('T')[0],
+      lido: false,
+      origem: nc.id
+    })),
+  
+  // Alerta de Insatisfação de Cliente (simulado)
+  {
+    id: 'alerta-satisfacao-1',
+    tipo: 'insatisfacao_cliente' as const,
+    titulo: 'Insatisfação Cliente Detectada',
+    mensagem: 'Categoria "Prazo de Entrega" com 42% de insatisfação - acima do limite configurado',
+    prioridade: 'alta' as const,
+    dataCriacao: '2024-11-15',
+    lido: false,
+    origem: 'pesquisa-satisfacao'
+  }
+];
+
+// Mock de KPIs RT
+export const kpisRTMockados: KPIRT = {
+  capasAbertos: naoConformidadesRTMockadas.filter(nc => 
+    nc.capa.status === 'Pendente' || nc.capa.status === 'Em Andamento'
+  ).length,
+  capasAtrasados: naoConformidadesRTMockadas.filter(nc => 
+    (nc.capa.status === 'Pendente' || nc.capa.status === 'Em Andamento') && 
+    isCapaAtrasado(nc.capa.prazoFinal)
+  ).length,
+  indiceQualidadePerformance: 87.5, // Valor calculado baseado em métricas
+  manutencoesPreventivasPendentes: 12,
+  manutencoesCorretivasPendentes: 5
+};
+
+// Mock de Trilha de Auditoria
+export const trilhaAuditoriaMockada: RegistroAuditoria[] = [
+  {
+    id: 'audit-001',
+    dataHora: '2024-11-28 10:30:15',
+    usuario: 'Dr. Carlos Silva',
+    acao: 'criacao',
+    modulo: 'Gestão de NC',
+    recurso: 'NC-RT-006',
+    detalhes: 'Nova não conformidade criada - Documentação Desatualizada',
+    ipAddress: '192.168.1.100'
+  },
+  {
+    id: 'audit-002',
+    dataHora: '2024-11-28 09:15:42',
+    usuario: 'Dra. Ana Paula',
+    acao: 'edicao',
+    modulo: 'CAPA',
+    recurso: 'CAPA-RT-001',
+    detalhes: 'Status alterado de Pendente para Em Andamento',
+    ipAddress: '192.168.1.101'
+  },
+  {
+    id: 'audit-003',
+    dataHora: '2024-11-27 16:45:33',
+    usuario: 'Eng. Roberto Santos',
+    acao: 'aprovacao',
+    modulo: 'Liberação de Produtos',
+    recurso: 'prod-1',
+    detalhes: 'Produto DxH 520 aprovado para comercialização',
+    ipAddress: '192.168.1.102'
+  },
+  {
+    id: 'audit-004',
+    dataHora: '2024-11-27 14:20:18',
+    usuario: 'João Silva',
+    acao: 'upload',
+    modulo: 'Documentação',
+    recurso: 'POP-045',
+    detalhes: 'Arquivo POP-045-Procedimento-Embalagem.pdf enviado',
+    ipAddress: '192.168.1.103'
+  },
+  {
+    id: 'audit-005',
+    dataHora: '2024-11-27 11:05:27',
+    usuario: 'Maria Santos',
+    acao: 'visualizacao',
+    modulo: 'Controle de Mudanças',
+    recurso: 'mud-1',
+    detalhes: 'Visualização de mudança A - Alteração de endereço',
+    ipAddress: '192.168.1.104'
+  },
+  {
+    id: 'audit-006',
+    dataHora: '2024-11-26 15:30:45',
+    usuario: 'Dr. Carlos Silva',
+    acao: 'edicao',
+    modulo: 'Treinamentos',
+    recurso: 'trei-1',
+    detalhes: 'Lista de participantes atualizada',
+    ipAddress: '192.168.1.100'
+  },
+  {
+    id: 'audit-007',
+    dataHora: '2024-11-26 13:12:59',
+    usuario: 'Dra. Ana Paula',
+    acao: 'criacao',
+    modulo: 'Treinamentos',
+    recurso: 'trei-5',
+    detalhes: 'Novo treinamento agendado - Gestão de Riscos',
+    ipAddress: '192.168.1.101'
+  },
+  {
+    id: 'audit-008',
+    dataHora: '2024-11-26 10:22:14',
+    usuario: 'João Silva',
+    acao: 'download',
+    modulo: 'Documentação',
+    recurso: 'ESP-001',
+    detalhes: 'Download de especificação técnica',
+    ipAddress: '192.168.1.103'
+  },
+  {
+    id: 'audit-009',
+    dataHora: '2024-11-25 16:48:37',
+    usuario: 'Eng. Roberto Santos',
+    acao: 'rejeicao',
+    modulo: 'Controle de Mudanças',
+    recurso: 'mud-5',
+    detalhes: 'Mudança rejeitada - Falta de documentação',
+    ipAddress: '192.168.1.102'
+  },
+  {
+    id: 'audit-010',
+    dataHora: '2024-11-25 14:35:21',
+    usuario: 'Maria Santos',
+    acao: 'exclusao',
+    modulo: 'Gestão de NC',
+    recurso: 'NC-RT-010',
+    detalhes: 'NC duplicada removida',
+    ipAddress: '192.168.1.104'
   }
 ];
