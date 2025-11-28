@@ -69,13 +69,8 @@ const estruturaInicial = {
 };
 
 export const EstruturaEPadroesTab = () => {
-  const [manuaisNome, setManuaisNome] = useState(estruturaInicial.manuais.nomeArquivo);
   const [manuaisPastas, setManuaisPastas] = useState(estruturaInicial.manuais.pastas);
-
-  const [popNome, setPopNome] = useState(estruturaInicial.pop.nomeArquivo);
   const [popPastas, setPopPastas] = useState(estruturaInicial.pop.pastas);
-
-  const [itNome, setItNome] = useState(estruturaInicial.instrucoesTrabalho.nomeArquivo);
   const [itPastas, setItPastas] = useState(estruturaInicial.instrucoesTrabalho.pastas);
 
   return (
@@ -90,8 +85,6 @@ export const EstruturaEPadroesTab = () => {
       {/* Seção 1: Manuais da Qualidade */}
       <OrganizacaoDocumentos
         titulo="Manuais da Qualidade"
-        nomeArquivoPrincipal={manuaisNome}
-        onNomeArquivoChange={setManuaisNome}
         estruturaPastas={manuaisPastas}
         onEstruturaChange={setManuaisPastas}
       />
@@ -99,8 +92,6 @@ export const EstruturaEPadroesTab = () => {
       {/* Seção 2: POP (Procedimentos Operacionais Padrão) */}
       <OrganizacaoDocumentos
         titulo="POP - Procedimentos Operacionais Padrão"
-        nomeArquivoPrincipal={popNome}
-        onNomeArquivoChange={setPopNome}
         estruturaPastas={popPastas}
         onEstruturaChange={setPopPastas}
       />
@@ -108,8 +99,6 @@ export const EstruturaEPadroesTab = () => {
       {/* Seção 3: Instruções de Trabalho */}
       <OrganizacaoDocumentos
         titulo="Instruções de Trabalho"
-        nomeArquivoPrincipal={itNome}
-        onNomeArquivoChange={setItNome}
         estruturaPastas={itPastas}
         onEstruturaChange={setItPastas}
       />
