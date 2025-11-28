@@ -16,50 +16,17 @@ import {
   Legend, 
   ResponsiveContainer 
 } from 'recharts';
-import { TrendingDown, Repeat, CheckCircle2, Users, Wifi, WifiOff, AlertTriangle, CheckCircle } from 'lucide-react';
+import { TrendingDown, Repeat, CheckCircle2, Users, AlertTriangle, CheckCircle } from 'lucide-react';
 import { 
   dadosNCMensal, 
   dadosRetrabalho, 
   dadosEficienciaCAPA, 
-  indicesQualidadeFornecedores,
-  integracoesSensores
+  indicesQualidadeFornecedores
 } from '@/data/qualidadeData';
-import { StatusIntegracao } from '@/types/qualidade';
-import { format } from 'date-fns';
 
 const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))'];
 
 export const AnaliseIndicadoresTab = () => {
-  const getStatusIcon = (status: StatusIntegracao) => {
-    switch (status) {
-      case 'OK':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'Alerta':
-        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
-      case 'Erro':
-        return <WifiOff className="h-4 w-4 text-destructive" />;
-      case 'Desativado':
-        return <Wifi className="h-4 w-4 text-muted-foreground" />;
-      default:
-        return null;
-    }
-  };
-
-  const getStatusBadgeVariant = (status: StatusIntegracao) => {
-    switch (status) {
-      case 'OK':
-        return 'default';
-      case 'Alerta':
-        return 'secondary';
-      case 'Erro':
-        return 'destructive';
-      case 'Desativado':
-        return 'outline';
-      default:
-        return 'outline';
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* Row 1: NC Mensal e Retrabalho */}
@@ -243,55 +210,6 @@ export const AnaliseIndicadoresTab = () => {
               ))}
             </TableBody>
           </Table>
-        </CardContent>
-      </Card>
-
-      {/* Integrações e Sensores */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Status das Integrações</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {integracoesSensores.map((sensor) => (
-              <div 
-                key={sensor.id}
-                className={`p-4 rounded-lg border-2 ${
-                  sensor.status === 'OK' 
-                    ? 'border-green-500/20 bg-green-500/5' 
-                    : sensor.status === 'Alerta'
-                    ? 'border-yellow-500/20 bg-yellow-500/5'
-                    : sensor.status === 'Erro'
-                    ? 'border-destructive/20 bg-destructive/5'
-                    : 'border-border bg-muted/5'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="font-semibold text-sm">{sensor.nome}</div>
-                  {getStatusIcon(sensor.status)}
-                </div>
-                <div className="text-xs text-muted-foreground mb-2">{sensor.tipo}</div>
-                {sensor.valor && (
-                  <div className="text-2xl font-bold mb-1">
-                    {sensor.valor}{sensor.unidade}
-                  </div>
-                )}
-                {sensor.limiteMin !== undefined && sensor.limiteMax !== undefined && (
-                  <div className="text-xs text-muted-foreground mb-2">
-                    Limites: {sensor.limiteMin} - {sensor.limiteMax}{sensor.unidade}
-                  </div>
-                )}
-                <div className="flex items-center justify-between mt-2">
-                  <Badge variant={getStatusBadgeVariant(sensor.status)}>
-                    {sensor.status}
-                  </Badge>
-                  <div className="text-xs text-muted-foreground">
-                    {format(sensor.ultimaAtualizacao, 'HH:mm')}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
         </CardContent>
       </Card>
     </div>
