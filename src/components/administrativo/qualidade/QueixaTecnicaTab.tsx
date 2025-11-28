@@ -239,24 +239,141 @@ export const QueixaTecnicaTab = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label>4.1. Descrição objetivamente a Queixa Técnica:</Label>
-                <Textarea value={queixaTecnicaMockada.descricaoObjetiva} readOnly rows={3} />
+                <Label>4.1. Descrição objetivamente a Queixa Técnica</Label>
+                <Textarea
+                  value={queixaTecnicaMockada.descricaoObjetiva}
+                  readOnly
+                  rows={3}
+                  className="bg-muted/50"
+                />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>4.2. Classificação da Ocorrência (Nível 1):</Label>
-                  <Input value={queixaTecnicaMockada.classificacaoNivel1} readOnly />
-                </div>
-                <div>
-                  <Label>4.2. Classificação da Ocorrência (Nível 2):</Label>
-                  <Input value={queixaTecnicaMockada.classificacaoNivel2} readOnly />
+              <div>
+                <Label className="mb-2 block">4.2. Classificação da Ocorrência:</Label>
+                <div className="border rounded-lg overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead className="bg-muted">
+                      <tr>
+                        <th className="border p-2 text-center font-semibold">Código Nível 1</th>
+                        <th className="border p-2 text-center font-semibold">Termo Nível 1</th>
+                        <th className="border p-2 text-center font-semibold">Definição Nível 1</th>
+                        <th className="border p-2 text-center font-semibold">Código Nível 2</th>
+                        <th className="border p-2 text-center font-semibold">Termo Nível 2</th>
+                        <th className="border p-2 text-center font-semibold">Definição Nível 2</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border p-2 text-center bg-muted/30">{queixaTecnicaMockada.classificacaoCodigoNivel1}</td>
+                        <td className="border p-2 text-center bg-muted/30">{queixaTecnicaMockada.classificacaoTermoNivel1}</td>
+                        <td className="border p-2 bg-muted/30">{queixaTecnicaMockada.classificacaoDefinicaoNivel1}</td>
+                        <td className="border p-2 text-center bg-muted/30">{queixaTecnicaMockada.classificacaoCodigoNivel2}</td>
+                        <td className="border p-2 text-center bg-muted/30">{queixaTecnicaMockada.classificacaoTermoNivel2}</td>
+                        <td className="border p-2 bg-muted/30">{queixaTecnicaMockada.classificacaoDefinicaoNivel2}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
 
               <div>
-                <Label>4.15. Especifique o setor:</Label>
-                <Input value={queixaTecnicaMockada.setorEspecifico} readOnly />
+                <Label>4.6. Data da identificação/ocorrência</Label>
+                <Input
+                  value={queixaTecnicaMockada.dataIdentificacaoOcorrencia.toLocaleDateString('pt-BR')}
+                  readOnly
+                  className="bg-muted/50"
+                />
+              </div>
+
+              <div>
+                <Label>4.7. Local da identificação/ocorrência</Label>
+                <Input
+                  value={queixaTecnicaMockada.localIdentificacaoOcorrencia || ''}
+                  readOnly
+                  className="bg-muted/50"
+                />
+              </div>
+
+              <div>
+                <Label>4.8. Nome do estabelecimento de saúde</Label>
+                <Input
+                  value={queixaTecnicaMockada.nomeEstabelecimentoSaude || ''}
+                  readOnly
+                  className="bg-muted/50"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>4.9. CNES do estabelecimento</Label>
+                  <Input
+                    value={queixaTecnicaMockada.cnesEstabelecimento || ''}
+                    readOnly
+                    className="bg-muted/50"
+                  />
+                </div>
+                <div>
+                  <Label>4.10. CNPJ do estabelecimento</Label>
+                  <Input
+                    value={queixaTecnicaMockada.cnpjEstabelecimento || ''}
+                    readOnly
+                    className="bg-muted/50"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label>4.11. País</Label>
+                  <Input
+                    value={queixaTecnicaMockada.paisEstabelecimento || ''}
+                    readOnly
+                    className="bg-muted/50"
+                  />
+                </div>
+                <div>
+                  <Label>4.12. UF</Label>
+                  <Input
+                    value={queixaTecnicaMockada.ufEstabelecimento || ''}
+                    readOnly
+                    className="bg-muted/50"
+                  />
+                </div>
+                <div>
+                  <Label>4.13. Município</Label>
+                  <Input
+                    value={queixaTecnicaMockada.municipioEstabelecimento || ''}
+                    readOnly
+                    className="bg-muted/50"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>4.14. Endereço do local da identificação/ocorrência</Label>
+                <Input
+                  value={queixaTecnicaMockada.enderecoLocalIdentificacao || ''}
+                  readOnly
+                  className="bg-muted/50"
+                />
+              </div>
+
+              <div>
+                <Label>4.15. Especifique o setor</Label>
+                <Input
+                  value={queixaTecnicaMockada.setorEspecifico}
+                  readOnly
+                  className="bg-muted/50"
+                />
+              </div>
+
+              <div>
+                <Label>4.16. Tipo de Procedimento</Label>
+                <Input
+                  value={queixaTecnicaMockada.tipoProcedimento || ''}
+                  readOnly
+                  className="bg-muted/50"
+                />
               </div>
             </CardContent>
           </Card>
