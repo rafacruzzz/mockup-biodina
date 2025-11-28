@@ -111,11 +111,44 @@ export const QueixaTecnicaTab = () => {
             </CardContent>
           </Card>
 
-          {/* Informações da Notificação */}
+          {/* Identificação do Notificador */}
+          <Card>
+            <CardHeader>
+              <CardTitle>1 - Identificação do Notificador:</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label>1.1. Nome completo:</Label>
+                <Input value={queixaTecnicaMockada.notificadorNome} readOnly />
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label>1.2. e-Mail:</Label>
+                  <Input value={queixaTecnicaMockada.notificadorEmail} readOnly />
+                </div>
+                <div>
+                  <Label>1.3. Telefone:</Label>
+                  <Input value={queixaTecnicaMockada.notificadorTelefone || ''} readOnly />
+                </div>
+                <div>
+                  <Label>1.4. Celular:</Label>
+                  <Input value={queixaTecnicaMockada.notificadorCelular || ''} readOnly />
+                </div>
+              </div>
+
+              <div>
+                <Label>1.5. Categoria do notificador:</Label>
+                <Input value={queixaTecnicaMockada.notificadorCategoria} readOnly />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Identificação da Notificação */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Informações da Notificação</CardTitle>
+                <CardTitle>Identificação da Notificação</CardTitle>
                 {getStatusBadge(queixaTecnicaMockada.status)}
               </div>
             </CardHeader>
