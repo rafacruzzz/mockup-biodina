@@ -2,6 +2,13 @@ import { QueixaTecnica } from '@/types/queixaTecnica';
 
 export const queixaTecnicaMockada: QueixaTecnica = {
   id: 'qt-001',
+  // Identificação do Notificador
+  notificadorNome: 'Maria Silva Santos',
+  notificadorEmail: 'maria.santos@hospital.com.br',
+  notificadorTelefone: '(11) 3456-7890',
+  notificadorCelular: '(11) 98765-4321',
+  notificadorCategoria: 'Profissional de Saúde',
+  // Identificação da Notificação
   numeroNotificacao: '2024.04.004335',
   dataIdentificacao: new Date('2024-04-04'),
   produtoMotivo: 'Kit para diagnóstico in vitro',

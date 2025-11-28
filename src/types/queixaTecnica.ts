@@ -2,6 +2,13 @@
 
 export interface QueixaTecnica {
   id: string;
+  // Identificação do Notificador
+  notificadorNome: string;
+  notificadorEmail: string;
+  notificadorTelefone?: string;
+  notificadorCelular?: string;
+  notificadorCategoria: string;
+  // Identificação da Notificação
   numeroNotificacao: string;
   dataIdentificacao: Date;
   produtoMotivo: string;
