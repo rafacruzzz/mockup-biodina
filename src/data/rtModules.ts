@@ -365,7 +365,7 @@ export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[
     data: "2024-11-03",
     origem: "Documentação",
     tipo: "Falha de Processo",
-    impacto: "Baixo",
+    impacto: "Leve",
     descricao: "Formulários de controle de mudanças não preenchidos corretamente em 3 ocasiões",
     acaoImediata: "Orientação imediata aos responsáveis sobre preenchimento correto",
     responsavel: "João Silva",

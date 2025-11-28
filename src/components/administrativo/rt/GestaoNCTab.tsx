@@ -39,14 +39,14 @@ export function GestaoNCTab() {
         return (
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse" />
-            <Badge className="bg-yellow-500 hover:bg-yellow-600">Moderado</Badge>
+            <Badge className="bg-yellow-500 hover:bg-yellow-600 text-yellow-950">Moderado</Badge>
           </div>
         );
-      case "Baixo":
+      case "Leve":
         return (
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-blue-500 rounded-full" />
-            <Badge className="bg-blue-500 hover:bg-blue-600">Baixo</Badge>
+            <div className="w-3 h-3 bg-green-500 rounded-full" />
+            <Badge className="bg-green-500 hover:bg-green-600 text-white">Leve</Badge>
           </div>
         );
     }
@@ -85,7 +85,7 @@ export function GestaoNCTab() {
   const totalNCs = naoConformidadesRTMockadas.length;
   const ncsCriticas = naoConformidadesRTMockadas.filter(nc => nc.impacto === "Crítico").length;
   const ncsModeradas = naoConformidadesRTMockadas.filter(nc => nc.impacto === "Moderado").length;
-  const ncsBaixas = naoConformidadesRTMockadas.filter(nc => nc.impacto === "Baixo").length;
+  const ncsLeves = naoConformidadesRTMockadas.filter(nc => nc.impacto === "Leve").length;
   const ncsAbertas = naoConformidadesRTMockadas.filter(nc => nc.status === "Aberta" || nc.status === "Em Análise" || nc.status === "Aguardando Ação").length;
 
   return (
@@ -110,21 +110,21 @@ export function GestaoNCTab() {
           </CardContent>
         </Card>
 
-        <Card className="border-yellow-200 bg-yellow-50">
+        <Card className="border-yellow-400 bg-yellow-100">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-yellow-700">NCs Moderadas</CardTitle>
+            <CardTitle className="text-sm font-medium text-yellow-800">NCs Moderadas</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-700">{ncsModeradas}</div>
+            <div className="text-2xl font-bold text-yellow-800">{ncsModeradas}</div>
           </CardContent>
         </Card>
 
-        <Card className="border-blue-200 bg-blue-50">
+        <Card className="border-green-200 bg-green-50">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-blue-700">NCs Baixas</CardTitle>
+            <CardTitle className="text-sm font-medium text-green-700">NCs Leves</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-700">{ncsBaixas}</div>
+            <div className="text-2xl font-bold text-green-700">{ncsLeves}</div>
           </CardContent>
         </Card>
 
@@ -240,7 +240,7 @@ export function GestaoNCTab() {
                         <SelectContent>
                           <SelectItem value="Crítico">Crítico</SelectItem>
                           <SelectItem value="Moderado">Moderado</SelectItem>
-                          <SelectItem value="Baixo">Baixo</SelectItem>
+                          <SelectItem value="Leve">Leve</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
