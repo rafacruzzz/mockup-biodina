@@ -25,9 +25,23 @@ export interface QueixaTecnica {
   alteracoesApresentadas?: string;
   // Queixa Técnica (Seção 4)
   descricaoObjetiva: string;
-  classificacaoNivel1: string;
-  classificacaoNivel2: string;
-  localIdentificacao: string;
+  // Classificação da Ocorrência
+  classificacaoCodigoNivel1: string;
+  classificacaoTermoNivel1: string;
+  classificacaoDefinicaoNivel1: string;
+  classificacaoCodigoNivel2: string;
+  classificacaoTermoNivel2: string;
+  classificacaoDefinicaoNivel2: string;
+  // Local da identificação/ocorrência
+  dataIdentificacaoOcorrencia: Date;
+  localIdentificacaoOcorrencia?: string;
+  nomeEstabelecimentoSaude?: string;
+  cnesEstabelecimento?: string;
+  cnpjEstabelecimento?: string;
+  paisEstabelecimento?: string;
+  ufEstabelecimento?: string;
+  municipioEstabelecimento?: string;
+  enderecoLocalIdentificacao?: string;
   setorEspecifico: string;
   tipoProcedimento?: string;
   numeroRegistroAnvisa: string;
