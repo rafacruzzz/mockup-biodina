@@ -144,6 +144,7 @@ export const naoConformidadesMockadas: NaoConformidade[] = [
       id: 'capa-1',
       acaoPreventiva: 'Revisão do POP de Inspeção de Recebimento',
       acaoCorretiva: 'Treinamento de recebimento para equipe de estoque',
+      gerenciamentoTarefas: 'Revisar POP em 5 dias úteis. Programar treinamento para equipe. Validar compreensão com teste prático.',
       prazoFinal: new Date('2024-12-15'),
       status: 'Em Andamento',
       responsavel: 'Maria Santos'
@@ -165,6 +166,7 @@ export const naoConformidadesMockadas: NaoConformidade[] = [
       id: 'capa-2',
       acaoPreventiva: 'Implementar sistema de SLA automatizado',
       acaoCorretiva: 'Treinamento de equipe de atendimento',
+      gerenciamentoTarefas: 'Reunião com TI para definir sistema de SLA. Desenvolver scripts de automação. Treinar equipe em 2 sessões.',
       prazoFinal: new Date('2024-12-20'),
       status: 'Pendente',
       responsavel: 'Pedro Costa'
@@ -188,7 +190,7 @@ export const naoConformidadesMockadas: NaoConformidade[] = [
     numeroNC: 'NC-2024-004',
     origem: 'Auditoria',
     tipo: 'Material Não Conforme',
-    impacto: 'Baixo',
+    impacto: 'Leve',
     responsavel: 'Ana Lima',
     prazo: new Date('2024-12-05'),
     status: 'Aberta',
@@ -201,7 +203,7 @@ export const naoConformidadesMockadas: NaoConformidade[] = [
     numeroNC: 'NC-2024-005',
     origem: 'Pesquisa',
     tipo: 'Atendimento',
-    impacto: 'Baixo',
+    impacto: 'Leve',
     responsavel: 'Carlos Eduardo',
     prazo: new Date('2024-12-10'),
     status: 'Aberta',

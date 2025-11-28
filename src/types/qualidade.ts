@@ -42,7 +42,7 @@ export interface RegistroRastreabilidade {
 
 export type OrigemNC = 'Pesquisa' | 'Auditoria' | 'Outro';
 export type TipoNC = 'Material Não Conforme' | 'Atendimento' | 'Treinamento Falho';
-export type ImpactoNC = 'Crítico' | 'Moderado' | 'Baixo';
+export type ImpactoNC = 'Crítico' | 'Moderado' | 'Leve';
 export type StatusNC = 'Aberta' | 'Em Análise' | 'Aguardando CAPA' | 'Resolvida' | 'Fechada';
 export type StatusCAPA = 'Pendente' | 'Em Andamento' | 'Concluída';
 
@@ -50,6 +50,7 @@ export interface AcaoCAPA {
   id: string;
   acaoPreventiva: string;
   acaoCorretiva: string;
+  gerenciamentoTarefas?: string;
   prazoFinal: Date;
   status: StatusCAPA;
   responsavel: string;

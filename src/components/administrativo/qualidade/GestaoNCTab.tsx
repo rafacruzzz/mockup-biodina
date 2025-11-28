@@ -23,9 +23,9 @@ export const GestaoNCTab = () => {
       case 'Crítico':
         return 'text-destructive';
       case 'Moderado':
-        return 'text-yellow-500';
-      case 'Baixo':
-        return 'text-blue-500';
+        return 'text-yellow-400';
+      case 'Leve':
+        return 'text-green-500';
       default:
         return 'text-muted-foreground';
     }
@@ -37,7 +37,7 @@ export const GestaoNCTab = () => {
         return 'destructive';
       case 'Moderado':
         return 'default';
-      case 'Baixo':
+      case 'Leve':
         return 'secondary';
       default:
         return 'outline';
@@ -77,7 +77,7 @@ export const GestaoNCTab = () => {
     total: ncs.length,
     criticas: ncs.filter(nc => nc.impacto === 'Crítico').length,
     moderadas: ncs.filter(nc => nc.impacto === 'Moderado').length,
-    baixas: ncs.filter(nc => nc.impacto === 'Baixo').length,
+    leves: ncs.filter(nc => nc.impacto === 'Leve').length,
     abertas: ncs.filter(nc => nc.status === 'Aberta' || nc.status === 'Em Análise').length
   };
 
@@ -106,7 +106,7 @@ export const GestaoNCTab = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-yellow-500 flex items-center justify-center gap-2">
+              <div className="text-3xl font-bold text-yellow-400 flex items-center justify-center gap-2">
                 <Circle className="h-4 w-4 fill-current animate-pulse" />
                 {estatisticas.moderadas}
               </div>
@@ -117,11 +117,11 @@ export const GestaoNCTab = () => {
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
-              <div className="text-3xl font-bold text-blue-500 flex items-center justify-center gap-2">
+              <div className="text-3xl font-bold text-green-500 flex items-center justify-center gap-2">
                 <Circle className="h-4 w-4 fill-current" />
-                {estatisticas.baixas}
+                {estatisticas.leves}
               </div>
-              <div className="text-sm text-muted-foreground mt-1">Baixas</div>
+              <div className="text-sm text-muted-foreground mt-1">Leves</div>
             </div>
           </CardContent>
         </Card>
@@ -241,7 +241,7 @@ export const GestaoNCTab = () => {
                     <SelectContent>
                       <SelectItem value="Crítico">Crítico</SelectItem>
                       <SelectItem value="Moderado">Moderado</SelectItem>
-                      <SelectItem value="Baixo">Baixo</SelectItem>
+                      <SelectItem value="Leve">Leve</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -340,6 +340,17 @@ export const GestaoNCTab = () => {
                       placeholder="Descreva a ação corretiva..."
                     />
                   </div>
+
+                  {ncSelecionada.capa?.gerenciamentoTarefas && (
+                    <div>
+                      <Label>Gerenciamento da Execução de Tarefas</Label>
+                      <Textarea 
+                        value={ncSelecionada.capa.gerenciamentoTarefas} 
+                        disabled 
+                        className="min-h-[80px]"
+                      />
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
