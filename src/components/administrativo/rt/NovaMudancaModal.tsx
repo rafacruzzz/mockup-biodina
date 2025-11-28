@@ -34,6 +34,7 @@ export const NovaMudancaModal = ({
   onSave
 }: NovaMudancaModalProps) => {
   const [parteInteressada, setParteInteressada] = useState<ParteInteressada>("RT");
+  const [outrosDescricao, setOutrosDescricao] = useState("");
   const [responsavel, setResponsavel] = useState("");
   const [tipoMudanca, setTipoMudanca] = useState<TipoMudanca>("A");
   const [descricao, setDescricao] = useState("");
@@ -41,6 +42,7 @@ export const NovaMudancaModal = ({
 
   const resetForm = () => {
     setParteInteressada("RT");
+    setOutrosDescricao("");
     setResponsavel("");
     setTipoMudanca("A");
     setDescricao("");
@@ -57,6 +59,19 @@ export const NovaMudancaModal = ({
       return;
     }
 
+    if (parteInteressada === "Outros" && !outrosDescricao.trim()) {
+      toast({
+        title: "Erro",
+        description: "Por favor, especifique qual é a parte interessada",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const observacoesCompletas = parteInteressada === "Outros" 
+      ? `Parte Interessada: ${outrosDescricao}${observacoes ? `\n\n${observacoes}` : ""}`
+      : observacoes;
+
     const novaMudanca: Mudanca = {
       id: `mud-${Date.now()}`,
       data: new Date().toISOString().split('T')[0],
@@ -65,7 +80,7 @@ export const NovaMudancaModal = ({
       tipoMudanca,
       descricao,
       status: "Pendente",
-      observacoes: observacoes || undefined
+      observacoes: observacoesCompletas || undefined
     };
 
     onSave(novaMudanca);
@@ -119,6 +134,18 @@ export const NovaMudancaModal = ({
               />
             </div>
           </div>
+
+          {parteInteressada === "Outros" && (
+            <div>
+              <Label htmlFor="outros-descricao">Especificar Parte Interessada *</Label>
+              <Input
+                id="outros-descricao"
+                value={outrosDescricao}
+                onChange={(e) => setOutrosDescricao(e.target.value)}
+                placeholder="Especifique qual é a parte interessada"
+              />
+            </div>
+          )}
 
           <div>
             <Label htmlFor="tipo-mudanca">Tipo de Mudança *</Label>
