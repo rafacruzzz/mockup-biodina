@@ -33,6 +33,7 @@ import { LinksSMTab } from '@/components/administrativo/institucional/LinksSMTab
 import { ControleImoveisTab } from '@/components/administrativo/institucional/ControleImoveisTab';
 import { ControleVeiculosTab } from '@/components/administrativo/institucional/ControleVeiculosTab';
 import { DocumentosEmpresaTab } from '@/components/administrativo/institucional/DocumentosEmpresaTab';
+import { RastreabilidadeRegulatorioTab } from '@/components/administrativo/regulatorio/rastreabilidade/RastreabilidadeRegulatorioTab';
 import { modules } from '@/data/cadastroModules';
 import { toast } from '@/components/ui/use-toast';
 import { parse, subDays, differenceInDays, format } from 'date-fns';
@@ -273,7 +274,6 @@ const Administrativo = () => {
       { id: 'due-diligence', label: 'DUE DILIGENCE - FORNECEDOR', icon: UserCheck },
       { id: 'rastreabilidade', label: 'RASTREABILIDADE', icon: Route },
       { id: 'boas-praticas', label: 'BOAS PRÁTICAS', icon: CheckCircle2 },
-      { id: 'controle-qualidade', label: 'CONTROLE DE QUALIDADE', icon: ShieldIcon },
     ];
 
     const renderContent = () => {
@@ -282,9 +282,8 @@ const Administrativo = () => {
         case 'registro-produtos': return renderRegistroProdutosTab();
         case 'atualizacoes': return renderAtualizacoesTab();
         case 'due-diligence': return renderDueDiligenceTab();
-        case 'rastreabilidade': return renderEmptyTab('RASTREABILIDADE', 'Sistema de rastreamento regulatório');
+        case 'rastreabilidade': return <RastreabilidadeRegulatorioTab />;
         case 'boas-praticas': return renderEmptyTab('BOAS PRÁTICAS', 'Gestão de boas práticas regulatórias');
-        case 'controle-qualidade': return renderEmptyTab('CONTROLE DE QUALIDADE', 'Controle e auditorias de qualidade');
         default: return renderRegulatorioIndicadores();
       }
     };
