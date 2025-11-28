@@ -43,33 +43,34 @@ export const DocumentacaoTab = () => {
   const legDoc = documentacoes.find(d => d.tipo === 'legislacoes');
 
   return (
-    <div className="space-y-6">
-      {/* Seção 1: POP */}
-      <OrganizacaoDocumentos
-        titulo="POP - Procedimentos Operacionais Padrão"
-        nomeArquivoPrincipal={popDoc?.nomeArquivoPrincipal || ""}
-        onNomeArquivoChange={(nome) => updateDocumentacao('pop', { nomeArquivoPrincipal: nome })}
-        estruturaPastas={popDoc?.estruturaPastas || []}
-        onEstruturaChange={(pastas) => updateDocumentacao('pop', { estruturaPastas: pastas })}
-      />
+    <div className="space-y-8">
+      {/* Seção: Documentação */}
+      <div>
+        <h2 className="text-2xl font-bold mb-6">Documentação</h2>
+        
+        <div className="space-y-6">
+          {/* POP - Procedimentos Operacionais Padrão */}
+          <OrganizacaoDocumentos
+            titulo="POP - Procedimentos Operacionais Padrão"
+            estruturaPastas={popDoc?.estruturaPastas || []}
+            onEstruturaChange={(pastas) => updateDocumentacao('pop', { estruturaPastas: pastas })}
+          />
 
-      {/* Seção 2: Especificações */}
-      <OrganizacaoDocumentos
-        titulo="Especificações"
-        nomeArquivoPrincipal={especDoc?.nomeArquivoPrincipal || ""}
-        onNomeArquivoChange={(nome) => updateDocumentacao('especificacoes', { nomeArquivoPrincipal: nome })}
-        estruturaPastas={especDoc?.estruturaPastas || []}
-        onEstruturaChange={(pastas) => updateDocumentacao('especificacoes', { estruturaPastas: pastas })}
-      />
+          {/* Especificações */}
+          <OrganizacaoDocumentos
+            titulo="Especificações"
+            estruturaPastas={especDoc?.estruturaPastas || []}
+            onEstruturaChange={(pastas) => updateDocumentacao('especificacoes', { estruturaPastas: pastas })}
+          />
 
-      {/* Seção 3: Legislações Vigentes Pertinentes */}
-      <OrganizacaoDocumentos
-        titulo="Legislações Vigentes Pertinentes"
-        nomeArquivoPrincipal={legDoc?.nomeArquivoPrincipal || ""}
-        onNomeArquivoChange={(nome) => updateDocumentacao('legislacoes', { nomeArquivoPrincipal: nome })}
-        estruturaPastas={legDoc?.estruturaPastas || []}
-        onEstruturaChange={(pastas) => updateDocumentacao('legislacoes', { estruturaPastas: pastas })}
-      />
+          {/* Legislações Vigentes Pertinentes */}
+          <OrganizacaoDocumentos
+            titulo="Legislações Vigentes Pertinentes"
+            estruturaPastas={legDoc?.estruturaPastas || []}
+            onEstruturaChange={(pastas) => updateDocumentacao('legislacoes', { estruturaPastas: pastas })}
+          />
+        </div>
+      </div>
 
       {/* Seção 4: Liberação de Produtos */}
       <LiberacaoProdutosTable

@@ -27,16 +27,12 @@ import { toast } from "@/components/ui/use-toast";
 
 interface OrganizacaoDocumentosProps {
   titulo: string;
-  nomeArquivoPrincipal: string;
-  onNomeArquivoChange: (nome: string) => void;
   estruturaPastas: PastaRT[];
   onEstruturaChange: (pastas: PastaRT[]) => void;
 }
 
 export const OrganizacaoDocumentos = ({
   titulo,
-  nomeArquivoPrincipal,
-  onNomeArquivoChange,
   estruturaPastas,
   onEstruturaChange
 }: OrganizacaoDocumentosProps) => {
@@ -263,19 +259,6 @@ export const OrganizacaoDocumentos = ({
   return (
     <Card>
       <CardContent className="pt-6 space-y-4">
-        <div>
-          <Label htmlFor={`arquivo-principal-${titulo}`}>
-            Nome do Arquivo Principal *
-          </Label>
-          <Input
-            id={`arquivo-principal-${titulo}`}
-            value={nomeArquivoPrincipal}
-            onChange={(e) => onNomeArquivoChange(e.target.value)}
-            placeholder="Digite o nome do arquivo principal"
-            className="mt-1"
-          />
-        </div>
-
         <div>
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-semibold flex items-center gap-2">
