@@ -23,7 +23,7 @@ import { participantesDisponiveis } from "@/data/rtModules";
 import { toast } from "@/components/ui/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { X, Upload, FileText } from "lucide-react";
 
 interface NovoTreinamentoModalProps {
   open: boolean;
@@ -45,6 +45,7 @@ export const NovoTreinamentoModal = ({
   const [participantesSelecionados, setParticipantesSelecionados] = useState<string[]>([]);
   const [objetivo, setObjetivo] = useState("");
   const [showParticipantes, setShowParticipantes] = useState(false);
+  const [anexos, setAnexos] = useState<Array<{ nome: string; tamanho: number }>>([]);
 
   const resetForm = () => {
     setData("");
@@ -53,6 +54,7 @@ export const NovoTreinamentoModal = ({
     setMinistrante("");
     setParticipantesSelecionados([]);
     setObjetivo("");
+    setAnexos([]);
   };
 
   const toggleParticipante = (participante: string) => {
@@ -61,6 +63,29 @@ export const NovoTreinamentoModal = ({
         ? prev.filter(p => p !== participante)
         : [...prev, participante]
     );
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const novosAnexos = Array.from(files).map(file => ({
+        nome: file.name,
+        tamanho: file.size
+      }));
+      setAnexos(prev => [...prev, ...novosAnexos]);
+    }
+  };
+
+  const removerAnexo = (index: number) => {
+    setAnexos(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const formatarTamanho = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   };
 
   const handleSave = () => {
@@ -81,7 +106,13 @@ export const NovoTreinamentoModal = ({
       ministrante,
       participantes: participantesSelecionados,
       objetivo,
-      anexos: [],
+      anexos: anexos.map((anexo, index) => ({
+        id: `anexo-${Date.now()}-${index}`,
+        nome: anexo.nome,
+        tipo: anexo.nome.split('.').pop() || '',
+        tamanho: anexo.tamanho,
+        dataUpload: new Date().toISOString().split('T')[0]
+      })),
       tipo,
       status: tipo === 'futuro' ? 'Agendado' : 'Realizado'
     };
@@ -221,17 +252,69 @@ export const NovoTreinamentoModal = ({
             />
           </div>
 
-          {tipo === 'realizado' && (
-            <div className="border rounded-lg p-3 bg-muted/30">
-              <Label>Anexos (Lista de presença, fotos, certificados, materiais)</Label>
-              <p className="text-sm text-muted-foreground mb-2">
-                Funcionalidade de upload será implementada em breve
+          <div className="border rounded-lg p-4 space-y-3">
+            <div>
+              <Label>Anexos do Treinamento</Label>
+              <p className="text-sm text-muted-foreground">
+                Lista de presença, fotos, certificados, materiais didáticos, etc.
               </p>
-              <Button variant="outline" size="sm" disabled>
-                Adicionar Anexos
-              </Button>
             </div>
-          )}
+            
+            {anexos.length > 0 && (
+              <div className="space-y-2">
+                {anexos.map((anexo, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-2 bg-muted/50 rounded-md"
+                  >
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{anexo.nome}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatarTamanho(anexo.tamanho)}
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removerAnexo(index)}
+                      className="flex-shrink-0"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div>
+              <Input
+                type="file"
+                multiple
+                onChange={handleFileUpload}
+                className="hidden"
+                id="file-upload"
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.zip"
+              />
+              <Label htmlFor="file-upload">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="w-full"
+                  asChild
+                >
+                  <span className="cursor-pointer flex items-center justify-center gap-2">
+                    <Upload className="h-4 w-4" />
+                    Adicionar Anexos
+                  </span>
+                </Button>
+              </Label>
+            </div>
+          </div>
         </div>
 
         <DialogFooter>
