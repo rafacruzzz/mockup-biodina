@@ -110,3 +110,41 @@ export interface NaoConformidadeRT {
   observacoes?: string;
   capa: AcaoCAPART;
 }
+
+// Monitoramento e Auditoria
+export type TipoAlertaRT = 'nc_critica' | 'limite_nc_mensal' | 'insatisfacao_cliente' | 'capa_atrasado';
+export type PrioridadeAlerta = 'critica' | 'alta' | 'media';
+
+export interface AlertaRT {
+  id: string;
+  tipo: TipoAlertaRT;
+  titulo: string;
+  mensagem: string;
+  prioridade: PrioridadeAlerta;
+  dataCriacao: string;
+  lido: boolean;
+  origem?: string;
+}
+
+export interface KPIRT {
+  capasAbertos: number;
+  capasAtrasados: number;
+  indiceQualidadePerformance: number;
+  manutencoesPreventivasPendentes: number;
+  manutencoesCorretivasPendentes: number;
+}
+
+export type TipoAcaoAuditoria = 
+  | 'visualizacao' | 'criacao' | 'edicao' | 'exclusao' 
+  | 'aprovacao' | 'rejeicao' | 'download' | 'upload';
+
+export interface RegistroAuditoria {
+  id: string;
+  dataHora: string;
+  usuario: string;
+  acao: TipoAcaoAuditoria;
+  modulo: string;
+  recurso: string;
+  detalhes?: string;
+  ipAddress?: string;
+}
