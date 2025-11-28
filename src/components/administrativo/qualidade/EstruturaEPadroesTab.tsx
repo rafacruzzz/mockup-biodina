@@ -3,75 +3,66 @@ import { OrganizacaoDocumentos } from "../rt/OrganizacaoDocumentos";
 import { PastaRT } from "@/types/rt";
 
 const estruturaInicial = {
-  manuais: {
-    nomeArquivo: "Manual de Gestão da Qualidade - Revisão 5.0",
-    pastas: [
-      {
-        id: "pasta-manual-1",
-        nome: "Política da Qualidade",
-        subtitulo: "Documentos de política e diretrizes",
-        arquivos: [],
-        subPastas: [],
-        expandido: false
-      },
-      {
-        id: "pasta-manual-2",
-        nome: "Organograma e Responsabilidades",
-        subtitulo: "Estrutura organizacional",
-        arquivos: [],
-        subPastas: [],
-        expandido: false
-      }
-    ] as PastaRT[]
-  },
-  pop: {
-    nomeArquivo: "POP - Controle de Temperatura da Câmara Fria",
-    pastas: [
-      {
-        id: "pasta-pop-1",
-        nome: "Recebimento",
-        subtitulo: "Procedimentos de entrada de materiais",
-        arquivos: [],
-        subPastas: [],
-        expandido: false
-      },
-      {
-        id: "pasta-pop-2",
-        nome: "Armazenamento",
-        subtitulo: "Controles de estoque e temperatura",
-        arquivos: [],
-        subPastas: [],
-        expandido: false
-      }
-    ] as PastaRT[]
-  },
-  instrucoesTrabalho: {
-    nomeArquivo: "IT - Inspeção de Recebimento de Matéria-Prima",
-    pastas: [
-      {
-        id: "pasta-it-1",
-        nome: "Inspeção Visual",
-        subtitulo: "Critérios de aceitação visual",
-        arquivos: [],
-        subPastas: [],
-        expandido: false
-      },
-      {
-        id: "pasta-it-2",
-        nome: "Testes Físico-Químicos",
-        subtitulo: "Procedimentos de análise",
-        arquivos: [],
-        subPastas: [],
-        expandido: false
-      }
-    ] as PastaRT[]
-  }
+  manuais: [
+    {
+      id: "pasta-manual-1",
+      nome: "Política da Qualidade",
+      subtitulo: "Documentos de política e diretrizes",
+      arquivos: [],
+      subPastas: [],
+      expandido: false
+    },
+    {
+      id: "pasta-manual-2",
+      nome: "Organograma e Responsabilidades",
+      subtitulo: "Estrutura organizacional",
+      arquivos: [],
+      subPastas: [],
+      expandido: false
+    }
+  ] as PastaRT[],
+  pop: [
+    {
+      id: "pasta-pop-1",
+      nome: "Recebimento",
+      subtitulo: "Procedimentos de entrada de materiais",
+      arquivos: [],
+      subPastas: [],
+      expandido: false
+    },
+    {
+      id: "pasta-pop-2",
+      nome: "Armazenamento",
+      subtitulo: "Controles de estoque e temperatura",
+      arquivos: [],
+      subPastas: [],
+      expandido: false
+    }
+  ] as PastaRT[],
+  instrucoesTrabalho: [
+    {
+      id: "pasta-it-1",
+      nome: "Inspeção Visual",
+      subtitulo: "Critérios de aceitação visual",
+      arquivos: [],
+      subPastas: [],
+      expandido: false
+    },
+    {
+      id: "pasta-it-2",
+      nome: "Testes Físico-Químicos",
+      subtitulo: "Procedimentos de análise",
+      arquivos: [],
+      subPastas: [],
+      expandido: false
+    }
+  ] as PastaRT[]
 };
 
 export const EstruturaEPadroesTab = () => {
-  const [manuaisPastas, setManuaisPastas] = useState(estruturaInicial.manuais.pastas);
-  const [popPastas, setPopPastas] = useState(estruturaInicial.pop.pastas);
-  const [itPastas, setItPastas] = useState(estruturaInicial.instrucoesTrabalho.pastas);
+  const [manuaisPastas, setManuaisPastas] = useState(estruturaInicial.manuais);
+  const [popPastas, setPopPastas] = useState(estruturaInicial.pop);
+  const [itPastas, setItPastas] = useState(estruturaInicial.instrucoesTrabalho);
 
   return (
     <div className="space-y-6">
