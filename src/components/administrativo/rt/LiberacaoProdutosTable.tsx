@@ -31,7 +31,7 @@ export const LiberacaoProdutosTable = ({
     produto.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
     produto.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     produto.marca.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    produto.linha.toLowerCase().includes(searchTerm.toLowerCase())
+    produto.linhaProduto.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const toggleLiberacao = (produtoId: string) => {
@@ -72,7 +72,7 @@ export const LiberacaoProdutosTable = ({
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar por código, nome, marca ou linha..."
+              placeholder="Buscar por código, nome, marca ou linha de produto..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -93,8 +93,15 @@ export const LiberacaoProdutosTable = ({
               <TableRow>
                 <TableHead className="w-[100px]">Código</TableHead>
                 <TableHead>Nome do Produto</TableHead>
+                <TableHead>Referência</TableHead>
+                <TableHead>Modelo</TableHead>
+                <TableHead>Fabricante</TableHead>
                 <TableHead>Marca</TableHead>
-                <TableHead>Linha</TableHead>
+                <TableHead>Linha de Produto</TableHead>
+                <TableHead>Apresentação Primária</TableHead>
+                <TableHead>Apresentação Secundária</TableHead>
+                <TableHead>Apresentação Terciária</TableHead>
+                <TableHead>Referências Comercializadas</TableHead>
                 <TableHead className="text-center">Status</TableHead>
                 <TableHead className="text-center">Liberado RT</TableHead>
                 <TableHead>Data Liberação</TableHead>
@@ -103,7 +110,7 @@ export const LiberacaoProdutosTable = ({
             <TableBody>
               {produtosFiltrados.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={14} className="text-center py-8 text-muted-foreground">
                     {searchTerm ? "Nenhum produto encontrado" : "Nenhum produto cadastrado"}
                   </TableCell>
                 </TableRow>
@@ -112,8 +119,15 @@ export const LiberacaoProdutosTable = ({
                   <TableRow key={produto.produtoId}>
                     <TableCell className="font-medium">{produto.codigo}</TableCell>
                     <TableCell>{produto.nome}</TableCell>
+                    <TableCell>{produto.referencia}</TableCell>
+                    <TableCell>{produto.modelo}</TableCell>
+                    <TableCell>{produto.fabricante}</TableCell>
                     <TableCell>{produto.marca}</TableCell>
-                    <TableCell>{produto.linha}</TableCell>
+                    <TableCell>{produto.linhaProduto}</TableCell>
+                    <TableCell>{produto.apresentacaoPrimaria}</TableCell>
+                    <TableCell>{produto.apresentacaoSecundaria}</TableCell>
+                    <TableCell>{produto.apresentacaoTerciaria}</TableCell>
+                    <TableCell>{produto.referenciasComercializadas}</TableCell>
                     <TableCell className="text-center">
                       {produto.liberadoRT ? (
                         <Badge variant="default" className="gap-1">

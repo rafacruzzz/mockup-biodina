@@ -56,8 +56,15 @@ export interface LiberacaoProduto {
   produtoId: string;
   codigo: string;
   nome: string;
+  referencia: string;
+  modelo: string;
+  fabricante: string;
   marca: string;
-  linha: string;
+  linhaProduto: string;
+  apresentacaoPrimaria: string;
+  apresentacaoSecundaria: string;
+  apresentacaoTerciaria: string;
+  referenciasComercializadas: string;
   liberadoRT: boolean;
   dataLiberacao?: string;
   responsavelLiberacao?: string;
