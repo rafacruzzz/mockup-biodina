@@ -151,57 +151,22 @@ export const NovaMudancaModal = ({
             <Label htmlFor="tipo-mudanca">Tipo de Mudança *</Label>
             <Select value={tipoMudanca} onValueChange={(value: TipoMudanca) => setTipoMudanca(value)}>
               <SelectTrigger id="tipo-mudanca">
-                <SelectValue />
+                <SelectValue>
+                  {tipoMudanca === "A" && "A) Alterações de Dados Empresariais"}
+                  {tipoMudanca === "B" && "B) Dados Mestres de Produtos"}
+                  {tipoMudanca === "C" && "C) Alterações em Processos de Negócio"}
+                  {tipoMudanca === "D" && "D) Atualizações Regulatórias (ANVISA)"}
+                  {tipoMudanca === "E" && "E) Melhorias de Performance"}
+                  {tipoMudanca === "F" && "F) Outros"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="A">
-                  <div className="space-y-1">
-                    <div className="font-medium">A) Alterações de Dados Empresariais</div>
-                    <div className="text-xs text-muted-foreground">
-                      Endereço, sócios, vigilâncias sanitárias, etc.
-                    </div>
-                  </div>
-                </SelectItem>
-                <SelectItem value="B">
-                  <div className="space-y-1">
-                    <div className="font-medium">B) Dados Mestres de Produtos</div>
-                    <div className="text-xs text-muted-foreground">
-                      Registro ANVISA, classe de risco, especificações técnicas
-                    </div>
-                  </div>
-                </SelectItem>
-                <SelectItem value="C">
-                  <div className="space-y-1">
-                    <div className="font-medium">C) Alterações em Processos de Negócio</div>
-                    <div className="text-xs text-muted-foreground">
-                      Recebimento, inspeção, armazenamento, rastreabilidade
-                    </div>
-                  </div>
-                </SelectItem>
-                <SelectItem value="D">
-                  <div className="space-y-1">
-                    <div className="font-medium">D) Atualizações Regulatórias (ANVISA)</div>
-                    <div className="text-xs text-muted-foreground">
-                      Novas RDCs, guias ou requisitos
-                    </div>
-                  </div>
-                </SelectItem>
-                <SelectItem value="E">
-                  <div className="space-y-1">
-                    <div className="font-medium">E) Melhorias de Performance</div>
-                    <div className="text-xs text-muted-foreground">
-                      Alterações físicas, ambientais e melhorias logísticas
-                    </div>
-                  </div>
-                </SelectItem>
-                <SelectItem value="F">
-                  <div className="space-y-1">
-                    <div className="font-medium">F) Outros</div>
-                    <div className="text-xs text-muted-foreground">
-                      Demais alterações
-                    </div>
-                  </div>
-                </SelectItem>
+                <SelectItem value="A">A) Alterações de Dados Empresariais</SelectItem>
+                <SelectItem value="B">B) Dados Mestres de Produtos</SelectItem>
+                <SelectItem value="C">C) Alterações em Processos de Negócio</SelectItem>
+                <SelectItem value="D">D) Atualizações Regulatórias (ANVISA)</SelectItem>
+                <SelectItem value="E">E) Melhorias de Performance</SelectItem>
+                <SelectItem value="F">F) Outros</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground mt-2">
