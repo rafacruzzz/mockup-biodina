@@ -458,26 +458,42 @@ export const QueixaTecnicaTab = () => {
             <CardHeader>
               <CardTitle>Informações do Fabricante/Importador</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>7.1. Nome ou razão social</Label>
-                  <Input value={queixaTecnicaMockada.razaoSocialFabricante} readOnly />
+                  <Input value={queixaTecnicaMockada.razaoSocialFabricante} readOnly className="bg-muted/50" />
                 </div>
                 <div>
                   <Label>7.2. Endereço</Label>
-                  <Input value={queixaTecnicaMockada.enderecoFabricante} readOnly />
+                  <Input value={queixaTecnicaMockada.enderecoFabricante} readOnly className="bg-muted/50" />
                 </div>
+              </div>
+
+              <div>
+                <Label>7.3. Número do telefone/SAC</Label>
+                <Input value={queixaTecnicaMockada.telefoneContato || ''} readOnly className="bg-muted/50" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label>7.4. UF</Label>
-                  <Input value={queixaTecnicaMockada.ufFabricante} readOnly />
+                  <Input value={queixaTecnicaMockada.ufFabricante} readOnly className="bg-muted/50" />
                 </div>
                 <div>
                   <Label>7.5. Município</Label>
-                  <Input value={queixaTecnicaMockada.municipioFabricante} readOnly />
+                  <Input value={queixaTecnicaMockada.municipioFabricante} readOnly className="bg-muted/50" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>7.6. Nome do fabricante</Label>
+                  <Input value={queixaTecnicaMockada.nomeFabricante || ''} readOnly className="bg-muted/50" />
+                </div>
+                <div>
+                  <Label>7.7. País fabricante</Label>
+                  <Input value={queixaTecnicaMockada.paisFabricante || ''} readOnly className="bg-muted/50" />
                 </div>
               </div>
             </CardContent>
