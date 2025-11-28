@@ -263,7 +263,7 @@ export const OrganizacaoDocumentos = ({
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <Folder className="h-5 w-5" />
-              Organização de Documentos
+              {titulo}
             </h3>
             <Button
               onClick={() => setShowNovaPastaDialog(true)}
