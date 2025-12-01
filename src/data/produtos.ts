@@ -6,13 +6,25 @@ export const marcasMock: Marca[] = [
     id: "marca-1",
     nome: "Beckman Coulter",
     logo: "/placeholder.svg",
-    descricao: "Líder global em sistemas de diagnóstico in vitro"
+    descricao: "Líder global em sistemas de diagnóstico in vitro",
+    ultimaAtualizacao: new Date('2024-11-25'),
+    arquivada: false
   },
   {
     id: "marca-2",
     nome: "Radiometer",
     logo: "/placeholder.svg",
-    descricao: "Soluções inovadoras em gasometria"
+    descricao: "Soluções inovadoras em gasometria",
+    ultimaAtualizacao: new Date('2024-11-20'),
+    arquivada: false
+  },
+  {
+    id: "marca-3",
+    nome: "Epredia",
+    logo: "/placeholder.svg",
+    descricao: "Soluções completas em anatomia patológica",
+    ultimaAtualizacao: new Date('2024-11-15'),
+    arquivada: false
   }
 ];
 
@@ -22,13 +34,37 @@ export const linhasMock: Linha[] = [
     id: "linha-1",
     nome: "Hematologia",
     marcaId: "marca-1",
-    descricao: "Sistemas para análise hematológica completa"
+    descricao: "Sistemas para análise hematológica completa",
+    status: "ativo",
+    statusCadastro: "completo",
+    arquivada: false
   },
   {
     id: "linha-2",
     nome: "Gasometria",
     marcaId: "marca-2",
-    descricao: "Equipamentos para análise de gases sanguíneos"
+    descricao: "Equipamentos para análise de gases sanguíneos",
+    status: "ativo",
+    statusCadastro: "completo",
+    arquivada: false
+  },
+  {
+    id: "linha-3",
+    nome: "Imunologia",
+    marcaId: "marca-1",
+    descricao: "Soluções para testes imunológicos",
+    status: "ativo",
+    statusCadastro: "incompleto",
+    arquivada: false
+  },
+  {
+    id: "linha-4",
+    nome: "Anatomia Patológica",
+    marcaId: "marca-3",
+    descricao: "Equipamentos para processamento de tecidos",
+    status: "ativo",
+    statusCadastro: "completo",
+    arquivada: false
   }
 ];
 
@@ -81,6 +117,21 @@ export const getLinhasPorMarca = (marcaId: string): Linha[] => {
 
 export const getProdutosPorLinha = (linhaId: string): Produto[] => {
   return produtosMock.filter(p => p.linhaId === linhaId);
+};
+
+export const contarLinhasPorMarca = (marcaId: string): number => {
+  return linhasMock.filter(l => l.marcaId === marcaId && !l.arquivada).length;
+};
+
+export const contarProdutosPorMarca = (marcaId: string): number => {
+  const linhas = linhasMock.filter(l => l.marcaId === marcaId && !l.arquivada);
+  return linhas.reduce((total, linha) => {
+    return total + produtosMock.filter(p => p.linhaId === linha.id).length;
+  }, 0);
+};
+
+export const contarProdutosPorLinha = (linhaId: string): number => {
+  return produtosMock.filter(p => p.linhaId === linhaId).length;
 };
 
 export const getDocumentosPorProduto = (produtoId: string): DocumentoProduto[] => {
