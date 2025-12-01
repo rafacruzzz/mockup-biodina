@@ -98,6 +98,7 @@ export interface ProductRegistrationData {
   origemMercadoria: string;
 
   // Aba 9 - Auditoria
+  statusProduto: string;
   inclusao: Date;
   ultimaAlteracao: Date;
   incluidoPor: string;
