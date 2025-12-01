@@ -1490,22 +1490,15 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                             <td className="px-3 py-2 text-right">{cliente.valorRealRecebido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
                           </tr>
                         ))}
+                        {/* Linha de Totais */}
+                        <tr className="border-t-2 bg-muted/50 font-semibold">
+                          <td className="px-3 py-2" colSpan={5}></td>
+                          <td className="px-3 py-2 text-center">Total</td>
+                          <td className="px-3 py-2 text-right">USD {comissao.relatorioAgente.totalUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                          <td className="px-3 py-2 text-right">R$ {comissao.relatorioAgente.totalReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                        </tr>
                       </tbody>
                     </table>
-                  </div>
-                </div>
-                {/* Totais em linha única abaixo da tabela */}
-                <div className="mt-3 p-3 bg-muted/50 rounded-lg border border-muted">
-                  <div className="flex items-center justify-end gap-6 text-sm font-semibold">
-                    <span>Total</span>
-                    <span className="flex items-center gap-2">
-                      <span className="text-muted-foreground">USD:</span>
-                      <span>{comissao.relatorioAgente.totalUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                    </span>
-                    <span className="flex items-center gap-2">
-                      <span className="text-muted-foreground">R$:</span>
-                      <span>{comissao.relatorioAgente.totalReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                    </span>
                   </div>
                 </div>
               </div>
