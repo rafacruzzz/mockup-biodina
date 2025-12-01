@@ -43,6 +43,8 @@ const produtosMock: Produto[] = [
     descricao: "Analisador hematológico de alto desempenho",
     descritivoBreve: "Analisador hematológico compacto de 5 partes com tecnologia avançada de citometria de fluxo",
     descritivoCompleto: "O DxH 520 é um analisador hematológico de 5 partes que oferece resultados precisos e confiáveis para laboratórios de médio porte. Equipado com tecnologia VCS (Volume, Condutividade e Dispersão de luz), proporciona diferenciação leucocitária completa e detecção de células anormais. Possui capacidade de 80 testes/hora, reagentes com estabilidade prolongada e interface intuitiva touchscreen.",
+    apresentacaoComercial: "Sistema compacto all-in-one com monitor touchscreen 10.4 polegadas, incluindo impressora térmica integrada, rack de amostras para 20 posições e módulo de refrigeração para reagentes",
+    modeloProdutoMedico: "DxH 520 Hematology Analyzer",
     aplicacoes: "Hemograma completo com diferenciação leucocitária de 5 partes, contagem de reticulócitos, detecção de células anormais e bandas, análise de fluidos corporais",
     tagsProduto: ["hematologia", "hemograma", "leucócitos", "citometria", "laboratório"],
     palavrasChave: ["hematologia", "hemograma", "leucócitos"],
