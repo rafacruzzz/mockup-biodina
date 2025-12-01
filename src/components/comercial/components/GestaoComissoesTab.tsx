@@ -1019,7 +1019,7 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
                 <div className="flex items-start gap-4">
                   <img 
                     src={biodinaLogo} 
-                    alt="iMuv Brasil" 
+                    alt="Biodina Brasil" 
                     className="h-16 w-auto"
                   />
                   <div className="flex-1">
