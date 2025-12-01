@@ -41,8 +41,13 @@ export interface Produto {
   requisitosInfraestrutura?: string;
   condicoesAmbientais?: string;
   conformidadesNormas?: string;
-  peso?: string;
-  dimensoes?: string;
+  peso?: string; // Deprecated - use campos específicos
+  dimensoes?: string; // Deprecated - use campos específicos
+  pesoLiquido?: number;
+  pesoBruto?: number;
+  altura?: number;
+  largura?: number;
+  profundidade?: number;
   
   // Regulatório
   registroAnvisa?: string;
