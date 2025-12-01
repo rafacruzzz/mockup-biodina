@@ -1,7 +1,8 @@
 import { EventoAgenda } from "@/data/agendaComercial";
 import { EventoCard } from "./EventoCard";
-import { format, startOfWeek, addDays, isSameDay } from "date-fns";
+import { format, startOfWeek, addDays, isSameDay, isToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import React from "react";
 
 interface CalendarioSemanalProps {
   dataAtual: Date;
@@ -41,45 +42,52 @@ export const CalendarioSemanal = ({ dataAtual, eventos, onEventoClick }: Calenda
   };
 
   return (
-    <div className="flex flex-col h-full overflow-auto">
+    <div className="flex flex-col h-full">
       {/* Header dos dias */}
-      <div className="grid grid-cols-[60px_repeat(7,1fr)] border-b sticky top-0 bg-background z-10">
-        <div className="p-2 text-xs font-medium text-muted-foreground">Hora</div>
-        {diasSemana.map((dia, idx) => (
-          <div key={idx} className="p-2 text-center border-l">
-            <div className="text-xs font-medium text-muted-foreground uppercase">
-              {format(dia, 'EEE', { locale: ptBR })}
+      <div className="grid grid-cols-[80px_repeat(7,1fr)] border-b border-gray-100 sticky top-0 bg-background z-10">
+        <div className="p-3 border-r border-gray-100"></div>
+        {diasSemana.map((dia, idx) => {
+          const ehHoje = isToday(dia);
+          return (
+            <div
+              key={idx}
+              className={`p-3 text-center border-r border-gray-100 last:border-r-0 ${
+                ehHoje ? 'bg-primary/5' : ''
+              }`}
+            >
+              <div className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium">
+                {format(dia, 'EEE', { locale: ptBR })}
+              </div>
+              <div className={`text-xl font-semibold mt-1 ${
+                ehHoje ? 'text-primary' : 'text-foreground'
+              }`}>
+                {format(dia, 'd')}
+              </div>
             </div>
-            <div className={`text-lg font-bold ${isSameDay(dia, new Date()) ? 'text-primary' : ''}`}>
-              {format(dia, 'd')}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Grid de horários */}
-      <div className="relative flex-1">
-        <div className="grid grid-cols-[60px_repeat(7,1fr)]">
+      <div className="flex-1 overflow-auto">
+        <div className="grid grid-cols-[80px_repeat(7,1fr)]">
           {HORARIOS.map((hora) => (
-            <div key={hora} className="contents">
-              {/* Coluna de horário */}
-              <div className="p-2 text-xs text-muted-foreground border-t">
-                {hora.toString().padStart(2, '0')}:00
+            <React.Fragment key={hora}>
+              <div className="p-2 border-r border-gray-100 border-t border-gray-100 text-xs text-muted-foreground text-right font-medium h-12 flex items-start justify-end">
+                {hora}:00
               </div>
-
-              {/* Células de cada dia */}
               {diasSemana.map((dia, diaIdx) => {
                 const eventosNaHora = getEventosParaDiaEHora(dia, hora);
+                const ehHoje = isToday(dia);
                 
                 return (
                   <div
                     key={`${hora}-${diaIdx}`}
-                    className="border-l border-t relative"
-                    style={{ minHeight: '60px' }}
+                    className={`border-r border-gray-100 border-t border-gray-100 last:border-r-0 p-1 relative h-12 transition-colors hover:bg-muted/20 ${
+                      ehHoje ? 'bg-primary/[0.02]' : ''
+                    }`}
                   >
-                    {/* Renderizar eventos que começam nesta hora */}
                     {eventosNaHora.map((evento, eventoIdx) => {
-                      // Só renderizar se o evento começa nesta hora
                       if (evento.dataInicio.getHours() !== hora) return null;
 
                       const { top, height } = calcularPosicaoEvento(evento);
@@ -87,11 +95,11 @@ export const CalendarioSemanal = ({ dataAtual, eventos, onEventoClick }: Calenda
                         e.dataInicio.getHours() === evento.dataInicio.getHours()
                       ).length;
                       
-                      const width = totalEventosSimultaneos > 1 ? 100 / totalEventosSimultaneos : 100;
+                      const width = totalEventosSimultaneos > 1 ? 95 / totalEventosSimultaneos : 100;
                       const left = totalEventosSimultaneos > 1 ? 
                         (eventosNaHora.filter(e => 
                           e.dataInicio.getHours() === evento.dataInicio.getHours()
-                        ).indexOf(evento) * width) : 0;
+                        ).indexOf(evento) * (100 / totalEventosSimultaneos)) : 0;
 
                       return (
                         <div
@@ -102,8 +110,8 @@ export const CalendarioSemanal = ({ dataAtual, eventos, onEventoClick }: Calenda
                             left: `${left}%`,
                             width: `${width}%`,
                             height: `${height}px`,
-                            zIndex: 1,
-                            padding: '2px'
+                            zIndex: eventoIdx + 1,
+                            paddingRight: '2px'
                           }}
                         >
                           <EventoCard
@@ -116,7 +124,7 @@ export const CalendarioSemanal = ({ dataAtual, eventos, onEventoClick }: Calenda
                   </div>
                 );
               })}
-            </div>
+            </React.Fragment>
           ))}
         </div>
       </div>

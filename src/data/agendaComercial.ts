@@ -19,28 +19,36 @@ export const CORES_CATEGORIAS = {
     border: 'border-blue-600',
     text: 'text-white',
     light: 'bg-blue-100',
-    textDark: 'text-blue-900'
+    textDark: 'text-blue-900',
+    bgLight: 'bg-blue-50',
+    borderLeft: 'border-l-blue-500'
   },
   comercialInterno: {
-    bg: 'bg-green-500',
-    border: 'border-green-600',
+    bg: 'bg-emerald-500',
+    border: 'border-emerald-600',
     text: 'text-white',
-    light: 'bg-green-100',
-    textDark: 'text-green-900'
+    light: 'bg-emerald-100',
+    textDark: 'text-emerald-900',
+    bgLight: 'bg-emerald-50',
+    borderLeft: 'border-l-emerald-500'
   },
   assessoriaCientifica: {
-    bg: 'bg-purple-500',
-    border: 'border-purple-600',
+    bg: 'bg-violet-500',
+    border: 'border-violet-600',
     text: 'text-white',
-    light: 'bg-purple-100',
-    textDark: 'text-purple-900'
+    light: 'bg-violet-100',
+    textDark: 'text-violet-900',
+    bgLight: 'bg-violet-50',
+    borderLeft: 'border-l-violet-500'
   },
   departamentoTecnico: {
-    bg: 'bg-red-500',
-    border: 'border-red-600',
+    bg: 'bg-rose-500',
+    border: 'border-rose-600',
     text: 'text-white',
-    light: 'bg-red-100',
-    textDark: 'text-red-900'
+    light: 'bg-rose-100',
+    textDark: 'text-rose-900',
+    bgLight: 'bg-rose-50',
+    borderLeft: 'border-l-rose-500'
   }
 };
 

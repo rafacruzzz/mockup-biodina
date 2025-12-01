@@ -19,20 +19,22 @@ export const EventoCard = ({ evento, onClick, style }: EventoCardProps) => {
       onClick={onClick}
       style={style}
       className={`
-        ${cores.bg} ${cores.border} ${cores.text}
-        border-l-4 p-2 rounded cursor-pointer
-        hover:opacity-90 transition-opacity
-        overflow-hidden text-xs
+        ${cores.bgLight} ${cores.borderLeft} ${cores.textDark}
+        border-l-4 px-2 py-1 rounded-md cursor-pointer
+        hover:shadow-md hover:z-10 transition-all
+        overflow-hidden h-full
       `}
     >
-      <div className="font-semibold truncate">{evento.titulo}</div>
-      <div className="flex items-center gap-1 mt-1 opacity-90">
-        <Clock className="h-3 w-3" />
-        <span>{horaInicio} - {horaFim}</span>
+      <div className="font-medium text-xs truncate leading-tight">{evento.titulo}</div>
+      <div className="flex items-center gap-1 mt-0.5 text-[10px] opacity-70">
+        <Clock className="h-2.5 w-2.5" />
+        <span className="truncate">{horaInicio} - {horaFim}</span>
       </div>
-      <div className="truncate mt-1 text-[10px] opacity-80">
-        {evento.projeto}
-      </div>
+      {evento.projeto && (
+        <div className="truncate mt-0.5 text-[9px] opacity-60">
+          {evento.projeto}
+        </div>
+      )}
     </div>
   );
 };
