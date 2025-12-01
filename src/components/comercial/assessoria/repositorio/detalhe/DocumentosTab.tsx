@@ -15,6 +15,7 @@ import { getDocumentosPorProduto } from "@/data/produtos";
 import { Upload, Download, FileText, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { HistoricoVersaoModal } from "./HistoricoVersaoModal";
+import { UploadDocumentoModal } from "./UploadDocumentoModal";
 
 interface DocumentosTabProps {
   produto: Produto;
@@ -23,13 +24,15 @@ interface DocumentosTabProps {
 export function DocumentosTab({ produto }: DocumentosTabProps) {
   const documentos = getDocumentosPorProduto(produto.id);
   const [historicoOpen, setHistoricoOpen] = useState(false);
+  const [uploadOpen, setUploadOpen] = useState(false);
   const [documentoSelecionado, setDocumentoSelecionado] = useState<any>(null);
 
   const getTipoLabel = (tipo: string) => {
     const labels: Record<string, string> = {
       catalogo: "Catálogo",
-      manual: "Manual/IFU",
-      artigo: "Artigo Científico",
+      manual: "POP/IFU/Manual de Operação",
+      artigo: "Artigos / Evidências científicas",
+      ficha_tecnica: "Ficha Técnica",
       outros: "Outros",
     };
     return labels[tipo] || tipo;
@@ -54,7 +57,7 @@ export function DocumentosTab({ produto }: DocumentosTabProps) {
               <FileText className="h-5 w-5" />
               Documentos do Produto
             </CardTitle>
-            <Button>
+            <Button onClick={() => setUploadOpen(true)}>
               <Upload className="h-4 w-4 mr-2" />
               Upload de Documento
             </Button>
@@ -129,6 +132,13 @@ export function DocumentosTab({ produto }: DocumentosTabProps) {
           )}
         </CardContent>
       </Card>
+
+      {/* Modal de Upload */}
+      <UploadDocumentoModal
+        open={uploadOpen}
+        onClose={() => setUploadOpen(false)}
+        produtoId={produto.id}
+      />
 
       {/* Modal de Histórico de Versões */}
       {documentoSelecionado && (

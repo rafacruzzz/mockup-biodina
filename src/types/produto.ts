@@ -70,7 +70,7 @@ export interface VersaoDocumento {
 export interface DocumentoProduto {
   id: string;
   produtoId: string;
-  tipo: 'catalogo' | 'manual' | 'artigo' | 'outros';
+  tipo: 'catalogo' | 'manual' | 'artigo' | 'ficha_tecnica' | 'outros';
   titulo: string;
   versao: string;
   idioma: string;
