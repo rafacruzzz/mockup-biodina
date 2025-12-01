@@ -22,12 +22,15 @@ const GestaoFiliais = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingFilial, setEditingFilial] = useState<Filial | null>(null);
 
+  // Filtrar filiais da empresa atual
+  const filiaisEmpresaAtual = filiais.filter(f => f.empresaPrincipalId === empresaAtual?.id);
+  
   const limiteFiliais = empresaAtual?.configuracoes.quantidadeFiliais || 0;
-  const filiaisCadastradas = filiais.length;
+  const filiaisCadastradas = filiaisEmpresaAtual.length;
   const limiteAtingido = limiteFiliais !== -1 && filiaisCadastradas >= limiteFiliais;
   const percentualUso = limiteFiliais === -1 ? 0 : (filiaisCadastradas / limiteFiliais) * 100;
 
-  const filteredFiliais = filiais.filter(filial =>
+  const filteredFiliais = filiaisEmpresaAtual.filter(filial =>
     filial.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     filial.cnpj.includes(searchTerm) ||
     filial.endereco?.cidade.toLowerCase().includes(searchTerm.toLowerCase())
