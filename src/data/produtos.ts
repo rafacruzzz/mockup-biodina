@@ -69,7 +69,7 @@ export const linhasMock: Linha[] = [
 ];
 
 // Mock data para Produtos
-const produtosMock: Produto[] = [
+export const produtosMock: Produto[] = [
   {
     id: "prod-1",
     codigo: "DXH520",
