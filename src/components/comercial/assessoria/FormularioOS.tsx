@@ -525,7 +525,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
               onValueChange={handleEquipamentoChange}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecionar equipamento..." />
+                <SelectValue placeholder="Ex: ABL800 FLEX, DxH 520, AQT 90 FLEX" />
               </SelectTrigger>
               <SelectContent className="bg-background z-50">
                 {equipamentosDisponiveis.map((eq) => (
