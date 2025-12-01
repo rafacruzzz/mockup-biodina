@@ -27,6 +27,8 @@ export interface Produto {
   descricao: string;
   descritivoBreve?: string;
   descritivoCompleto?: string;
+  apresentacaoComercial?: string;
+  modeloProdutoMedico?: string;
   aplicacoes: string;
   tagsProduto?: string[];
   palavrasChave: string[]; // Deprecated - use tagsProduto

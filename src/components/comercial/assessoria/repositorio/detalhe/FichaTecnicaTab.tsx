@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Produto } from "@/types/produto";
-import { FileText, Ruler, Edit, Save, Settings, Box, Building2, Thermometer, Shield } from "lucide-react";
+import { FileText, Ruler, Edit, Save, Settings, Box, Building2, Thermometer, Shield, Package } from "lucide-react";
 import { toast } from "sonner";
 
 interface FichaTecnicaTabProps {
@@ -33,6 +33,26 @@ export function FichaTecnicaTab({ produto, highlightIncomplete }: FichaTecnicaTa
 
   return (
     <div className="space-y-6">
+      {/* Apresentação Comercial e Modelo */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Package className="h-5 w-5" />
+            Informações do Produto
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <p className="text-sm text-muted-foreground mb-1">Apresentação Comercial</p>
+            <p className="text-sm leading-relaxed">{produto.apresentacaoComercial || "Informação não cadastrada"}</p>
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground mb-1">Modelo de Produto Médico</p>
+            <p className="font-medium">{produto.modeloProdutoMedico || "Informação não cadastrada"}</p>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
