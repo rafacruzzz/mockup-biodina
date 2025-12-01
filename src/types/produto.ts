@@ -8,6 +8,8 @@ export interface Marca {
   nome: string;
   logo: string;
   descricao?: string;
+  ultimaAtualizacao: Date;
+  arquivada: boolean;
 }
 
 export interface Linha {
@@ -16,6 +18,9 @@ export interface Linha {
   marcaId: string;
   descricao?: string;
   imagem?: string;
+  status: 'ativo' | 'inativo';
+  statusCadastro: 'completo' | 'incompleto';
+  arquivada: boolean;
 }
 
 export interface Produto {
