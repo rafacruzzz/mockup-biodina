@@ -3,11 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Save, User, Bell, UserMinus, AlertTriangle, Monitor, Shield } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Save, User, Bell, UserMinus, AlertTriangle, Monitor, Shield, AlertCircle } from "lucide-react";
 import { ColaboradorData } from "@/types/colaborador";
-import { ModuleAccess } from "@/types/permissions";
+import { ModuleAccess, EmpresaVinculada } from "@/types/permissions";
 import { getSolicitacoesByColaborador } from "@/data/solicitacoes";
 import { useColaboradores } from "@/hooks/useColaboradores";
+import { useEmpresa } from "@/contexts/EmpresaContext";
+import { useModulosUsuario } from "@/hooks/useModulosUsuario";
 import DadosPessoaisTab from "./tabs/DadosPessoaisTab";
 import DadosProfissionaisTab from "./tabs/DadosProfissionaisTab";
 import DadosFinanceirosTab from "./tabs/DadosFinanceirosTab";
@@ -21,6 +24,7 @@ import DesligarColaboradorModal from "./DesligarColaboradorModal";
 import TITab from "./tabs/TITab";
 import AccessProfileSelector from "../cadastro/AccessProfileSelector";
 import ModuleAccessTree from "../cadastro/ModuleAccessTree";
+import { EmpresasDoUsuario } from "../cadastro/EmpresasDoUsuario";
 
 interface ColaboradorModalProps {
   isOpen: boolean;
@@ -40,6 +44,7 @@ const ColaboradorModal = ({
   context = "colaborador"
 }: ColaboradorModalProps) => {
   const { desligarColaborador } = useColaboradores();
+  const { empresaAtual, filiais } = useEmpresa();
   const [isDesligarModalOpen, setIsDesligarModalOpen] = useState(false);
   const [colaboradorDesligado, setColaboradorDesligado] = useState(!!colaboradorData?.desligamento);
   
@@ -53,6 +58,7 @@ const ColaboradorModal = ({
     userType?: string;
     isActive?: boolean;
     moduleAccess?: ModuleAccess[];
+    empresasVinculadas?: EmpresaVinculada[];
   }>({
     dadosPessoais: {
       nome: colaboradorData?.dadosPessoais?.nome || '',
@@ -188,7 +194,18 @@ const ColaboradorModal = ({
     confirmPassword: '',
     userType: '',
     isActive: true,
-    moduleAccess: []
+    moduleAccess: [],
+    empresasVinculadas: empresaAtual ? [{
+      id: empresaAtual.id,
+      tipo: 'principal',
+      nome: empresaAtual.nome,
+    }] : []
+  });
+
+  const { modulosDisponiveis } = useModulosUsuario({
+    empresaPrincipal: empresaAtual,
+    empresasVinculadas: formData.empresasVinculadas || [],
+    filiais: filiais,
   });
 
   const handleInputChange = (section: keyof ColaboradorData | string, field: string, value: any) => {
@@ -242,6 +259,13 @@ const ColaboradorModal = ({
     setFormData(prev => ({
       ...prev,
       moduleAccess: modules
+    }));
+  };
+
+  const handleEmpresasChange = (empresas: EmpresaVinculada[]) => {
+    setFormData(prev => ({
+      ...prev,
+      empresasVinculadas: empresas
     }));
   };
 
@@ -523,6 +547,24 @@ const ColaboradorModal = ({
                         Configure as permissões de acesso aos módulos do sistema. Você pode aplicar um perfil pré-definido ou configurar as permissões individualmente.
                       </p>
                     </div>
+
+                    <div className="space-y-4">
+                      <EmpresasDoUsuario
+                        empresaPrincipal={empresaAtual}
+                        filiais={filiais}
+                        empresasVinculadas={formData.empresasVinculadas || []}
+                        onEmpresasChange={handleEmpresasChange}
+                      />
+                    </div>
+
+                    {formData.empresasVinculadas && formData.empresasVinculadas.length > 1 && (
+                      <Alert>
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription>
+                          Este usuário tem acesso a múltiplas empresas. Os módulos disponíveis são a interseção dos módulos habilitados em todas as empresas vinculadas.
+                        </AlertDescription>
+                      </Alert>
+                    )}
 
                     <div className="space-y-4">
                       <AccessProfileSelector onProfileSelect={handleModuleAccessChange} />
