@@ -68,6 +68,20 @@ export interface VersaoDocumento {
   arquivo: string;
 }
 
+export interface ChangelogEntry {
+  id: string;
+  artefatoId: string;
+  tipoArtefato: 'catalogo' | 'ifu_pop' | 'manual' | 'comparativo' | 'justificativa' | 'termo_referencia' | 'ficha_tecnica' | 'imagem' | 'video' | 'artigo';
+  versaoAnterior: string;
+  versaoNova: string;
+  oqueMudou: string;
+  porqueMudou: string;
+  aprovadoPor?: string;
+  aprovadoEm?: Date;
+  alteradoPor: string;
+  alteradoEm: Date;
+}
+
 export interface DocumentoProduto {
   id: string;
   produtoId: string;
@@ -79,6 +93,9 @@ export interface DocumentoProduto {
   uploadPor: string;
   arquivo: string;
   historicoVersoes?: VersaoDocumento[];
+  bloqueadoSobrescrita?: boolean; // Para IFU/POP - não permite edição, apenas nova versão
+  dataProximaRevalidacao?: Date; // Controle de revalidação a cada 12 meses
+  changelog?: ChangelogEntry[];
 }
 
 export interface ComparativoProduto {
