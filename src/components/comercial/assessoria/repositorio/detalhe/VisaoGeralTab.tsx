@@ -151,6 +151,10 @@ export function VisaoGeralTab({ produto }: VisaoGeralTabProps) {
               <p className="font-medium">{produto.codigo}</p>
             </div>
             <div>
+              <p className="text-sm text-muted-foreground">CATMAT</p>
+              <p className="font-medium">{produto.catmat || "Não informado"}</p>
+            </div>
+            <div>
               <p className="text-sm text-muted-foreground">Status</p>
               <Badge variant={produto.status === "ativo" ? "default" : "secondary"}>
                 {produto.status === "ativo" ? "Ativo" : "Descontinuado"}

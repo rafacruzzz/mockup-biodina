@@ -5,8 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Produto } from "@/types/produto";
 import { VisaoGeralTab } from "./detalhe/VisaoGeralTab";
 import { FichaTecnicaTab } from "./detalhe/FichaTecnicaTab";
+import { ApresentacaoTab } from "./detalhe/ApresentacaoTab";
 import { DocumentosTab } from "./detalhe/DocumentosTab";
-import { SuporteVendasTab } from "./detalhe/SuporteVendasTab";
 import { MidiaTab } from "./detalhe/MidiaTab";
 import { RegulatorioTab } from "./detalhe/RegulatorioTab";
 
@@ -15,7 +15,7 @@ interface DetalheProdutoProps {
   onVoltar: () => void;
 }
 
-type SubAba = "visao-geral" | "ficha-tecnica" | "documentos" | "suporte-vendas" | "midia" | "regulatorio";
+type SubAba = "visao-geral" | "ficha-tecnica" | "apresentacao" | "documentos" | "midia" | "regulatorio";
 
 export function DetalheProduto({ produto, onVoltar }: DetalheProdutoProps) {
   const [subAbaAtiva, setSubAbaAtiva] = useState<SubAba>("visao-geral");
@@ -92,10 +92,10 @@ export function DetalheProduto({ produto, onVoltar }: DetalheProdutoProps) {
           {[
             { id: "visao-geral", label: "Visão Geral" },
             { id: "ficha-tecnica", label: "Ficha Técnica" },
+            { id: "apresentacao", label: "Apresentação" },
             { id: "documentos", label: "Documentos" },
-            { id: "suporte-vendas", label: "Suporte a Vendas" },
             { id: "midia", label: "Mídia" },
-            { id: "regulatorio", label: "Regulatório" },
+            { id: "regulatorio", label: "Regulatório & Versões" },
           ].map((aba) => (
             <button
               key={aba.id}
@@ -116,8 +116,8 @@ export function DetalheProduto({ produto, onVoltar }: DetalheProdutoProps) {
       <div>
         {subAbaAtiva === "visao-geral" && <VisaoGeralTab produto={produto} />}
         {subAbaAtiva === "ficha-tecnica" && <FichaTecnicaTab produto={produto} highlightIncomplete={highlightIncomplete} />}
+        {subAbaAtiva === "apresentacao" && <ApresentacaoTab produto={produto} />}
         {subAbaAtiva === "documentos" && <DocumentosTab produto={produto} />}
-        {subAbaAtiva === "suporte-vendas" && <SuporteVendasTab produto={produto} />}
         {subAbaAtiva === "midia" && <MidiaTab produto={produto} />}
         {subAbaAtiva === "regulatorio" && <RegulatorioTab produto={produto} highlightIncomplete={highlightIncomplete} />}
       </div>

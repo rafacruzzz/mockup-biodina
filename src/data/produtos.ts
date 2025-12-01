@@ -84,6 +84,7 @@ const produtosMock: Produto[] = [
     aplicacoes: "Hemograma completo com diferenciação leucocitária de 5 partes, contagem de reticulócitos, detecção de células anormais e bandas, análise de fluidos corporais",
     tagsProduto: ["hematologia", "hemograma", "leucócitos", "citometria", "laboratório"],
     palavrasChave: ["hematologia", "hemograma", "leucócitos"],
+    catmat: "424660",
     status: "ativo",
     statusCadastro: "completo",
     registroAnvisa: "80123456789",
