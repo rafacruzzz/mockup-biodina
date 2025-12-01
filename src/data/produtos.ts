@@ -48,7 +48,12 @@ const produtosMock: Produto[] = [
     palavrasChave: ["hematologia", "hemograma", "leucócitos"],
     status: "ativo",
     statusCadastro: "completo",
-    registroAnvisa: "80123456789"
+    registroAnvisa: "80123456789",
+    parametrosChave: "Faixa de medição: WBC: 0,0 - 99,9 x 10³/µL\nPrecisão: CV < 2%\nVazão: 80 amostras/hora\nVolume de amostra: 175 µL",
+    compatibilidades: "Reagentes: DxH SMS, CellPak, LH Diluent\nEquipamentos: Compatível com sistema DxH\nAcessórios: Racks universais, tubos com EDTA",
+    requisitosInfraestrutura: "Energia: 110-240V, 50/60Hz, 500VA\nAr comprimido: Não requerido\nRede: Ethernet RJ45, conexão LIS opcional\nLaboratório: Área mínima 1,5m²",
+    condicoesAmbientais: "Operação:\n- Temperatura: 15-30°C\n- Umidade: 20-80% sem condensação\n\nArmazenamento:\n- Temperatura: -10 a 50°C\n- Umidade: 10-95% sem condensação",
+    conformidadesNormas: "IEC 61010-1: Segurança elétrica\nISO 13485: Sistema de gestão da qualidade\nIEC 61326-1: Compatibilidade eletromagnética\nRDC 16/2013 ANVISA: Registro de equipamentos médicos"
   }
 ];
 
