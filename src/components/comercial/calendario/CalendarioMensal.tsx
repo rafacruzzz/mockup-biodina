@@ -28,9 +28,9 @@ export const CalendarioMensal = ({ dataAtual, eventos, onEventoClick }: Calendar
   return (
     <div className="flex flex-col h-full">
       {/* Header dos dias da semana */}
-      <div className="grid grid-cols-7 border-b">
+      <div className="grid grid-cols-7 border-b border-gray-100">
         {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((dia) => (
-          <div key={dia} className="p-2 text-center text-xs font-medium text-muted-foreground uppercase border-r last:border-r-0">
+          <div key={dia} className="p-3 text-center text-[10px] font-medium text-muted-foreground uppercase tracking-wide border-r border-gray-100 last:border-r-0">
             {dia}
           </div>
         ))}
@@ -47,14 +47,15 @@ export const CalendarioMensal = ({ dataAtual, eventos, onEventoClick }: Calendar
             <div
               key={idx}
               className={`
-                border-r border-b last:border-r-0 p-2 overflow-hidden
+                border-r border-gray-100 border-b border-gray-100 last:border-r-0 p-2 overflow-hidden
+                transition-colors hover:bg-muted/20 cursor-pointer
                 ${!dentroDoMes ? 'bg-muted/30' : ''}
-                ${ehHoje ? 'bg-primary/5' : ''}
+                ${ehHoje ? 'bg-primary/[0.03]' : ''}
               `}
             >
               <div className={`
-                text-sm font-medium mb-1
-                ${!dentroDoMes ? 'text-muted-foreground' : ''}
+                text-sm font-medium mb-1.5
+                ${!dentroDoMes ? 'text-muted-foreground/60' : 'text-foreground'}
                 ${ehHoje ? 'text-primary font-bold' : ''}
               `}>
                 {format(dia, 'd')}
@@ -68,18 +69,18 @@ export const CalendarioMensal = ({ dataAtual, eventos, onEventoClick }: Calendar
                       key={evento.id}
                       onClick={() => onEventoClick(evento)}
                       className={`
-                        ${cores.light} ${cores.textDark}
-                        text-[10px] p-1 rounded cursor-pointer
-                        hover:opacity-80 transition-opacity
-                        truncate border-l-2 ${cores.border}
+                        ${cores.bgLight} ${cores.textDark} ${cores.borderLeft}
+                        text-[9px] px-1.5 py-0.5 rounded-sm cursor-pointer
+                        hover:shadow-sm transition-all
+                        truncate border-l-2 font-medium
                       `}
                     >
-                      {format(evento.dataInicio, 'HH:mm')} {evento.titulo}
+                      <span className="opacity-70">{format(evento.dataInicio, 'HH:mm')}</span> {evento.titulo}
                     </div>
                   );
                 })}
                 {eventosDoDia.length > 3 && (
-                  <div className="text-[10px] text-muted-foreground pl-1">
+                  <div className="text-[9px] text-muted-foreground pl-1 font-medium">
                     +{eventosDoDia.length - 3} mais
                   </div>
                 )}

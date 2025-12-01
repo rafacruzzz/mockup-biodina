@@ -38,39 +38,27 @@ export const CalendarioDiario = ({ dataAtual, eventos, onEventoClick }: Calendar
   };
 
   return (
-    <div className="flex flex-col h-full overflow-auto">
+    <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="border-b sticky top-0 bg-background z-10 p-4">
-        <div className="text-center">
-          <div className="text-sm text-muted-foreground uppercase">
-            {format(dataAtual, 'EEEE', { locale: ptBR })}
-          </div>
-          <div className="text-2xl font-bold">
-            {format(dataAtual, "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
-          </div>
-        </div>
+      <div className="border-b border-gray-100 p-4 bg-background">
+        <h3 className="text-lg font-semibold text-foreground">
+          {format(dataAtual, "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR })}
+        </h3>
       </div>
 
       {/* Grid de horários */}
-      <div className="relative flex-1">
+      <div className="flex-1 overflow-auto">
         <div className="grid grid-cols-[80px_1fr]">
           {HORARIOS.map((hora) => {
             const eventosNaHora = getEventosParaHora(hora);
             
             return (
               <div key={hora} className="contents">
-                {/* Coluna de horário */}
-                <div className="p-3 text-sm text-muted-foreground border-t text-right pr-4">
-                  {hora.toString().padStart(2, '0')}:00
+                <div className="p-2 border-r border-gray-100 border-t border-gray-100 text-xs text-muted-foreground text-right font-medium h-12 flex items-start justify-end">
+                  {hora}:00
                 </div>
-
-                {/* Coluna de eventos */}
-                <div
-                  className="border-l border-t relative"
-                  style={{ minHeight: '60px' }}
-                >
+                <div className="border-r border-gray-100 border-t border-gray-100 p-1 relative h-12 transition-colors hover:bg-muted/20">
                   {eventosNaHora.map((evento, eventoIdx) => {
-                    // Só renderizar se o evento começa nesta hora
                     if (evento.dataInicio.getHours() !== hora) return null;
 
                     const { top, height } = calcularPosicaoEvento(evento);
@@ -78,11 +66,8 @@ export const CalendarioDiario = ({ dataAtual, eventos, onEventoClick }: Calendar
                       e.dataInicio.getHours() === evento.dataInicio.getHours()
                     ).length;
                     
-                    const width = totalEventosSimultaneos > 1 ? 100 / totalEventosSimultaneos : 100;
-                    const left = totalEventosSimultaneos > 1 ? 
-                      (eventosNaHora.filter(e => 
-                        e.dataInicio.getHours() === evento.dataInicio.getHours()
-                      ).indexOf(evento) * width) : 0;
+                    const width = totalEventosSimultaneos > 1 ? 95 / totalEventosSimultaneos : 100;
+                    const left = eventoIdx * (100 / totalEventosSimultaneos);
 
                     return (
                       <div
@@ -93,8 +78,8 @@ export const CalendarioDiario = ({ dataAtual, eventos, onEventoClick }: Calendar
                           left: `${left}%`,
                           width: `${width}%`,
                           height: `${height}px`,
-                          zIndex: 1,
-                          padding: '4px'
+                          zIndex: eventoIdx + 1,
+                          paddingRight: totalEventosSimultaneos > 1 ? '2px' : '0'
                         }}
                       >
                         <EventoCard

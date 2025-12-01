@@ -79,68 +79,96 @@ const AgendaComercial = () => {
   return (
     <>
       <Card className="shadow-lg h-[600px] flex flex-col">
-        <CardHeader className="pb-3 flex-shrink-0 space-y-4">
-          <CardTitle className="flex items-center justify-center gap-3 text-xl font-bold text-biodina-blue">
-            <Calendar className="h-6 w-6 text-biodina-blue" />
-            Agenda Comercial
-          </CardTitle>
+        <CardHeader className="pb-3 flex-shrink-0 border-b border-gray-100">
+          <div className="flex flex-col gap-4">
+            {/* Linha de navegação e visualização */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={irParaHoje}
+                  className="font-medium"
+                >
+                  Hoje
+                </Button>
+                <div className="flex items-center gap-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={navegarAnterior}
+                    className="h-8 w-8"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={navegarProximo}
+                    className="h-8 w-8"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+                <h2 className="text-xl font-semibold text-foreground capitalize">{getTitulo()}</h2>
+              </div>
 
-          {/* Controles de Navegação e Visualização */}
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={irParaHoje}>
-                Hoje
-              </Button>
-              <Button variant="ghost" size="icon" onClick={navegarAnterior}>
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button variant="ghost" size="icon" onClick={navegarProximo}>
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-              <div className="text-base font-semibold capitalize min-w-[200px] text-center">
-                {getTitulo()}
+              <div className="flex gap-1">
+                <Button
+                  variant={visualizacao === 'dia' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setVisualizacao('dia')}
+                  className="font-medium"
+                >
+                  Dia
+                </Button>
+                <Button
+                  variant={visualizacao === 'semana' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setVisualizacao('semana')}
+                  className="font-medium"
+                >
+                  Semana
+                </Button>
+                <Button
+                  variant={visualizacao === 'mes' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setVisualizacao('mes')}
+                  className="font-medium"
+                >
+                  Mês
+                </Button>
               </div>
             </div>
 
-            <div className="flex gap-1">
-              {(['dia', 'semana', 'mes'] as TipoVisualizacao[]).map((tipo) => (
-                <Button
-                  key={tipo}
-                  variant={visualizacao === tipo ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setVisualizacao(tipo)}
-                  className="capitalize"
-                >
-                  {tipo}
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          {/* Filtros de Categoria */}
-          <div className="flex flex-wrap gap-3">
-            {(Object.keys(CORES_CATEGORIAS) as CategoriaEvento[]).map((categoria) => {
-              const cores = CORES_CATEGORIAS[categoria];
-              const nome = NOME_CATEGORIAS[categoria];
-              const checked = categoriasFiltro.has(categoria);
-
-              return (
-                <div key={categoria} className="flex items-center gap-2">
-                  <Checkbox
-                    id={categoria}
-                    checked={checked}
-                    onCheckedChange={() => toggleCategoria(categoria)}
-                  />
+            {/* Filtros por categoria */}
+            <div className="flex gap-2 flex-wrap">
+              {(Object.entries(NOME_CATEGORIAS) as [CategoriaEvento, string][]).map(([categoria, nome]) => {
+                const cores = CORES_CATEGORIAS[categoria];
+                const ativo = categoriasFiltro.has(categoria);
+                return (
                   <label
-                    htmlFor={categoria}
-                    className="flex items-center gap-2 text-sm cursor-pointer"
+                    key={categoria}
+                    className={`
+                      flex items-center gap-2 px-3 py-1.5 rounded-full cursor-pointer
+                      transition-all border text-xs font-medium
+                      ${ativo 
+                        ? `${cores.bgLight} ${cores.textDark} border-current` 
+                        : 'bg-muted/30 text-muted-foreground border-transparent hover:bg-muted/50'
+                      }
+                    `}
                   >
-                    <div className={`w-3 h-3 rounded ${cores.bg}`} />
-                    {nome}
+                    <Checkbox
+                      checked={ativo}
+                      onCheckedChange={() => toggleCategoria(categoria)}
+                      className="h-3.5 w-3.5"
+                    />
+                    <span>{nome}</span>
+                    <div className={`w-2 h-2 rounded-full ${cores.bg}`} />
                   </label>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </CardHeader>
 
