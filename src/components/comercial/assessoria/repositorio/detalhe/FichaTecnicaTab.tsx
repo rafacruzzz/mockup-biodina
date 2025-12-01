@@ -169,29 +169,61 @@ export function FichaTecnicaTab({ produto, highlightIncomplete }: FichaTecnicaTa
         </CardContent>
       </Card>
 
-      <Card className={highlightIncomplete && (!produto.peso || !produto.dimensoes) ? "border-2 border-red-500 animate-pulse" : ""}>
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Ruler className="h-5 w-5" />
             Dimensões e Peso
-            {highlightIncomplete && (!produto.peso || !produto.dimensoes) && (
-              <span className="text-red-600 text-sm font-normal">• Campos Obrigatórios</span>
-            )}
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
-            <div className={highlightIncomplete && !produto.peso ? "p-2 border-2 border-red-300 rounded" : ""}>
-              <p className="text-sm text-muted-foreground mb-1">
-                Peso {highlightIncomplete && !produto.peso && <span className="text-red-600">*</span>}
-              </p>
-              <p className="font-medium">{produto.peso || "Não cadastrado"}</p>
+        <CardContent className="space-y-6">
+          {/* Campos de peso e dimensões */}
+          <div className="grid grid-cols-5 gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Peso Líquido (kg)</p>
+              <p className="font-medium">{produto.pesoLiquido ? produto.pesoLiquido.toFixed(2) : "0"}</p>
             </div>
-            <div className={highlightIncomplete && !produto.dimensoes ? "p-2 border-2 border-red-300 rounded" : ""}>
-              <p className="text-sm text-muted-foreground mb-1">
-                Dimensões {highlightIncomplete && !produto.dimensoes && <span className="text-red-600">*</span>}
-              </p>
-              <p className="font-medium">{produto.dimensoes || "Não cadastrado"}</p>
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Peso Bruto (kg)</p>
+              <p className="font-medium">{produto.pesoBruto ? produto.pesoBruto.toFixed(2) : "0"}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Altura (cm)</p>
+              <p className="font-medium">{produto.altura || "0"}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Largura (cm)</p>
+              <p className="font-medium">{produto.largura || "0"}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">Profundidade (cm)</p>
+              <p className="font-medium">{produto.profundidade || "0"}</p>
+            </div>
+          </div>
+
+          {/* Informações de Dimensões */}
+          <div className="bg-muted/50 p-4 rounded-lg">
+            <h4 className="font-semibold text-sm mb-2">Informações de Dimensões</h4>
+            <p className="text-xs text-muted-foreground mb-3">
+              Essas informações são essenciais para cálculos de frete e armazenamento.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs text-muted-foreground">Volume calculado:</p>
+                <p className="font-medium text-sm">
+                  {produto.altura && produto.largura && produto.profundidade
+                    ? ((produto.altura * produto.largura * produto.profundidade) / 1000000).toFixed(4) + " m³"
+                    : "0.0000 m³"}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Peso cubado:</p>
+                <p className="font-medium text-sm">
+                  {produto.altura && produto.largura && produto.profundidade
+                    ? ((produto.altura * produto.largura * produto.profundidade) / 6000).toFixed(2) + " kg"
+                    : "0.00 kg"}
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>
