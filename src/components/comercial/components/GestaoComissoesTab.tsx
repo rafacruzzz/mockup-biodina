@@ -1535,33 +1535,35 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
               </div>
 
               {/* Comissões e Total Geral */}
-              <div className="bg-muted/50 p-4 rounded-lg space-y-3">
+              <div>
                 <h3 className="font-semibold mb-3">Comissões e Total Geral</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="flex justify-between items-center p-2 bg-background rounded">
-                    <span className="font-medium">Comissões Agente iMuv Emp. e Participações USD:</span>
-                    <span className="font-semibold">{comissao.relatorioAgente.comissoesBiodinaUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-background rounded">
-                    <span className="font-medium">R$:</span>
-                    <span className="font-semibold">{comissao.relatorioAgente.comissoesBiodinaReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-background rounded">
-                    <span className="font-medium">Comissões de Marketing USD:</span>
-                    <span className="font-semibold">{comissao.relatorioAgente.comissoesMarketingUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-background rounded">
-                    <span className="font-medium">R$:</span>
-                    <span className="font-semibold">{comissao.relatorioAgente.comissoesMarketingReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-primary/10 rounded border-2 border-primary/30">
-                    <span className="font-bold">Total Geral USD:</span>
-                    <span className="font-bold text-lg">{comissao.relatorioAgente.totalGeralUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-primary/10 rounded border-2 border-primary/30">
-                    <span className="font-bold">R$:</span>
-                    <span className="font-bold text-lg">{comissao.relatorioAgente.totalGeralReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                  </div>
+                <div className="border rounded-lg overflow-hidden">
+                  <table className="w-full text-sm">
+                    <thead className="bg-muted">
+                      <tr>
+                        <th className="px-3 py-2 text-left font-medium">Comissão</th>
+                        <th className="px-3 py-2 text-right font-medium">USD</th>
+                        <th className="px-3 py-2 text-right font-medium">R$</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-t">
+                        <td className="px-3 py-2 bg-yellow-50 dark:bg-yellow-950/20">COMISSÕES AGENTE BIODINA</td>
+                        <td className="px-3 py-2 text-right">USD {comissao.relatorioAgente.comissoesBiodinaUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                        <td className="px-3 py-2 text-right">R$ {comissao.relatorioAgente.comissoesBiodinaReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                      </tr>
+                      <tr className="border-t">
+                        <td className="px-3 py-2 bg-yellow-50 dark:bg-yellow-950/20">COMISSÕES DE MARKETING</td>
+                        <td className="px-3 py-2 text-right">USD {comissao.relatorioAgente.comissoesMarketingUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                        <td className="px-3 py-2 text-right">R$ {comissao.relatorioAgente.comissoesMarketingReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                      </tr>
+                      <tr className="border-t-2 bg-muted/50 font-bold">
+                        <td className="px-3 py-2">TOTAL GERAL</td>
+                        <td className="px-3 py-2 text-right">USD {comissao.relatorioAgente.totalGeralUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                        <td className="px-3 py-2 text-right">R$ {comissao.relatorioAgente.totalGeralReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
 
