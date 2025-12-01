@@ -293,7 +293,7 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
     { id: 'no', label: 'NO' },
     { id: 'aoso', label: 'AO/SO' },
     { id: 'instrucao-embarque', label: 'INSTRUÇÃO DE EMBARQUE' },
-    { id: 'fatura-packing-certificados', label: 'FATURA PACKING LIST CERTIFICADOS' },
+    { id: 'fatura-packing-certificados', label: 'FATURA, PACKING LIST E CERTIFICADOS' },
     { id: 'li', label: 'LI' },
     { id: 'ddr', label: 'DDR' },
     { id: 'gestao-emprestimos', label: 'GESTÃO DE EMPRÉSTIMOS' },
