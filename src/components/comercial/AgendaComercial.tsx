@@ -109,7 +109,7 @@ const AgendaComercial = () => {
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>
-                <h2 className="text-xl font-semibold text-foreground capitalize">{getTitulo()}</h2>
+                <h2 className="text-xl font-semibold text-foreground">{getTitulo()}</h2>
               </div>
 
               <div className="flex gap-1">
