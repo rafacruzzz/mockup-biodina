@@ -63,6 +63,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     
     // Endereço Faturamento
     fat_endereco: "",
+    fat_numero: "",
+    fat_complemento: "",
     fat_cidade: "",
     fat_estado: "",
     fat_cep: "",
@@ -71,6 +73,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     
     // Endereço Entrega
     ent_endereco: "",
+    ent_numero: "",
+    ent_complemento: "",
     ent_cidade: "",
     ent_estado: "",
     ent_cep: "",
@@ -578,7 +582,25 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                       id="fat_endereco"
                       value={formData.fat_endereco}
                       onChange={(e) => handleInputChange("fat_endereco", e.target.value)}
-                      placeholder="Rua, Avenida, número"
+                      placeholder="Rua, Avenida"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="fat_numero">N°</Label>
+                    <Input
+                      id="fat_numero"
+                      value={formData.fat_numero}
+                      onChange={(e) => handleInputChange("fat_numero", e.target.value)}
+                      placeholder="Número"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="fat_complemento">Complemento</Label>
+                    <Input
+                      id="fat_complemento"
+                      value={formData.fat_complemento}
+                      onChange={(e) => handleInputChange("fat_complemento", e.target.value)}
+                      placeholder="Sala, Apto, etc"
                     />
                   </div>
                   <div>
@@ -640,7 +662,25 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                       id="ent_endereco"
                       value={formData.ent_endereco}
                       onChange={(e) => handleInputChange("ent_endereco", e.target.value)}
-                      placeholder="Rua, Avenida, número"
+                      placeholder="Rua, Avenida"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="ent_numero">N°</Label>
+                    <Input
+                      id="ent_numero"
+                      value={formData.ent_numero}
+                      onChange={(e) => handleInputChange("ent_numero", e.target.value)}
+                      placeholder="Número"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="ent_complemento">Complemento</Label>
+                    <Input
+                      id="ent_complemento"
+                      value={formData.ent_complemento}
+                      onChange={(e) => handleInputChange("ent_complemento", e.target.value)}
+                      placeholder="Sala, Apto, etc"
                     />
                   </div>
                   <div>
@@ -683,6 +723,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                 </div>
               </div>
             </TabsContent>
+
 
             {/* ABA: DADOS FISCAIS */}
             <TabsContent value="fiscais" className="space-y-4 mt-4">
