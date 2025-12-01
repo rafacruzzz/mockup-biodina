@@ -22,10 +22,14 @@ interface DocumentosTabProps {
 }
 
 export function DocumentosTab({ produto }: DocumentosTabProps) {
-  const documentos = getDocumentosPorProduto(produto.id);
+  const [documentos, setDocumentos] = useState(getDocumentosPorProduto(produto.id));
   const [historicoOpen, setHistoricoOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [documentoSelecionado, setDocumentoSelecionado] = useState<any>(null);
+
+  const handleDocumentoUpload = (novoDocumento: any) => {
+    setDocumentos(prev => [...prev, novoDocumento]);
+  };
 
   const getTipoLabel = (tipo: string) => {
     const labels: Record<string, string> = {
@@ -138,6 +142,7 @@ export function DocumentosTab({ produto }: DocumentosTabProps) {
         open={uploadOpen}
         onClose={() => setUploadOpen(false)}
         produtoId={produto.id}
+        onDocumentoUpload={handleDocumentoUpload}
       />
 
       {/* Modal de Histórico de Versões */}
