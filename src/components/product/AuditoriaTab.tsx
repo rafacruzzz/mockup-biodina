@@ -2,9 +2,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductTabProps } from "@/types/product";
 
-const AuditoriaTab = ({ formData }: ProductTabProps) => {
+const AuditoriaTab = ({ formData, onInputChange }: ProductTabProps) => {
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('pt-BR', {
       day: '2-digit',
@@ -23,8 +24,21 @@ const AuditoriaTab = ({ formData }: ProductTabProps) => {
       <CardContent className="space-y-6">
         <div className="bg-gray-50 p-4 rounded-lg">
           <p className="text-sm text-gray-600 mb-4">
-            As informações abaixo são geradas automaticamente pelo sistema e não podem ser editadas.
+            As informações de data e usuário são geradas automaticamente pelo sistema e não podem ser editadas.
           </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="statusProduto" className="text-sm font-semibold">Status do Produto *</Label>
+          <Select value={formData.statusProduto} onValueChange={(value) => onInputChange('statusProduto', value)}>
+            <SelectTrigger className="border-gray-300">
+              <SelectValue placeholder="Selecione o status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ativo">Ativo</SelectItem>
+              <SelectItem value="descontinuado">Descontinuado</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

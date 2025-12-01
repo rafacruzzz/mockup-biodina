@@ -92,6 +92,7 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
     origemMercadoria: "",
 
     // Auditoria
+    statusProduto: "ativo",
     inclusao: new Date(),
     ultimaAlteracao: new Date(),
     incluidoPor: "Sistema",
