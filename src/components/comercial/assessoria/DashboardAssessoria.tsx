@@ -44,6 +44,23 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
     navigate("/");
   };
 
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+    setIsNewOS(false);
+    setSelectedOS(null);
+  };
+
+  // Se o formul√°rio estiver aberto, mostrar apenas ele
+  if (isFormOpen) {
+    return (
+      <FormularioOS
+        os={selectedOS}
+        isNew={isNewOS}
+        onClose={handleCloseForm}
+      />
+    );
+  }
+
   const handleOSClick = (os: OrdemServico) => {
     setSelectedOS(os);
     setIsSheetOpen(true);
@@ -53,12 +70,6 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
     setSelectedOS(null);
     setIsNewOS(true);
     setIsFormOpen(true);
-  };
-
-  const handleCloseForm = () => {
-    setIsFormOpen(false);
-    setIsNewOS(false);
-    setSelectedOS(null);
   };
 
   const handleAlertaClick = (osIds?: string[]) => {
@@ -380,15 +391,6 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
             setIsSheetOpen(false);
             setSelectedOS(null);
           }}
-        />
-      )}
-
-      {/* Formul√°rio de Nova OS */}
-      {isFormOpen && (
-        <FormularioOS
-          os={selectedOS}
-          isNew={isNewOS}
-          onClose={handleCloseForm}
         />
       )}
     </TooltipProvider>
