@@ -6,7 +6,7 @@ import { EmpresaVinculada } from "@/types/permissions";
 import { Empresa, Filial } from "@/types/super";
 
 interface EmpresasDoUsuarioProps {
-  empresaPrincipal: Empresa;
+  empresaPrincipal: Empresa | null;
   filiais: Filial[];
   empresasVinculadas: EmpresaVinculada[];
   onEmpresasChange: (empresas: EmpresaVinculada[]) => void;
@@ -41,6 +41,11 @@ export const EmpresasDoUsuario = ({
   const isFilialVinculada = (filialId: string) => {
     return empresasVinculadas.some(e => e.id === filialId);
   };
+
+  // Guard: se não há empresa principal, não renderiza nada
+  if (!empresaPrincipal) {
+    return null;
+  }
 
   return (
     <Card>
