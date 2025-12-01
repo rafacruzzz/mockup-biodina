@@ -53,11 +53,16 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
   const { empresaAtual, filiais } = useEmpresa();
   const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
   
+  // Guard: não renderizar modal se não houver empresa atual (DEVE VIR ANTES DE TUDO)
+  if (!empresaAtual) {
+    return null;
+  }
+  
   // Empresa principal sempre vinculada por padrão
   const empresaPrincipalVinculada: EmpresaVinculada = {
-    id: empresaAtual?.id || '',
+    id: empresaAtual.id,
     tipo: 'principal',
-    nome: empresaAtual?.nome || '',
+    nome: empresaAtual.nome,
   };
   
   const [formData, setFormData] = useState<UserData>({
@@ -77,15 +82,10 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
 
   // Hook para calcular módulos disponíveis baseado nas empresas vinculadas
   const { modulosDisponiveis, verificarModuloDisponivel } = useModulosUsuario({
-    empresaPrincipal: empresaAtual || null,
+    empresaPrincipal: empresaAtual,
     empresasVinculadas: formData.empresasVinculadas,
     filiais: filiais,
   });
-
-  // Guard: não renderizar modal se não houver empresa atual
-  if (!empresaAtual) {
-    return null;
-  }
 
   const handleColaboradorChange = (colaboradorId: string) => {
     const colaborador = colaboradores.find(c => c.id === colaboradorId);
@@ -337,7 +337,7 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
 
                   {/* Empresas do Usuário */}
                   <EmpresasDoUsuario
-                    empresaPrincipal={empresaAtual!}
+                    empresaPrincipal={empresaAtual}
                     filiais={filiais}
                     empresasVinculadas={formData.empresasVinculadas}
                     onEmpresasChange={handleEmpresasChange}

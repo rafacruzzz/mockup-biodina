@@ -3,7 +3,7 @@ import { ModuloSistema, Empresa, Filial } from '@/types/super';
 import { EmpresaVinculada } from '@/types/permissions';
 
 interface UseModulosUsuarioProps {
-  empresaPrincipal: Empresa | null;
+  empresaPrincipal: Empresa;
   empresasVinculadas: EmpresaVinculada[];
   filiais: Filial[];
 }
@@ -14,11 +14,6 @@ export const useModulosUsuario = ({
   filiais,
 }: UseModulosUsuarioProps) => {
   const modulosDisponiveis = useMemo(() => {
-    // Guard: se não tem empresa principal, retorna array vazio
-    if (!empresaPrincipal) {
-      return [];
-    }
-
     // Se não tem empresas vinculadas, retorna módulos da principal
     if (empresasVinculadas.length === 0) {
       return empresaPrincipal.modulosHabilitados;
@@ -48,15 +43,6 @@ export const useModulosUsuario = ({
   } => {
     const empresasComModulo: string[] = [];
     const empresasSemModulo: string[] = [];
-
-    // Guard: se não tem empresa principal, retorna valores vazios
-    if (!empresaPrincipal) {
-      return {
-        disponivel: false,
-        empresasComModulo: [],
-        empresasSemModulo: [],
-      };
-    }
 
     // Verifica empresa principal
     if (empresaPrincipal.modulosHabilitados.includes(modulo)) {
