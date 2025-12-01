@@ -9,13 +9,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Save, User, Shield } from "lucide-react";
 import { useColaboradores } from "@/hooks/useColaboradores";
-import { ModuleAccess } from "@/types/permissions";
+import { ModuleAccess, EmpresaVinculada } from "@/types/permissions";
 import { useEmpresa } from "@/contexts/EmpresaContext";
+import { useModulosUsuario } from "@/hooks/useModulosUsuario";
 import ColaboradorSelector from "./ColaboradorSelector";
 import UserColaboradorLink from "./UserColaboradorLink";
 import ColaboradorModal from "../rh/ColaboradorModal";
 import AccessProfileSelector from "./AccessProfileSelector";
 import ModuleAccessTree from "./ModuleAccessTree";
+import { EmpresasDoUsuario } from "./EmpresasDoUsuario";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface UserData {
   // Campos específicos do usuário
@@ -33,9 +37,8 @@ interface UserData {
   isActive: boolean;
   userType: string;
   moduleAccess: ModuleAccess[];
-  // Vínculo com empresa/filial
-  empresaId: string;
-  filialId: string | null;
+  // Vínculo com empresas
+  empresasVinculadas: EmpresaVinculada[];
 }
 
 interface UserModalProps {
@@ -47,8 +50,16 @@ interface UserModalProps {
 
 const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalProps) => {
   const { colaboradores } = useColaboradores();
-  const { empresaAtual, filiais, isPrincipal } = useEmpresa();
+  const { empresaAtual, filiais } = useEmpresa();
   const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
+  
+  // Empresa principal sempre vinculada por padrão
+  const empresaPrincipalVinculada: EmpresaVinculada = {
+    id: empresaAtual?.id || '',
+    tipo: 'principal',
+    nome: empresaAtual?.nome || '',
+  };
+  
   const [formData, setFormData] = useState<UserData>({
     username: userData?.username || '',
     password: userData?.password || '',
@@ -61,8 +72,14 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
     isActive: userData?.isActive ?? true,
     userType: userData?.userType || '',
     moduleAccess: userData?.moduleAccess || [],
-    empresaId: userData?.empresaId || empresaAtual?.id || '',
-    filialId: userData?.filialId || null
+    empresasVinculadas: userData?.empresasVinculadas || [empresaPrincipalVinculada]
+  });
+
+  // Hook para calcular módulos disponíveis baseado nas empresas vinculadas
+  const { modulosDisponiveis, verificarModuloDisponivel } = useModulosUsuario({
+    empresaPrincipal: empresaAtual!,
+    empresasVinculadas: formData.empresasVinculadas,
+    filiais: filiais,
   });
 
   const handleColaboradorChange = (colaboradorId: string) => {
@@ -87,9 +104,26 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
   };
 
   const handleModuleAccessChange = (modules: ModuleAccess[]) => {
+    // Filtrar apenas módulos que estão disponíveis nas empresas vinculadas
+    const modulosFiltrados = modules.filter(module => 
+      modulosDisponiveis.includes(module.key as any)
+    );
+    
     setFormData(prev => ({
       ...prev,
-      moduleAccess: modules
+      moduleAccess: modulosFiltrados
+    }));
+  };
+
+  const handleEmpresasChange = (empresas: EmpresaVinculada[]) => {
+    // Sempre incluir a empresa principal
+    const empresasComPrincipal = empresas.some(e => e.tipo === 'principal')
+      ? empresas
+      : [empresaPrincipalVinculada, ...empresas];
+    
+    setFormData(prev => ({
+      ...prev,
+      empresasVinculadas: empresasComPrincipal
     }));
   };
 
@@ -265,48 +299,6 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
                     </div>
                   </div>
 
-                  {/* Vínculo Empresa/Filial */}
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-gray-900 border-b pb-2">
-                      Empresa/Filial
-                    </h3>
-                    
-                    {isPrincipal ? (
-                      <div className="space-y-2">
-                        <Label htmlFor="filialVinculo">Vincular usuário à *</Label>
-                        <Select 
-                          value={formData.filialId || 'principal'} 
-                          onValueChange={(value) => handleInputChange('filialId', value === 'principal' ? null : value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione a empresa ou filial" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="principal">
-                              {empresaAtual?.nome} (Principal)
-                            </SelectItem>
-                            {filiais.map((filial) => (
-                              <SelectItem key={filial.id} value={filial.id}>
-                                {filial.nome} (Filial)
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <p className="text-xs text-muted-foreground">
-                          Este usuário terá acesso apenas aos dados da empresa/filial selecionada
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="p-4 bg-gray-50 rounded-lg">
-                        <p className="text-sm text-gray-600">
-                          <strong>Empresa:</strong> {empresaAtual?.nome}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-2">
-                          Usuários criados nesta filial são automaticamente vinculados a ela
-                        </p>
-                      </div>
-                    )}
-                  </div>
 
                   {/* Status */}
                   <div className="space-y-4">
@@ -334,9 +326,28 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-4">Permissões e Controles de Sistema</h3>
                     <p className="text-sm text-gray-600 mb-6">
-                      Configure as permissões de acesso aos módulos do sistema. Você pode aplicar um perfil pré-definido ou configurar as permissões individualmente.
+                      Configure as empresas vinculadas e as permissões de acesso aos módulos do sistema.
                     </p>
                   </div>
+
+                  {/* Empresas do Usuário */}
+                  <EmpresasDoUsuario
+                    empresaPrincipal={empresaAtual!}
+                    filiais={filiais}
+                    empresasVinculadas={formData.empresasVinculadas}
+                    onEmpresasChange={handleEmpresasChange}
+                  />
+
+                  {/* Alerta sobre módulos disponíveis */}
+                  {formData.empresasVinculadas.length > 1 && (
+                    <Alert>
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        Os módulos disponíveis são determinados pela interseção das empresas vinculadas.
+                        Apenas módulos presentes em todas as empresas estarão disponíveis.
+                      </AlertDescription>
+                    </Alert>
+                  )}
 
                   {/* Seletor de Perfil */}
                   <div className="space-y-4">
@@ -350,6 +361,14 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
                       <p className="text-sm text-gray-600 mb-4">
                         Configure permissões específicas para cada módulo e funcionalidade
                       </p>
+                      {formData.moduleAccess.length > 0 && (
+                        <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                          <p className="text-sm text-blue-800">
+                            <strong>Módulos limitados pelas empresas:</strong> Se um módulo não estiver disponível
+                            em alguma empresa vinculada, ele não será visível para o usuário naquela empresa.
+                          </p>
+                        </div>
+                      )}
                       <ModuleAccessTree 
                         modules={formData.moduleAccess}
                         onModuleChange={handleModuleAccessChange}

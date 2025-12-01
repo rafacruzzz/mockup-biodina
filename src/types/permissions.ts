@@ -21,6 +21,12 @@ export interface ModuleAccess {
   subModules: SubModule[];
 }
 
+export interface EmpresaVinculada {
+  id: string;
+  tipo: 'principal' | 'filial';
+  nome: string;
+}
+
 export interface AccessProfile {
   id: string;
   name: string;
