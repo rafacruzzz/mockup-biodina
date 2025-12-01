@@ -359,6 +359,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                 <TabsTrigger value="produtos" className="min-w-fit whitespace-nowrap">Produtos</TabsTrigger>
                 <TabsTrigger value="informacoes-nf" className="min-w-fit whitespace-nowrap">Informações NF</TabsTrigger>
                 <TabsTrigger value="frete" className="min-w-fit whitespace-nowrap">Frete</TabsTrigger>
+                <TabsTrigger value="pagamento" className="min-w-fit whitespace-nowrap">Pagamento</TabsTrigger>
                 <TabsTrigger value="acompanhamento" className="min-w-fit whitespace-nowrap">Acompanhamento do Pedido</TabsTrigger>
               </TabsList>
 
@@ -395,6 +396,92 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                       placeholder="Observações gerais para o pedido..."
                       rows={3}
                     />
+                  </CardContent>
+                </Card>
+
+                {/* Card: Natureza da Operação */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Natureza da Operação</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Selecione a operação e seu descritivo específico
+                    </p>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="operacao">Qual natureza da operação? *</Label>
+                        <Select 
+                          value={naturezaOperacao} 
+                          onValueChange={setNaturezaOperacao}
+                        >
+                          <SelectTrigger className="mt-2">
+                            <SelectValue placeholder="Selecione a operação" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[300px]">
+                            {naturezasOperacao.map((nat) => (
+                              <SelectItem key={nat.operacao} value={nat.operacao}>
+                                {nat.label}
+                                {temDescritivoUnico(nat.operacao) && (
+                                  <span className="text-xs text-muted-foreground ml-2">
+                                    (preenchimento automático)
+                                  </span>
+                                )}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="descritivoOperacao">
+                          Descritivo da Operação *
+                          {temDescritivoUnico(naturezaOperacao) && (
+                            <span className="text-xs text-green-600 dark:text-green-400 ml-2">
+                              ✓ Preenchido automaticamente
+                            </span>
+                          )}
+                        </Label>
+                        <Select 
+                          value={descritivoOperacao} 
+                          onValueChange={setDescritivoOperacao}
+                          disabled={!naturezaOperacao || temDescritivoUnico(naturezaOperacao)}
+                        >
+                          <SelectTrigger className={`mt-2 ${temDescritivoUnico(naturezaOperacao) ? 'bg-muted/50 cursor-not-allowed' : ''}`}>
+                            <SelectValue placeholder={
+                              !naturezaOperacao 
+                                ? "Selecione primeiro a operação" 
+                                : "Selecione o descritivo"
+                            } />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[300px]">
+                            {descritivosFiltrados.map((desc) => (
+                              <SelectItem 
+                                key={`${naturezaOperacao}-${desc.numero}`} 
+                                value={desc.descritivo}
+                              >
+                                {desc.descritivo}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    
+                    {/* Informação visual sobre a seleção */}
+                    {naturezaOperacao && descritivoOperacao && (
+                      <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                        <div className="flex items-start gap-2">
+                          <Info className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                          <div className="text-sm">
+                            <strong className="text-green-800 dark:text-green-300">Operação selecionada:</strong>
+                            <p className="text-green-700 dark:text-green-400 mt-1">
+                              {naturezasOperacao.find(n => n.operacao === naturezaOperacao)?.label} - {descritivoOperacao}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -715,93 +802,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                   </CardContent>
                 </Card>
 
-                {/* Card 2: Natureza da Operação */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Natureza da Operação</CardTitle>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Selecione a operação e seu descritivo específico
-                    </p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="operacao">Qual natureza da operação? *</Label>
-                        <Select 
-                          value={naturezaOperacao} 
-                          onValueChange={setNaturezaOperacao}
-                        >
-                          <SelectTrigger className="mt-2">
-                            <SelectValue placeholder="Selecione a operação" />
-                          </SelectTrigger>
-                          <SelectContent className="max-h-[300px]">
-                            {naturezasOperacao.map((nat) => (
-                              <SelectItem key={nat.operacao} value={nat.operacao}>
-                                {nat.label}
-                                {temDescritivoUnico(nat.operacao) && (
-                                  <span className="text-xs text-muted-foreground ml-2">
-                                    (preenchimento automático)
-                                  </span>
-                                )}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="descritivoOperacao">
-                          Descritivo da Operação *
-                          {temDescritivoUnico(naturezaOperacao) && (
-                            <span className="text-xs text-green-600 dark:text-green-400 ml-2">
-                              ✓ Preenchido automaticamente
-                            </span>
-                          )}
-                        </Label>
-                        <Select 
-                          value={descritivoOperacao} 
-                          onValueChange={setDescritivoOperacao}
-                          disabled={!naturezaOperacao || temDescritivoUnico(naturezaOperacao)}
-                        >
-                          <SelectTrigger className={`mt-2 ${temDescritivoUnico(naturezaOperacao) ? 'bg-muted/50 cursor-not-allowed' : ''}`}>
-                            <SelectValue placeholder={
-                              !naturezaOperacao 
-                                ? "Selecione primeiro a operação" 
-                                : "Selecione o descritivo"
-                            } />
-                          </SelectTrigger>
-                          <SelectContent className="max-h-[300px]">
-                            {descritivosFiltrados.map((desc) => (
-                              <SelectItem 
-                                key={`${naturezaOperacao}-${desc.numero}`} 
-                                value={desc.descritivo}
-                              >
-                                {desc.descritivo}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    
-                    {/* Informação visual sobre a seleção */}
-                    {naturezaOperacao && descritivoOperacao && (
-                      <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
-                        <div className="flex items-start gap-2">
-                          <Info className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                          <div className="text-sm">
-                            <strong className="text-green-800 dark:text-green-300">Operação selecionada:</strong>
-                            <p className="text-green-700 dark:text-green-400 mt-1">
-                              {naturezasOperacao.find(n => n.operacao === naturezaOperacao)?.label} - {descritivoOperacao}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Card 3: Configurações Fiscais */}
+                {/* Card 2: Configurações Fiscais */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Configurações Fiscais</CardTitle>
@@ -841,7 +842,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                   </CardContent>
                 </Card>
 
-                {/* Card 4: Comunicação e Envio */}
+                {/* Card 3: Comunicação e Envio */}
                 <Card>
                   <CardHeader>
                     <CardTitle>Comunicação e Envio</CardTitle>
@@ -862,172 +863,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                   </CardContent>
                 </Card>
 
-                {/* Card 5: PAGAMENTO */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Wallet className="h-5 w-5" />
-                      Pagamento
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="formaPagamentoNF">Forma de Pagamento *</Label>
-                        <Select value={formaPagamentoNF} onValueChange={setFormaPagamentoNF}>
-                          <SelectTrigger className="mt-2">
-                            <SelectValue placeholder="Selecione a forma de pagamento" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="a_vista">À Vista</SelectItem>
-                            <SelectItem value="boleto">Boleto</SelectItem>
-                            <SelectItem value="cartao_credito">Cartão de Crédito</SelectItem>
-                            <SelectItem value="transferencia">Transferência Bancária</SelectItem>
-                            <SelectItem value="cheque">Cheque</SelectItem>
-                            <SelectItem value="parcelado">Parcelado</SelectItem>
-                            <SelectItem value="deposito">Depósito</SelectItem>
-                            <SelectItem value="pix">PIX</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="condicoesPagamento">Condições de Pagamento *</Label>
-                        <div className="relative mt-2">
-                          <Input
-                            id="condicoesPagamento"
-                            value={condicoesPagamento || condicoesPagamentoProjeto}
-                            onChange={(e) => setCondicoesPagamento(e.target.value)}
-                            placeholder="Ex: 30/60/90 dias"
-                            className={condicoesPagamentoProjeto ? "bg-muted/30" : ""}
-                          />
-                          {condicoesPagamentoProjeto && (
-                            <span className="text-xs text-muted-foreground ml-1 mt-1 block">
-                              (pré-preenchido do projeto)
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="contaBancaria">Conta Bancária para Recebimento *</Label>
-                      <Select value={contaBancariaRecebimento} onValueChange={setContaBancariaRecebimento}>
-                        <SelectTrigger className="mt-2">
-                          <SelectValue placeholder="Selecione a conta bancária" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockContasBancarias
-                            .filter(c => c.status === 'Ativa')
-                            .map(conta => (
-                              <SelectItem key={conta.id} value={conta.id}>
-                                {conta.banco} - Ag: {conta.agencia} - Conta: {conta.conta}
-                              </SelectItem>
-                            ))
-                          }
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    {contaBancariaRecebimento && (() => {
-                      const contaSelecionada = mockContasBancarias.find(c => c.id === contaBancariaRecebimento);
-                      return contaSelecionada && (
-                        <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 rounded-lg border border-green-200 dark:border-green-800">
-                          <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
-                            <Building className="h-4 w-4" />
-                            Dados Bancários Selecionados:
-                          </h4>
-                          <div className="grid grid-cols-2 gap-2 text-sm">
-                            <div className="flex items-center gap-2">
-                              <span className="text-muted-foreground">🏦 Banco:</span>
-                              <span className="font-medium">{contaSelecionada.banco}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-muted-foreground">🔢 Agência:</span>
-                              <span className="font-medium">{contaSelecionada.agencia}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-muted-foreground">💳 Conta:</span>
-                              <span className="font-medium">{contaSelecionada.conta} ({contaSelecionada.tipo})</span>
-                            </div>
-                            {contaSelecionada.gerente && (
-                              <div className="flex items-center gap-2">
-                                <span className="text-muted-foreground">👤 Gerente:</span>
-                                <span className="font-medium">{contaSelecionada.gerente}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })()}
-                    
-                    {(formaPagamentoNF === 'parcelado' || formaPagamentoNF === 'boleto') && (
-                      <div>
-                        <Label htmlFor="numeroParcelas">Número de Parcelas *</Label>
-                        <Input
-                          id="numeroParcelas"
-                          type="number"
-                          value={numeroParcelas}
-                          onChange={(e) => setNumeroParcelas(Number(e.target.value))}
-                          min="1"
-                          max="12"
-                          className="mt-2 w-32"
-                        />
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {numeroParcelas > 1 ? `${numeroParcelas}x de ${formatCurrency(calcularTotal() / numeroParcelas)}` : 'Pagamento à vista'}
-                        </p>
-                      </div>
-                    )}
-                    
-                    {formaPagamentoNF === 'boleto' && (
-                      <>
-                        <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg border border-yellow-300 dark:border-yellow-800">
-                          <div className="flex items-start gap-2">
-                            <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 mt-0.5 flex-shrink-0" />
-                            <div className="text-sm text-yellow-800 dark:text-yellow-300">
-                              <strong>ATENÇÃO:</strong> O departamento de faturamento deverá emitir {numeroParcelas > 1 ? `${numeroParcelas} boletos` : 'o boleto'} e anexar junto à Nota Fiscal antes do envio ao cliente.
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <Label htmlFor="instrucoesBoleto">Instruções para o Boleto (opcional)</Label>
-                          <Textarea
-                            id="instrucoesBoleto"
-                            value={instrucoesBoleto}
-                            onChange={(e) => setInstrucoesBoleto(e.target.value)}
-                            placeholder="Ex: Não aceitar pagamento em cheque, multa de 2% após vencimento..."
-                            rows={3}
-                            className="mt-2"
-                          />
-                        </div>
-                      </>
-                    )}
-                    
-                    <div>
-                      <Label htmlFor="condicoesPagamentoFaturamento">Condições (parcelas, vencimentos)</Label>
-                      <Textarea
-                        id="condicoesPagamentoFaturamento"
-                        value={condicoesPagamentoFaturamento}
-                        onChange={(e) => setCondicoesPagamentoFaturamento(e.target.value)}
-                        placeholder="Ex: Entrada + 2x30/60 dias, Vencimento: todo dia 10..."
-                        rows={2}
-                        className="mt-2"
-                      />
-                    </div>
-                    
-                    <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                      <div className="flex items-start gap-2">
-                        <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-blue-800 dark:text-blue-300">
-                          💡 Estas informações serão incluídas automaticamente nas <strong>informações complementares da Nota Fiscal</strong>
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Card 6: DOCUMENTAÇÃO */}
+                {/* Card 4: DOCUMENTAÇÃO */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
@@ -1487,6 +1323,174 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                         )}
                       </>
                     )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Aba Pagamento */}
+              <TabsContent value="pagamento" className="space-y-6">
+                {/* Card: PAGAMENTO */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Wallet className="h-5 w-5" />
+                      Pagamento
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="formaPagamentoNF">Forma de Pagamento *</Label>
+                        <Select value={formaPagamentoNF} onValueChange={setFormaPagamentoNF}>
+                          <SelectTrigger className="mt-2">
+                            <SelectValue placeholder="Selecione a forma de pagamento" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="a_vista">À Vista</SelectItem>
+                            <SelectItem value="boleto">Boleto</SelectItem>
+                            <SelectItem value="cartao_credito">Cartão de Crédito</SelectItem>
+                            <SelectItem value="transferencia">Transferência Bancária</SelectItem>
+                            <SelectItem value="cheque">Cheque</SelectItem>
+                            <SelectItem value="parcelado">Parcelado</SelectItem>
+                            <SelectItem value="deposito">Depósito</SelectItem>
+                            <SelectItem value="pix">PIX</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="condicoesPagamento">Condições de Pagamento *</Label>
+                        <div className="relative mt-2">
+                          <Input
+                            id="condicoesPagamento"
+                            value={condicoesPagamento || condicoesPagamentoProjeto}
+                            onChange={(e) => setCondicoesPagamento(e.target.value)}
+                            placeholder="Ex: 30/60/90 dias"
+                            className={condicoesPagamentoProjeto ? "bg-muted/30" : ""}
+                          />
+                          {condicoesPagamentoProjeto && (
+                            <span className="text-xs text-muted-foreground ml-1 mt-1 block">
+                              (pré-preenchido do projeto)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="contaBancaria">Conta Bancária para Recebimento *</Label>
+                      <Select value={contaBancariaRecebimento} onValueChange={setContaBancariaRecebimento}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="Selecione a conta bancária" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockContasBancarias
+                            .filter(c => c.status === 'Ativa')
+                            .map(conta => (
+                              <SelectItem key={conta.id} value={conta.id}>
+                                {conta.banco} - Ag: {conta.agencia} - Conta: {conta.conta}
+                              </SelectItem>
+                            ))
+                          }
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {contaBancariaRecebimento && (() => {
+                      const contaSelecionada = mockContasBancarias.find(c => c.id === contaBancariaRecebimento);
+                      return contaSelecionada && (
+                        <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                          <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                            <Building className="h-4 w-4" />
+                            Dados Bancários Selecionados:
+                          </h4>
+                          <div className="grid grid-cols-2 gap-2 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground">🏦 Banco:</span>
+                              <span className="font-medium">{contaSelecionada.banco}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground">🔢 Agência:</span>
+                              <span className="font-medium">{contaSelecionada.agencia}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground">💳 Conta:</span>
+                              <span className="font-medium">{contaSelecionada.conta} ({contaSelecionada.tipo})</span>
+                            </div>
+                            {contaSelecionada.gerente && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-muted-foreground">👤 Gerente:</span>
+                                <span className="font-medium">{contaSelecionada.gerente}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                    
+                    {(formaPagamentoNF === 'parcelado' || formaPagamentoNF === 'boleto') && (
+                      <div>
+                        <Label htmlFor="numeroParcelas">Número de Parcelas *</Label>
+                        <Input
+                          id="numeroParcelas"
+                          type="number"
+                          value={numeroParcelas}
+                          onChange={(e) => setNumeroParcelas(Number(e.target.value))}
+                          min="1"
+                          max="12"
+                          className="mt-2 w-32"
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {numeroParcelas > 1 ? `${numeroParcelas}x de ${formatCurrency(calcularTotal() / numeroParcelas)}` : 'Pagamento à vista'}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {formaPagamentoNF === 'boleto' && (
+                      <>
+                        <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg border border-yellow-300 dark:border-yellow-800">
+                          <div className="flex items-start gap-2">
+                            <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 mt-0.5 flex-shrink-0" />
+                            <div className="text-sm text-yellow-800 dark:text-yellow-300">
+                              <strong>ATENÇÃO:</strong> O departamento de faturamento deverá emitir {numeroParcelas > 1 ? `${numeroParcelas} boletos` : 'o boleto'} e anexar junto à Nota Fiscal antes do envio ao cliente.
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="instrucoesBoleto">Instruções para o Boleto (opcional)</Label>
+                          <Textarea
+                            id="instrucoesBoleto"
+                            value={instrucoesBoleto}
+                            onChange={(e) => setInstrucoesBoleto(e.target.value)}
+                            placeholder="Ex: Não aceitar pagamento em cheque, multa de 2% após vencimento..."
+                            rows={3}
+                            className="mt-2"
+                          />
+                        </div>
+                      </>
+                    )}
+                    
+                    <div>
+                      <Label htmlFor="condicoesPagamentoFaturamento">Condições (parcelas, vencimentos)</Label>
+                      <Textarea
+                        id="condicoesPagamentoFaturamento"
+                        value={condicoesPagamentoFaturamento}
+                        onChange={(e) => setCondicoesPagamentoFaturamento(e.target.value)}
+                        placeholder="Ex: Entrada + 2x30/60 dias, Vencimento: todo dia 10..."
+                        rows={2}
+                        className="mt-2"
+                      />
+                    </div>
+                    
+                    <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <div className="flex items-start gap-2">
+                        <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-blue-800 dark:text-blue-300">
+                          💡 Estas informações serão incluídas automaticamente nas <strong>informações complementares da Nota Fiscal</strong>
+                        </p>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
