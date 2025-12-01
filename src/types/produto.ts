@@ -25,8 +25,11 @@ export interface Produto {
   linhaId: string;
   marcaId: string;
   descricao: string;
-  aplicacoes: string[];
-  palavrasChave: string[];
+  descritivoBreve?: string;
+  descritivoCompleto?: string;
+  aplicacoes: string;
+  tagsProduto?: string[];
+  palavrasChave: string[]; // Deprecated - use tagsProduto
   status: StatusProduto;
   statusCadastro?: StatusCadastro;
   imagem?: string;
