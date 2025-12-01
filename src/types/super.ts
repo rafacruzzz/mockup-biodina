@@ -66,6 +66,14 @@ export interface Filial {
     cidade: string;
     uf: string;
   };
+  
+  // Dados do Emitente
+  inscricaoEstadual?: string;
+  inscricaoMunicipal?: string;
+  regimeTributario?: '1' | '2' | '3' | '4';
+  email?: string;
+  telefone?: string;
+  discriminaImpostos?: boolean;
 }
 
 export type ModuloSistema = 

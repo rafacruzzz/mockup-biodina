@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, MapPin, Package } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Building2, MapPin, Package, Loader2 } from "lucide-react";
 import { Filial } from "@/types/super";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { SeletorModulos } from "../super/SeletorModulos";
+import { useCepLookup } from "@/hooks/useCepLookup";
 import { toast } from "sonner";
 
 interface FilialModalProps {
@@ -16,13 +19,57 @@ interface FilialModalProps {
   filial: Filial | null;
 }
 
+const ESTADOS_BRASILEIROS = [
+  { value: 'AC', label: 'AC - Acre' },
+  { value: 'AL', label: 'AL - Alagoas' },
+  { value: 'AP', label: 'AP - Amapá' },
+  { value: 'AM', label: 'AM - Amazonas' },
+  { value: 'BA', label: 'BA - Bahia' },
+  { value: 'CE', label: 'CE - Ceará' },
+  { value: 'DF', label: 'DF - Distrito Federal' },
+  { value: 'ES', label: 'ES - Espírito Santo' },
+  { value: 'GO', label: 'GO - Goiás' },
+  { value: 'MA', label: 'MA - Maranhão' },
+  { value: 'MT', label: 'MT - Mato Grosso' },
+  { value: 'MS', label: 'MS - Mato Grosso do Sul' },
+  { value: 'MG', label: 'MG - Minas Gerais' },
+  { value: 'PA', label: 'PA - Pará' },
+  { value: 'PB', label: 'PB - Paraíba' },
+  { value: 'PR', label: 'PR - Paraná' },
+  { value: 'PE', label: 'PE - Pernambuco' },
+  { value: 'PI', label: 'PI - Piauí' },
+  { value: 'RJ', label: 'RJ - Rio de Janeiro' },
+  { value: 'RN', label: 'RN - Rio Grande do Norte' },
+  { value: 'RS', label: 'RS - Rio Grande do Sul' },
+  { value: 'RO', label: 'RO - Rondônia' },
+  { value: 'RR', label: 'RR - Roraima' },
+  { value: 'SC', label: 'SC - Santa Catarina' },
+  { value: 'SP', label: 'SP - São Paulo' },
+  { value: 'SE', label: 'SE - Sergipe' },
+  { value: 'TO', label: 'TO - Tocantins' }
+];
+
+const REGIMES_TRIBUTARIOS = [
+  { value: '1', label: '1 - Simples Nacional' },
+  { value: '2', label: '2 - Simples Nacional - Excesso de sublimite de receita bruta' },
+  { value: '3', label: '3 - Regime Normal' },
+  { value: '4', label: '4 - Simples Nacional - Microempreendedor Individual - MEI' }
+];
+
 const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
   const { empresaAtual, adicionarFilial, atualizarFilial } = useEmpresa();
+  const { lookupCep, loading: cepLoading } = useCepLookup();
   const [activeTab, setActiveTab] = useState("info");
   const [formData, setFormData] = useState<Partial<Filial>>({
     nome: '',
     razaoSocial: '',
     cnpj: '',
+    inscricaoEstadual: '',
+    inscricaoMunicipal: '',
+    regimeTributario: '3',
+    email: '',
+    telefone: '',
+    discriminaImpostos: true,
     modulosHabilitados: [],
     endereco: {
       cep: '',
@@ -43,6 +90,12 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
         nome: '',
         razaoSocial: '',
         cnpj: '',
+        inscricaoEstadual: '',
+        inscricaoMunicipal: '',
+        regimeTributario: '3',
+        email: '',
+        telefone: '',
+        discriminaImpostos: true,
         modulosHabilitados: [],
         endereco: {
           cep: '',
@@ -56,6 +109,33 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
       });
     }
   }, [filial, open]);
+
+  const handleCepChange = async (cep: string) => {
+    const cepNumeros = cep.replace(/\D/g, '');
+    
+    setFormData({ 
+      ...formData, 
+      endereco: { ...formData.endereco!, cep } 
+    });
+
+    if (cepNumeros.length === 8) {
+      const resultado = await lookupCep(cepNumeros);
+      if (resultado) {
+        setFormData({
+          ...formData,
+          endereco: {
+            ...formData.endereco!,
+            cep,
+            logradouro: resultado.logradouro,
+            bairro: resultado.bairro,
+            cidade: resultado.localidade,
+            uf: resultado.uf
+          }
+        });
+        toast.success("Endereço encontrado!");
+      }
+    }
+  };
 
   const handleSave = () => {
     // Validações
@@ -159,14 +239,98 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
               />
             </div>
 
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="cnpj">CNPJ *</Label>
+                <Input
+                  id="cnpj"
+                  value={formData.cnpj}
+                  onChange={(e) => setFormData({ ...formData, cnpj: e.target.value })}
+                  placeholder="00.000.000/0000-00"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="inscricaoEstadual">Inscrição Estadual</Label>
+                <Input
+                  id="inscricaoEstadual"
+                  value={formData.inscricaoEstadual}
+                  onChange={(e) => setFormData({ ...formData, inscricaoEstadual: e.target.value })}
+                  placeholder="000.000.000.000"
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="cnpj">CNPJ *</Label>
+              <Label htmlFor="inscricaoMunicipal">Inscrição Municipal</Label>
               <Input
-                id="cnpj"
-                value={formData.cnpj}
-                onChange={(e) => setFormData({ ...formData, cnpj: e.target.value })}
-                placeholder="00.000.000/0000-00"
+                id="inscricaoMunicipal"
+                value={formData.inscricaoMunicipal}
+                onChange={(e) => setFormData({ ...formData, inscricaoMunicipal: e.target.value })}
+                placeholder="000000000"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="regimeTributario">Regime Tributário *</Label>
+              <Select
+                value={formData.regimeTributario}
+                onValueChange={(value) => setFormData({ ...formData, regimeTributario: value as '1' | '2' | '3' | '4' })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o regime tributário" />
+                </SelectTrigger>
+                <SelectContent>
+                  {REGIMES_TRIBUTARIOS.map((regime) => (
+                    <SelectItem key={regime.value} value={regime.value}>
+                      {regime.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="border-t pt-4 mt-4">
+              <h4 className="text-sm font-semibold mb-3 text-muted-foreground">Contato</h4>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">E-mail</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="contato@empresa.com.br"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="telefone">Telefone</Label>
+                  <Input
+                    id="telefone"
+                    value={formData.telefone}
+                    onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                    placeholder="(00) 00000-0000"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t pt-4 mt-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="discriminaImpostos">Discriminar impostos no corpo da nota?</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Define se os impostos serão discriminados na nota fiscal
+                  </p>
+                </div>
+                <Switch
+                  id="discriminaImpostos"
+                  checked={formData.discriminaImpostos}
+                  onCheckedChange={(checked) => setFormData({ ...formData, discriminaImpostos: checked })}
+                />
+              </div>
             </div>
           </TabsContent>
 
@@ -174,28 +338,41 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="cep">CEP</Label>
-                <Input
-                  id="cep"
-                  value={formData.endereco?.cep}
-                  onChange={(e) => setFormData({ 
-                    ...formData, 
-                    endereco: { ...formData.endereco!, cep: e.target.value } 
-                  })}
-                  placeholder="00000-000"
-                />
+                <div className="relative">
+                  <Input
+                    id="cep"
+                    value={formData.endereco?.cep}
+                    onChange={(e) => handleCepChange(e.target.value)}
+                    placeholder="00000-000"
+                    maxLength={9}
+                  />
+                  {cepLoading && (
+                    <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-muted-foreground" />
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">Busca automática ao digitar</p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="numero">Número</Label>
-                <Input
-                  id="numero"
-                  value={formData.endereco?.numero}
-                  onChange={(e) => setFormData({ 
+                <Label htmlFor="uf">Estado (UF)</Label>
+                <Select
+                  value={formData.endereco?.uf}
+                  onValueChange={(value) => setFormData({ 
                     ...formData, 
-                    endereco: { ...formData.endereco!, numero: e.target.value } 
+                    endereco: { ...formData.endereco!, uf: value } 
                   })}
-                  placeholder="123"
-                />
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o estado" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ESTADOS_BRASILEIROS.map((estado) => (
+                      <SelectItem key={estado.value} value={estado.value}>
+                        {estado.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -212,35 +389,50 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="complemento">Complemento</Label>
-              <Input
-                id="complemento"
-                value={formData.endereco?.complemento}
-                onChange={(e) => setFormData({ 
-                  ...formData, 
-                  endereco: { ...formData.endereco!, complemento: e.target.value } 
-                })}
-                placeholder="Sala, Andar, etc."
-              />
-            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="numero">Número</Label>
+                <Input
+                  id="numero"
+                  value={formData.endereco?.numero}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    endereco: { ...formData.endereco!, numero: e.target.value } 
+                  })}
+                  placeholder="123"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="bairro">Bairro</Label>
-              <Input
-                id="bairro"
-                value={formData.endereco?.bairro}
-                onChange={(e) => setFormData({ 
-                  ...formData, 
-                  endereco: { ...formData.endereco!, bairro: e.target.value } 
-                })}
-                placeholder="Bairro"
-              />
+              <div className="space-y-2">
+                <Label htmlFor="complemento">Complemento</Label>
+                <Input
+                  id="complemento"
+                  value={formData.endereco?.complemento}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    endereco: { ...formData.endereco!, complemento: e.target.value } 
+                  })}
+                  placeholder="Sala, Andar, etc."
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="cidade">Cidade</Label>
+                <Label htmlFor="bairro">Bairro</Label>
+                <Input
+                  id="bairro"
+                  value={formData.endereco?.bairro}
+                  onChange={(e) => setFormData({ 
+                    ...formData, 
+                    endereco: { ...formData.endereco!, bairro: e.target.value } 
+                  })}
+                  placeholder="Nome do bairro"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="cidade">Município</Label>
                 <Input
                   id="cidade"
                   value={formData.endereco?.cidade}
@@ -248,21 +440,7 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
                     ...formData, 
                     endereco: { ...formData.endereco!, cidade: e.target.value } 
                   })}
-                  placeholder="Cidade"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="uf">UF</Label>
-                <Input
-                  id="uf"
-                  value={formData.endereco?.uf}
-                  onChange={(e) => setFormData({ 
-                    ...formData, 
-                    endereco: { ...formData.endereco!, uf: e.target.value } 
-                  })}
-                  placeholder="SP"
-                  maxLength={2}
+                  placeholder="Nome da cidade"
                 />
               </div>
             </div>
