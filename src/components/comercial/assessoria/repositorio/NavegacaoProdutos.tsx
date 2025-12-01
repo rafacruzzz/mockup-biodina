@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Package, Edit, Archive, Clock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +19,7 @@ import { EditarMarcaModal } from "./EditarMarcaModal";
 import { EditarLinhaModal } from "./EditarLinhaModal";
 import { ArquivarConfirmModal } from "./ArquivarConfirmModal";
 import { toast } from "sonner";
+import { atualizarStatusCadastro } from "@/utils/produtoValidation";
 
 interface NavegacaoProdutosProps {
   onSelectProduto: (produto: Produto) => void;
@@ -33,6 +34,14 @@ export function NavegacaoProdutos({
 }: NavegacaoProdutosProps) {
   const [marcaSelecionada, setMarcaSelecionada] = useState<Marca | null>(null);
   const [linhaSelecionada, setLinhaSelecionada] = useState<Linha | null>(null);
+  const [produtosValidados, setProdutosValidados] = useState<Produto[]>([]);
+
+  // Valida todos os produtos automaticamente ao carregar
+  useEffect(() => {
+    const produtosParaValidar = produtosBuscados || getProdutosPorLinha(linhaSelecionada?.id || "");
+    const validados = produtosParaValidar.map(produto => atualizarStatusCadastro(produto));
+    setProdutosValidados(validados);
+  }, [produtosBuscados, linhaSelecionada]);
   
   // Modals de edição
   const [editarMarcaModal, setEditarMarcaModal] = useState<Marca | null>(null);
@@ -45,19 +54,19 @@ export function NavegacaoProdutos({
   } | null>(null);
 
   // Se há busca ativa, mostra os resultados
-  if (termoBusca && produtosBuscados) {
+  if (termoBusca && produtosValidados && produtosValidados.length > 0) {
     return (
       <div className="space-y-4">
         <div>
           <h3 className="text-lg font-semibold mb-2">
-            Resultados da Busca ({produtosBuscados.length})
+            Resultados da Busca ({produtosValidados.length})
           </h3>
           <p className="text-sm text-muted-foreground">
             Encontrados para "{termoBusca}"
           </p>
         </div>
 
-        {produtosBuscados.length === 0 ? (
+        {produtosValidados.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center text-muted-foreground">
               Nenhum produto encontrado
@@ -65,7 +74,7 @@ export function NavegacaoProdutos({
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {produtosBuscados.map((produto) => (
+            {produtosValidados.map((produto) => (
               <Card
                 key={produto.id}
                 className="cursor-pointer hover:shadow-lg transition-shadow"
@@ -121,7 +130,9 @@ export function NavegacaoProdutos({
 
   // Navegação por produtos de uma linha
   if (linhaSelecionada) {
-    const produtos = getProdutosPorLinha(linhaSelecionada.id);
+    const produtosLinha = produtosValidados.length > 0 
+      ? produtosValidados 
+      : getProdutosPorLinha(linhaSelecionada.id).map(p => atualizarStatusCadastro(p));
     return (
       <div className="space-y-4">
         <div className="flex items-center gap-4">
@@ -142,7 +153,7 @@ export function NavegacaoProdutos({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {produtos.map((produto) => (
+          {produtosLinha.map((produto) => (
             <Card
               key={produto.id}
               className="cursor-pointer hover:shadow-lg transition-shadow"
