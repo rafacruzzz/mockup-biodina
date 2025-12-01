@@ -8,11 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 interface SPIEnvioModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onEnviar: (selectedCnpj: string) => void;
+  onEnviar: (selectedCnpj: string, modeloPi: string) => void;
 }
 
 const SPIEnvioModal = ({ isOpen, onClose, onEnviar }: SPIEnvioModalProps) => {
   const [selectedCnpj, setSelectedCnpj] = useState('');
+  const [modeloPi, setModeloPi] = useState('');
 
   const cnpjOptions = [
     { value: '12.345.678/0001-90', label: '12.345.678/0001-90 - Empresa Alpha Ltda' },
@@ -21,17 +22,25 @@ const SPIEnvioModal = ({ isOpen, onClose, onEnviar }: SPIEnvioModalProps) => {
     { value: '55.666.777/0001-88', label: '55.666.777/0001-88 - Delta Importação Ltda' }
   ];
 
+  const modeloOptions = [
+    { value: 'radiometer', label: 'Radiometer Medical' },
+    { value: 'epredia', label: 'Epredia' },
+    { value: 'advanced', label: 'Advanced' }
+  ];
+
   const handleEnviar = () => {
-    if (selectedCnpj) {
-      onEnviar(selectedCnpj);
+    if (selectedCnpj && modeloPi) {
+      onEnviar(selectedCnpj, modeloPi);
       onClose();
       setSelectedCnpj('');
+      setModeloPi('');
     }
   };
 
   const handleCancel = () => {
     onClose();
     setSelectedCnpj('');
+    setModeloPi('');
   };
 
   return (
@@ -61,6 +70,24 @@ const SPIEnvioModal = ({ isOpen, onClose, onEnviar }: SPIEnvioModalProps) => {
               </SelectContent>
             </Select>
           </div>
+
+          <div>
+            <Label htmlFor="modelo-select" className="text-sm font-medium">
+              Selecione o Modelo de PI:
+            </Label>
+            <Select value={modeloPi} onValueChange={setModeloPi}>
+              <SelectTrigger className="w-full mt-2">
+                <SelectValue placeholder="Escolha um modelo" />
+              </SelectTrigger>
+              <SelectContent>
+                {modeloOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="flex justify-end space-x-3 pt-4">
@@ -69,7 +96,7 @@ const SPIEnvioModal = ({ isOpen, onClose, onEnviar }: SPIEnvioModalProps) => {
           </Button>
           <Button 
             onClick={handleEnviar}
-            disabled={!selectedCnpj}
+            disabled={!selectedCnpj || !modeloPi}
             className="bg-blue-600 text-white hover:bg-blue-700"
           >
             Enviar
