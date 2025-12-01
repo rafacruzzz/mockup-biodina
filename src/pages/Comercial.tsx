@@ -780,7 +780,7 @@ const Comercial = () => {
                 onClick={() => handleNovaOportunidade(modalidade as 'licitacao' | 'contratacao_simples' | 'importacao_direta')}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                {modalidade === 'licitacao' ? 'Nova Oportunidade' : 'Novo Projeto'}
+                {modalidade === 'licitacao' ? 'Nova Oportunidade' : 'Novo'}
               </Button>
             </div>
           </div>
