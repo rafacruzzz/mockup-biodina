@@ -217,33 +217,70 @@ const RegulamentacaoAnvisaTab = ({ formData, onInputChange }: ProductTabProps) =
 
             <div className="space-y-2">
               <Label className="text-sm font-semibold">Data de Vencimento</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal border-gray-300",
-                      !formData.dataVencimento && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {formData.dataVencimento ? (
-                      format(formData.dataVencimento, "PPP", { locale: ptBR })
-                    ) : (
-                      <span>Selecione a data</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={formData.dataVencimento || undefined}
-                    onSelect={(date) => onInputChange('dataVencimento', date || null)}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
+              
+              {/* Opções: Data específica ou Vigente */}
+              <div className="flex gap-2 mb-2">
+                <Button
+                  type="button"
+                  variant={formData.dataVencimentoTipo === 'data' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => {
+                    onInputChange('dataVencimentoTipo', 'data');
+                    if (formData.dataVencimentoTipo === 'vigente') {
+                      onInputChange('dataVencimento', null);
+                    }
+                  }}
+                  className="flex-1"
+                >
+                  Data específica
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.dataVencimentoTipo === 'vigente' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => {
+                    onInputChange('dataVencimentoTipo', 'vigente');
+                    onInputChange('dataVencimento', null);
+                  }}
+                  className="flex-1"
+                >
+                  Vigente
+                </Button>
+              </div>
+
+              {formData.dataVencimentoTipo === 'data' ? (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal border-gray-300",
+                        !formData.dataVencimento && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData.dataVencimento ? (
+                        format(formData.dataVencimento, "PPP", { locale: ptBR })
+                      ) : (
+                        <span>Selecione a data</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={formData.dataVencimento || undefined}
+                      onSelect={(date) => onInputChange('dataVencimento', date || null)}
+                      initialFocus
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                <div className="w-full px-4 py-2 border border-gray-300 rounded-md bg-green-50 text-green-700 font-semibold flex items-center justify-center">
+                  Vigente
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
