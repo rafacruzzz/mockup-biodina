@@ -74,6 +74,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
               <SelectContent>
                 <SelectItem value="refrigerado">Produto Refrigerado</SelectItem>
                 <SelectItem value="congelado">Produto Congelado</SelectItem>
+                <SelectItem value="seco">Material Seco</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -1115,6 +1116,542 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   rows={6}
                   className="w-full bg-gray-50 border-gray-200 text-sm"
                 />
+              </div>
+            </div>
+          )}
+
+          {/* SEÇÃO ESPECÍFICA PARA MATERIAL SECO */}
+          {tipoProduto === 'seco' && (
+            <div className="border-2 border-green-500 p-6 rounded-lg bg-green-50 space-y-6 mt-6">
+              <h3 className="text-lg font-bold text-green-700 border-b-2 border-green-300 pb-2">
+                The following sentences need to be included in the shipping documents
+              </h3>
+
+              <div className="space-y-6">
+                {/* 1- Invoice Section */}
+                <div className="border p-4 rounded bg-white">
+                  <h4 className="font-semibold mb-4 text-base">1- Invoice: Please mention on the invoice:</h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="invoiceDescription_seco">Portuguese description as proforma invoice</Label>
+                      <Textarea
+                        id="invoiceDescription_seco"
+                        value={formData.invoiceDescription_seco || 'Descrição em português conforme proforma invoice #XXXXXXX'}
+                        onChange={(e) => onInputChange('invoiceDescription_seco', e.target.value)}
+                        rows={2}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="unitTotalPrices_seco">Unit and Total prices item by item</Label>
+                      <Textarea
+                        id="unitTotalPrices_seco"
+                        value={formData.unitTotalPrices_seco || 'Item 1 - USD X.XX/unit - Total USD X.XX\nItem 2 - USD X.XX/unit - Total USD X.XX'}
+                        onChange={(e) => onInputChange('unitTotalPrices_seco', e.target.value)}
+                        rows={3}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="lotEachItem_seco">Lot of each item</Label>
+                      <Textarea
+                        id="lotEachItem_seco"
+                        value={formData.lotEachItem_seco || 'Item 1 - Lot XXXX-XX-X\nItem 2 - Lot XXXX-XX-X'}
+                        onChange={(e) => onInputChange('lotEachItem_seco', e.target.value)}
+                        rows={2}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="countryOrigin_seco">Country of origin</Label>
+                      <Input
+                        id="countryOrigin_seco"
+                        value={formData.countryOrigin_seco || 'United States'}
+                        onChange={(e) => onInputChange('countryOrigin_seco', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="totalCartons_seco">Total of cartons and its marks</Label>
+                      <Textarea
+                        id="totalCartons_seco"
+                        value={formData.totalCartons_seco || 'X cartons - Marks: BIODINA XXXX/XX-XXX'}
+                        onChange={(e) => onInputChange('totalCartons_seco', e.target.value)}
+                        rows={2}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="grossWeight_seco">Gross weight</Label>
+                        <Input
+                          id="grossWeight_seco"
+                          value={formData.grossWeight_seco || 'XX kg'}
+                          onChange={(e) => onInputChange('grossWeight_seco', e.target.value)}
+                          className="w-full"
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="netWeight_seco">Net weight</Label>
+                        <Input
+                          id="netWeight_seco"
+                          value={formData.netWeight_seco || 'XX kg'}
+                          onChange={(e) => onInputChange('netWeight_seco', e.target.value)}
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="termsPayment_seco">Terms of payment</Label>
+                      <Input
+                        id="termsPayment_seco"
+                        value={formData.termsPayment_seco || 'International wire transfer, 30 days after shipment'}
+                        onChange={(e) => onInputChange('termsPayment_seco', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    {/* Consigned to - Detailed Section */}
+                    <div className="border p-3 rounded bg-gray-50">
+                      <h5 className="font-semibold mb-3">Consigned to:</h5>
+                      <div className="space-y-3">
+                        <div>
+                          <Label htmlFor="consignedName_seco">Name/Company</Label>
+                          <Input
+                            id="consignedName_seco"
+                            value={formData.consignedName_seco || ''}
+                            onChange={(e) => onInputChange('consignedName_seco', e.target.value)}
+                            placeholder="Company Name"
+                            className="w-full"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="consignedAddress1_seco">Address Line 1</Label>
+                          <Input
+                            id="consignedAddress1_seco"
+                            value={formData.consignedAddress1_seco || ''}
+                            onChange={(e) => onInputChange('consignedAddress1_seco', e.target.value)}
+                            placeholder="Street, Number"
+                            className="w-full"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="consignedAddress2_seco">Address Line 2</Label>
+                          <Input
+                            id="consignedAddress2_seco"
+                            value={formData.consignedAddress2_seco || ''}
+                            onChange={(e) => onInputChange('consignedAddress2_seco', e.target.value)}
+                            placeholder="City, State"
+                            className="w-full"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div>
+                            <Label htmlFor="consignedCEP_seco">CEP</Label>
+                            <Input
+                              id="consignedCEP_seco"
+                              value={formData.consignedCEP_seco || ''}
+                              onChange={(e) => onInputChange('consignedCEP_seco', e.target.value)}
+                              placeholder="00.000-000"
+                              className="w-full"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="consignedCNPJ_seco">CNPJ</Label>
+                            <Input
+                              id="consignedCNPJ_seco"
+                              value={formData.consignedCNPJ_seco || ''}
+                              onChange={(e) => onInputChange('consignedCNPJ_seco', e.target.value)}
+                              placeholder="00.000.000/0000-00"
+                              className="w-full"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Shipping Documents Sentences */}
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="paisAquisicao_seco">PAÍS DE AQUISIÇÃO DE TODOS OS ITENS:</Label>
+                    <Input
+                      id="paisAquisicao_seco"
+                      value={formData.paisAquisicao_seco || 'ESTADOS UNIDOS'}
+                      onChange={(e) => onInputChange('paisAquisicao_seco', e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="paisProcedencia_seco">PAÍS DE PROCEDÊNCIA DE TODOS OS ITENS:</Label>
+                    <Input
+                      id="paisProcedencia_seco"
+                      value={formData.paisProcedencia_seco || 'ESTADOS UNIDOS'}
+                      onChange={(e) => onInputChange('paisProcedencia_seco', e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="previsaoEmbarque_seco">PREVISÃO DE EMBARQUE:</Label>
+                    <Textarea
+                      id="previsaoEmbarque_seco"
+                      value={formData.previsaoEmbarque_seco || '30 DIAS APÓS A CONFIRMAÇÃO DO RECEBIMENTO DO PAGAMENTO E/OU APÓS AUTORIZAÇÃO DE EMBARQUE'}
+                      onChange={(e) => onInputChange('previsaoEmbarque_seco', e.target.value)}
+                      rows={2}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="aeroportoOrigem_seco">AEROPORTO DE ORIGEM:</Label>
+                    <Input
+                      id="aeroportoOrigem_seco"
+                      value={formData.aeroportoOrigem_seco || 'AEROPORTO INTERNACIONAL DE _____________'}
+                      onChange={(e) => onInputChange('aeroportoOrigem_seco', e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="aeroportoDestino_seco">AEROPORTO DE DESTINO:</Label>
+                    <Input
+                      id="aeroportoDestino_seco"
+                      value={formData.aeroportoDestino_seco || 'AEROPORTO INTERNACIONAL DE _____________ - Brazil.'}
+                      onChange={(e) => onInputChange('aeroportoDestino_seco', e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="entrega_seco">Entrega:</Label>
+                    <Textarea
+                      id="entrega_seco"
+                      value={formData.entrega_seco || 'O material estará disponível para coleta dentro de 3 dias após nossa notificação de coleta ao agente de cargas indicado'}
+                      onChange={(e) => onInputChange('entrega_seco', e.target.value)}
+                      rows={2}
+                      className="w-full"
+                    />
+                  </div>
+
+                  {/* For each box section */}
+                  <div className="border-2 border-gray-300 p-4 rounded-lg bg-gray-50">
+                    <Label className="text-base font-semibold mb-3 block">For each box, please include:</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="boxControlNo_seco" className="text-sm">
+                          control no. <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                          id="boxControlNo_seco"
+                          value={formData.boxControlNo_seco || ''}
+                          onChange={(e) => onInputChange('boxControlNo_seco', e.target.value)}
+                          placeholder="Control number"
+                          className="w-full mt-1"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="boxTemperature_seco" className="text-sm">
+                          Temperature <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                          id="boxTemperature_seco"
+                          value={formData.boxTemperature_seco || ''}
+                          onChange={(e) => onInputChange('boxTemperature_seco', e.target.value)}
+                          placeholder="Temperature"
+                          className="w-full mt-1"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="boxDimension_seco" className="text-sm">
+                          Dimension <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                          id="boxDimension_seco"
+                          value={formData.boxDimension_seco || ''}
+                          onChange={(e) => onInputChange('boxDimension_seco', e.target.value)}
+                          placeholder="Dimensions"
+                          className="w-full mt-1"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="boxGrossWeight_seco" className="text-sm">
+                          Gross weight <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                          id="boxGrossWeight_seco"
+                          value={formData.boxGrossWeight_seco || ''}
+                          onChange={(e) => onInputChange('boxGrossWeight_seco', e.target.value)}
+                          placeholder="Gross weight"
+                          className="w-full mt-1"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2- Packing List Section */}
+                <div className="border p-4 rounded bg-white">
+                  <h4 className="font-semibold mb-3">2- Packing List: Please mention on the Packing list:</h4>
+                  <div className="space-y-2 mb-3">
+                    <div className="flex items-start space-x-2">
+                      <input type="checkbox" id="pl1_seco" className="mt-1" />
+                      <Label htmlFor="pl1_seco" className="cursor-pointer">Portuguese description as proforma invoice</Label>
+                      <Input
+                        type="text"
+                        value={formData.numeroInvoicePackingList_seco || ''}
+                        onChange={(e) => onInputChange('numeroInvoicePackingList_seco', e.target.value)}
+                        placeholder="Nº da invoice"
+                        className="w-40 h-8 ml-2"
+                      />
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <input type="checkbox" id="pl2_seco" className="mt-1" />
+                      <Label htmlFor="pl2_seco" className="cursor-pointer">Total of cartons and its marks</Label>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <input type="checkbox" id="pl3_seco" className="mt-1" />
+                      <Label htmlFor="pl3_seco" className="cursor-pointer">Unit and total Gross weight</Label>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <input type="checkbox" id="pl4_seco" className="mt-1" />
+                      <Label htmlFor="pl4_seco" className="cursor-pointer">Unit and total Net weight</Label>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <input type="checkbox" id="pl5_seco" className="mt-1" />
+                      <Label htmlFor="pl5_seco" className="cursor-pointer">Temperature of each item</Label>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <input type="checkbox" id="pl6_seco" className="mt-1" />
+                      <Label htmlFor="pl6_seco" className="cursor-pointer">{getForEachBoxText('_seco')}</Label>
+                    </div>
+                  </div>
+                  <div className="bg-yellow-50 border border-yellow-200 p-3 rounded text-sm">
+                    <p className="font-medium">
+                      THE ORIGINAL INVOICE (PLUS 1 COPY) AND PACKING LIST (PLUS 1 COPY) MUST BE SENT TOGETHER WITH THE CARGO: 
+                      DULY SIGNED (WITH THE RESPONSIBLE'S WHOLE NAME AND HIS/HER POSITION AT THE COMPANY) WITH BLUE INK PEN, 
+                      STAMPED WITHOUT ANY KIND OF ERASURES, STAINS, OVERWRITING, CORRECTION FLUID OR OTHER.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 3- Certificate of Quality */}
+                <div>
+                  <Label htmlFor="certificateQuality_seco">3- Certificate of Quality:</Label>
+                  <Textarea
+                    id="certificateQuality_seco"
+                    value={formData.certificateQuality_seco || 'Together with all documents.'}
+                    onChange={(e) => onInputChange('certificateQuality_seco', e.target.value)}
+                    rows={2}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* 4- Packing */}
+                <div>
+                  <Label htmlFor="packing_seco">4- Packing:</Label>
+                  <Textarea
+                    id="packing_seco"
+                    value={formData.packing_seco || "As usual for this merchandise. IN CASE OF PACKAGES, BOXES OR PALLETS MADE OF WOOD, FUMIGATION IS OBLIGED AND ALSO THE IPPC STAMP ON THE WOOD IS OBLIGED. THE FUMIGATION CERTIFICATE MUST BE SENT TOGHETGER WITH THE CARGO DECLARING THE IPPC STAMP CODE OF THE WOOD FOR EACH SHIPMENT. THE NON-COMPLIANCE WILL IMPLY THE RETURN OF THE GOODS TO THE ORIGIN (COSTS OF THE RETURN WILL BE COVERED BY THE EXPORTER), ACCORDING TO THE RULES OF 'IN 32/2015' OF MINISTRY OF AGRICULTURE."}
+                    onChange={(e) => onInputChange('packing_seco', e.target.value)}
+                    rows={5}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* 5- Insurance */}
+                <div>
+                  <Label htmlFor="insurance_seco">5- Insurance:</Label>
+                  <Textarea
+                    id="insurance_seco"
+                    value={formData.insurance_seco || 'Will be covered by the customer'}
+                    onChange={(e) => onInputChange('insurance_seco', e.target.value)}
+                    rows={2}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* 6- Forwarder */}
+                <div>
+                  <Label htmlFor="forwarder_seco">6- Forwarder:</Label>
+                  <Textarea
+                    id="forwarder_seco"
+                    value={formData.forwarder_seco || 'Please contact the following agent forwarder:'}
+                    onChange={(e) => onInputChange('forwarder_seco', e.target.value)}
+                    rows={2}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* 7- Others */}
+                <div>
+                  <Label htmlFor="others_seco">7- Others:</Label>
+                  <Textarea
+                    id="others_seco"
+                    value={formData.others_seco || '**Please e-mail us copy of all shipping documents as soon as possible, as following: *Comercial Invoice, *Packing list, *Quality Certificate, *Consignment Note, Treated Wood Certificate and Shipper declaration for dangerous goods and package certificate for dangerous goods (when applicable).'}
+                    onChange={(e) => onInputChange('others_seco', e.target.value)}
+                    rows={3}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Highlighted warning about pallet dimensions */}
+                <div className="bg-yellow-100 border-2 border-yellow-400 p-3 rounded font-semibold text-sm">
+                  <p>PLEASE THE PALLETS MUSTN'T HAVE MORE THAN 120 (LENGTH) X 80 (WIDTH) X 100 (HEIGHT).</p>
+                </div>
+
+                {/* 8- ATTENTION! */}
+                <div className="bg-red-100 border-2 border-red-400 p-4 rounded">
+                  <h4 className="font-bold mb-2 text-base">8- ATTENTION!</h4>
+                  <p className="font-semibold">
+                    PLEASE SEND US THE BATCH/SERIAL NUMBERS AND EXPIRY DATES OF ALL ITEMS BEFORE INVOICING FOR APPROVAL
+                  </p>
+                </div>
+
+                {/* INSTRUCTIONS FOR THE FREIGHT FORWARD */}
+                <div className="border-2 border-blue-400 p-4 rounded bg-blue-50 mt-4">
+                  <h4 className="font-bold mb-4 text-lg">INSTRUCTIONS FOR THE FREIGHT FORWARD</h4>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="ffDestination_seco">1- Destination:</Label>
+                      <Input
+                        id="ffDestination_seco"
+                        value={formData.ffDestination_seco || 'XXX International Airport -XX- Brazil.'}
+                        onChange={(e) => onInputChange('ffDestination_seco', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffFreight_seco">2- Freight:</Label>
+                      <Input
+                        id="ffFreight_seco"
+                        value={formData.ffFreight_seco || 'Collect'}
+                        onChange={(e) => onInputChange('ffFreight_seco', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffShipment_seco">3- Shipment:</Label>
+                      <Input
+                        id="ffShipment_seco"
+                        value={formData.ffShipment_seco || 'By airfreight'}
+                        onChange={(e) => onInputChange('ffShipment_seco', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <h5 className="font-semibold mb-2">4- Air waybill:</h5>
+                      <div className="space-y-3 pl-4">
+                        <div>
+                          <Label htmlFor="ffConsignedTo_seco">Consigned to:</Label>
+                          <Input
+                            id="ffConsignedTo_seco"
+                            value={formData.ffConsignedTo_seco || 'The customer above mentioned'}
+                            onChange={(e) => onInputChange('ffConsignedTo_seco', e.target.value)}
+                            className="w-full"
+                          />
+                        </div>
+
+                        <div>
+                          <Label htmlFor="ffNotifyNome_seco">Notify (Nome):</Label>
+                          <Input
+                            id="ffNotifyNome_seco"
+                            value={formData.ffNotifyNome_seco || ''}
+                            onChange={(e) => onInputChange('ffNotifyNome_seco', e.target.value)}
+                            placeholder="Nome do contato"
+                            className="w-full"
+                          />
+                        </div>
+
+                        <div>
+                          <Label htmlFor="ffNotifyEmail_seco">Notify (email):</Label>
+                          <Input
+                            id="ffNotifyEmail_seco"
+                            value={formData.ffNotifyEmail_seco || ''}
+                            onChange={(e) => onInputChange('ffNotifyEmail_seco', e.target.value)}
+                            placeholder="email@example.com"
+                            className="w-full"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-yellow-100 border-2 border-yellow-400 p-3 rounded font-semibold text-sm">
+                      <p>PLEASE DECLARE ON THE AWB THE NET AND GROSS WEIGHT OF THE GOODS.</p>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ffOthers_seco">5- Others:</Label>
+                      <Textarea
+                        id="ffOthers_seco"
+                        value={formData.ffOthers_seco || 'Please e-mail us (vanessa.hevia@biodina.com.br) a copy of AWB as soon as you have dispatched the goods.'}
+                        onChange={(e) => onInputChange('ffOthers_seco', e.target.value)}
+                        rows={2}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div className="bg-yellow-100 border-2 border-yellow-400 p-3 rounded font-semibold text-sm">
+                      <p>PLEASE SEND THE ORIGINAL COMMERCIAL INVOICE, PACKING LIST AND AWB TOGETHER WITH THE CARGO.</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* SIGNATURE */}
+                <div className="border p-4 rounded bg-gray-50">
+                  <h4 className="font-semibold mb-3">SIGNATURE</h4>
+                  <div className="space-y-3">
+                    <p className="text-sm italic">Looking forward to hearing from you soon.</p>
+                    <p className="text-sm italic">Cordially,</p>
+                    
+                    <div>
+                      <Label htmlFor="signatureName_seco">Nome:</Label>
+                      <Input
+                        id="signatureName_seco"
+                        value={formData.signatureName_seco || 'Evandro Amorim'}
+                        onChange={(e) => onInputChange('signatureName_seco', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="signatureCargo_seco">Cargo:</Label>
+                      <Input
+                        id="signatureCargo_seco"
+                        value={formData.signatureCargo_seco || 'International Division'}
+                        onChange={(e) => onInputChange('signatureCargo_seco', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="signatureCodigo_seco">Código:</Label>
+                      <Input
+                        id="signatureCodigo_seco"
+                        value={formData.signatureCodigo_seco || 'EAA – XXXX.'}
+                        onChange={(e) => onInputChange('signatureCodigo_seco', e.target.value)}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
