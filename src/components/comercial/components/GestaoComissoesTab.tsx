@@ -64,17 +64,48 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
     invoiceServico: comissaoExistente?.invoiceServico || { ...defaultInvoiceServico },
     faturaRecebimento: comissaoExistente?.faturaRecebimento || { ...defaultFaturaRecebimento },
     relatorioAgente: comissaoExistente?.relatorioAgente || {
-      dataFechamentoCambio: '',
-      taxaCambial: 0,
-      clientes: [],
-      totalUSD: 0,
-      totalReal: 0,
-      comissoesBiodinaUSD: 0,
-      comissoesBiodinaReal: 0,
+      dataFechamentoCambio: '15/01/2025',
+      taxaCambial: 5.294,
+      clientes: [
+        {
+          cliente: 'FUND. FAC. REG. DE MED. SJRP',
+          processo: 'DD-6800/RD-4918',
+          fatura: '3168902',
+          dataFatura: '11/12/24',
+          valorFaturadoUSD: 173548.81,
+          uf: 'SP',
+          valorUSD: 32239.15,
+          valorRealRecebido: 170715.25
+        },
+        {
+          cliente: 'REDE SARAH',
+          processo: 'DD-6940/RD-5040',
+          fatura: '3360863',
+          dataFatura: '29/07/25',
+          valorFaturadoUSD: 44955.31,
+          uf: 'DF',
+          valorUSD: 8715.84,
+          valorRealRecebido: 46152.79
+        },
+        {
+          cliente: 'IRMÃ DULCE',
+          processo: 'DD-6940/RD-5039',
+          fatura: '3360863',
+          dataFatura: '29/07/25',
+          valorFaturadoUSD: 105292.72,
+          uf: 'BA',
+          valorUSD: 25552.03,
+          valorRealRecebido: 135305.08
+        }
+      ],
+      totalUSD: 66507.02,
+      totalReal: 352173.12,
+      comissoesBiodinaUSD: 66507.02,
+      comissoesBiodinaReal: 352173.12,
       comissoesMarketingUSD: 0,
       comissoesMarketingReal: 0,
-      totalGeralUSD: 0,
-      totalGeralReal: 0,
+      totalGeralUSD: 66507.02,
+      totalGeralReal: 352173.12,
       nomeDistribuidor: '',
       distribuidores: []
     },
