@@ -30,7 +30,7 @@ export function AssinaturaLoteModal({ open, onClose, osIds }: AssinaturaLoteModa
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             Assinatura em Lote - {osIds.length} Ordem(ns) de Serviço
