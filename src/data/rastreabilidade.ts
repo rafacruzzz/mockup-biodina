@@ -17,6 +17,10 @@ export const equipamentosMock: Equipamento[] = [
     proximaManutencao: new Date(2025, 3, 10),
     versaoSoftware: "v4.2.1",
     versaoWindows: "Windows 10 Pro",
+    setorAlocacao: "UTI",
+    pessoaResponsavelSetor: "Dr. João Silva",
+    telefoneResponsavel: "(11) 98765-4321",
+    emailResponsavel: "joao.silva@hospitalcentral.com.br",
   },
   {
     id: "eq-002",
@@ -33,6 +37,10 @@ export const equipamentosMock: Equipamento[] = [
     proximaManutencao: new Date(2025, 2, 5),
     versaoSoftware: "v4.2.1",
     versaoWindows: "Windows 10 Pro",
+    setorAlocacao: "Laboratório Central",
+    pessoaResponsavelSetor: "Dra. Maria Santos",
+    telefoneResponsavel: "(11) 99876-5432",
+    emailResponsavel: "maria.santos@einstein.com.br",
   },
   {
     id: "eq-003",
@@ -47,6 +55,9 @@ export const equipamentosMock: Equipamento[] = [
     status: "ativo",
     ultimaManutencao: new Date(2025, 0, 20),
     versaoSoftware: "v2.1.0",
+    setorAlocacao: "Hematologia",
+    pessoaResponsavelSetor: "Bioq. Carlos Pereira",
+    emailResponsavel: "carlos.pereira@siriolibanes.com.br",
   },
   {
     id: "eq-004",
@@ -62,6 +73,10 @@ export const equipamentosMock: Equipamento[] = [
     ultimaManutencao: new Date(2024, 11, 15),
     proximaManutencao: new Date(2025, 2, 15),
     versaoSoftware: "v3.1.2",
+    setorAlocacao: "Pronto Socorro",
+    pessoaResponsavelSetor: "Enf. Roberto Lima",
+    telefoneResponsavel: "(11) 97654-3210",
+    emailResponsavel: "roberto.lima@hospitalcentral.com.br",
   },
   {
     id: "eq-005",
@@ -75,6 +90,10 @@ export const equipamentosMock: Equipamento[] = [
     dataInstalacao: new Date(2023, 10, 1),
     status: "ativo",
     ultimaManutencao: new Date(2025, 0, 5),
+    setorAlocacao: "Processamento Central",
+    pessoaResponsavelSetor: "Ana Paula Costa",
+    telefoneResponsavel: "(11) 98888-7777",
+    emailResponsavel: "ana.costa@fleury.com.br",
   },
 ];
 
@@ -177,9 +196,16 @@ export const historicoIntervencoesMock: HistoricoIntervencao[] = [
 export const buscarEquipamentos = (termo: string): ResultadoBusca => {
   const termoLower = termo.toLowerCase();
   
-  // Buscar equipamentos por número de série
-  const equipamentosPorSerie = equipamentosMock.filter(eq =>
-    eq.numeroSerie.toLowerCase().includes(termoLower)
+  // Buscar equipamentos por múltiplos critérios
+  const equipamentosPorCriterios = equipamentosMock.filter(eq =>
+    eq.numeroSerie.toLowerCase().includes(termoLower) ||
+    eq.modelo.toLowerCase().includes(termoLower) ||
+    eq.marca.toLowerCase().includes(termoLower) ||
+    eq.cliente.toLowerCase().includes(termoLower) ||
+    eq.setor.toLowerCase().includes(termoLower) ||
+    (eq.setorAlocacao && eq.setorAlocacao.toLowerCase().includes(termoLower)) ||
+    (eq.pessoaResponsavelSetor && eq.pessoaResponsavelSetor.toLowerCase().includes(termoLower)) ||
+    (eq.emailResponsavel && eq.emailResponsavel.toLowerCase().includes(termoLower))
   );
   
   // Buscar modelos únicos
@@ -200,7 +226,7 @@ export const buscarEquipamentos = (termo: string): ResultadoBusca => {
     });
   
   return {
-    equipamentos: equipamentosPorSerie,
+    equipamentos: equipamentosPorCriterios,
     modelos: modelosUnicos,
     clientes: Array.from(clientesMap.values()),
   };

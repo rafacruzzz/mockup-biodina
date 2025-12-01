@@ -18,6 +18,12 @@ export interface Equipamento {
   versaoSoftware?: string;
   versaoWindows?: string;
   observacoes?: string;
+  
+  // Contato do Setor Responsável
+  setorAlocacao?: string;
+  pessoaResponsavelSetor?: string;
+  telefoneResponsavel?: string;
+  emailResponsavel?: string;
 }
 
 export interface HistoricoIntervencao {

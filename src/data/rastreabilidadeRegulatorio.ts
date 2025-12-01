@@ -238,9 +238,17 @@ export function buscarEquipamentosRegulatorio(termo: string): ResultadoBuscaRegu
     eq.numeroSerie.toLowerCase().includes(termoLower) ||
     eq.modelo.toLowerCase().includes(termoLower) ||
     eq.marca.toLowerCase().includes(termoLower) ||
+    eq.linhaProduto.toLowerCase().includes(termoLower) ||
     eq.nomeProduto.toLowerCase().includes(termoLower) ||
     eq.cliente.toLowerCase().includes(termoLower) ||
+    eq.uf.toLowerCase().includes(termoLower) ||
+    eq.mantenedora.toLowerCase().includes(termoLower) ||
+    eq.localizacao.toLowerCase().includes(termoLower) ||
     eq.lote.toLowerCase().includes(termoLower) ||
+    eq.setorAlocacao.toLowerCase().includes(termoLower) ||
+    eq.pessoaResponsavelSetor.toLowerCase().includes(termoLower) ||
+    (eq.telefoneResponsavel && eq.telefoneResponsavel.toLowerCase().includes(termoLower)) ||
+    eq.emailResponsavel.toLowerCase().includes(termoLower) ||
     eq.versaoSoftware.toLowerCase().includes(termoLower) ||
     eq.versaoWindows.toLowerCase().includes(termoLower)
   );
