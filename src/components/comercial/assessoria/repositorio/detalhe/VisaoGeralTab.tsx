@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Produto } from "@/types/produto";
-import { FileText, Tag, Target } from "lucide-react";
+import { FileText, Tag, Target, AlignLeft } from "lucide-react";
 
 interface VisaoGeralTabProps {
   produto: Produto;
@@ -22,21 +22,43 @@ export function VisaoGeralTab({ produto }: VisaoGeralTabProps) {
         </CardContent>
       </Card>
 
+      {produto.descritivoBreve && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlignLeft className="h-5 w-5" />
+              Descritivo Breve
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm leading-relaxed">{produto.descritivoBreve}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {produto.descritivoCompleto && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Descritivo Completo
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm leading-relaxed whitespace-pre-wrap">{produto.descritivoCompleto}</p>
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-5 w-5" />
-            Aplicações
+            Aplicações/Indicações de uso
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {produto.aplicacoes.map((aplicacao, index) => (
-              <Badge key={index} variant="outline" className="text-sm">
-                {aplicacao}
-              </Badge>
-            ))}
-          </div>
+          <p className="text-sm leading-relaxed">{produto.aplicacoes}</p>
         </CardContent>
       </Card>
 
@@ -44,14 +66,14 @@ export function VisaoGeralTab({ produto }: VisaoGeralTabProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Tag className="h-5 w-5" />
-            Palavras-chave
+            Tags do Produto
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
-            {produto.palavrasChave.map((palavra, index) => (
+            {(produto.tagsProduto || produto.palavrasChave).map((tag, index) => (
               <Badge key={index} variant="secondary" className="text-xs">
-                {palavra}
+                {tag}
               </Badge>
             ))}
           </div>
