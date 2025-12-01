@@ -13,7 +13,7 @@ import { useState } from "react";
 const DadosGeraisTab = ({ formData, onInputChange }: ProductTabProps) => {
   const [tagInput, setTagInput] = useState("");
 
-  const familiasProduto = [
+  const linhasProduto = [
     "Medicamentos",
     "Equipamentos Médicos",
     "Materiais Hospitalares",
@@ -70,15 +70,15 @@ const DadosGeraisTab = ({ formData, onInputChange }: ProductTabProps) => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="familiaProduto" className="text-sm font-semibold">Família de Produto *</Label>
-                <Select value={formData.familiaProduto} onValueChange={(value) => onInputChange('familiaProduto', value)}>
+                <Label htmlFor="linhaProduto" className="text-sm font-semibold">Linha de Produto *</Label>
+                <Select value={formData.linhaProduto} onValueChange={(value) => onInputChange('linhaProduto', value)}>
                   <SelectTrigger className="border-gray-300">
-                    <SelectValue placeholder="Selecione a família" />
+                    <SelectValue placeholder="Selecione a linha" />
                   </SelectTrigger>
                   <SelectContent>
-                    {familiasProduto.map((familia) => (
-                      <SelectItem key={familia} value={familia}>
-                        {familia}
+                    {linhasProduto.map((linha) => (
+                      <SelectItem key={linha} value={linha}>
+                        {linha}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -108,6 +108,17 @@ const DadosGeraisTab = ({ formData, onInputChange }: ProductTabProps) => {
                   value={formData.modelo}
                   onChange={(e) => onInputChange('modelo', e.target.value)}
                   placeholder="Ex: XYZ-2024"
+                  className="border-gray-300"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="modeloProdutoMedico" className="text-sm font-semibold">Modelo de Produto Médico</Label>
+                <Input
+                  id="modeloProdutoMedico"
+                  value={formData.modeloProdutoMedico}
+                  onChange={(e) => onInputChange('modeloProdutoMedico', e.target.value)}
+                  placeholder="Modelo do produto médico"
                   className="border-gray-300"
                 />
               </div>

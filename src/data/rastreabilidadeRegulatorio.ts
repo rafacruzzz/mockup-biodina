@@ -5,7 +5,7 @@ export const equipamentosRegulatorioMock: EquipamentoRegulatorio[] = [
   {
     id: 'EQ001',
     codigo: 'BIO-AN-001',
-    familiaProduto: 'Analisadores',
+    linhaProduto: 'Analisadores',
     marca: 'BioTech',
     modelo: 'Analyzer Pro 3000',
     nomeProduto: 'Analisador Hematológico Completo',
@@ -36,7 +36,7 @@ export const equipamentosRegulatorioMock: EquipamentoRegulatorio[] = [
   {
     id: 'EQ002',
     codigo: 'BIO-AN-002',
-    familiaProduto: 'Analisadores',
+    linhaProduto: 'Analisadores',
     marca: 'BioTech',
     modelo: 'Analyzer Pro 3000',
     nomeProduto: 'Analisador Hematológico Completo',
@@ -67,7 +67,7 @@ export const equipamentosRegulatorioMock: EquipamentoRegulatorio[] = [
   {
     id: 'EQ003',
     codigo: 'BIO-MON-001',
-    familiaProduto: 'Monitores',
+    linhaProduto: 'Monitores',
     marca: 'MediCare',
     modelo: 'CardioMonitor Plus',
     nomeProduto: 'Monitor Multiparâmetros',
@@ -96,7 +96,7 @@ export const equipamentosRegulatorioMock: EquipamentoRegulatorio[] = [
   {
     id: 'EQ004',
     codigo: 'BIO-AN-003',
-    familiaProduto: 'Analisadores',
+    linhaProduto: 'Analisadores',
     marca: 'BioTech',
     modelo: 'Analyzer Pro 5000',
     nomeProduto: 'Analisador Bioquímico Avançado',

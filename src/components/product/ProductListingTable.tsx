@@ -67,7 +67,7 @@ const ProductListingTable = ({ products, onEdit, onView, onDelete }: ProductList
                     <p className="font-medium text-gray-900 truncate max-w-[200px]" title={product.descricao}>
                       {product.descricao}
                     </p>
-                    <p className="text-sm text-gray-500">{product.familiaProduto}</p>
+                    <p className="text-sm text-gray-500">{product.linhaProduto}</p>
                   </div>
                 </TableCell>
                 <TableCell className="py-4 px-6">
