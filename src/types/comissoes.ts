@@ -107,7 +107,7 @@ export interface FaturaRecebimento {
   saldo: number;
   descriptionOfService: string;
   
-  // Contact Person (iMuv)
+  // Contact Person
   preparedBy: string;
   phoneNumber: string;
   emailBiodina: string;
