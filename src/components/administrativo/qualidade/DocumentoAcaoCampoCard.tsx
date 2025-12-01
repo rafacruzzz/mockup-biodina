@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { AssinaturaPad } from "@/components/ui/assinatura-pad";
 import { DocumentoAcaoCampo } from "@/types/acaoCampo";
-import { Upload, Eye, Pen, Check, FileText, X } from "lucide-react";
+import { Upload, Eye, Pen, Check, FileText, X, Download } from "lucide-react";
 import { toast } from "sonner";
 
 interface DocumentoAcaoCampoCardProps {
@@ -163,6 +163,26 @@ export const DocumentoAcaoCampoCard = ({
                 >
                   <Eye className="h-4 w-4 mr-1" />
                   Visualizar
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    if (documento.url) {
+                      const link = document.createElement('a');
+                      link.href = documento.url;
+                      link.download = documento.nomeOriginal || documento.nome;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      toast.success("Download iniciado");
+                    }
+                  }}
+                  className="flex-1"
+                >
+                  <Download className="h-4 w-4 mr-1" />
+                  Baixar
                 </Button>
 
                 {documento.requerAssinatura && !documento.assinatura && (

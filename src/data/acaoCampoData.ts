@@ -109,7 +109,38 @@ export const acoesCampoMock: AcaoCampo[] = [
         requerAssinatura: false
       }
     ],
-    documentosAdicionais: []
+    documentosAdicionais: [
+      {
+        id: 'doc-padrao-1',
+        tipo: TipoDocumentoAcaoCampo.ADICIONAL,
+        nome: 'Formulário de Notificação de Ação de Campo v2-5',
+        nomeOriginal: 'Formulario-de-Notificacao-de-Acao-de-Campo-v2-5.pdf',
+        url: '/documents/Formulario-de-Notificacao-de-Acao-de-Campo-v2-5.pdf',
+        dataUpload: '2024-01-10',
+        tamanho: 150000,
+        requerAssinatura: false
+      },
+      {
+        id: 'doc-padrao-2',
+        tipo: TipoDocumentoAcaoCampo.ADICIONAL,
+        nome: 'Ação de Campo 915-428 ABL800 pH Distribuição',
+        nomeOriginal: 'Acao-de-Campo-915-428-ABL800-pH-Distribuicao.pdf',
+        url: '/documents/Acao-de-Campo-915-428-ABL800-pH-Distribuicao.pdf',
+        dataUpload: '2024-01-10',
+        tamanho: 280000,
+        requerAssinatura: false
+      },
+      {
+        id: 'doc-padrao-3',
+        tipo: TipoDocumentoAcaoCampo.ADICIONAL,
+        nome: 'Sumário do Alerta - Ação de Campo v2-5',
+        nomeOriginal: 'Sumario-do-Alerta-Acao-de-Campo-v2-5.pdf',
+        url: '/documents/Sumario-do-Alerta-Acao-de-Campo-v2-5.pdf',
+        dataUpload: '2024-01-10',
+        tamanho: 95000,
+        requerAssinatura: false
+      }
+    ]
   },
   {
     id: '3',
