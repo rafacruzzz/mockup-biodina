@@ -77,10 +77,15 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
 
   // Hook para calcular módulos disponíveis baseado nas empresas vinculadas
   const { modulosDisponiveis, verificarModuloDisponivel } = useModulosUsuario({
-    empresaPrincipal: empresaAtual!,
+    empresaPrincipal: empresaAtual || null,
     empresasVinculadas: formData.empresasVinculadas,
     filiais: filiais,
   });
+
+  // Guard: não renderizar modal se não houver empresa atual
+  if (!empresaAtual) {
+    return null;
+  }
 
   const handleColaboradorChange = (colaboradorId: string) => {
     const colaborador = colaboradores.find(c => c.id === colaboradorId);
