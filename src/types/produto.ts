@@ -37,6 +37,7 @@ export interface Produto {
   aplicacoes: string;
   tagsProduto?: string[];
   palavrasChave: string[]; // Deprecated - use tagsProduto
+  catmat?: string; // Código CATMAT
   status: StatusProduto;
   statusCadastro?: StatusCadastro;
   imagem?: string;
