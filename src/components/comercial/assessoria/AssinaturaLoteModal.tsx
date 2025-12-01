@@ -18,7 +18,9 @@ export function AssinaturaLoteModal({ open, onClose, osIds }: AssinaturaLoteModa
   const handleSave = (assinatura: {
     nomeCliente: string;
     assinaturaCliente: string;
-    data: Date;
+    nomeAssessor: string;
+    assinaturaAssessor: string;
+    data: string;
   }) => {
     // Aqui implementar lógica para aplicar assinatura a todas as OS selecionadas
     console.log("Aplicando assinatura para OS:", osIds, assinatura);
