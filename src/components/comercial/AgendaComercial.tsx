@@ -14,8 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 type TipoVisualizacao = 'dia' | 'semana' | 'mes';
 
 const AgendaComercial = () => {
-  // Iniciar em Janeiro de 2025 onde temos os eventos mockados
-  const [dataAtual, setDataAtual] = useState<Date>(new Date(2025, 0, 22));
+  const [dataAtual, setDataAtual] = useState<Date>(startOfToday());
   const [visualizacao, setVisualizacao] = useState<TipoVisualizacao>('semana');
   const [eventoSelecionado, setEventoSelecionado] = useState<EventoAgenda | null>(null);
   const [sheetAberto, setSheetAberto] = useState(false);
