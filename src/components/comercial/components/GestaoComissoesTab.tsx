@@ -106,8 +106,18 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
       comissoesMarketingReal: 0,
       totalGeralUSD: 66507.02,
       totalGeralReal: 352173.12,
-      nomeDistribuidor: '',
-      distribuidores: []
+      nomeDistribuidor: 'DISTRIBUIDORA EXEMPLO LTDA',
+      distribuidores: [
+        {
+          cliente: 'IRMÃ DULCE',
+          processo: 'DD-6940/RD-5039',
+          fatura: '3360863',
+          valorFaturado: 105292.72,
+          comissaoUSD: 25552.03,
+          comissaoRecebidaReal: 135305.08,
+          comissaoDistribuidorReal: 54122.03
+        }
+      ]
     },
     nfGerada: comissaoExistente?.nfGerada || false,
     numeroNF: comissaoExistente?.numeroNF || undefined,
@@ -1570,43 +1580,50 @@ const GestaoComissoesTab = ({ importacaoId, formData }: GestaoComissoesTabProps)
               {/* Comissão para Distribuidores */}
               {comissao.relatorioAgente.distribuidores.length > 0 && (
                 <div>
-                  <h3 className="font-semibold mb-3">Comissão para Distribuidores</h3>
-                  <div className="mb-3">
-                    <Label>Distribuidor</Label>
-                    <Input 
-                      value={comissao.relatorioAgente.nomeDistribuidor} 
-                      disabled 
-                      className="bg-muted" 
-                    />
+                  <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 px-3 py-2 rounded-t-lg">
+                    <h3 className="font-bold text-sm">COMISSÃO PARA DISTRIBUIDORES:</h3>
                   </div>
-                  <div className="border rounded-lg overflow-hidden">
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-sm">
-                        <thead className="bg-muted">
-                          <tr>
-                            <th className="px-3 py-2 text-left font-medium">Cliente</th>
-                            <th className="px-3 py-2 text-left font-medium">Processo</th>
-                            <th className="px-3 py-2 text-left font-medium">Fatura</th>
-                            <th className="px-3 py-2 text-right font-medium">Valor Faturado</th>
-                            <th className="px-3 py-2 text-right font-medium">Comissão USD</th>
-                            <th className="px-3 py-2 text-right font-medium">Comissão Recebida R$</th>
-                            <th className="px-3 py-2 text-right font-medium">Comissão Distribuidor R$</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {comissao.relatorioAgente.distribuidores.map((dist, idx) => (
-                            <tr key={idx} className="border-t">
-                              <td className="px-3 py-2">{dist.cliente}</td>
-                              <td className="px-3 py-2">{dist.processo}</td>
-                              <td className="px-3 py-2">{dist.fatura}</td>
-                              <td className="px-3 py-2 text-right">{dist.valorFaturado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                              <td className="px-3 py-2 text-right">{dist.comissaoUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                              <td className="px-3 py-2 text-right">{dist.comissaoRecebidaReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                              <td className="px-3 py-2 text-right">{dist.comissaoDistribuidorReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                  <div className="border border-t-0 rounded-b-lg p-4 space-y-4">
+                    <div>
+                      <Label className="font-semibold">Distribuidor:</Label>
+                      <Input 
+                        value={comissao.relatorioAgente.nomeDistribuidor} 
+                        onChange={(e) => setComissao(prev => ({
+                          ...prev,
+                          relatorioAgente: { ...prev.relatorioAgente, nomeDistribuidor: e.target.value }
+                        }))}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div className="border rounded-lg overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead className="bg-muted">
+                            <tr>
+                              <th className="px-3 py-2 text-left font-medium">Cliente</th>
+                              <th className="px-3 py-2 text-left font-medium">Processo</th>
+                              <th className="px-3 py-2 text-left font-medium">Fatura</th>
+                              <th className="px-3 py-2 text-right font-medium">Valor Faturado</th>
+                              <th className="px-3 py-2 text-right font-medium">Comissão USD</th>
+                              <th className="px-3 py-2 text-right font-medium">Comissão Recebida R$</th>
+                              <th className="px-3 py-2 text-right font-medium">Comissão Distribuidor R$</th>
                             </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                          </thead>
+                          <tbody>
+                            {comissao.relatorioAgente.distribuidores.map((dist, idx) => (
+                              <tr key={idx} className="border-t">
+                                <td className="px-3 py-2">{dist.cliente}</td>
+                                <td className="px-3 py-2">{dist.processo}</td>
+                                <td className="px-3 py-2">{dist.fatura}</td>
+                                <td className="px-3 py-2 text-right">{dist.valorFaturado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                                <td className="px-3 py-2 text-right">{dist.comissaoUSD.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                                <td className="px-3 py-2 text-right">{dist.comissaoRecebidaReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                                <td className="px-3 py-2 text-right">{dist.comissaoDistribuidorReal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
