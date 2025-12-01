@@ -56,7 +56,7 @@ export const NovoRegistroAnvisaModal = ({ isOpen, onClose, onRegistroSalvo }: No
       referencia: produto.codigoProdutoFabricante || produto.codigo,
       nome: produto.descritivoBreve || produto.descricao,
       descricao: produto.descritivoCompleto || produto.descricao,
-      familiaProduto: produto.familiaProduto,
+      linhaProduto: produto.linhaProduto,
       marca: produto.marca,
       modelo: produto.modelo,
       fabricante: produto.nomeProdutoFabricante || '',

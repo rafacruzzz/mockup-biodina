@@ -2,9 +2,10 @@
 export interface ProductRegistrationData {
   // Aba 1 - Dados Gerais (expandida)
   codigo: string;
-  familiaProduto: string;
+  linhaProduto: string;
   marca: string;
   modelo: string;
+  modeloProdutoMedico: string;
   descricao: string;
   vendidoPorUnidade: boolean;
   // Novos campos de marketing

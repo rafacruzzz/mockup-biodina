@@ -18,9 +18,10 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
   const [formData, setFormData] = useState<ProductRegistrationData>({
     // Dados Gerais
     codigo: "",
-    familiaProduto: "",
+    linhaProduto: "",
     marca: "",
     modelo: "",
+    modeloProdutoMedico: "",
     descricao: "",
     vendidoPorUnidade: true,
     nomeMarketing: "",

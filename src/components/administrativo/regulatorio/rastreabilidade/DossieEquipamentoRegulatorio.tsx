@@ -65,8 +65,8 @@ export function DossieEquipamentoRegulatorio({ equipamento }: DossieEquipamentoR
               <p className="text-sm font-semibold">{equipamento.codigo}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">Família de Produto</p>
-              <p className="text-sm font-semibold">{equipamento.familiaProduto}</p>
+              <p className="text-sm font-medium text-muted-foreground">Linha de Produto</p>
+              <p className="text-sm font-semibold">{equipamento.linhaProduto}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">Marca</p>

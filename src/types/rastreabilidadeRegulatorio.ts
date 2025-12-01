@@ -5,7 +5,7 @@ export interface EquipamentoRegulatorio {
   
   // CADASTRO
   codigo: string;
-  familiaProduto: string;
+  linhaProduto: string;
   marca: string;
   modelo: string;
   nomeProduto: string;
