@@ -56,6 +56,16 @@ export function RegulatorioTab({ produto, highlightIncomplete }: RegulatorioTabP
                 <p className="text-muted-foreground">Não cadastrado</p>
               )}
             </div>
+            <div>
+              <p className="text-sm text-muted-foreground mb-1">
+                Classe do Produto
+              </p>
+              {produto.classeProduto ? (
+                <p className="text-lg font-semibold">{produto.classeProduto}</p>
+              ) : (
+                <p className="text-muted-foreground">Não cadastrado</p>
+              )}
+            </div>
             <div className={highlightIncomplete && !produto.linkConsultaAnvisa ? "p-2 border-2 border-red-300 rounded" : ""}>
               <p className="text-sm text-muted-foreground mb-1">
                 Link de Consulta {highlightIncomplete && !produto.linkConsultaAnvisa && <span className="text-red-600">*</span>}

@@ -54,6 +54,7 @@ export interface Produto {
   // Regulatório
   registroAnvisa?: string;
   linkConsultaAnvisa?: string;
+  classeProduto?: string;
   
   // Mídia
   galeria?: string[];
