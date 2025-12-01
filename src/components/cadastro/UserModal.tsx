@@ -49,20 +49,16 @@ interface UserModalProps {
 }
 
 const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalProps) => {
+  // TODOS os hooks primeiro (antes de qualquer return condicional)
   const { colaboradores } = useColaboradores();
   const { empresaAtual, filiais } = useEmpresa();
   const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
   
-  // Guard: não renderizar modal se não houver empresa atual (DEVE VIR ANTES DE TUDO)
-  if (!empresaAtual) {
-    return null;
-  }
-  
   // Empresa principal sempre vinculada por padrão
   const empresaPrincipalVinculada: EmpresaVinculada = {
-    id: empresaAtual.id,
+    id: empresaAtual?.id || '',
     tipo: 'principal',
-    nome: empresaAtual.nome,
+    nome: empresaAtual?.nome || '',
   };
   
   const [formData, setFormData] = useState<UserData>({
@@ -77,7 +73,7 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
     isActive: userData?.isActive ?? true,
     userType: userData?.userType || '',
     moduleAccess: userData?.moduleAccess || [],
-    empresasVinculadas: userData?.empresasVinculadas || [empresaPrincipalVinculada]
+    empresasVinculadas: userData?.empresasVinculadas || [empresaPrincipalVinculada],
   });
 
   // Hook para calcular módulos disponíveis baseado nas empresas vinculadas
@@ -86,6 +82,11 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
     empresasVinculadas: formData.empresasVinculadas,
     filiais: filiais,
   });
+
+  // Guard: não renderizar modal se não houver empresa atual (DEPOIS de todos os hooks)
+  if (!empresaAtual) {
+    return null;
+  }
 
   const handleColaboradorChange = (colaboradorId: string) => {
     const colaborador = colaboradores.find(c => c.id === colaboradorId);
