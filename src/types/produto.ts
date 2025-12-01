@@ -35,7 +35,12 @@ export interface Produto {
   imagem?: string;
   
   // Ficha técnica
-  especificacoesTecnicas?: string;
+  especificacoesTecnicas?: string; // Deprecated - use campos estruturados abaixo
+  parametrosChave?: string;
+  compatibilidades?: string;
+  requisitosInfraestrutura?: string;
+  condicoesAmbientais?: string;
+  conformidadesNormas?: string;
   peso?: string;
   dimensoes?: string;
   
