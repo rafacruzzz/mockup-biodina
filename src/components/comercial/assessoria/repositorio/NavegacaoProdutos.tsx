@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, Package, Edit, Archive, Clock, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Package, Edit, Archive, Clock, AlertTriangle, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +20,7 @@ import { EditarLinhaModal } from "./EditarLinhaModal";
 import { ArquivarConfirmModal } from "./ArquivarConfirmModal";
 import { toast } from "sonner";
 import { atualizarStatusCadastro } from "@/utils/produtoValidation";
+import { BiCoberturaTab } from "./BiCoberturaTab";
 
 interface NavegacaoProdutosProps {
   onSelectProduto: (produto: Produto) => void;
@@ -35,6 +36,7 @@ export function NavegacaoProdutos({
   const [marcaSelecionada, setMarcaSelecionada] = useState<Marca | null>(null);
   const [linhaSelecionada, setLinhaSelecionada] = useState<Linha | null>(null);
   const [produtosValidados, setProdutosValidados] = useState<Produto[]>([]);
+  const [mostrarBI, setMostrarBI] = useState(false);
 
   // Valida todos os produtos automaticamente ao carregar
   useEffect(() => {
@@ -52,6 +54,11 @@ export function NavegacaoProdutos({
     tipo: "marca" | "linha";
     item: Marca | Linha;
   } | null>(null);
+
+  // Se está mostrando BI, renderiza o componente de BI
+  if (mostrarBI) {
+    return <BiCoberturaTab onVoltar={() => setMostrarBI(false)} />;
+  }
 
   // Se há busca ativa, mostra os resultados
   if (termoBusca && produtosValidados && produtosValidados.length > 0) {
@@ -367,6 +374,19 @@ export function NavegacaoProdutos({
   
   return (
     <div className="space-y-4">
+      {/* Botão BI & Cobertura */}
+      <div className="mb-6">
+        <Button
+          onClick={() => setMostrarBI(true)}
+          variant="outline"
+          size="lg"
+          className="w-full md:w-auto"
+        >
+          <BarChart3 className="h-5 w-5 mr-2" />
+          BI & Cobertura do Repositório
+        </Button>
+      </div>
+
       <div>
         <h3 className="text-lg font-semibold mb-2">Selecione uma Marca</h3>
         <p className="text-sm text-muted-foreground">
