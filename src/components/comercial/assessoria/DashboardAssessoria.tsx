@@ -266,7 +266,7 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria CientÃ
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <span className="text-lg font-semibold min-w-48 text-center capitalize">
+              <span className="text-lg font-semibold min-w-48 text-center">
                 {getMonthName()}
               </span>
               <Button 
