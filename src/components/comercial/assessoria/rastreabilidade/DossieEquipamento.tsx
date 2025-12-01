@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { ArrowLeft, Calendar, MapPin, Activity, Info } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Activity, Info, User, Edit, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -27,6 +30,14 @@ interface DossieEquipamentoProps {
 
 export function DossieEquipamento({ equipamento, onVoltar }: DossieEquipamentoProps) {
   const [osSheet, setOsSheet] = useState<OrdemServico | null>(null);
+  const [isEditingContato, setIsEditingContato] = useState(false);
+  const [contatoData, setContatoData] = useState({
+    setorAlocacao: equipamento.setorAlocacao || "",
+    pessoaResponsavelSetor: equipamento.pessoaResponsavelSetor || "",
+    telefoneResponsavel: equipamento.telefoneResponsavel || "",
+    emailResponsavel: equipamento.emailResponsavel || "",
+  });
+  
   const historico = getHistoricoEquipamento(equipamento.id);
   const statusColor = getStatusEquipamentoColor(equipamento.status);
 
@@ -35,6 +46,12 @@ export function DossieEquipamento({ equipamento, onVoltar }: DossieEquipamentoPr
     if (os) {
       setOsSheet(os);
     }
+  };
+
+  const handleSaveContato = () => {
+    // Aqui você faria a chamada para salvar no backend
+    toast.success("Informações de contato atualizadas com sucesso!");
+    setIsEditingContato(false);
   };
 
   return (
@@ -127,6 +144,83 @@ export function DossieEquipamento({ equipamento, onVoltar }: DossieEquipamentoPr
             </div>
           </>
         )}
+      </div>
+
+      {/* Contato do Setor Responsável */}
+      <div className="border rounded-lg p-6 bg-card">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <User className="h-5 w-5 text-primary" />
+            <h3 className="text-lg font-semibold">Contato do Setor Responsável</h3>
+          </div>
+          {!isEditingContato ? (
+            <Button variant="outline" size="sm" onClick={() => setIsEditingContato(true)}>
+              <Edit className="h-4 w-4 mr-2" />
+              Editar
+            </Button>
+          ) : (
+            <Button variant="default" size="sm" onClick={handleSaveContato}>
+              <Save className="h-4 w-4 mr-2" />
+              Salvar
+            </Button>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="setorAlocacao">Setor de Alocação</Label>
+            {isEditingContato ? (
+              <Input
+                id="setorAlocacao"
+                value={contatoData.setorAlocacao}
+                onChange={(e) => setContatoData({ ...contatoData, setorAlocacao: e.target.value })}
+                placeholder="Ex: UTI, Laboratório..."
+              />
+            ) : (
+              <p className="text-sm font-semibold mt-2">{contatoData.setorAlocacao || "Não informado"}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="pessoaResponsavel">Pessoa Responsável pelo Setor</Label>
+            {isEditingContato ? (
+              <Input
+                id="pessoaResponsavel"
+                value={contatoData.pessoaResponsavelSetor}
+                onChange={(e) => setContatoData({ ...contatoData, pessoaResponsavelSetor: e.target.value })}
+                placeholder="Ex: Dr. João Silva"
+              />
+            ) : (
+              <p className="text-sm font-semibold mt-2">{contatoData.pessoaResponsavelSetor || "Não informado"}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="telefone">Telefone</Label>
+            {isEditingContato ? (
+              <Input
+                id="telefone"
+                value={contatoData.telefoneResponsavel}
+                onChange={(e) => setContatoData({ ...contatoData, telefoneResponsavel: e.target.value })}
+                placeholder="(11) 98765-4321"
+              />
+            ) : (
+              <p className="text-sm font-semibold mt-2">{contatoData.telefoneResponsavel || "Não informado"}</p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="email">E-mail</Label>
+            {isEditingContato ? (
+              <Input
+                id="email"
+                type="email"
+                value={contatoData.emailResponsavel}
+                onChange={(e) => setContatoData({ ...contatoData, emailResponsavel: e.target.value })}
+                placeholder="contato@exemplo.com.br"
+              />
+            ) : (
+              <p className="text-sm font-semibold mt-2">{contatoData.emailResponsavel || "Não informado"}</p>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Tabs de Detalhes */}
