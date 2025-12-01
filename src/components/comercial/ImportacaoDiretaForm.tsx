@@ -340,7 +340,7 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
     setShowSPIEnvioModal(true);
   };
 
-  const handleEnviarComCnpj = (selectedCnpj: string) => {
+  const handleEnviarComCnpj = (selectedCnpj: string, modeloPi: string) => {
     // Criar novo item do histórico
     const novoHistorico: PIHistoryItem = {
       id: Date.now().toString(),
@@ -364,8 +364,8 @@ PLEASE DECLARE THE FOLLOWING SENTENCES ON THE AWB:
       isFieldsLocked: true
     }));
 
-    // Gerar o PDF (mantém funcionalidade original)
-    generateSPIPDF(formData, selectedCnpj);
+    // Gerar o PDF com o modelo selecionado
+    generateSPIPDF(formData, selectedCnpj, modeloPi);
   };
 
   const handlePIStatusChange = (historyId: string, newStatus: 'aceito' | 'rejeitado', observacoes?: string) => {
