@@ -20,10 +20,12 @@ import { EmptyStateSuper } from "@/components/super/EmptyStateSuper";
 import { Empresa, PerfilAcesso, Plano, Webform } from "@/types/super";
 import { perfisAcessoMock, planosMock } from "@/data/superModules";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
 
 const Super = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useUser();
   const {
     empresas,
     isMasterUser,
@@ -56,8 +58,8 @@ const Super = () => {
   const [activeSubModule, setActiveSubModule] = useState("gestao");
   const [expandedModules, setExpandedModules] = useState<string[]>(["empresas"]);
 
-  // Proteção: apenas usuários Master podem acessar
-  if (!isMasterUser) {
+  // Proteção: apenas usuário super@super.com.br pode acessar
+  if (user?.email !== 'super@super.com.br') {
     return (
       <SidebarLayout>
         <div className="flex items-center justify-center h-screen">
@@ -66,7 +68,7 @@ const Super = () => {
               <CardTitle>Acesso Negado</CardTitle>
               <CardDescription>
                 Você não tem permissão para acessar o módulo SUPER.
-                Apenas usuários da empresa Master podem gerenciar o sistema.
+                Apenas o usuário administrador do sistema pode gerenciar este módulo.
               </CardDescription>
             </CardHeader>
             <CardContent>

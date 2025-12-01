@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import UserProfileMenu from "@/components/UserProfileMenu";
 import FloatingChat from "@/components/chat/FloatingChat";
 import { useEmpresa } from "@/contexts/EmpresaContext";
+import { useUser } from "@/contexts/UserContext";
 
 interface NavOverrides {
   order?: string[];
@@ -25,6 +26,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
   const { empresaAtual, isMasterUser, modulosDisponiveis } = useEmpresa();
+  const { user } = useUser();
 
   const defaultMenuItems = [
     // { name: "Aplicativos", path: "/home", icon: <Home size={20} />, id: "aplicativos" }, // Escondido temporariamente
@@ -86,9 +88,9 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
     if (['solicitacoes', 'personalizar-navegacao'].includes(item.id)) {
       return true;
     }
-    // SUPER apenas para Master
+    // SUPER apenas para usuário super@super.com.br
     if (item.id === 'super') {
-      return isMasterUser;
+      return user?.email === 'super@super.com.br';
     }
     // Outros módulos: verificar se empresa tem acesso
     return modulosDisponiveis.includes(item.id as any);
