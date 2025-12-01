@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Calendar, LogOut } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, LogOut, Plus } from "lucide-react";
 import { OrdemServico, FiltrosAgenda, StatusOS, DepartamentoOS } from "@/types/assessoria-cientifica";
 import { ordensServicoMock, getTipoOSIcon, getTipoOSLabel, getStatusColor, alertasMock, assessoresTecnicos } from "@/data/assessoria-cientifica";
 import { FiltrosAgendaOS } from "./FiltrosAgendaOS";
 import { DetalhesOSSheet } from "./DetalhesOSSheet";
+import { FormularioOS } from "./FormularioOS";
 import { PainelAlertas } from "./PainelAlertas";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuthDemo } from "@/hooks/useAuthDemo";
@@ -23,6 +24,8 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedOS, setSelectedOS] = useState<OrdemServico | null>(null);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isNewOS, setIsNewOS] = useState(false);
   const [assessorFilter, setAssessorFilter] = useState<string>("todos");
   const [filtros, setFiltros] = useState<FiltrosAgenda>({
     departamentos: [departamento], // Fixo no departamento espec√≠fico
@@ -44,6 +47,18 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
   const handleOSClick = (os: OrdemServico) => {
     setSelectedOS(os);
     setIsSheetOpen(true);
+  };
+
+  const handleNewOS = () => {
+    setSelectedOS(null);
+    setIsNewOS(true);
+    setIsFormOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+    setIsNewOS(false);
+    setSelectedOS(null);
   };
 
   const handleAlertaClick = (osIds?: string[]) => {
@@ -250,6 +265,14 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
               >
                 <ChevronRight className="h-4 w-4" />
               </Button>
+              <div className="h-6 w-px bg-border mx-2" />
+              <Button 
+                onClick={handleNewOS}
+                size="sm"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Nova OS
+              </Button>
             </div>
           </div>
         </CardHeader>
@@ -357,6 +380,15 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
             setIsSheetOpen(false);
             setSelectedOS(null);
           }}
+        />
+      )}
+
+      {/* Formul√°rio de Nova OS */}
+      {isFormOpen && (
+        <FormularioOS
+          os={selectedOS}
+          isNew={isNewOS}
+          onClose={handleCloseForm}
         />
       )}
     </TooltipProvider>
