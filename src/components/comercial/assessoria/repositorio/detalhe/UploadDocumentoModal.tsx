@@ -23,12 +23,14 @@ interface UploadDocumentoModalProps {
   open: boolean;
   onClose: () => void;
   produtoId: string;
+  onDocumentoUpload: (documento: any) => void;
 }
 
 export function UploadDocumentoModal({
   open,
   onClose,
   produtoId,
+  onDocumentoUpload,
 }: UploadDocumentoModalProps) {
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [formData, setFormData] = useState({
@@ -91,13 +93,24 @@ export function UploadDocumentoModal({
       return;
     }
 
-    // Aqui seria o upload real para o backend/storage
-    console.log("Upload do documento:", {
-      arquivo: arquivo.name,
+    // Criar o objeto documento
+    const novoDocumento = {
+      id: `doc-${Date.now()}`,
       produtoId,
-      ...formData,
-    });
+      tipo: formData.tipo,
+      titulo: formData.titulo,
+      versao: formData.versao,
+      idioma: formData.idioma,
+      dataUpload: new Date(),
+      uploadPor: "Usuário Atual", // Aqui seria o nome do usuário logado
+      nomeArquivo: arquivo.name,
+      tamanhoArquivo: arquivo.size,
+      historicoVersoes: [],
+    };
 
+    // Adicionar documento à lista
+    onDocumentoUpload(novoDocumento);
+    
     toast.success("Documento enviado com sucesso");
     handleClose();
   };
