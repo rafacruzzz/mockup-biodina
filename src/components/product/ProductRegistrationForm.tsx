@@ -45,6 +45,7 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
     classificacaoRisco: "",
     dataInicioVigencia: null,
     dataVencimento: null,
+    dataVencimentoTipo: 'data',
     linkConsultaAnvisa: "",
 
     // Apresentações

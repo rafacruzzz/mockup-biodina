@@ -35,6 +35,7 @@ export interface ProductRegistrationData {
   classificacaoRisco: string;
   dataInicioVigencia: Date | null;
   dataVencimento: Date | null;
+  dataVencimentoTipo: 'data' | 'vigente';
   linkConsultaAnvisa: string;
 
   // Aba 3 - Apresentações (expandida)
