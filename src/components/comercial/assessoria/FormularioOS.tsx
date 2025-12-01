@@ -549,6 +549,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
               value={formData.numeroSerieLote}
               readOnly
               className="bg-muted"
+              placeholder="Preenchido ao selecionar equipamento"
             />
             <p className="text-xs text-muted-foreground">
               Preenchido automaticamente ao selecionar o equipamento
@@ -563,6 +564,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                 value={formData.versaoSoftware}
                 readOnly
                 className="bg-muted"
+                placeholder="Preenchido ao selecionar equipamento"
               />
             </div>
             <div className="space-y-2">
@@ -572,6 +574,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                 value={formData.versaoWindows}
                 readOnly
                 className="bg-muted"
+                placeholder="Preenchido ao selecionar equipamento"
               />
             </div>
           </div>
@@ -586,6 +589,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
               value={formData.setorAlocacao}
               readOnly
               className="bg-muted"
+              placeholder="Preenchido ao selecionar equipamento"
             />
             <p className="text-xs text-muted-foreground">
               Preenchido automaticamente ao selecionar o equipamento
