@@ -443,6 +443,12 @@ export const filiaisMock: Filial[] = [
     modulosHabilitados: ['cadastro', 'comercial', 'financeiro', 'estoque'],
     status: 'ativa',
     dataCriacao: '2023-01-15',
+    inscricaoEstadual: '123.456.789.012',
+    inscricaoMunicipal: '987654321',
+    regimeTributario: '3',
+    email: 'sp@imuv.com.br',
+    telefone: '(11) 3456-7890',
+    discriminaImpostos: true,
     endereco: {
       cep: '01310-100',
       logradouro: 'Av. Paulista',
@@ -461,6 +467,12 @@ export const filiaisMock: Filial[] = [
     modulosHabilitados: ['cadastro', 'comercial', 'financeiro'],
     status: 'ativa',
     dataCriacao: '2023-06-20',
+    inscricaoEstadual: '234.567.890.123',
+    inscricaoMunicipal: '876543210',
+    regimeTributario: '1',
+    email: 'rj@imuv.com.br',
+    telefone: '(21) 2345-6789',
+    discriminaImpostos: false,
     endereco: {
       cep: '20040-020',
       logradouro: 'Av. Rio Branco',
@@ -480,6 +492,12 @@ export const filiaisMock: Filial[] = [
     modulosHabilitados: ['cadastro', 'comercial', 'estoque', 'bi'],
     status: 'ativa',
     dataCriacao: '2024-02-10',
+    inscricaoEstadual: '345.678.901.234',
+    inscricaoMunicipal: '765432109',
+    regimeTributario: '3',
+    email: 'bh@imuv.com.br',
+    telefone: '(31) 3234-5678',
+    discriminaImpostos: true,
     endereco: {
       cep: '30130-100',
       logradouro: 'Av. Afonso Pena',
@@ -487,6 +505,31 @@ export const filiaisMock: Filial[] = [
       bairro: 'Centro',
       cidade: 'Belo Horizonte',
       uf: 'MG'
+    }
+  },
+  {
+    id: 'filial-pr-001',
+    nome: 'iMuv - Filial Curitiba',
+    razaoSocial: 'iMuv Farmacêutica PR Ltda',
+    cnpj: '98.765.432/0005-54',
+    empresaPrincipalId: 'biodina-001',
+    modulosHabilitados: ['cadastro', 'comercial', 'compras', 'estoque', 'financeiro', 'contabilidade'],
+    status: 'ativa',
+    dataCriacao: '2024-11-01',
+    inscricaoEstadual: '456.789.012.345',
+    inscricaoMunicipal: '654321098',
+    regimeTributario: '2',
+    email: 'curitiba@imuv.com.br',
+    telefone: '(41) 3123-4567',
+    discriminaImpostos: true,
+    endereco: {
+      cep: '80010-000',
+      logradouro: 'Rua XV de Novembro',
+      numero: '2500',
+      complemento: 'Sala 1201',
+      bairro: 'Centro',
+      cidade: 'Curitiba',
+      uf: 'PR'
     }
   }
 ];
