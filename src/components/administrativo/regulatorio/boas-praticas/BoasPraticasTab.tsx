@@ -87,9 +87,9 @@ export const BoasPraticasTab = () => {
                           )}
                         </div>
                         
-                        {cert.nomeFornecedor && (
+                        {cert.fabricanteLegal && (
                           <p className="text-sm text-muted-foreground mt-1">
-                            Fornecedor: {cert.nomeFornecedor}
+                            Fabricante: {cert.fabricanteLegal}
                           </p>
                         )}
                         

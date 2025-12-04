@@ -7,8 +7,6 @@ import { getAlertaVencimento } from '@/types/boasPraticas';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface InformacoesRegulatoriasBPTabProps {
-  fornecedorId?: string;
-  setFornecedorId: (value: string) => void;
   numeroProcessoAnvisa: string;
   setNumeroProcessoAnvisa: (value: string) => void;
   transacao: string;
@@ -34,8 +32,6 @@ interface InformacoesRegulatoriasBPTabProps {
 }
 
 export const InformacoesRegulatoriasBPTab = ({
-  fornecedorId,
-  setFornecedorId,
   numeroProcessoAnvisa,
   setNumeroProcessoAnvisa,
   transacao,
@@ -64,28 +60,6 @@ export const InformacoesRegulatoriasBPTab = ({
 
   return (
     <div className="space-y-6">
-      {/* Vínculo com Fornecedor */}
-      <Card className="p-6">
-        <div className="space-y-4">
-          <div>
-            <Label className="text-base font-semibold">Vínculo</Label>
-            <p className="text-sm text-muted-foreground mb-3">
-              Vincule este certificado a um fornecedor ou empresa
-            </p>
-          </div>
-          <div>
-            <Label htmlFor="fornecedor">Fornecedor / Empresa</Label>
-            <Input
-              id="fornecedor"
-              value={fornecedorId}
-              onChange={(e) => setFornecedorId(e.target.value)}
-              placeholder="Selecione ou digite o fornecedor"
-              className="mt-1"
-            />
-          </div>
-        </div>
-      </Card>
-
       {/* Dados do Processo ANVISA */}
       <Card className="p-6">
         <div className="space-y-4">

@@ -3,10 +3,9 @@ import { CertificadoBoasPraticas } from '@/types/boasPraticas';
 export const mockCertificados: CertificadoBoasPraticas[] = [
   {
     id: '1',
-    fornecedorId: 'forn-001',
-    nomeFornecedor: 'Fornecedor Alpha Medical',
-    nomeEmpresa: 'BioDina Equipamentos',
     nomeArquivoPrincipal: 'Documentação Certificado BPF - Alpha Medical 2024',
+    fabricanteLegal: 'Fornecedor Alpha Medical',
+    unidadeFabril: 'Unidade Fabril São Paulo - Av. Industrial, 1000',
     documentos: [
       {
         id: 1,
@@ -39,10 +38,9 @@ export const mockCertificados: CertificadoBoasPraticas[] = [
   },
   {
     id: '2',
-    fornecedorId: 'forn-002',
-    nomeFornecedor: 'Beta Healthcare Solutions',
-    nomeEmpresa: 'BioDina Equipamentos',
     nomeArquivoPrincipal: 'Documentação Certificado BPF - Beta Healthcare 2024',
+    fabricanteLegal: 'Beta Healthcare Solutions',
+    unidadeFabril: 'Unidade Fabril Rio de Janeiro - Rua Farmacêutica, 500',
     documentos: [
       {
         id: 1,
@@ -69,10 +67,9 @@ export const mockCertificados: CertificadoBoasPraticas[] = [
   },
   {
     id: '3',
-    fornecedorId: 'forn-003',
-    nomeFornecedor: 'Gamma Medical Devices',
-    nomeEmpresa: 'BioDina Equipamentos',
     nomeArquivoPrincipal: 'Documentação Certificado BPF - Gamma Medical 2024',
+    fabricanteLegal: 'Gamma Medical Devices',
+    unidadeFabril: 'Unidade Fabril Campinas - Rod. Dom Pedro, Km 90',
     documentos: [],
     nomeProtocolo: 'protocolo_peticionamento_11223.pdf',
     numeroProcessoAnvisa: '25351.345678/2024-03',
