@@ -29,12 +29,18 @@ import {
   AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal,
   Gavel, Building2, Globe, HandCoins, FileSpreadsheet // FileSignature COMENTADO - NÃO USAR NO MOMENTO
 } from "lucide-react";
+import { useEmpresa } from "@/contexts/EmpresaContext";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
   PieChart, Pie, Cell, ResponsiveContainer 
 } from 'recharts';
 
 const Comercial = () => {
+  const { empresaAtual, filialAtual } = useEmpresa();
+  
+  // Empresa ativa é a filial se logado em uma filial, senão é a principal
+  const empresaAtivaId = filialAtual?.id || empresaAtual?.id || '';
+  
   const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'emprestimos' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeTab, setActiveTab] = useState('indicadores');
   const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade" | "analise-editais" | "repositorio">("agenda");
@@ -51,9 +57,11 @@ const Comercial = () => {
   const [showImportacaoDiretaForm, setShowImportacaoDiretaForm] = useState(false);
   // const [showAssinaturas, setShowAssinaturas] = useState(false); // COMENTADO - NÃO USAR NO MOMENTO
 
-  const oportunidades = [
+  // Mock data com empresaId para filtrar por empresa
+  const todasOportunidades = [
     { 
       id: 1,
+      empresaId: 'master-001', // Empresa principal
       codigo: '10678',
       cliente: 'Associação das Pioneiras Sociais',
       contato: 'Ramal - 3319-1111',
@@ -78,6 +86,7 @@ const Comercial = () => {
     },
     { 
       id: 2,
+      empresaId: 'master-001', // Empresa principal
       codigo: '10679',
       cliente: 'Hospital Universitário Onofre Lopes',
       contato: 'contato@huol.ufrn.br',
@@ -102,6 +111,7 @@ const Comercial = () => {
     },
     { 
       id: 3,
+      empresaId: 'filial-sp-001', // Filial São Paulo
       codigo: '10680',
       cliente: 'CEMA - Central de Medicamentos',
       contato: '(85) 3101-1234',
@@ -126,6 +136,7 @@ const Comercial = () => {
     },
     { 
       id: 4,
+      empresaId: 'filial-rj-001', // Filial Rio de Janeiro
       codigo: '10681',
       cliente: 'Prefeitura de São Paulo',
       contato: 'licitacoes@saude.sp.gov.br',
@@ -150,6 +161,7 @@ const Comercial = () => {
     },
     {
       id: 5,
+      empresaId: 'master-001', // Empresa principal
       codigo: '10682',
       cliente: 'Hospital Albert Einstein',
       contato: 'compras@einstein.br',
@@ -175,6 +187,7 @@ const Comercial = () => {
     // Exemplos de Importação Direta
     {
       id: 'IMP-2024-001',
+      empresaId: 'master-001', // Empresa principal
       codigo: 'IMP-2024-001',
       cliente: 'Hospital Albert Einstein',
       contato: 'compras@einstein.br',
@@ -199,6 +212,7 @@ const Comercial = () => {
     },
     {
       id: 'IMP-2024-002',
+      empresaId: 'filial-sp-001', // Filial São Paulo
       codigo: 'IMP-2024-002',
       cliente: 'Hospital Sírio-Libanês',
       contato: 'suprimentos@hsl.org.br',
@@ -223,6 +237,7 @@ const Comercial = () => {
     },
     {
       id: 'IMP-2024-003',
+      empresaId: 'filial-rj-001', // Filial Rio de Janeiro
       codigo: 'IMP-2024-003',
       cliente: 'INCA - Instituto Nacional de Câncer',
       contato: 'compras@inca.gov.br',
@@ -246,6 +261,9 @@ const Comercial = () => {
       servicos: ['Instalação']
     }
   ];
+
+  // Filtrar oportunidades pela empresa atualmente logada
+  const oportunidades = todasOportunidades.filter(op => op.empresaId === empresaAtivaId);
 
   const calculateFunnelData = () => {
     const activeOportunidades = oportunidades.filter(op => op.resultadoOportunidade !== 'perda');

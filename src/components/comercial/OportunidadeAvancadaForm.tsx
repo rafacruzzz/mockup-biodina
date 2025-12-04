@@ -49,7 +49,10 @@ const mockClientes = [
 const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: OportunidadeAvancadaFormProps) => {
   const { toast } = useToast();
   const { segmentos } = useSegmentoLeadManager();
-  const { empresaAtual, filiais } = useEmpresa();
+  const { empresaAtual, filialAtual } = useEmpresa();
+  
+  // Empresa ativa é a filial se logado em uma filial, senão é a principal
+  const empresaAtivaId = filialAtual?.id || empresaAtual?.id || '';
   const [activeTab, setActiveTab] = useState('dados-gerais');
   
   // Funções auxiliares para status de licitantes
@@ -118,8 +121,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   ]);
 
   const [formData, setFormData] = useState({
-    // Empresa
-    empresaId: oportunidade?.empresaId || empresaAtual?.id || '',
+    // Empresa - automaticamente definida pela empresa logada
+    empresaId: oportunidade?.empresaId || empresaAtivaId,
     
     // Novos campos para cliente
     cliente: oportunidade?.cliente || '',
@@ -252,37 +255,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
   const renderDadosGerais = () => (
     <div className="space-y-6">
-      {/* Empresa */}
-      <div className="border rounded-lg p-4 space-y-4">
-        <h3 className="text-lg font-semibold text-gray-800">Empresa</h3>
-        <div>
-          <Label htmlFor="empresaId">Empresa *</Label>
-          <Select 
-            value={formData.empresaId} 
-            onValueChange={(value) => setFormData({...formData, empresaId: value})}
-            disabled={isReadOnlyMode()}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione a empresa" />
-            </SelectTrigger>
-            <SelectContent>
-              {/* Empresa Principal */}
-              {empresaAtual && (
-                <SelectItem value={empresaAtual.id}>
-                  {empresaAtual.nome} (Principal)
-                </SelectItem>
-              )}
-              {/* Filiais */}
-              {filiais.filter(f => f.status === 'ativa').map((filial) => (
-                <SelectItem key={filial.id} value={filial.id}>
-                  {filial.nome} (Filial)
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
       {/* Dados do Cliente */}
       <div className="border rounded-lg p-4 space-y-4">
         <h3 className="text-lg font-semibold text-gray-800">Dados do Cliente</h3>
