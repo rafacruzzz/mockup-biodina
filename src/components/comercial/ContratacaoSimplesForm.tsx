@@ -10,7 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, Network } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, Network, Send } from 'lucide-react';
+import { toast } from 'sonner';
+import { mockChecklistVendas } from '@/data/faturamentoModules';
 import { PedidoCompleto } from '@/types/comercial';
 import { Chamado, StatusChamado } from '@/types/chamado';
 import { licitacoesGanhasDetalhadas } from '@/data/licitacaoMockData';
@@ -235,6 +237,35 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       case 'cancelado': return 'bg-red-500';
       default: return 'bg-gray-500';
     }
+  };
+
+  const handleEnviarExpedicao = (pedido: PedidoCompleto) => {
+    const novoChecklist = {
+      id: `CHK-${pedido.id}`,
+      numeroPedido: `#${pedido.id.toString().slice(-6)}`,
+      cliente: formData.nomeFantasia || formData.razaoSocial || 'Cliente não definido',
+      cnpjCliente: formData.cpfCnpj || '',
+      vendedor: formData.colaboradoresResponsaveis || 'Não definido',
+      dataEmissaoPedido: pedido.dataVenda,
+      valorTotal: pedido.valorTotal,
+      status: 'Aguardando',
+      estoqueValidado: false,
+      servicosConcluidos: false,
+      documentacaoCompleta: false,
+      creditoAprovado: false,
+      produtos: pedido.produtos,
+      observacoes: `Pedido enviado do Comercial - Contratação`
+    };
+    
+    mockChecklistVendas.push(novoChecklist as any);
+    
+    setPedidos(prev => prev.map(p => 
+      p.id === pedido.id 
+        ? { ...p, status: 'enviado' } 
+        : p
+    ));
+    
+    toast.success(`Pedido #${pedido.id.toString().slice(-6)} enviado para Expedição!`);
   };
 
   const licitacaoVinculadaData = licitacoesGanhasDetalhadas.find(l => l.id.toString() === licitacaoVinculada);
@@ -1022,9 +1053,22 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                                 {formatCurrency(pedido.valorTotal)}
                               </TableCell>
                               <TableCell>
-                                <Button variant="ghost" size="sm">
-                                  <Eye className="h-4 w-4" />
-                                </Button>
+                                <div className="flex gap-1">
+                                  <Button variant="ghost" size="sm" title="Visualizar">
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
+                                  {pedido.status === 'rascunho' && (
+                                    <Button 
+                                      variant="ghost" 
+                                      size="sm" 
+                                      onClick={() => handleEnviarExpedicao(pedido)}
+                                      title="Enviar para Expedição"
+                                      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                    >
+                                      <Send className="h-4 w-4" />
+                                    </Button>
+                                  )}
+                                </div>
                               </TableCell>
                             </TableRow>
                           ))}
