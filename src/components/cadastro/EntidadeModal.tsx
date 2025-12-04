@@ -192,8 +192,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onSave }: EntidadeModalP
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4">
-      <div className="bg-background rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
+      <div className="bg-background rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden z-[100]">
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-bold">Cadastro de {getTipoLabel(tipoEntidade)}</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
