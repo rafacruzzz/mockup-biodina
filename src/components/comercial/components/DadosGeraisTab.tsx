@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { naturezasOperacao, getDescritivosOperacao, temDescritivoUnico } from "@/data/naturezasOperacao";
 
 interface DadosGeraisTabProps {
   formData: any;
@@ -211,8 +212,76 @@ const DadosGeraisTab = ({ formData, onInputChange }: DadosGeraisTabProps) => {
 
   const projetosDisponiveis = searchProjetos(projetoSearch);
 
+  // Descritivos disponíveis baseados na natureza selecionada
+  const descritivosDisponiveis = formData.naturezaOperacao 
+    ? getDescritivosOperacao(formData.naturezaOperacao) 
+    : [];
+
+  // Auto-selecionar descritivo quando há apenas um
+  useEffect(() => {
+    if (formData.naturezaOperacao && temDescritivoUnico(formData.naturezaOperacao)) {
+      const descritivos = getDescritivosOperacao(formData.naturezaOperacao);
+      if (descritivos.length === 1) {
+        onInputChange('descritivoOperacao', descritivos[0].numero.toString());
+      }
+    }
+  }, [formData.naturezaOperacao]);
+
   return (
     <div className="space-y-6">
+      {/* Seção de Natureza da Operação */}
+      <Card className="bg-muted/30">
+        <CardHeader>
+          <CardTitle className="text-base">Natureza da Operação</CardTitle>
+          <p className="text-sm text-muted-foreground">Selecione a operação e seu descritivo específico</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Qual natureza da operação? *</Label>
+              <Select 
+                value={formData.naturezaOperacao || ""} 
+                onValueChange={(value) => {
+                  onInputChange('naturezaOperacao', value);
+                  onInputChange('descritivoOperacao', '');
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione a operação" />
+                </SelectTrigger>
+                <SelectContent>
+                  {naturezasOperacao.map((natureza) => (
+                    <SelectItem key={natureza.operacao} value={natureza.operacao}>
+                      {natureza.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Descritivo da Operação *</Label>
+              <Select 
+                value={formData.descritivoOperacao || ""} 
+                onValueChange={(value) => onInputChange('descritivoOperacao', value)}
+                disabled={!formData.naturezaOperacao || descritivosDisponiveis.length === 0}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={formData.naturezaOperacao ? "Selecione o descritivo" : "Selecione primeiro a operação"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {descritivosDisponiveis.map((descritivo) => (
+                    <SelectItem key={descritivo.numero} value={descritivo.numero.toString()}>
+                      {descritivo.descritivo}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Seção de Vinculação de Projeto */}
       <Card className="bg-muted/30">
         <CardHeader>
