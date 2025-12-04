@@ -270,45 +270,92 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
               <CardContent>
                 {pedido.produtos && pedido.produtos.length > 0 ? (
                   <>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Código</TableHead>
-                          <TableHead>Descrição</TableHead>
-                          <TableHead>Referência</TableHead>
-                          <TableHead>UN</TableHead>
-                          <TableHead className="text-right">Qtd</TableHead>
-                          <TableHead className="text-right">Preço Unit.</TableHead>
-                          <TableHead className="text-right">Desc. %</TableHead>
-                          <TableHead className="text-right">Preço Final</TableHead>
-                          <TableHead className="text-right">Subtotal</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {pedido.produtos.map((produto) => (
-                          <TableRow key={produto.id}>
-                            <TableCell className="font-medium">{produto.codigo}</TableCell>
-                            <TableCell>
-                              <div>
-                                <p className="font-medium">{produto.descricao}</p>
-                                {produto.observacoes && (
-                                  <p className="text-xs text-muted-foreground mt-1">{produto.observacoes}</p>
-                                )}
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-sm text-muted-foreground">
-                              {produto.referencia || '-'}
-                            </TableCell>
-                            <TableCell>{produto.unidade}</TableCell>
-                            <TableCell className="text-right">{produto.quantidade}</TableCell>
-                            <TableCell className="text-right">{formatCurrency(produto.precoUnitario)}</TableCell>
-                            <TableCell className="text-right">{produto.desconto}%</TableCell>
-                            <TableCell className="text-right font-medium">{formatCurrency(produto.precoFinal)}</TableCell>
-                            <TableCell className="text-right font-bold">{formatCurrency(produto.subtotal)}</TableCell>
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Código</TableHead>
+                            <TableHead>Produto</TableHead>
+                            <TableHead>Un.</TableHead>
+                            <TableHead>Estoque Disponível</TableHead>
+                            <TableHead>Val. Mín. Exigida</TableHead>
+                            <TableHead className="text-right">Qtd.</TableHead>
+                            <TableHead className="text-right">Preço Unit.</TableHead>
+                            <TableHead className="text-right">Desc. %</TableHead>
+                            <TableHead className="text-right">Preço Final</TableHead>
+                            <TableHead>Descr. NF</TableHead>
+                            <TableHead>Obs.</TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                        </TableHeader>
+                        <TableBody>
+                          {pedido.produtos.map((produto) => (
+                            <TableRow key={produto.id}>
+                              <TableCell className="font-medium">{produto.codigo}</TableCell>
+                              <TableCell>
+                                <div className="space-y-1">
+                                  <p className="font-medium">{produto.descricao}</p>
+                                  <div className="flex gap-1 flex-wrap">
+                                    {produto.estoqueDisponivel?.alertas?.map((alerta, idx) => (
+                                      <Badge 
+                                        key={idx} 
+                                        variant="outline" 
+                                        className={
+                                          alerta.tipo === 'validade_proxima' 
+                                            ? 'text-amber-600 border-amber-300 bg-amber-50 text-xs' 
+                                            : 'text-blue-600 border-blue-300 bg-blue-50 text-xs'
+                                        }
+                                      >
+                                        {alerta.tipo === 'validade_proxima' ? 'Validade' : 'Multi-lotes'}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="secondary" className="text-xs">{produto.unidade}</Badge>
+                              </TableCell>
+                              <TableCell>
+                                {produto.estoqueDisponivel ? (
+                                  <div className="space-y-0.5">
+                                    <span className="text-green-600 font-medium text-sm">
+                                      {produto.estoqueDisponivel.totalDisponivel} un
+                                    </span>
+                                    <p className="text-xs text-muted-foreground">
+                                      Reservado: {produto.estoqueDisponivel.totalReservado}
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <span className="text-muted-foreground">-</span>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                {produto.validadeMinima ? (
+                                  new Date(produto.validadeMinima).toLocaleDateString('pt-BR')
+                                ) : (
+                                  <span className="text-muted-foreground">dd/mm/aaaa</span>
+                                )}
+                              </TableCell>
+                              <TableCell className="text-right">{produto.quantidade}</TableCell>
+                              <TableCell className="text-right">{formatCurrency(produto.precoUnitario)}</TableCell>
+                              <TableCell className="text-right">{produto.desconto}%</TableCell>
+                              <TableCell className="text-right font-medium text-green-600">
+                                {formatCurrency(produto.precoFinal)}
+                              </TableCell>
+                              <TableCell className="max-w-[150px]">
+                                <p className="text-sm truncate" title={produto.descritivoNF || '-'}>
+                                  {produto.descritivoNF || '-'}
+                                </p>
+                              </TableCell>
+                              <TableCell className="max-w-[120px]">
+                                <p className="text-sm truncate" title={produto.observacoes || '-'}>
+                                  {produto.observacoes || '-'}
+                                </p>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
                     <div className="mt-6 flex justify-end">
                       <div className="w-80 space-y-2">
                         <div className="flex justify-between text-sm">

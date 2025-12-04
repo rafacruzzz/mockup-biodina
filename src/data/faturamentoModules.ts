@@ -29,7 +29,14 @@ export const mockChecklistVendas: ChecklistVenda[] = [
         desconto: 5,
         precoFinal: 14250.00,
         subtotal: 14250.00,
-        observacoes: 'Equipamento com garantia estendida'
+        observacoes: 'Equipamento com garantia estendida',
+        estoqueDisponivel: {
+          totalDisponivel: 15,
+          totalReservado: 3,
+          alertas: [{ tipo: 'validade_proxima', mensagem: 'Validade próxima' }]
+        },
+        validadeMinima: '2025-06-15',
+        descritivoNF: 'Analisador bioquímico automático modelo XYZ-500'
       },
       {
         id: 2,
@@ -40,7 +47,17 @@ export const mockChecklistVendas: ChecklistVenda[] = [
         precoUnitario: 150.00,
         desconto: 0,
         precoFinal: 150.00,
-        subtotal: 1500.00
+        subtotal: 1500.00,
+        estoqueDisponivel: {
+          totalDisponivel: 650,
+          totalReservado: 220,
+          alertas: [
+            { tipo: 'validade_proxima', mensagem: 'Validade próxima' },
+            { tipo: 'multiplos_lotes', mensagem: 'Múltiplos lotes' }
+          ]
+        },
+        validadeMinima: '2025-03-20',
+        descritivoNF: 'Kit de reagentes para análises bioquímicas - 200 testes'
       }
     ],
     
@@ -203,7 +220,14 @@ export const mockChecklistVendas: ChecklistVenda[] = [
         desconto: 0,
         precoFinal: 42000.00,
         subtotal: 42000.00,
-        observacoes: 'Modelo top de linha com todos os transdutores'
+        observacoes: 'Modelo top de linha com todos os transdutores',
+        estoqueDisponivel: {
+          totalDisponivel: 5,
+          totalReservado: 2,
+          alertas: []
+        },
+        validadeMinima: '2026-12-31',
+        descritivoNF: 'Ultrassom Doppler Colorido Premium com transdutores'
       },
       {
         id: 2,
@@ -214,7 +238,14 @@ export const mockChecklistVendas: ChecklistVenda[] = [
         precoUnitario: 1600.00,
         desconto: 0,
         precoFinal: 1600.00,
-        subtotal: 3200.00
+        subtotal: 3200.00,
+        estoqueDisponivel: {
+          totalDisponivel: 28,
+          totalReservado: 8,
+          alertas: [{ tipo: 'multiplos_lotes', mensagem: 'Múltiplos lotes' }]
+        },
+        validadeMinima: '2025-09-15',
+        descritivoNF: 'Transdutor linear para ultrassom 7.5 MHz'
       }
     ],
     
