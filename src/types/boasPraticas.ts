@@ -9,13 +9,10 @@ export interface DocumentoBoasPraticas {
 export interface CertificadoBoasPraticas {
   id: string;
   
-  // Identificação (vinculado ao fornecedor)
-  fornecedorId?: string;
-  nomeFornecedor?: string;
-  nomeEmpresa?: string;
-  
   // Documentação
   nomeArquivoPrincipal: string;
+  fabricanteLegal?: string;
+  unidadeFabril?: string;
   documentos: DocumentoBoasPraticas[];
   protocoloPeticionamento?: File | string;
   nomeProtocolo?: string;

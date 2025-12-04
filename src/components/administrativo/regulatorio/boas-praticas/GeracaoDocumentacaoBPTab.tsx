@@ -10,6 +10,10 @@ import { toast } from 'sonner';
 interface GeracaoDocumentacaoBPTabProps {
   nomeArquivoPrincipal: string;
   setNomeArquivoPrincipal: (value: string) => void;
+  fabricanteLegal: string;
+  setFabricanteLegal: (value: string) => void;
+  unidadeFabril: string;
+  setUnidadeFabril: (value: string) => void;
   documentos: DocumentoBoasPraticas[];
   setDocumentos: (docs: DocumentoBoasPraticas[]) => void;
   protocoloPeticionamento?: File;
@@ -20,6 +24,10 @@ interface GeracaoDocumentacaoBPTabProps {
 export const GeracaoDocumentacaoBPTab = ({
   nomeArquivoPrincipal,
   setNomeArquivoPrincipal,
+  fabricanteLegal,
+  setFabricanteLegal,
+  unidadeFabril,
+  setUnidadeFabril,
   documentos,
   setDocumentos,
   protocoloPeticionamento,
@@ -89,6 +97,38 @@ export const GeracaoDocumentacaoBPTab = ({
               placeholder="Ex: Documentação Certificado BPF - Fornecedor 2024"
               className="text-base"
             />
+          </div>
+        </div>
+      </Card>
+
+      {/* Fabricante Legal e Unidade Fabril */}
+      <Card className="p-6">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="fabricante-legal" className="text-base font-semibold">
+                Fabricante Legal
+              </Label>
+              <Input
+                id="fabricante-legal"
+                value={fabricanteLegal}
+                onChange={(e) => setFabricanteLegal(e.target.value)}
+                placeholder="Nome do fabricante legal"
+                className="mt-2"
+              />
+            </div>
+            <div>
+              <Label htmlFor="unidade-fabril" className="text-base font-semibold">
+                Unidade Fabril
+              </Label>
+              <Input
+                id="unidade-fabril"
+                value={unidadeFabril}
+                onChange={(e) => setUnidadeFabril(e.target.value)}
+                placeholder="Nome/endereço da unidade fabril"
+                className="mt-2"
+              />
+            </div>
           </div>
         </div>
       </Card>

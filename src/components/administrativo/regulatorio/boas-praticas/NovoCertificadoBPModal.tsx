@@ -24,11 +24,12 @@ export const NovoCertificadoBPModal = ({
   
   // Estados do primeiro tab
   const [nomeArquivoPrincipal, setNomeArquivoPrincipal] = useState(certificadoEdit?.nomeArquivoPrincipal || '');
+  const [fabricanteLegal, setFabricanteLegal] = useState(certificadoEdit?.fabricanteLegal || '');
+  const [unidadeFabril, setUnidadeFabril] = useState(certificadoEdit?.unidadeFabril || '');
   const [documentos, setDocumentos] = useState<DocumentoBoasPraticas[]>(certificadoEdit?.documentos || []);
   const [protocoloPeticionamento, setProtocoloPeticionamento] = useState<File | undefined>();
   
   // Estados do segundo tab
-  const [fornecedorId, setFornecedorId] = useState(certificadoEdit?.fornecedorId || '');
   const [numeroProcessoAnvisa, setNumeroProcessoAnvisa] = useState(certificadoEdit?.numeroProcessoAnvisa || '');
   const [transacao, setTransacao] = useState(certificadoEdit?.transacao || '');
   const [expediente, setExpediente] = useState(certificadoEdit?.expediente || '');
@@ -54,10 +55,11 @@ export const NovoCertificadoBPModal = ({
     const novoCertificado: CertificadoBoasPraticas = {
       id: certificadoEdit?.id || `cert-${Date.now()}`,
       nomeArquivoPrincipal,
+      fabricanteLegal,
+      unidadeFabril,
       documentos,
       protocoloPeticionamento,
       nomeProtocolo: protocoloPeticionamento?.name,
-      fornecedorId,
       numeroProcessoAnvisa,
       transacao,
       expediente,
@@ -104,6 +106,10 @@ export const NovoCertificadoBPModal = ({
             <GeracaoDocumentacaoBPTab
               nomeArquivoPrincipal={nomeArquivoPrincipal}
               setNomeArquivoPrincipal={setNomeArquivoPrincipal}
+              fabricanteLegal={fabricanteLegal}
+              setFabricanteLegal={setFabricanteLegal}
+              unidadeFabril={unidadeFabril}
+              setUnidadeFabril={setUnidadeFabril}
               documentos={documentos}
               setDocumentos={setDocumentos}
               protocoloPeticionamento={protocoloPeticionamento}
@@ -114,8 +120,6 @@ export const NovoCertificadoBPModal = ({
 
           <TabsContent value="informacoes" className="mt-6">
             <InformacoesRegulatoriasBPTab
-              fornecedorId={fornecedorId}
-              setFornecedorId={setFornecedorId}
               numeroProcessoAnvisa={numeroProcessoAnvisa}
               setNumeroProcessoAnvisa={setNumeroProcessoAnvisa}
               transacao={transacao}
