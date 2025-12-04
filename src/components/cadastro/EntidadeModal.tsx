@@ -7,8 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { X, Save, Upload, Trash2, FileText } from "lucide-react";
+import { X, Save, Upload, Trash2, FileText, Plus, Link2 } from "lucide-react";
 import { useCepLookup } from "@/hooks/useCepLookup";
+import { mockCertificados } from "@/data/boasPraticas";
+import { getStatusLabel, getStatusColor, getAlertaVencimento } from "@/types/boasPraticas";
 
 interface EntidadeModalProps {
   isOpen: boolean;
@@ -19,6 +21,10 @@ interface EntidadeModalProps {
 const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) => {
   const { lookupCep, loading: cepLoading } = useCepLookup();
   const [uploadedDocs, setUploadedDocs] = useState<Array<{ name: string; size: number; type: string }>>([]);
+  const [certificadosVinculados, setCertificadosVinculados] = useState<string[]>([]);
+  const [certificadoSelecionado, setCertificadoSelecionado] = useState<string>("");
+
+  const isFornecedor = tipoEntidade.startsWith('fornecedores_');
 
   const [formData, setFormData] = useState({
     // Dados Gerais
@@ -198,13 +204,16 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
           <Tabs defaultValue="dados-gerais" className="w-full">
-            <TabsList className="grid w-full grid-cols-7">
+            <TabsList className={`grid w-full ${isFornecedor ? 'grid-cols-8' : 'grid-cols-7'}`}>
               <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
               <TabsTrigger value="enderecos">Endereços</TabsTrigger>
               <TabsTrigger value="fiscais">Dados Fiscais</TabsTrigger>
               <TabsTrigger value="bancarios">Dados Bancários</TabsTrigger>
               <TabsTrigger value="credito">Crédito/Restrições</TabsTrigger>
               <TabsTrigger value="documentos">Documentos</TabsTrigger>
+              {isFornecedor && (
+                <TabsTrigger value="boas-praticas">Boas Práticas</TabsTrigger>
+              )}
               <TabsTrigger value="observacoes">Observações</TabsTrigger>
             </TabsList>
 
@@ -1009,6 +1018,119 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                 </div>
               )}
             </TabsContent>
+
+            {/* ABA: BOAS PRÁTICAS (apenas para fornecedores) */}
+            {isFornecedor && (
+              <TabsContent value="boas-praticas" className="space-y-4 mt-4">
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg">Certificados de Boas Práticas</h3>
+                  
+                  {/* Vincular certificado */}
+                  <div className="flex gap-2 items-end">
+                    <div className="flex-1">
+                      <Label htmlFor="certificado_select">Vincular Certificado</Label>
+                      <Select 
+                        value={certificadoSelecionado} 
+                        onValueChange={setCertificadoSelecionado}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione um certificado..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockCertificados
+                            .filter(cert => !certificadosVinculados.includes(cert.id))
+                            .map(cert => (
+                              <SelectItem key={cert.id} value={cert.id}>
+                                {cert.nomeArquivoPrincipal}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button
+                      onClick={() => {
+                        if (certificadoSelecionado) {
+                          setCertificadosVinculados(prev => [...prev, certificadoSelecionado]);
+                          setCertificadoSelecionado("");
+                        }
+                      }}
+                      disabled={!certificadoSelecionado}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Vincular
+                    </Button>
+                  </div>
+
+                  {/* Tabela de certificados vinculados */}
+                  {certificadosVinculados.length > 0 ? (
+                    <div className="border rounded-lg overflow-hidden">
+                      <table className="w-full text-sm">
+                        <thead className="bg-muted">
+                          <tr>
+                            <th className="text-left p-3 font-medium">Nome</th>
+                            <th className="text-left p-3 font-medium">Fabricante Legal</th>
+                            <th className="text-left p-3 font-medium">Unidade Fabril</th>
+                            <th className="text-left p-3 font-medium">Validade</th>
+                            <th className="text-left p-3 font-medium">Status</th>
+                            <th className="text-center p-3 font-medium">Ações</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {certificadosVinculados.map(certId => {
+                            const cert = mockCertificados.find(c => c.id === certId);
+                            if (!cert) return null;
+                            const alerta = getAlertaVencimento(cert.validade);
+                            return (
+                              <tr key={certId} className="border-t">
+                                <td className="p-3">{cert.nomeArquivoPrincipal}</td>
+                                <td className="p-3">{cert.fabricanteLegal || '-'}</td>
+                                <td className="p-3 max-w-[200px] truncate">{cert.unidadeFabril || '-'}</td>
+                                <td className="p-3">
+                                  <div className="flex items-center gap-2">
+                                    {cert.validade ? new Date(cert.validade).toLocaleDateString('pt-BR') : '-'}
+                                    {alerta.tipo && (
+                                      <span className={`text-xs px-2 py-0.5 rounded ${
+                                        alerta.tipo === 'danger' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                                      }`}>
+                                        {alerta.mensagem}
+                                      </span>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="p-3">
+                                  <span className={`text-xs px-2 py-1 rounded ${getStatusColor(cert.status)}`}>
+                                    {getStatusLabel(cert.status)}
+                                  </span>
+                                </td>
+                                <td className="p-3 text-center">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setCertificadosVinculados(prev => prev.filter(id => id !== certId))}
+                                  >
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                  </Button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="border border-dashed rounded-lg p-8 text-center text-muted-foreground">
+                      <Link2 className="h-10 w-10 mx-auto mb-3 opacity-50" />
+                      <p>Nenhum certificado vinculado</p>
+                      <p className="text-xs mt-1">Selecione um certificado acima para vincular a este fornecedor</p>
+                    </div>
+                  )}
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
+                    <p>ℹ️ Os certificados vinculados aparecerão automaticamente no módulo Regulatório / Boas Práticas</p>
+                  </div>
+                </div>
+              </TabsContent>
+            )}
 
             {/* ABA: OBSERVAÇÕES */}
             <TabsContent value="observacoes" className="space-y-4 mt-4">
