@@ -92,6 +92,13 @@ export interface ProdutoPedidoVenda {
   precoFinal: number;
   subtotal: number;
   observacoes?: string;
+  estoqueDisponivel?: {
+    totalDisponivel: number;
+    totalReservado: number;
+    alertas: Array<{ tipo: string; mensagem: string }>;
+  };
+  validadeMinima?: string;
+  descritivoNF?: string;
 }
 
 export interface ItemUsoConsumoPedido {
