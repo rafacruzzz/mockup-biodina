@@ -633,7 +633,7 @@ const Comercial = () => {
             <button onClick={() => setDepartamentoTecnicoTab("chamados")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "chamados" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Chamados Ativos por Assessor</button>
             <button onClick={() => setDepartamentoTecnicoTab("os")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "os" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Ordens de Serviço</button>
             <button onClick={() => setDepartamentoTecnicoTab("rastreabilidade")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "rastreabilidade" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Rastreabilidade</button>
-            <button onClick={() => setDepartamentoTecnicoTab("emprestimos")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "emprestimos" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Empréstimos</button>
+            <button onClick={() => setDepartamentoTecnicoTab("emprestimos")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "emprestimos" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Gestão de Empréstimos</button>
           </div>
         </div>
 
@@ -654,7 +654,7 @@ const Comercial = () => {
       { id: 'licitacao', label: 'Licitação', icon: Gavel },
       { id: 'contratacao', label: 'Contratação', icon: Building2 },
       { id: 'importacao', label: 'Importação Direta', icon: Globe },
-      { id: 'emprestimos', label: 'Empréstimos', icon: HandCoins },
+      { id: 'emprestimos', label: 'Gestão de Empréstimos', icon: HandCoins },
     ];
 
     const renderContent = () => {
