@@ -469,21 +469,21 @@ const DetalhesEntradaModal = ({ isOpen, onOpenChange, pedido, onConfirmarEntrada
               </Button>
             )}
 
-            {pedido.status === 'Aguardando Entrada' && (
+            {['Pedido realizado', 'Mercadoria enviada – Aéreo', 'Mercadoria enviada – marítimo'].includes(pedido.status) && (
               <Button onClick={() => setNfModalOpen(true)} className="bg-blue-600 hover:bg-blue-700">
                 <FileText className="h-4 w-4 mr-2" />
                 Gerar NF de Entrada
               </Button>
             )}
 
-            {pedido.status === 'NF Recebida' && (
+            {['Conferido – conforme', 'Conferido – realizar ajuste'].includes(pedido.status) && (
               <Button onClick={handleConfirmarEntrada} className="bg-green-600 hover:bg-green-700">
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Confirmar Entrada
               </Button>
             )}
 
-            {pedido.status !== 'Cancelado' && pedido.status !== 'Entrada Confirmada' && (
+            {pedido.status !== 'Cancelado' && pedido.status !== 'Entrada no estoque' && (
               <Button variant="destructive" onClick={handleCancelar}>
                 <XCircle className="h-4 w-4 mr-2" />
                 Cancelar
