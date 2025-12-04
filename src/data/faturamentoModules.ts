@@ -98,6 +98,7 @@ export const mockChecklistVendas: ChecklistVenda[] = [
     prazoEntrega: '10 dias úteis',
     dataEntrega: '2025-02-05',
     fretePagarPor: 'Fornecedor',
+    freteRetirarPor: 'DESTINO FINAL',
     entregarRetirarCuidados: 'Equipamento frágil. Manusear com cuidado.',
     nomeCompletoRecebedor: 'Carlos Alberto dos Santos',
     cpfRecebedor: '123.456.789-00',
@@ -108,7 +109,14 @@ export const mockChecklistVendas: ChecklistVenda[] = [
     enderecoEntrega: 'Rua das Flores, 123 - Centro - São Paulo/SP - CEP 01000-000',
     maisInformacoesEntrega: 'Ligar com 1 dia de antecedência para agendar a entrega',
     
-    solicitarUrgencia: false,
+    solicitarUrgencia: true,
+    justificativaUrgencia: 'Cliente necessita do equipamento com urgência para atender demanda de fim de mês.',
+    urgenciaStatus: 'aprovada',
+    autorizadoPor: 'Diretor Comercial - Roberto Fernandes',
+    dataAutorizacao: '2025-01-16',
+    emailAutorizador: 'roberto.fernandes@empresa.com.br',
+    
+    condicoesPagamentoFaturamento: '1ª parcela: R$ 5.250,00 (venc. 19/02/2025) | 2ª parcela: R$ 5.250,00 (venc. 21/03/2025) | 3ª parcela: R$ 5.250,00 (venc. 20/04/2025)',
     
     notaFiscal: {
       numeroNF: '000012345',
@@ -119,6 +127,20 @@ export const mockChecklistVendas: ChecklistVenda[] = [
       protocoloSEFAZ: '135250000012345',
       linkXML: '/downloads/nf-12345.xml',
       linkDANFE: '/downloads/danfe-12345.pdf'
+    },
+    
+    boleto: {
+      dataVencimento: '2025-02-19',
+      valor: 5250.00,
+      numeroDocumento: 'BOL-2025-001234',
+      linkBoleto: '/downloads/boleto-001234.pdf'
+    },
+    
+    gnre: {
+      numeroGuia: 'GNRE-2025-00567',
+      dataVencimento: '2025-01-25',
+      valor: 850.00,
+      linkGNRE: '/downloads/gnre-00567.pdf'
     },
     
     logistica: {
@@ -133,6 +155,85 @@ export const mockChecklistVendas: ChecklistVenda[] = [
       dataSaida: '2025-01-20',
       previsaoEntrega: '2025-01-25',
       dataEntregaEfetiva: '2025-01-24'
+    },
+    
+    transportadora: {
+      nome: 'Transportadora Rápida Ltda',
+      cnpj: '98.765.432/0001-10',
+      telefone: '(11) 3000-4000',
+      email: 'operacoes@transportadorarapida.com.br',
+      custoFrete: 450.00
+    },
+    
+    cte: {
+      numeroCTe: '000045678',
+      serieCTe: '001',
+      chaveAcesso: '35250198765432000110570010000456781234567890',
+      linkRastreamento: 'https://rastreamento.transportadorarapida.com.br/TR123456789BR'
+    },
+    
+    statusEntrega: 'entregue',
+    dataSaidaExpedicao: '2025-01-20',
+    previsaoEntrega: '2025-01-25',
+    dataEntregaEfetiva: '2025-01-24',
+    
+    comprovanteEntrega: {
+      dataEntrega: '2025-01-24',
+      horaEntrega: '10:15',
+      nomeRecebedor: 'Carlos Alberto dos Santos',
+      documentoRecebedor: '123.456.789-00',
+      protocoloCliente: 'PROT-FC-2025-0123',
+      imagemCanhoto: '/uploads/canhoto-12345.jpg'
+    },
+    
+    recebimentoEstoque: {
+      status: 'pronto_faturamento',
+      dataRecebimento: '2025-01-17',
+      horaRecebimento: '09:30',
+      responsavel: 'Pedro Estoquista',
+      numeroLote: 'LT-2025-001',
+      numeroSerie: 'SN-XYZ500-001234',
+      referenciaInterna: 'REF-INT-001',
+      itensConferidos: [
+        {
+          codigoProduto: 'CAT024',
+          descricao: 'Analisador Bioquímico XYZ-500',
+          quantidadeSolicitada: 1,
+          quantidadeConferida: 1,
+          divergencia: false
+        },
+        {
+          codigoProduto: 'REA-001',
+          descricao: 'Kit Reagentes Bioquímicos - 200 testes',
+          quantidadeSolicitada: 10,
+          quantidadeConferida: 10,
+          divergencia: false
+        }
+      ],
+      dataSaidaPrevista: '2025-01-20',
+      dataSaidaEfetiva: '2025-01-20'
+    },
+    
+    timeline: [
+      { status: 'Pedido Criado', data: '2025-01-15', hora: '08:30', responsavel: 'João Silva' },
+      { status: 'Enviado para Estoque', data: '2025-01-15', hora: '14:00', responsavel: 'Sistema' },
+      { status: 'Recebido pelo Estoque', data: '2025-01-17', hora: '09:30', responsavel: 'Pedro Estoquista' },
+      { status: 'Em Separação', data: '2025-01-17', hora: '10:00', responsavel: 'Pedro Estoquista' },
+      { status: 'Pronto para Faturamento', data: '2025-01-18', hora: '16:00', responsavel: 'Pedro Estoquista' },
+      { status: 'Faturado', data: '2025-01-19', hora: '14:30', responsavel: 'Ana Fiscal', observacoes: 'NF-e 000012345 emitida' },
+      { status: 'Em Trânsito', data: '2025-01-20', hora: '08:00', responsavel: 'Transportadora Rápida' },
+      { status: 'Entregue', data: '2025-01-24', hora: '10:15', responsavel: 'Carlos Alberto dos Santos' }
+    ],
+    
+    feedbackEntrega: {
+      statusRecebimento: 'ok',
+      observacoesCliente: 'Equipamento recebido em perfeitas condições. Embalagem intacta.',
+      responsavelFeedback: 'Carlos Alberto dos Santos',
+      dataFeedback: '2025-01-24',
+      anexos: [
+        { id: 'anexo-001', nome: 'foto_recebimento.jpg' },
+        { id: 'anexo-002', nome: 'protocolo_entrega.pdf' }
+      ]
     },
     
     alertas: [
