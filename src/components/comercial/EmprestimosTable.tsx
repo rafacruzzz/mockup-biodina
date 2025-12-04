@@ -13,7 +13,11 @@ import ControleRetornosTab from "./components/ControleRetornosTab";
 import DetalhesEmprestimoComercialModal from "./DetalhesEmprestimoComercialModal";
 import { emprestimosMock, Emprestimo } from "@/data/emprestimos";
 
-const EmprestimosTable = () => {
+interface EmprestimosTableProps {
+  contexto?: 'vendas' | 'departamento-tecnico';
+}
+
+const EmprestimosTable = ({ contexto = 'vendas' }: EmprestimosTableProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [clienteFilter, setClienteFilter] = useState('todos');
@@ -22,8 +26,8 @@ const EmprestimosTable = () => {
   const [isDetalhesModalOpen, setIsDetalhesModalOpen] = useState(false);
   const [selectedEmprestimo, setSelectedEmprestimo] = useState<Emprestimo | null>(null);
 
-  // Usar dados centralizados
-  const emprestimos: Emprestimo[] = emprestimosMock;
+  // Filtrar dados pelo contexto (vendas ou departamento-tecnico)
+  const emprestimos: Emprestimo[] = emprestimosMock.filter(emp => emp.origem === contexto);
 
   const getStatusColor = (status: string) => {
     switch (status) {

@@ -44,7 +44,7 @@ const Comercial = () => {
   const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeTab, setActiveTab] = useState('indicadores');
   const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade" | "analise-editais" | "repositorio">("agenda");
-  const [departamentoTecnicoTab, setDepartamentoTecnicoTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade">("agenda");
+  const [departamentoTecnicoTab, setDepartamentoTecnicoTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade" | "emprestimos">("agenda");
   const [osStatusFilter, setOsStatusFilter] = useState<StatusOS[] | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
@@ -633,6 +633,7 @@ const Comercial = () => {
             <button onClick={() => setDepartamentoTecnicoTab("chamados")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "chamados" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Chamados Ativos por Assessor</button>
             <button onClick={() => setDepartamentoTecnicoTab("os")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "os" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Ordens de Serviço</button>
             <button onClick={() => setDepartamentoTecnicoTab("rastreabilidade")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "rastreabilidade" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Rastreabilidade</button>
+            <button onClick={() => setDepartamentoTecnicoTab("emprestimos")} className={`px-4 py-2 border-b-2 transition-colors ${departamentoTecnicoTab === "emprestimos" ? "border-primary text-primary font-medium" : "border-transparent text-muted-foreground hover:text-foreground"}`}>Empréstimos</button>
           </div>
         </div>
 
@@ -641,6 +642,7 @@ const Comercial = () => {
           {departamentoTecnicoTab === "chamados" && <ChamadosAssessoriaTab departamento="Departamento Técnico" />}
           {departamentoTecnicoTab === "os" && <OrdensServicoTab statusFilterFromAlert={osStatusFilter} departamento="Departamento Técnico" />}
           {departamentoTecnicoTab === "rastreabilidade" && <RastreabilidadeTab />}
+          {departamentoTecnicoTab === "emprestimos" && <EmprestimosTable contexto="departamento-tecnico" />}
         </div>
       </div>
     );
@@ -661,7 +663,7 @@ const Comercial = () => {
         case 'licitacao': return renderOportunidadesPorModalidade('licitacao');
         case 'contratacao': return renderOportunidadesPorModalidade('contratacao_simples');
         case 'importacao': return renderOportunidadesPorModalidade('importacao_direta');
-        case 'emprestimos': return <EmprestimosTable />;
+        case 'emprestimos': return <EmprestimosTable contexto="vendas" />;
         default: return renderIndicadoresEAnalise();
       }
     };

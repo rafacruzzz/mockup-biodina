@@ -22,10 +22,12 @@ export interface Emprestimo {
   data_entrada_fisica?: string;
   observacoes_retorno?: string;
   usuario_retorno?: string;
+  // Campo para separar empréstimos por contexto
+  origem: 'vendas' | 'departamento-tecnico';
 }
 
 export const emprestimosMock: Emprestimo[] = [
-  // Empréstimos para IMP-2024-001
+  // Empréstimos para IMP-2024-001 - VENDAS
   {
     numeroProcesso: "EMP-2024-001",
     cnpjCliente: "12.345.678/0001-99",
@@ -48,7 +50,8 @@ export const emprestimosMock: Emprestimo[] = [
     id_movimentacao_retorno: "MOV-2024-0156",
     data_entrada_fisica: "2024-03-16",
     observacoes_retorno: "Material recebido em perfeitas condições",
-    usuario_retorno: "João Silva"
+    usuario_retorno: "João Silva",
+    origem: 'vendas'
   },
   {
     numeroProcesso: "EMP-2024-004",
@@ -69,7 +72,8 @@ export const emprestimosMock: Emprestimo[] = [
     idImportacaoDireta: "IMP-2024-001",
     status: 'devolvido_nf',
     observacoes_retorno: "Aguardando recebimento físico da versão atualizada",
-    usuario_retorno: "Maria Santos"
+    usuario_retorno: "Maria Santos",
+    origem: 'vendas'
   },
   {
     numeroProcesso: "EMP-2024-008",
@@ -83,10 +87,11 @@ export const emprestimosMock: Emprestimo[] = [
     dataEmprestimo: "2024-02-10",
     dataSaida: "2024-02-11",
     idImportacaoDireta: "IMP-2024-001",
-    status: 'emprestado'
+    status: 'emprestado',
+    origem: 'vendas'
   },
 
-  // Empréstimos para IMP-2024-002
+  // Empréstimos para IMP-2024-002 - VENDAS
   {
     numeroProcesso: "EMP-2024-002",
     cnpjCliente: "98.765.432/0001-11",
@@ -99,7 +104,8 @@ export const emprestimosMock: Emprestimo[] = [
     dataEmprestimo: "2024-02-01",
     dataSaida: "2024-02-02",
     idImportacaoDireta: "IMP-2024-002",
-    status: 'emprestado'
+    status: 'emprestado',
+    origem: 'vendas'
   },
   {
     numeroProcesso: "EMP-2024-005",
@@ -113,7 +119,8 @@ export const emprestimosMock: Emprestimo[] = [
     dataEmprestimo: "2024-03-10",
     dataSaida: "2024-03-11",
     idImportacaoDireta: "IMP-2024-002",
-    status: 'emprestado'
+    status: 'emprestado',
+    origem: 'vendas'
   },
   {
     numeroProcesso: "EMP-2024-009",
@@ -127,10 +134,11 @@ export const emprestimosMock: Emprestimo[] = [
     dataEmprestimo: "2023-11-15",
     dataSaida: "2023-11-16",
     idImportacaoDireta: "IMP-2024-002",
-    status: 'vencido'
+    status: 'vencido',
+    origem: 'vendas'
   },
 
-  // Empréstimos para IMP-2024-003
+  // Empréstimos para IMP-2024-003 - VENDAS
   {
     numeroProcesso: "EMP-2024-003",
     cnpjCliente: "11.222.333/0001-44",
@@ -143,7 +151,8 @@ export const emprestimosMock: Emprestimo[] = [
     dataEmprestimo: "2023-12-10",
     dataSaida: "2023-12-11",
     idImportacaoDireta: "IMP-2024-003",
-    status: 'vencido'
+    status: 'vencido',
+    origem: 'vendas'
   },
   {
     numeroProcesso: "EMP-2024-006",
@@ -167,10 +176,11 @@ export const emprestimosMock: Emprestimo[] = [
     id_movimentacao_retorno: "MOV-2024-0089",
     data_entrada_fisica: "2024-02-16",
     observacoes_retorno: "Material recebido conforme especificado",
-    usuario_retorno: "Carlos Oliveira"
+    usuario_retorno: "Carlos Oliveira",
+    origem: 'vendas'
   },
 
-  // Empréstimos pontuais (sem vinculação com importação direta) - BRL
+  // Empréstimos pontuais BRL - VENDAS
   {
     numeroProcesso: "EMP-2024-011",
     cnpjCliente: "77.888.999/0001-22",
@@ -182,7 +192,8 @@ export const emprestimosMock: Emprestimo[] = [
     moeda: 'BRL',
     dataEmprestimo: "2024-03-20",
     dataSaida: "2024-03-21",
-    status: 'emprestado'
+    status: 'emprestado',
+    origem: 'vendas'
   },
   {
     numeroProcesso: "EMP-2024-012",
@@ -205,12 +216,13 @@ export const emprestimosMock: Emprestimo[] = [
     id_movimentacao_retorno: "MOV-2024-0201",
     data_entrada_fisica: "2024-03-26",
     observacoes_retorno: "Equipamento recebido em ótimo estado de conservação",
-    usuario_retorno: "Ana Paula Costa"
+    usuario_retorno: "Ana Paula Costa",
+    origem: 'vendas'
   },
 
-  // Empréstimos sem vinculação (para mostrar na tabela geral)
+  // Empréstimos DEPARTAMENTO TÉCNICO
   {
-    numeroProcesso: "EMP-2024-007",
+    numeroProcesso: "DT-EMP-2024-001",
     cnpjCliente: "55.666.777/0001-88",
     nomeCliente: "Hospital São Paulo",
     numeroDanfeEmprestimo: "55240155666777000188550010000000081123456798",
@@ -220,10 +232,11 @@ export const emprestimosMock: Emprestimo[] = [
     moeda: 'USD',
     dataEmprestimo: "2024-03-05",
     dataSaida: "2024-03-06",
-    status: 'emprestado'
+    status: 'emprestado',
+    origem: 'departamento-tecnico'
   },
   {
-    numeroProcesso: "EMP-2024-010",
+    numeroProcesso: "DT-EMP-2024-002",
     cnpjCliente: "66.777.888/0001-99",
     nomeCliente: "Hospital Israelita Albert Einstein",
     numeroDanfeEmprestimo: "55240166777888000199550010000000101123456800",
@@ -241,12 +254,11 @@ export const emprestimosMock: Emprestimo[] = [
     valorRetornado: 5800.00,
     status: 'devolvido_nf',
     observacoes_retorno: "DANFE registrada, aguardando chegada física no estoque",
-    usuario_retorno: "Pedro Henrique"
+    usuario_retorno: "Pedro Henrique",
+    origem: 'departamento-tecnico'
   },
-
-  // Novos casos para demonstrar diferentes status
   {
-    numeroProcesso: "EMP-2024-013",
+    numeroProcesso: "DT-EMP-2024-003",
     cnpjCliente: "12.345.678/0001-99",
     nomeCliente: "Hospital Albert Einstein",
     numeroDanfeEmprestimo: "55240112345678000199550010000000131123456805",
@@ -266,7 +278,22 @@ export const emprestimosMock: Emprestimo[] = [
     id_movimentacao_retorno: "MOV-2024-0287",
     data_entrada_fisica: "2024-03-25",
     observacoes_retorno: "Material recebido com avarias. Valor reduzido devido ao estado.",
-    usuario_retorno: "Juliana Fernandes"
+    usuario_retorno: "Juliana Fernandes",
+    origem: 'departamento-tecnico'
+  },
+  {
+    numeroProcesso: "DT-EMP-2024-004",
+    cnpjCliente: "33.444.555/0001-66",
+    nomeCliente: "Hospital das Clínicas - USP",
+    numeroDanfeEmprestimo: "55240133444555000166550010000000151123456807",
+    referenciaProdutoEmprestado: "CALIBRADOR-TECNICO",
+    descricaoProdutoEmprestado: "Kit Calibrador Técnico para ABL90",
+    valorEmprestimo: 18500.00,
+    moeda: 'BRL',
+    dataEmprestimo: "2024-04-01",
+    dataSaida: "2024-04-02",
+    status: 'emprestado',
+    origem: 'departamento-tecnico'
   }
 ];
 
