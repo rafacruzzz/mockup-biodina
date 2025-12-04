@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { ColaboradorData } from '@/types/colaborador';
+import { EmpresaVinculada } from '@/types/permissions';
 
 interface User {
   id: string;
@@ -14,6 +15,7 @@ interface User {
   colaboradorId?: string;
   fotoPerfil?: File;
   colaboradorData?: ColaboradorData;
+  empresasVinculadas?: EmpresaVinculada[];
 }
 
 interface UserContextType {

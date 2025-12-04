@@ -4,13 +4,15 @@ import {
   Menu, X, Home, Users, Settings, 
   BarChart2, FileText, Database, 
   ShoppingCart, DollarSign, Briefcase, 
-  Package, Calculator, UserCheck, Cpu, Crown
+  Package, Calculator, UserCheck, Cpu, Crown,
+  ChevronDown
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import UserProfileMenu from "@/components/UserProfileMenu";
 import FloatingChat from "@/components/chat/FloatingChat";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { useUser } from "@/contexts/UserContext";
+import EmpresaUsuarioSwitcher from "@/components/layout/EmpresaUsuarioSwitcher";
 
 interface NavOverrides {
   order?: string[];
@@ -24,9 +26,13 @@ interface SidebarLayoutProps {
 
 const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isEmpresaSwitcherOpen, setIsEmpresaSwitcherOpen] = useState(false);
   const location = useLocation();
-  const { empresaAtual, isMasterUser, modulosDisponiveis } = useEmpresa();
+  const { empresaAtual, filialAtual, isMasterUser, modulosDisponiveis } = useEmpresa();
   const { user } = useUser();
+
+  // Nome da empresa/filial atual
+  const nomeEmpresaAtual = filialAtual?.nome || empresaAtual?.nome || 'iMuv';
 
   const defaultMenuItems = [
     // { name: "Aplicativos", path: "/home", icon: <Home size={20} />, id: "aplicativos" }, // Escondido temporariamente
@@ -106,14 +112,22 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
         )}
       >
         <div className="flex h-16 items-center justify-between px-4 border-b border-gray-100">
-          <div className={cn("flex items-center", !isSidebarOpen && "justify-center w-full")}>
-            <span className={cn("text-xl font-bold text-biodina-blue", !isSidebarOpen && "hidden")}>
-              {empresaAtual?.nome || 'iMuv'}
+          <button 
+            onClick={() => setIsEmpresaSwitcherOpen(true)}
+            className={cn(
+              "flex items-center gap-1 hover:bg-gray-50 rounded-lg p-2 transition-colors cursor-pointer",
+              !isSidebarOpen && "justify-center w-full"
+            )}
+            title="Trocar empresa"
+          >
+            <span className={cn("text-xl font-bold text-biodina-blue truncate max-w-[140px]", !isSidebarOpen && "hidden")}>
+              {nomeEmpresaAtual}
             </span>
-            <span className={cn("text-sm text-biodina-gold ml-2", !isSidebarOpen && "hidden")}>
+            <span className={cn("text-sm text-biodina-gold", !isSidebarOpen && "hidden")}>
               Sistemas
             </span>
-          </div>
+            <ChevronDown className={cn("h-4 w-4 text-muted-foreground ml-1", !isSidebarOpen && "hidden")} />
+          </button>
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
             className="text-gray-400 hover:text-biodina-blue p-2 rounded-lg hover:bg-gray-50 transition-colors"
@@ -187,6 +201,12 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
 
       {/* Chat Flutuante */}
       <FloatingChat />
+
+      {/* Modal de troca de empresa */}
+      <EmpresaUsuarioSwitcher 
+        isOpen={isEmpresaSwitcherOpen} 
+        onClose={() => setIsEmpresaSwitcherOpen(false)} 
+      />
     </div>
   );
 };
