@@ -171,6 +171,7 @@ export interface ChecklistVenda {
   numeroParcelas?: number;
   instrucoesBoleto?: string;
   documentosNF?: string[];
+  condicoesPagamentoFaturamento?: string;
   
   // Destinatário
   destinatario?: {
@@ -218,7 +219,23 @@ export interface ChecklistVenda {
     linkDANFE?: string;
   };
   
-  // Logística
+  // Boleto
+  boleto?: {
+    dataVencimento: string;
+    valor: number;
+    numeroDocumento: string;
+    linkBoleto?: string;
+  };
+  
+  // GNRE
+  gnre?: {
+    numeroGuia: string;
+    dataVencimento: string;
+    valor: number;
+    linkGNRE?: string;
+  };
+  
+  // Logística (formato legado)
   logistica?: {
     transportadora: {
       nome: string;
@@ -231,6 +248,85 @@ export interface ChecklistVenda {
     dataSaida?: string;
     previsaoEntrega?: string;
     dataEntregaEfetiva?: string;
+  };
+  
+  // Transportadora (novo formato)
+  transportadora?: {
+    nome: string;
+    cnpj: string;
+    telefone?: string;
+    email?: string;
+    custoFrete?: number;
+  };
+  
+  // CT-e
+  cte?: {
+    numeroCTe: string;
+    serieCTe: string;
+    chaveAcesso: string;
+    linkRastreamento?: string;
+  };
+  
+  // Status de entrega e expedição
+  statusEntrega?: 'aguardando_coleta' | 'em_transito' | 'em_rota_entrega' | 'entregue' | 'devolvido';
+  dataSaidaExpedicao?: string;
+  previsaoEntrega?: string;
+  dataEntregaEfetiva?: string;
+  
+  // Comprovante de Entrega
+  comprovanteEntrega?: {
+    dataEntrega: string;
+    horaEntrega: string;
+    nomeRecebedor: string;
+    documentoRecebedor?: string;
+    protocoloCliente?: string;
+    imagemCanhoto?: string;
+  };
+  
+  // Recebimento Estoque
+  recebimentoEstoque?: {
+    status: 'recebido' | 'em_separacao' | 'pronto_faturamento';
+    dataRecebimento: string;
+    horaRecebimento: string;
+    responsavel: string;
+    numeroLote?: string;
+    numeroSerie?: string;
+    referenciaInterna?: string;
+    itensConferidos?: Array<{
+      codigoProduto: string;
+      descricao: string;
+      quantidadeSolicitada: number;
+      quantidadeConferida: number;
+      divergencia?: boolean;
+      tipoDivergencia?: 'falta' | 'dano' | 'substituicao';
+    }>;
+    observacoesDivergencia?: string;
+    dataSaidaPrevista?: string;
+    dataSaidaEfetiva?: string;
+  };
+  
+  // Timeline de eventos
+  timeline?: Array<{
+    status: string;
+    data: string;
+    hora: string;
+    responsavel?: string;
+    observacoes?: string;
+  }>;
+  
+  // Feedback de Entrega
+  feedbackEntrega?: {
+    statusRecebimento: 'ok' | 'com_avarias' | 'temperatura_errada' | 'incompleto' | 'produto_errado' | 'devolucao' | 'outros';
+    observacoesCliente?: string;
+    outrosDetalhes?: string;
+    acoesTomadas?: string;
+    responsavelFeedback: string;
+    dataFeedback: string;
+    anexos?: Array<{
+      id: string;
+      nome: string;
+      url?: string;
+    }>;
   };
   
   // Alertas

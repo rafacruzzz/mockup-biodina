@@ -440,13 +440,31 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
                   <p className="text-base">{pedido.finalidadeNF || '-'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Forma de Pagamento</label>
-                  <p className="text-base">{pedido.formaPagamento || '-'}</p>
-                </div>
-                <div>
                   <label className="text-sm font-medium text-muted-foreground">Emails para NF</label>
                   <p className="text-sm">{pedido.emailsNF || '-'}</p>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Seção Separada: Configurações Fiscais (IR) */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <DollarSign className="h-5 w-5" />
+                  Configurações Fiscais
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Destacar IR?</label>
+                  <p className="text-base font-medium">{pedido.destacarIR ? 'Sim' : 'Não'}</p>
+                </div>
+                {pedido.destacarIR && pedido.percentualIR && (
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Percentual IR</label>
+                    <p className="text-base">{pedido.percentualIR}%</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -496,26 +514,24 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-4">
                 <div>
+                  <label className="text-sm font-medium text-muted-foreground">Forma de Pagamento</label>
+                  <p className="text-base">{pedido.formaPagamento || '-'}</p>
+                </div>
+                <div>
                   <label className="text-sm font-medium text-muted-foreground">Condições de Pagamento</label>
                   <p className="text-base">{pedido.condicoesPagamento || '-'}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Conta Bancária de Recebimento</label>
+                  <p className="text-base">{pedido.contaBancariaRecebimento || '-'}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Número de Parcelas</label>
                   <p className="text-base">{pedido.numeroParcelas || '-'}</p>
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Destacar IR?</label>
-                  <p className="text-base">{pedido.destacarIR ? 'Sim' : 'Não'}</p>
-                </div>
-                {pedido.destacarIR && pedido.percentualIR && (
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground">Percentual IR</label>
-                    <p className="text-base">{pedido.percentualIR}%</p>
-                  </div>
-                )}
                 <div className="col-span-2">
-                  <label className="text-sm font-medium text-muted-foreground">Conta Bancária de Recebimento</label>
-                  <p className="text-base">{pedido.contaBancariaRecebimento || '-'}</p>
+                  <label className="text-sm font-medium text-muted-foreground">Condições (Parcelas, Vencimentos)</label>
+                  <p className="text-base">{pedido.condicoesPagamentoFaturamento || '-'}</p>
                 </div>
                 {pedido.instrucoesBoleto && (
                   <div className="col-span-2">
@@ -558,11 +574,12 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
 
           {/* ABA 4: FRETE */}
           <TabsContent value="frete" className="space-y-4">
+            {/* Seção 1: Informações Básicas de Frete */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Truck className="h-5 w-5" />
-                  Informações de Frete
+                  Informações Básicas de Frete
                 </CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-4">
@@ -571,26 +588,38 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
                   <p className="text-base font-medium">{pedido.tipoFrete || '-'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Prazo de Entrega</label>
+                  <label className="text-sm font-medium text-muted-foreground">Prazo Máximo de Entrega</label>
                   <p className="text-base">{pedido.prazoEntrega || '-'}</p>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Data Prevista de Entrega</label>
+                  <label className="text-sm font-medium text-muted-foreground">Data de Entrega (Agendada)</label>
                   <p className="text-base">{pedido.dataEntrega ? formatDate(pedido.dataEntrega) : '-'}</p>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Seção 2: Responsabilidades */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Responsabilidades</CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 gap-4">
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Frete a Pagar Por</label>
                   <p className="text-base">{pedido.fretePagarPor || '-'}</p>
                 </div>
-                {pedido.entregarRetirarCuidados && (
-                  <div className="col-span-2">
-                    <label className="text-sm font-medium text-muted-foreground">Cuidados na Entrega/Retirada</label>
-                    <p className="text-sm text-muted-foreground">{pedido.entregarRetirarCuidados}</p>
-                  </div>
-                )}
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Frete a Retirar Por</label>
+                  <p className="text-base">{pedido.freteRetirarPor || '-'}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Entregar/Retirar aos Cuidados de Quem</label>
+                  <p className="text-base">{pedido.entregarRetirarCuidados || '-'}</p>
+                </div>
               </CardContent>
             </Card>
 
+            {/* Seção 3: Dados do Recebedor */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -624,6 +653,7 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
               </CardContent>
             </Card>
 
+            {/* Seção 4: Detalhes da Entrega */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -653,17 +683,18 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
               </CardContent>
             </Card>
 
+            {/* Seção 5: Urgência e Autorização */}
             {pedido.solicitarUrgencia && (
-              <Card className="border-orange-500 bg-orange-50">
+              <Card className="border-orange-500 bg-orange-50 dark:bg-orange-950/20">
                 <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2 text-orange-700">
+                  <CardTitle className="text-lg flex items-center gap-2 text-orange-700 dark:text-orange-400">
                     <AlertCircle className="h-5 w-5" />
-                    Pedido Urgente
+                    Urgência e Autorização
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
+                <CardContent className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-orange-700">Status da Solicitação</label>
+                    <label className="text-sm font-medium text-orange-700 dark:text-orange-400">Status da Solicitação</label>
                     <div className="mt-1">
                       <Badge className={
                         pedido.urgenciaStatus === 'aprovada' ? 'bg-green-600 text-white' :
@@ -678,22 +709,28 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
                   </div>
                   {pedido.justificativaUrgencia && (
                     <div>
-                      <label className="text-sm font-medium text-orange-700">Justificativa</label>
-                      <p className="text-sm text-orange-900 mt-1">{pedido.justificativaUrgencia}</p>
+                      <label className="text-sm font-medium text-orange-700 dark:text-orange-400">Justificativa da Urgência</label>
+                      <p className="text-sm text-orange-900 dark:text-orange-300 mt-1">{pedido.justificativaUrgencia}</p>
                     </div>
                   )}
                   {pedido.autorizadoPor && (
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium text-orange-700">Autorizado Por</label>
-                        <p className="text-sm text-orange-900">{pedido.autorizadoPor}</p>
+                        <label className="text-sm font-medium text-orange-700 dark:text-orange-400">Autorizado Por</label>
+                        <p className="text-sm text-orange-900 dark:text-orange-300">{pedido.autorizadoPor}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-orange-700">Data de Autorização</label>
-                        <p className="text-sm text-orange-900">
+                        <label className="text-sm font-medium text-orange-700 dark:text-orange-400">Data de Autorização</label>
+                        <p className="text-sm text-orange-900 dark:text-orange-300">
                           {pedido.dataAutorizacao ? formatDate(pedido.dataAutorizacao) : '-'}
                         </p>
                       </div>
+                      {pedido.emailAutorizador && (
+                        <div className="col-span-2">
+                          <label className="text-sm font-medium text-orange-700 dark:text-orange-400">Email do Autorizador</label>
+                          <p className="text-sm text-orange-900 dark:text-orange-300">{pedido.emailAutorizador}</p>
+                        </div>
+                      )}
                     </div>
                   )}
                 </CardContent>
@@ -703,11 +740,15 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
 
           {/* ABA 5: ACOMPANHAMENTO DO PEDIDO */}
           <TabsContent value="acompanhamento" className="space-y-4">
+            {/* Timeline de Status / Progresso do Pedido */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Status Atual</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Clock className="h-5 w-5" />
+                  Progresso do Pedido
+                </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <div className="flex items-center gap-4">
                   <Badge className={`${getStatusColor(pedido.status)} text-lg py-2 px-4`}>
                     {pedido.status}
@@ -718,161 +759,519 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
                     </p>
                   </div>
                 </div>
+                
+                {/* Timeline de eventos (se disponível) */}
+                {pedido.timeline && pedido.timeline.length > 0 && (
+                  <div className="space-y-3 mt-4 pt-4 border-t">
+                    <h4 className="text-sm font-semibold">Histórico de Eventos</h4>
+                    <div className="space-y-3">
+                      {pedido.timeline.map((evento: any, index: number) => (
+                        <div key={index} className="flex items-start gap-3">
+                          <div className="p-2 rounded-full bg-primary text-primary-foreground">
+                            <Clock className="h-4 w-4" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                              <p className="font-medium text-sm">{evento.status}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {evento.data} às {evento.hora}
+                              </p>
+                            </div>
+                            {evento.responsavel && (
+                              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                                <User className="h-3 w-3" />
+                                {evento.responsavel}
+                              </p>
+                            )}
+                            {evento.observacoes && (
+                              <p className="text-xs text-muted-foreground mt-1">{evento.observacoes}</p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
-            {pedido.notaFiscal && (
-              <Card className="border-blue-500 bg-blue-50">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2 text-blue-700">
-                    <FileText className="h-5 w-5" />
-                    Nota Fiscal Emitida
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-blue-700">Número da NF</label>
-                      <p className="text-base font-bold text-blue-900">{pedido.notaFiscal.numeroNF}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-blue-700">Série</label>
-                      <p className="text-base text-blue-900">{pedido.notaFiscal.serieNF}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-blue-700">Data de Emissão</label>
-                      <p className="text-base text-blue-900">{formatDate(pedido.notaFiscal.dataEmissao)}</p>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-blue-700">Chave de Acesso</label>
-                    <p className="text-sm text-blue-900 font-mono">{pedido.notaFiscal.chaveAcesso}</p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-blue-700">Protocolo SEFAZ</label>
-                    <p className="text-sm text-blue-900">{pedido.notaFiscal.protocoloSEFAZ}</p>
-                  </div>
-                  <div className="flex gap-2 pt-2">
-                    {pedido.notaFiscal.linkXML && (
-                      <Button size="sm" variant="outline" className="border-blue-600 text-blue-700">
-                        <FileDown className="h-4 w-4 mr-2" />
-                        Download XML
-                      </Button>
-                    )}
-                    {pedido.notaFiscal.linkDANFE && (
-                      <Button size="sm" variant="outline" className="border-blue-600 text-blue-700">
-                        <FileDown className="h-4 w-4 mr-2" />
-                        Visualizar DANFE
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {pedido.logistica && (
-              <Card className="border-green-500 bg-green-50">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2 text-green-700">
-                    <Truck className="h-5 w-5" />
-                    Informações de Logística
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-green-700">Transportadora</label>
-                      <p className="text-base font-medium text-green-900">{pedido.logistica.transportadora.nome}</p>
-                      <p className="text-sm text-green-700">{pedido.logistica.transportadora.cnpj}</p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-green-700">Status de Entrega</label>
-                      <Badge className={
-                        pedido.logistica.statusEntrega === 'entregue' ? 'bg-green-700 text-white' :
-                        pedido.logistica.statusEntrega === 'em_rota_entrega' ? 'bg-blue-600 text-white' :
-                        'bg-orange-600 text-white'
-                      }>
-                        {getStatusEntregaLabel(pedido.logistica.statusEntrega)}
-                      </Badge>
-                    </div>
-                  </div>
-                  {pedido.logistica.codigoRastreamento && (
-                    <div>
-                      <label className="text-sm font-medium text-green-700">Código de Rastreamento</label>
-                      <p className="text-base font-mono text-green-900">{pedido.logistica.codigoRastreamento}</p>
-                    </div>
-                  )}
-                  <div className="grid grid-cols-3 gap-4">
-                    {pedido.logistica.dataSaida && (
-                      <div>
-                        <label className="text-sm font-medium text-green-700">Data de Saída</label>
-                        <p className="text-sm text-green-900">{formatDate(pedido.logistica.dataSaida)}</p>
-                      </div>
-                    )}
-                    {pedido.logistica.previsaoEntrega && (
-                      <div>
-                        <label className="text-sm font-medium text-green-700">Previsão de Entrega</label>
-                        <p className="text-sm text-green-900">{formatDate(pedido.logistica.previsaoEntrega)}</p>
-                      </div>
-                    )}
-                    {pedido.logistica.dataEntregaEfetiva && (
-                      <div>
-                        <label className="text-sm font-medium text-green-700">Entrega Realizada</label>
-                        <p className="text-sm text-green-900 font-bold">{formatDate(pedido.logistica.dataEntregaEfetiva)}</p>
-                      </div>
-                    )}
-                  </div>
-                  {pedido.logistica.linkRastreamento && (
-                    <div className="pt-2">
-                      <Button size="sm" variant="outline" className="border-green-700 text-green-800">
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Rastrear Pedido
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-
-            {pedido.alertas && pedido.alertas.length > 0 && (
+            {/* Confirmação de Recebimento Interno (Estoque/Expedição) */}
+            {pedido.recebimentoEstoque && (
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5" />
-                    Alertas e Notificações
+                    <Package className="h-5 w-5" />
+                    Confirmação de Recebimento Interno (Estoque/Expedição)
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {pedido.alertas.map((alerta, index) => (
-                      <div key={index} className="flex gap-3 p-3 border rounded-lg bg-muted/30">
-                        <div className="flex-shrink-0 mt-1">
-                          {getAlertIcon(alerta.tipo)}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <h4 className="text-sm font-semibold">{alerta.titulo}</h4>
-                            <Badge variant="outline" className={getPrioridadeColor(alerta.prioridade)}>
-                              {alerta.prioridade.charAt(0).toUpperCase() + alerta.prioridade.slice(1)}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground mt-1">{alerta.mensagem}</p>
-                          <p className="text-xs text-muted-foreground mt-2 flex items-center gap-2">
-                            <Calendar className="h-3 w-3" />
-                            {formatDate(alerta.dataAlerta)} às {alerta.horaAlerta}
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">Status Atual:</span>
+                    <Badge variant={pedido.recebimentoEstoque.status === 'pronto_faturamento' ? 'default' : 'secondary'}>
+                      {pedido.recebimentoEstoque.status === 'recebido' && 'Recebido'}
+                      {pedido.recebimentoEstoque.status === 'em_separacao' && 'Em Separação'}
+                      {pedido.recebimentoEstoque.status === 'pronto_faturamento' && 'Pronto para Faturamento'}
+                    </Badge>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Data/Hora Recebimento</p>
+                        <p className="text-sm font-medium">
+                          {pedido.recebimentoEstoque.dataRecebimento} às {pedido.recebimentoEstoque.horaRecebimento}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Responsável</p>
+                        <p className="text-sm font-medium">{pedido.recebimentoEstoque.responsavel}</p>
+                      </div>
+                    </div>
+                    {(pedido.recebimentoEstoque.numeroLote || pedido.recebimentoEstoque.numeroSerie) && (
+                      <div>
+                        <p className="text-xs text-muted-foreground">Lote/Número de Série</p>
+                        <p className="text-sm font-medium">
+                          {pedido.recebimentoEstoque.numeroLote && `Lote: ${pedido.recebimentoEstoque.numeroLote}`}
+                          {pedido.recebimentoEstoque.numeroLote && pedido.recebimentoEstoque.numeroSerie && ' | '}
+                          {pedido.recebimentoEstoque.numeroSerie && `Nº Série: ${pedido.recebimentoEstoque.numeroSerie}`}
+                        </p>
+                      </div>
+                    )}
+                    {pedido.recebimentoEstoque.referenciaInterna && (
+                      <div>
+                        <p className="text-xs text-muted-foreground">Referência Interna</p>
+                        <p className="text-sm font-medium">{pedido.recebimentoEstoque.referenciaInterna}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Tabela de Itens Conferidos */}
+                  {pedido.recebimentoEstoque.itensConferidos && pedido.recebimentoEstoque.itensConferidos.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-3">Itens Conferidos</h4>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Código</TableHead>
+                            <TableHead>Descrição</TableHead>
+                            <TableHead className="text-right">Solicitado</TableHead>
+                            <TableHead className="text-right">Conferido</TableHead>
+                            <TableHead className="text-center">Status</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {pedido.recebimentoEstoque.itensConferidos.map((item: any, index: number) => (
+                            <TableRow key={index}>
+                              <TableCell className="font-medium">{item.codigoProduto}</TableCell>
+                              <TableCell>{item.descricao}</TableCell>
+                              <TableCell className="text-right">{item.quantidadeSolicitada}</TableCell>
+                              <TableCell className="text-right">{item.quantidadeConferida}</TableCell>
+                              <TableCell className="text-center">
+                                {item.divergencia ? (
+                                  <Badge variant="destructive" className="gap-1">
+                                    <AlertTriangle className="h-3 w-3" />
+                                    {item.tipoDivergencia === 'falta' && 'Falta'}
+                                    {item.tipoDivergencia === 'dano' && 'Avaria'}
+                                    {item.tipoDivergencia === 'substituicao' && 'Substituído'}
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="default" className="gap-1">
+                                    <CheckCircle className="h-3 w-3" />
+                                    OK
+                                  </Badge>
+                                )}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
+
+                  {/* Divergências */}
+                  {pedido.recebimentoEstoque.observacoesDivergencia && (
+                    <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                      <div className="flex items-start gap-2">
+                        <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mt-0.5" />
+                        <div>
+                          <p className="text-xs font-semibold text-yellow-900 dark:text-yellow-100">
+                            Divergências Identificadas
+                          </p>
+                          <p className="text-xs text-yellow-800 dark:text-yellow-300 mt-1">
+                            {pedido.recebimentoEstoque.observacoesDivergencia}
                           </p>
                         </div>
                       </div>
-                    ))}
+                    </div>
+                  )}
+
+                  {/* Previsão de Saída */}
+                  {(pedido.recebimentoEstoque.dataSaidaPrevista || pedido.recebimentoEstoque.dataSaidaEfetiva) && (
+                    <div className="grid grid-cols-2 gap-4">
+                      {pedido.recebimentoEstoque.dataSaidaPrevista && (
+                        <div>
+                          <p className="text-xs text-muted-foreground">Previsão de Saída</p>
+                          <p className="text-sm font-medium">{pedido.recebimentoEstoque.dataSaidaPrevista}</p>
+                        </div>
+                      )}
+                      {pedido.recebimentoEstoque.dataSaidaEfetiva && (
+                        <div>
+                          <p className="text-xs text-muted-foreground">Saída Efetiva</p>
+                          <p className="text-sm font-medium">{pedido.recebimentoEstoque.dataSaidaEfetiva}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Documentação Fiscal e Faturamento */}
+            {pedido.notaFiscal && (
+              <Card className="border-blue-500 bg-blue-50 dark:bg-blue-950/20">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2 text-blue-700 dark:text-blue-400">
+                    <FileText className="h-5 w-5" />
+                    Documentação Fiscal e Faturamento
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* NF-e */}
+                  <div>
+                    <h4 className="text-sm font-semibold mb-3 text-blue-700 dark:text-blue-400">Nota Fiscal Eletrônica (NF-e)</h4>
+                    <div className="p-4 bg-white/50 dark:bg-background/50 rounded-lg space-y-3">
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Número NF</p>
+                          <p className="text-sm font-bold text-blue-900 dark:text-blue-100">{pedido.notaFiscal.numeroNF}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Série</p>
+                          <p className="text-sm font-medium text-blue-900 dark:text-blue-100">{pedido.notaFiscal.serieNF}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Data de Emissão</p>
+                          <p className="text-sm font-medium text-blue-900 dark:text-blue-100">{formatDate(pedido.notaFiscal.dataEmissao)}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Chave de Acesso</p>
+                        <p className="text-sm text-blue-900 dark:text-blue-100 font-mono">{pedido.notaFiscal.chaveAcesso}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Protocolo SEFAZ</p>
+                        <p className="text-sm text-blue-900 dark:text-blue-100">{pedido.notaFiscal.protocoloSEFAZ}</p>
+                      </div>
+                      <div className="flex gap-2 pt-2">
+                        {pedido.notaFiscal.linkXML && (
+                          <Button size="sm" variant="outline" className="border-blue-600 text-blue-700 dark:border-blue-400 dark:text-blue-400">
+                            <FileDown className="h-4 w-4 mr-2" />
+                            Download XML
+                          </Button>
+                        )}
+                        {pedido.notaFiscal.linkDANFE && (
+                          <Button size="sm" variant="outline" className="border-blue-600 text-blue-700 dark:border-blue-400 dark:text-blue-400">
+                            <FileDown className="h-4 w-4 mr-2" />
+                            Visualizar DANFE
+                          </Button>
+                        )}
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Boleto */}
+                  {pedido.boleto && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-3 text-blue-700 dark:text-blue-400">Boleto Bancário</h4>
+                      <div className="p-4 bg-white/50 dark:bg-background/50 rounded-lg">
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <p className="text-xs text-muted-foreground">Vencimento</p>
+                            <p className="text-sm font-medium">{pedido.boleto.dataVencimento}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Valor</p>
+                            <p className="text-sm font-medium">{formatCurrency(pedido.boleto.valor)}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Número</p>
+                            <p className="text-sm font-medium">{pedido.boleto.numeroDocumento}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* GNRE */}
+                  {pedido.gnre && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-3 text-blue-700 dark:text-blue-400">GNRE</h4>
+                      <div className="p-4 bg-white/50 dark:bg-background/50 rounded-lg">
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <p className="text-xs text-muted-foreground">Guia</p>
+                            <p className="text-sm font-medium">{pedido.gnre.numeroGuia}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Vencimento</p>
+                            <p className="text-sm font-medium">{pedido.gnre.dataVencimento}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Valor</p>
+                            <p className="text-sm font-medium">{formatCurrency(pedido.gnre.valor)}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Condições de Pagamento/Parcelas */}
+                  {pedido.condicoesPagamentoFaturamento && (
+                    <div className="p-3 border rounded-lg">
+                      <h5 className="text-sm font-medium mb-2">Condições (Parcelas, Vencimentos)</h5>
+                      <p className="text-sm text-muted-foreground">{pedido.condicoesPagamentoFaturamento}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Expedição e Logística */}
+            {pedido.transportadora && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Truck className="h-5 w-5" />
+                    Expedição e Logística
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Transportadora */}
+                  <div>
+                    <h4 className="text-sm font-semibold mb-3">Transportadora</h4>
+                    <div className="p-4 bg-muted/50 rounded-lg">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Nome</p>
+                          <p className="text-sm font-medium">{pedido.transportadora.nome}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">CNPJ</p>
+                          <p className="text-sm font-medium">{pedido.transportadora.cnpj}</p>
+                        </div>
+                        {pedido.transportadora.telefone && (
+                          <div>
+                            <p className="text-xs text-muted-foreground">Telefone</p>
+                            <p className="text-sm font-medium">{pedido.transportadora.telefone}</p>
+                          </div>
+                        )}
+                        {pedido.transportadora.email && (
+                          <div>
+                            <p className="text-xs text-muted-foreground">E-mail</p>
+                            <p className="text-sm font-medium">{pedido.transportadora.email}</p>
+                          </div>
+                        )}
+                        {pedido.transportadora.custoFrete && (
+                          <div>
+                            <p className="text-xs text-muted-foreground">Custo do Frete</p>
+                            <p className="text-sm font-medium">{formatCurrency(pedido.transportadora.custoFrete)}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CT-e */}
+                  {pedido.cte && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-3">Conhecimento de Transporte (CT-e)</h4>
+                      <div className="p-4 bg-muted/50 rounded-lg space-y-3">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-xs text-muted-foreground">CT-e</p>
+                            <p className="text-sm font-medium">{pedido.cte.numeroCTe}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Série</p>
+                            <p className="text-sm font-medium">{pedido.cte.serieCTe}</p>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Chave de Acesso</p>
+                          <p className="text-sm font-mono break-all">{pedido.cte.chaveAcesso}</p>
+                        </div>
+                        {pedido.cte.linkRastreamento && (
+                          <Button variant="outline" className="w-full gap-2">
+                            <ExternalLink className="h-4 w-4" />
+                            Rastrear Entrega
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Status da Entrega */}
+                  {pedido.statusEntrega && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-3">Status da Entrega</h4>
+                      <div className="p-4 bg-muted/50 rounded-lg space-y-3">
+                        <Badge variant={pedido.statusEntrega === 'entregue' ? 'default' : 'secondary'} className="text-sm">
+                          {getStatusEntregaLabel(pedido.statusEntrega)}
+                        </Badge>
+                        <div className="grid grid-cols-2 gap-4 text-sm mt-3">
+                          {pedido.dataSaidaExpedicao && (
+                            <div>
+                              <p className="text-xs text-muted-foreground">Data de Saída</p>
+                              <p className="font-medium">{formatDate(pedido.dataSaidaExpedicao)}</p>
+                            </div>
+                          )}
+                          {pedido.previsaoEntrega && (
+                            <div>
+                              <p className="text-xs text-muted-foreground">Previsão de Entrega</p>
+                              <p className="font-medium">{formatDate(pedido.previsaoEntrega)}</p>
+                            </div>
+                          )}
+                          {pedido.dataEntregaEfetiva && (
+                            <div>
+                              <p className="text-xs text-muted-foreground">Entrega Efetiva</p>
+                              <p className="font-medium">{formatDate(pedido.dataEntregaEfetiva)}</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Comprovante de Entrega */}
+                  {pedido.comprovanteEntrega && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-3">Comprovante de Entrega</h4>
+                      <div className="p-4 bg-muted/50 rounded-lg space-y-3">
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <p className="text-xs text-muted-foreground">Data/Hora Entrega</p>
+                            <p className="font-medium">
+                              {pedido.comprovanteEntrega.dataEntrega} às {pedido.comprovanteEntrega.horaEntrega}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Recebedor</p>
+                            <p className="font-medium">{pedido.comprovanteEntrega.nomeRecebedor}</p>
+                          </div>
+                          {pedido.comprovanteEntrega.documentoRecebedor && (
+                            <div>
+                              <p className="text-xs text-muted-foreground">CPF Recebedor</p>
+                              <p className="font-medium">{pedido.comprovanteEntrega.documentoRecebedor}</p>
+                            </div>
+                          )}
+                        </div>
+                        {pedido.comprovanteEntrega.imagemCanhoto && (
+                          <Button variant="outline" className="w-full gap-2">
+                            <FileText className="h-4 w-4" />
+                            Ver Canhoto Digitalizado
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Feedback de Entrega */}
+            {pedido.feedbackEntrega && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5" />
+                    Feedback de Entrega
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">Status de Recebimento:</span>
+                    <Badge 
+                      variant={pedido.feedbackEntrega.statusRecebimento === 'ok' ? 'default' : 'destructive'}
+                      className="gap-1"
+                    >
+                      {pedido.feedbackEntrega.statusRecebimento === 'ok' && '✓ Recebido OK'}
+                      {pedido.feedbackEntrega.statusRecebimento === 'com_avarias' && '⚠ Recebido com Avarias'}
+                      {pedido.feedbackEntrega.statusRecebimento === 'temperatura_errada' && '🌡 Temperatura Errada'}
+                      {pedido.feedbackEntrega.statusRecebimento === 'incompleto' && '📦 Recebido Incompleto'}
+                      {pedido.feedbackEntrega.statusRecebimento === 'produto_errado' && '✗ Produto Errado'}
+                      {pedido.feedbackEntrega.statusRecebimento === 'devolucao' && '↩ Devolução Solicitada'}
+                      {pedido.feedbackEntrega.statusRecebimento === 'outros' && '📝 Outros'}
+                    </Badge>
+                  </div>
+
+                  {pedido.feedbackEntrega.observacoesCliente && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-2">Observações do Cliente</h4>
+                      <div className="p-3 bg-muted/50 rounded-lg">
+                        <p className="text-sm">{pedido.feedbackEntrega.observacoesCliente}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {pedido.feedbackEntrega.statusRecebimento === 'outros' && pedido.feedbackEntrega.outrosDetalhes && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-2">Detalhes</h4>
+                      <div className="p-3 bg-muted/50 rounded-lg">
+                        <p className="text-sm">{pedido.feedbackEntrega.outrosDetalhes}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {pedido.feedbackEntrega.acoesTomadas && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-2">Ações Tomadas</h4>
+                      <div className="p-3 bg-muted/50 rounded-lg">
+                        <p className="text-sm">{pedido.feedbackEntrega.acoesTomadas}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Responsável pelo Feedback</p>
+                      <p className="font-medium">{pedido.feedbackEntrega.responsavelFeedback}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Data do Registro</p>
+                      <p className="font-medium">{pedido.feedbackEntrega.dataFeedback}</p>
+                    </div>
+                  </div>
+
+                  {pedido.feedbackEntrega.anexos && pedido.feedbackEntrega.anexos.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-2">Anexos</h4>
+                      <div className="space-y-2">
+                        {pedido.feedbackEntrega.anexos.map((anexo: any) => (
+                          <div key={anexo.id} className="flex items-center justify-between p-2 border rounded">
+                            <div className="flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-muted-foreground" />
+                              <span className="text-sm">{anexo.nome}</span>
+                            </div>
+                            <Button size="sm" variant="ghost">
+                              <FileDown className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-end pt-4">
-          <Button onClick={onClose} variant="outline">
+        <div className="flex justify-end pt-4 border-t">
+          <Button onClick={onClose}>
             Fechar
           </Button>
         </div>
