@@ -21,7 +21,7 @@ import ConcorrenteModal from "./ConcorrenteModal";
 import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
 import CustomAlertModal from "./components/CustomAlertModal";
-import SolicitacaoCadastroModal from "./SolicitacaoCadastroModal";
+import EntidadeModal from "@/components/cadastro/EntidadeModal";
 import GerenciarSegmentosModal from "./GerenciarSegmentosModal";
 import { concorrentes as mockConcorrentes, licitantes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
 import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getUnidadeColor, getAtendeEditalBadge } from "@/lib/utils";
@@ -82,7 +82,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     return labels[status] || status;
   };
   const [showEmprestimoAlert, setShowEmprestimoAlert] = useState(false);
-  const [showSolicitacaoCadastro, setShowSolicitacaoCadastro] = useState(false);
+  const [showCadastroCliente, setShowCadastroCliente] = useState(false);
+  const [clientes, setClientes] = useState(mockClientes);
   const [showGerenciarSegmentos, setShowGerenciarSegmentos] = useState(false);
   const [clienteDropdownOpen, setClienteDropdownOpen] = useState(false);
   
@@ -279,7 +280,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                   <CommandList>
                     <CommandEmpty>Nenhum cliente encontrado.</CommandEmpty>
                     <CommandGroup>
-                      {mockClientes.map((cliente) => (
+                      {clientes.map((cliente) => (
                         <CommandItem
                           key={cliente.id}
                           value={cliente.nome}
@@ -303,10 +304,10 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                 variant="outline"
                 size="sm"
                 className="mt-2 text-blue-600 border-blue-600 hover:bg-blue-50"
-                onClick={() => setShowSolicitacaoCadastro(true)}
+                onClick={() => setShowCadastroCliente(true)}
               >
                 <UserPlus className="h-4 w-4 mr-2" />
-                Solicitação de cadastro
+                Cadastrar cliente
               </Button>
             )}
           </div>
@@ -1302,9 +1303,24 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         onConfirm={() => setShowEmprestimoAlert(false)}
       />
 
-      <SolicitacaoCadastroModal
-        isOpen={showSolicitacaoCadastro}
-        onClose={() => setShowSolicitacaoCadastro(false)}
+      <EntidadeModal
+        isOpen={showCadastroCliente}
+        onClose={() => setShowCadastroCliente(false)}
+        tipoEntidade="clientes"
+        onSave={(clienteData) => {
+          const novoCliente = {
+            id: Date.now(),
+            nome: clienteData.razao_social || clienteData.nome_cliente || clienteData.nome_fantasia || 'Novo Cliente',
+            cpfCnpj: clienteData.cnpj_cpf || ''
+          };
+          setClientes(prev => [...prev, novoCliente]);
+          handleClienteSelect(novoCliente);
+          setShowCadastroCliente(false);
+          toast({
+            title: "Cliente cadastrado",
+            description: "Cliente cadastrado com sucesso e selecionado para esta oportunidade.",
+          });
+        }}
       />
     </div>
   );

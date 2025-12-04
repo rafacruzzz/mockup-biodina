@@ -14,9 +14,10 @@ interface EntidadeModalProps {
   isOpen: boolean;
   onClose: () => void;
   tipoEntidade: string;
+  onSave?: (data: any) => void;
 }
 
-const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) => {
+const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onSave }: EntidadeModalProps) => {
   const { lookupCep, loading: cepLoading } = useCepLookup();
   const [uploadedDocs, setUploadedDocs] = useState<Array<{ name: string; size: number; type: string }>>([]);
 
@@ -167,7 +168,11 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
   const handleSave = () => {
     console.log("Salvando entidade:", formData);
     console.log("Documentos anexados:", uploadedDocs);
-    onClose();
+    if (onSave) {
+      onSave(formData);
+    } else {
+      onClose();
+    }
   };
 
 
