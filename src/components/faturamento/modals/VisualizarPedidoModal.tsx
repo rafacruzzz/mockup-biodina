@@ -136,6 +136,14 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-4">
                 <div>
+                  <label className="text-sm font-medium text-muted-foreground">Natureza da Operação</label>
+                  <p className="text-base font-medium">{pedido.naturezaOperacao || '-'}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Descritivo da Operação</label>
+                  <p className="text-base font-medium">{pedido.descritivoOperacao || '-'}</p>
+                </div>
+                <div>
                   <label className="text-sm font-medium text-muted-foreground">Cliente</label>
                   <p className="text-base font-medium">{pedido.cliente}</p>
                   <p className="text-sm text-muted-foreground">{pedido.cnpjCliente}</p>
