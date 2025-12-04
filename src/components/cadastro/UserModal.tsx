@@ -54,13 +54,7 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
   const { empresaAtual, filiais } = useEmpresa();
   const [isColaboradorModalOpen, setIsColaboradorModalOpen] = useState(false);
   
-  // Empresa principal sempre vinculada por padrão
-  const empresaPrincipalVinculada: EmpresaVinculada = {
-    id: empresaAtual?.id || '',
-    tipo: 'principal',
-    nome: empresaAtual?.nome || '',
-  };
-  
+  // Inicializar com empresas vinculadas existentes ou vazio
   const [formData, setFormData] = useState<UserData>({
     username: userData?.username || '',
     password: userData?.password || '',
@@ -73,7 +67,7 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
     isActive: userData?.isActive ?? true,
     userType: userData?.userType || '',
     moduleAccess: userData?.moduleAccess || [],
-    empresasVinculadas: userData?.empresasVinculadas || [empresaPrincipalVinculada],
+    empresasVinculadas: userData?.empresasVinculadas || [],
   });
 
   // Hook para calcular módulos disponíveis baseado nas empresas vinculadas
@@ -122,14 +116,10 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
   };
 
   const handleEmpresasChange = (empresas: EmpresaVinculada[]) => {
-    // Sempre incluir a empresa principal
-    const empresasComPrincipal = empresas.some(e => e.tipo === 'principal')
-      ? empresas
-      : [empresaPrincipalVinculada, ...empresas];
-    
+    // Não força mais a empresa principal - usuário pode estar apenas em filiais
     setFormData(prev => ({
       ...prev,
-      empresasVinculadas: empresasComPrincipal
+      empresasVinculadas: empresas
     }));
   };
 

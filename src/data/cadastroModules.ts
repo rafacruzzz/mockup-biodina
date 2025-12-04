@@ -21,6 +21,20 @@ export const modules: ModulesConfig = {
             nome: "João Silva",
             email: "joao@email.com",
             perfil: "Administrador"
+          },
+          {
+            id: 2,
+            nome: "Danilo Silva",
+            email: "danilo@tecnologiadc.com.br",
+            username: "danilo.silva",
+            perfil: "Administrador",
+            empresasVinculadas: [
+              { id: 'master-001', tipo: 'principal', nome: 'iMuv Master' },
+              { id: 'filial-sp-001', tipo: 'filial', nome: 'iMuv - Filial São Paulo' },
+              { id: 'filial-rj-001', tipo: 'filial', nome: 'iMuv - Filial Rio de Janeiro' },
+              { id: 'filial-mg-001', tipo: 'filial', nome: 'iMuv - Filial Belo Horizonte' },
+              { id: 'filial-pr-001', tipo: 'filial', nome: 'iMuv - Filial Curitiba' }
+            ]
           }
         ]
       }
