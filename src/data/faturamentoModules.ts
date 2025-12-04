@@ -559,7 +559,7 @@ export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
     valorTotal: 85000.00,
     valorImpostos: 15300.00,
     categoria: 'Produto',
-    status: 'Aguardando Entrada',
+    status: 'Desembaraçado - pronto para retirar',
     itens: [
       {
         id: 'ITEM001',
@@ -589,7 +589,7 @@ export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
     valorTotal: 125000.00,
     valorImpostos: 22500.00,
     categoria: 'Produto',
-    status: 'Aguardando Entrada',
+    status: 'Mercadoria enviada – marítimo',
     itens: [
       {
         id: 'ITEM002',
@@ -621,7 +621,7 @@ export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
     valorTotal: 15000.00,
     valorImpostos: 2700.00,
     categoria: 'Produto',
-    status: 'NF Recebida',
+    status: 'Faturado',
     itens: [
       {
         id: 'ITEM003',
@@ -653,7 +653,7 @@ export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
     valorTotal: 145000.00,
     valorImpostos: 26100.00,
     categoria: 'Produto',
-    status: 'Aguardando Entrada',
+    status: 'Aguardando desembaraço - canal amarelo',
     itens: [
       {
         id: 'ITEM004',
@@ -687,7 +687,7 @@ export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
     valorTotal: 98000.00,
     valorImpostos: 17640.00,
     categoria: 'Produto',
-    status: 'NF Recebida',
+    status: 'Chegada no estoque – pronto para conferência',
     itens: [
       {
         id: 'ITEM005',

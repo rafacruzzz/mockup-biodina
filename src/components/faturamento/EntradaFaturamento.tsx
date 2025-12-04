@@ -21,20 +21,24 @@ import { Badge } from "@/components/ui/badge";
 import {
   PackageCheck,
   Package,
-  Wrench,
   Search,
   Eye,
-  CheckCircle,
-  XCircle,
   FileText,
   TrendingUp,
-  Upload
+  Upload,
+  FilePlus,
+  FileEdit,
+  PackageX,
+  XCircle
 } from "lucide-react";
 import { mockPedidosEntrada } from "@/data/faturamentoModules";
 import { PedidoEntradaMercadoria } from "@/types/faturamento";
-import PainelNotificacoesEntrada from "./PainelNotificacoesEntrada";
 import DetalhesEntradaModal from "./DetalhesEntradaModal";
 import UploadXMLModal from "./UploadXMLModal";
+import NFComplementarModal from "./modals/NFComplementarModal";
+import CartaCorrecaoModal from "./modals/CartaCorrecaoModal";
+import DevolucaoModal from "./modals/DevolucaoModal";
+import CancelamentoModal from "./modals/CancelamentoModal";
 import { useToast } from "@/hooks/use-toast";
 
 const EntradaFaturamento = () => {
@@ -45,6 +49,10 @@ const EntradaFaturamento = () => {
   const [pedidoSelecionado, setPedidoSelecionado] = useState<PedidoEntradaMercadoria | null>(null);
   const [modalDetalhesOpen, setModalDetalhesOpen] = useState(false);
   const [modalXMLOpen, setModalXMLOpen] = useState(false);
+  const [modalNFComplementarOpen, setModalNFComplementarOpen] = useState(false);
+  const [modalCartaCorrecaoOpen, setModalCartaCorrecaoOpen] = useState(false);
+  const [modalDevolucaoOpen, setModalDevolucaoOpen] = useState(false);
+  const [modalCancelamentoOpen, setModalCancelamentoOpen] = useState(false);
   const [pedidos, setPedidos] = useState<PedidoEntradaMercadoria[]>(mockPedidosEntrada);
   const { toast } = useToast();
 
@@ -72,24 +80,46 @@ const EntradaFaturamento = () => {
   });
 
   const totais = {
-    aguardandoProdutos: pedidos.filter(p => p.status === 'Aguardando Entrada' && p.categoria === 'Produto').length,
-    aguardandoServicos: pedidos.filter(p => p.status === 'Aguardando Entrada' && p.categoria === 'Servico').length,
+    aguardandoProdutos: pedidos.filter(p => 
+      ['Pedido realizado', 'Mercadoria enviada – Aéreo', 'Mercadoria enviada – marítimo', 'Aguardando desembaraço - canal amarelo', 'Aguardando desembaraço - canal vermelho', 'Aguardando desembaraço - canal verde', 'Aguardando faturamento'].includes(p.status) && p.categoria === 'Produto'
+    ).length,
     nfRecebidasHoje: pedidos.filter(p => {
       const hoje = new Date().toISOString().split('T')[0];
-      return p.dataEmissao === hoje && p.status === 'NF Recebida';
+      return p.dataEmissao === hoje && p.status === 'Faturado';
     }).length,
     valorPendente: pedidos
-      .filter(p => p.status !== 'Entrada Confirmada' && p.status !== 'Cancelado')
+      .filter(p => p.status !== 'Entrada no estoque' && p.status !== 'Cancelado')
       .reduce((acc, p) => acc + p.valorTotal, 0)
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Aguardando Entrada':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'NF Recebida':
+      case 'Pedido realizado':
+        return 'bg-gray-100 text-gray-800';
+      case 'Mercadoria enviada – Aéreo':
+      case 'Mercadoria enviada – marítimo':
         return 'bg-blue-100 text-blue-800';
-      case 'Entrada Confirmada':
+      case 'Aguardando desembaraço - canal amarelo':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'Aguardando desembaraço - canal vermelho':
+        return 'bg-red-100 text-red-800';
+      case 'Aguardando desembaraço - canal verde':
+        return 'bg-emerald-100 text-emerald-800';
+      case 'Aguardando faturamento':
+        return 'bg-orange-100 text-orange-800';
+      case 'Faturado':
+        return 'bg-indigo-100 text-indigo-800';
+      case 'Desembaraçado - pronto para retirar':
+        return 'bg-teal-100 text-teal-800';
+      case 'Carga retirada – em trânsito':
+        return 'bg-purple-100 text-purple-800';
+      case 'Chegada no estoque – pronto para conferência':
+        return 'bg-cyan-100 text-cyan-800';
+      case 'Conferido – realizar ajuste':
+        return 'bg-amber-100 text-amber-800';
+      case 'Conferido – conforme':
+        return 'bg-lime-100 text-lime-800';
+      case 'Entrada no estoque':
         return 'bg-green-100 text-green-800';
       case 'Cancelado':
         return 'bg-red-100 text-red-800';
@@ -106,16 +136,27 @@ const EntradaFaturamento = () => {
     }
   };
 
-  const handleConfirmarEntrada = (pedidoId: string) => {
-    setPedidos(prev =>
-      prev.map(p =>
-        p.id === pedidoId ? { ...p, status: 'Entrada Confirmada' as const } : p
-      )
-    );
+  const handleNFComplementar = (pedido: PedidoEntradaMercadoria) => {
+    setPedidoSelecionado(pedido);
+    setModalNFComplementarOpen(true);
+  };
+
+  const handleCartaCorrecao = (pedido: PedidoEntradaMercadoria) => {
+    setPedidoSelecionado(pedido);
+    setModalCartaCorrecaoOpen(true);
+  };
+
+  const handleDevolucao = (pedido: PedidoEntradaMercadoria) => {
+    setPedidoSelecionado(pedido);
+    setModalDevolucaoOpen(true);
+  };
+
+  const handleCancelamento = (pedido: PedidoEntradaMercadoria) => {
+    setPedidoSelecionado(pedido);
+    setModalCancelamentoOpen(true);
   };
 
   const handleUploadXML = (xmlData: any) => {
-    // Criar nova entrada de importação a partir dos dados do XML
     const novaEntrada: PedidoEntradaMercadoria = {
       id: `IMP-${Date.now()}`,
       numeroPedido: xmlData.numeroNF,
@@ -127,7 +168,7 @@ const EntradaFaturamento = () => {
       dataEntrada: new Date().toISOString().split('T')[0],
       valorTotal: xmlData.valorTotal,
       valorImpostos: xmlData.valorImpostos || 0,
-      status: 'NF Recebida',
+      status: 'Pedido realizado',
       numeroNF: xmlData.numeroNF,
       chaveAcesso: xmlData.chaveAcesso,
       itens: xmlData.itens?.map((item: any, index: number) => ({
@@ -150,12 +191,12 @@ const EntradaFaturamento = () => {
     });
   };
 
-  const handleCancelar = (pedidoId: string) => {
-    setPedidos(prev =>
-      prev.map(p =>
-        p.id === pedidoId ? { ...p, status: 'Cancelado' as const } : p
-      )
-    );
+  const canEditStatus = (status: string) => {
+    return status === 'Faturado' || status === 'Entrada no estoque';
+  };
+
+  const canCancel = (status: string) => {
+    return status !== 'Cancelado' && status !== 'Entrada no estoque';
   };
 
   return (
@@ -171,8 +212,8 @@ const EntradaFaturamento = () => {
         </p>
       </div>
 
-      {/* Indicadores Rápidos */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Indicadores Rápidos - 3 cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4">
           <div className="flex items-center justify-between">
             <div>
@@ -180,16 +221,6 @@ const EntradaFaturamento = () => {
               <p className="text-2xl font-bold">{totais.aguardandoProdutos}</p>
             </div>
             <Package className="h-8 w-8 text-yellow-600" />
-          </div>
-        </Card>
-
-        <Card className="p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Aguardando (Serviços)</p>
-              <p className="text-2xl font-bold">{totais.aguardandoServicos}</p>
-            </div>
-            <Wrench className="h-8 w-8 text-blue-600" />
           </div>
         </Card>
 
@@ -213,9 +244,6 @@ const EntradaFaturamento = () => {
           </div>
         </Card>
       </div>
-
-      {/* Painel de Notificações */}
-      <PainelNotificacoesEntrada onVerDetalhes={handleVerDetalhes} />
 
       {/* Filtros */}
       <Card className="p-4">
@@ -259,9 +287,20 @@ const EntradaFaturamento = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="todos">Todos os Status</SelectItem>
-                <SelectItem value="Aguardando Entrada">Aguardando Entrada</SelectItem>
-                <SelectItem value="NF Recebida">NF Recebida</SelectItem>
-                <SelectItem value="Entrada Confirmada">Entrada Confirmada</SelectItem>
+                <SelectItem value="Pedido realizado">Pedido realizado</SelectItem>
+                <SelectItem value="Mercadoria enviada – Aéreo">Mercadoria enviada – Aéreo</SelectItem>
+                <SelectItem value="Mercadoria enviada – marítimo">Mercadoria enviada – marítimo</SelectItem>
+                <SelectItem value="Aguardando desembaraço - canal amarelo">Aguardando desembaraço - canal amarelo</SelectItem>
+                <SelectItem value="Aguardando desembaraço - canal vermelho">Aguardando desembaraço - canal vermelho</SelectItem>
+                <SelectItem value="Aguardando desembaraço - canal verde">Aguardando desembaraço - canal verde</SelectItem>
+                <SelectItem value="Aguardando faturamento">Aguardando faturamento</SelectItem>
+                <SelectItem value="Faturado">Faturado</SelectItem>
+                <SelectItem value="Desembaraçado - pronto para retirar">Desembaraçado - pronto para retirar</SelectItem>
+                <SelectItem value="Carga retirada – em trânsito">Carga retirada – em trânsito</SelectItem>
+                <SelectItem value="Chegada no estoque – pronto para conferência">Chegada no estoque – pronto para conferência</SelectItem>
+                <SelectItem value="Conferido – realizar ajuste">Conferido – realizar ajuste</SelectItem>
+                <SelectItem value="Conferido – conforme">Conferido – conforme</SelectItem>
+                <SelectItem value="Entrada no estoque">Entrada no estoque</SelectItem>
                 <SelectItem value="Cancelado">Cancelado</SelectItem>
               </SelectContent>
             </Select>
@@ -320,28 +359,57 @@ const EntradaFaturamento = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex items-center justify-center gap-1 flex-wrap">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleVerDetalhes(pedido.id)}
+                        title="Visualizar"
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      {pedido.status === 'NF Recebida' && (
-                        <Button
-                          size="sm"
-                          className="bg-green-600 hover:bg-green-700"
-                          onClick={() => handleConfirmarEntrada(pedido.id)}
-                        >
-                          <CheckCircle className="h-4 w-4" />
-                        </Button>
+                      
+                      {canEditStatus(pedido.status) && (
+                        <>
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleNFComplementar(pedido)}
+                            title="NF Complementar"
+                            className="border-blue-600 text-blue-700 hover:bg-blue-50"
+                          >
+                            <FilePlus className="h-4 w-4" />
+                          </Button>
+                          
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleCartaCorrecao(pedido)}
+                            title="Carta de Correção"
+                            className="border-purple-600 text-purple-700 hover:bg-purple-50"
+                          >
+                            <FileEdit className="h-4 w-4" />
+                          </Button>
+                          
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleDevolucao(pedido)}
+                            title="Devolução"
+                            className="border-orange-600 text-orange-700 hover:bg-orange-50"
+                          >
+                            <PackageX className="h-4 w-4" />
+                          </Button>
+                        </>
                       )}
-                      {pedido.status !== 'Cancelado' && pedido.status !== 'Entrada Confirmada' && (
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleCancelar(pedido.id)}
+
+                      {canCancel(pedido.status) && (
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleCancelamento(pedido)}
+                          title="Cancelamento"
+                          className="border-red-600 text-red-700 hover:bg-red-50"
                         >
                           <XCircle className="h-4 w-4" />
                         </Button>
@@ -360,8 +428,8 @@ const EntradaFaturamento = () => {
         isOpen={modalDetalhesOpen}
         onOpenChange={setModalDetalhesOpen}
         pedido={pedidoSelecionado}
-        onConfirmarEntrada={handleConfirmarEntrada}
-        onCancelar={handleCancelar}
+        onConfirmarEntrada={() => {}}
+        onCancelar={() => {}}
       />
       
       {/* Modal de Upload XML */}
@@ -370,6 +438,47 @@ const EntradaFaturamento = () => {
         onClose={() => setModalXMLOpen(false)}
         onUpload={handleUploadXML}
       />
+
+      {/* Modais de Ação */}
+      {pedidoSelecionado && (
+        <>
+          <NFComplementarModal
+            isOpen={modalNFComplementarOpen}
+            onClose={() => {
+              setModalNFComplementarOpen(false);
+              setPedidoSelecionado(null);
+            }}
+            numeroPedido={pedidoSelecionado.numeroPedido}
+          />
+
+          <CartaCorrecaoModal
+            isOpen={modalCartaCorrecaoOpen}
+            onClose={() => {
+              setModalCartaCorrecaoOpen(false);
+              setPedidoSelecionado(null);
+            }}
+            numeroPedido={pedidoSelecionado.numeroPedido}
+          />
+
+          <DevolucaoModal
+            isOpen={modalDevolucaoOpen}
+            onClose={() => {
+              setModalDevolucaoOpen(false);
+              setPedidoSelecionado(null);
+            }}
+            numeroPedido={pedidoSelecionado.numeroPedido}
+          />
+
+          <CancelamentoModal
+            isOpen={modalCancelamentoOpen}
+            onClose={() => {
+              setModalCancelamentoOpen(false);
+              setPedidoSelecionado(null);
+            }}
+            numeroPedido={pedidoSelecionado.numeroPedido}
+          />
+        </>
+      )}
     </div>
   );
 };

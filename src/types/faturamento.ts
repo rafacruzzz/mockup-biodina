@@ -475,7 +475,22 @@ export interface PedidoEntradaMercadoria {
   categoria: 'Produto' | 'Servico';
   
   // Status do processo
-  status: 'Aguardando Entrada' | 'NF Recebida' | 'Entrada Confirmada' | 'Cancelado';
+  status: 
+    | 'Pedido realizado'
+    | 'Mercadoria enviada – Aéreo'
+    | 'Mercadoria enviada – marítimo'
+    | 'Aguardando desembaraço - canal amarelo'
+    | 'Aguardando desembaraço - canal vermelho'
+    | 'Aguardando desembaraço - canal verde'
+    | 'Aguardando faturamento'
+    | 'Faturado'
+    | 'Desembaraçado - pronto para retirar'
+    | 'Carga retirada – em trânsito'
+    | 'Chegada no estoque – pronto para conferência'
+    | 'Conferido – realizar ajuste'
+    | 'Conferido – conforme'
+    | 'Entrada no estoque'
+    | 'Cancelado';
   
   itens: ItemEntradaMercadoria[];
   observacoes?: string;

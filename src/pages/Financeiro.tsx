@@ -22,6 +22,7 @@ import AssistenteFiscalIA from "@/components/faturamento/AssistenteFiscalIA";
 import RodapeFaturamento from "@/components/faturamento/RodapeFaturamento";
 import ParametrosFiscais from "@/components/faturamento/ParametrosFiscais";
 import CartasFaturamento from "@/components/faturamento/CartasFaturamento";
+import PainelNotificacoesEntrada from "@/components/faturamento/PainelNotificacoesEntrada";
 import {
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
@@ -503,6 +504,11 @@ const Financeiro = () => {
             </div>
 
             <IndicadoresFaturamento />
+
+            {/* Painel de Notificações */}
+            <PainelNotificacoesEntrada onVerDetalhes={(pedidoId) => {
+              setActiveSubModule('entrada');
+            }} />
 
             {/* Dashboard & Relatórios */}
             <div className="space-y-4">

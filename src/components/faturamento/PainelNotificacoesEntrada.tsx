@@ -63,7 +63,7 @@ const PainelNotificacoesEntrada = ({ onVerDetalhes }: PainelNotificacoesEntradaP
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Bell className="h-5 w-5" />
-          <h3 className="text-lg font-semibold">Notificações de Entrada</h3>
+          <h3 className="text-lg font-semibold">Notificações</h3>
           {naoLidas > 0 && (
             <Badge variant="destructive" className="ml-2">
               {naoLidas} nova{naoLidas > 1 ? 's' : ''}
