@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ProcessoJuridico, TipoProcesso, StatusProcesso } from '@/types/juridico';
 import { tipoProcessoLabels, statusProcessoLabels } from '@/data/juridicoModules';
 import { toast } from '@/components/ui/use-toast';
+import { Upload, FileText, Loader2 } from 'lucide-react';
 
 interface NovoProcessoModalProps {
   open: boolean;
@@ -29,6 +30,42 @@ export const NovoProcessoModal = ({ open, onOpenChange, onProcessoCreated }: Nov
   const [responsavelInterno, setResponsavelInterno] = useState('');
   const [advogadoExterno, setAdvogadoExterno] = useState('');
   const [observacoes, setObservacoes] = useState('');
+  const [isImporting, setIsImporting] = useState(false);
+  const [arquivoDOU, setArquivoDOU] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImportarDOU = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setArquivoDOU(file);
+      setIsImporting(true);
+      
+      // Simula processamento do arquivo DOU e preenchimento dos campos
+      setTimeout(() => {
+        // Dados mockados que seriam extraídos do DOU
+        setNumeroProcesso('0012345-67.2024.1.00.0001');
+        setTipo(TipoProcesso.ADMINISTRATIVO);
+        setStatus(StatusProcesso.EM_ANDAMENTO);
+        setParteContraria('União Federal');
+        setVara('1ª Vara Federal');
+        setComarca('Brasília');
+        setTribunal('TRF1');
+        setObjeto('Processo administrativo referente à análise de documentação para registro de produto junto à ANVISA');
+        setValorCausa('50000.00');
+        setDataDistribuicao('2024-03-15');
+        
+        setIsImporting(false);
+        toast({
+          title: 'Dados importados',
+          description: 'Os campos foram preenchidos com os dados do DOU. Verifique e complete as informações.',
+        });
+      }, 1500);
+    }
+  };
 
   const handleSubmit = () => {
     if (!numeroProcesso || !parteContraria || !objeto || !dataDistribuicao || !responsavelInterno) {
@@ -74,6 +111,7 @@ export const NovoProcessoModal = ({ open, onOpenChange, onProcessoCreated }: Nov
     setResponsavelInterno('');
     setAdvogadoExterno('');
     setObservacoes('');
+    setArquivoDOU(null);
 
     toast({
       title: 'Sucesso',
@@ -89,6 +127,53 @@ export const NovoProcessoModal = ({ open, onOpenChange, onProcessoCreated }: Nov
         </DialogHeader>
 
         <div className="space-y-4 py-4">
+          {/* Seção de Importação do DOU */}
+          <div className="p-4 border border-dashed border-primary/40 rounded-lg bg-primary/5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <FileText className="h-5 w-5 text-primary" />
+                <div>
+                  <p className="font-medium text-sm">Importar dados do DOU</p>
+                  <p className="text-xs text-muted-foreground">
+                    Faça upload do documento do DOU para preencher automaticamente os campos
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {arquivoDOU && (
+                  <span className="text-xs text-muted-foreground truncate max-w-[150px]">
+                    {arquivoDOU.name}
+                  </span>
+                )}
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleImportarDOU}
+                  disabled={isImporting}
+                >
+                  {isImporting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Importando...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Importar DOU
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+          </div>
+
           <div className="space-y-2">
             <Label>Número do Processo *</Label>
             <Input
