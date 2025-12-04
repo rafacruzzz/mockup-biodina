@@ -41,7 +41,7 @@ const Comercial = () => {
   // Empresa ativa é a filial se logado em uma filial, senão é a principal
   const empresaAtivaId = filialAtual?.id || empresaAtual?.id || '';
   
-  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'emprestimos' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
+  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeTab, setActiveTab] = useState('indicadores');
   const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade" | "analise-editais" | "repositorio">("agenda");
   const [departamentoTecnicoTab, setDepartamentoTecnicoTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade">("agenda");
@@ -525,18 +525,7 @@ const Comercial = () => {
           </CardContent>
         </Card>
 
-        <Card 
-          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-          onClick={() => setActiveModule('emprestimos')}
-        >
-          <CardContent className="p-8 text-center">
-            <HandCoins className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Empréstimos</h3>
-            <p className="text-gray-600">Gestão de empréstimos</p>
-          </CardContent>
-        </Card>
-
-        <Card 
+        <Card
           className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
           onClick={() => setActiveModule('assessoria')}
         >
@@ -663,6 +652,7 @@ const Comercial = () => {
       { id: 'licitacao', label: 'Licitação', icon: Gavel },
       { id: 'contratacao', label: 'Contratação', icon: Building2 },
       { id: 'importacao', label: 'Importação Direta', icon: Globe },
+      { id: 'emprestimos', label: 'Empréstimos', icon: HandCoins },
     ];
 
     const renderContent = () => {
@@ -671,6 +661,7 @@ const Comercial = () => {
         case 'licitacao': return renderOportunidadesPorModalidade('licitacao');
         case 'contratacao': return renderOportunidadesPorModalidade('contratacao_simples');
         case 'importacao': return renderOportunidadesPorModalidade('importacao_direta');
+        case 'emprestimos': return <EmprestimosTable />;
         default: return renderIndicadoresEAnalise();
       }
     };
@@ -715,25 +706,6 @@ const Comercial = () => {
     );
   };
 
-  const renderEmprestimosModule = () => {
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="outline" 
-            onClick={() => setActiveModule('main')}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Voltar
-          </Button>
-          <h1 className="text-2xl font-bold text-biodina-blue">Comercial / Empréstimos</h1>
-        </div>
-
-        <EmprestimosTable />
-      </div>
-    );
-  };
 
   /* COMENTADO - NÃO USAR NO MOMENTO
   const renderAssinaturasModule = () => {
@@ -1163,7 +1135,6 @@ const Comercial = () => {
 
         {activeModule === 'main' && renderMainModules()}
         {activeModule === 'vendas' && renderVendasModule()}
-        {activeModule === 'emprestimos' && renderEmprestimosModule()}
         {activeModule === 'assessoria' && renderAssessoriaModule()}
         {activeModule === 'departamento-tecnico' && renderDepartamentoTecnicoModule()}
         {/* activeModule === 'assinaturas' && renderAssinaturasModule() */} {/* COMENTADO - NÃO USAR NO MOMENTO */}
