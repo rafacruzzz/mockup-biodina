@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -191,7 +192,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onSave }: EntidadeModalP
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4">
       <div className="bg-background rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden z-[100]">
         <div className="flex items-center justify-between p-6 border-b">
@@ -1041,7 +1042,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onSave }: EntidadeModalP
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
