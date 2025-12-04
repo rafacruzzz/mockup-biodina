@@ -9,13 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { AlertCircle, XCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -28,18 +21,8 @@ interface CancelamentoModalProps {
 const CancelamentoModal = ({ isOpen, onClose, numeroPedido }: CancelamentoModalProps) => {
   const { toast } = useToast();
   const [justificativa, setJustificativa] = useState("");
-  const [motivo, setMotivo] = useState("");
 
   const handleSubmit = () => {
-    if (!motivo) {
-      toast({
-        title: "Motivo obrigatório",
-        description: "Por favor, selecione o motivo do cancelamento.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     if (!justificativa.trim()) {
       toast({
         title: "Justificativa obrigatória",
@@ -57,7 +40,6 @@ const CancelamentoModal = ({ isOpen, onClose, numeroPedido }: CancelamentoModalP
 
     // Limpar campos e fechar
     setJustificativa("");
-    setMotivo("");
     onClose();
   };
 
@@ -81,24 +63,6 @@ const CancelamentoModal = ({ isOpen, onClose, numeroPedido }: CancelamentoModalP
                 após a autorização. Após esse período, será necessário emitir uma NF de devolução.
               </p>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="motivo">Motivo do Cancelamento *</Label>
-            <Select value={motivo} onValueChange={setMotivo}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o motivo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="erro_emissao">Erro na Emissão</SelectItem>
-                <SelectItem value="duplicidade">Duplicidade de NF-e</SelectItem>
-                <SelectItem value="desistencia_cliente">Desistência do Cliente</SelectItem>
-                <SelectItem value="erro_valores">Erro nos Valores</SelectItem>
-                <SelectItem value="erro_destinatario">Erro no Destinatário</SelectItem>
-                <SelectItem value="operacao_nao_realizada">Operação Não Realizada</SelectItem>
-                <SelectItem value="outro">Outro Motivo</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           <div className="space-y-2">
