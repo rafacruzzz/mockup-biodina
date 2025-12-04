@@ -88,12 +88,19 @@ const LoginForm = () => {
           name: 'Danilo Silva',
           email: 'danilo@tecnologiadc.com.br',
           username: 'danilo.silva',
-          empresaId: 'biodina-001',
+          empresaId: 'master-001',
           role: 'Gerente de TI',
+          empresasVinculadas: [
+            { id: 'master-001', tipo: 'principal', nome: 'iMuv Master' },
+            { id: 'filial-sp-001', tipo: 'filial', nome: 'iMuv - Filial São Paulo' },
+            { id: 'filial-rj-001', tipo: 'filial', nome: 'iMuv - Filial Rio de Janeiro' },
+            { id: 'filial-mg-001', tipo: 'filial', nome: 'iMuv - Filial Belo Horizonte' },
+            { id: 'filial-pr-001', tipo: 'filial', nome: 'iMuv - Filial Curitiba' }
+          ]
         });
         
         // Garantir que a empresa correta seja carregada
-        localStorage.setItem('empresaAtualId', 'biodina-001');
+        localStorage.setItem('empresaAtualId', 'master-001');
         
         toast({
           title: "Login bem-sucedido",
