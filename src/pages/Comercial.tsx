@@ -878,15 +878,17 @@ const Comercial = () => {
                         <Button size="sm" variant="outline" onClick={() => handleEditOportunidade(oportunidade)}>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          onClick={() => handleGerarPedido(oportunidade)}
-                          disabled={oportunidade.status !== 'Ganha'}
-                          title={oportunidade.status !== 'Ganha' ? 'Pedidos só podem ser gerados para oportunidades ganhas' : 'Gerar pedido'}
-                        >
-                          <FileText className="h-4 w-4" />
-                        </Button>
+                        {modalidade !== 'licitacao' && (
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => handleGerarPedido(oportunidade)}
+                            disabled={oportunidade.status !== 'Ganha'}
+                            title={oportunidade.status !== 'Ganha' ? 'Pedidos só podem ser gerados para oportunidades ganhas' : 'Gerar pedido'}
+                          >
+                            <FileText className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
