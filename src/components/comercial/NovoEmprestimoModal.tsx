@@ -27,6 +27,8 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
   
   const [formData, setFormData] = useState({
     numeroProcesso: `EMP-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
+    naturezaOperacao: "",
+    descritivoOperacao: "",
     cnpjCliente: "",
     nomeCliente: "",
     observacoes: "",
@@ -122,6 +124,12 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
 
   const handleSave = () => {
     // Validação dos campos obrigatórios
+    if (!formData.naturezaOperacao || !formData.descritivoOperacao) {
+      toast.error("Preencha a Natureza da Operação e seu Descritivo");
+      setActiveTab("dados-gerais");
+      return;
+    }
+
     if (!formData.cnpjCliente || !formData.nomeCliente || !formData.dataEmprestimo) {
       toast.error("Preencha todos os campos obrigatórios em Dados Gerais");
       setActiveTab("dados-gerais");
@@ -205,7 +213,7 @@ const NovoEmprestimoModal = ({ isOpen, onClose }: NovoEmprestimoModalProps) => {
   const getTabStatus = (tabId: string) => {
     switch (tabId) {
       case "dados-gerais":
-        return formData.cnpjCliente && formData.nomeCliente && formData.dataEmprestimo ? "complete" : "incomplete";
+        return formData.naturezaOperacao && formData.descritivoOperacao && formData.cnpjCliente && formData.nomeCliente && formData.dataEmprestimo ? "complete" : "incomplete";
       case "pedidos":
         return formData.moeda && pedidosVinculados.length > 0 ? "complete" : "incomplete";
       case "retorno":
