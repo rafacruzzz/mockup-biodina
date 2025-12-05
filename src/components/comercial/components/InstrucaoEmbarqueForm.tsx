@@ -28,7 +28,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
     if (controlNo || temperature || dimension || grossWeight) {
       return `For each box, please include: control no.: ${controlNo}; Temperature: ${temperature}; Dimension: ${dimension}; Gross weight: ${grossWeight}`;
     }
-    return 'For each box, please include: control no.; Temperature; Dimension; Gross weight';
+    return "For each box, please include: control no.xxx; Temperature xº-xºC; Dimmension: xxx X xxx X xxx; Gross weight: xxx";
   };
 
   const handleAnexarComprovante = () => {
@@ -1210,7 +1210,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
 
                   {/* For each box section */}
                   <div className="border-2 border-gray-300 p-4 rounded-lg bg-gray-50">
-                    <Label className="text-base font-semibold mb-3 block">For each box, please include:</Label>
+                    <Label className="text-base font-semibold mb-3 block">For each box, please include: control no.xxx; Temperature xº-xºC; Dimmension: xxx X xxx X xxx; Gross weight: xxx</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="boxControlNo_seco" className="text-sm">
