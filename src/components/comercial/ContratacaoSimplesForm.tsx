@@ -10,7 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, Network, Send } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { mockChecklistVendas } from '@/data/faturamentoModules';
 import { PedidoCompleto } from '@/types/comercial';
@@ -298,11 +299,17 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
           </DialogHeader>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-7">
+            <TabsList className={`grid w-full ${oportunidade ? 'grid-cols-8' : 'grid-cols-7'}`}>
               <TabsTrigger value="dados-gerais" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Dados Gerais
               </TabsTrigger>
+              {oportunidade && (
+                <TabsTrigger value="saldo-cliente" className="flex items-center gap-2">
+                  <Wallet className="h-4 w-4" />
+                  Saldo do Cliente
+                </TabsTrigger>
+              )}
               <TabsTrigger value="analise-tecnica" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Análise Técnica
@@ -917,6 +924,200 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                 </Card>
               </div>
             </TabsContent>
+
+            {/* Aba Saldo do Cliente - Apenas em modo edição */}
+            {oportunidade && (
+              <TabsContent value="saldo-cliente" className="space-y-6">
+                {(() => {
+                  // Cálculos do saldo
+                  const valorNegocio = formData.valorNegocio || 0;
+                  const totalPedidos = pedidos.reduce((sum, pedido) => sum + (pedido.valorTotal || 0), 0);
+                  const totalServicos = 0; // Preparado para futuro
+                  const totalChamados = 0; // Preparado para futuro - chamados não têm valor ainda
+                  const totalGasto = totalPedidos + totalServicos + totalChamados;
+                  const saldoRestante = valorNegocio - totalGasto;
+                  const percentualConsumido = valorNegocio > 0 ? (totalGasto / valorNegocio) * 100 : 0;
+
+                  return (
+                    <>
+                      {/* Cards de Resumo */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Card className="border-l-4 border-l-blue-500">
+                          <CardContent className="pt-6">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Valor do Negócio</p>
+                                <p className="text-2xl font-bold text-blue-600">{formatCurrency(valorNegocio)}</p>
+                              </div>
+                              <DollarSign className="h-8 w-8 text-blue-500 opacity-50" />
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className="border-l-4 border-l-orange-500">
+                          <CardContent className="pt-6">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Total Gasto</p>
+                                <p className="text-2xl font-bold text-orange-600">{formatCurrency(totalGasto)}</p>
+                              </div>
+                              <TrendingDown className="h-8 w-8 text-orange-500 opacity-50" />
+                            </div>
+                          </CardContent>
+                        </Card>
+
+                        <Card className={`border-l-4 ${saldoRestante >= 0 ? 'border-l-green-500' : 'border-l-red-500'}`}>
+                          <CardContent className="pt-6">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">Saldo Restante</p>
+                                <p className={`text-2xl font-bold ${saldoRestante >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                  {formatCurrency(saldoRestante)}
+                                </p>
+                              </div>
+                              <Wallet className={`h-8 w-8 ${saldoRestante >= 0 ? 'text-green-500' : 'text-red-500'} opacity-50`} />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+
+                      {/* Barra de Progresso */}
+                      <Card>
+                        <CardContent className="pt-6">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between text-sm">
+                              <span className="text-muted-foreground">Consumo do Orçamento</span>
+                              <span className={`font-medium ${percentualConsumido > 100 ? 'text-red-600' : percentualConsumido > 80 ? 'text-orange-600' : 'text-green-600'}`}>
+                                {percentualConsumido.toFixed(1)}%
+                              </span>
+                            </div>
+                            <Progress 
+                              value={Math.min(percentualConsumido, 100)} 
+                              className={`h-3 ${percentualConsumido > 100 ? '[&>div]:bg-red-500' : percentualConsumido > 80 ? '[&>div]:bg-orange-500' : '[&>div]:bg-green-500'}`}
+                            />
+                            {percentualConsumido > 100 && (
+                              <p className="text-sm text-red-600 font-medium">
+                                ⚠️ Orçamento excedido em {formatCurrency(Math.abs(saldoRestante))}
+                              </p>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Detalhamento - Pedidos */}
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2 text-lg">
+                            <Package className="h-5 w-5 text-blue-500" />
+                            Pedidos
+                            <Badge variant="secondary" className="ml-auto">
+                              {formatCurrency(totalPedidos)}
+                            </Badge>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          {pedidos.length === 0 ? (
+                            <div className="text-center py-6 text-muted-foreground">
+                              <Package className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                              <p className="text-sm">Nenhum pedido registrado</p>
+                            </div>
+                          ) : (
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Data</TableHead>
+                                  <TableHead>Nº Pedido</TableHead>
+                                  <TableHead>Status</TableHead>
+                                  <TableHead className="text-right">Valor</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {pedidos.map((pedido) => (
+                                  <TableRow key={pedido.id}>
+                                    <TableCell>{new Date(pedido.dataVenda).toLocaleDateString('pt-BR')}</TableCell>
+                                    <TableCell className="font-mono">#{pedido.id.toString().slice(-6)}</TableCell>
+                                    <TableCell>
+                                      <Badge className={`${getStatusColor(pedido.status)} text-white`}>
+                                        {pedido.status.toUpperCase()}
+                                      </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right font-medium">{formatCurrency(pedido.valorTotal)}</TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          )}
+                        </CardContent>
+                      </Card>
+
+                      {/* Detalhamento - Serviços */}
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2 text-lg">
+                            <Wrench className="h-5 w-5 text-purple-500" />
+                            Serviços
+                            <Badge variant="secondary" className="ml-auto">
+                              {formatCurrency(totalServicos)}
+                            </Badge>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-center py-6 text-muted-foreground">
+                            <Wrench className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                            <p className="text-sm">Nenhum serviço registrado</p>
+                            <p className="text-xs mt-1">Integração com serviços em breve</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Detalhamento - Chamados */}
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="flex items-center gap-2 text-lg">
+                            <Phone className="h-5 w-5 text-amber-500" />
+                            Chamados
+                            <Badge variant="secondary" className="ml-auto">
+                              {formatCurrency(totalChamados)}
+                            </Badge>
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          {chamados.length === 0 ? (
+                            <div className="text-center py-6 text-muted-foreground">
+                              <Phone className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                              <p className="text-sm">Nenhum chamado com valor registrado</p>
+                            </div>
+                          ) : (
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Data</TableHead>
+                                  <TableHead>Tipo</TableHead>
+                                  <TableHead>Status</TableHead>
+                                  <TableHead className="text-right">Valor</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {chamados.map((chamado) => (
+                                  <TableRow key={chamado.id}>
+                                    <TableCell>{new Date(chamado.dataAbertura).toLocaleDateString('pt-BR')}</TableCell>
+                                    <TableCell>{chamado.tipo}</TableCell>
+                                    <TableCell>
+                                      <Badge variant="outline">{chamado.status}</Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right text-muted-foreground">-</TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </>
+                  );
+                })()}
+              </TabsContent>
+            )}
 
             <TabsContent value="analise-tecnica" className="space-y-4">
               <Card>
