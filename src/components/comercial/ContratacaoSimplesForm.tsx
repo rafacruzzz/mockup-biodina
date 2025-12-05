@@ -98,6 +98,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     // Análise Técnica
     analiseTecnica: oportunidade?.analiseTecnica || '',
     
+    // Representação Comercial
+    representanteResponsavel: oportunidade?.representanteResponsavel || '',
+    percentualComissao: oportunidade?.percentualComissao || 0,
+    
     // Modalidade
     modalidade: 'contratacao_simples'
   });
@@ -801,71 +805,113 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                             <span>100°</span>
                           </div>
                         </div>
-                        <div className="mt-2 flex items-center gap-2">
+                      <div className="mt-2 flex items-center gap-2">
                           <div 
                             className={`w-4 h-4 rounded-full ${getTermometroColor(formData.termometro)}`}
                             title={`Termômetro: ${formData.termometro}°`}
                           />
-                          <span className="text-sm text-gray-600">
+                          <span className="text-sm text-muted-foreground">
                             {formData.termometro < 30 ? 'Frio' : 
                              formData.termometro < 60 ? 'Morno' : 
                              formData.termometro < 80 ? 'Quente' : 'Muito Quente'}
                           </span>
                         </div>
                       </div>
+                    </div>
+                  </CardContent>
+                </Card>
 
-                      {/* Histórico de Visitas */}
-                      <div className="mt-6 pt-4 border-t border-gray-200">
-                        <div className="flex items-center justify-between mb-4">
-                          <h4 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                            <Calendar className="h-5 w-5" />
-                            Histórico de Visitas
-                          </h4>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setModalHistoricoOpen(true)}
-                          >
-                            <Plus className="h-4 w-4 mr-2" />
-                            Adicionar Histórico
-                          </Button>
-                        </div>
-                        
-                        {historicoVisitas.length === 0 ? (
-                          <div className="text-center py-6 text-gray-500">
-                            <Calendar className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                            <p className="text-sm">Nenhuma visita registrada</p>
-                          </div>
-                        ) : (
-                          <div className="space-y-2">
-                            <Table>
-                              <TableHeader>
-                                <TableRow>
-                                  <TableHead>Data</TableHead>
-                                  <TableHead>Colaborador</TableHead>
-                                  <TableHead>Observação</TableHead>
-                                </TableRow>
-                              </TableHeader>
-                              <TableBody>
-                                {historicoVisitas
-                                  .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
-                                  .map((visita) => (
-                                  <TableRow key={visita.id}>
-                                    <TableCell className="font-medium">
-                                      {new Date(visita.data).toLocaleDateString('pt-BR')}
-                                    </TableCell>
-                                    <TableCell>{visita.colaborador}</TableCell>
-                                    <TableCell className="text-sm text-gray-600">
-                                      {visita.observacao}
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </div>
-                        )}
+                {/* Representação Comercial */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Representação Comercial</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="representanteResponsavel">Representante Responsável</Label>
+                        <Select
+                          value={formData.representanteResponsavel}
+                          onValueChange={(value) => handleInputChange('representanteResponsavel', value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o representante" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {colaboradores.map((colab) => (
+                              <SelectItem key={colab.id} value={colab.nome}>
+                                {colab.nome}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
+                      <div>
+                        <Label htmlFor="percentualComissao">Percentual de Comissão (%)</Label>
+                        <Input
+                          id="percentualComissao"
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="0.1"
+                          value={formData.percentualComissao}
+                          onChange={(e) => handleInputChange('percentualComissao', parseFloat(e.target.value) || 0)}
+                          placeholder="Ex: 5.5"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Histórico de Visitas */}
+                    <div className="mt-4 pt-4 border-t">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-base font-medium flex items-center gap-2">
+                          <Calendar className="h-5 w-5" />
+                          Histórico de Visitas
+                        </h4>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setModalHistoricoOpen(true)}
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Adicionar Histórico
+                        </Button>
+                      </div>
+                      
+                      {historicoVisitas.length === 0 ? (
+                        <div className="text-center py-6 text-muted-foreground">
+                          <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                          <p className="text-sm">Nenhuma visita registrada</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Data</TableHead>
+                                <TableHead>Colaborador</TableHead>
+                                <TableHead>Observação</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {historicoVisitas
+                                .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
+                                .map((visita) => (
+                                <TableRow key={visita.id}>
+                                  <TableCell className="font-medium">
+                                    {new Date(visita.data).toLocaleDateString('pt-BR')}
+                                  </TableCell>
+                                  <TableCell>{visita.colaborador}</TableCell>
+                                  <TableCell className="text-sm text-muted-foreground">
+                                    {visita.observacao}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
