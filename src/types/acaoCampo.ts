@@ -51,6 +51,14 @@ export interface DocumentoAcaoCampo {
   dadosFormulario?: FieldActionEffectivenessData;
 }
 
+// Seção de Ação de Campo (NOVA)
+export interface SecaoAcaoCampo {
+  id: string;
+  titulo: string;
+  documentos: DocumentoAcaoCampo[];
+  documentosAdicionais: DocumentoAcaoCampo[];
+}
+
 // Status da Ação de Campo
 export enum StatusAcaoCampo {
   EM_ANDAMENTO = 'em_andamento',
@@ -67,6 +75,6 @@ export interface AcaoCampo {
   dataCriacao: string;
   dataAtualizacao?: string;
   status: StatusAcaoCampo;
-  documentos: DocumentoAcaoCampo[];
-  documentosAdicionais: DocumentoAcaoCampo[];
+  secoes: SecaoAcaoCampo[];
+  documentosExtras: DocumentoAcaoCampo[];
 }
