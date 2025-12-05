@@ -3,16 +3,21 @@ import { OrganizacaoDocumentos } from "./OrganizacaoDocumentos";
 import { LiberacaoProdutosTable } from "./LiberacaoProdutosTable";
 import { ControleMudancasTable } from "./ControleMudancasTable";
 import { TreinamentosSection } from "./TreinamentosSection";
+import { ListaMestraSection } from "./ListaMestraSection";
 import { 
   mockDocumentacoes, 
   mockLiberacaoProdutos, 
   mockMudancas,
   mockTreinamentosRealizados,
-  mockTreinamentosFuturos
+  mockTreinamentosFuturos,
+  mockListaMestra
 } from "@/data/rtModules";
-import { DocumentacaoRT, LiberacaoProduto, Mudanca, Treinamento } from "@/types/rt";
+import { DocumentacaoRT, LiberacaoProduto, Mudanca, Treinamento, ListaMestra } from "@/types/rt";
 
 export const DocumentacaoTab = () => {
+  // Estado para Lista Mestra
+  const [listaMestra, setListaMestra] = useState<ListaMestra>(mockListaMestra);
+
   // Estados para documentações
   const [documentacoes, setDocumentacoes] = useState<DocumentacaoRT[]>(mockDocumentacoes);
 
@@ -44,6 +49,12 @@ export const DocumentacaoTab = () => {
 
   return (
     <div className="space-y-8">
+      {/* Seção: Lista Mestra */}
+      <ListaMestraSection
+        listaMestra={listaMestra}
+        onListaMestraChange={setListaMestra}
+      />
+
       {/* Seção: Documentação */}
       <div>
         <h2 className="text-2xl font-bold mb-6">Documentação</h2>

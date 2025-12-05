@@ -149,3 +149,17 @@ export interface RegistroAuditoria {
   detalhes?: string;
   ipAddress?: string;
 }
+
+// Lista Mestra
+export interface ItemListaMestra {
+  id: string;
+  titulo: string;
+  estruturaPastas: PastaRT[];
+  codigo?: string;
+  data?: string;
+}
+
+export interface ListaMestra {
+  arquivoGeral?: ArquivoRT;
+  itens: ItemListaMestra[];
+}

@@ -7,7 +7,8 @@ import {
   DocumentacaoRT,
   AlertaRT,
   KPIRT,
-  RegistroAuditoria
+  RegistroAuditoria,
+  ListaMestra
 } from "@/types/rt";
 
 // Mock de arquivos
@@ -599,3 +600,23 @@ export const trilhaAuditoriaMockada: RegistroAuditoria[] = [
     ipAddress: '192.168.1.104'
   }
 ];
+
+// Mock de Lista Mestra
+export const mockListaMestra: ListaMestra = {
+  arquivoGeral: undefined,
+  itens: [
+    { id: 'lm-1', titulo: 'Roteiro de Auditoria da Qualidade', estruturaPastas: [], codigo: '', data: '' },
+    { id: 'lm-2', titulo: 'Formulário de Autoinspeção', estruturaPastas: [], codigo: '', data: '' },
+    { id: 'lm-3', titulo: 'Registro de Qualificação de Fornecedores', estruturaPastas: [], codigo: '', data: '' },
+    { id: 'lm-4', titulo: 'Registro de Qualificação de Distribuidores', estruturaPastas: [], codigo: '', data: '' },
+    { id: 'lm-5', titulo: 'Registro de Qualificação de Clientes', estruturaPastas: [], codigo: '', data: '' },
+    { id: 'lm-6', titulo: 'Registro de Qualificação de Terceirizados', estruturaPastas: [], codigo: '', data: '' },
+    { id: 'lm-7', titulo: 'Certificado de ART – Anotação de Responsabilidade Técnica', estruturaPastas: [], codigo: '', data: '' },
+    { id: 'lm-8', titulo: 'Análise Crítica da Qualidade', estruturaPastas: [], codigo: '', data: '' },
+    { id: 'lm-9', titulo: 'Cancelamento de Documentos Normativos', estruturaPastas: [], codigo: '', data: '' },
+    { id: 'lm-10', titulo: 'LTCAT', estruturaPastas: [], codigo: '', data: '' },
+    { id: 'lm-11', titulo: 'PCMSO', estruturaPastas: [], codigo: '', data: '' },
+    { id: 'lm-12', titulo: 'PGR', estruturaPastas: [], codigo: '', data: '' },
+    { id: 'lm-13', titulo: 'Outros', estruturaPastas: [], codigo: '', data: '' },
+  ]
+};
