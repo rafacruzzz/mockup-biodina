@@ -276,9 +276,6 @@ const Administrativo = () => {
   const renderRegulatorioModule = () => {
     const tabs = [
       { id: 'dashboard', label: 'DASHBOARD', icon: BarChart3 },
-      { id: 'registro-produtos', label: 'REGISTRO DE PRODUTOS', icon: FileText },
-      { id: 'atualizacoes', label: 'ATUALIZAÇÕES DE PRODUTO', icon: RefreshCw },
-      { id: 'due-diligence', label: 'DUE DILIGENCE - FORNECEDOR', icon: UserCheck },
       { id: 'rastreabilidade', label: 'RASTREABILIDADE', icon: Route },
       { id: 'boas-praticas', label: 'BOAS PRÁTICAS', icon: CheckCircle2 },
     ];
@@ -286,9 +283,6 @@ const Administrativo = () => {
     const renderContent = () => {
       switch (activeTab) {
         case 'dashboard': return renderRegulatorioIndicadores();
-        case 'registro-produtos': return renderRegistroProdutosTab();
-        case 'atualizacoes': return renderAtualizacoesTab();
-        case 'due-diligence': return renderDueDiligenceTab();
         case 'rastreabilidade': return <RastreabilidadeRegulatorioTab />;
         case 'boas-praticas': return <BoasPraticasTab />;
         default: return renderRegulatorioIndicadores();
@@ -490,169 +484,6 @@ const Administrativo = () => {
       </Card>
     </div>
   );
-
-  const renderRegistroProdutosTab = () => {
-    const registrosData = modules.registros_anvisa.subModules.registros.data;
-    
-    const handleEditRegistro = (registro: any) => {
-      toast({
-        title: "Editar Registro",
-        description: `Editando registro: ${registro.nomeProduto}`,
-      });
-    };
-
-    const handleDeleteRegistro = (registroId: number) => {
-      toast({
-        title: "Excluir Registro",
-        description: "Registro excluído com sucesso",
-        variant: "destructive",
-      });
-    };
-
-    const handleViewHistory = (registro: any) => {
-      setSelectedRegistroHistory(registro);
-      setShowHistoryModal(true);
-    };
-
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold">REGISTRO DE PRODUTOS</h2>
-            <p className="text-gray-600">Gerencie os registros ANVISA dos seus produtos</p>
-          </div>
-          <Button 
-            onClick={() => setShowNovoRegistroModal(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Novo Registro
-          </Button>
-        </div>
-
-        {/* Explicação do processo */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-medium text-blue-900 mb-2">Como funciona o processo:</h4>
-          <ol className="text-sm text-blue-800 space-y-1">
-            <li>1. Selecione um produto cadastrado no sistema</li>
-            <li>2. Organize a documentação necessária para o registro</li>
-            <li>3. Anexe o protocolo de peticionamento obrigatório</li>
-            <li>4. Finalize e acompanhe o processo de registro</li>
-          </ol>
-        </div>
-
-        <RegistrosAnvisaTable 
-          registros={registrosData}
-          onEdit={handleEditRegistro}
-          onDelete={handleDeleteRegistro}
-          onViewHistory={handleViewHistory}
-        />
-      </div>
-    );
-  };
-
-  const renderAtualizacoesTab = () => {
-    const atualizacoesData = modules.atualizacoes_anvisa.subModules.atualizacoes.data;
-    
-    const handleEditAtualizacao = (atualizacao: any) => {
-      toast({
-        title: "Editar Atualização",
-        description: `Editando atualização: ${atualizacao.nomeArquivoPrincipal}`,
-      });
-    };
-
-    const handleDeleteAtualizacao = (atualizacaoId: number) => {
-      toast({
-        title: "Excluir Atualização",
-        description: "Atualização excluída com sucesso",
-        variant: "destructive",
-      });
-    };
-
-    const handleViewAtualizacaoHistory = (atualizacao: any) => {
-      setSelectedAtualizacaoHistory(atualizacao);
-      setShowAtualizacaoHistoryModal(true);
-    };
-
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold">ATUALIZAÇÕES DE PRODUTO</h2>
-            <p className="text-gray-600">Gerencie as atualizações regulatórias dos seus produtos</p>
-          </div>
-          <Button 
-            onClick={() => setShowNovaAtualizacaoModal(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Nova Atualização
-          </Button>
-        </div>
-
-        {/* Explicação do processo */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-medium text-blue-900 mb-2">Como funciona o processo:</h4>
-          <ol className="text-sm text-blue-800 space-y-1">
-            <li>1. Selecione um produto já registrado para atualização</li>
-            <li>2. Organize a documentação de alteração necessária</li>
-            <li>3. Preencha as informações do peticionamento junto à ANVISA</li>
-            <li>4. Gerencie a disponibilização da instrução de uso atualizada</li>
-          </ol>
-        </div>
-
-        <AtualizacoesAnvisaTable 
-          atualizacoes={atualizacoesData}
-          onEdit={handleEditAtualizacao}
-          onDelete={handleDeleteAtualizacao}
-          onViewHistory={handleViewAtualizacaoHistory}
-        />
-      </div>
-    );
-  };
-
-  const renderDueDiligenceTab = () => {
-    const triagensData = modules.due_diligence_fornecedor.subModules.triagens.data as any[];
-    
-    const handleViewTriagem = (triagem: any) => {
-      setSelectedTriagem(triagem);
-      setShowNovaTriagemModal(true);
-    };
-
-    const handleEditTriagem = (triagem: any) => {
-      setSelectedTriagem(triagem);
-      setShowNovaTriagemModal(true);
-    };
-
-    const handleDeleteTriagem = (id: number) => {
-      toast({
-        title: "Triagem excluída",
-        description: "A triagem foi excluída com sucesso.",
-      });
-    };
-
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold">Due Diligence - Fornecedor</h2>
-            <p className="text-muted-foreground">Gestão completa do processo de due diligence de fornecedores</p>
-          </div>
-          <Button onClick={() => setShowNovaTriagemModal(true)} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Nova Triagem
-          </Button>
-        </div>
-
-        <DueDiligenceTable
-          data={triagensData}
-          onView={handleViewTriagem}
-          onEdit={handleEditTriagem}
-          onDelete={handleDeleteTriagem}
-        />
-      </div>
-    );
-  };
 
   const renderEmptyTab = (titulo: string, descricao: string) => (
     <Card className="shadow-sm">
