@@ -4,6 +4,7 @@ import { LiberacaoProdutosTable } from "./LiberacaoProdutosTable";
 import { ControleMudancasTable } from "./ControleMudancasTable";
 import { TreinamentosSection } from "./TreinamentosSection";
 import { ListaMestraSection } from "./ListaMestraSection";
+import { HistoricoIntegracaoRT } from "./HistoricoIntegracaoRT";
 import { 
   mockDocumentacoes, 
   mockLiberacaoProdutos, 
@@ -101,6 +102,9 @@ export const DocumentacaoTab = () => {
         treinamentosFuturos={treinamentosFuturos}
         onTreinamentosChange={handleTreinamentosChange}
       />
+
+      {/* Seção 7: Histórico de Alterações */}
+      <HistoricoIntegracaoRT />
     </div>
   );
 };
