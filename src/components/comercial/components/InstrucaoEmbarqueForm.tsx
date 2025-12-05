@@ -1505,7 +1505,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     </div>
 
                     <div>
-                      <Label htmlFor="signatureCodigo_seco">Código:</Label>
                       <Input
                         id="signatureCodigo_seco"
                         value={formData.signatureCodigo_seco || 'EAA – XXXX.'}
