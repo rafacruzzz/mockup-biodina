@@ -38,6 +38,13 @@ interface LicitanteItem {
   ranking: number;
   status: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor' | 'adjudicada' | 'aceita_habilitada' | 'homologada';
 }
+
+// Tipo para tabela de licitantes
+interface TabelaLicitantes {
+  id: number;
+  numero: number;
+  licitantes: LicitanteItem[];
+}
 import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getAtendeEditalBadge } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useSegmentoLeadManager } from "@/hooks/useSegmentoLeadManager";
@@ -106,8 +113,13 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   const [showPedidoForm, setShowPedidoForm] = useState(false);
   const [showLicitanteModal, setShowLicitanteModal] = useState(false);
   
-  // Estado para licitantes (inicia vazio)
-  const [licitantesLista, setLicitantesLista] = useState<LicitanteItem[]>([]);
+  // Estado para múltiplas tabelas de licitantes (inicia com uma tabela padrão)
+  const [tabelasLicitantes, setTabelasLicitantes] = useState<TabelaLicitantes[]>([
+    { id: 1, numero: 1, licitantes: [] }
+  ]);
+  
+  // Estado para rastrear qual tabela está recebendo o novo licitante
+  const [tabelaAtiva, setTabelaAtiva] = useState<number | null>(null);
   
   // Estado para novo licitante
   const [novoLicitante, setNovoLicitante] = useState({
@@ -262,7 +274,46 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({ ...formData, licitantes: licitantesLista });
+    onSave({ ...formData, tabelasLicitantes });
+  };
+
+  const handleAdicionarTabela = () => {
+    const proximoNumero = tabelasLicitantes.length > 0 
+      ? Math.max(...tabelasLicitantes.map(t => t.numero)) + 1 
+      : 1;
+    
+    setTabelasLicitantes([
+      ...tabelasLicitantes,
+      { id: Date.now(), numero: proximoNumero, licitantes: [] }
+    ]);
+    
+    toast({
+      title: "Tabela adicionada",
+      description: `Tabela de Licitantes ${proximoNumero} criada com sucesso.`
+    });
+  };
+
+  const handleExcluirTabela = (tabelaId: number) => {
+    if (tabelasLicitantes.length === 1) {
+      toast({
+        title: "Não é possível excluir",
+        description: "É necessário manter pelo menos uma tabela de licitantes.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setTabelasLicitantes(tabelasLicitantes.filter(t => t.id !== tabelaId));
+    
+    toast({
+      title: "Tabela excluída",
+      description: "Tabela de licitantes removida com sucesso."
+    });
+  };
+
+  const handleAbrirModalLicitante = (tabelaId: number) => {
+    setTabelaAtiva(tabelaId);
+    setShowLicitanteModal(true);
   };
 
   const handleAdicionarLicitante = () => {
@@ -270,6 +321,15 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
       toast({
         title: "Campos obrigatórios",
         description: "Preencha Empresa, Marca e Modelo.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!tabelaAtiva) {
+      toast({
+        title: "Erro",
+        description: "Nenhuma tabela selecionada.",
         variant: "destructive"
       });
       return;
@@ -290,7 +350,12 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
       status: novoLicitante.status
     };
     
-    setLicitantesLista([...licitantesLista, licitante]);
+    setTabelasLicitantes(tabelasLicitantes.map(tabela => 
+      tabela.id === tabelaAtiva 
+        ? { ...tabela, licitantes: [...tabela.licitantes, licitante] }
+        : tabela
+    ));
+    
     setNovoLicitante({
       empresa: '',
       marca: '',
@@ -302,10 +367,24 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
       status: 'habilitado'
     });
     setShowLicitanteModal(false);
+    setTabelaAtiva(null);
     
     toast({
       title: "Licitante adicionado",
       description: "Licitante cadastrado com sucesso."
+    });
+  };
+
+  const handleExcluirLicitante = (tabelaId: number, licitanteId: number) => {
+    setTabelasLicitantes(tabelasLicitantes.map(tabela => 
+      tabela.id === tabelaId 
+        ? { ...tabela, licitantes: tabela.licitantes.filter(l => l.id !== licitanteId) }
+        : tabela
+    ));
+    
+    toast({
+      title: "Licitante excluído",
+      description: "Licitante removido com sucesso."
     });
   };
 
@@ -911,74 +990,124 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           />
         </div>
 
-        {/* Tabela de Licitantes */}
-        <div className="space-y-2">
+        {/* Tabelas de Licitantes */}
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium">Tabela de Licitantes</Label>
+            <Label className="text-lg font-semibold">Tabelas de Licitantes</Label>
             {!isReadOnlyMode() && (
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => setShowLicitanteModal(true)}
+                onClick={handleAdicionarTabela}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Adicionar Licitante
+                Adicionar Tabela de Licitantes
               </Button>
             )}
           </div>
-          <div className="border rounded-lg overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Empresa</TableHead>
-                  <TableHead>Marca</TableHead>
-                  <TableHead>Modelo</TableHead>
-                  <TableHead>Valor Unitário</TableHead>
-                  <TableHead>Quantidade</TableHead>
-                  <TableHead>Valor Final</TableHead>
-                  <TableHead>Atende ao Edital?</TableHead>
-                  <TableHead>Ranking</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {licitantesLista.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
-                      Nenhum licitante cadastrado. Clique em "Adicionar Licitante" para começar.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  licitantesLista.map((licitante) => (
-                    <TableRow key={licitante.id}>
-                      <TableCell className="font-medium">{licitante.empresa}</TableCell>
-                      <TableCell>{licitante.marca}</TableCell>
-                      <TableCell>{licitante.modelo}</TableCell>
-                      <TableCell>{formatCurrency(licitante.valorUnitario)}</TableCell>
-                      <TableCell>{licitante.quantidade}</TableCell>
-                      <TableCell>{formatCurrency(licitante.valorFinal)}</TableCell>
-                      <TableCell>
-                        <Badge className={getAtendeEditalBadge(licitante.atendeEdital)}>
-                          {licitante.atendeEdital ? 'SIM' : 'NÃO'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getRankingColor(licitante.ranking)}>
-                          {licitante.ranking}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(licitante.status)}>
-                          {getStatusLabel(licitante.status)}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+          
+          {tabelasLicitantes.map((tabela) => (
+            <Card key={tabela.id} className="border">
+              <CardHeader className="py-3 px-4 flex flex-row items-center justify-between">
+                <CardTitle className="text-base font-medium">
+                  Tabela de Licitantes {tabela.numero}
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  {!isReadOnlyMode() && (
+                    <>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleAbrirModalLicitante(tabela.id)}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Adicionar Licitante
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        onClick={() => handleExcluirTabela(tabela.id)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="border-t overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Empresa</TableHead>
+                        <TableHead>Marca</TableHead>
+                        <TableHead>Modelo</TableHead>
+                        <TableHead>Valor Unitário</TableHead>
+                        <TableHead>Quantidade</TableHead>
+                        <TableHead>Valor Final</TableHead>
+                        <TableHead>Atende ao Edital?</TableHead>
+                        <TableHead>Ranking</TableHead>
+                        <TableHead>Status</TableHead>
+                        {!isReadOnlyMode() && <TableHead>Ações</TableHead>}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {tabela.licitantes.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={isReadOnlyMode() ? 9 : 10} className="text-center text-muted-foreground py-8">
+                            Nenhum licitante cadastrado. Clique em "Adicionar Licitante" para começar.
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        tabela.licitantes.map((licitante) => (
+                          <TableRow key={licitante.id}>
+                            <TableCell className="font-medium">{licitante.empresa}</TableCell>
+                            <TableCell>{licitante.marca}</TableCell>
+                            <TableCell>{licitante.modelo}</TableCell>
+                            <TableCell>{formatCurrency(licitante.valorUnitario)}</TableCell>
+                            <TableCell>{licitante.quantidade}</TableCell>
+                            <TableCell>{formatCurrency(licitante.valorFinal)}</TableCell>
+                            <TableCell>
+                              <Badge className={getAtendeEditalBadge(licitante.atendeEdital)}>
+                                {licitante.atendeEdital ? 'SIM' : 'NÃO'}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={getRankingColor(licitante.ranking)}>
+                                {licitante.ranking}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={getStatusColor(licitante.status)}>
+                                {getStatusLabel(licitante.status)}
+                              </Badge>
+                            </TableCell>
+                            {!isReadOnlyMode() && (
+                              <TableCell>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                  onClick={() => handleExcluirLicitante(tabela.id, licitante.id)}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </TableCell>
+                            )}
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
 
