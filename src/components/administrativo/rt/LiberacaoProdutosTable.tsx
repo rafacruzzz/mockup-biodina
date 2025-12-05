@@ -93,7 +93,6 @@ export const LiberacaoProdutosTable = ({
               <TableRow>
                 <TableHead className="w-[100px]">Código</TableHead>
                 <TableHead>Nome do Produto</TableHead>
-                <TableHead>Referência</TableHead>
                 <TableHead>Modelo</TableHead>
                 <TableHead>Fabricante</TableHead>
                 <TableHead>Marca</TableHead>
@@ -110,7 +109,7 @@ export const LiberacaoProdutosTable = ({
             <TableBody>
               {produtosFiltrados.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={14} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={13} className="text-center py-8 text-muted-foreground">
                     {searchTerm ? "Nenhum produto encontrado" : "Nenhum produto cadastrado"}
                   </TableCell>
                 </TableRow>
@@ -119,7 +118,6 @@ export const LiberacaoProdutosTable = ({
                   <TableRow key={produto.produtoId}>
                     <TableCell className="font-medium">{produto.codigo}</TableCell>
                     <TableCell>{produto.nome}</TableCell>
-                    <TableCell>{produto.referencia}</TableCell>
                     <TableCell>{produto.modelo}</TableCell>
                     <TableCell>{produto.fabricante}</TableCell>
                     <TableCell>{produto.marca}</TableCell>
