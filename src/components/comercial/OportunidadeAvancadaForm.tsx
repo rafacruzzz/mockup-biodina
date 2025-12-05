@@ -23,8 +23,22 @@ import PedidoForm from "./PedidoForm";
 import CustomAlertModal from "./components/CustomAlertModal";
 import SolicitacaoCadastroModal from "./SolicitacaoCadastroModal";
 import GerenciarSegmentosModal from "./GerenciarSegmentosModal";
-import { concorrentes as mockConcorrentes, licitantes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
-import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getUnidadeColor, getAtendeEditalBadge } from "@/lib/utils";
+import { concorrentes as mockConcorrentes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
+
+// Tipo para licitantes
+interface LicitanteItem {
+  id: number;
+  empresa: string;
+  marca: string;
+  modelo: string;
+  valorUnitario: number;
+  quantidade: number;
+  valorFinal: number;
+  atendeEdital: boolean;
+  ranking: number;
+  status: 'habilitado' | 'inabilitado' | 'desclassificado' | 'vencedor' | 'adjudicada' | 'aceita_habilitada' | 'homologada';
+}
+import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getAtendeEditalBadge } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useSegmentoLeadManager } from "@/hooks/useSegmentoLeadManager";
 import { PedidoCompleto } from "@/types/comercial";
@@ -90,6 +104,22 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
   const [showConcorrenteModal, setShowConcorrenteModal] = useState(false);
   const [showPedidoForm, setShowPedidoForm] = useState(false);
+  const [showLicitanteModal, setShowLicitanteModal] = useState(false);
+  
+  // Estado para licitantes (inicia vazio)
+  const [licitantesLista, setLicitantesLista] = useState<LicitanteItem[]>([]);
+  
+  // Estado para novo licitante
+  const [novoLicitante, setNovoLicitante] = useState({
+    empresa: '',
+    marca: '',
+    modelo: '',
+    valorUnitario: 0,
+    quantidade: 1,
+    atendeEdital: true,
+    ranking: 1,
+    status: 'habilitado' as LicitanteItem['status']
+  });
   
   // Estados para dados
   const [concorrentes, setConcorrentes] = useState([
@@ -232,7 +262,51 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    onSave({ ...formData, licitantes: licitantesLista });
+  };
+
+  const handleAdicionarLicitante = () => {
+    if (!novoLicitante.empresa || !novoLicitante.marca || !novoLicitante.modelo) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Preencha Empresa, Marca e Modelo.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    const valorFinal = novoLicitante.valorUnitario * novoLicitante.quantidade;
+    
+    const licitante: LicitanteItem = {
+      id: Date.now(),
+      empresa: novoLicitante.empresa,
+      marca: novoLicitante.marca,
+      modelo: novoLicitante.modelo,
+      valorUnitario: novoLicitante.valorUnitario,
+      quantidade: novoLicitante.quantidade,
+      valorFinal,
+      atendeEdital: novoLicitante.atendeEdital,
+      ranking: novoLicitante.ranking,
+      status: novoLicitante.status
+    };
+    
+    setLicitantesLista([...licitantesLista, licitante]);
+    setNovoLicitante({
+      empresa: '',
+      marca: '',
+      modelo: '',
+      valorUnitario: 0,
+      quantidade: 1,
+      atendeEdital: true,
+      ranking: 1,
+      status: 'habilitado'
+    });
+    setShowLicitanteModal(false);
+    
+    toast({
+      title: "Licitante adicionado",
+      description: "Licitante cadastrado com sucesso."
+    });
   };
 
   const handleSalvarPedido = (pedidoData: any) => {
@@ -839,7 +913,20 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
         {/* Tabela de Licitantes */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Tabela de Licitantes</Label>
+          <div className="flex items-center justify-between">
+            <Label className="text-sm font-medium">Tabela de Licitantes</Label>
+            {!isReadOnlyMode() && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setShowLicitanteModal(true)}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Adicionar Licitante
+              </Button>
+            )}
+          </div>
           <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
@@ -848,43 +935,47 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                   <TableHead>Marca</TableHead>
                   <TableHead>Modelo</TableHead>
                   <TableHead>Valor Unitário</TableHead>
+                  <TableHead>Quantidade</TableHead>
                   <TableHead>Valor Final</TableHead>
-                  <TableHead>Qnt Unidade</TableHead>
                   <TableHead>Atende ao Edital?</TableHead>
                   <TableHead>Ranking</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {licitantes.map((licitante, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="font-medium">{licitante.empresa}</TableCell>
-                    <TableCell>{licitante.marca}</TableCell>
-                    <TableCell>{licitante.modelo}</TableCell>
-                    <TableCell>{formatCurrency(licitante.valorUnitario)}</TableCell>
-                    <TableCell>{formatCurrency(licitante.valorFinal)}</TableCell>
-                    <TableCell>
-                      <Badge className={getUnidadeColor(licitante.unidade)}>
-                        {licitante.unidade}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getAtendeEditalBadge(licitante.atendeEdital)}>
-                        {licitante.atendeEdital ? 'SIM' : 'NÃO'}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getRankingColor(licitante.ranking)}>
-                        {licitante.ranking}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(licitante.status)}>
-                        {getStatusLabel(licitante.status)}
-                      </Badge>
+                {licitantesLista.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
+                      Nenhum licitante cadastrado. Clique em "Adicionar Licitante" para começar.
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : (
+                  licitantesLista.map((licitante) => (
+                    <TableRow key={licitante.id}>
+                      <TableCell className="font-medium">{licitante.empresa}</TableCell>
+                      <TableCell>{licitante.marca}</TableCell>
+                      <TableCell>{licitante.modelo}</TableCell>
+                      <TableCell>{formatCurrency(licitante.valorUnitario)}</TableCell>
+                      <TableCell>{licitante.quantidade}</TableCell>
+                      <TableCell>{formatCurrency(licitante.valorFinal)}</TableCell>
+                      <TableCell>
+                        <Badge className={getAtendeEditalBadge(licitante.atendeEdital)}>
+                          {licitante.atendeEdital ? 'SIM' : 'NÃO'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getRankingColor(licitante.ranking)}>
+                          {licitante.ranking}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={getStatusColor(licitante.status)}>
+                          {getStatusLabel(licitante.status)}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
@@ -1306,6 +1397,139 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         isOpen={showSolicitacaoCadastro}
         onClose={() => setShowSolicitacaoCadastro(false)}
       />
+
+      {/* Modal para adicionar licitante */}
+      <Dialog open={showLicitanteModal} onOpenChange={setShowLicitanteModal}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Adicionar Licitante</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="licit-empresa">Empresa *</Label>
+              <Input
+                id="licit-empresa"
+                value={novoLicitante.empresa}
+                onChange={(e) => setNovoLicitante({ ...novoLicitante, empresa: e.target.value })}
+                placeholder="Nome da empresa"
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="licit-marca">Marca *</Label>
+                <Input
+                  id="licit-marca"
+                  value={novoLicitante.marca}
+                  onChange={(e) => setNovoLicitante({ ...novoLicitante, marca: e.target.value })}
+                  placeholder="Marca do produto"
+                />
+              </div>
+              <div>
+                <Label htmlFor="licit-modelo">Modelo *</Label>
+                <Input
+                  id="licit-modelo"
+                  value={novoLicitante.modelo}
+                  onChange={(e) => setNovoLicitante({ ...novoLicitante, modelo: e.target.value })}
+                  placeholder="Modelo do produto"
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="licit-valorUnitario">Valor Unitário (R$)</Label>
+                <Input
+                  id="licit-valorUnitario"
+                  type="number"
+                  step="0.01"
+                  value={novoLicitante.valorUnitario}
+                  onChange={(e) => setNovoLicitante({ ...novoLicitante, valorUnitario: parseFloat(e.target.value) || 0 })}
+                  placeholder="0,00"
+                />
+              </div>
+              <div>
+                <Label htmlFor="licit-quantidade">Quantidade</Label>
+                <Input
+                  id="licit-quantidade"
+                  type="number"
+                  min="1"
+                  value={novoLicitante.quantidade}
+                  onChange={(e) => setNovoLicitante({ ...novoLicitante, quantidade: parseInt(e.target.value) || 1 })}
+                  placeholder="1"
+                />
+              </div>
+            </div>
+            
+            <div className="p-3 bg-muted rounded-lg">
+              <Label className="text-sm text-muted-foreground">Valor Final (calculado)</Label>
+              <p className="text-lg font-semibold">
+                {formatCurrency(novoLicitante.valorUnitario * novoLicitante.quantidade)}
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="licit-atendeEdital">Atende ao Edital?</Label>
+                <Select
+                  value={novoLicitante.atendeEdital ? 'sim' : 'nao'}
+                  onValueChange={(value) => setNovoLicitante({ ...novoLicitante, atendeEdital: value === 'sim' })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sim">Sim</SelectItem>
+                    <SelectItem value="nao">Não</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="licit-ranking">Ranking</Label>
+                <Input
+                  id="licit-ranking"
+                  type="number"
+                  min="1"
+                  value={novoLicitante.ranking}
+                  onChange={(e) => setNovoLicitante({ ...novoLicitante, ranking: parseInt(e.target.value) || 1 })}
+                  placeholder="1"
+                />
+              </div>
+            </div>
+            
+            <div>
+              <Label htmlFor="licit-status">Status</Label>
+              <Select
+                value={novoLicitante.status}
+                onValueChange={(value) => setNovoLicitante({ ...novoLicitante, status: value as LicitanteItem['status'] })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="habilitado">Habilitado</SelectItem>
+                  <SelectItem value="inabilitado">Inabilitado</SelectItem>
+                  <SelectItem value="desclassificado">Desclassificado</SelectItem>
+                  <SelectItem value="vencedor">Vencedor</SelectItem>
+                  <SelectItem value="adjudicada">Adjudicada</SelectItem>
+                  <SelectItem value="aceita_habilitada">Aceita e Habilitada</SelectItem>
+                  <SelectItem value="homologada">Homologada</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex justify-end gap-2 pt-4">
+              <Button variant="outline" onClick={() => setShowLicitanteModal(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleAdicionarLicitante}>
+                <Plus className="h-4 w-4 mr-2" />
+                Adicionar
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
