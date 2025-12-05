@@ -202,7 +202,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 id="aoSubject"
                 value={formData.aoSubject || ''}
                 onChange={(e) => onInputChange('aoSubject', e.target.value)}
-                placeholder="SHIPMENT INSTRUCTIONS, DD-6859/RD-4968, YOUR AO's 003627075 USD 17,299.74."
+                placeholder="SHIPMENT INSTRUCTIONS,DD-xxxx/RD-xxxx, YOUR PI xxxxxxx USD xxxxxxxx."
                 className="w-full"
               />
             </div>
@@ -213,7 +213,16 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 id="aoCustomer"
                 value={formData.aoCustomer || ''}
                 onChange={(e) => onInputChange('aoCustomer', e.target.value)}
-                placeholder="HOSPITAL SÃO VICENTE DE PAULO"
+                className="w-full"
+              />
+            </div>
+
+            <div className="lg:col-span-2">
+              <Label htmlFor="aoDearGreeting">Greeting</Label>
+              <Input
+                id="aoDearGreeting"
+                value={formData.aoDearGreeting || 'Dear Ms. Orbansen:'}
+                onChange={(e) => onInputChange('aoDearGreeting', e.target.value)}
                 className="w-full"
               />
             </div>
@@ -347,55 +356,64 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
 
           <div className="border p-4 rounded">
             <h3 className="font-semibold mb-4 border-b pb-2">BANKING INFORMATION</h3>
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <Label htmlFor="bankName">Bank Name</Label>
-                <Input
-                  id="bankName"
-                  value={formData.bankName || 'NORDEA BANK DENMARK A/S'}
-                  onChange={(e) => onInputChange('bankName', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="bankPOBox">P.O. Box</Label>
-                <Input
-                  id="bankPOBox"
-                  value={formData.bankPOBox || 'P.O. BOX 850'}
-                  onChange={(e) => onInputChange('bankPOBox', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="bankCity">City</Label>
-                <Input
-                  id="bankCity"
-                  value={formData.bankCity || '0900 COPENHAGEN C DENMARK'}
-                  onChange={(e) => onInputChange('bankCity', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="bankSwift">S.W.I.F.T</Label>
-                <Input
-                  id="bankSwift"
-                  value={formData.bankSwift || 'S.W.I.F.T NDEEDKKK'}
-                  onChange={(e) => onInputChange('bankSwift', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="bankAccount">Account Number</Label>
-                <Input
-                  id="bankAccount"
-                  value={formData.bankAccount || 'ACCOUNT NO.: 2149 5005508776'}
-                  onChange={(e) => onInputChange('bankAccount', e.target.value)}
-                  className="w-full"
-                />
+            <div className="space-y-2">
+              <p className="text-sm font-medium">- Complete Bank information for payment</p>
+              <div className="bg-gray-50 p-4 rounded border space-y-1 font-mono text-sm">
+                <div className="flex">
+                  <span className="w-32"></span>
+                  <span>OUR BANK</span>
+                </div>
+                <div className="flex">
+                  <span className="w-32"></span>
+                  <Input
+                    id="bankName"
+                    value={formData.bankName || 'NORDEA BANK DENMARK A/S'}
+                    onChange={(e) => onInputChange('bankName', e.target.value)}
+                    className="w-full max-w-md h-8"
+                  />
+                </div>
+                <div className="flex">
+                  <span className="w-32"></span>
+                  <Input
+                    id="bankPOBox"
+                    value={formData.bankPOBox || 'P.O. BOX 850'}
+                    onChange={(e) => onInputChange('bankPOBox', e.target.value)}
+                    className="w-full max-w-md h-8"
+                  />
+                </div>
+                <div className="flex">
+                  <span className="w-32"></span>
+                  <Input
+                    id="bankCity"
+                    value={formData.bankCity || '0900 COPENHAGEN C DENMARK'}
+                    onChange={(e) => onInputChange('bankCity', e.target.value)}
+                    className="w-full max-w-md h-8"
+                  />
+                </div>
+                <div className="flex">
+                  <span className="w-32"></span>
+                  <div className="flex items-center gap-2">
+                    <span>S.W.I.F.T</span>
+                    <Input
+                      id="bankSwift"
+                      value={formData.bankSwift || 'NDEADKKK'}
+                      onChange={(e) => onInputChange('bankSwift', e.target.value)}
+                      className="w-40 h-8"
+                    />
+                  </div>
+                </div>
+                <div className="flex">
+                  <span className="w-32"></span>
+                  <div className="flex items-center gap-2">
+                    <span>ACCOUNT NO.:</span>
+                    <Input
+                      id="bankAccount"
+                      value={formData.bankAccount || '2149 5005508776'}
+                      onChange={(e) => onInputChange('bankAccount', e.target.value)}
+                      className="w-48 h-8"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1130,25 +1148,34 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
               <div className="space-y-6">
                 {/* 1- Invoice Section */}
                 <div className="border p-4 rounded bg-white">
-                  <h4 className="font-semibold mb-4 text-base">1- Invoice: Please mention on the invoice:</h4>
+                  <div className="mb-4">
+                    <Label htmlFor="invoiceTitle_seco">Invoice Title</Label>
+                    <Input
+                      id="invoiceTitle_seco"
+                      value={formData.invoiceTitle_seco || '1- Invoice: Please mention on the invoice:'}
+                      onChange={(e) => onInputChange('invoiceTitle_seco', e.target.value)}
+                      className="w-full font-semibold"
+                    />
+                  </div>
                   
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="invoiceDescription_seco">Portuguese description as proforma invoice</Label>
+                      <Label htmlFor="invoiceDescription_seco">Portuguese description as</Label>
                       <Textarea
                         id="invoiceDescription_seco"
-                        value={formData.invoiceDescription_seco || 'Descrição em português conforme proforma invoice #XXXXXXX'}
+                        value={formData.invoiceDescription_seco || ''}
                         onChange={(e) => onInputChange('invoiceDescription_seco', e.target.value)}
+                        placeholder="proforma invoice#XXXXXXX"
                         rows={2}
                         className="w-full"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="unitTotalPrices_seco">Unit and Total prices item by item</Label>
+                      <Label htmlFor="unitTotalPrices_seco">2. Unit and Total prices item by item</Label>
                       <Textarea
                         id="unitTotalPrices_seco"
-                        value={formData.unitTotalPrices_seco || 'Item 1 - USD X.XX/unit - Total USD X.XX\nItem 2 - USD X.XX/unit - Total USD X.XX'}
+                        value={formData.unitTotalPrices_seco || ''}
                         onChange={(e) => onInputChange('unitTotalPrices_seco', e.target.value)}
                         rows={3}
                         className="w-full"
@@ -1156,10 +1183,10 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     </div>
 
                     <div>
-                      <Label htmlFor="lotEachItem_seco">Lot of each item</Label>
+                      <Label htmlFor="lotEachItem_seco">3. Lot of each item</Label>
                       <Textarea
                         id="lotEachItem_seco"
-                        value={formData.lotEachItem_seco || 'Item 1 - Lot XXXX-XX-X\nItem 2 - Lot XXXX-XX-X'}
+                        value={formData.lotEachItem_seco || ''}
                         onChange={(e) => onInputChange('lotEachItem_seco', e.target.value)}
                         rows={2}
                         className="w-full"
@@ -1167,20 +1194,21 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     </div>
 
                     <div>
-                      <Label htmlFor="countryOrigin_seco">Country of origin</Label>
+                      <Label htmlFor="countryOrigin_seco">4. Country of origin</Label>
                       <Input
                         id="countryOrigin_seco"
-                        value={formData.countryOrigin_seco || 'United States'}
+                        value={formData.countryOrigin_seco || ''}
                         onChange={(e) => onInputChange('countryOrigin_seco', e.target.value)}
+                        placeholder="Denmark"
                         className="w-full"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="totalCartons_seco">Total of cartons and its marks</Label>
+                      <Label htmlFor="totalCartons_seco">5. Total of cartons and its marks</Label>
                       <Textarea
                         id="totalCartons_seco"
-                        value={formData.totalCartons_seco || 'X cartons - Marks: BIODINA XXXX/XX-XXX'}
+                        value={formData.totalCartons_seco || ''}
                         onChange={(e) => onInputChange('totalCartons_seco', e.target.value)}
                         rows={2}
                         className="w-full"
@@ -1189,20 +1217,20 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="grossWeight_seco">Gross weight</Label>
+                        <Label htmlFor="grossWeight_seco">6. Gross weight</Label>
                         <Input
                           id="grossWeight_seco"
-                          value={formData.grossWeight_seco || 'XX kg'}
+                          value={formData.grossWeight_seco || ''}
                           onChange={(e) => onInputChange('grossWeight_seco', e.target.value)}
                           className="w-full"
                         />
                       </div>
 
                       <div>
-                        <Label htmlFor="netWeight_seco">Net weight</Label>
+                        <Label htmlFor="netWeight_seco">7. Net weight</Label>
                         <Input
                           id="netWeight_seco"
-                          value={formData.netWeight_seco || 'XX kg'}
+                          value={formData.netWeight_seco || ''}
                           onChange={(e) => onInputChange('netWeight_seco', e.target.value)}
                           className="w-full"
                         />
@@ -1210,46 +1238,35 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                     </div>
 
                     <div>
-                      <Label htmlFor="termsPayment_seco">Terms of payment</Label>
+                      <Label htmlFor="termsPayment_seco">8. Terms of payment</Label>
                       <Input
                         id="termsPayment_seco"
-                        value={formData.termsPayment_seco || 'International wire transfer, 30 days after shipment'}
+                        value={formData.termsPayment_seco || ''}
                         onChange={(e) => onInputChange('termsPayment_seco', e.target.value)}
                         className="w-full"
                       />
                     </div>
 
-                    {/* Consigned to - Detailed Section */}
+                    {/* 9. Consigned to - Detailed Section */}
                     <div className="border p-3 rounded bg-gray-50">
-                      <h5 className="font-semibold mb-3">Consigned to:</h5>
+                      <h5 className="font-semibold mb-3">9. Consigned to:</h5>
                       <div className="space-y-3">
                         <div>
-                          <Label htmlFor="consignedName_seco">Name/Company</Label>
+                          <Label htmlFor="consignedName_seco">Nome do Cliente</Label>
                           <Input
                             id="consignedName_seco"
                             value={formData.consignedName_seco || ''}
                             onChange={(e) => onInputChange('consignedName_seco', e.target.value)}
-                            placeholder="Company Name"
                             className="w-full"
                           />
                         </div>
                         <div>
-                          <Label htmlFor="consignedAddress1_seco">Address Line 1</Label>
-                          <Input
-                            id="consignedAddress1_seco"
-                            value={formData.consignedAddress1_seco || ''}
-                            onChange={(e) => onInputChange('consignedAddress1_seco', e.target.value)}
-                            placeholder="Street, Number"
-                            className="w-full"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="consignedAddress2_seco">Address Line 2</Label>
-                          <Input
-                            id="consignedAddress2_seco"
-                            value={formData.consignedAddress2_seco || ''}
-                            onChange={(e) => onInputChange('consignedAddress2_seco', e.target.value)}
-                            placeholder="City, State"
+                          <Label htmlFor="consignedAddress_seco">Endereço</Label>
+                          <Textarea
+                            id="consignedAddress_seco"
+                            value={formData.consignedAddress_seco || ''}
+                            onChange={(e) => onInputChange('consignedAddress_seco', e.target.value)}
+                            rows={2}
                             className="w-full"
                           />
                         </div>
@@ -1260,7 +1277,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                               id="consignedCEP_seco"
                               value={formData.consignedCEP_seco || ''}
                               onChange={(e) => onInputChange('consignedCEP_seco', e.target.value)}
-                              placeholder="00.000-000"
                               className="w-full"
                             />
                           </div>
@@ -1270,7 +1286,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                               id="consignedCNPJ_seco"
                               value={formData.consignedCNPJ_seco || ''}
                               onChange={(e) => onInputChange('consignedCNPJ_seco', e.target.value)}
-                              placeholder="00.000.000/0000-00"
                               className="w-full"
                             />
                           </div>
