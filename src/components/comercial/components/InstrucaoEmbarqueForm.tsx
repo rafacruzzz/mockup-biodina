@@ -1145,219 +1145,68 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 The following sentences need to be included in the shipping documents
               </h3>
 
-              <div className="space-y-6">
-                {/* 1- Invoice Section */}
-                <div className="border p-4 rounded bg-white">
-                  <div className="mb-4">
-                    <Label htmlFor="invoiceTitle_seco">Invoice Title</Label>
-                    <Input
-                      id="invoiceTitle_seco"
-                      value={formData.invoiceTitle_seco || '1- Invoice: Please mention on the invoice:'}
-                      onChange={(e) => onInputChange('invoiceTitle_seco', e.target.value)}
-                      className="w-full font-semibold"
-                    />
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="invoiceDescription_seco">Portuguese description as</Label>
-                      <Textarea
-                        id="invoiceDescription_seco"
-                        value={formData.invoiceDescription_seco || ''}
-                        onChange={(e) => onInputChange('invoiceDescription_seco', e.target.value)}
-                        placeholder="proforma invoice#XXXXXXX"
-                        rows={2}
-                        className="w-full"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="unitTotalPrices_seco">2. Unit and Total prices item by item</Label>
-                      <Textarea
-                        id="unitTotalPrices_seco"
-                        value={formData.unitTotalPrices_seco || ''}
-                        onChange={(e) => onInputChange('unitTotalPrices_seco', e.target.value)}
-                        rows={3}
-                        className="w-full"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="lotEachItem_seco">3. Lot of each item</Label>
-                      <Textarea
-                        id="lotEachItem_seco"
-                        value={formData.lotEachItem_seco || ''}
-                        onChange={(e) => onInputChange('lotEachItem_seco', e.target.value)}
-                        rows={2}
-                        className="w-full"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="countryOrigin_seco">4. Country of origin</Label>
-                      <Input
-                        id="countryOrigin_seco"
-                        value={formData.countryOrigin_seco || ''}
-                        onChange={(e) => onInputChange('countryOrigin_seco', e.target.value)}
-                        placeholder="Denmark"
-                        className="w-full"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="totalCartons_seco">5. Total of cartons and its marks</Label>
-                      <Textarea
-                        id="totalCartons_seco"
-                        value={formData.totalCartons_seco || ''}
-                        onChange={(e) => onInputChange('totalCartons_seco', e.target.value)}
-                        rows={2}
-                        className="w-full"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="grossWeight_seco">6. Gross weight</Label>
-                        <Input
-                          id="grossWeight_seco"
-                          value={formData.grossWeight_seco || ''}
-                          onChange={(e) => onInputChange('grossWeight_seco', e.target.value)}
-                          className="w-full"
-                        />
-                      </div>
-
-                      <div>
-                        <Label htmlFor="netWeight_seco">7. Net weight</Label>
-                        <Input
-                          id="netWeight_seco"
-                          value={formData.netWeight_seco || ''}
-                          onChange={(e) => onInputChange('netWeight_seco', e.target.value)}
-                          className="w-full"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="termsPayment_seco">8. Terms of payment</Label>
-                      <Input
-                        id="termsPayment_seco"
-                        value={formData.termsPayment_seco || ''}
-                        onChange={(e) => onInputChange('termsPayment_seco', e.target.value)}
-                        className="w-full"
-                      />
-                    </div>
-
-                    {/* 9. Consigned to - Detailed Section */}
-                    <div className="border p-3 rounded bg-gray-50">
-                      <h5 className="font-semibold mb-3">9. Consigned to:</h5>
-                      <div className="space-y-3">
-                        <div>
-                          <Label htmlFor="consignedName_seco">Nome do Cliente</Label>
-                          <Input
-                            id="consignedName_seco"
-                            value={formData.consignedName_seco || ''}
-                            onChange={(e) => onInputChange('consignedName_seco', e.target.value)}
-                            className="w-full"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="consignedAddress_seco">Endereço</Label>
-                          <Textarea
-                            id="consignedAddress_seco"
-                            value={formData.consignedAddress_seco || ''}
-                            onChange={(e) => onInputChange('consignedAddress_seco', e.target.value)}
-                            rows={2}
-                            className="w-full"
-                          />
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <div>
-                            <Label htmlFor="consignedCEP_seco">CEP</Label>
-                            <Input
-                              id="consignedCEP_seco"
-                              value={formData.consignedCEP_seco || ''}
-                              onChange={(e) => onInputChange('consignedCEP_seco', e.target.value)}
-                              className="w-full"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="consignedCNPJ_seco">CNPJ</Label>
-                            <Input
-                              id="consignedCNPJ_seco"
-                              value={formData.consignedCNPJ_seco || ''}
-                              onChange={(e) => onInputChange('consignedCNPJ_seco', e.target.value)}
-                              className="w-full"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="paisAquisicao_seco">PAÍS DE AQUISIÇÃO DE TODOS OS ITENS:</Label>
+                  <Input
+                    id="paisAquisicao_seco"
+                    value={formData.paisAquisicao_seco || 'ESTADOS UNIDOS'}
+                    onChange={(e) => onInputChange('paisAquisicao_seco', e.target.value)}
+                    className="w-full"
+                  />
                 </div>
 
-                {/* Shipping Documents Sentences */}
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="paisAquisicao_seco">PAÍS DE AQUISIÇÃO DE TODOS OS ITENS:</Label>
-                    <Input
-                      id="paisAquisicao_seco"
-                      value={formData.paisAquisicao_seco || 'ESTADOS UNIDOS'}
-                      onChange={(e) => onInputChange('paisAquisicao_seco', e.target.value)}
-                      className="w-full"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="paisProcedencia_seco">PAÍS DE PROCEDÊNCIA DE TODOS OS ITENS:</Label>
+                  <Input
+                    id="paisProcedencia_seco"
+                    value={formData.paisProcedencia_seco || 'ESTADOS UNIDOS'}
+                    onChange={(e) => onInputChange('paisProcedencia_seco', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
 
-                  <div>
-                    <Label htmlFor="paisProcedencia_seco">PAÍS DE PROCEDÊNCIA DE TODOS OS ITENS:</Label>
-                    <Input
-                      id="paisProcedencia_seco"
-                      value={formData.paisProcedencia_seco || 'ESTADOS UNIDOS'}
-                      onChange={(e) => onInputChange('paisProcedencia_seco', e.target.value)}
-                      className="w-full"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="previsaoEmbarque_seco">PREVISÃO DE EMBARQUE:</Label>
+                  <Textarea
+                    id="previsaoEmbarque_seco"
+                    value={formData.previsaoEmbarque_seco || '30 DIAS APÓS A CONFIRMAÇÃO DO RECEBIMENTO DO PAGAMENTO E/OU APÓS AUTORIZAÇÃO DE EMBARQUE'}
+                    onChange={(e) => onInputChange('previsaoEmbarque_seco', e.target.value)}
+                    rows={2}
+                    className="w-full"
+                  />
+                </div>
 
-                  <div>
-                    <Label htmlFor="previsaoEmbarque_seco">PREVISÃO DE EMBARQUE:</Label>
-                    <Textarea
-                      id="previsaoEmbarque_seco"
-                      value={formData.previsaoEmbarque_seco || '30 DIAS APÓS A CONFIRMAÇÃO DO RECEBIMENTO DO PAGAMENTO E/OU APÓS AUTORIZAÇÃO DE EMBARQUE'}
-                      onChange={(e) => onInputChange('previsaoEmbarque_seco', e.target.value)}
-                      rows={2}
-                      className="w-full"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="aeroportoOrigem_seco">AEROPORTO DE ORIGEM:</Label>
+                  <Input
+                    id="aeroportoOrigem_seco"
+                    value={formData.aeroportoOrigem_seco || 'AEROPORTO INTERNACIONAL DE LOS ANGELES/CA - USA'}
+                    onChange={(e) => onInputChange('aeroportoOrigem_seco', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
 
-                  <div>
-                    <Label htmlFor="aeroportoOrigem_seco">AEROPORTO DE ORIGEM:</Label>
-                    <Input
-                      id="aeroportoOrigem_seco"
-                      value={formData.aeroportoOrigem_seco || 'AEROPORTO INTERNACIONAL DE _____________'}
-                      onChange={(e) => onInputChange('aeroportoOrigem_seco', e.target.value)}
-                      className="w-full"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="aeroportoDestino_seco">AEROPORTO DE DESTINO:</Label>
+                  <Input
+                    id="aeroportoDestino_seco"
+                    value={formData.aeroportoDestino_seco || 'AEROPORTO INTERNACIONAL XXXXXX -XX - BRASIL'}
+                    onChange={(e) => onInputChange('aeroportoDestino_seco', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
 
-                  <div>
-                    <Label htmlFor="aeroportoDestino_seco">AEROPORTO DE DESTINO:</Label>
-                    <Input
-                      id="aeroportoDestino_seco"
-                      value={formData.aeroportoDestino_seco || 'AEROPORTO INTERNACIONAL DE _____________ - Brazil.'}
-                      onChange={(e) => onInputChange('aeroportoDestino_seco', e.target.value)}
-                      className="w-full"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="entrega_seco">Entrega:</Label>
-                    <Textarea
-                      id="entrega_seco"
-                      value={formData.entrega_seco || 'O material estará disponível para coleta dentro de 3 dias após nossa notificação de coleta ao agente de cargas indicado'}
-                      onChange={(e) => onInputChange('entrega_seco', e.target.value)}
-                      rows={2}
-                      className="w-full"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="entrega_seco">Entrega:</Label>
+                  <Textarea
+                    id="entrega_seco"
+                    value={formData.entrega_seco || 'O material estará disponível para coleta dentro de 3 dias após nossa notificação de coleta ao agente de cargas indicado.'}
+                    onChange={(e) => onInputChange('entrega_seco', e.target.value)}
+                    rows={2}
+                    className="w-full"
+                  />
+                </div>
 
                   {/* For each box section */}
                   <div className="border-2 border-gray-300 p-4 rounded-lg bg-gray-50">
@@ -1416,7 +1265,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                       </div>
                     </div>
                   </div>
-                </div>
 
                 {/* 2- Packing List Section */}
                 <div className="border p-4 rounded bg-white">
