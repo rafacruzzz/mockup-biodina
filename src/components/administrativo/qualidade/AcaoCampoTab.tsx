@@ -5,12 +5,27 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { DocumentoAcaoCampoCard } from "./DocumentoAcaoCampoCard";
 import { DocumentoPreenchívelCard } from "./DocumentoPreenchívelCard";
 import { NovoDocumentoAdicionalModal } from "./NovoDocumentoAdicionalModal";
-import { AcaoCampo, DocumentoAcaoCampo, StatusAcaoCampo, TipoDocumentoAcaoCampo, FieldActionEffectivenessData } from "@/types/acaoCampo";
-import { acoesCampoMock, statusAcaoCampoLabels, tipoDocumentoLabels } from "@/data/acaoCampoData";
-import { Plus, FileText, CheckCircle, Clock, AlertCircle, Archive } from "lucide-react";
+import { 
+  AcaoCampo, 
+  DocumentoAcaoCampo, 
+  StatusAcaoCampo, 
+  TipoDocumentoAcaoCampo, 
+  FieldActionEffectivenessData,
+  SecaoAcaoCampo 
+} from "@/types/acaoCampo";
+import { 
+  acoesCampoMock, 
+  statusAcaoCampoLabels, 
+  tipoDocumentoLabels,
+  criarDocumentosRecebimentoEmpresa,
+  criarDocumentosEnvioAnvisa,
+  criarDocumentosEnvioEmpresaRepresentada
+} from "@/data/acaoCampoData";
+import { Plus, FileText, CheckCircle, Clock, AlertCircle, Archive, ChevronDown, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 
 export const AcaoCampoTab = () => {
@@ -20,6 +35,8 @@ export const AcaoCampoTab = () => {
   const [showNovoDocumento, setShowNovoDocumento] = useState(false);
   const [novaAcaoTitulo, setNovaAcaoTitulo] = useState("");
   const [novaAcaoEmpresa, setNovaAcaoEmpresa] = useState("");
+  const [secoesAbertas, setSecoesAbertas] = useState<Record<string, boolean>>({});
+  const [secaoParaAddDoc, setSecaoParaAddDoc] = useState<string | null>(null);
 
   const getStatusIcon = (status: StatusAcaoCampo) => {
     switch (status) {
@@ -47,58 +64,58 @@ export const AcaoCampoTab = () => {
     }
   };
 
+  const toggleSecao = (secaoId: string) => {
+    setSecoesAbertas(prev => ({ ...prev, [secaoId]: !prev[secaoId] }));
+  };
+
   const handleCriarNovaAcao = () => {
     if (!novaAcaoTitulo.trim() || !novaAcaoEmpresa.trim()) {
       toast.error("Por favor, preencha todos os campos");
       return;
     }
 
+    const baseId = String(Date.now());
+    
+    // Criar documentos para cada seção
+    const docsRecebimento = criarDocumentosRecebimentoEmpresa(baseId);
+    const docsAnvisa = criarDocumentosEnvioAnvisa(baseId);
+    const docsEmpresa = criarDocumentosEnvioEmpresaRepresentada(baseId);
+
+    const secoes: SecaoAcaoCampo[] = [
+      {
+        id: `${baseId}-secao-1`,
+        titulo: 'Recebimento dos Documentos da Empresa',
+        documentos: docsRecebimento.documentos,
+        documentosAdicionais: docsRecebimento.adicionais
+      },
+      {
+        id: `${baseId}-secao-2`,
+        titulo: 'Envio de Documentos para Anvisa',
+        documentos: docsAnvisa.documentos,
+        documentosAdicionais: docsAnvisa.adicionais
+      },
+      {
+        id: `${baseId}-secao-3`,
+        titulo: 'Envio de Documentos para Empresa que a Biodina Representa',
+        documentos: docsEmpresa.documentos,
+        documentosAdicionais: docsEmpresa.adicionais
+      }
+    ];
+
     const novaAcao: AcaoCampo = {
-      id: String(Date.now()),
+      id: baseId,
       titulo: novaAcaoTitulo,
       empresaRepresentada: novaAcaoEmpresa,
       dataCriacao: new Date().toISOString().split('T')[0],
       status: StatusAcaoCampo.EM_ANDAMENTO,
-      documentos: [
-        {
-          id: `doc-${Date.now()}-1`,
-          tipo: TipoDocumentoAcaoCampo.CARTA_CLIENTE,
-          nome: tipoDocumentoLabels[TipoDocumentoAcaoCampo.CARTA_CLIENTE],
-          requerAssinatura: false
-        },
-        {
-          id: `doc-${Date.now()}-2`,
-          tipo: TipoDocumentoAcaoCampo.FAN,
-          nome: tipoDocumentoLabels[TipoDocumentoAcaoCampo.FAN],
-          requerAssinatura: false
-        },
-        {
-          id: `doc-${Date.now()}-3`,
-          tipo: TipoDocumentoAcaoCampo.FIELD_ACTION_EFFECTIVENESS,
-          nome: tipoDocumentoLabels[TipoDocumentoAcaoCampo.FIELD_ACTION_EFFECTIVENESS],
-          requerAssinatura: false
-        },
-        {
-          id: `doc-${Date.now()}-4`,
-          tipo: TipoDocumentoAcaoCampo.FAC1_CUSTOMER_ADVISORY,
-          nome: tipoDocumentoLabels[TipoDocumentoAcaoCampo.FAC1_CUSTOMER_ADVISORY],
-          requerAssinatura: true
-        },
-        {
-          id: `doc-${Date.now()}-5`,
-          tipo: TipoDocumentoAcaoCampo.FAC2_CUSTOMER_RESPONSE,
-          nome: tipoDocumentoLabels[TipoDocumentoAcaoCampo.FAC2_CUSTOMER_RESPONSE],
-          requerAssinatura: true
-        },
-        {
-          id: `doc-${Date.now()}-6`,
-          tipo: TipoDocumentoAcaoCampo.FAC3,
-          nome: tipoDocumentoLabels[TipoDocumentoAcaoCampo.FAC3],
-          requerAssinatura: true
-        }
-      ],
-      documentosAdicionais: []
+      secoes,
+      documentosExtras: []
     };
+
+    // Inicializar todas as seções como abertas
+    const novasSecoesAbertas: Record<string, boolean> = {};
+    secoes.forEach(s => { novasSecoesAbertas[s.id] = true; });
+    setSecoesAbertas(novasSecoesAbertas);
 
     setAcoesCampo([novaAcao, ...acoesCampo]);
     setAcaoSelecionada(novaAcao);
@@ -108,36 +125,63 @@ export const AcaoCampoTab = () => {
     toast.success("Ação de Campo criada com sucesso!");
   };
 
-  const handleUploadDocumento = (acaoId: string, docId: string, file: File) => {
+  const handleUploadDocumento = (acaoId: string, secaoId: string | null, docId: string, file: File) => {
     setAcoesCampo(acoes =>
       acoes.map(acao => {
         if (acao.id !== acaoId) return acao;
 
-        const documentos = acao.documentos.map(doc => {
-          if (doc.id !== docId) return doc;
-          return {
-            ...doc,
-            nomeOriginal: file.name,
-            url: URL.createObjectURL(file),
-            dataUpload: new Date().toISOString().split('T')[0],
-            tamanho: file.size,
-            arquivo: file
-          };
-        });
+        let acaoAtualizada: AcaoCampo;
 
-        const documentosAdicionais = acao.documentosAdicionais.map(doc => {
-          if (doc.id !== docId) return doc;
-          return {
-            ...doc,
-            nomeOriginal: file.name,
-            url: URL.createObjectURL(file),
-            dataUpload: new Date().toISOString().split('T')[0],
-            tamanho: file.size,
-            arquivo: file
-          };
-        });
+        if (secaoId) {
+          // Documento dentro de uma seção
+          const secoes = acao.secoes.map(secao => {
+            if (secao.id !== secaoId) return secao;
 
-        const acaoAtualizada = { ...acao, documentos, documentosAdicionais };
+            const documentos = secao.documentos.map(doc => {
+              if (doc.id !== docId) return doc;
+              return {
+                ...doc,
+                nomeOriginal: file.name,
+                url: URL.createObjectURL(file),
+                dataUpload: new Date().toISOString().split('T')[0],
+                tamanho: file.size,
+                arquivo: file
+              };
+            });
+
+            const documentosAdicionais = secao.documentosAdicionais.map(doc => {
+              if (doc.id !== docId) return doc;
+              return {
+                ...doc,
+                nomeOriginal: file.name,
+                url: URL.createObjectURL(file),
+                dataUpload: new Date().toISOString().split('T')[0],
+                tamanho: file.size,
+                arquivo: file
+              };
+            });
+
+            return { ...secao, documentos, documentosAdicionais };
+          });
+
+          acaoAtualizada = { ...acao, secoes };
+        } else {
+          // Documento extra
+          const documentosExtras = acao.documentosExtras.map(doc => {
+            if (doc.id !== docId) return doc;
+            return {
+              ...doc,
+              nomeOriginal: file.name,
+              url: URL.createObjectURL(file),
+              dataUpload: new Date().toISOString().split('T')[0],
+              tamanho: file.size,
+              arquivo: file
+            };
+          });
+
+          acaoAtualizada = { ...acao, documentosExtras };
+        }
+
         if (acaoSelecionada?.id === acaoId) {
           setAcaoSelecionada(acaoAtualizada);
         }
@@ -147,27 +191,42 @@ export const AcaoCampoTab = () => {
     toast.success("Documento anexado com sucesso!");
   };
 
-  const handleRemoverDocumento = (acaoId: string, docId: string) => {
+  const handleRemoverDocumento = (acaoId: string, secaoId: string | null, docId: string) => {
     setAcoesCampo(acoes =>
       acoes.map(acao => {
         if (acao.id !== acaoId) return acao;
 
-        const documentos = acao.documentos.map(doc => {
-          if (doc.id !== docId) return doc;
-          return {
-            ...doc,
-            nomeOriginal: undefined,
-            url: undefined,
-            dataUpload: undefined,
-            tamanho: undefined,
-            arquivo: undefined,
-            assinatura: undefined
-          };
-        });
+        let acaoAtualizada: AcaoCampo;
 
-        const documentosAdicionais = acao.documentosAdicionais.filter(doc => doc.id !== docId);
+        if (secaoId) {
+          const secoes = acao.secoes.map(secao => {
+            if (secao.id !== secaoId) return secao;
 
-        const acaoAtualizada = { ...acao, documentos, documentosAdicionais };
+            const documentos = secao.documentos.map(doc => {
+              if (doc.id !== docId) return doc;
+              return {
+                ...doc,
+                nomeOriginal: undefined,
+                url: undefined,
+                dataUpload: undefined,
+                tamanho: undefined,
+                arquivo: undefined,
+                assinatura: undefined
+              };
+            });
+
+            // Remover documento adicional (não obrigatório)
+            const documentosAdicionais = secao.documentosAdicionais.filter(doc => doc.id !== docId);
+
+            return { ...secao, documentos, documentosAdicionais };
+          });
+
+          acaoAtualizada = { ...acao, secoes };
+        } else {
+          const documentosExtras = acao.documentosExtras.filter(doc => doc.id !== docId);
+          acaoAtualizada = { ...acao, documentosExtras };
+        }
+
         if (acaoSelecionada?.id === acaoId) {
           setAcaoSelecionada(acaoAtualizada);
         }
@@ -179,6 +238,7 @@ export const AcaoCampoTab = () => {
 
   const handleAssinarDocumento = (
     acaoId: string,
+    secaoId: string | null,
     docId: string,
     nomeAssinante: string,
     assinaturaBase64: string,
@@ -188,33 +248,59 @@ export const AcaoCampoTab = () => {
       acoes.map(acao => {
         if (acao.id !== acaoId) return acao;
 
-        const documentos = acao.documentos.map(doc => {
-          if (doc.id !== docId) return doc;
-          return {
-            ...doc,
-            assinatura: {
-              nomeAssinante,
-              assinaturaBase64,
-              dataAssinatura: new Date().toISOString(),
-              cargo
-            }
-          };
-        });
+        let acaoAtualizada: AcaoCampo;
 
-        const documentosAdicionais = acao.documentosAdicionais.map(doc => {
-          if (doc.id !== docId) return doc;
-          return {
-            ...doc,
-            assinatura: {
-              nomeAssinante,
-              assinaturaBase64,
-              dataAssinatura: new Date().toISOString(),
-              cargo
-            }
-          };
-        });
+        if (secaoId) {
+          const secoes = acao.secoes.map(secao => {
+            if (secao.id !== secaoId) return secao;
 
-        const acaoAtualizada = { ...acao, documentos, documentosAdicionais };
+            const documentos = secao.documentos.map(doc => {
+              if (doc.id !== docId) return doc;
+              return {
+                ...doc,
+                assinatura: {
+                  nomeAssinante,
+                  assinaturaBase64,
+                  dataAssinatura: new Date().toISOString(),
+                  cargo
+                }
+              };
+            });
+
+            const documentosAdicionais = secao.documentosAdicionais.map(doc => {
+              if (doc.id !== docId) return doc;
+              return {
+                ...doc,
+                assinatura: {
+                  nomeAssinante,
+                  assinaturaBase64,
+                  dataAssinatura: new Date().toISOString(),
+                  cargo
+                }
+              };
+            });
+
+            return { ...secao, documentos, documentosAdicionais };
+          });
+
+          acaoAtualizada = { ...acao, secoes };
+        } else {
+          const documentosExtras = acao.documentosExtras.map(doc => {
+            if (doc.id !== docId) return doc;
+            return {
+              ...doc,
+              assinatura: {
+                nomeAssinante,
+                assinaturaBase64,
+                dataAssinatura: new Date().toISOString(),
+                cargo
+              }
+            };
+          });
+
+          acaoAtualizada = { ...acao, documentosExtras };
+        }
+
         if (acaoSelecionada?.id === acaoId) {
           setAcaoSelecionada(acaoAtualizada);
         }
@@ -224,20 +310,23 @@ export const AcaoCampoTab = () => {
     toast.success("Documento assinado com sucesso!");
   };
 
-  const handleSalvarFormulario = (acaoId: string, docId: string, dados: FieldActionEffectivenessData) => {
+  const handleSalvarFormulario = (acaoId: string, secaoId: string, docId: string, dados: FieldActionEffectivenessData) => {
     setAcoesCampo(acoes =>
       acoes.map(acao => {
         if (acao.id !== acaoId) return acao;
 
-        const documentos = acao.documentos.map(doc => {
-          if (doc.id !== docId) return doc;
-          return {
-            ...doc,
-            dadosFormulario: dados
-          };
+        const secoes = acao.secoes.map(secao => {
+          if (secao.id !== secaoId) return secao;
+
+          const documentos = secao.documentos.map(doc => {
+            if (doc.id !== docId) return doc;
+            return { ...doc, dadosFormulario: dados };
+          });
+
+          return { ...secao, documentos };
         });
 
-        const acaoAtualizada = { ...acao, documentos };
+        const acaoAtualizada = { ...acao, secoes };
         if (acaoSelecionada?.id === acaoId) {
           setAcaoSelecionada(acaoAtualizada);
         }
@@ -246,24 +335,30 @@ export const AcaoCampoTab = () => {
     );
   };
 
-  const handleGerarPDF = (acaoId: string, docId: string) => {
+  const handleGerarPDF = (acaoId: string, secaoId: string, docId: string) => {
     setAcoesCampo(acoes =>
       acoes.map(acao => {
         if (acao.id !== acaoId) return acao;
 
-        const documentos = acao.documentos.map(doc => {
-          if (doc.id !== docId || !doc.dadosFormulario) return doc;
-          return {
-            ...doc,
-            dadosFormulario: {
-              ...doc.dadosFormulario,
-              pdfGerado: true,
-              dataPdfGerado: new Date().toISOString()
-            }
-          };
+        const secoes = acao.secoes.map(secao => {
+          if (secao.id !== secaoId) return secao;
+
+          const documentos = secao.documentos.map(doc => {
+            if (doc.id !== docId || !doc.dadosFormulario) return doc;
+            return {
+              ...doc,
+              dadosFormulario: {
+                ...doc.dadosFormulario,
+                pdfGerado: true,
+                dataPdfGerado: new Date().toISOString()
+              }
+            };
+          });
+
+          return { ...secao, documentos };
         });
 
-        const acaoAtualizada = { ...acao, documentos };
+        const acaoAtualizada = { ...acao, secoes };
         if (acaoSelecionada?.id === acaoId) {
           setAcaoSelecionada(acaoAtualizada);
         }
@@ -297,14 +392,32 @@ export const AcaoCampoTab = () => {
     setAcoesCampo(acoes =>
       acoes.map(acao => {
         if (acao.id !== acaoSelecionada.id) return acao;
-        const acaoAtualizada = {
-          ...acao,
-          documentosAdicionais: [...acao.documentosAdicionais, novoDoc]
-        };
+
+        let acaoAtualizada: AcaoCampo;
+
+        if (secaoParaAddDoc) {
+          // Adicionar na seção específica
+          const secoes = acao.secoes.map(secao => {
+            if (secao.id !== secaoParaAddDoc) return secao;
+            return {
+              ...secao,
+              documentosAdicionais: [...secao.documentosAdicionais, novoDoc]
+            };
+          });
+          acaoAtualizada = { ...acao, secoes };
+        } else {
+          // Adicionar como documento extra
+          acaoAtualizada = {
+            ...acao,
+            documentosExtras: [...acao.documentosExtras, novoDoc]
+          };
+        }
+
         setAcaoSelecionada(acaoAtualizada);
         return acaoAtualizada;
       })
     );
+    setSecaoParaAddDoc(null);
     toast.success("Documento adicional criado com sucesso!");
   };
 
@@ -319,6 +432,30 @@ export const AcaoCampoTab = () => {
 
   const stats = calcularEstatisticas();
 
+  const renderDocumentoCard = (doc: DocumentoAcaoCampo, secaoId: string) => {
+    if (doc.tipo === TipoDocumentoAcaoCampo.FIELD_ACTION_EFFECTIVENESS_PREENCHIVEL) {
+      return (
+        <DocumentoPreenchívelCard
+          key={doc.id}
+          documento={doc}
+          onSave={(dados) => handleSalvarFormulario(acaoSelecionada!.id, secaoId, doc.id, dados)}
+          onGeneratePDF={() => handleGerarPDF(acaoSelecionada!.id, secaoId, doc.id)}
+        />
+      );
+    }
+    return (
+      <DocumentoAcaoCampoCard
+        key={doc.id}
+        documento={doc}
+        onUpload={(file) => handleUploadDocumento(acaoSelecionada!.id, secaoId, doc.id, file)}
+        onRemove={() => handleRemoverDocumento(acaoSelecionada!.id, secaoId, doc.id)}
+        onSign={(nome, assinatura, cargo) =>
+          handleAssinarDocumento(acaoSelecionada!.id, secaoId, doc.id, nome, assinatura, cargo)
+        }
+      />
+    );
+  };
+
   if (acaoSelecionada) {
     return (
       <div className="space-y-6">
@@ -328,6 +465,7 @@ export const AcaoCampoTab = () => {
               ← Voltar
             </Button>
             <h2 className="text-2xl font-bold mt-4">{acaoSelecionada.titulo}</h2>
+            <p className="text-muted-foreground">Empresa: {acaoSelecionada.empresaRepresentada}</p>
           </div>
           <Badge className={`${getStatusColor(acaoSelecionada.status)} text-white`}>
             {getStatusIcon(acaoSelecionada.status)}
@@ -335,66 +473,112 @@ export const AcaoCampoTab = () => {
           </Badge>
         </div>
 
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Documentos Obrigatórios</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {acaoSelecionada.documentos.map(doc => {
-              if (doc.tipo === TipoDocumentoAcaoCampo.FIELD_ACTION_EFFECTIVENESS_PREENCHIVEL) {
-                return (
-                  <DocumentoPreenchívelCard
+        {/* Seções */}
+        {acaoSelecionada.secoes.map((secao, index) => (
+          <Card key={secao.id}>
+            <Collapsible
+              open={secoesAbertas[secao.id] !== false}
+              onOpenChange={() => toggleSecao(secao.id)}
+            >
+              <CollapsibleTrigger asChild>
+                <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      {secoesAbertas[secao.id] !== false ? (
+                        <ChevronDown className="h-5 w-5" />
+                      ) : (
+                        <ChevronRight className="h-5 w-5" />
+                      )}
+                      <span className="text-primary">Seção {index + 1}:</span> {secao.titulo}
+                    </CardTitle>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSecaoParaAddDoc(secao.id);
+                        setShowNovoDocumento(true);
+                      }}
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Adicionar Documento
+                    </Button>
+                  </div>
+                </CardHeader>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <CardContent className="space-y-4">
+                  {/* Documentos Obrigatórios */}
+                  <div>
+                    <h4 className="text-sm font-semibold mb-3 text-muted-foreground">Documentos Obrigatórios</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {secao.documentos.map(doc => renderDocumentoCard(doc, secao.id))}
+                    </div>
+                  </div>
+
+                  {/* Documentos Adicionais da Seção */}
+                  {secao.documentosAdicionais.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-semibold mb-3 text-muted-foreground">Documentos Adicionais</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {secao.documentosAdicionais.map(doc => (
+                          <DocumentoAcaoCampoCard
+                            key={doc.id}
+                            documento={doc}
+                            onUpload={(file) => handleUploadDocumento(acaoSelecionada.id, secao.id, doc.id, file)}
+                            onRemove={() => handleRemoverDocumento(acaoSelecionada.id, secao.id, doc.id)}
+                            onSign={(nome, assinatura, cargo) =>
+                              handleAssinarDocumento(acaoSelecionada.id, secao.id, doc.id, nome, assinatura, cargo)
+                            }
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </CollapsibleContent>
+            </Collapsible>
+          </Card>
+        ))}
+
+        {/* Documentos Extras */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Documentos Extras</CardTitle>
+              <Button
+                onClick={() => {
+                  setSecaoParaAddDoc(null);
+                  setShowNovoDocumento(true);
+                }}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Adicionar Documento
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {acaoSelecionada.documentosExtras.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {acaoSelecionada.documentosExtras.map(doc => (
+                  <DocumentoAcaoCampoCard
                     key={doc.id}
                     documento={doc}
-                    onSave={(dados) => handleSalvarFormulario(acaoSelecionada.id, doc.id, dados)}
-                    onGeneratePDF={() => handleGerarPDF(acaoSelecionada.id, doc.id)}
+                    onUpload={(file) => handleUploadDocumento(acaoSelecionada.id, null, doc.id, file)}
+                    onRemove={() => handleRemoverDocumento(acaoSelecionada.id, null, doc.id)}
+                    onSign={(nome, assinatura, cargo) =>
+                      handleAssinarDocumento(acaoSelecionada.id, null, doc.id, nome, assinatura, cargo)
+                    }
                   />
-                );
-              }
-              return (
-                <DocumentoAcaoCampoCard
-                  key={doc.id}
-                  documento={doc}
-                  onUpload={(file) => handleUploadDocumento(acaoSelecionada.id, doc.id, file)}
-                  onRemove={() => handleRemoverDocumento(acaoSelecionada.id, doc.id)}
-                  onSign={(nome, assinatura, cargo) =>
-                    handleAssinarDocumento(acaoSelecionada.id, doc.id, nome, assinatura, cargo)
-                  }
-                />
-              );
-            })}
-          </div>
-        </div>
-
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold">Documentos Adicionais</h3>
-            <Button onClick={() => setShowNovoDocumento(true)}>
-              <Plus className="h-4 w-4 mr-1" />
-              Adicionar Documento
-            </Button>
-          </div>
-
-          {acaoSelecionada.documentosAdicionais.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {acaoSelecionada.documentosAdicionais.map(doc => (
-                <DocumentoAcaoCampoCard
-                  key={doc.id}
-                  documento={doc}
-                  onUpload={(file) => handleUploadDocumento(acaoSelecionada.id, doc.id, file)}
-                  onRemove={() => handleRemoverDocumento(acaoSelecionada.id, doc.id)}
-                  onSign={(nome, assinatura, cargo) =>
-                    handleAssinarDocumento(acaoSelecionada.id, doc.id, nome, assinatura, cargo)
-                  }
-                />
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="py-8 text-center text-muted-foreground">
-                Nenhum documento adicional cadastrado
-              </CardContent>
-            </Card>
-          )}
-        </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-4">
+                Nenhum documento extra cadastrado
+              </p>
+            )}
+          </CardContent>
+        </Card>
 
         <NovoDocumentoAdicionalModal
           open={showNovoDocumento}
@@ -459,26 +643,39 @@ export const AcaoCampoTab = () => {
           <CardDescription>Gerencie as ações de campo e seus documentos</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {acoesCampo.map(acao => (
-              <div
-                key={acao.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer"
-                onClick={() => setAcaoSelecionada(acao)}
-              >
-                <div className="flex items-start gap-3">
-                  <FileText className="h-5 w-5 text-primary mt-1" />
-                  <div>
-                    <p className="font-medium">{acao.titulo}</p>
+          {acoesCampo.length > 0 ? (
+            <div className="space-y-3">
+              {acoesCampo.map(acao => (
+                <div
+                  key={acao.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 cursor-pointer"
+                  onClick={() => {
+                    // Inicializar seções como abertas ao selecionar ação
+                    const novasSecoesAbertas: Record<string, boolean> = {};
+                    acao.secoes.forEach(s => { novasSecoesAbertas[s.id] = true; });
+                    setSecoesAbertas(novasSecoesAbertas);
+                    setAcaoSelecionada(acao);
+                  }}
+                >
+                  <div className="flex items-start gap-3">
+                    <FileText className="h-5 w-5 text-primary mt-1" />
+                    <div>
+                      <p className="font-medium">{acao.titulo}</p>
+                      <p className="text-sm text-muted-foreground">{acao.empresaRepresentada}</p>
+                    </div>
                   </div>
+                  <Badge className={`${getStatusColor(acao.status)} text-white`}>
+                    {getStatusIcon(acao.status)}
+                    <span className="ml-1">{statusAcaoCampoLabels[acao.status]}</span>
+                  </Badge>
                 </div>
-                <Badge className={`${getStatusColor(acao.status)} text-white`}>
-                  {getStatusIcon(acao.status)}
-                  <span className="ml-1">{statusAcaoCampoLabels[acao.status]}</span>
-                </Badge>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground py-8">
+              Nenhuma ação de campo cadastrada. Clique em "Nova Ação de Campo" para criar.
+            </p>
+          )}
         </CardContent>
       </Card>
 
@@ -497,22 +694,20 @@ export const AcaoCampoTab = () => {
                 placeholder="Ex: Ação de Campo - Lote ABC123"
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="empresa">Empresa Representada *</Label>
               <Input
                 id="empresa"
                 value={novaAcaoEmpresa}
                 onChange={(e) => setNovaAcaoEmpresa(e.target.value)}
-                placeholder="Ex: Fabricante XYZ Ltda"
+                placeholder="Nome da empresa representada"
               />
             </div>
-
-            <div className="flex gap-2 pt-4">
-              <Button variant="outline" onClick={() => setShowNovaAcao(false)} className="flex-1">
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowNovaAcao(false)}>
                 Cancelar
               </Button>
-              <Button onClick={handleCriarNovaAcao} className="flex-1">
+              <Button onClick={handleCriarNovaAcao}>
                 Criar Ação de Campo
               </Button>
             </div>
