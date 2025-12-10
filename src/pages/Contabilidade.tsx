@@ -1,7 +1,7 @@
 import React, { useState, lazy, Suspense } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileText, Calculator, FileInput, FileOutput, Send } from "lucide-react";
+import { ArrowLeft, FileText, Calculator, FileInput, FileOutput } from "lucide-react";
 import SidebarLayout from "@/components/SidebarLayout";
 import AliquotasEstadoConfig from "@/components/financeiro/AliquotasEstadoConfig";
 
@@ -12,8 +12,7 @@ const Contabilidade = () => {
     { id: 'cenarios_fiscais', title: 'Cenários Fiscais', icon: FileText },
     { id: 'aliquotas_estado', title: 'ICMS DIFAL para não contribuinte', icon: Calculator },
     { id: 'naturezas_operacao', title: 'Naturezas de operação de entrada (tributação)', icon: FileInput },
-    { id: 'naturezas_operacao_saida', title: 'Naturezas de operação de saída (tributação)', icon: FileOutput },
-    { id: 'emissao', title: 'Emissão', icon: Send }
+    { id: 'naturezas_operacao_saida', title: 'Naturezas de operação de saída (tributação)', icon: FileOutput }
   ];
 
   const renderModules = () => (
@@ -114,25 +113,6 @@ const Contabilidade = () => {
             </div>
             <Suspense fallback={<div>Carregando...</div>}>
               <NaturezasOperacaoSaidaConfig />
-            </Suspense>
-          </div>
-        );
-      case 'emissao':
-        const EmissaoConfig = lazy(() => import('@/components/financeiro/EmissaoConfig'));
-        return (
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveModule(null)}
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-            </div>
-            <Suspense fallback={<div>Carregando...</div>}>
-              <EmissaoConfig />
             </Suspense>
           </div>
         );
