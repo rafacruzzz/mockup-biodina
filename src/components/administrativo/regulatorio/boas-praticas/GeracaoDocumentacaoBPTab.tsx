@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -6,6 +6,47 @@ import { Card } from '@/components/ui/card';
 import { Plus, X, Upload, FileText, AlertCircle } from 'lucide-react';
 import { DocumentoBoasPraticas } from '@/types/boasPraticas';
 import { toast } from 'sonner';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+// Mock data de fornecedores - Mercadoria para Revenda com suas unidades fabris
+const fornecedoresMercadoriaRevenda = [
+  {
+    id: '1',
+    fabricanteLegal: 'Radiometer Medical ApS',
+    unidadesFabris: [
+      { id: 'uf-1', nome: 'Copenhagen Factory', endereco: 'Åkandevej 21, 2700 Brønshøj, Denmark' },
+      { id: 'uf-2', nome: 'Brønshøj Production', endereco: 'Brønshøj Hovedgade 10, 2700 Brønshøj, Denmark' },
+    ]
+  },
+  {
+    id: '2',
+    fabricanteLegal: 'Epredia UK Limited',
+    unidadesFabris: [
+      { id: 'uf-3', nome: 'Sheffield Plant', endereco: 'Sheffield Business Park, Sheffield S1 2AB, UK' },
+    ]
+  },
+  {
+    id: '3',
+    fabricanteLegal: 'Beckman Coulter, Inc.',
+    unidadesFabris: [
+      { id: 'uf-4', nome: 'Miami Facility', endereco: '11800 SW 147th Ave, Miami, FL 33196, USA' },
+      { id: 'uf-5', nome: 'Indianapolis Plant', endereco: '4300 N Harbor Blvd, Indianapolis, IN 46240, USA' },
+    ]
+  },
+  {
+    id: '4',
+    fabricanteLegal: 'Siemens Healthineers AG',
+    unidadesFabris: [
+      { id: 'uf-6', nome: 'Erlangen Factory', endereco: 'Siemensstraße 3, 91052 Erlangen, Germany' },
+    ]
+  },
+];
 
 interface GeracaoDocumentacaoBPTabProps {
   nomeArquivoPrincipal: string;
@@ -35,6 +76,26 @@ export const GeracaoDocumentacaoBPTab = ({
   onProximaEtapa
 }: GeracaoDocumentacaoBPTabProps) => {
   const [nextId, setNextId] = useState(documentos.length + 1);
+  const [selectedUnidadeFabrilId, setSelectedUnidadeFabrilId] = useState<string>('');
+
+  // Flatten all unidades fabris with their parent fabricante legal
+  const todasUnidadesFabris = useMemo(() => {
+    return fornecedoresMercadoriaRevenda.flatMap(fornecedor =>
+      fornecedor.unidadesFabris.map(uf => ({
+        ...uf,
+        fabricanteLegal: fornecedor.fabricanteLegal
+      }))
+    );
+  }, []);
+
+  const handleUnidadeFabrilChange = (unidadeId: string) => {
+    setSelectedUnidadeFabrilId(unidadeId);
+    const unidade = todasUnidadesFabris.find(uf => uf.id === unidadeId);
+    if (unidade) {
+      setUnidadeFabril(`${unidade.nome} - ${unidade.endereco}`);
+      setFabricanteLegal(unidade.fabricanteLegal);
+    }
+  };
 
   const adicionarSubtitulo = () => {
     const novoDoc: DocumentoBoasPraticas = {
@@ -80,6 +141,49 @@ export const GeracaoDocumentacaoBPTab = ({
 
   return (
     <div className="space-y-6">
+      {/* Unidade Fabril e Fabricante Legal (acima do Nome do Arquivo Principal) */}
+      <Card className="p-6">
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="unidade-fabril" className="text-base font-semibold">
+                Unidade Fabril
+              </Label>
+              <p className="text-sm text-muted-foreground mb-2">
+                Selecione a unidade fabril cadastrada em Fornecedor - Mercadoria para Revenda
+              </p>
+              <Select value={selectedUnidadeFabrilId} onValueChange={handleUnidadeFabrilChange}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Selecione a unidade fabril" />
+                </SelectTrigger>
+                <SelectContent className="bg-background z-50">
+                  {todasUnidadesFabris.map((uf) => (
+                    <SelectItem key={uf.id} value={uf.id}>
+                      {uf.nome} - {uf.fabricanteLegal}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="fabricante-legal" className="text-base font-semibold">
+                Fabricante Legal
+              </Label>
+              <p className="text-sm text-muted-foreground mb-2">
+                Preenchido automaticamente ao selecionar a unidade fabril
+              </p>
+              <Input
+                id="fabricante-legal"
+                value={fabricanteLegal}
+                readOnly
+                placeholder="Será preenchido automaticamente"
+                className="bg-muted"
+              />
+            </div>
+          </div>
+        </div>
+      </Card>
+
       {/* Nome do Arquivo Principal */}
       <Card className="p-6">
         <div className="space-y-4">
@@ -97,38 +201,6 @@ export const GeracaoDocumentacaoBPTab = ({
               placeholder="Ex: Documentação Certificado BPF - Fornecedor 2024"
               className="text-base"
             />
-          </div>
-        </div>
-      </Card>
-
-      {/* Fabricante Legal e Unidade Fabril */}
-      <Card className="p-6">
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="fabricante-legal" className="text-base font-semibold">
-                Fabricante Legal
-              </Label>
-              <Input
-                id="fabricante-legal"
-                value={fabricanteLegal}
-                onChange={(e) => setFabricanteLegal(e.target.value)}
-                placeholder="Nome do fabricante legal"
-                className="mt-2"
-              />
-            </div>
-            <div>
-              <Label htmlFor="unidade-fabril" className="text-base font-semibold">
-                Unidade Fabril
-              </Label>
-              <Input
-                id="unidade-fabril"
-                value={unidadeFabril}
-                onChange={(e) => setUnidadeFabril(e.target.value)}
-                placeholder="Nome/endereço da unidade fabril"
-                className="mt-2"
-              />
-            </div>
           </div>
         </div>
       </Card>
