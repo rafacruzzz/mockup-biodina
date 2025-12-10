@@ -413,7 +413,7 @@ const Financeiro = () => {
     {
       id: 'tesouraria',
       title: 'Tesouraria',
-      description: 'Caixa, Empréstimos, Investimentos, Seguros, Consórcios, Cadastros, Extratos, Doc. Fin, Saldos, Despesas a Serviço, Relatórios',
+      description: 'Caixa, Empréstimos, Investimentos, Seguros, Consórcios, Cadastros, Extratos, Doc. Fin, Saldos, Despesas a Serviço, Emissão, Relatórios',
       icon: Vault,
       subModules: [
         { id: 'caixa', title: 'Caixa' },
@@ -426,6 +426,7 @@ const Financeiro = () => {
         { id: 'doc_fin', title: 'Doc. Fin' },
         { id: 'saldos', title: 'Saldos' },
         { id: 'despesas_servico', title: 'Despesas a Serviço (Cartão de Crédito)' },
+        { id: 'emissao', title: 'Emissão' },
         { id: 'relatorios_tesouraria', title: 'Relatórios' }
       ]
     },
@@ -972,6 +973,25 @@ const Financeiro = () => {
               <h2 className="text-2xl font-bold mb-4">Despesas a Serviço (Cartão de Crédito)</h2>
               <p className="text-muted-foreground">Módulo de despesas a serviço em desenvolvimento.</p>
             </div>
+          </div>
+        );
+      case 'emissao':
+        const EmissaoConfig = lazy(() => import('@/components/financeiro/EmissaoConfig'));
+        return (
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setActiveSubModule(null)}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            </div>
+            <Suspense fallback={<div>Carregando...</div>}>
+              <EmissaoConfig />
+            </Suspense>
           </div>
         );
       case 'relatorios_tesouraria':
