@@ -16,9 +16,10 @@ interface CancelamentoModalProps {
   isOpen: boolean;
   onClose: () => void;
   numeroPedido: string;
+  onSolicitar?: (justificativa: string) => void;
 }
 
-const CancelamentoModal = ({ isOpen, onClose, numeroPedido }: CancelamentoModalProps) => {
+const CancelamentoModal = ({ isOpen, onClose, numeroPedido, onSolicitar }: CancelamentoModalProps) => {
   const { toast } = useToast();
   const [justificativa, setJustificativa] = useState("");
 
@@ -32,7 +33,11 @@ const CancelamentoModal = ({ isOpen, onClose, numeroPedido }: CancelamentoModalP
       return;
     }
 
-    // Aqui seria feita a chamada para o backend/Supabase
+    // Chamar callback para atualizar o status no componente pai
+    if (onSolicitar) {
+      onSolicitar(justificativa);
+    }
+
     toast({
       title: "Solicitação enviada",
       description: "A solicitação de cancelamento foi enviada para aprovação do gestor.",
@@ -66,17 +71,17 @@ const CancelamentoModal = ({ isOpen, onClose, numeroPedido }: CancelamentoModalP
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="justificativa">Justificativa Detalhada *</Label>
+            <Label htmlFor="justificativa">Justificativa Detalhada (uso interno) *</Label>
             <Textarea
               id="justificativa"
-              placeholder="Descreva detalhadamente o motivo do cancelamento da NF-e..."
+              placeholder="Descreva detalhadamente o motivo do cancelamento para aprovação do gestor..."
               value={justificativa}
               onChange={(e) => setJustificativa(e.target.value)}
               rows={5}
               maxLength={1000}
             />
             <p className="text-xs text-muted-foreground">
-              {justificativa.length}/1000 caracteres
+              {justificativa.length}/1000 caracteres - Esta justificativa é para uso interno e não será enviada à NF-e
             </p>
           </div>
 
