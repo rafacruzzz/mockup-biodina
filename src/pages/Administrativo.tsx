@@ -273,9 +273,85 @@ const Administrativo = () => {
     }
   };
 
+  // Mock data para as tabelas
+  const registrosAnvisa = [
+    { id: '1', numeroRegistro: 'REG-2024-001', produto: 'Equipamento XYZ', fabricante: 'Fabricante A', area: 'produtos_saude', status: 'vigente', dataRegistro: '2024-01-15', dataVencimento: '2029-01-15' },
+    { id: '2', numeroRegistro: 'REG-2024-002', produto: 'Dispositivo ABC', fabricante: 'Fabricante B', area: 'medicamentos', status: 'renovacao', dataRegistro: '2023-06-20', dataVencimento: '2024-06-20' },
+  ];
+
+  const atualizacoesAnvisa = [
+    { id: '1', idProduto: 'PROD-001', nomeProduto: 'Equipamento XYZ', areaAnvisa: 'produtos_saude', tipoAtualizacao: 'renovacao', status: 'em_andamento', dataSolicitacao: '2024-01-10', prazo: '2024-03-10' },
+    { id: '2', idProduto: 'PROD-002', nomeProduto: 'Dispositivo ABC', areaAnvisa: 'medicamentos', tipoAtualizacao: 'alteracao', status: 'pendente', dataSolicitacao: '2024-02-05', prazo: '2024-04-05' },
+  ];
+
+  const dueDiligenceData = [
+    { id: 1, idTriagem: 'TRI-2024-001', nomeFornecedor: 'Fornecedor Alpha', dataCriacao: '2024-01-20', statusAtual: 'Em Análise', responsavel: 'João Silva', contatoPrincipal: 'Carlos Mendes', emailContato: 'carlos@alpha.com', telefoneContato: '(11) 99999-0001', produtosInteresse: 'Equipamentos médicos', protocoloInterno: 'PROT-001' },
+    { id: 2, idTriagem: 'TRI-2024-002', nomeFornecedor: 'Fornecedor Beta', dataCriacao: '2024-02-15', statusAtual: 'Aprovado', responsavel: 'Maria Santos', contatoPrincipal: 'Ana Paula', emailContato: 'ana@beta.com', telefoneContato: '(11) 99999-0002', produtosInteresse: 'Dispositivos diagnósticos', protocoloInterno: 'PROT-002' },
+  ];
+
+  const renderRegistroProdutos = () => (
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button onClick={() => setShowNovoRegistroModal(true)} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          Novo Registro
+        </Button>
+      </div>
+      <RegistrosAnvisaTable 
+        registros={registrosAnvisa}
+        onEdit={(id) => toast({ title: "Editar registro", description: `Editando registro ${id}` })}
+        onDelete={(id) => toast({ title: "Excluir registro", description: `Registro ${id} excluído` })}
+        onViewHistory={(registro) => {
+          setSelectedRegistroHistory(registro);
+          setShowHistoryModal(true);
+        }}
+      />
+    </div>
+  );
+
+  const renderAtualizacoesProdutos = () => (
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button onClick={() => setShowNovaAtualizacaoModal(true)} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          Nova Atualização
+        </Button>
+      </div>
+      <AtualizacoesAnvisaTable 
+        atualizacoes={atualizacoesAnvisa}
+        onEdit={(id) => toast({ title: "Editar atualização", description: `Editando atualização ${id}` })}
+        onDelete={(id) => toast({ title: "Excluir atualização", description: `Atualização ${id} excluída` })}
+        onViewHistory={(atualizacao) => {
+          setSelectedAtualizacaoHistory(atualizacao);
+          setShowAtualizacaoHistoryModal(true);
+        }}
+      />
+    </div>
+  );
+
+  const renderDueDiligence = () => (
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <Button onClick={() => setShowNovaTriagemModal(true)} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          Nova Triagem
+        </Button>
+      </div>
+      <DueDiligenceTable 
+        data={dueDiligenceData}
+        onView={(id) => toast({ title: "Visualizar triagem", description: `Visualizando triagem ${id}` })}
+        onEdit={(id) => toast({ title: "Editar triagem", description: `Editando triagem ${id}` })}
+        onDelete={(id) => toast({ title: "Excluir triagem", description: `Triagem ${id} excluída` })}
+      />
+    </div>
+  );
+
   const renderRegulatorioModule = () => {
     const tabs = [
       { id: 'dashboard', label: 'DASHBOARD', icon: BarChart3 },
+      { id: 'registro-produtos', label: 'REGISTRO DOS PRODUTOS', icon: FileText },
+      { id: 'atualizacoes-produtos', label: 'ATUALIZAÇÕES DE PRODUTOS', icon: RefreshCw },
+      { id: 'due-diligence', label: 'DUE DILIGENCE - FORNECEDOR', icon: UserCheck },
       { id: 'rastreabilidade', label: 'RASTREABILIDADE', icon: Route },
       { id: 'boas-praticas', label: 'BOAS PRÁTICAS', icon: CheckCircle2 },
     ];
@@ -283,6 +359,9 @@ const Administrativo = () => {
     const renderContent = () => {
       switch (activeTab) {
         case 'dashboard': return renderRegulatorioIndicadores();
+        case 'registro-produtos': return renderRegistroProdutos();
+        case 'atualizacoes-produtos': return renderAtualizacoesProdutos();
+        case 'due-diligence': return renderDueDiligence();
         case 'rastreabilidade': return <RastreabilidadeRegulatorioTab />;
         case 'boas-praticas': return <BoasPraticasTab />;
         default: return renderRegulatorioIndicadores();
