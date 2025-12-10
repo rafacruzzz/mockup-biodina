@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { AlertCircle, FileEdit } from "lucide-react";
+import { CheckCircle2, FileEdit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface CartaCorrecaoModalProps {
@@ -38,19 +38,19 @@ const CartaCorrecaoModal = ({
   const [correcaoDesejada, setCorrecaoDesejada] = useState("");
 
   const handleSubmit = () => {
-    if (!justificativa.trim()) {
+    if (!correcaoDesejada.trim()) {
       toast({
-        title: "Justificativa obrigatória",
-        description: "Por favor, informe a justificativa para a carta de correção.",
+        title: "Correção obrigatória",
+        description: "Por favor, descreva a correção que deseja realizar.",
         variant: "destructive",
       });
       return;
     }
 
-    if (!correcaoDesejada.trim()) {
+    if (!justificativa.trim()) {
       toast({
-        title: "Correção obrigatória",
-        description: "Por favor, descreva a correção que deseja realizar.",
+        title: "Justificativa obrigatória",
+        description: "Por favor, informe a justificativa para liberação do gestor.",
         variant: "destructive",
       });
       return;
@@ -69,8 +69,8 @@ const CartaCorrecaoModal = ({
 
     // Toast e limpeza
     toast({
-      title: "Solicitação enviada",
-      description: "A solicitação de carta de correção foi enviada para aprovação do gestor.",
+      title: "Carta de Correção gerada",
+      description: "A Carta de Correção foi gerada e enviada para liberação do gestor.",
     });
 
     setJustificativa("");
@@ -84,18 +84,18 @@ const CartaCorrecaoModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FileEdit className="h-5 w-5" />
-            Solicitar Carta de Correção {displayNumber && `- ${displayNumber}`}
+            Gerar Carta de Correção {displayNumber && `- ${displayNumber}`}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex gap-3">
-            <AlertCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-blue-800">
-              <p className="font-medium">Esta solicitação requer aprovação do gestor</p>
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex gap-3">
+            <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-green-800">
+              <p className="font-medium">Geração de Carta de Correção</p>
               <p className="mt-1">
-                A Carta de Correção eletrônica (CC-e) é utilizada para corrigir erros em campos
-                específicos da NF-e já autorizada. Nem todos os campos podem ser corrigidos por CC-e.
+                Preencha os dados abaixo para gerar a Carta de Correção (CC-e). Após a geração,
+                informe a justificativa para que o gestor possa liberar.
               </p>
             </div>
           </div>
@@ -116,10 +116,10 @@ const CartaCorrecaoModal = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="justificativa">Justificativa *</Label>
+            <Label htmlFor="justificativa">Justificativa para o Gestor *</Label>
             <Textarea
               id="justificativa"
-              placeholder="Explique o motivo da necessidade de correção e como o erro ocorreu..."
+              placeholder="Descreva o motivo da correção para que o gestor possa liberar..."
               value={justificativa}
               onChange={(e) => setJustificativa(e.target.value)}
               rows={4}
@@ -143,7 +143,7 @@ const CartaCorrecaoModal = ({
             Cancelar
           </Button>
           <Button onClick={handleSubmit}>
-            Enviar para Aprovação
+            Gerar e Enviar para Liberação
           </Button>
         </DialogFooter>
       </DialogContent>
