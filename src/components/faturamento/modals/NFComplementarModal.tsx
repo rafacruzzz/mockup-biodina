@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { AlertCircle, FileText } from "lucide-react";
+import { CheckCircle2, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface NFComplementarModalProps {
@@ -41,7 +41,7 @@ const NFComplementarModal = ({
     if (!justificativa.trim()) {
       toast({
         title: "Justificativa obrigatória",
-        description: "Por favor, informe a justificativa para a NF complementar.",
+        description: "Por favor, informe a justificativa para liberação do gestor.",
         variant: "destructive",
       });
       return;
@@ -69,8 +69,8 @@ const NFComplementarModal = ({
 
     // Toast e limpeza
     toast({
-      title: "Solicitação enviada",
-      description: "A solicitação de NF complementar foi enviada para aprovação do gestor.",
+      title: "NF Complementar gerada",
+      description: "A NF Complementar foi gerada e enviada para liberação do gestor.",
     });
 
     setJustificativa("");
@@ -85,18 +85,18 @@ const NFComplementarModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Solicitar NF Complementar {displayNumber && `- ${displayNumber}`}
+            Gerar NF Complementar {displayNumber && `- ${displayNumber}`}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex gap-3">
-            <AlertCircle className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-orange-800">
-              <p className="font-medium">Esta solicitação requer aprovação do gestor</p>
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex gap-3">
+            <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-green-800">
+              <p className="font-medium">Geração de NF Complementar</p>
               <p className="mt-1">
-                A NF complementar é emitida quando há necessidade de complementar valores ou informações
-                da nota fiscal original. Após enviar, aguarde a aprovação do gestor para prosseguir.
+                Preencha os dados abaixo para gerar a NF Complementar. Após a geração, 
+                informe a justificativa para que o gestor possa liberar a nota.
               </p>
             </div>
           </div>
@@ -115,10 +115,10 @@ const NFComplementarModal = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="justificativa">Justificativa *</Label>
+            <Label htmlFor="justificativa">Justificativa para o Gestor *</Label>
             <Textarea
               id="justificativa"
-              placeholder="Descreva detalhadamente o motivo da necessidade de emitir uma NF complementar..."
+              placeholder="Descreva o motivo da NF complementar para que o gestor possa liberar..."
               value={justificativa}
               onChange={(e) => setJustificativa(e.target.value)}
               rows={4}
@@ -150,7 +150,7 @@ const NFComplementarModal = ({
             Cancelar
           </Button>
           <Button onClick={handleSubmit}>
-            Enviar para Aprovação
+            Gerar e Enviar para Liberação
           </Button>
         </DialogFooter>
       </DialogContent>
