@@ -144,13 +144,13 @@ export const GeracaoDocumentacaoBPTab = ({
       {/* Unidade Fabril e Fabricante Legal (acima do Nome do Arquivo Principal) */}
       <Card className="p-6">
         <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
             <div>
               <Label htmlFor="unidade-fabril" className="text-base font-semibold">
                 Unidade Fabril
               </Label>
               <p className="text-sm text-muted-foreground mb-2">
-                Selecione a unidade fabril cadastrada em Fornecedor - Mercadoria para Revenda
+                Selecione a unidade fabril cadastrada em Fornecedor
               </p>
               <Select value={selectedUnidadeFabrilId} onValueChange={handleUnidadeFabrilChange}>
                 <SelectTrigger className="w-full">
@@ -170,7 +170,7 @@ export const GeracaoDocumentacaoBPTab = ({
                 Fabricante Legal
               </Label>
               <p className="text-sm text-muted-foreground mb-2">
-                Preenchido automaticamente ao selecionar a unidade fabril
+                Preenchido automaticamente
               </p>
               <Input
                 id="fabricante-legal"
