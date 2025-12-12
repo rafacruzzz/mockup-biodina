@@ -200,9 +200,8 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
               <Label htmlFor="aoSubject">Subject</Label>
               <Input
                 id="aoSubject"
-                value={formData.aoSubject || ''}
+                value={formData.aoSubject || 'SHIPMENT INSTRUCTIONS, DD-xxxx/RD-xxxx, YOUR PI xxxxxxx USD xxxxxxxx.'}
                 onChange={(e) => onInputChange('aoSubject', e.target.value)}
-                placeholder="SHIPMENT INSTRUCTIONS,DD-xxxx/RD-xxxx, YOUR PI xxxxxxx USD xxxxxxxx."
                 className="w-full"
               />
             </div>
@@ -245,16 +244,23 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
           <div className="grid grid-cols-1 gap-4 border p-4 rounded">
             <div>
               <h3 className="font-semibold mb-4 border-b pb-2">SPECIFIC FIELDS</h3>
-              <p className="text-sm font-medium mb-4">1- Invoice: Please mention on the invoice:</p>
+              <div className="mb-4">
+                <Label htmlFor="aoInvoiceTitle">1- Invoice:</Label>
+                <Input
+                  id="aoInvoiceTitle"
+                  value={formData.aoInvoiceTitle || 'Please mention on the invoice:'}
+                  onChange={(e) => onInputChange('aoInvoiceTitle', e.target.value)}
+                  className="w-full mt-1"
+                />
+              </div>
             </div>
             
             <div>
               <Label htmlFor="aoPortugueseDescription">1. Portuguese description as</Label>
               <Textarea
                 id="aoPortugueseDescription"
-                value={formData.aoPortugueseDescription || ''}
+                value={formData.aoPortugueseDescription || 'proforma invoice#XXXXXXX'}
                 onChange={(e) => onInputChange('aoPortugueseDescription', e.target.value)}
-                placeholder="Analisador de Gases Sanguíneos ABL800 FLEX, AO#003627075"
                 rows={2}
                 className="w-full"
               />
@@ -266,7 +272,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 id="aoUnitTotalPrices"
                 value={formData.aoUnitTotalPrices || ''}
                 onChange={(e) => onInputChange('aoUnitTotalPrices', e.target.value)}
-                placeholder="ABL800 FLEX - USD 15,000.00/unit - Total USD 15,000.00; Sensors (5 units) - USD 459.95/unit - Total USD 2,299.74"
                 rows={3}
                 className="w-full"
               />
@@ -278,7 +283,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 id="aoLotEachItem"
                 value={formData.aoLotEachItem || ''}
                 onChange={(e) => onInputChange('aoLotEachItem', e.target.value)}
-                placeholder="ABL800 FLEX - Lot 2023-06-A; Sensors - Lot 2023-05-B"
                 rows={2}
                 className="w-full"
               />
@@ -301,7 +305,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 id="aoTotalCartons"
                 value={formData.aoTotalCartons || ''}
                 onChange={(e) => onInputChange('aoTotalCartons', e.target.value)}
-                placeholder="3 cartons - Marks: BIODINA 2023/06-001, BIODINA 2023/06-002, BIODINA 2023/06-003"
                 rows={2}
                 className="w-full"
               />
@@ -314,7 +317,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   id="aoGrossWeight"
                   value={formData.aoGrossWeight || ''}
                   onChange={(e) => onInputChange('aoGrossWeight', e.target.value)}
-                  placeholder="45 kg"
                   className="w-full"
                 />
               </div>
@@ -325,7 +327,6 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                   id="aoNetWeight"
                   value={formData.aoNetWeight || ''}
                   onChange={(e) => onInputChange('aoNetWeight', e.target.value)}
-                  placeholder="38 kg"
                   className="w-full"
                 />
               </div>
@@ -337,20 +338,50 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 id="aoTermsPayment"
                 value={formData.aoTermsPayment || ''}
                 onChange={(e) => onInputChange('aoTermsPayment', e.target.value)}
-                placeholder="International wire transfer, 30 days after shipment"
                 className="w-full"
               />
             </div>
             
-            <div>
-              <Label htmlFor="aoConsignedTo">9. Consigned to</Label>
-              <Input
-                id="aoConsignedTo"
-                value={formData.aoConsignedTo || ''}
-                onChange={(e) => onInputChange('aoConsignedTo', e.target.value)}
-                placeholder="HOSPITAL SÃO VICENTE DE PAULO"
-                className="w-full"
-              />
+            <div className="border p-3 rounded bg-gray-50">
+              <Label className="font-semibold mb-3 block">9. Consigned to</Label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="aoConsignedToNome" className="text-sm">Nome do Cliente</Label>
+                  <Input
+                    id="aoConsignedToNome"
+                    value={formData.aoConsignedToNome || ''}
+                    onChange={(e) => onInputChange('aoConsignedToNome', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="aoConsignedToEndereco" className="text-sm">Endereço</Label>
+                  <Input
+                    id="aoConsignedToEndereco"
+                    value={formData.aoConsignedToEndereco || ''}
+                    onChange={(e) => onInputChange('aoConsignedToEndereco', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="aoConsignedToCep" className="text-sm">CEP</Label>
+                  <Input
+                    id="aoConsignedToCep"
+                    value={formData.aoConsignedToCep || ''}
+                    onChange={(e) => onInputChange('aoConsignedToCep', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="aoConsignedToCnpj" className="text-sm">CNPJ</Label>
+                  <Input
+                    id="aoConsignedToCnpj"
+                    value={formData.aoConsignedToCnpj || ''}
+                    onChange={(e) => onInputChange('aoConsignedToCnpj', e.target.value)}
+                    className="w-full"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
