@@ -82,34 +82,33 @@ export const criarDocumentosEnvioAnvisa = (baseId: string): { documentos: Docume
       tipo: TipoDocumentoAcaoCampo.PROTOCOLO_ENCERRAMENTO_ANVISA,
       nome: tipoDocumentoLabels[TipoDocumentoAcaoCampo.PROTOCOLO_ENCERRAMENTO_ANVISA],
       requerAssinatura: false
-    }
-  ],
-  adicionais: [
+    },
     {
-      id: `${baseId}-anv-add-1`,
+      id: `${baseId}-anv-4`,
       tipo: TipoDocumentoAcaoCampo.ADICIONAL,
-      nome: 'Formulário de Notificação de Ação de Campo v2-5',
+      nome: 'Formulário de Notificação de Ação de Campo',
       nomeOriginal: 'Formulario-de-Notificacao-de-Acao-de-Campo-v2-5.pdf',
       url: '/documents/Formulario-de-Notificacao-de-Acao-de-Campo-v2-5.pdf',
       requerAssinatura: false
     },
     {
-      id: `${baseId}-anv-add-2`,
+      id: `${baseId}-anv-5`,
       tipo: TipoDocumentoAcaoCampo.ADICIONAL,
-      nome: 'Ação de Campo 915-428 ABL800 pH Distribuição',
+      nome: 'Planilha de Ação de Campo',
       nomeOriginal: 'Acao-de-Campo-915-428-ABL800-pH-Distribuicao.pdf',
       url: '/documents/Acao-de-Campo-915-428-ABL800-pH-Distribuicao.pdf',
       requerAssinatura: false
     },
     {
-      id: `${baseId}-anv-add-3`,
+      id: `${baseId}-anv-6`,
       tipo: TipoDocumentoAcaoCampo.ADICIONAL,
-      nome: 'Sumário do Alerta - Ação de Campo v2-5',
+      nome: 'Sumário de Alerta',
       nomeOriginal: 'Sumario-do-Alerta-Acao-de-Campo-v2-5.pdf',
       url: '/documents/Sumario-do-Alerta-Acao-de-Campo-v2-5.pdf',
       requerAssinatura: false
     }
-  ]
+  ],
+  adicionais: []
 });
 
 export const criarDocumentosEnvioEmpresaRepresentada = (baseId: string): { documentos: DocumentoAcaoCampo[], adicionais: DocumentoAcaoCampo[] } => ({

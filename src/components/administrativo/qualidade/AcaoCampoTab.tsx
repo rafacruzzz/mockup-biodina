@@ -580,6 +580,30 @@ export const AcaoCampoTab = () => {
           </CardContent>
         </Card>
 
+        {/* Botão Finalizar Ação de Campo */}
+        <div className="flex justify-end">
+          <Button
+            className="bg-green-600 hover:bg-green-700"
+            onClick={() => {
+              setAcoesCampo(acoes =>
+                acoes.map(acao => {
+                  if (acao.id !== acaoSelecionada.id) return acao;
+                  return {
+                    ...acao,
+                    status: StatusAcaoCampo.COMPLETA,
+                    dataAtualizacao: new Date().toISOString().split('T')[0]
+                  };
+                })
+              );
+              toast.success("Ação de Campo finalizada com sucesso!");
+              setAcaoSelecionada(null);
+            }}
+          >
+            <CheckCircle className="h-4 w-4 mr-2" />
+            Finalizar Ação de Campo
+          </Button>
+        </div>
+
         <NovoDocumentoAdicionalModal
           open={showNovoDocumento}
           onOpenChange={setShowNovoDocumento}
