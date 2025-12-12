@@ -28,7 +28,7 @@ const EditarPerfil = () => {
     navigate(-1);
   };
 
-  if (!user) {
+  if (!user || !user.colaboradorData) {
     return null;
   }
 
