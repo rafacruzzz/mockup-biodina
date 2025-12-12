@@ -659,10 +659,16 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 {/* Packing */}
                 <div>
                   <Label htmlFor="packing">4- Packing:</Label>
-                  <Textarea
+                  <Input
                     id="packing"
-                    value={formData.packing || "As usual for this merchandise. IN CASE OF PACKAGES, BOXES OR PALLETS MADE OF WOOD, FUMIGATION IS OBLIGED AND ALSO THE IPPC STAMP ON THE WOOD IS OBLIGED. THE FUMIGATION CERTIFICATE MUST BE SENT TOGETHER WITH THE CARGO DECLARING THE IPPC STAMP CODE OF THE WOOD FOR EACH SHIPMENT. THE NON-COMPLIANCE WILL IMPLY THE RETURN OF THE GOODS TO THE ORIGIN (COSTS OF THE RETURN WILL BE COVERED BY THE EXPORTER), ACCORDING TO THE RULES OF 'IN 32/2015' OF MINISTRY OF AGRICULTURE."}
+                    value={formData.packing || 'As usual for this merchandise.'}
                     onChange={(e) => onInputChange('packing', e.target.value)}
+                    className="w-full mb-2"
+                  />
+                  <Textarea
+                    id="packingWood"
+                    value={formData.packingWood || 'IN CASE OF PACKAGES, BOXES OR PALLETS MADE OF WOOD, FUMIGATION IS OBLIGED AND ALSO THE IPPC STAMP ON THE WOOD IS OBLIGED. THE FUMIGATION CERTIFICATE MUST BE SENT TOGETHER WITH THE CARGO DECLARING THE IPPC STAMP CODE OF THE WOOD FOR EACH SHIPMENT. THE NON-COMPLIANCE WILL IMPLY THE RETURN OF THE GOODS TO THE ORIGIN (COSTS OF THE RETURN WILL BE COVERED BY THE EXPORTER), ACCORDING TO THE RULES OF "IN 32/2015" OF MINISTRY OF AGRICULTURE.'}
+                    onChange={(e) => onInputChange('packingWood', e.target.value)}
                     rows={4}
                     className="w-full"
                   />
@@ -1002,11 +1008,17 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
 
                   <div>
                     <Label htmlFor="packing_congelado">4- Packing:</Label>
-                    <Textarea
+                    <Input
                       id="packing_congelado"
-                      value={formData.packing_congelado || 'As usual for this merchandise.\n\nIN CASE OF PACKAGES, BOXES OR PALLETS MADE OF WOOD, FUMIGATION IS OBLIGED AND ALSO THE IPPC STAMP ON THE WOOD IS OBLIGED. THE FUMIGATION CERTIFICATE MUST BE SENT TOGETHER WITH THE CARGO DECLARING THE IPPC STAMP CODE OF THE WOOD FOR EACH SHIPMENT. THE NON-COMPLIANCE WILL IMPLY THE RETURN OF THE GOODS TO THE ORIGIN (COSTS OF THE RETURN WILL BE COVERED BY THE EXPORTER), ACCORDING TO THE RULES OF "IN 32/2015" OF MINISTRY OF AGRICULTURE.'}
+                      value={formData.packing_congelado || 'As usual for this merchandise.'}
                       onChange={(e) => onInputChange('packing_congelado', e.target.value)}
-                      rows={6}
+                      className="w-full mb-2"
+                    />
+                    <Textarea
+                      id="packingWood_congelado"
+                      value={formData.packingWood_congelado || 'IN CASE OF PACKAGES, BOXES OR PALLETS MADE OF WOOD, FUMIGATION IS OBLIGED AND ALSO THE IPPC STAMP ON THE WOOD IS OBLIGED. THE FUMIGATION CERTIFICATE MUST BE SENT TOGETHER WITH THE CARGO DECLARING THE IPPC STAMP CODE OF THE WOOD FOR EACH SHIPMENT. THE NON-COMPLIANCE WILL IMPLY THE RETURN OF THE GOODS TO THE ORIGIN (COSTS OF THE RETURN WILL BE COVERED BY THE EXPORTER), ACCORDING TO THE RULES OF "IN 32/2015" OF MINISTRY OF AGRICULTURE.'}
+                      onChange={(e) => onInputChange('packingWood_congelado', e.target.value)}
+                      rows={4}
                       className="w-full"
                     />
                   </div>
@@ -1347,11 +1359,17 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 {/* 4- Packing */}
                 <div>
                   <Label htmlFor="packing_seco">4- Packing:</Label>
-                  <Textarea
+                  <Input
                     id="packing_seco"
-                    value={formData.packing_seco || "As usual for this merchandise. IN CASE OF PACKAGES, BOXES OR PALLETS MADE OF WOOD, FUMIGATION IS OBLIGED AND ALSO THE IPPC STAMP ON THE WOOD IS OBLIGED. THE FUMIGATION CERTIFICATE MUST BE SENT TOGHETGER WITH THE CARGO DECLARING THE IPPC STAMP CODE OF THE WOOD FOR EACH SHIPMENT. THE NON-COMPLIANCE WILL IMPLY THE RETURN OF THE GOODS TO THE ORIGIN (COSTS OF THE RETURN WILL BE COVERED BY THE EXPORTER), ACCORDING TO THE RULES OF 'IN 32/2015' OF MINISTRY OF AGRICULTURE."}
+                    value={formData.packing_seco || 'As usual for this merchandise.'}
                     onChange={(e) => onInputChange('packing_seco', e.target.value)}
-                    rows={5}
+                    className="w-full mb-2"
+                  />
+                  <Textarea
+                    id="packingWood_seco"
+                    value={formData.packingWood_seco || 'IN CASE OF PACKAGES, BOXES OR PALLETS MADE OF WOOD, FUMIGATION IS OBLIGED AND ALSO THE IPPC STAMP ON THE WOOD IS OBLIGED. THE FUMIGATION CERTIFICATE MUST BE SENT TOGETHER WITH THE CARGO DECLARING THE IPPC STAMP CODE OF THE WOOD FOR EACH SHIPMENT. THE NON-COMPLIANCE WILL IMPLY THE RETURN OF THE GOODS TO THE ORIGIN (COSTS OF THE RETURN WILL BE COVERED BY THE EXPORTER), ACCORDING TO THE RULES OF "IN 32/2015" OF MINISTRY OF AGRICULTURE.'}
+                    onChange={(e) => onInputChange('packingWood_seco', e.target.value)}
+                    rows={4}
                     className="w-full"
                   />
                 </div>
