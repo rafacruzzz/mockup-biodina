@@ -155,33 +155,22 @@ export const QueixaTecnicaTab = () => {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>2.1. Número da Notificação:</Label>
-                  <Input value={queixaTecnicaMockada.numeroNotificacao} readOnly />
-                </div>
-                <div>
-                  <Label>2.2. Data da Identificação/Ocorrência:</Label>
-                  <Input value={format(queixaTecnicaMockada.dataIdentificacao, 'dd/MM/yyyy')} readOnly />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>2.3. Produto motivo da notificação:</Label>
+                  <Label>2.1. Produto motivo da notificação:</Label>
                   <Input value={queixaTecnicaMockada.produtoMotivo} readOnly />
                 </div>
                 <div>
-                  <Label>2.4. Queixa Técnica/Evento Adverso:</Label>
+                  <Label>2.2. Queixa Técnica/Evento Adverso:</Label>
                   <Input value={queixaTecnicaMockada.tipoQueixaEvento} readOnly />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label>2.5. Utilizado no manejo do Covid-19?</Label>
+                  <Label>2.3. Utilizado no manejo do Covid-19?</Label>
                   <Input value={queixaTecnicaMockada.covidRelacionado ? 'Sim' : 'Não'} readOnly />
                 </div>
                 <div>
-                  <Label>2.6. Utilizado na aplicação da vacina contra a Covid-19?</Label>
+                  <Label>2.4. Utilizado na aplicação da vacina contra a Covid-19?</Label>
                   <Input value={queixaTecnicaMockada.vacinaCovidRelacionado ? 'Sim' : 'Não'} readOnly />
                 </div>
               </div>
