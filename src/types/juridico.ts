@@ -106,6 +106,15 @@ export enum StatusChamadoJuridico {
   FINALIZADO = 'finalizado'
 }
 
+// Resposta do Jurídico
+export interface RespostaJuridico {
+  id: string;
+  data: string;
+  responsavel: string;
+  mensagem: string;
+  documentosAnexados?: DocumentoProcesso[];
+}
+
 // Chamado Jurídico
 export interface ChamadoJuridico {
   id: string;
@@ -123,4 +132,6 @@ export interface ChamadoJuridico {
   parecer?: string;
   documentosAnexados?: DocumentoProcesso[];
   licitacaoRelacionada?: string;
+  projetoRelacionado?: string;
+  historicoRespostas?: RespostaJuridico[];
 }
