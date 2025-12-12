@@ -66,6 +66,35 @@ export const processosMock: ProcessoJuridico[] = [
     responsavelInterno: 'Dr. Carlos Silva',
     advogadoExterno: 'Escritório Advocacia & Consultoria',
     observacoes: 'Processo em fase de produção de provas',
+    monitoramentoDOU: {
+      ativo: true,
+      cnpj: '12.345.678/0001-99',
+      numeroProcesso: '0001234-56.2024.8.26.0100',
+      nomeParte: 'ACME Indústria Ltda'
+    },
+    atualizacoesDOU: [
+      {
+        id: 'dou-1',
+        dataPublicacao: '10/12/2024',
+        dataCaptura: '10/12/2024',
+        secaoDOU: 'Seção 3 - Atos Judiciais',
+        conteudo: 'Despacho: Defiro a produção de prova pericial requerida pela parte autora. Nomeio perito do juízo Dr. José Antônio Cardoso. Intimem-se as partes para indicação de assistentes técnicos no prazo de 5 dias.',
+        arquivoPDF: { id: 'dou-pdf-1', nome: 'DOU_10122024_Secao3.pdf', tipo: 'PDF', dataUpload: '10/12/2024', tamanho: '156 KB' },
+        visualizada: false,
+        relevante: undefined
+      },
+      {
+        id: 'dou-2',
+        dataPublicacao: '05/12/2024',
+        dataCaptura: '05/12/2024',
+        secaoDOU: 'Seção 3 - Atos Judiciais',
+        conteudo: 'Publicação de despacho determinando a manifestação das partes sobre os documentos juntados aos autos.',
+        arquivoPDF: { id: 'dou-pdf-2', nome: 'DOU_05122024_Secao3.pdf', tipo: 'PDF', dataUpload: '05/12/2024', tamanho: '142 KB' },
+        visualizada: true,
+        relevante: true,
+        observacaoRelevancia: 'Despacho importante - prazo de 5 dias para manifestação'
+      }
+    ],
     andamentos: [
       {
         id: '1',
@@ -169,6 +198,24 @@ export const processosMock: ProcessoJuridico[] = [
     dataDistribuicao: '20/02/2024',
     responsavelInterno: 'Dr. Carlos Silva',
     observacoes: 'Aguardando documentação complementar',
+    monitoramentoDOU: {
+      ativo: true,
+      cnpj: '12.345.678/0001-99',
+      numeroProcesso: 'PA-2024-0156',
+      nomeParte: 'Biodina Instrumentos'
+    },
+    atualizacoesDOU: [
+      {
+        id: 'dou-3',
+        dataPublicacao: '11/12/2024',
+        dataCaptura: '11/12/2024',
+        secaoDOU: 'Seção 1 - ANVISA',
+        conteudo: 'RESOLUÇÃO-RE Nº 4.521, DE 10 DE DEZEMBRO DE 2024. A Diretoria Colegiada da ANVISA resolve: Art. 1º Conceder o prazo de 60 dias para apresentação de documentação complementar referente ao processo PA-2024-0156.',
+        arquivoPDF: { id: 'dou-pdf-3', nome: 'DOU_11122024_Secao1_ANVISA.pdf', tipo: 'PDF', dataUpload: '11/12/2024', tamanho: '89 KB' },
+        visualizada: false,
+        relevante: undefined
+      }
+    ],
     andamentos: [
       {
         id: '7',

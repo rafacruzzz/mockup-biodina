@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Eye, FileText, Clock, CheckCircle, AlertCircle } from 'lucide-react';
+import { Plus, Eye, FileText, Clock, CheckCircle, AlertCircle, Bell, Newspaper } from 'lucide-react';
 import { processosMock, tipoProcessoLabels, statusProcessoLabels } from '@/data/juridicoModules';
 import { ProcessoJuridico, StatusProcesso } from '@/types/juridico';
 import { NovoProcessoModal } from './NovoProcessoModal';
@@ -45,17 +45,27 @@ export const ProcessosTab = () => {
     setShowAndamentoModal(true);
   };
 
+  // Verifica se processo tem atualizações não visualizadas do DOU
+  const temAtualizacoesNaoVisualizadas = (processo: ProcessoJuridico) => {
+    return processo.atualizacoesDOU?.some(a => !a.visualizada) ?? false;
+  };
+
+  const contarAtualizacoesNaoVisualizadas = (processo: ProcessoJuridico) => {
+    return processo.atualizacoesDOU?.filter(a => !a.visualizada).length ?? 0;
+  };
+
   const estatisticas = {
     total: processos.length,
     emAndamento: processos.filter(p => p.status === StatusProcesso.EM_ANDAMENTO).length,
     aguardandoPrazo: processos.filter(p => p.status === StatusProcesso.AGUARDANDO_PRAZO).length,
     encerrados: processos.filter(p => p.status === StatusProcesso.ENCERRADO).length,
+    comAtualizacoesDOU: processos.filter(p => temAtualizacoesNaoVisualizadas(p)).length,
   };
 
   return (
     <div className="space-y-6">
       {/* Dashboard com Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -103,6 +113,27 @@ export const ProcessosTab = () => {
             </div>
           </CardContent>
         </Card>
+
+        <Card className={estatisticas.comAtualizacoesDOU > 0 ? 'border-orange-500 bg-orange-50 dark:bg-orange-950/20' : ''}>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground">Atualizações DOU</p>
+                <p className={`text-3xl font-bold ${estatisticas.comAtualizacoesDOU > 0 ? 'text-orange-600' : ''}`}>
+                  {estatisticas.comAtualizacoesDOU}
+                </p>
+              </div>
+              <div className="relative">
+                <Newspaper className={`h-8 w-8 ${estatisticas.comAtualizacoesDOU > 0 ? 'text-orange-600' : 'text-muted-foreground'}`} />
+                {estatisticas.comAtualizacoesDOU > 0 && (
+                  <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 rounded-full flex items-center justify-center">
+                    <Bell className="h-2.5 w-2.5 text-white animate-pulse" />
+                  </span>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Tabela de Processos */}
@@ -130,27 +161,55 @@ export const ProcessosTab = () => {
             <TableBody>
               {processos.map((processo) => {
                 const ultimoAndamento = processo.andamentos[processo.andamentos.length - 1];
+                const temNovasAtualizacoes = temAtualizacoesNaoVisualizadas(processo);
+                const qtdAtualizacoes = contarAtualizacoesNaoVisualizadas(processo);
+                
                 return (
-                  <TableRow key={processo.id}>
-                    <TableCell className="font-mono text-sm">{processo.numeroProcesso}</TableCell>
+                  <TableRow 
+                    key={processo.id}
+                    className={temNovasAtualizacoes ? 'bg-orange-50 dark:bg-orange-950/20' : ''}
+                  >
+                    <TableCell className="font-mono text-sm">
+                      <div className="flex items-center gap-2">
+                        {processo.numeroProcesso}
+                        {processo.monitoramentoDOU?.ativo && (
+                          <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+                            <Newspaper className="h-3 w-3 mr-1" />
+                            DOU
+                          </Badge>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <Badge variant="outline">{tipoProcessoLabels[processo.tipo]}</Badge>
                     </TableCell>
                     <TableCell>{processo.parteContraria}</TableCell>
                     <TableCell>{getStatusBadge(processo.status)}</TableCell>
                     <TableCell>{processo.responsavelInterno}</TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {ultimoAndamento ? ultimoAndamento.data : 'Sem andamentos'}
+                    <TableCell>
+                      {temNovasAtualizacoes ? (
+                        <div className="flex items-center gap-2">
+                          <Badge className="bg-orange-500 text-white animate-pulse flex items-center gap-1">
+                            <Bell className="h-3 w-3" />
+                            {qtdAtualizacoes} nova{qtdAtualizacoes > 1 ? 's' : ''} atualização{qtdAtualizacoes > 1 ? 'ões' : ''} DOU
+                          </Badge>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">
+                          {ultimoAndamento ? ultimoAndamento.data : 'Sem andamentos'}
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
                           size="sm"
-                          variant="outline"
+                          variant={temNovasAtualizacoes ? "default" : "outline"}
                           onClick={() => handleVerDetalhes(processo)}
+                          className={temNovasAtualizacoes ? 'bg-orange-500 hover:bg-orange-600' : ''}
                         >
                           <Eye className="h-4 w-4 mr-1" />
-                          Ver Detalhes
+                          {temNovasAtualizacoes ? 'Ver Atualizações' : 'Ver Detalhes'}
                         </Button>
                         <Button
                           size="sm"
@@ -184,6 +243,12 @@ export const ProcessosTab = () => {
             open={showDetalhesModal}
             onOpenChange={setShowDetalhesModal}
             processo={processoSelecionado}
+            onProcessoUpdated={(processoAtualizado) => {
+              setProcessos(processos.map(p => 
+                p.id === processoAtualizado.id ? processoAtualizado : p
+              ));
+              setProcessoSelecionado(processoAtualizado);
+            }}
           />
 
           <NovoAndamentoModal
