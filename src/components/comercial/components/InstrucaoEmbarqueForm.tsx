@@ -450,37 +450,27 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
           </div>
 
           <div className="border p-4 rounded">
-            <h3 className="font-semibold mb-4 border-b pb-2">EXPORTER INFORMATION</h3>
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <Label htmlFor="exporterName">Exporter Name</Label>
-                <Input
-                  id="exporterName"
-                  value={formData.exporterName || 'Radiometer Medical Aps'}
-                  onChange={(e) => onInputChange('exporterName', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="exporterAddress">Address</Label>
-                <Input
-                  id="exporterAddress"
-                  value={formData.exporterAddress || 'Akandevej 21,DK-2700'}
-                  onChange={(e) => onInputChange('exporterAddress', e.target.value)}
-                  className="w-full"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="exporterCity">City - Country</Label>
-                <Input
-                  id="exporterCity"
-                  value={formData.exporterCity || 'Bronshoj - Denmark'}
-                  onChange={(e) => onInputChange('exporterCity', e.target.value)}
-                  className="w-full"
-                />
-              </div>
+            <h3 className="font-semibold mb-2 border-b pb-2">Complete Exporter information</h3>
+            <p className="font-semibold mb-4">EXPORTADOR:</p>
+            <div className="space-y-3">
+              <Input
+                id="exporterLine1"
+                value={formData.exporterLine1 || ''}
+                onChange={(e) => onInputChange('exporterLine1', e.target.value)}
+                className="w-full"
+              />
+              <Input
+                id="exporterLine2"
+                value={formData.exporterLine2 || ''}
+                onChange={(e) => onInputChange('exporterLine2', e.target.value)}
+                className="w-full"
+              />
+              <Input
+                id="exporterLine3"
+                value={formData.exporterLine3 || ''}
+                onChange={(e) => onInputChange('exporterLine3', e.target.value)}
+                className="w-full"
+              />
             </div>
           </div>
 
