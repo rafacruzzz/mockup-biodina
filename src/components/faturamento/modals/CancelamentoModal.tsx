@@ -16,12 +16,13 @@ interface CancelamentoModalProps {
   isOpen: boolean;
   onClose: () => void;
   numeroPedido: string;
-  onSolicitar?: (justificativa: string) => void;
+  onSolicitar?: (justificativaInterna: string, justificativaNota: string) => void;
 }
 
 const CancelamentoModal = ({ isOpen, onClose, numeroPedido, onSolicitar }: CancelamentoModalProps) => {
   const { toast } = useToast();
   const [justificativa, setJustificativa] = useState("");
+  const [justificativaNota, setJustificativaNota] = useState("");
 
   const handleSubmit = () => {
     if (!justificativa.trim()) {
@@ -33,9 +34,18 @@ const CancelamentoModal = ({ isOpen, onClose, numeroPedido, onSolicitar }: Cance
       return;
     }
 
+    if (!justificativaNota.trim()) {
+      toast({
+        title: "Justificativa na Nota obrigatória",
+        description: "Por favor, informe a justificativa que será enviada na NF-e.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Chamar callback para atualizar o status no componente pai
     if (onSolicitar) {
-      onSolicitar(justificativa);
+      onSolicitar(justificativa, justificativaNota);
     }
 
     toast({
@@ -45,6 +55,7 @@ const CancelamentoModal = ({ isOpen, onClose, numeroPedido, onSolicitar }: Cance
 
     // Limpar campos e fechar
     setJustificativa("");
+    setJustificativaNota("");
     onClose();
   };
 
@@ -77,11 +88,26 @@ const CancelamentoModal = ({ isOpen, onClose, numeroPedido, onSolicitar }: Cance
               placeholder="Descreva detalhadamente o motivo do cancelamento para aprovação do gestor..."
               value={justificativa}
               onChange={(e) => setJustificativa(e.target.value)}
-              rows={5}
+              rows={4}
               maxLength={1000}
             />
             <p className="text-xs text-muted-foreground">
               {justificativa.length}/1000 caracteres - Esta justificativa é para uso interno e não será enviada à NF-e
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="justificativaNota">Justificativa na Nota *</Label>
+            <Textarea
+              id="justificativaNota"
+              placeholder="Informe a justificativa que será registrada no cancelamento da NF-e..."
+              value={justificativaNota}
+              onChange={(e) => setJustificativaNota(e.target.value)}
+              rows={3}
+              maxLength={255}
+            />
+            <p className="text-xs text-muted-foreground">
+              {justificativaNota.length}/255 caracteres - Esta justificativa será enviada à SEFAZ no evento de cancelamento
             </p>
           </div>
 
