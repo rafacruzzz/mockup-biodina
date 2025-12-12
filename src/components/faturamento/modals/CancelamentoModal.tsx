@@ -22,7 +22,7 @@ interface CancelamentoModalProps {
 const CancelamentoModal = ({ isOpen, onClose, numeroPedido, onSolicitar }: CancelamentoModalProps) => {
   const { toast } = useToast();
   const [justificativa, setJustificativa] = useState("");
-  const [justificativaNota, setJustificativaNota] = useState("");
+  const [justificativaNota, setJustificativaNota] = useState("ERRO DE EMISSÃO");
 
   const handleSubmit = () => {
     if (!justificativa.trim()) {
