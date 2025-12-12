@@ -28,8 +28,45 @@ const EditarPerfil = () => {
     navigate(-1);
   };
 
-  if (!user || !user.colaboradorData) {
+  if (!user) {
     return null;
+  }
+
+  if (!user.colaboradorData) {
+    return (
+      <SidebarLayout>
+        <div className="p-6">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center gap-4 mb-6">
+              <Button variant="ghost" onClick={handleCancel}>
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-biodina-blue">Meu Perfil</h1>
+                <p className="text-gray-600">Visualize e edite suas informações pessoais</p>
+              </div>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Informações do Colaborador</CardTitle>
+                <CardDescription>
+                  Seus dados de colaborador ainda não foram vinculados ao seu usuário.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8">
+                  <User className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                  <p className="text-muted-foreground">
+                    Entre em contato com o RH para vincular seus dados de colaborador.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </SidebarLayout>
+    );
   }
 
   return (
