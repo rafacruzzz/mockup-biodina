@@ -204,9 +204,16 @@ export const GestaoNCTab = () => {
               {/* Informações Básicas */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
+                  <Label>Data da NC</Label>
+                  <Input value={format(ncSelecionada.dataCriacao, 'dd/MM/yyyy')} disabled />
+                </div>
+                <div>
                   <Label>Origem</Label>
                   <Input value={ncSelecionada.origem} disabled />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>Tipo</Label>
                   <Select
@@ -287,6 +294,16 @@ export const GestaoNCTab = () => {
                   onChange={(e) => setNcSelecionada({ ...ncSelecionada, acaoImediata: e.target.value })}
                   rows={2}
                   placeholder="Descreva a ação imediata tomada..."
+                />
+              </div>
+
+              <div>
+                <Label>Observações</Label>
+                <Textarea
+                  value={(ncSelecionada as any).observacoes || ''}
+                  onChange={(e) => setNcSelecionada({ ...ncSelecionada, observacoes: e.target.value } as any)}
+                  rows={3}
+                  placeholder="Observações adicionais..."
                 />
               </div>
 
