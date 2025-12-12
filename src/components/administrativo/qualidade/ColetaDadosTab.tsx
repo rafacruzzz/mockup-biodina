@@ -4,7 +4,7 @@ import { AuditoriaQualidadeForm } from './AuditoriaQualidadeForm';
 import { PesquisaSatisfacaoTab } from './PesquisaSatisfacaoTab';
 import { RastreabilidadeTab } from './RastreabilidadeTab';
 import { QueixaTecnicaTab } from './QueixaTecnicaTab';
-import { EmailsTelefonemesTab } from './EmailsTelefonemesTab';
+import { ReclamacaoClientesTab } from './ReclamacaoClientesTab';
 import { IntegracaoSensoresTab } from './IntegracaoSensoresTab';
 
 export const ColetaDadosTab = () => {
@@ -18,7 +18,7 @@ export const ColetaDadosTab = () => {
           <TabsTrigger value="pesquisa">Pesquisa de Satisfação</TabsTrigger>
           <TabsTrigger value="rastreabilidade">Rastreabilidade</TabsTrigger>
           <TabsTrigger value="queixa-tecnica">Queixa Técnica (Notivisa/ANVISA)</TabsTrigger>
-          <TabsTrigger value="emails-telefonemas">E-mails e Telefonemas</TabsTrigger>
+          <TabsTrigger value="reclamacao-clientes">Reclamação de Clientes</TabsTrigger>
           <TabsTrigger value="sensores">Integração Sensores/Máquinas</TabsTrigger>
         </TabsList>
 
@@ -38,8 +38,8 @@ export const ColetaDadosTab = () => {
           <QueixaTecnicaTab />
         </TabsContent>
 
-        <TabsContent value="emails-telefonemas">
-          <EmailsTelefonemesTab />
+        <TabsContent value="reclamacao-clientes">
+          <ReclamacaoClientesTab />
         </TabsContent>
 
         <TabsContent value="sensores">
