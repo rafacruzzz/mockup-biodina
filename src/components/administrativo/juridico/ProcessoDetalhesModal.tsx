@@ -1,18 +1,27 @@
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { FileText, Calendar, User } from 'lucide-react';
-import { ProcessoJuridico } from '@/types/juridico';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { FileText, Calendar, User, Newspaper, Bell, CheckCircle, XCircle, Download, Eye } from 'lucide-react';
+import { ProcessoJuridico, AtualizacaoDOU } from '@/types/juridico';
 import { tipoProcessoLabels, statusProcessoLabels } from '@/data/juridicoModules';
+import { toast } from '@/components/ui/use-toast';
 
 interface ProcessoDetalhesModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   processo: ProcessoJuridico;
+  onProcessoUpdated?: (processo: ProcessoJuridico) => void;
 }
 
-export const ProcessoDetalhesModal = ({ open, onOpenChange, processo }: ProcessoDetalhesModalProps) => {
+export const ProcessoDetalhesModal = ({ open, onOpenChange, processo, onProcessoUpdated }: ProcessoDetalhesModalProps) => {
+  const [processoLocal, setProcessoLocal] = useState(processo);
+  
   const formatCurrency = (value?: number) => {
     if (!value) return '-';
     return new Intl.NumberFormat('pt-BR', {
@@ -21,14 +30,87 @@ export const ProcessoDetalhesModal = ({ open, onOpenChange, processo }: Processo
     }).format(value);
   };
 
+  const atualizacoesNaoVisualizadas = processoLocal.atualizacoesDOU?.filter(a => !a.visualizada) ?? [];
+  const todasAtualizacoes = processoLocal.atualizacoesDOU ?? [];
+
+  const marcarComoVisualizada = (atualizacaoId: string) => {
+    const novasAtualizacoes = processoLocal.atualizacoesDOU?.map(a => 
+      a.id === atualizacaoId ? { ...a, visualizada: true } : a
+    );
+    const processoAtualizado = { ...processoLocal, atualizacoesDOU: novasAtualizacoes };
+    setProcessoLocal(processoAtualizado);
+    onProcessoUpdated?.(processoAtualizado);
+  };
+
+  const marcarRelevancia = (atualizacaoId: string, relevante: boolean, observacao?: string) => {
+    const novasAtualizacoes = processoLocal.atualizacoesDOU?.map(a => 
+      a.id === atualizacaoId 
+        ? { ...a, visualizada: true, relevante, observacaoRelevancia: observacao } 
+        : a
+    );
+    const processoAtualizado = { ...processoLocal, atualizacoesDOU: novasAtualizacoes };
+    setProcessoLocal(processoAtualizado);
+    onProcessoUpdated?.(processoAtualizado);
+    
+    toast({
+      title: relevante ? 'Marcado como relevante' : 'Marcado como não relevante',
+      description: 'A atualização foi classificada com sucesso.',
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Detalhes do Processo</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            Detalhes do Processo
+            {atualizacoesNaoVisualizadas.length > 0 && (
+              <Badge className="bg-orange-500 text-white animate-pulse">
+                <Bell className="h-3 w-3 mr-1" />
+                {atualizacoesNaoVisualizadas.length} nova{atualizacoesNaoVisualizadas.length > 1 ? 's' : ''} atualização{atualizacoesNaoVisualizadas.length > 1 ? 'ões' : ''} DOU
+              </Badge>
+            )}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
+          {/* Atualizações do DOU - Seção de Destaque */}
+          {todasAtualizacoes.length > 0 && (
+            <Card className={atualizacoesNaoVisualizadas.length > 0 ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/20' : ''}>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Newspaper className="h-5 w-5 text-orange-600" />
+                  Atualizações Automáticas do DOU
+                  {atualizacoesNaoVisualizadas.length > 0 && (
+                    <Badge variant="destructive" className="ml-2">
+                      {atualizacoesNaoVisualizadas.length} não visualizada{atualizacoesNaoVisualizadas.length > 1 ? 's' : ''}
+                    </Badge>
+                  )}
+                </CardTitle>
+                {processo.monitoramentoDOU && (
+                  <div className="text-sm text-muted-foreground mt-2 space-y-1">
+                    <p><strong>Monitoramento ativo:</strong></p>
+                    {processo.monitoramentoDOU.cnpj && <p>CNPJ: {processo.monitoramentoDOU.cnpj}</p>}
+                    {processo.monitoramentoDOU.numeroProcesso && <p>Nº Processo: {processo.monitoramentoDOU.numeroProcesso}</p>}
+                    {processo.monitoramentoDOU.nomeParte && <p>Nome da Parte: {processo.monitoramentoDOU.nomeParte}</p>}
+                  </div>
+                )}
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {todasAtualizacoes.map((atualizacao) => (
+                    <AtualizacaoDOUCard
+                      key={atualizacao.id}
+                      atualizacao={atualizacao}
+                      onMarcarVisualizada={() => marcarComoVisualizada(atualizacao.id)}
+                      onMarcarRelevancia={(relevante, obs) => marcarRelevancia(atualizacao.id, relevante, obs)}
+                    />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Informações Básicas */}
           <Card>
             <CardHeader>
@@ -211,5 +293,141 @@ export const ProcessoDetalhesModal = ({ open, onOpenChange, processo }: Processo
         </div>
       </DialogContent>
     </Dialog>
+  );
+};
+
+// Componente para cada atualização do DOU
+interface AtualizacaoDOUCardProps {
+  atualizacao: AtualizacaoDOU;
+  onMarcarVisualizada: () => void;
+  onMarcarRelevancia: (relevante: boolean, observacao?: string) => void;
+}
+
+const AtualizacaoDOUCard = ({ atualizacao, onMarcarVisualizada, onMarcarRelevancia }: AtualizacaoDOUCardProps) => {
+  const [observacao, setObservacao] = useState(atualizacao.observacaoRelevancia || '');
+  const [showObservacao, setShowObservacao] = useState(false);
+
+  return (
+    <div 
+      className={`p-4 border rounded-lg ${
+        !atualizacao.visualizada 
+          ? 'border-orange-500 bg-orange-100/50 dark:bg-orange-900/30' 
+          : atualizacao.relevante === true
+            ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+            : atualizacao.relevante === false
+              ? 'border-gray-300 bg-gray-50 dark:bg-gray-800/50'
+              : 'border-border'
+      }`}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1 space-y-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Badge variant="outline" className="text-xs">
+              {atualizacao.secaoDOU}
+            </Badge>
+            <span className="text-xs text-muted-foreground">
+              Publicado: {atualizacao.dataPublicacao}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              • Capturado: {atualizacao.dataCaptura}
+            </span>
+            {!atualizacao.visualizada && (
+              <Badge className="bg-orange-500 text-white text-xs">
+                <Bell className="h-3 w-3 mr-1" />
+                Nova
+              </Badge>
+            )}
+            {atualizacao.relevante === true && (
+              <Badge className="bg-green-500 text-white text-xs">
+                <CheckCircle className="h-3 w-3 mr-1" />
+                Relevante
+              </Badge>
+            )}
+            {atualizacao.relevante === false && (
+              <Badge variant="secondary" className="text-xs">
+                <XCircle className="h-3 w-3 mr-1" />
+                Não relevante
+              </Badge>
+            )}
+          </div>
+
+          <p className="text-sm leading-relaxed">{atualizacao.conteudo}</p>
+
+          {atualizacao.arquivoPDF && (
+            <div className="flex items-center gap-2 mt-2">
+              <Button variant="outline" size="sm" className="text-xs">
+                <Download className="h-3 w-3 mr-1" />
+                {atualizacao.arquivoPDF.nome}
+              </Button>
+              <span className="text-xs text-muted-foreground">{atualizacao.arquivoPDF.tamanho}</span>
+            </div>
+          )}
+
+          {atualizacao.observacaoRelevancia && (
+            <div className="mt-2 p-2 bg-muted rounded text-sm">
+              <strong>Observação:</strong> {atualizacao.observacaoRelevancia}
+            </div>
+          )}
+
+          {showObservacao && (
+            <div className="mt-2 space-y-2">
+              <Label className="text-xs">Observação sobre relevância</Label>
+              <Textarea
+                value={observacao}
+                onChange={(e) => setObservacao(e.target.value)}
+                placeholder="Descreva por que esta atualização é ou não relevante..."
+                rows={2}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          {!atualizacao.visualizada && (
+            <Button size="sm" variant="outline" onClick={onMarcarVisualizada}>
+              <Eye className="h-4 w-4 mr-1" />
+              Marcar lida
+            </Button>
+          )}
+          
+          {atualizacao.relevante === undefined && (
+            <>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="text-green-600 border-green-600 hover:bg-green-50"
+                onClick={() => {
+                  if (!showObservacao) {
+                    setShowObservacao(true);
+                  } else {
+                    onMarcarRelevancia(true, observacao);
+                    setShowObservacao(false);
+                  }
+                }}
+              >
+                <CheckCircle className="h-4 w-4 mr-1" />
+                Relevante
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="text-gray-600"
+                onClick={() => {
+                  if (!showObservacao) {
+                    setShowObservacao(true);
+                  } else {
+                    onMarcarRelevancia(false, observacao);
+                    setShowObservacao(false);
+                  }
+                }}
+              >
+                <XCircle className="h-4 w-4 mr-1" />
+                Não relevante
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };

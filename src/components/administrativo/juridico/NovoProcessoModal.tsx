@@ -5,10 +5,12 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProcessoJuridico, TipoProcesso, StatusProcesso } from '@/types/juridico';
 import { tipoProcessoLabels, statusProcessoLabels } from '@/data/juridicoModules';
 import { toast } from '@/components/ui/use-toast';
-import { Upload, FileText, Loader2 } from 'lucide-react';
+import { Upload, FileText, Loader2, Newspaper, Bell } from 'lucide-react';
 
 interface NovoProcessoModalProps {
   open: boolean;
@@ -33,6 +35,12 @@ export const NovoProcessoModal = ({ open, onOpenChange, onProcessoCreated }: Nov
   const [isImporting, setIsImporting] = useState(false);
   const [arquivoDOU, setArquivoDOU] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Campos de monitoramento DOU
+  const [monitoramentoDOUAtivo, setMonitoramentoDOUAtivo] = useState(false);
+  const [monitoramentoCNPJ, setMonitoramentoCNPJ] = useState('');
+  const [monitoramentoNumeroProcesso, setMonitoramentoNumeroProcesso] = useState('');
+  const [monitoramentoNomeParte, setMonitoramentoNomeParte] = useState('');
 
   const handleImportarDOU = () => {
     fileInputRef.current?.click();
@@ -94,6 +102,13 @@ export const NovoProcessoModal = ({ open, onOpenChange, onProcessoCreated }: Nov
       observacoes: observacoes || undefined,
       andamentos: [],
       documentos: [],
+      monitoramentoDOU: monitoramentoDOUAtivo ? {
+        ativo: true,
+        cnpj: monitoramentoCNPJ || undefined,
+        numeroProcesso: monitoramentoNumeroProcesso || undefined,
+        nomeParte: monitoramentoNomeParte || undefined,
+      } : undefined,
+      atualizacoesDOU: [],
     };
 
     onProcessoCreated(novoProcesso);
@@ -112,6 +127,10 @@ export const NovoProcessoModal = ({ open, onOpenChange, onProcessoCreated }: Nov
     setAdvogadoExterno('');
     setObservacoes('');
     setArquivoDOU(null);
+    setMonitoramentoDOUAtivo(false);
+    setMonitoramentoCNPJ('');
+    setMonitoramentoNumeroProcesso('');
+    setMonitoramentoNomeParte('');
 
     toast({
       title: 'Sucesso',
@@ -312,6 +331,66 @@ export const NovoProcessoModal = ({ open, onOpenChange, onProcessoCreated }: Nov
               rows={3}
             />
           </div>
+
+          {/* Seção de Monitoramento Automático do DOU */}
+          <Card className="border-primary/20 bg-primary/5">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Newspaper className="h-5 w-5 text-primary" />
+                Monitoramento Automático do DOU
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-sm font-medium">Ativar monitoramento</Label>
+                  <p className="text-xs text-muted-foreground">
+                    O sistema buscará automaticamente atualizações publicadas no DOU
+                  </p>
+                </div>
+                <Switch
+                  checked={monitoramentoDOUAtivo}
+                  onCheckedChange={setMonitoramentoDOUAtivo}
+                />
+              </div>
+
+              {monitoramentoDOUAtivo && (
+                <div className="space-y-4 pt-2 border-t">
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Bell className="h-3 w-3" />
+                    Preencha pelo menos um campo para monitoramento. O sistema alertará quando houver publicações relacionadas.
+                  </p>
+
+                  <div className="space-y-2">
+                    <Label>CNPJ para monitoramento</Label>
+                    <Input
+                      value={monitoramentoCNPJ}
+                      onChange={(e) => setMonitoramentoCNPJ(e.target.value)}
+                      placeholder="00.000.000/0000-00"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Número do Processo para monitoramento</Label>
+                    <Input
+                      value={monitoramentoNumeroProcesso}
+                      onChange={(e) => setMonitoramentoNumeroProcesso(e.target.value)}
+                      placeholder="Ex: 0001234-56.2024.8.26.0100"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Nome da Parte para monitoramento</Label>
+                    <Input
+                      value={monitoramentoNomeParte}
+                      onChange={(e) => setMonitoramentoNomeParte(e.target.value)}
+                      placeholder="Nome da empresa ou pessoa"
+                    />
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         <div className="flex justify-end gap-2">

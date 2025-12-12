@@ -35,6 +35,27 @@ export interface DocumentoProcesso {
   url?: string;
 }
 
+// Atualização automática do DOU
+export interface AtualizacaoDOU {
+  id: string;
+  dataPublicacao: string;
+  dataCaptura: string;
+  secaoDOU: string;
+  conteudo: string;
+  arquivoPDF?: DocumentoProcesso;
+  visualizada: boolean;
+  relevante?: boolean;
+  observacaoRelevancia?: string;
+}
+
+// Configuração de monitoramento do DOU
+export interface MonitoramentoDOU {
+  ativo: boolean;
+  cnpj?: string;
+  numeroProcesso?: string;
+  nomeParte?: string;
+}
+
 // Processo Principal
 export interface ProcessoJuridico {
   id: string;
@@ -53,6 +74,9 @@ export interface ProcessoJuridico {
   observacoes?: string;
   andamentos: AndamentoProcesso[];
   documentos: DocumentoProcesso[];
+  // Monitoramento automático do DOU
+  monitoramentoDOU?: MonitoramentoDOU;
+  atualizacoesDOU?: AtualizacaoDOU[];
 }
 
 // Tipos de Chamado Jurídico
