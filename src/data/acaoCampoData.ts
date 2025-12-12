@@ -45,29 +45,22 @@ export const criarDocumentosRecebimentoEmpresa = (baseId: string): { documentos:
       id: `${baseId}-rec-4`,
       tipo: TipoDocumentoAcaoCampo.FAC1_CUSTOMER_ADVISORY,
       nome: tipoDocumentoLabels[TipoDocumentoAcaoCampo.FAC1_CUSTOMER_ADVISORY],
-      requerAssinatura: true
+      requerAssinatura: false
     },
     {
       id: `${baseId}-rec-5`,
       tipo: TipoDocumentoAcaoCampo.FAC2_CUSTOMER_RESPONSE,
       nome: tipoDocumentoLabels[TipoDocumentoAcaoCampo.FAC2_CUSTOMER_RESPONSE],
-      requerAssinatura: true
+      requerAssinatura: false
     },
     {
       id: `${baseId}-rec-6`,
       tipo: TipoDocumentoAcaoCampo.FAC3,
       nome: tipoDocumentoLabels[TipoDocumentoAcaoCampo.FAC3],
-      requerAssinatura: true
-    }
-  ],
-  adicionais: [
-    {
-      id: `${baseId}-rec-add-1`,
-      tipo: TipoDocumentoAcaoCampo.ADICIONAL,
-      nome: 'Laudo Técnico Complementar',
       requerAssinatura: false
     }
-  ]
+  ],
+  adicionais: []
 });
 
 export const criarDocumentosEnvioAnvisa = (baseId: string): { documentos: DocumentoAcaoCampo[], adicionais: DocumentoAcaoCampo[] } => ({
