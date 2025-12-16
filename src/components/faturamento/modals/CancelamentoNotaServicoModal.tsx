@@ -8,7 +8,8 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { AlertCircle, XCircle } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { AlertCircle, XCircle, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface CancelamentoNotaServicoModalProps {
@@ -31,23 +32,42 @@ const CancelamentoNotaServicoModal = ({
   servico,
   onCancelar
 }: CancelamentoNotaServicoModalProps) => {
-  const [justificativa, setJustificativa] = useState('');
+  const [justificativaInterna, setJustificativaInterna] = useState('');
+  const [justificativaNota, setJustificativaNota] = useState('ERRO DE EMISSÃO');
   const { toast } = useToast();
 
   const handleSubmit = () => {
-    if (!justificativa.trim()) {
+    if (!justificativaInterna.trim()) {
       toast({
-        title: "Justificativa obrigatória",
-        description: "Por favor, informe a justificativa para o cancelamento da NFS-e.",
+        title: "Justificativa interna obrigatória",
+        description: "Por favor, informe a justificativa detalhada para uso interno.",
         variant: "destructive",
       });
       return;
     }
 
-    if (justificativa.trim().length < 20) {
+    if (justificativaInterna.trim().length < 20) {
       toast({
         title: "Justificativa muito curta",
-        description: "A justificativa deve ter pelo menos 20 caracteres.",
+        description: "A justificativa interna deve ter pelo menos 20 caracteres.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!justificativaNota.trim()) {
+      toast({
+        title: "Justificativa na nota obrigatória",
+        description: "Por favor, informe a justificativa que aparecerá na NFS-e.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (justificativaNota.trim().length < 15) {
+      toast({
+        title: "Justificativa na nota muito curta",
+        description: "A justificativa na nota deve ter pelo menos 15 caracteres.",
         variant: "destructive",
       });
       return;
@@ -60,10 +80,15 @@ const CancelamentoNotaServicoModal = ({
     });
 
     if (onCancelar) {
-      onCancelar({ justificativa, servico });
+      onCancelar({ 
+        justificativaInterna, 
+        justificativaNota,
+        servico 
+      });
     }
 
-    setJustificativa('');
+    setJustificativaInterna('');
+    setJustificativaNota('ERRO DE EMISSÃO');
     onClose();
   };
 
@@ -86,13 +111,23 @@ const CancelamentoNotaServicoModal = ({
             </div>
           )}
 
+          {/* Alerta de aprovação do gestor */}
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex gap-3">
+            <AlertTriangle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div className="space-y-1 text-sm">
+              <p className="font-semibold text-amber-900">Esta solicitação requer aprovação do gestor</p>
+              <p className="text-amber-800">
+                Após o envio, um gestor irá revisar e aprovar ou rejeitar esta solicitação de cancelamento.
+              </p>
+            </div>
+          </div>
+
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex gap-3">
             <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
             <div className="space-y-2 text-sm">
               <p className="font-semibold text-red-900">Atenção: Cancelamento de NFS-e</p>
               <ul className="list-disc list-inside space-y-1 text-red-800">
                 <li>O cancelamento de NFS-e é uma operação fiscal importante</li>
-                <li>Esta solicitação será enviada para aprovação do gestor</li>
                 <li>Após aprovação, o cancelamento será processado junto à prefeitura</li>
                 <li>Uma vez cancelada, a nota não poderá ser reativada</li>
                 <li>Pode ser necessário emitir uma nova NFS-e caso o serviço seja mantido</li>
@@ -100,19 +135,37 @@ const CancelamentoNotaServicoModal = ({
             </div>
           </div>
 
+          {/* Justificativa Interna */}
           <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Justificativa do Cancelamento *
-            </label>
+            <Label className="text-sm font-semibold">
+              Justificativa Detalhada (uso interno) *
+            </Label>
             <Textarea
-              placeholder="Descreva detalhadamente o motivo do cancelamento da NFS-e (mínimo 20 caracteres)..."
-              value={justificativa}
-              onChange={(e) => setJustificativa(e.target.value)}
-              rows={5}
+              placeholder="Descreva detalhadamente o motivo do cancelamento (mínimo 20 caracteres)..."
+              value={justificativaInterna}
+              onChange={(e) => setJustificativaInterna(e.target.value)}
+              rows={4}
               className="resize-none"
             />
-            <p className="text-xs text-gray-500">
-              {justificativa.length} caracteres (mínimo 20)
+            <p className="text-xs text-muted-foreground">
+              Esta justificativa é para uso interno e não será enviada à prefeitura. {justificativaInterna.length} caracteres (mínimo 20)
+            </p>
+          </div>
+
+          {/* Justificativa na Nota */}
+          <div className="space-y-2">
+            <Label className="text-sm font-semibold">
+              Justificativa na Nota *
+            </Label>
+            <Textarea
+              placeholder="Justificativa que aparecerá no documento fiscal..."
+              value={justificativaNota}
+              onChange={(e) => setJustificativaNota(e.target.value)}
+              rows={2}
+              className="resize-none"
+            />
+            <p className="text-xs text-muted-foreground">
+              Esta justificativa será enviada à prefeitura no evento de cancelamento. {justificativaNota.length} caracteres (mínimo 15)
             </p>
           </div>
         </div>
