@@ -8,12 +8,21 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+interface ClienteCriadoData {
+  id: number;
+  nome: string;
+  cpfCnpj: string;
+  tipo: 'cliente' | 'lead';
+  cadastroCompleto: boolean;
+}
+
 interface SolicitacaoCadastroModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onClienteCriado?: (cliente: ClienteCriadoData) => void;
 }
 
-const SolicitacaoCadastroModal = ({ isOpen, onClose }: SolicitacaoCadastroModalProps) => {
+const SolicitacaoCadastroModal = ({ isOpen, onClose, onClienteCriado }: SolicitacaoCadastroModalProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     tipoCliente: '',
@@ -42,9 +51,23 @@ const SolicitacaoCadastroModal = ({ isOpen, onClose }: SolicitacaoCadastroModalP
       return;
     }
 
+    // Criar o novo cliente/lead com cadastro incompleto
+    const novoCliente: ClienteCriadoData = {
+      id: Date.now(),
+      nome: formData.nomeCliente || formData.razaoSocial,
+      cpfCnpj: formData.cnpjCpf,
+      tipo: formData.tipoCliente === 'pessoa_fisica' ? 'lead' : 'cliente',
+      cadastroCompleto: false // Marcado como incompleto pois veio da solicitação
+    };
+
+    // Notificar o componente pai sobre o cliente criado
+    if (onClienteCriado) {
+      onClienteCriado(novoCliente);
+    }
+
     toast({
       title: "Solicitação enviada",
-      description: "Sua solicitação de cadastro foi enviada para o setor responsável.",
+      description: "Sua solicitação de cadastro foi enviada para o setor responsável. O cadastro será completado em breve.",
     });
     
     setFormData({

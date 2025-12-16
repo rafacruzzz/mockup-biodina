@@ -43,7 +43,17 @@ interface LicitanteItem {
 interface TabelaLicitantes {
   id: number;
   numero: number;
+  titulo: string;
   licitantes: LicitanteItem[];
+}
+
+// Tipo para entidade (cliente ou lead)
+interface EntidadeItem {
+  id: number;
+  nome: string;
+  cpfCnpj: string;
+  tipo: 'cliente' | 'lead';
+  cadastroCompleto: boolean;
 }
 import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getAtendeEditalBadge } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -58,13 +68,14 @@ interface OportunidadeAvancadaFormProps {
   oportunidade?: any;
 }
 
-// Mock data para clientes
-const mockClientes = [
-  { id: 1, nome: "Associação das Pioneiras Sociais", cpfCnpj: "12.345.678/0001-90" },
-  { id: 2, nome: "Hospital São Francisco", cpfCnpj: "98.765.432/0001-10" },
-  { id: 3, nome: "Laboratório Central LTDA", cpfCnpj: "11.222.333/0001-44" },
-  { id: 4, nome: "Clínica Med Center", cpfCnpj: "55.666.777/0001-88" },
-  { id: 5, nome: "Instituto de Pesquisas Médicas", cpfCnpj: "33.444.555/0001-22" },
+// Mock data para clientes e leads combinados
+const mockEntidades: EntidadeItem[] = [
+  { id: 1, nome: "Associação das Pioneiras Sociais", cpfCnpj: "12.345.678/0001-90", tipo: 'cliente', cadastroCompleto: true },
+  { id: 2, nome: "Hospital São Francisco", cpfCnpj: "98.765.432/0001-10", tipo: 'cliente', cadastroCompleto: true },
+  { id: 3, nome: "Laboratório Central LTDA", cpfCnpj: "11.222.333/0001-44", tipo: 'cliente', cadastroCompleto: false },
+  { id: 4, nome: "Clínica Med Center", cpfCnpj: "55.666.777/0001-88", tipo: 'lead', cadastroCompleto: true },
+  { id: 5, nome: "Instituto de Pesquisas Médicas", cpfCnpj: "33.444.555/0001-22", tipo: 'lead', cadastroCompleto: false },
+  { id: 6, nome: "Centro Médico Regional", cpfCnpj: "44.555.666/0001-77", tipo: 'lead', cadastroCompleto: true },
 ];
 
 const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: OportunidadeAvancadaFormProps) => {
@@ -115,8 +126,12 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   
   // Estado para múltiplas tabelas de licitantes (inicia com uma tabela padrão)
   const [tabelasLicitantes, setTabelasLicitantes] = useState<TabelaLicitantes[]>([
-    { id: 1, numero: 1, licitantes: [] }
+    { id: 1, numero: 1, titulo: 'Tabela de Licitantes 1', licitantes: [] }
   ]);
+  
+  // Estado para rastrear entidades criadas via solicitação (cadastro incompleto)
+  const [entidadesDisponiveis, setEntidadesDisponiveis] = useState<EntidadeItem[]>(mockEntidades);
+  const [clienteSelecionadoCadastroIncompleto, setClienteSelecionadoCadastroIncompleto] = useState(false);
   
   // Estado para rastrear qual tabela está recebendo o novo licitante
   const [tabelaAtiva, setTabelaAtiva] = useState<number | null>(null);
@@ -166,10 +181,11 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     // Empresa - automaticamente definida pela empresa logada
     empresaId: oportunidade?.empresaId || empresaAtivaId,
     
-    // Novos campos para cliente
+    // Novos campos para cliente/lead
     cliente: oportunidade?.cliente || '',
     clienteId: oportunidade?.clienteId || '',
     cpfCnpj: oportunidade?.cpfCnpj || '',
+    tipoEntidade: oportunidade?.tipoEntidade || '' as 'cliente' | 'lead' | '',
     ativo: oportunidade?.ativo || true,
     fonteLead: oportunidade?.fonteLead || '',
     segmentoLead: oportunidade?.segmentoLead || '',
@@ -223,14 +239,27 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     solicitarAnaliseTecnica: oportunidade?.solicitarAnaliseTecnica || false,
   });
 
-  const handleClienteSelect = (cliente: any) => {
+  const handleClienteSelect = (entidade: EntidadeItem) => {
     setFormData({
       ...formData,
-      cliente: cliente.nome,
-      clienteId: cliente.id,
-      cpfCnpj: cliente.cpfCnpj
+      cliente: entidade.nome,
+      clienteId: entidade.id,
+      cpfCnpj: entidade.cpfCnpj,
+      tipoEntidade: entidade.tipo
     });
+    setClienteSelecionadoCadastroIncompleto(!entidade.cadastroCompleto);
     setClienteDropdownOpen(false);
+  };
+
+  const handleClienteCriadoViaSolicitacao = (novoCliente: EntidadeItem) => {
+    setEntidadesDisponiveis([...entidadesDisponiveis, novoCliente]);
+    handleClienteSelect(novoCliente);
+  };
+
+  const handleAtualizarTituloTabela = (tabelaId: number, novoTitulo: string) => {
+    setTabelasLicitantes(tabelasLicitantes.map(tabela =>
+      tabela.id === tabelaId ? { ...tabela, titulo: novoTitulo } : tabela
+    ));
   };
 
   const isStatusPerdida = () => {
@@ -284,7 +313,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     
     setTabelasLicitantes([
       ...tabelasLicitantes,
-      { id: Date.now(), numero: proximoNumero, licitantes: [] }
+      { id: Date.now(), numero: proximoNumero, titulo: `Tabela de Licitantes ${proximoNumero}`, licitantes: [] }
     ]);
     
     toast({
@@ -408,12 +437,23 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
   const renderDadosGerais = () => (
     <div className="space-y-6">
-      {/* Dados do Cliente */}
+      {/* Dados do Cliente/Lead */}
       <div className="border rounded-lg p-4 space-y-4">
-        <h3 className="text-lg font-semibold text-gray-800">Dados do Cliente</h3>
+        <h3 className="text-lg font-semibold text-gray-800">Dados do Cliente/Lead</h3>
+        
+        {/* Alerta de cadastro incompleto */}
+        {clienteSelecionadoCadastroIncompleto && formData.cliente && (
+          <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <AlertTriangle className="h-5 w-5 text-amber-600" />
+            <span className="text-sm text-amber-800 font-medium">
+              Cadastro incompleto - Este registro foi enviado para o setor de Cadastro para ser completado.
+            </span>
+          </div>
+        )}
+        
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="cliente">Cliente *</Label>
+            <Label htmlFor="cliente">Cliente/Lead *</Label>
             <Popover open={clienteDropdownOpen} onOpenChange={setClienteDropdownOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -423,24 +463,72 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                   className="w-full justify-between"
                   disabled={isReadOnlyMode()}
                 >
-                  {formData.cliente || "Selecione um cliente..."}
+                  <div className="flex items-center gap-2">
+                    {formData.cliente || "Selecione um cliente ou lead..."}
+                    {formData.tipoEntidade && (
+                      <Badge 
+                        variant="outline" 
+                        className={formData.tipoEntidade === 'cliente' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'bg-purple-100 text-purple-700 border-purple-300'}
+                      >
+                        {formData.tipoEntidade === 'cliente' ? 'Cliente' : 'Lead'}
+                      </Badge>
+                    )}
+                  </div>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-full p-0" align="start">
+              <PopoverContent className="w-full p-0 bg-background" align="start">
                 <Command>
-                  <CommandInput placeholder="Buscar cliente..." />
+                  <CommandInput placeholder="Buscar cliente ou lead..." />
                   <CommandList>
-                    <CommandEmpty>Nenhum cliente encontrado.</CommandEmpty>
-                    <CommandGroup>
-                      {mockClientes.map((cliente) => (
+                    <CommandEmpty>Nenhum cliente ou lead encontrado.</CommandEmpty>
+                    <CommandGroup heading="Clientes">
+                      {entidadesDisponiveis.filter(e => e.tipo === 'cliente').map((entidade) => (
                         <CommandItem
-                          key={cliente.id}
-                          value={cliente.nome}
-                          onSelect={() => handleClienteSelect(cliente)}
+                          key={`cliente-${entidade.id}`}
+                          value={entidade.nome}
+                          onSelect={() => handleClienteSelect(entidade)}
                         >
-                          <div className="flex flex-col">
-                            <span className="font-medium">{cliente.nome}</span>
-                            <span className="text-sm text-gray-500">{cliente.cpfCnpj}</span>
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex flex-col">
+                              <span className="font-medium">{entidade.nome}</span>
+                              <span className="text-sm text-muted-foreground">{entidade.cpfCnpj}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-300">
+                                Cliente
+                              </Badge>
+                              {!entidade.cadastroCompleto && (
+                                <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-300">
+                                  Incompleto
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                    <CommandGroup heading="Leads">
+                      {entidadesDisponiveis.filter(e => e.tipo === 'lead').map((entidade) => (
+                        <CommandItem
+                          key={`lead-${entidade.id}`}
+                          value={entidade.nome}
+                          onSelect={() => handleClienteSelect(entidade)}
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex flex-col">
+                              <span className="font-medium">{entidade.nome}</span>
+                              <span className="text-sm text-muted-foreground">{entidade.cpfCnpj}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="bg-purple-100 text-purple-700 border-purple-300">
+                                Lead
+                              </Badge>
+                              {!entidade.cadastroCompleto && (
+                                <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-300">
+                                  Incompleto
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                         </CommandItem>
                       ))}
@@ -469,7 +557,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             <Input
               id="cpfCnpj"
               value={formData.cpfCnpj}
-              placeholder="Selecione um cliente"
+              placeholder="Selecione um cliente ou lead"
               disabled={true}
               className="bg-gray-50"
             />
@@ -1010,9 +1098,18 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           {tabelasLicitantes.map((tabela) => (
             <Card key={tabela.id} className="border">
               <CardHeader className="py-3 px-4 flex flex-row items-center justify-between">
-                <CardTitle className="text-base font-medium">
-                  Tabela de Licitantes {tabela.numero}
-                </CardTitle>
+                {!isReadOnlyMode() ? (
+                  <Input
+                    value={tabela.titulo}
+                    onChange={(e) => handleAtualizarTituloTabela(tabela.id, e.target.value)}
+                    className="text-base font-semibold border-none bg-transparent p-0 h-auto focus-visible:ring-1 max-w-[300px]"
+                    placeholder="Título da tabela..."
+                  />
+                ) : (
+                  <CardTitle className="text-base font-medium">
+                    {tabela.titulo}
+                  </CardTitle>
+                )}
                 <div className="flex items-center gap-2">
                   {!isReadOnlyMode() && (
                     <>
@@ -1525,6 +1622,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
       <SolicitacaoCadastroModal
         isOpen={showSolicitacaoCadastro}
         onClose={() => setShowSolicitacaoCadastro(false)}
+        onClienteCriado={handleClienteCriadoViaSolicitacao}
       />
 
       {/* Modal para adicionar licitante */}
