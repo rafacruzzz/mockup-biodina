@@ -35,6 +35,8 @@ import {
   AlertTriangle,
   DollarSign,
   Calendar,
+  Wallet,
+  Building2,
 } from "lucide-react";
 
 interface VisualizarPedidoModalProps {
@@ -120,11 +122,12 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
         </DialogHeader>
 
         <Tabs defaultValue="geral" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="geral">Informações Gerais</TabsTrigger>
             <TabsTrigger value="produtos">Produtos</TabsTrigger>
             <TabsTrigger value="nf">Informações NF</TabsTrigger>
             <TabsTrigger value="frete">Frete</TabsTrigger>
+            <TabsTrigger value="pagamento">Pagamento</TabsTrigger>
             <TabsTrigger value="acompanhamento">Acompanhamento</TabsTrigger>
           </TabsList>
 
@@ -738,7 +741,120 @@ const VisualizarPedidoModal = ({ isOpen, onClose, pedido }: VisualizarPedidoModa
             )}
           </TabsContent>
 
-          {/* ABA 5: ACOMPANHAMENTO DO PEDIDO */}
+          {/* ABA 5: PAGAMENTO */}
+          <TabsContent value="pagamento" className="space-y-4">
+            {/* Informações de Pagamento */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Wallet className="h-5 w-5" />
+                  Informações de Pagamento
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Forma e Condições */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Forma de Pagamento</label>
+                    <p className="text-base font-medium">{pedido.formaPagamento || '-'}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Condições de Pagamento</label>
+                    <p className="text-base font-medium">{pedido.condicoesPagamento || '-'}</p>
+                  </div>
+                </div>
+
+                {/* Conta Bancária de Recebimento */}
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Building2 className="h-4 w-4 text-muted-foreground" />
+                    <label className="text-sm font-medium">Conta Bancária de Recebimento</label>
+                  </div>
+                  <p className="text-base font-medium">{pedido.contaBancariaRecebimento || '-'}</p>
+                </div>
+
+                {/* Parcelas */}
+                {pedido.numeroParcelas && pedido.numeroParcelas > 0 && (
+                  <div className="p-4 border rounded-lg">
+                    <div className="flex items-center gap-2 mb-3">
+                      <CreditCard className="h-4 w-4 text-muted-foreground" />
+                      <label className="text-sm font-medium">Parcelamento</label>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Número de Parcelas</p>
+                        <p className="text-lg font-bold text-primary">{pedido.numeroParcelas}x</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Valor por Parcela</p>
+                        <p className="text-lg font-bold text-primary">
+                          {formatCurrency(pedido.valorTotal / pedido.numeroParcelas)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Condições (Parcelas, Vencimentos) */}
+                {pedido.condicoesPagamentoFaturamento && (
+                  <div className="p-4 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      <label className="text-sm font-semibold text-blue-700 dark:text-blue-400">
+                        Condições (Parcelas, Vencimentos)
+                      </label>
+                    </div>
+                    <p className="text-sm text-blue-900 dark:text-blue-300">{pedido.condicoesPagamentoFaturamento}</p>
+                  </div>
+                )}
+
+                {/* Instruções para Boleto */}
+                {pedido.instrucoesBoleto && (
+                  <div className="p-4 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <FileText className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                      <label className="text-sm font-semibold text-amber-700 dark:text-amber-400">
+                        Instruções para Boleto
+                      </label>
+                    </div>
+                    <p className="text-sm text-amber-900 dark:text-amber-300 whitespace-pre-wrap">{pedido.instrucoesBoleto}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Resumo Financeiro */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <DollarSign className="h-5 w-5" />
+                  Resumo Financeiro
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-muted-foreground">Subtotal dos Produtos</span>
+                    <span className="font-medium">
+                      {formatCurrency(pedido.produtos?.reduce((sum, p) => sum + p.subtotal, 0) || pedido.valorTotal)}
+                    </span>
+                  </div>
+                  {pedido.transportadora?.custoFrete && pedido.transportadora.custoFrete > 0 && (
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <span className="text-muted-foreground">Frete</span>
+                      <span className="font-medium">{formatCurrency(pedido.transportadora.custoFrete)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center py-3 bg-primary/5 rounded-lg px-3">
+                    <span className="text-lg font-semibold">Valor Total</span>
+                    <span className="text-xl font-bold text-primary">{formatCurrency(pedido.valorTotal)}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* ABA 6: ACOMPANHAMENTO DO PEDIDO */}
           <TabsContent value="acompanhamento" className="space-y-4">
             {/* Timeline de Status / Progresso do Pedido */}
             <Card>
