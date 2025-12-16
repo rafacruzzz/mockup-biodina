@@ -28,7 +28,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
     if (controlNo || temperature || dimension || grossWeight) {
       return `For each box, please include: control no.: ${controlNo}; Temperature: ${temperature}; Dimension: ${dimension}; Gross weight: ${grossWeight}`;
     }
-    return "For each box, please include: control no.xxx; Temperature xº-xºC; Dimmension: xxx X xxx X xxx; Gross weight: xxx";
+    return "For each box, please include:";
   };
 
   const handleAnexarComprovante = () => {
@@ -200,7 +200,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
               <Label htmlFor="aoSubject">Subject</Label>
               <Input
                 id="aoSubject"
-                value={formData.aoSubject || 'SHIPMENT INSTRUCTIONS, DD-xxxx/RD-xxxx, YOUR PI xxxxxxx USD xxxxxxxx.'}
+                value={formData.aoSubject || 'SHIPMENT INSTRUCTIONS,DD-xxxx/RD-xxxx, YOUR AO\'s xxx and xxx USD xxx.'}
                 onChange={(e) => onInputChange('aoSubject', e.target.value)}
                 className="w-full"
               />
@@ -1059,7 +1059,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
                 {/* ATTENTION FOR FROZEN PRODUCTS */}
                 <Textarea
                   id="attentionFrozenItems"
-                  value={formData.attentionFrozenItems || 'ATTENTION:\n\n"TO AVOID PROBLEMS WITH THE FROZEN GOODS, PLEASE PACK THESE ITEMS (xxxx) IN BIG BOXES, DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE BETWEEN -18ºC, AS FOLLOWS:"\n\nTHE LABEL IN PORTUGUESE:\n"ESTAS CAIXAS CONTÊM PRODUTOS QUE DEVEM SER CONGELADOS A -18ºC."\n\nTHAT MEANS:\n"THESE BOXES CONTAIN PRODUCTS WHICH SHOULD BE FROZEN AT -18ºC."'}
+                  value={formData.attentionFrozenItems || 'ATTENTION:\n\nTO AVOID PROBLEMS WITH THE FROZEN GOODS, PLEASE PACK THESE ITEMS (xxxx) IN BIG BOXES, DULY STAMPED ON ALL OUTER PARTS WITH THE PORTUGUESE SENTENCE BELOW, DECLARING THE TEMPERATURE BETWEEN -18ºC, AS FOLLOWS:\n\nTHE LABEL IN PORTUGUESE:\n"ESTAS CAIXAS CONTÊM PRODUTOS QUE DEVEM SER CONGELADOS A -18ºC."\n\nTHAT MEANS:\n"THESE BOXES CONTAIN PRODUCTS WHICH SHOULD BE FROZEN AT -18ºC."'}
                   onChange={(e) => onInputChange('attentionFrozenItems', e.target.value)}
                   className="min-h-[220px] bg-blue-50 border-blue-200 text-sm font-mono"
                   placeholder="Instruções para produtos congelados..."
@@ -1243,7 +1243,7 @@ const InstrucaoEmbarqueForm = ({ formData, onInputChange }: InstrucaoEmbarqueFor
 
                   {/* For each box section */}
                   <div className="border-2 border-gray-300 p-4 rounded-lg bg-gray-50">
-                    <Label className="text-base font-semibold mb-3 block">For each box, please include: control no.xxx; Temperature xº-xºC; Dimmension: xxx X xxx X xxx; Gross weight: xxx</Label>
+                    <Label className="text-base font-semibold mb-3 block">For each box, please include:</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="boxControlNo_seco" className="text-sm">
