@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle2, FileText } from "lucide-react";
+import { AlertTriangle, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface NFComplementarModalProps {
@@ -33,24 +33,33 @@ const NFComplementarModal = ({
   const displayNumber = numeroPedido || numeroNF || '';
 
   const { toast } = useToast();
-  const [justificativa, setJustificativa] = useState("");
+  const [justificativaInterna, setJustificativaInterna] = useState("");
+  const [justificativaNota, setJustificativaNota] = useState("COMPLEMENTO DE VALOR");
   const [valorComplementar, setValorComplementar] = useState("");
-  const [observacoes, setObservacoes] = useState("");
 
   const handleSubmit = () => {
-    if (!justificativa.trim()) {
+    if (!valorComplementar || parseFloat(valorComplementar) <= 0) {
       toast({
-        title: "Justificativa obrigatória",
-        description: "Por favor, informe a justificativa para liberação do gestor.",
+        title: "Valor inválido",
+        description: "Por favor, informe um valor válido para a NF complementar.",
         variant: "destructive",
       });
       return;
     }
 
-    if (!valorComplementar || parseFloat(valorComplementar) <= 0) {
+    if (!justificativaInterna.trim()) {
       toast({
-        title: "Valor inválido",
-        description: "Por favor, informe um valor válido para a NF complementar.",
+        title: "Justificativa interna obrigatória",
+        description: "Por favor, informe a justificativa detalhada para uso interno.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!justificativaNota.trim()) {
+      toast({
+        title: "Justificativa na nota obrigatória",
+        description: "Por favor, informe a justificativa que será enviada na NF Complementar.",
         variant: "destructive",
       });
       return;
@@ -62,20 +71,20 @@ const NFComplementarModal = ({
         pedidoId,
         numeroNF,
         valorComplementar: parseFloat(valorComplementar),
-        justificativa,
-        observacoes
+        justificativaInterna,
+        justificativaNota
       });
     }
 
     // Toast e limpeza
     toast({
-      title: "NF Complementar gerada",
-      description: "A NF Complementar foi gerada e enviada para liberação do gestor.",
+      title: "Solicitação enviada",
+      description: "A NF Complementar foi enviada para aprovação do gestor.",
     });
 
-    setJustificativa("");
+    setJustificativaInterna("");
+    setJustificativaNota("COMPLEMENTO DE VALOR");
     setValorComplementar("");
-    setObservacoes("");
     onClose();
   };
 
@@ -90,13 +99,12 @@ const NFComplementarModal = ({
         </DialogHeader>
 
         <div className="space-y-4">
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex gap-3">
-            <CheckCircle2 className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-green-800">
-              <p className="font-medium">Geração de NF Complementar</p>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex gap-3">
+            <AlertTriangle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-yellow-800">
+              <p className="font-medium">Esta solicitação requer aprovação do gestor</p>
               <p className="mt-1">
-                Preencha os dados abaixo para gerar a NF Complementar. Após a geração, 
-                informe a justificativa para que o gestor possa liberar a nota.
+                Após o envio, a NF Complementar ficará pendente até que o gestor aprove ou rejeite a solicitação.
               </p>
             </div>
           </div>
@@ -115,32 +123,32 @@ const NFComplementarModal = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="justificativa">Justificativa para o Gestor *</Label>
+            <Label htmlFor="justificativaInterna">Justificativa Detalhada (uso interno) *</Label>
             <Textarea
-              id="justificativa"
-              placeholder="Descreva o motivo da NF complementar para que o gestor possa liberar..."
-              value={justificativa}
-              onChange={(e) => setJustificativa(e.target.value)}
+              id="justificativaInterna"
+              placeholder="Descreva detalhadamente o motivo da NF complementar para análise do gestor..."
+              value={justificativaInterna}
+              onChange={(e) => setJustificativaInterna(e.target.value)}
               rows={4}
               maxLength={1000}
             />
             <p className="text-xs text-muted-foreground">
-              {justificativa.length}/1000 caracteres
+              Esta justificativa é para uso interno e não será enviada na NF-e. {justificativaInterna.length}/1000 caracteres
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="observacoes">Observações Adicionais</Label>
+            <Label htmlFor="justificativaNota">Justificativa na NF Complementar *</Label>
             <Textarea
-              id="observacoes"
-              placeholder="Informações complementares..."
-              value={observacoes}
-              onChange={(e) => setObservacoes(e.target.value)}
+              id="justificativaNota"
+              placeholder="Justificativa que será enviada na NF Complementar..."
+              value={justificativaNota}
+              onChange={(e) => setJustificativaNota(e.target.value)}
               rows={3}
               maxLength={500}
             />
             <p className="text-xs text-muted-foreground">
-              {observacoes.length}/500 caracteres
+              Esta justificativa será enviada na NF Complementar à SEFAZ. {justificativaNota.length}/500 caracteres
             </p>
           </div>
         </div>
@@ -150,7 +158,7 @@ const NFComplementarModal = ({
             Cancelar
           </Button>
           <Button onClick={handleSubmit}>
-            Gerar e Enviar para Liberação
+            Enviar para Aprovação
           </Button>
         </DialogFooter>
       </DialogContent>
