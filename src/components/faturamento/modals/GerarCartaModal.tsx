@@ -20,10 +20,23 @@ interface GerarCartaModalProps {
 }
 
 const GerarCartaModal = ({ onClose, onCartaGerada }: GerarCartaModalProps) => {
-  const [competencia, setCompetencia] = useState('');
+  const [competenciaInicio, setCompetenciaInicio] = useState('');
+  const [competenciaFim, setCompetenciaFim] = useState('');
   const [emailSocio, setEmailSocio] = useState('');
   const [emailContador, setEmailContador] = useState('');
   const [gerando, setGerando] = useState(false);
+
+  // Gerar lista de meses/anos para seleção
+  const meses = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  ];
+  
+  const anos = [2025, 2024, 2023];
+  
+  const opcoesCompetencia = anos.flatMap(ano => 
+    meses.map(mes => `${mes}/${ano}`)
+  );
 
   // Mock data - em produção, buscar do banco de dados
   const mockFaturamento12Meses: FaturamentoMensal[] = [
@@ -42,7 +55,7 @@ const GerarCartaModal = ({ onClose, onCartaGerada }: GerarCartaModalProps) => {
   ];
 
   const handleGerar = async () => {
-    if (!competencia || !emailSocio || !emailContador) {
+    if (!competenciaInicio || !competenciaFim || !emailSocio || !emailContador) {
       toast.error('Preencha todos os campos obrigatórios');
       return;
     }
@@ -51,6 +64,7 @@ const GerarCartaModal = ({ onClose, onCartaGerada }: GerarCartaModalProps) => {
 
     try {
       const totalPeriodo = mockFaturamento12Meses.reduce((acc, item) => acc + item.faturamento, 0);
+      const competencia = `${competenciaInicio} até ${competenciaFim}`;
 
       const novaCarta: CartaFaturamento = {
         id: crypto.randomUUID(),
@@ -123,18 +137,39 @@ const GerarCartaModal = ({ onClose, onCartaGerada }: GerarCartaModalProps) => {
         
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="competencia">Competência *</Label>
-            <Select value={competencia} onValueChange={setCompetencia}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o mês/ano" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Janeiro/2025">Janeiro/2025</SelectItem>
-                <SelectItem value="Dezembro/2024">Dezembro/2024</SelectItem>
-                <SelectItem value="Novembro/2024">Novembro/2024</SelectItem>
-                <SelectItem value="Outubro/2024">Outubro/2024</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label>Competência *</Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <span className="text-xs text-muted-foreground">De:</span>
+                <Select value={competenciaInicio} onValueChange={setCompetenciaInicio}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o início" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {opcoesCompetencia.map((opcao) => (
+                      <SelectItem key={`inicio-${opcao}`} value={opcao}>
+                        {opcao}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <span className="text-xs text-muted-foreground">Até:</span>
+                <Select value={competenciaFim} onValueChange={setCompetenciaFim}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o fim" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {opcoesCompetencia.map((opcao) => (
+                      <SelectItem key={`fim-${opcao}`} value={opcao}>
+                        {opcao}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
