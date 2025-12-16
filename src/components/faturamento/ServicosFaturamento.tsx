@@ -13,12 +13,14 @@ import { mockServicosFaturamento } from "@/data/faturamentoModules";
 import { ServicoFaturamento } from "@/types/faturamento";
 import CancelamentoNotaServicoModal from "./modals/CancelamentoNotaServicoModal";
 import VisualizarServicoModal from "./modals/VisualizarServicoModal";
+import NovoServicoModal from "./modals/NovoServicoModal";
 
 const ServicosFaturamento = () => {
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [pesquisa, setPesquisa] = useState('');
   const [modalCancelamentoOpen, setModalCancelamentoOpen] = useState(false);
   const [modalVisualizarOpen, setModalVisualizarOpen] = useState(false);
+  const [modalNovoServicoOpen, setModalNovoServicoOpen] = useState(false);
   const [servicoSelecionado, setServicoSelecionado] = useState<ServicoFaturamento | null>(null);
 
   const statusColors = {
@@ -70,7 +72,10 @@ const ServicosFaturamento = () => {
           <h1 className="text-2xl font-bold text-gray-900">Faturamento de Serviços</h1>
           <p className="text-gray-600">Gestão de serviços prestados e emissão de NFS-e</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button 
+          className="bg-primary hover:bg-primary/90"
+          onClick={() => setModalNovoServicoOpen(true)}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Novo Serviço
         </Button>
@@ -330,6 +335,14 @@ const ServicosFaturamento = () => {
       </Card>
 
       {/* Modals */}
+      <NovoServicoModal
+        isOpen={modalNovoServicoOpen}
+        onClose={() => setModalNovoServicoOpen(false)}
+        onSalvar={(servico) => {
+          console.log('Novo serviço criado:', servico);
+        }}
+      />
+
       {servicoSelecionado && (
         <>
           <CancelamentoNotaServicoModal
