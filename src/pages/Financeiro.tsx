@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SidebarLayout from "@/components/SidebarLayout";
 import ContasPagarDashboard from "@/components/financeiro/ContasPagarDashboard";
 import APagarPagosView from "@/components/financeiro/APagarPagosView";
@@ -17,17 +18,14 @@ import DashboardRelatorios from "@/components/faturamento/DashboardRelatorios";
 import EntradaFaturamento from "@/components/faturamento/EntradaFaturamento";
 import SaidaFaturamento from "@/components/faturamento/SaidaFaturamento";
 import ServicosFaturamento from "@/components/faturamento/ServicosFaturamento";
-import IndicadoresFaturamento from "@/components/faturamento/IndicadoresFaturamento";
-import AssistenteFiscalIA from "@/components/faturamento/AssistenteFiscalIA";
-import RodapeFaturamento from "@/components/faturamento/RodapeFaturamento";
+import FaturamentoResumo from "@/components/faturamento/FaturamentoResumo";
 import ParametrosFiscais from "@/components/faturamento/ParametrosFiscais";
 import CartasFaturamento from "@/components/faturamento/CartasFaturamento";
-import PainelNotificacoesEntrada from "@/components/faturamento/PainelNotificacoesEntrada";
 import {
   CreditCard, Banknote, Wallet, Building, CheckCircle, FileText,
   Plus, Search, Edit, Calendar, TrendingUp, TrendingDown, DollarSign,
   AlertTriangle, Clock, Vault, ArrowLeft, Receipt, Download, Upload,
-  RefreshCw, X, Briefcase, BarChart3
+  RefreshCw, X, Briefcase, BarChart3, LayoutDashboard, ArrowDownCircle, ArrowUpCircle, Settings
 } from "lucide-react";
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -39,6 +37,7 @@ const Financeiro = () => {
   const [activeSubModule, setActiveSubModule] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState('todos');
   const [filterPeriodo, setFilterPeriodo] = useState('mes');
+  const [faturamentoTab, setFaturamentoTab] = useState('faturamento');
 
   // Listener para navegação de configurações fiscais
   React.useEffect(() => {
@@ -472,175 +471,95 @@ const Financeiro = () => {
     const currentModule = mainModules.find(m => m.id === activeModule);
     if (!currentModule) return null;
 
-    // Renderização especial para Faturamento com seções organizadas
+    // Renderização especial para Faturamento com abas
     if (activeModule === 'faturamento') {
-      const dashboardRelatorios = [
-        { id: 'dashboard_relatorios', title: 'Dashboard & Relatórios', description: 'Análise completa e exportações', icon: BarChart3 },
-      ];
-
-      const faturamentoProdutos = [
-        { id: 'entrada', title: 'Entrada', description: 'Lançar NF-e de compra ou importação', icon: Download },
-        { id: 'saida', title: 'Saída', description: 'Emitir NF-e de venda ou remessa', icon: Upload },
-      ];
-
-      const faturamentoServicos = [
-        { id: 'servicos', title: 'Serviços (NFS-e)', description: 'Emitir notas de serviço', icon: Briefcase },
-      ];
-
-      const documentosDeclaracoes = [
-        { id: 'cartas_faturamento', title: 'Cartas de Faturamento', description: 'Declarações mensais com assinatura digital', icon: FileText },
-      ];
-
       return (
-        <div className="flex gap-6">
-          {/* Conteúdo Principal */}
-          <div className="flex-1 space-y-6">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setActiveModule(null)}
-                className="flex items-center gap-2"
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setActiveModule(null)}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar
+            </Button>
+            <div>
+              <h2 className="text-2xl font-bold text-biodina-blue">{currentModule.title}</h2>
+              <p className="text-muted-foreground">Gestão completa de documentos fiscais</p>
+            </div>
+          </div>
+
+          <Tabs value={faturamentoTab} onValueChange={setFaturamentoTab} className="w-full">
+            <TabsList className="w-full justify-start bg-muted/50 p-1 h-auto flex-wrap gap-1">
+              <TabsTrigger 
+                value="faturamento" 
+                className="flex items-center gap-2 data-[state=active]:bg-background"
               >
-                <ArrowLeft className="h-4 w-4" />
-                Voltar
-              </Button>
-              <div>
-                <h2 className="text-2xl font-bold text-biodina-blue">{currentModule.title}</h2>
-                <p className="text-muted-foreground">{currentModule.description}</p>
-              </div>
-            </div>
+                <LayoutDashboard className="h-4 w-4" />
+                Faturamento
+              </TabsTrigger>
+              <TabsTrigger 
+                value="dashboard" 
+                className="flex items-center gap-2 data-[state=active]:bg-background"
+              >
+                <BarChart3 className="h-4 w-4" />
+                Dashboard
+              </TabsTrigger>
+              <TabsTrigger 
+                value="entrada" 
+                className="flex items-center gap-2 data-[state=active]:bg-background"
+              >
+                <ArrowDownCircle className="h-4 w-4" />
+                Entrada
+              </TabsTrigger>
+              <TabsTrigger 
+                value="saida" 
+                className="flex items-center gap-2 data-[state=active]:bg-background"
+              >
+                <ArrowUpCircle className="h-4 w-4" />
+                Saída
+              </TabsTrigger>
+              <TabsTrigger 
+                value="servicos" 
+                className="flex items-center gap-2 data-[state=active]:bg-background"
+              >
+                <Settings className="h-4 w-4" />
+                Serviços
+              </TabsTrigger>
+              <TabsTrigger 
+                value="documentos" 
+                className="flex items-center gap-2 data-[state=active]:bg-background"
+              >
+                <FileText className="h-4 w-4" />
+                Documentos e Declarações
+              </TabsTrigger>
+            </TabsList>
 
-            <IndicadoresFaturamento />
+            <TabsContent value="faturamento" className="mt-6">
+              <FaturamentoResumo />
+            </TabsContent>
 
-            {/* Painel de Notificações */}
-            <PainelNotificacoesEntrada onVerDetalhes={(pedidoId) => {
-              setActiveSubModule('entrada');
-            }} />
+            <TabsContent value="dashboard" className="mt-6">
+              <DashboardRelatorios />
+            </TabsContent>
 
-            {/* Dashboard & Relatórios */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-biodina-blue">Dashboard & Relatórios</h3>
-              <div className="grid grid-cols-1 gap-4">
-                {dashboardRelatorios.map((modulo) => {
-                  const IconComponent = modulo.icon;
-                  return (
-                    <Card 
-                      key={modulo.id}
-                      className="shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-biodina-gold/50"
-                      onClick={() => setActiveSubModule(modulo.id)}
-                    >
-                      <CardContent className="p-6 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-biodina-blue">
-                            {modulo.title}
-                          </h3>
-                          <IconComponent className="h-5 w-5 text-biodina-gold" />
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {modulo.description}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
+            <TabsContent value="entrada" className="mt-6">
+              <EntradaFaturamento />
+            </TabsContent>
 
-            {/* Faturamento de Produtos */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-biodina-blue">Faturamento de Produtos</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {faturamentoProdutos.map((modulo) => {
-                  const IconComponent = modulo.icon;
-                  return (
-                    <Card 
-                      key={modulo.id}
-                      className="shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-biodina-gold/50"
-                      onClick={() => setActiveSubModule(modulo.id)}
-                    >
-                      <CardContent className="p-6 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-biodina-blue">
-                            {modulo.title}
-                          </h3>
-                          <IconComponent className="h-5 w-5 text-biodina-gold" />
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {modulo.description}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
+            <TabsContent value="saida" className="mt-6">
+              <SaidaFaturamento />
+            </TabsContent>
 
-            {/* Faturamento de Serviços */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-biodina-blue">Faturamento de Serviços</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {faturamentoServicos.map((modulo) => {
-                  const IconComponent = modulo.icon;
-                  return (
-                    <Card 
-                      key={modulo.id}
-                      className="shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-biodina-gold/50"
-                      onClick={() => setActiveSubModule(modulo.id)}
-                    >
-                      <CardContent className="p-6 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-biodina-blue">
-                            {modulo.title}
-                          </h3>
-                          <IconComponent className="h-5 w-5 text-biodina-gold" />
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {modulo.description}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
+            <TabsContent value="servicos" className="mt-6">
+              <ServicosFaturamento />
+            </TabsContent>
 
-            {/* Documentos e Declarações */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-biodina-blue">Documentos e Declarações</h3>
-              <div className="grid grid-cols-1 gap-4">
-                {documentosDeclaracoes.map((modulo) => {
-                  const IconComponent = modulo.icon;
-                  return (
-                    <Card 
-                      key={modulo.id}
-                      className="shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer border hover:border-biodina-gold/50"
-                      onClick={() => setActiveSubModule(modulo.id)}
-                    >
-                      <CardContent className="p-6 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-biodina-blue">
-                            {modulo.title}
-                          </h3>
-                          <IconComponent className="h-5 w-5 text-biodina-gold" />
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {modulo.description}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Rodapé com atalhos */}
-            <RodapeFaturamento />
-          </div>
-
-          {/* Assistente Fiscal IA - Lateral Direita */}
-          <div className="w-80 flex-shrink-0 sticky top-6 self-start">
-            <AssistenteFiscalIA />
-          </div>
+            <TabsContent value="documentos" className="mt-6">
+              <CartasFaturamento />
+            </TabsContent>
+          </Tabs>
         </div>
       );
     }
