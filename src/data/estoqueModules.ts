@@ -1,5 +1,12 @@
 import { Package, ArrowLeftRight } from "lucide-react";
-import { EstoqueModulesConfig, StatusSeparacao, StatusItemSeparacao, StatusQualidade } from "@/types/estoque";
+import { 
+  EstoqueModulesConfig, 
+  StatusSeparacao, 
+  StatusItemSeparacao, 
+  StatusQualidade,
+  StatusPedidoAdministrativo,
+  PedidoAdministrativo
+} from "@/types/estoque";
 
 export const mockPosicaoEstoque = [
   {
@@ -623,14 +630,79 @@ export const mockEstoquesDisponiveis = [
   }
 ];
 
+// Mock data para Estoque Administrativo
+export const mockPedidosAdministrativos: PedidoAdministrativo[] = [
+  {
+    id: 1,
+    numero_pedido: "PED-2024-001",
+    cliente: "Hospital São Paulo",
+    vendedor: "João Silva",
+    data_pedido: "2024-01-10",
+    status: StatusPedidoAdministrativo.PENDENTE_ANALISE,
+    nop: "6.108 SP",
+    cliente_estado: "SP",
+    endereco_cliente: "Av. Paulista, 1000 - São Paulo/SP",
+    observacoes_comercial: "Cliente solicita entrega urgente",
+    itens: [
+      { id: 1, codigo_produto: "944-021-U", descricao_produto: "Solução de Calibração S7770", unidade: "UN", estoque_disponivel: 150, validade_minima_exigida: "2025-06-01", quantidade_pedido: 50 },
+      { id: 2, codigo_produto: "944-132", descricao_produto: "Solução de Lavagem", unidade: "UN", estoque_disponivel: 80, quantidade_pedido: 30 }
+    ]
+  },
+  {
+    id: 2,
+    numero_pedido: "PED-2024-002",
+    cliente: "Laboratório Minas",
+    vendedor: "Maria Santos",
+    data_pedido: "2024-01-12",
+    status: StatusPedidoAdministrativo.AGUARDANDO_VALIDACAO,
+    nop: "6.109 MG",
+    cliente_estado: "MG",
+    endereco_cliente: "Rua das Flores, 200 - Belo Horizonte/MG",
+    itens: [
+      { id: 3, codigo_produto: "SER001", descricao_produto: "Seringa 3ml BD", unidade: "CX", estoque_disponivel: 5000, quantidade_pedido: 100, quantidade_autorizada: 100, quantidade_separada: 100, lote_separado: "LOT-2024-001", validade_separada: "2025-12-31" }
+    ]
+  },
+  {
+    id: 3,
+    numero_pedido: "PED-2024-003",
+    cliente: "Clínica Beta",
+    vendedor: "Carlos Ferreira",
+    data_pedido: "2024-01-08",
+    status: StatusPedidoAdministrativo.LIBERADO_FATURAMENTO,
+    nop: "6.110 RJ",
+    cliente_estado: "RJ",
+    itens: [
+      { id: 4, codigo_produto: "LAB-500", descricao_produto: "Kit Laboratorial Completo", unidade: "KIT", estoque_disponivel: 25, quantidade_pedido: 5, quantidade_autorizada: 5, quantidade_separada: 5 }
+    ]
+  },
+  {
+    id: 4,
+    numero_pedido: "PED-2024-004",
+    cliente: "Hospital Regional",
+    vendedor: "Ana Costa",
+    data_pedido: "2024-01-15",
+    status: StatusPedidoAdministrativo.PENDENTE_ANALISE,
+    nop: "6.111 PR",
+    cliente_estado: "PR",
+    observacoes_comercial: "Validade mínima obrigatória de 8 meses",
+    itens: [
+      { id: 5, codigo_produto: "944-200", descricao_produto: "Reagente Especial", unidade: "UN", estoque_disponivel: 200, validade_minima_exigida: "2025-09-15", quantidade_pedido: 25 }
+    ]
+  }
+];
+
 export const estoqueModules: EstoqueModulesConfig = {
   posicao_estoque: {
     name: "Estoque",
     icon: Package,
     subModules: {
-      posicao_atual: {
-        name: "Est. Adm.",
+      visao_geral: {
+        name: "Visão Geral",
         data: mockPosicaoEstoque
+      },
+      estoque_administrativo: {
+        name: "Est. Administrativo",
+        data: mockPedidosAdministrativos
       },
       separacao_estoque: {
         name: "Est. Expedição",
