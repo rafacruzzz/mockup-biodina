@@ -274,3 +274,66 @@ export enum TipoOperacaoAuditoria {
   CORRECAO_INVENTARIO = 'correcao_inventario',
   TRANSFERENCIA_EMERGENCIAL = 'transferencia_emergencial'
 }
+
+// ============= ESTOQUE ADMINISTRATIVO =============
+
+export enum StatusPedidoAdministrativo {
+  PENDENTE_ANALISE = 'pendente_analise',
+  AUTORIZADO = 'autorizado',
+  REJEITADO = 'rejeitado',
+  AGUARDANDO_SEPARACAO = 'aguardando_separacao',
+  AGUARDANDO_VALIDACAO = 'aguardando_validacao',
+  LIBERADO_FATURAMENTO = 'liberado_faturamento'
+}
+
+export interface PedidoAdministrativo {
+  id: number;
+  numero_pedido: string;
+  cliente: string;
+  vendedor: string;
+  data_pedido: string;
+  status: StatusPedidoAdministrativo;
+  observacoes_comercial?: string;
+  observacoes_administrativas?: string;
+  validade_minima_global?: string;
+  autorizado_por?: string;
+  data_autorizacao?: string;
+  justificativa_rejeicao?: string;
+  nop?: string;
+  cliente_estado?: string;
+  endereco_cliente?: string;
+  transportadora?: string;
+  itens: ItemPedidoAdministrativo[];
+}
+
+export interface ItemPedidoAdministrativo {
+  id: number;
+  codigo_produto: string;
+  descricao_produto: string;
+  unidade: string;
+  estoque_disponivel: number;
+  validade_minima_exigida?: string;
+  quantidade_pedido: number;
+  quantidade_autorizada?: number;
+  unidade_origem?: string;
+  deposito_origem?: string;
+  lotes_autorizados?: LoteAutorizado[];
+  validade_autorizada?: string;
+  observacoes_item?: string;
+  // Dados da separação (preenchidos pela expedição)
+  quantidade_separada?: number;
+  validade_separada?: string;
+  lote_separado?: string;
+  status_separacao?: StatusItemSeparacao;
+  // Dados da validação
+  status_validacao?: 'conforme' | 'divergente' | 'pendente';
+  observacoes_validacao?: string;
+}
+
+export interface LoteAutorizado {
+  lote: string;
+  quantidade: number;
+  validade: string;
+  cnpj: string;
+  deposito: string;
+}

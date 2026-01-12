@@ -10,10 +10,11 @@ import DataTable from "@/components/cadastro/DataTable";
 import { estoqueModules } from "@/data/estoqueModules";
 import { MovimentacaoEstoque } from "@/types/estoque";
 import SeparacaoEstoqueTable from "@/components/estoque/SeparacaoEstoqueTable";
+import EstoqueAdministrativoTable from "@/components/estoque/EstoqueAdministrativoTable";
 
 const Estoque = () => {
   const [activeModule, setActiveModule] = useState('posicao_estoque');
-  const [activeSubModule, setActiveSubModule] = useState('posicao_atual');
+  const [activeSubModule, setActiveSubModule] = useState('visao_geral');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedModules, setExpandedModules] = useState<string[]>(['posicao_estoque']);
   const [isNovaMovimentacaoOpen, setIsNovaMovimentacaoOpen] = useState(false);
@@ -52,9 +53,8 @@ const Estoque = () => {
   };
 
   const handleCloseSidebar = () => {
-    // Volta para a gestão de estoque quando fechar
     setActiveModule('posicao_estoque');
-    setActiveSubModule('posicao_atual');
+    setActiveSubModule('visao_geral');
     setExpandedModules(['posicao_estoque']);
     setSearchTerm('');
   };
@@ -68,8 +68,8 @@ const Estoque = () => {
     if (activeModule === 'movimentacoes') {
       return true;
     }
-    // Não mostrar botão "Novo Registro" para posição atual (Est. Adm.)
-    return !(activeModule === 'posicao_estoque' && activeSubModule === 'posicao_atual');
+    // Não mostrar botão "Novo Registro" para visão geral e estoque administrativo
+    return !(activeModule === 'posicao_estoque' && (activeSubModule === 'visao_geral' || activeSubModule === 'estoque_administrativo'));
   };
 
   const getButtonText = () => {
@@ -142,7 +142,11 @@ const Estoque = () => {
                   <SeparacaoEstoqueTable 
                     data={currentSubModule?.data || []} 
                   />
-                ) : activeModule === 'posicao_estoque' && activeSubModule === 'posicao_atual' ? (
+                ) : activeModule === 'posicao_estoque' && activeSubModule === 'estoque_administrativo' ? (
+                  <EstoqueAdministrativoTable 
+                    data={currentSubModule?.data || []} 
+                  />
+                ) : activeModule === 'posicao_estoque' && activeSubModule === 'visao_geral' ? (
                   <EstoqueDashboard />
                 ) : (
                   <DataTable 
