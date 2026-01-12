@@ -13,7 +13,7 @@ const EstoqueDashboard = () => {
   const [selectedTipoEstoque, setSelectedTipoEstoque] = useState("todos");
   const [quickFilter, setQuickFilter] = useState("todos");
 
-  const posicaoEstoque = estoqueModules.posicao_estoque.subModules.posicao_atual.data;
+  const posicaoEstoque = estoqueModules.posicao_estoque.subModules.visao_geral.data;
 
   // Calcular métricas básicas para os filtros
   const produtosVencidos = posicaoEstoque.filter(item => 
