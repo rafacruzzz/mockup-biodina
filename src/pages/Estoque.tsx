@@ -126,10 +126,11 @@ const Estoque = () => {
                 description={`Gerencie os registros de ${currentSubModule.name.toLowerCase()}`}
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
-                onNewRecord={shouldShowNewButton() ? handleNewRecord : undefined}
+                onNewRecord={handleNewRecord}
                 buttonText={getButtonText()}
                 showExcelButton={activeModule === 'movimentacoes'}
                 onExcelClick={handleExcelClick}
+                showNewButton={shouldShowNewButton()}
               />
 
               <div className="flex-1 p-6 min-h-0">
