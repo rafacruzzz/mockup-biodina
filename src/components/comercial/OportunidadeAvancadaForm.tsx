@@ -1281,6 +1281,14 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           aprovacaoEmpresa={aprovacaoEmpresa}
           onChange={handleEmpresaParticipanteChange}
           onSolicitarAprovacao={handleSolicitarAprovacao}
+          onAprovar={handleAprovacaoEmpresa}
+          onRejeitar={handleAprovacaoEmpresa}
+          licitacaoData={{
+            id: oportunidade?.id || 0,
+            numeroPregao: oportunidade?.codigo || formData.numeroPregao || '',
+            nomeInstituicao: oportunidade?.cliente || formData.cliente || '',
+            objetoLicitacao: oportunidade?.descricao || formData.descricao || ''
+          }}
           disabled={isReadOnlyMode()}
           required={true}
         />
