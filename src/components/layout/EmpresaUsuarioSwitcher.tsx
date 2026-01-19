@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,11 +6,43 @@ import { Building2, Check } from "lucide-react";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { useUser } from "@/contexts/UserContext";
 import { cn } from "@/lib/utils";
+import { EmpresaVinculada, ModuloUsuario } from "@/types/permissions";
 
 interface EmpresaUsuarioSwitcherProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+// Verifica se o usuário tem pelo menos um módulo/submódulo habilitado
+const temModuloHabilitado = (moduleAccess?: ModuloUsuario[]): boolean => {
+  if (!moduleAccess || moduleAccess.length === 0) return false;
+  
+  return moduleAccess.some(modulo => 
+    modulo.habilitado && modulo.subModulos?.some(sub => sub.habilitado)
+  );
+};
+
+// Filtra empresas onde o usuário tem pelo menos um módulo habilitado
+const filtrarEmpresasComAcesso = (
+  empresasVinculadas: EmpresaVinculada[],
+  moduleAccess?: ModuloUsuario[]
+): EmpresaVinculada[] => {
+  // Se não tem moduleAccess definido, retorna todas as vinculadas (compatibilidade)
+  if (!moduleAccess || moduleAccess.length === 0) {
+    return empresasVinculadas;
+  }
+
+  // Verifica se o usuário tem algum módulo habilitado
+  const temAcesso = temModuloHabilitado(moduleAccess);
+  
+  // Se tem acesso a pelo menos um módulo, retorna empresas vinculadas
+  // Futuramente pode ser refinado para filtrar por empresa específica
+  if (temAcesso) {
+    return empresasVinculadas;
+  }
+
+  return [];
+};
 
 const EmpresaUsuarioSwitcher = ({ isOpen, onClose }: EmpresaUsuarioSwitcherProps) => {
   const { user } = useUser();
@@ -18,14 +50,22 @@ const EmpresaUsuarioSwitcher = ({ isOpen, onClose }: EmpresaUsuarioSwitcherProps
 
   // Empresas vinculadas do usuário
   const empresasVinculadas = user?.empresasVinculadas || [];
+  
+  // Obtém o moduleAccess do usuário (pode estar no colaboradorData ou diretamente)
+  const moduleAccess = (user as any)?.moduleAccess as ModuloUsuario[] | undefined;
 
-  // Se não há empresas vinculadas, usar todas as empresas disponíveis
-  const empresasDisponiveis = empresasVinculadas.length > 0
-    ? empresasVinculadas
-    : [
-        ...(empresaAtual ? [{ id: empresaAtual.id, tipo: 'principal' as const, nome: empresaAtual.nome }] : []),
-        ...filiais.map(f => ({ id: f.id, tipo: 'filial' as const, nome: f.nome }))
-      ];
+  // Filtra apenas empresas onde o usuário tem acesso a pelo menos um módulo
+  const empresasDisponiveis = useMemo(() => {
+    if (empresasVinculadas.length === 0) {
+      // Fallback: se não há vínculo explícito, usa empresa atual
+      if (empresaAtual) {
+        return [{ id: empresaAtual.id, tipo: 'principal' as const, nome: empresaAtual.nome }];
+      }
+      return [];
+    }
+
+    return filtrarEmpresasComAcesso(empresasVinculadas, moduleAccess);
+  }, [empresasVinculadas, moduleAccess, empresaAtual]);
 
   const handleSelectEmpresa = (empresaId: string, tipo: 'principal' | 'filial') => {
     if (tipo === 'principal') {
@@ -47,9 +87,6 @@ const EmpresaUsuarioSwitcher = ({ isOpen, onClose }: EmpresaUsuarioSwitcherProps
     return filialAtual?.id === id;
   };
 
-  // Nome atual para exibição
-  const nomeAtual = filialAtual?.nome || empresaAtual?.nome || 'Selecione uma empresa';
-
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
@@ -67,7 +104,7 @@ const EmpresaUsuarioSwitcher = ({ isOpen, onClose }: EmpresaUsuarioSwitcherProps
 
           {empresasDisponiveis.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              Nenhuma empresa vinculada ao seu usuário.
+              Nenhuma empresa com módulos habilitados para seu usuário.
             </p>
           ) : (
             <div className="space-y-2 max-h-[400px] overflow-y-auto">
