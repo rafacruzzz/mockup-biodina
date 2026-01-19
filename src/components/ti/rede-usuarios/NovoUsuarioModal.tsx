@@ -8,9 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { User, Shield } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import type { ModuleAccess } from "@/types/permissions";
+import type { ModuloUsuario } from "@/types/permissions";
 import ModuleAccessTree from "../../cadastro/ModuleAccessTree";
-import AccessProfileSelector from "../../cadastro/AccessProfileSelector";
 
 interface NovoUsuarioModalProps {
   open: boolean;
@@ -37,7 +36,7 @@ export const NovoUsuarioModal = ({ open, onClose }: NovoUsuarioModalProps) => {
     senha: "",
     confirmarSenha: "",
     gruposPermissao: [] as string[],
-    moduleAccess: [] as ModuleAccess[]
+    moduleAccess: [] as ModuloUsuario[]
   });
 
   const departamentos = [
@@ -63,7 +62,7 @@ export const NovoUsuarioModal = ({ open, onClose }: NovoUsuarioModalProps) => {
 
     // Validar se tem pelo menos um tipo de permissão
     const hasGrupoPermissao = formData.gruposPermissao.length > 0;
-    const hasModuleAccess = formData.moduleAccess.some(m => m.enabled);
+    const hasModuleAccess = formData.moduleAccess.some(m => m.habilitado);
     
     if (!hasGrupoPermissao && !hasModuleAccess) {
       toast({
@@ -88,7 +87,7 @@ export const NovoUsuarioModal = ({ open, onClose }: NovoUsuarioModalProps) => {
     onClose();
   };
 
-  const handleModuleAccessChange = (modules: ModuleAccess[]) => {
+  const handleModuleAccessChange = (modules: ModuloUsuario[]) => {
     setFormData(prev => ({
       ...prev,
       moduleAccess: modules
@@ -229,13 +228,11 @@ export const NovoUsuarioModal = ({ open, onClose }: NovoUsuarioModalProps) => {
                   Permissões e Controles de Sistema
                 </h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Configure permissões detalhadas de acesso aos módulos
+                  Configure permissões detalhadas de acesso aos módulos e submódulos
                 </p>
               </div>
-
-              <AccessProfileSelector onProfileSelect={handleModuleAccessChange} />
               
-              <div className="border-t pt-4">
+              <div>
                 <h4 className="font-medium text-gray-900 mb-3">
                   Permissões Detalhadas
                 </h4>
