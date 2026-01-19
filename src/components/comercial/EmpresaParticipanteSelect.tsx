@@ -11,10 +11,20 @@ import {
   XCircle, 
   AlertTriangle, 
   Send,
-  FileCheck
+  FileCheck,
+  ShieldCheck
 } from 'lucide-react';
 import { useEmpresa } from '@/contexts/EmpresaContext';
+import { useAuthDemo } from '@/hooks/useAuthDemo';
 import { AprovacaoEmpresa } from '@/types/licitacao';
+import AprovacaoEmpresaModal from './AprovacaoEmpresaModal';
+
+interface LicitacaoData {
+  id: number;
+  numeroPregao: string;
+  nomeInstituicao: string;
+  objetoLicitacao: string;
+}
 
 interface EmpresaParticipanteSelectProps {
   empresaParticipanteId?: string;
@@ -27,6 +37,9 @@ interface EmpresaParticipanteSelectProps {
     empresaParticipanteCNPJ: string;
   }) => void;
   onSolicitarAprovacao: () => void;
+  onAprovar?: (aprovacao: AprovacaoEmpresa) => void;
+  onRejeitar?: (aprovacao: AprovacaoEmpresa) => void;
+  licitacaoData?: LicitacaoData;
   disabled?: boolean;
   required?: boolean;
 }
@@ -46,11 +59,16 @@ export default function EmpresaParticipanteSelect({
   aprovacaoEmpresa,
   onChange,
   onSolicitarAprovacao,
+  onAprovar,
+  onRejeitar,
+  licitacaoData,
   disabled = false,
   required = true
 }: EmpresaParticipanteSelectProps) {
   const { empresaAtual } = useEmpresa();
+  const { isGestor } = useAuthDemo();
   const [selectedEmpresaId, setSelectedEmpresaId] = useState(empresaParticipanteId || '');
+  const [showAprovacaoModal, setShowAprovacaoModal] = useState(false);
 
   const handleEmpresaChange = (empresaId: string) => {
     const empresa = empresasDisponiveis.find(e => e.id === empresaId);
@@ -100,6 +118,7 @@ export default function EmpresaParticipanteSelect({
   const selectedEmpresa = empresasDisponiveis.find(e => e.id === selectedEmpresaId);
   const aprovacaoStatus = getAprovacaoStatus();
   const needsApproval = selectedEmpresaId && (!aprovacaoEmpresa || aprovacaoEmpresa.status === 'rejeitado');
+  const canApprove = isGestor() && aprovacaoEmpresa?.status === 'pendente';
 
   return (
     <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
@@ -181,6 +200,18 @@ export default function EmpresaParticipanteSelect({
             </div>
           )}
 
+          {/* Botão de aprovar/rejeitar para gestores */}
+          {canApprove && licitacaoData && (
+            <Button
+              type="button"
+              onClick={() => setShowAprovacaoModal(true)}
+              className="w-full bg-green-600 hover:bg-green-700"
+            >
+              <ShieldCheck className="h-4 w-4 mr-2" />
+              Aprovar / Rejeitar Empresa
+            </Button>
+          )}
+
           {/* Botão de solicitar aprovação */}
           {needsApproval && !disabled && (
             <Button
@@ -204,6 +235,30 @@ export default function EmpresaParticipanteSelect({
             </div>
           )}
         </div>
+
+        {/* Modal de aprovação */}
+        {licitacaoData && (
+          <AprovacaoEmpresaModal
+            isOpen={showAprovacaoModal}
+            onClose={() => setShowAprovacaoModal(false)}
+            licitacaoData={{
+              id: licitacaoData.id,
+              numeroPregao: licitacaoData.numeroPregao,
+              nomeInstituicao: licitacaoData.nomeInstituicao,
+              objetoLicitacao: licitacaoData.objetoLicitacao,
+              empresaParticipanteNome: selectedEmpresa?.nome,
+              empresaParticipanteCNPJ: selectedEmpresa?.cnpj
+            }}
+            onAprovar={(aprovacao) => {
+              onAprovar?.(aprovacao);
+              setShowAprovacaoModal(false);
+            }}
+            onRejeitar={(aprovacao) => {
+              onRejeitar?.(aprovacao);
+              setShowAprovacaoModal(false);
+            }}
+          />
+        )}
       </CardContent>
     </Card>
   );
