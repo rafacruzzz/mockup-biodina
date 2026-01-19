@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,8 @@ import {
   FilePlus,
   FileEdit,
   PackageX,
-  XCircle
+  XCircle,
+  Building2
 } from "lucide-react";
 import { mockPedidosEntrada } from "@/data/faturamentoModules";
 import { PedidoEntradaMercadoria } from "@/types/faturamento";
@@ -40,8 +41,13 @@ import CartaCorrecaoModal from "./modals/CartaCorrecaoModal";
 import DevolucaoModal from "./modals/DevolucaoModal";
 import CancelamentoModal from "./modals/CancelamentoModal";
 import { useToast } from "@/hooks/use-toast";
+import { useEmpresa } from "@/contexts/EmpresaContext";
 
 const EntradaFaturamento = () => {
+  const { empresaAtual, filialAtual } = useEmpresa();
+  const empresaAtivaId = filialAtual?.id || empresaAtual?.id || '';
+  const nomeEmpresaAtiva = filialAtual?.nome || empresaAtual?.razaoSocial || 'Empresa';
+  
   const [filtroTipo, setFiltroTipo] = useState<string>('todos');
   const [filtroCategoria, setFiltroCategoria] = useState<string>('todos');
   const [filtroStatus, setFiltroStatus] = useState<string>('todos');
@@ -53,7 +59,16 @@ const EntradaFaturamento = () => {
   const [modalCartaCorrecaoOpen, setModalCartaCorrecaoOpen] = useState(false);
   const [modalDevolucaoOpen, setModalDevolucaoOpen] = useState(false);
   const [modalCancelamentoOpen, setModalCancelamentoOpen] = useState(false);
-  const [pedidos, setPedidos] = useState<PedidoEntradaMercadoria[]>(mockPedidosEntrada);
+  
+  // Filtrar pedidos por empresa ativa
+  const pedidosEmpresa = useMemo(() => 
+    mockPedidosEntrada.filter(p => p.empresaId === empresaAtivaId),
+    [empresaAtivaId]
+  );
+  
+  const [pedidosAdicionais, setPedidosAdicionais] = useState<PedidoEntradaMercadoria[]>([]);
+  const pedidos = useMemo(() => [...pedidosEmpresa, ...pedidosAdicionais.filter(p => p.empresaId === empresaAtivaId)], [pedidosEmpresa, pedidosAdicionais, empresaAtivaId]);
+  
   const { toast } = useToast();
 
   const formatCurrency = (value: number) => {
@@ -157,8 +172,11 @@ const EntradaFaturamento = () => {
   };
 
   const handleUploadXML = (xmlData: any) => {
+    const empresaAtivaId = filialAtual?.id || empresaAtual?.id || 'biodina-001';
+    
     const novaEntrada: PedidoEntradaMercadoria = {
       id: `IMP-${Date.now()}`,
+      empresaId: empresaAtivaId,
       numeroPedido: xmlData.numeroNF,
       fornecedor: xmlData.fornecedor,
       cnpjFornecedor: xmlData.cnpjFornecedor || '00.000.000/0000-00',
@@ -183,7 +201,7 @@ const EntradaFaturamento = () => {
       })) || []
     };
 
-    setPedidos(prev => [novaEntrada, ...prev]);
+    setPedidosAdicionais(prev => [novaEntrada, ...prev]);
     
     toast({
       title: "Importação realizada com sucesso",
@@ -203,10 +221,16 @@ const EntradaFaturamento = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-3xl font-bold flex items-center gap-2">
-          <PackageCheck className="h-8 w-8" />
-          Entrada
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-3xl font-bold flex items-center gap-2">
+            <PackageCheck className="h-8 w-8" />
+            Entrada
+          </h2>
+          <Badge variant="outline" className="ml-2 flex items-center gap-1">
+            <Building2 className="h-3 w-3" />
+            {nomeEmpresaAtiva}
+          </Badge>
+        </div>
         <p className="text-muted-foreground mt-1">
           Gestão de compras para revenda (nacional e internacional) com controle de DI e desembaraço
         </p>

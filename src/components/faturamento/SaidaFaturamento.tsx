@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import EmissaoNFeModal from "@/components/faturamento/modals/EmissaoNFeModal";
 import VisualizarPedidoModal from "@/components/faturamento/modals/VisualizarPedidoModal";
 import NFComplementarModal from "@/components/faturamento/modals/NFComplementarModal";
@@ -15,10 +15,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { 
   Plus, Search, Filter, FileText, 
   CheckCircle, Clock, AlertTriangle, Eye, Users, DollarSign,
-  FilePlus, FileEdit, PackageX, XCircle, ShieldCheck
+  FilePlus, FileEdit, PackageX, XCircle, ShieldCheck, Building2
 } from "lucide-react";
 import { mockChecklistVendas } from "@/data/faturamentoModules";
 import { ChecklistVenda } from "@/types/faturamento";
+import { useEmpresa } from "@/contexts/EmpresaContext";
 
 interface SolicitacaoCancelamento {
   numeroPedido: string;
@@ -32,6 +33,15 @@ interface SolicitacaoCancelamento {
 }
 
 const SaidaFaturamento = () => {
+  const { empresaAtual, filialAtual } = useEmpresa();
+  const empresaAtivaId = filialAtual?.id || empresaAtual?.id || '';
+  const nomeEmpresaAtiva = filialAtual?.nome || empresaAtual?.razaoSocial || 'Empresa';
+  
+  // Filtrar vendas por empresa ativa
+  const vendasEmpresa = useMemo(() => 
+    mockChecklistVendas.filter(v => v.empresaId === empresaAtivaId),
+    [empresaAtivaId]
+  );
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [pesquisa, setPesquisa] = useState('');
   const [modalEmissaoOpen, setModalEmissaoOpen] = useState(false);
@@ -149,7 +159,7 @@ const SaidaFaturamento = () => {
     }).format(value);
   };
 
-  const vendasFiltradas = mockChecklistVendas.filter(venda => {
+  const vendasFiltradas = vendasEmpresa.filter(venda => {
     const status = getStatusPedido(venda);
     if (filtroStatus !== 'todos' && status.toLowerCase() !== filtroStatus.toLowerCase()) {
       return false;
@@ -163,12 +173,12 @@ const SaidaFaturamento = () => {
   });
 
   const stats = {
-    aguardando: mockChecklistVendas.filter(v => getStatusPedido(v) === 'Aguardando').length,
-    validando: mockChecklistVendas.filter(v => getStatusPedido(v) === 'Validando').length,
-    liberado: mockChecklistVendas.filter(v => getStatusPedido(v) === 'Liberado').length,
-    faturado: mockChecklistVendas.filter(v => getStatusPedido(v) === 'Faturado').length,
-    emCancelamento: mockChecklistVendas.filter(v => getStatusPedido(v) === 'Em Cancelamento').length,
-    valorTotal: mockChecklistVendas.reduce((sum, v) => sum + v.valorTotal, 0)
+    aguardando: vendasEmpresa.filter(v => getStatusPedido(v) === 'Aguardando').length,
+    validando: vendasEmpresa.filter(v => getStatusPedido(v) === 'Validando').length,
+    liberado: vendasEmpresa.filter(v => getStatusPedido(v) === 'Liberado').length,
+    faturado: vendasEmpresa.filter(v => getStatusPedido(v) === 'Faturado').length,
+    emCancelamento: vendasEmpresa.filter(v => getStatusPedido(v) === 'Em Cancelamento').length,
+    valorTotal: vendasEmpresa.reduce((sum, v) => sum + v.valorTotal, 0)
   };
 
   const getStatusBadge = (status: string) => {
@@ -193,7 +203,13 @@ const SaidaFaturamento = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Saída</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-gray-900">Saída</h1>
+            <Badge variant="outline" className="flex items-center gap-1">
+              <Building2 className="h-3 w-3" />
+              {nomeEmpresaAtiva}
+            </Badge>
+          </div>
           <p className="text-gray-600">Checklist de vendas e emissão de documentos fiscais</p>
         </div>
         <Button 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,15 +7,26 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Settings, Search, Filter, Plus, FileText, 
-  CheckCircle, Clock, AlertTriangle, User, Eye, Send, XCircle
+  CheckCircle, Clock, AlertTriangle, User, Eye, Send, XCircle, Building2
 } from "lucide-react";
 import { mockServicosFaturamento } from "@/data/faturamentoModules";
 import { ServicoFaturamento } from "@/types/faturamento";
 import CancelamentoNotaServicoModal from "./modals/CancelamentoNotaServicoModal";
 import VisualizarServicoModal from "./modals/VisualizarServicoModal";
 import NovoServicoModal from "./modals/NovoServicoModal";
+import { useEmpresa } from "@/contexts/EmpresaContext";
 
 const ServicosFaturamento = () => {
+  const { empresaAtual, filialAtual } = useEmpresa();
+  const empresaAtivaId = filialAtual?.id || empresaAtual?.id || '';
+  const nomeEmpresaAtiva = filialAtual?.nome || empresaAtual?.razaoSocial || 'Empresa';
+  
+  // Filtrar serviços por empresa ativa
+  const servicosEmpresa = useMemo(() => 
+    mockServicosFaturamento.filter(s => s.empresaId === empresaAtivaId),
+    [empresaAtivaId]
+  );
+  
   const [filtroStatus, setFiltroStatus] = useState('todos');
   const [pesquisa, setPesquisa] = useState('');
   const [modalCancelamentoOpen, setModalCancelamentoOpen] = useState(false);
@@ -46,7 +57,7 @@ const ServicosFaturamento = () => {
     }).format(value);
   };
 
-  const servicosFiltrados = mockServicosFaturamento.filter(servico => {
+  const servicosFiltrados = servicosEmpresa.filter(servico => {
     if (filtroStatus !== 'todos' && servico.status.toLowerCase().replace(' ', '_') !== filtroStatus) {
       return false;
     }
@@ -58,10 +69,10 @@ const ServicosFaturamento = () => {
   });
 
   const totais = {
-    emAndamento: mockServicosFaturamento.filter(s => s.status === 'Em Andamento').length,
-    concluido: mockServicosFaturamento.filter(s => s.status === 'Concluído').length,
-    aprovado: mockServicosFaturamento.filter(s => s.status === 'Aprovado').length,
-    valorTotal: mockServicosFaturamento.reduce((sum, s) => sum + s.valor, 0)
+    emAndamento: servicosEmpresa.filter(s => s.status === 'Em Andamento').length,
+    concluido: servicosEmpresa.filter(s => s.status === 'Concluído').length,
+    aprovado: servicosEmpresa.filter(s => s.status === 'Aprovado').length,
+    valorTotal: servicosEmpresa.reduce((sum, s) => sum + s.valor, 0)
   };
 
   return (
@@ -69,7 +80,13 @@ const ServicosFaturamento = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Faturamento de Serviços</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-gray-900">Faturamento de Serviços</h1>
+            <Badge variant="outline" className="flex items-center gap-1">
+              <Building2 className="h-3 w-3" />
+              {nomeEmpresaAtiva}
+            </Badge>
+          </div>
           <p className="text-gray-600">Gestão de serviços prestados e emissão de NFS-e</p>
         </div>
         <Button 
