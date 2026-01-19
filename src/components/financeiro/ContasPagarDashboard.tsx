@@ -12,8 +12,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   CreditCard, Plus, Search, Edit, Calendar as CalendarIcon, 
   Filter, FileText, CheckCircle, Clock, AlertTriangle,
-  TrendingUp, TrendingDown, DollarSign, Users
+  TrendingUp, TrendingDown, DollarSign, Users, Building
 } from 'lucide-react';
+import { useEmpresa } from '@/contexts/EmpresaContext';
 
 import { 
   Requisicao, 
@@ -38,6 +39,10 @@ import AprovacaoModal from './AprovacaoModal';
 import PagamentosRecorrentesModal from './PagamentosRecorrentesModal';
 
 const ContasPagarDashboard = () => {
+  // Contexto de empresa para segregação de dados por CNPJ
+  const { empresaAtual, filialAtual } = useEmpresa();
+  const empresaAtivaId = filialAtual?.id || empresaAtual?.id || '';
+
   const [activeTab, setActiveTab] = useState('requisicoes');
   const [filtros, setFiltros] = useState<FiltrosRequisicao>({});
   const [pesquisa, setPesquisa] = useState('');
@@ -46,9 +51,10 @@ const ContasPagarDashboard = () => {
   const [aprovacaoOpen, setAprovacaoOpen] = useState(false);
   const [requisicaoSelecionada, setRequisicaoSelecionada] = useState<Requisicao | null>(null);
 
-  // Filtrar requisições baseado nos filtros e pesquisa
+  // Filtrar requisições baseado na empresa ativa, filtros e pesquisa
   const requisicoesFiltradasMemo = useMemo(() => {
-    let resultado = [...mockRequisicoes];
+    // Primeiro filtra por empresa ativa
+    let resultado = mockRequisicoes.filter(req => req.empresaId === empresaAtivaId);
 
     // Aplicar pesquisa
     if (pesquisa) {
@@ -70,7 +76,7 @@ const ContasPagarDashboard = () => {
     }
 
     return resultado;
-  }, [mockRequisicoes, pesquisa, filtros]);
+  }, [empresaAtivaId, pesquisa, filtros]);
 
   // Calcular resumo financeiro
   const resumoFinanceiro: ResumoFinanceiro = useMemo(() => {
@@ -391,7 +397,13 @@ const ContasPagarDashboard = () => {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-primary">Contas a Pagar</h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-primary">Contas a Pagar</h1>
+            <Badge variant="outline" className="flex items-center gap-1">
+              <Building className="h-3 w-3" />
+              {filialAtual ? filialAtual.nome : empresaAtual?.razaoSocial || 'Empresa'}
+            </Badge>
+          </div>
           <p className="text-muted-foreground">
             Gerencie todas as requisições de pagamento e contas da empresa
           </p>

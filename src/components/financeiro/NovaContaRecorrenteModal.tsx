@@ -79,6 +79,7 @@ export const NovaContaRecorrenteModal: React.FC<NovaContaRecorrenteModalProps> =
 
     if (Object.keys(newErrors).length === 0) {
       const novaConta: Omit<ContaRecorrenteEnhanced, 'id' | 'status' | 'proximoVencimento'> = {
+        empresaId: 'biodina-001', // Será substituído pelo contexto da empresa ativa
         nome: formData.nome,
         fornecedor: formData.fornecedor,
         categoria: formData.categoria,

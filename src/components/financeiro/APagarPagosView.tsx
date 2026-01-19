@@ -20,9 +20,13 @@ import { EditarContaModal } from "./EditarContaModal";
 import { ContaPagar } from "@/types/financeiro";
 import { useToast } from "@/hooks/use-toast";
 import ContratosTabContent from "./ContratosTabContent";
+import { useEmpresa } from "@/contexts/EmpresaContext";
 
 const APagarPagosView = () => {
   const { toast } = useToast();
+  const { empresaAtual, filialAtual } = useEmpresa();
+  const empresaAtivaId = filialAtual?.id || empresaAtual?.id || 'biodina-001';
+  
   const [showRecorrentesModal, setShowRecorrentesModal] = useState(false);
   const [showNovaContaModal, setShowNovaContaModal] = useState(false);
   const [showNovaRecorrenteModal, setShowNovaRecorrenteModal] = useState(false);
@@ -51,7 +55,13 @@ const APagarPagosView = () => {
       {/* Header com ações principais */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold">A Pagar x Pagos</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-2xl font-bold">A Pagar x Pagos</h2>
+            <Badge variant="outline" className="flex items-center gap-1">
+              <Building className="h-3 w-3" />
+              {filialAtual ? filialAtual.nome : empresaAtual?.razaoSocial || 'Empresa'}
+            </Badge>
+          </div>
           <p className="text-muted-foreground">Gestão completa de contas a pagar e programação financeira</p>
         </div>
         <div className="flex gap-2">
@@ -196,6 +206,7 @@ const APagarPagosView = () => {
                           onClick={() => {
                             setContaSelecionada({
                               id: 'CP-001',
+                              empresaId: 'biodina-001',
                               numero: 'CP-001',
                               tipo: 'compra' as any,
                               departamentoSolicitante: 'Administrativo',
@@ -220,6 +231,7 @@ const APagarPagosView = () => {
                           onClick={() => {
                             setContaSelecionada({
                               id: 'CP-001',
+                              empresaId: 'biodina-001',
                               numero: 'CP-001',
                               tipo: 'compra' as any,
                               departamentoSolicitante: 'Administrativo',
@@ -265,6 +277,7 @@ const APagarPagosView = () => {
                           onClick={() => {
                             setContaSelecionada({
                               id: 'CP-002',
+                              empresaId: 'biodina-001',
                               numero: 'CP-002',
                               tipo: 'outros' as any,
                               departamentoSolicitante: 'Administrativo',
@@ -289,6 +302,7 @@ const APagarPagosView = () => {
                           onClick={() => {
                             setContaSelecionada({
                               id: 'CP-002',
+                              empresaId: 'biodina-001',
                               numero: 'CP-002',
                               tipo: 'outros' as any,
                               departamentoSolicitante: 'Administrativo',
@@ -334,6 +348,7 @@ const APagarPagosView = () => {
                           onClick={() => {
                             setContaSelecionada({
                               id: 'CP-003',
+                              empresaId: 'biodina-001',
                               numero: 'CP-003',
                               tipo: 'outros' as any,
                               departamentoSolicitante: 'TI',
@@ -358,6 +373,7 @@ const APagarPagosView = () => {
                           onClick={() => {
                             setContaSelecionada({
                               id: 'CP-003',
+                              empresaId: 'biodina-001',
                               numero: 'CP-003',
                               tipo: 'outros' as any,
                               departamentoSolicitante: 'TI',

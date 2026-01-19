@@ -66,6 +66,7 @@ export const NovaContaPagarModal: React.FC<NovaContaPagarModalProps> = ({
 
     if (Object.keys(newErrors).length === 0) {
       const novaConta = {
+        empresaId: 'biodina-001', // Será substituído pelo contexto da empresa ativa
         tipo: formData.tipo,
         departamentoSolicitante: formData.departamentoSolicitante,
         vincularA: formData.vincularA,

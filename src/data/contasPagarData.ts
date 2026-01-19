@@ -85,6 +85,7 @@ export const mockProjetos = [
 export const mockRequisicoes: Requisicao[] = [
   {
     id: 'REQ001',
+    empresaId: 'biodina-001',
     numeroRequisicao: '2025-001',
     dataCreacao: new Date('2025-01-10'),
     dataVencimento: new Date('2025-01-25'),
@@ -136,6 +137,7 @@ export const mockRequisicoes: Requisicao[] = [
   },
   {
     id: 'REQ002',
+    empresaId: 'biodina-001',
     numeroRequisicao: '2025-002', 
     dataCreacao: new Date('2025-01-12'),
     dataVencimento: new Date('2025-01-30'),
@@ -194,6 +196,7 @@ export const mockRequisicoes: Requisicao[] = [
   },
   {
     id: 'REQ003',
+    empresaId: 'biodina-001',
     numeroRequisicao: '2025-003',
     dataCreacao: new Date('2025-01-08'),
     dataVencimento: new Date('2025-01-15'),
@@ -265,6 +268,7 @@ export const mockRequisicoes: Requisicao[] = [
 export const mockContasRecorrentes: ContaRecorrente[] = [
   {
     id: 'REC001',
+    empresaId: 'biodina-001',
     nome: 'Energia Elétrica - Sede',
     fornecedor: mockFornecedores[1],
     valor: 4800,
@@ -279,6 +283,7 @@ export const mockContasRecorrentes: ContaRecorrente[] = [
   },
   {
     id: 'REC002',
+    empresaId: 'biodina-001',
     nome: 'Telecomunicações - Pacote Completo',
     fornecedor: mockFornecedores[2],
     valor: 1200,
@@ -292,6 +297,7 @@ export const mockContasRecorrentes: ContaRecorrente[] = [
   },
   {
     id: 'REC003',
+    empresaId: 'biodina-001',
     nome: 'Aluguel - Galpão Produção',
     fornecedor: { id: '5', nome: 'Imobiliária XYZ Ltda', cnpj: '22.333.444/0001-55', email: 'contratos@xyz.com.br' },
     valor: 12000,
@@ -304,6 +310,7 @@ export const mockContasRecorrentes: ContaRecorrente[] = [
   },
   {
     id: 'REC004',
+    empresaId: 'biodina-001',
     nome: 'Software ERP - Licença Anual',
     fornecedor: { id: '6', nome: 'TechSoft Solutions', cnpj: '33.444.555/0001-66', email: 'suporte@techsoft.com' },
     valor: 8500,
@@ -320,6 +327,7 @@ export const mockContasRecorrentes: ContaRecorrente[] = [
 // Mock de itens do calendário (próximos 30 dias)
 export const mockCalendarioItens: CalendarioItem[] = [
   {
+    empresaId: 'biodina-001',
     data: new Date('2025-01-25'),
     contas: [
       {
@@ -335,6 +343,7 @@ export const mockCalendarioItens: CalendarioItem[] = [
     totalValor: 15000
   },
   {
+    empresaId: 'biodina-001',
     data: new Date('2025-01-30'),
     contas: [
       {
@@ -350,6 +359,7 @@ export const mockCalendarioItens: CalendarioItem[] = [
     totalValor: 2800
   },
   {
+    empresaId: 'biodina-001',
     data: new Date('2025-02-05'),
     contas: [
       {
@@ -365,6 +375,7 @@ export const mockCalendarioItens: CalendarioItem[] = [
     totalValor: 12000
   },
   {
+    empresaId: 'biodina-001',
     data: new Date('2025-02-10'),
     contas: [
       {
@@ -380,6 +391,7 @@ export const mockCalendarioItens: CalendarioItem[] = [
     totalValor: 1200
   },
   {
+    empresaId: 'biodina-001',
     data: new Date('2025-02-15'),
     contas: [
       {
