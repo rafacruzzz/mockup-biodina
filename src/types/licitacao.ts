@@ -1,4 +1,26 @@
 
+// Interface para aditivos contratuais
+export interface AditivoContratual {
+  id: string;
+  tipo: 'alteracao_cnpj' | 'acrescimo_valor' | 'prorrogacao' | 'outros';
+  cnpjAnterior?: string;
+  cnpjNovo?: string;
+  justificativa: string;
+  arquivoUrl: string;
+  alteradoPor: string;
+  alteradoEm: string;
+  validadoPorMaster: boolean;
+  senhaMasterValidada: boolean;
+}
+
+// Interface para aprovação de empresa
+export interface AprovacaoEmpresa {
+  status: 'pendente' | 'aprovado' | 'rejeitado';
+  aprovadoPor?: string;
+  aprovadoEm?: string;
+  observacao?: string;
+}
+
 export interface Licitacao {
   id: number;
   numeroPregao: string;
@@ -35,6 +57,15 @@ export interface Licitacao {
   ultimaAlteracao: string;
   incluidoPor: string;
   alteradoPor: string;
+  
+  // Campos de identificação empresarial (obrigatórios na estratégia)
+  empresaParticipanteId?: string;
+  empresaParticipanteNome?: string;
+  empresaParticipanteCNPJ?: string;
+  aprovacaoEmpresa?: AprovacaoEmpresa;
+  
+  // Rastreabilidade de aditivos
+  aditivos?: AditivoContratual[];
 }
 
 export interface Licitante {
