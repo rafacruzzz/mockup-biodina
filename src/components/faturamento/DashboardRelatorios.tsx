@@ -8,22 +8,52 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import {
   DollarSign, Package, Settings, FileText, AlertTriangle, TrendingUp,
   Calendar, BarChart3, PieChart, Download, FileSpreadsheet, FileDown,
-  CheckCircle, XCircle, RotateCcw, Edit3, Users, MapPin, Receipt
+  CheckCircle, XCircle, RotateCcw, Edit3, Users, MapPin, Receipt, Building2
 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart as RechartsPieChart, Pie, Cell, Legend } from 'recharts';
 import { mockDashboardData } from "@/data/dashboardRelatoriosData";
 import { exportDashboardToExcel, exportNotasCanceladasToExcel, exportNotasDevolucidasToExcel, exportCartasCorrecaoToExcel } from "@/utils/export/exportToExcel";
 import { exportDashboardToPDF, exportNotasCanceladasToPDF, exportCartasCorrecaoToPDF } from "@/utils/export/exportToPDF";
 import { useToast } from "@/hooks/use-toast";
+import { useEmpresa } from "@/contexts/EmpresaContext";
 
 const DashboardRelatorios = () => {
   const { toast } = useToast();
+  const { empresaAtual, filialAtual } = useEmpresa();
+  const empresaAtivaId = filialAtual?.id || empresaAtual?.id || '';
+  const nomeEmpresaAtiva = filialAtual?.nome || empresaAtual?.razaoSocial || 'Empresa';
+  
+  // Verificar se há dados para esta empresa (mock só tem dados para biodina-001)
+  const temDadosEmpresa = empresaAtivaId === 'biodina-001';
+  
   const [periodo, setPeriodo] = useState("mes-atual");
   const [ano, setAno] = useState("2025");
   const [tipoFiltro, setTipoFiltro] = useState("todos");
   const [visualizacaoFaturamento, setVisualizacaoFaturamento] = useState<'mes' | 'ano'>('mes');
+  // Dados vazios para quando não há dados da empresa
+  const dadosVazios = {
+    faturamentoTotal: 0,
+    faturamentoProdutos: 0,
+    faturamentoServicos: 0,
+    totalNotas: 0,
+    pendenciasFiscais: 0,
+    variacaoMensal: 0,
+    variacaoAnual: 0,
+    faturamentoPorMes: [],
+    faturamentoPorAno: [],
+    notasEmitidas: { total: 0, nfe: 0, nfse: 0, autorizadas: 0, pendentes: 0, rejeitadas: 0, canceladas: 0 },
+    notasCanceladas: [],
+    notasDevolvidas: [],
+    cartasCorrecao: [],
+    faturamentoPorCliente: [],
+    faturamentoPorProduto: [],
+    faturamentoPorRegiao: [],
+    impostos: [],
+    tempoMedioEmissao: [],
+    taxaAprovacao: 0,
+  };
 
-  const data = mockDashboardData;
+  const data = temDadosEmpresa ? mockDashboardData : dadosVazios;
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -103,7 +133,13 @@ const DashboardRelatorios = () => {
       {/* Cabeçalho com Filtros */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Dashboard & Relatórios de Faturamento</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-foreground">Dashboard & Relatórios de Faturamento</h1>
+            <Badge variant="outline" className="flex items-center gap-1">
+              <Building2 className="h-3 w-3" />
+              {nomeEmpresaAtiva}
+            </Badge>
+          </div>
           <p className="text-muted-foreground">Análise completa de faturamento e documentos fiscais</p>
         </div>
         

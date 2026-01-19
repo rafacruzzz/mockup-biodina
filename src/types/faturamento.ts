@@ -136,6 +136,7 @@ export interface SolicitacaoAcaoFiscal {
 
 export interface ChecklistVenda {
   id: string;
+  empresaId: string;
   numeroPedido: string;
   cliente: string;
   cnpjCliente: string;
@@ -335,6 +336,7 @@ export interface ChecklistVenda {
 
 export interface ServicoFaturamento {
   id: string;
+  empresaId: string;
   descricao: string;
   cliente: string;
   cnpjCliente?: string;
@@ -553,6 +555,7 @@ export interface TituloReceber {
 
 export interface PedidoEntradaMercadoria {
   id: string;
+  empresaId: string;
   numeroPedido: string;
   tipo: 'Importacao' | 'Compra Nacional';
   fornecedor: string;

@@ -3,6 +3,7 @@ import { DocumentoFiscal, ChecklistVenda, ServicoFaturamento, ProtocoloSefaz, Ti
 export const mockChecklistVendas: ChecklistVenda[] = [
   {
     id: 'CHK001',
+    empresaId: 'biodina-001',
     numeroPedido: 'PED-2024-001',
     cliente: 'Farmácia Central Ltda',
     cnpjCliente: '12.345.678/0001-90',
@@ -265,6 +266,7 @@ export const mockChecklistVendas: ChecklistVenda[] = [
   },
   {
     id: 'CHK002',
+    empresaId: 'biodina-001',
     numeroPedido: 'PED-2024-002',
     cliente: 'Hospital São Lucas',
     cnpjCliente: '98.765.432/0001-10',
@@ -280,6 +282,7 @@ export const mockChecklistVendas: ChecklistVenda[] = [
   },
   {
     id: 'CHK003',
+    empresaId: 'biodina-001',
     numeroPedido: 'PED-2024-003',
     cliente: 'Drogaria Moderna',
     cnpjCliente: '11.222.333/0001-44',
@@ -295,6 +298,7 @@ export const mockChecklistVendas: ChecklistVenda[] = [
   },
   {
     id: 'CHK004',
+    empresaId: 'biodina-001',
     numeroPedido: 'PED-2024-004',
     cliente: 'Clínica Vida Nova',
     cnpjCliente: '22.333.444/0001-55',
@@ -488,6 +492,7 @@ export const mockDocumentosFiscais: DocumentoFiscal[] = [
 export const mockServicosFaturamento: ServicoFaturamento[] = [
   {
     id: 'SF001',
+    empresaId: 'biodina-001',
     descricao: 'Consultoria Regulatória ANVISA',
     descricaoDetalhada: 'Consultoria completa para adequação de processos às normas da ANVISA, incluindo análise documental e plano de ação.',
     cliente: 'Laboratório XYZ',
@@ -564,6 +569,7 @@ export const mockServicosFaturamento: ServicoFaturamento[] = [
   },
   {
     id: 'SF002',
+    empresaId: 'biodina-001',
     descricao: 'Assessoria Técnica em Registros',
     descricaoDetalhada: 'Assessoria especializada para registro de produtos na ANVISA.',
     cliente: 'Indústria Farmacêutica ABC',
@@ -583,6 +589,7 @@ export const mockServicosFaturamento: ServicoFaturamento[] = [
   },
   {
     id: 'SF003',
+    empresaId: 'biodina-001',
     descricao: 'Treinamento Boas Práticas',
     descricaoDetalhada: 'Treinamento completo sobre Boas Práticas de Fabricação (BPF).',
     cliente: 'Hospital Regional',
@@ -674,6 +681,7 @@ export const mockTitulosReceber: TituloReceber[] = [
 export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
   {
     id: 'ENT001',
+    empresaId: 'biodina-001',
     numeroPedido: 'IMP-2025-001',
     tipo: 'Importacao',
     fornecedor: 'MedTech USA Inc.',
@@ -708,6 +716,7 @@ export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
   },
   {
     id: 'ENT002',
+    empresaId: 'biodina-001',
     numeroPedido: 'IMP-2025-002',
     tipo: 'Importacao',
     fornecedor: 'BioLab Germany GmbH',
@@ -738,6 +747,7 @@ export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
   },
   {
     id: 'ENT003',
+    empresaId: 'biodina-001',
     numeroPedido: 'NAC-2025-010',
     tipo: 'Compra Nacional',
     fornecedor: 'Distribuidora Nacional Ltda',
@@ -769,6 +779,7 @@ export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
   },
   {
     id: 'ENT004',
+    empresaId: 'biodina-001',
     numeroPedido: 'IMP-2025-003',
     tipo: 'Importacao',
     fornecedor: 'Global Instruments Ltd',
@@ -802,6 +813,7 @@ export const mockPedidosEntrada: PedidoEntradaMercadoria[] = [
   },
   {
     id: 'ENT005',
+    empresaId: 'biodina-001',
     numeroPedido: 'IMP-2025-004',
     tipo: 'Importacao',
     fornecedor: 'Japan MedEquip Corp.',
