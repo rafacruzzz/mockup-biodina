@@ -167,15 +167,22 @@ export default function EmpresaParticipanteSelect({
             </SelectContent>
           </Select>
 
-          {/* Empresa selecionada - detalhes */}
-          {selectedEmpresa && (
-            <div className="p-3 bg-muted/50 rounded-lg">
+          {/* Empresa selecionada - detalhes (mostra da seleção ou das props quando há aprovação) */}
+          {(selectedEmpresa || (aprovacaoEmpresa && empresaParticipanteNome)) && (
+            <div className="p-3 bg-muted/50 rounded-lg border-2 border-primary/30">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">{selectedEmpresa.nome}</p>
-                  <p className="text-sm text-muted-foreground">CNPJ: {selectedEmpresa.cnpj}</p>
+                  <p className="text-xs text-muted-foreground uppercase font-semibold mb-1">
+                    Empresa Selecionada para Participação
+                  </p>
+                  <p className="font-medium text-lg">
+                    {selectedEmpresa?.nome || empresaParticipanteNome}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    CNPJ: {selectedEmpresa?.cnpj || empresaParticipanteCNPJ}
+                  </p>
                 </div>
-                {selectedEmpresa.documentacaoCompleta ? (
+                {selectedEmpresa?.documentacaoCompleta !== false ? (
                   <Badge variant="outline" className="text-green-600 border-green-300">
                     <FileCheck className="h-3 w-3 mr-1" />
                     Documentação OK
