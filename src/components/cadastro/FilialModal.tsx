@@ -9,9 +9,11 @@ import { Switch } from "@/components/ui/switch";
 import { Building2, MapPin, Package, Loader2 } from "lucide-react";
 import { Filial } from "@/types/super";
 import { useEmpresa } from "@/contexts/EmpresaContext";
-import { SeletorModulos } from "../super/SeletorModulos";
+import { SeletorModulosDetalhado } from "./SeletorModulosDetalhado";
 import { useCepLookup } from "@/hooks/useCepLookup";
 import { toast } from "sonner";
+import { ModuloEmpresa } from "@/types/permissions";
+import { modulosCompletosSistema } from "@/data/sistemaModulosCompletos";
 
 interface FilialModalProps {
   open: boolean;
@@ -60,7 +62,7 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
   const { empresaAtual, adicionarFilial, atualizarFilial } = useEmpresa();
   const { lookupCep, loading: cepLoading } = useCepLookup();
   const [activeTab, setActiveTab] = useState("info");
-  const [formData, setFormData] = useState<Partial<Filial>>({
+  const [formData, setFormData] = useState<Partial<Filial> & { modulosDetalhados?: ModuloEmpresa[] }>({
     nome: '',
     razaoSocial: '',
     cnpj: '',
@@ -71,6 +73,7 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
     telefone: '',
     discriminaImpostos: true,
     modulosHabilitados: [],
+    modulosDetalhados: [],
     endereco: {
       cep: '',
       logradouro: '',
@@ -82,9 +85,33 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
     }
   });
 
+  // Converter modulosHabilitados da empresa para formato detalhado (para limite)
+  const modulosDisponiveisDetalhados = empresaAtual?.modulosHabilitados || [];
+
   useEffect(() => {
     if (filial) {
-      setFormData(filial);
+      // Converter modulosHabilitados para modulosDetalhados se não existir
+      const modulosDetalhados = (filial as any).modulosDetalhados || 
+        (filial.modulosHabilitados?.map(key => {
+          const moduloDef = modulosCompletosSistema.find(m => m.key === key);
+          if (!moduloDef) return null;
+          return {
+            key: moduloDef.key,
+            name: moduloDef.name,
+            icon: moduloDef.icon,
+            habilitado: true,
+            subModulos: moduloDef.subModulos.map(s => ({
+              key: s.key,
+              name: s.name,
+              habilitado: true
+            }))
+          } as ModuloEmpresa;
+        }).filter(Boolean) as ModuloEmpresa[]) || [];
+      
+      setFormData({
+        ...filial,
+        modulosDetalhados
+      });
     } else {
       setFormData({
         nome: '',
@@ -97,6 +124,7 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
         telefone: '',
         discriminaImpostos: true,
         modulosHabilitados: [],
+        modulosDetalhados: [],
         endereco: {
           cep: '',
           logradouro: '',
@@ -144,14 +172,19 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
       return;
     }
 
-    if (formData.modulosHabilitados?.length === 0) {
+    // Verificar módulos detalhados
+    const modulosHabilitados = formData.modulosDetalhados?.filter(m => m.habilitado) || [];
+    if (modulosHabilitados.length === 0) {
       toast.error("Selecione pelo menos um módulo");
       return;
     }
 
+    // Converter modulosDetalhados para modulosHabilitados (compatibilidade)
+    const modulosHabilitadosKeys = modulosHabilitados.map(m => m.key);
+
     // Verificar se os módulos selecionados estão disponíveis na empresa principal
-    const modulosInvalidos = formData.modulosHabilitados?.filter(
-      mod => !empresaAtual?.modulosHabilitados.includes(mod)
+    const modulosInvalidos = modulosHabilitadosKeys.filter(
+      mod => !empresaAtual?.modulosHabilitados.some(m => m === mod || (typeof m === 'object' && (m as any).key === mod))
     );
 
     if (modulosInvalidos && modulosInvalidos.length > 0) {
@@ -451,14 +484,14 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
               <p className="text-sm text-blue-800">
                 ℹ️ A empresa principal <strong>{empresaAtual?.nome}</strong> possui{' '}
                 <strong>{empresaAtual?.modulosHabilitados.length} módulos</strong> disponíveis.
-                Selecione quais módulos esta filial terá acesso.
+                Selecione quais módulos e submódulos esta filial terá acesso.
               </p>
             </div>
 
-            <SeletorModulos
-              modulosSelecionados={formData.modulosHabilitados || []}
-              onChange={(modulos) => setFormData({ ...formData, modulosHabilitados: modulos })}
-              modulosDisponiveis={empresaAtual?.modulosHabilitados}
+            <SeletorModulosDetalhado
+              modulosSelecionados={formData.modulosDetalhados || []}
+              onChange={(modulos) => setFormData({ ...formData, modulosDetalhados: modulos })}
+              modulosDisponiveis={modulosDisponiveisDetalhados.map(m => typeof m === 'string' ? m : (m as any).key)}
             />
           </TabsContent>
         </Tabs>

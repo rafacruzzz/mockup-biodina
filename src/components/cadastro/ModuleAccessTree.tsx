@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Eye, Plus, Edit, Trash, Settings } from "lucide-react";
+import { ChevronDown, ChevronRight, Eye, Edit, Trash } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { modulosCompletosSistema, ModuloDefinicao } from "@/data/sistemaModulosCompletos";
 import { ModuloUsuario, SubModuloUsuario, Permission } from "@/types/permissions";
 
@@ -16,9 +17,10 @@ const defaultPermissions: Permission = {
   view: false,
   create: false,
   edit: false,
-  delete: false,
-  admin: false
+  delete: false
 };
+
+type PermissionLevel = 'view' | 'edit' | 'delete';
 
 const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: ModuleAccessTreeProps) => {
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
@@ -56,6 +58,26 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
     return subModulo?.habilitado ?? false;
   };
 
+  // Determina o nível de permissão atual
+  const getPermissionLevel = (permissions: Permission): PermissionLevel => {
+    if (permissions.delete) return 'delete';
+    if (permissions.edit || permissions.create) return 'edit';
+    return 'view';
+  };
+
+  // Converte nível de permissão para objeto Permission
+  const permissionLevelToPermission = (level: PermissionLevel): Permission => {
+    switch (level) {
+      case 'delete':
+        return { view: true, create: true, edit: true, delete: true };
+      case 'edit':
+        return { view: true, create: true, edit: true, delete: false };
+      case 'view':
+      default:
+        return { view: true, create: false, edit: false, delete: false };
+    }
+  };
+
   const handleModuloToggle = (moduloDef: ModuloDefinicao, checked: boolean) => {
     const existingModulo = getModuloSelecionado(moduloDef.key);
     
@@ -69,7 +91,7 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
           key: s.key,
           name: s.name,
           habilitado: true,
-          permissions: { view: true, create: false, edit: false, delete: false, admin: false }
+          permissions: { view: true, create: false, edit: false, delete: false }
         }))
       };
 
@@ -110,7 +132,7 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
             key: subModuloKey, 
             name: subDef?.name || subModuloKey, 
             habilitado: checked,
-            permissions: checked ? { view: true, create: false, edit: false, delete: false, admin: false } : defaultPermissions
+            permissions: checked ? { view: true, create: false, edit: false, delete: false } : defaultPermissions
           }
         ];
       }
@@ -133,7 +155,7 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
           name: s.name,
           habilitado: s.key === subModuloKey,
           permissions: s.key === subModuloKey 
-            ? { view: true, create: false, edit: false, delete: false, admin: false }
+            ? { view: true, create: false, edit: false, delete: false }
             : defaultPermissions
         }))
       };
@@ -141,15 +163,17 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
     }
   };
 
-  const handlePermissionChange = (moduloKey: string, subModuloKey: string, permission: keyof Permission, value: boolean) => {
+  const handlePermissionLevelChange = (moduloKey: string, subModuloKey: string, level: PermissionLevel) => {
     const existingModulo = getModuloSelecionado(moduloKey);
     if (!existingModulo) return;
+
+    const newPermissions = permissionLevelToPermission(level);
 
     const updatedSubModulos = existingModulo.subModulos.map(s => {
       if (s.key === subModuloKey) {
         return {
           ...s,
-          permissions: { ...s.permissions, [permission]: value }
+          permissions: newPermissions
         };
       }
       return s;
@@ -160,34 +184,6 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
         ? { ...m, subModulos: updatedSubModulos }
         : m
     ));
-  };
-
-  const getPermissionIcon = (permission: keyof Permission) => {
-    switch (permission) {
-      case 'view': return <Eye className="h-3 w-3" />;
-      case 'create': return <Plus className="h-3 w-3" />;
-      case 'edit': return <Edit className="h-3 w-3" />;
-      case 'delete': return <Trash className="h-3 w-3" />;
-      case 'admin': return <Settings className="h-3 w-3" />;
-    }
-  };
-
-  const getPermissionLabel = (permission: keyof Permission) => {
-    switch (permission) {
-      case 'view': return 'Ver';
-      case 'create': return 'Criar';
-      case 'edit': return 'Editar';
-      case 'delete': return 'Excluir';
-      case 'admin': return 'Admin';
-    }
-  };
-
-  const getActivePermissionsCount = (moduloKey: string): number => {
-    const modulo = getModuloSelecionado(moduloKey);
-    if (!modulo) return 0;
-    return modulo.subModulos.reduce((total, subModule) => {
-      return total + Object.values(subModule.permissions).filter(Boolean).length;
-    }, 0);
   };
 
   const getSubModulosHabilitadosCount = (moduloKey: string): number => {
@@ -201,7 +197,6 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
       {modulosParaMostrar.map((moduloDef) => {
         const isExpanded = expandedModules.includes(moduloDef.key);
         const isEnabled = isModuloHabilitado(moduloDef.key);
-        const activePermissions = getActivePermissionsCount(moduloDef.key);
         const subModulosCount = getSubModulosHabilitadosCount(moduloDef.key);
         
         return (
@@ -237,12 +232,6 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
                     {subModulosCount}/{moduloDef.subModulos.length} submódulos
                   </Badge>
                 )}
-                
-                {activePermissions > 0 && (
-                  <Badge variant="outline" className="text-xs">
-                    {activePermissions} permissões
-                  </Badge>
-                )}
               </div>
             </div>
 
@@ -252,10 +241,11 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
                   {moduloDef.subModulos.map((subModuloDef) => {
                     const isSubEnabled = isSubModuloHabilitado(moduloDef.key, subModuloDef.key);
                     const subModulo = getSubModulo(moduloDef.key, subModuloDef.key);
+                    const currentLevel = subModulo ? getPermissionLevel(subModulo.permissions) : 'view';
                     
                     return (
                       <div key={subModuloDef.key} className={`bg-white rounded p-3 border ${isSubEnabled ? 'border-primary/30' : ''}`}>
-                        <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <Checkbox
                               id={`submodule-${moduloDef.key}-${subModuloDef.key}`}
@@ -271,30 +261,50 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
                               {subModuloDef.name}
                             </Label>
                           </div>
-                        </div>
-                        
-                        {isSubEnabled && (
-                          <div className="grid grid-cols-5 gap-2 mt-2 pl-6">
-                            {(['view', 'create', 'edit', 'delete', 'admin'] as const).map((permission) => (
-                              <div key={permission} className="flex items-center space-x-1">
-                                <Checkbox
-                                  id={`${moduloDef.key}-${subModuloDef.key}-${permission}`}
-                                  checked={subModulo?.permissions[permission] ?? false}
-                                  onCheckedChange={(checked) => 
-                                    handlePermissionChange(moduloDef.key, subModuloDef.key, permission, checked as boolean)
-                                  }
-                                />
+                          
+                          {isSubEnabled && (
+                            <RadioGroup
+                              value={currentLevel}
+                              onValueChange={(value) => 
+                                handlePermissionLevelChange(moduloDef.key, subModuloDef.key, value as PermissionLevel)
+                              }
+                              className="flex items-center space-x-4"
+                            >
+                              <div className="flex items-center space-x-1">
+                                <RadioGroupItem value="view" id={`${moduloDef.key}-${subModuloDef.key}-view`} />
                                 <Label 
-                                  htmlFor={`${moduloDef.key}-${subModuloDef.key}-${permission}`}
+                                  htmlFor={`${moduloDef.key}-${subModuloDef.key}-view`}
                                   className="text-xs flex items-center space-x-1 cursor-pointer"
                                 >
-                                  {getPermissionIcon(permission)}
-                                  <span>{getPermissionLabel(permission)}</span>
+                                  <Eye className="h-3 w-3" />
+                                  <span>Ver</span>
                                 </Label>
                               </div>
-                            ))}
-                          </div>
-                        )}
+                              
+                              <div className="flex items-center space-x-1">
+                                <RadioGroupItem value="edit" id={`${moduloDef.key}-${subModuloDef.key}-edit`} />
+                                <Label 
+                                  htmlFor={`${moduloDef.key}-${subModuloDef.key}-edit`}
+                                  className="text-xs flex items-center space-x-1 cursor-pointer"
+                                >
+                                  <Edit className="h-3 w-3" />
+                                  <span>Ver/Editar</span>
+                                </Label>
+                              </div>
+                              
+                              <div className="flex items-center space-x-1">
+                                <RadioGroupItem value="delete" id={`${moduloDef.key}-${subModuloDef.key}-delete`} />
+                                <Label 
+                                  htmlFor={`${moduloDef.key}-${subModuloDef.key}-delete`}
+                                  className="text-xs flex items-center space-x-1 cursor-pointer"
+                                >
+                                  <Trash className="h-3 w-3" />
+                                  <span>Excluir</span>
+                                </Label>
+                              </div>
+                            </RadioGroup>
+                          )}
+                        </div>
                       </div>
                     );
                   })}

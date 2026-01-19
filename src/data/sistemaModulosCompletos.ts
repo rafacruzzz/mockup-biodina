@@ -14,6 +14,16 @@ export interface ModuloDefinicao {
 
 export const modulosCompletosSistema: ModuloDefinicao[] = [
   {
+    key: 'bi',
+    name: 'BI Geral',
+    icon: '📈',
+    subModulos: [
+      { key: 'dashboards', name: 'Dashboards' },
+      { key: 'relatorios', name: 'Relatórios' },
+      { key: 'indicadores', name: 'Indicadores' }
+    ]
+  },
+  {
     key: 'cadastro',
     name: 'Cadastro',
     icon: '📋',
@@ -28,6 +38,18 @@ export const modulosCompletosSistema: ModuloDefinicao[] = [
     ]
   },
   {
+    key: 'administrativo',
+    name: 'Administrativo',
+    icon: '🗃️',
+    subModulos: [
+      { key: 'regulatorio', name: 'Regulatório' },
+      { key: 'qualidade', name: 'Qualidade' },
+      { key: 'juridico', name: 'Jurídico' },
+      { key: 'contratos', name: 'Contratos' },
+      { key: 'documentos', name: 'Documentos' }
+    ]
+  },
+  {
     key: 'comercial',
     name: 'Comercial',
     icon: '💼',
@@ -36,15 +58,6 @@ export const modulosCompletosSistema: ModuloDefinicao[] = [
       { key: 'vendas', name: 'Vendas' },
       { key: 'pre_venda', name: 'Pré-Venda' },
       { key: 'pos_venda', name: 'Pós-Venda' }
-    ]
-  },
-  {
-    key: 'compras',
-    name: 'CPR (Compras para Revenda)',
-    icon: '📦',
-    subModulos: [
-      { key: 'pedidos', name: 'Mercadoria para Revenda' },
-      { key: 'importacao', name: 'Importação/DI' }
     ]
   },
   {
@@ -57,6 +70,15 @@ export const modulosCompletosSistema: ModuloDefinicao[] = [
       { key: 'inventario', name: 'Inventário' },
       { key: 'expedicao', name: 'Expedição' },
       { key: 'administracao', name: 'Administração' }
+    ]
+  },
+  {
+    key: 'compras',
+    name: 'CPR (Compras para Revenda)',
+    icon: '📦',
+    subModulos: [
+      { key: 'pedidos', name: 'Mercadoria para Revenda' },
+      { key: 'importacao', name: 'Importação/DI' }
     ]
   },
   {
@@ -109,18 +131,6 @@ export const modulosCompletosSistema: ModuloDefinicao[] = [
     ]
   },
   {
-    key: 'administrativo',
-    name: 'Administrativo',
-    icon: '🗃️',
-    subModulos: [
-      { key: 'regulatorio', name: 'Regulatório' },
-      { key: 'qualidade', name: 'Qualidade' },
-      { key: 'juridico', name: 'Jurídico' },
-      { key: 'contratos', name: 'Contratos' },
-      { key: 'documentos', name: 'Documentos' }
-    ]
-  },
-  {
     key: 'solicitacoes',
     name: 'Solicitações',
     icon: '📝',
@@ -128,16 +138,6 @@ export const modulosCompletosSistema: ModuloDefinicao[] = [
       { key: 'minhas_solicitacoes', name: 'Minhas Solicitações' },
       { key: 'aprovacoes', name: 'Aprovações' },
       { key: 'historico', name: 'Histórico' }
-    ]
-  },
-  {
-    key: 'bi',
-    name: 'BI Geral',
-    icon: '📈',
-    subModulos: [
-      { key: 'dashboards', name: 'Dashboards' },
-      { key: 'relatorios', name: 'Relatórios' },
-      { key: 'indicadores', name: 'Indicadores' }
     ]
   },
   {
