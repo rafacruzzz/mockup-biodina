@@ -4,7 +4,6 @@ export interface Permission {
   create: boolean;
   edit: boolean;
   delete: boolean;
-  admin: boolean;
 }
 
 export interface SubModule {
