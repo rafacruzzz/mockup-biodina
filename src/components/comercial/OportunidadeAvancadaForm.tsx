@@ -23,7 +23,10 @@ import PedidoForm from "./PedidoForm";
 import CustomAlertModal from "./components/CustomAlertModal";
 import SolicitacaoCadastroModal from "./SolicitacaoCadastroModal";
 import GerenciarSegmentosModal from "./GerenciarSegmentosModal";
+import EmpresaParticipanteSelect from "./EmpresaParticipanteSelect";
+import AprovacaoEmpresaModal from "./AprovacaoEmpresaModal";
 import { concorrentes as mockConcorrentes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
+import { AprovacaoEmpresa } from "@/types/licitacao";
 
 // Tipo para licitantes
 interface LicitanteItem {
@@ -123,6 +126,17 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   const [showConcorrenteModal, setShowConcorrenteModal] = useState(false);
   const [showPedidoForm, setShowPedidoForm] = useState(false);
   const [showLicitanteModal, setShowLicitanteModal] = useState(false);
+  const [showAprovacaoEmpresaModal, setShowAprovacaoEmpresaModal] = useState(false);
+  
+  // Estados para empresa participante
+  const [empresaParticipante, setEmpresaParticipante] = useState({
+    empresaParticipanteId: oportunidade?.empresaParticipanteId || '',
+    empresaParticipanteNome: oportunidade?.empresaParticipanteNome || '',
+    empresaParticipanteCNPJ: oportunidade?.empresaParticipanteCNPJ || ''
+  });
+  const [aprovacaoEmpresa, setAprovacaoEmpresa] = useState<AprovacaoEmpresa | undefined>(
+    oportunidade?.aprovacaoEmpresa
+  );
   
   // Estado para múltiplas tabelas de licitantes (inicia com uma tabela padrão)
   const [tabelasLicitantes, setTabelasLicitantes] = useState<TabelaLicitantes[]>([
@@ -303,7 +317,54 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({ ...formData, tabelasLicitantes });
+    
+    // Validação: empresa participante obrigatória
+    if (!empresaParticipante.empresaParticipanteId) {
+      toast({
+        title: "Campo obrigatório",
+        description: "Selecione a empresa participante da licitação antes de salvar.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    onSave({ 
+      ...formData, 
+      tabelasLicitantes,
+      ...empresaParticipante,
+      aprovacaoEmpresa 
+    });
+  };
+  
+  const handleEmpresaParticipanteChange = (data: {
+    empresaParticipanteId: string;
+    empresaParticipanteNome: string;
+    empresaParticipanteCNPJ: string;
+  }) => {
+    setEmpresaParticipante(data);
+    // Resetar aprovação quando muda a empresa
+    setAprovacaoEmpresa(undefined);
+  };
+  
+  const handleSolicitarAprovacao = () => {
+    setAprovacaoEmpresa({
+      status: 'pendente',
+      observacao: 'Aguardando aprovação gerencial'
+    });
+    toast({
+      title: "Solicitação enviada",
+      description: "A solicitação de aprovação foi enviada ao gestor comercial.",
+    });
+  };
+  
+  const handleAprovacaoEmpresa = (aprovacao: AprovacaoEmpresa) => {
+    setAprovacaoEmpresa(aprovacao);
+  };
+  
+  // Verifica se pode avançar para fase de proposta
+  const canAdvanceToProposal = () => {
+    return empresaParticipante.empresaParticipanteId && 
+           aprovacaoEmpresa?.status === 'aprovado';
   };
 
   const handleAdicionarTabela = () => {
@@ -1212,6 +1273,18 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
       <div className="border rounded-lg p-4 space-y-4 bg-green-50">
         <h3 className="text-lg font-semibold text-gray-800">Estratégia e Planejamento</h3>
         
+        {/* Empresa Participante - Campo Obrigatório */}
+        <EmpresaParticipanteSelect
+          empresaParticipanteId={empresaParticipante.empresaParticipanteId}
+          empresaParticipanteNome={empresaParticipante.empresaParticipanteNome}
+          empresaParticipanteCNPJ={empresaParticipante.empresaParticipanteCNPJ}
+          aprovacaoEmpresa={aprovacaoEmpresa}
+          onChange={handleEmpresaParticipanteChange}
+          onSolicitarAprovacao={handleSolicitarAprovacao}
+          disabled={isReadOnlyMode()}
+          required={true}
+        />
+        
         <div>
           <Label htmlFor="estrategiaParticipacao">Estratégia de Participação</Label>
           <Textarea
@@ -1757,6 +1830,22 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </div>
         </DialogContent>
       </Dialog>
+      
+      {/* Modal de Aprovação de Empresa */}
+      <AprovacaoEmpresaModal
+        isOpen={showAprovacaoEmpresaModal}
+        onClose={() => setShowAprovacaoEmpresaModal(false)}
+        licitacaoData={{
+          id: oportunidade?.id || 0,
+          numeroPregao: formData.numeroPregao || '',
+          nomeInstituicao: formData.cliente || '',
+          objetoLicitacao: formData.descricao || '',
+          empresaParticipanteNome: empresaParticipante.empresaParticipanteNome,
+          empresaParticipanteCNPJ: empresaParticipante.empresaParticipanteCNPJ
+        }}
+        onAprovar={handleAprovacaoEmpresa}
+        onRejeitar={handleAprovacaoEmpresa}
+      />
     </div>
   );
 };
