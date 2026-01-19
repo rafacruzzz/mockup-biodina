@@ -482,6 +482,17 @@ const Comercial = () => {
   const handleLicitacaoConvertida = (licitacaoData: any) => {
     console.log('Processando licitação convertida automaticamente:', licitacaoData);
     
+    // Validação: empresa participante deve estar selecionada e aprovada
+    if (!licitacaoData.empresaParticipanteId) {
+      alert('Erro: Não é possível converter a licitação sem uma empresa participante selecionada.');
+      return;
+    }
+    
+    if (licitacaoData.aprovacaoEmpresa?.status !== 'aprovado') {
+      alert('Erro: A empresa participante precisa estar aprovada pelo gestor antes da conversão.');
+      return;
+    }
+    
     const novaOportunidade = {
       id: Date.now(),
       codigo: `LIC-${licitacaoData.numeroPregao}`,
@@ -504,11 +515,28 @@ const Comercial = () => {
       modalidade: 'comercial_administrativo',
       descricao: `Oportunidade criada automaticamente da licitação ${licitacaoData.numeroPregao} - ${licitacaoData.objetoLicitacao}`,
       produtos: [],
-      servicos: []
+      servicos: [],
+      
+      // Herança de dados jurídicos da licitação aprovada
+      empresaContratanteId: licitacaoData.empresaParticipanteId,
+      empresaContratanteNome: licitacaoData.empresaParticipanteNome,
+      empresaContratanteCNPJ: licitacaoData.empresaParticipanteCNPJ,
+      
+      // Rastreabilidade da origem
+      origemLicitacao: {
+        id: licitacaoData.id,
+        numeroPregao: licitacaoData.numeroPregao,
+        dataAprovacao: licitacaoData.aprovacaoEmpresa?.aprovadoEm,
+        aprovadoPor: licitacaoData.aprovacaoEmpresa?.aprovadoPor,
+        observacaoAprovacao: licitacaoData.aprovacaoEmpresa?.observacao
+      },
+      
+      // Histórico de aditivos (inicialmente vazio)
+      aditivos: []
     };
 
-    console.log('Nova oportunidade criada:', novaOportunidade);
-    alert(`Licitação convertida com sucesso! Uma nova oportunidade foi criada automaticamente no Comercial Administrativo.`);
+    console.log('Nova oportunidade criada com dados jurídicos herdados:', novaOportunidade);
+    alert(`Licitação convertida com sucesso! Uma nova oportunidade foi criada automaticamente no Comercial Administrativo com os dados jurídicos da empresa ${licitacaoData.empresaParticipanteNome}.`);
   };
 
   const renderMainModules = () => (
