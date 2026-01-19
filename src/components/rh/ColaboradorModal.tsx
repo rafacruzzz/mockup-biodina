@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Save, User, Bell, UserMinus, AlertTriangle, Monitor, Shield, AlertCircle } from "lucide-react";
 import { ColaboradorData } from "@/types/colaborador";
-import { ModuleAccess, EmpresaVinculada } from "@/types/permissions";
+import { ModuloUsuario, EmpresaVinculada } from "@/types/permissions";
 import { getSolicitacoesByColaborador } from "@/data/solicitacoes";
 import { useColaboradores } from "@/hooks/useColaboradores";
 import { useEmpresa } from "@/contexts/EmpresaContext";
@@ -22,7 +22,6 @@ import SolicitacoesTab from "./tabs/SolicitacoesTab";
 import DesligamentoTab from "./tabs/DesligamentoTab";
 import DesligarColaboradorModal from "./DesligarColaboradorModal";
 import TITab from "./tabs/TITab";
-import AccessProfileSelector from "../cadastro/AccessProfileSelector";
 import ModuleAccessTree from "../cadastro/ModuleAccessTree";
 import { EmpresasDoUsuario } from "../cadastro/EmpresasDoUsuario";
 
@@ -57,7 +56,7 @@ const ColaboradorModal = ({
     confirmPassword?: string;
     userType?: string;
     isActive?: boolean;
-    moduleAccess?: ModuleAccess[];
+    moduleAccess?: ModuloUsuario[];
     empresasVinculadas?: EmpresaVinculada[];
   }>({
     dadosPessoais: {
@@ -255,7 +254,7 @@ const ColaboradorModal = ({
     }));
   };
 
-  const handleModuleAccessChange = (modules: ModuleAccess[]) => {
+  const handleModuleAccessChange = (modules: ModuloUsuario[]) => {
     setFormData(prev => ({
       ...prev,
       moduleAccess: modules
@@ -567,18 +566,15 @@ const ColaboradorModal = ({
                     )}
 
                     <div className="space-y-4">
-                      <AccessProfileSelector onProfileSelect={handleModuleAccessChange} />
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="border-t pt-6">
+                      <div>
                         <h4 className="font-medium text-gray-900 mb-4">Permissões Detalhadas</h4>
                         <p className="text-sm text-gray-600 mb-4">
-                          Configure permissões específicas para cada módulo e funcionalidade
+                          Configure permissões específicas para cada módulo e submódulo
                         </p>
                         <ModuleAccessTree 
                           modules={formData.moduleAccess || []}
                           onModuleChange={handleModuleAccessChange}
+                          modulosDisponiveis={modulosDisponiveis as string[]}
                         />
                       </div>
                     </div>

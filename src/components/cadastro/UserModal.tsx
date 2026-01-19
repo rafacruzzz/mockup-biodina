@@ -15,10 +15,10 @@ import { useModulosUsuario } from "@/hooks/useModulosUsuario";
 import ColaboradorSelector from "./ColaboradorSelector";
 import UserColaboradorLink from "./UserColaboradorLink";
 import ColaboradorModal from "../rh/ColaboradorModal";
-import AccessProfileSelector from "./AccessProfileSelector";
 import ModuleAccessTree from "./ModuleAccessTree";
 import { EmpresasDoUsuario } from "./EmpresasDoUsuario";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ModuloUsuario } from "@/types/permissions";
 import { AlertCircle } from "lucide-react";
 
 interface UserData {
@@ -36,7 +36,7 @@ interface UserData {
   // Controle de sistema
   isActive: boolean;
   userType: string;
-  moduleAccess: ModuleAccess[];
+  moduleAccess: ModuloUsuario[];
   // Vínculo com empresas
   empresasVinculadas: EmpresaVinculada[];
 }
@@ -103,7 +103,7 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
     }));
   };
 
-  const handleModuleAccessChange = (modules: ModuleAccess[]) => {
+  const handleModuleAccessChange = (modules: ModuloUsuario[]) => {
     // Filtrar apenas módulos que estão disponíveis nas empresas vinculadas
     const modulosFiltrados = modules.filter(module => 
       modulosDisponiveis.includes(module.key as any)
@@ -345,29 +345,24 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
                     </Alert>
                   )}
 
-                  {/* Seletor de Perfil */}
+                  {/* Árvore de Permissões Detalhadas */}
                   <div className="space-y-4">
-                    <AccessProfileSelector onProfileSelect={handleModuleAccessChange} />
-                  </div>
-
-                  {/* Árvore de Permissões */}
-                  <div className="space-y-4">
-                    <div className="border-t pt-6">
+                    <div>
                       <h4 className="font-medium text-gray-900 mb-4">Permissões Detalhadas</h4>
                       <p className="text-sm text-gray-600 mb-4">
-                        Configure permissões específicas para cada módulo e funcionalidade
+                        Configure permissões específicas para cada módulo e submódulo. Selecione quais funcionalidades o usuário poderá acessar.
                       </p>
-                      {formData.moduleAccess.length > 0 && (
+                      {modulosDisponiveis.length > 0 && (
                         <div className="mb-4 p-3 bg-blue-50 rounded-lg">
                           <p className="text-sm text-blue-800">
-                            <strong>Módulos limitados pelas empresas:</strong> Se um módulo não estiver disponível
-                            em alguma empresa vinculada, ele não será visível para o usuário naquela empresa.
+                            <strong>Módulos limitados pelas empresas:</strong> Apenas módulos habilitados nas empresas vinculadas estão disponíveis para seleção.
                           </p>
                         </div>
                       )}
                       <ModuleAccessTree 
                         modules={formData.moduleAccess}
                         onModuleChange={handleModuleAccessChange}
+                        modulosDisponiveis={modulosDisponiveis as string[]}
                       />
                     </div>
                   </div>

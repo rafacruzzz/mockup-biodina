@@ -8,9 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Shield } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import type { UsuarioRede } from "@/types/ti";
-import type { ModuleAccess } from "@/types/permissions";
+import type { ModuloUsuario } from "@/types/permissions";
 import ModuleAccessTree from "../../cadastro/ModuleAccessTree";
-import AccessProfileSelector from "../../cadastro/AccessProfileSelector";
 
 interface EditarPermissoesModalProps {
   open: boolean;
@@ -32,7 +31,7 @@ const gruposDisponiveis = [
 
 export const EditarPermissoesModal = ({ open, onClose, user }: EditarPermissoesModalProps) => {
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
-  const [moduleAccess, setModuleAccess] = useState<ModuleAccess[]>([]);
+  const [moduleAccess, setModuleAccess] = useState<ModuloUsuario[]>([]);
 
   useEffect(() => {
     if (user) {
@@ -54,7 +53,7 @@ export const EditarPermissoesModal = ({ open, onClose, user }: EditarPermissoesM
     
     // Validar se tem pelo menos um tipo de permissão
     const hasGrupoPermissao = selectedGroups.length > 0;
-    const hasModuleAccess = moduleAccess.some(m => m.enabled);
+    const hasModuleAccess = moduleAccess.some(m => m.habilitado);
     
     if (!hasGrupoPermissao && !hasModuleAccess) {
       toast({
@@ -162,13 +161,11 @@ export const EditarPermissoesModal = ({ open, onClose, user }: EditarPermissoesM
                   Permissões Detalhadas por Módulo
                 </h3>
                 <p className="text-sm text-gray-600 mb-4">
-                  Configure permissões granulares de acesso aos módulos do sistema
+                  Configure permissões granulares de acesso aos módulos e submódulos do sistema
                 </p>
               </div>
-
-              <AccessProfileSelector onProfileSelect={setModuleAccess} />
               
-              <div className="border-t pt-4">
+              <div>
                 <h4 className="font-medium text-gray-900 mb-3">
                   Permissões Detalhadas
                 </h4>
