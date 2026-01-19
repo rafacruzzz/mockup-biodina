@@ -22,6 +22,7 @@ const ConciliacaoBancariaView = () => {
   const [contasPagar] = useState<ContaPagar[]>([
     {
       id: 'CP-001',
+      empresaId: 'biodina-001',
       numero: 'CP-001',
       tipo: TipoRequisicaoSimples.COMPRA,
       departamentoSolicitante: 'Administrativo',
@@ -37,6 +38,7 @@ const ConciliacaoBancariaView = () => {
     },
     {
       id: 'CP-002',
+      empresaId: 'biodina-001',
       numero: 'CP-002',
       tipo: TipoRequisicaoSimples.OUTROS,
       departamentoSolicitante: 'Administrativo',
@@ -52,6 +54,7 @@ const ConciliacaoBancariaView = () => {
     },
     {
       id: 'CP-003',
+      empresaId: 'biodina-001',
       numero: 'CP-003',
       tipo: TipoRequisicaoSimples.OUTROS,
       departamentoSolicitante: 'TI',

@@ -63,6 +63,8 @@ export interface HistoricoPedido {
 
 export interface Requisicao {
   id: string;
+  empresaId: string; // CNPJ/ID da empresa responsável
+  filialId?: string; // Opcional, se for filial
   numeroRequisicao: string;
   dataCreacao: Date;
   dataVencimento: Date;
@@ -195,6 +197,8 @@ export interface DadosBancarios {
 
 export interface ContaRecorrente {
   id: string;
+  empresaId: string; // CNPJ/ID da empresa responsável
+  filialId?: string; // Opcional, se for filial
   nome: string;
   fornecedor: Fornecedor;
   valor: number;
@@ -209,6 +213,8 @@ export interface ContaRecorrente {
 }
 
 export interface CalendarioItem {
+  empresaId: string; // CNPJ/ID da empresa responsável
+  filialId?: string; // Opcional, se for filial
   data: Date;
   contas: ContaCalendario[];
   totalValor: number;
@@ -388,6 +394,8 @@ export const URGENCIA_COLORS: Record<UrgenciaVencimento, string> = {
 // Simplified ContaPagar interface for the modals
 export interface ContaPagar {
   id: string;
+  empresaId: string; // CNPJ/ID da empresa responsável
+  filialId?: string; // Opcional, se for filial
   numero: string;
   tipo: TipoRequisicaoSimples;
   departamentoSolicitante: string;
