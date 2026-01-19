@@ -61,7 +61,7 @@ const Comercial = () => {
   const todasOportunidades = [
     { 
       id: 1,
-      empresaId: 'master-001', // Empresa principal
+      empresaId: 'biodina-001', // Empresa principal
       codigo: '10678',
       cliente: 'Associação das Pioneiras Sociais',
       contato: 'Ramal - 3319-1111',
@@ -86,7 +86,7 @@ const Comercial = () => {
     },
     { 
       id: 2,
-      empresaId: 'master-001', // Empresa principal
+      empresaId: 'biodina-001', // Empresa principal
       codigo: '10679',
       cliente: 'Hospital Universitário Onofre Lopes',
       contato: 'contato@huol.ufrn.br',
@@ -162,7 +162,7 @@ const Comercial = () => {
     // EXEMPLO: Licitação SEM empresa participante - para testar seleção
     {
       id: 101,
-      empresaId: 'master-001',
+      empresaId: 'biodina-001',
       codigo: 'LIC-2024-001',
       cliente: 'Prefeitura Municipal de Campinas',
       contato: 'licitacoes@campinas.sp.gov.br',
@@ -188,7 +188,7 @@ const Comercial = () => {
     // EXEMPLO: Licitação COM empresa aguardando aprovação - para testar modal de aprovação
     {
       id: 102,
-      empresaId: 'master-001',
+      empresaId: 'biodina-001',
       codigo: 'LIC-2024-002',
       cliente: 'EMBRAPA - Empresa Brasileira de Pesquisa Agropecuária',
       contato: 'compras@embrapa.br',
@@ -219,7 +219,7 @@ const Comercial = () => {
     },
     {
       id: 5,
-      empresaId: 'master-001', // Empresa principal
+      empresaId: 'biodina-001', // Empresa principal
       codigo: '10682',
       cliente: 'Hospital Albert Einstein',
       contato: 'compras@einstein.br',
@@ -245,7 +245,7 @@ const Comercial = () => {
     // Exemplos de Importação Direta
     {
       id: 'IMP-2024-001',
-      empresaId: 'master-001', // Empresa principal
+      empresaId: 'biodina-001', // Empresa principal
       codigo: 'IMP-2024-001',
       cliente: 'Hospital Albert Einstein',
       contato: 'compras@einstein.br',
