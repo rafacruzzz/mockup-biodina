@@ -22,6 +22,34 @@ export interface PedidoFinanceiro {
   historico: HistoricoPedido[];
   createdAt: string;
   updatedAt: string;
+  
+  // Dados jurídicos herdados da licitação
+  empresaContratanteId?: string;
+  empresaContratanteNome?: string;
+  empresaContratanteCNPJ?: string;
+  origemLicitacao?: {
+    id: number;
+    numeroPregao: string;
+    dataAprovacao?: string;
+    aprovadoPor?: string;
+    observacaoAprovacao?: string;
+  };
+  aditivos?: AditivoContratualFinanceiro[];
+}
+
+// Interface para aditivos contratuais no financeiro
+export interface AditivoContratualFinanceiro {
+  id: string;
+  tipo: 'alteracao_cnpj' | 'aditivo_valor' | 'aditivo_prazo' | 'outros';
+  dataRegistro: string;
+  cnpjAnterior?: string;
+  cnpjNovo?: string;
+  empresaAnteriorNome?: string;
+  empresaNovoNome?: string;
+  justificativa: string;
+  documentoUrl: string;
+  validadoPor: string;
+  validadoEm: string;
 }
 
 export interface HistoricoPedido {
