@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { X, Save } from "lucide-react";
+import { EmpresasVisiveis, EmpresaVisivel } from "./EmpresasVisiveis";
 
 interface ServiceModalProps {
   isOpen: boolean;
@@ -13,6 +14,8 @@ interface ServiceModalProps {
 }
 
 const ServiceModal = ({ isOpen, onClose }: ServiceModalProps) => {
+  const [empresasVisiveis, setEmpresasVisiveis] = useState<EmpresaVisivel[]>([]);
+  const [todasEmpresas, setTodasEmpresas] = useState(true);
   const [formData, setFormData] = useState({
     // Informações Básicas
     codigo: "",
@@ -436,10 +439,21 @@ const ServiceModal = ({ isOpen, onClose }: ServiceModalProps) => {
                     disabled
                     className="bg-gray-100"
                   />
-                </div>
               </div>
             </div>
+
+            {/* Visibilidade por Empresa */}
+            <div>
+              <h3 className="text-lg font-medium text-biodina-blue mb-4">Visibilidade por Empresa</h3>
+              <EmpresasVisiveis
+                empresasVisiveis={empresasVisiveis}
+                onEmpresasChange={setEmpresasVisiveis}
+                todasEmpresas={todasEmpresas}
+                onTodasEmpresasChange={setTodasEmpresas}
+              />
+            </div>
           </div>
+        </div>
         </div>
 
         <div className="flex justify-end gap-4 p-6 border-t">

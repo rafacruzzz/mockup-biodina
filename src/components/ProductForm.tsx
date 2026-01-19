@@ -8,8 +8,12 @@ import InformacaoBasicaTab from "./product/InformacaoBasicaTab";
 import EstoqueTab from "./product/EstoqueTab";
 import UltimasMovimentacoesTab from "./product/UltimasMovimentacoesTab";
 import FiscalTab from "./product/FiscalTab";
+import { EmpresasVisiveis, EmpresaVisivel } from "./cadastro/EmpresasVisiveis";
 
 const ProductForm = ({ onClose }: { onClose: () => void }) => {
+  const [empresasVisiveis, setEmpresasVisiveis] = useState<EmpresaVisivel[]>([]);
+  const [todasEmpresas, setTodasEmpresas] = useState(true);
+
   const [formData, setFormData] = useState({
     // Informações Básicas
     nome: "",
@@ -118,11 +122,12 @@ const ProductForm = ({ onClose }: { onClose: () => void }) => {
 
         <form onSubmit={handleSubmit} className="p-6">
           <Tabs defaultValue="informacoes-basicas" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-6">
+            <TabsList className="grid w-full grid-cols-5 mb-6">
               <TabsTrigger value="informacoes-basicas">Informações Básicas</TabsTrigger>
               <TabsTrigger value="estoque">Estoque</TabsTrigger>
               <TabsTrigger value="movimentacoes">Últimas Movimentações</TabsTrigger>
               <TabsTrigger value="fiscal">Fiscal</TabsTrigger>
+              <TabsTrigger value="empresas">Empresas</TabsTrigger>
             </TabsList>
 
             <TabsContent value="informacoes-basicas">
@@ -144,6 +149,15 @@ const ProductForm = ({ onClose }: { onClose: () => void }) => {
               <FiscalTab 
                 formData={formData} 
                 onInputChange={handleInputChange} 
+              />
+            </TabsContent>
+
+            <TabsContent value="empresas">
+              <EmpresasVisiveis
+                empresasVisiveis={empresasVisiveis}
+                onEmpresasChange={setEmpresasVisiveis}
+                todasEmpresas={todasEmpresas}
+                onTodasEmpresasChange={setTodasEmpresas}
               />
             </TabsContent>
           </Tabs>

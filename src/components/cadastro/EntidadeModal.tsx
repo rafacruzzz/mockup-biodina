@@ -11,6 +11,7 @@ import { X, Save, Upload, Trash2, FileText, Plus, Link2 } from "lucide-react";
 import { useCepLookup } from "@/hooks/useCepLookup";
 import { mockCertificados } from "@/data/boasPraticas";
 import { getStatusLabel, getStatusColor, getAlertaVencimento } from "@/types/boasPraticas";
+import { EmpresasVisiveis, EmpresaVisivel } from "./EmpresasVisiveis";
 
 interface EntidadeModalProps {
   isOpen: boolean;
@@ -23,6 +24,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
   const [uploadedDocs, setUploadedDocs] = useState<Array<{ name: string; size: number; type: string }>>([]);
   const [certificadosVinculados, setCertificadosVinculados] = useState<string[]>([]);
   const [certificadoSelecionado, setCertificadoSelecionado] = useState<string>("");
+  const [empresasVisiveis, setEmpresasVisiveis] = useState<EmpresaVisivel[]>([]);
+  const [todasEmpresas, setTodasEmpresas] = useState(true);
 
   const isFornecedor = tipoEntidade.startsWith('fornecedores_');
 
@@ -204,7 +207,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
           <Tabs defaultValue="dados-gerais" className="w-full">
-            <TabsList className={`grid w-full ${isFornecedor ? 'grid-cols-8' : 'grid-cols-7'}`}>
+            <TabsList className={`grid w-full ${isFornecedor ? 'grid-cols-9' : 'grid-cols-8'}`}>
               <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
               <TabsTrigger value="enderecos">Endereços</TabsTrigger>
               <TabsTrigger value="fiscais">Dados Fiscais</TabsTrigger>
@@ -214,6 +217,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
               {isFornecedor && (
                 <TabsTrigger value="boas-praticas">Boas Práticas</TabsTrigger>
               )}
+              <TabsTrigger value="empresas">Empresas</TabsTrigger>
               <TabsTrigger value="observacoes">Observações</TabsTrigger>
             </TabsList>
 
@@ -1131,6 +1135,16 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                 </div>
               </TabsContent>
             )}
+
+            {/* ABA: EMPRESAS */}
+            <TabsContent value="empresas" className="space-y-4 mt-4">
+              <EmpresasVisiveis
+                empresasVisiveis={empresasVisiveis}
+                onEmpresasChange={setEmpresasVisiveis}
+                todasEmpresas={todasEmpresas}
+                onTodasEmpresasChange={setTodasEmpresas}
+              />
+            </TabsContent>
 
             {/* ABA: OBSERVAÇÕES */}
             <TabsContent value="observacoes" className="space-y-4 mt-4">
