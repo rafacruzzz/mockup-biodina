@@ -23,8 +23,8 @@ const DashboardRelatorios = () => {
   const empresaAtivaId = filialAtual?.id || empresaAtual?.id || '';
   const nomeEmpresaAtiva = filialAtual?.nome || empresaAtual?.razaoSocial || 'Empresa';
   
-  // Verificar se há dados para esta empresa (mock só tem dados para biodina-001)
-  const temDadosEmpresa = empresaAtivaId === 'biodina-001';
+  // Verificar se há dados para esta empresa (mock só tem dados para master-001)
+  const temDadosEmpresa = empresaAtivaId === 'master-001';
   
   const [periodo, setPeriodo] = useState("mes-atual");
   const [ano, setAno] = useState("2025");
