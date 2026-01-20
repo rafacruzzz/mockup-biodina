@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { X, Save } from "lucide-react";
 import { EmpresasVisiveis, EmpresaVisivel } from "./EmpresasVisiveis";
+import { useDraft } from "@/hooks/useDraft";
+import { DraftIndicator, DraftSaveButton } from "./DraftIndicator";
 
 interface ServiceModalProps {
   isOpen: boolean;
@@ -16,6 +18,7 @@ interface ServiceModalProps {
 const ServiceModal = ({ isOpen, onClose }: ServiceModalProps) => {
   const [empresasVisiveis, setEmpresasVisiveis] = useState<EmpresaVisivel[]>([]);
   const [todasEmpresas, setTodasEmpresas] = useState(true);
+  const [draftRestored, setDraftRestored] = useState(false);
   const [formData, setFormData] = useState({
     // Informações Básicas
     codigo: "",
@@ -61,6 +64,20 @@ const ServiceModal = ({ isOpen, onClose }: ServiceModalProps) => {
     alteradoPor: "Usuário Atual"
   });
 
+  // Hook de rascunho
+  const { 
+    hasDraft, 
+    draftInfo, 
+    saveDraft, 
+    loadDraft, 
+    discardDraft, 
+    clearDraftOnSave 
+  } = useDraft({
+    moduleName: 'cadastro',
+    entityType: 'servicos',
+    expirationDays: 7
+  });
+
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ 
       ...prev, 
@@ -72,7 +89,25 @@ const ServiceModal = ({ isOpen, onClose }: ServiceModalProps) => {
 
   const handleSave = () => {
     console.log("Salvando serviço:", formData);
+    clearDraftOnSave();
     onClose();
+  };
+
+  const handleSaveDraft = () => {
+    saveDraft(formData);
+  };
+
+  const handleRestoreDraft = () => {
+    const draftData = loadDraft();
+    if (draftData) {
+      setFormData(prev => ({ ...prev, ...draftData }));
+      setDraftRestored(true);
+    }
+  };
+
+  const handleDiscardDraft = () => {
+    discardDraft();
+    setDraftRestored(false);
   };
 
   if (!isOpen) return null;
@@ -456,14 +491,17 @@ const ServiceModal = ({ isOpen, onClose }: ServiceModalProps) => {
         </div>
         </div>
 
-        <div className="flex justify-end gap-4 p-6 border-t">
-          <Button variant="outline" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
-            <Save className="h-4 w-4 mr-2" />
-            Salvar
-          </Button>
+        <div className="flex justify-between gap-4 p-6 border-t">
+          <DraftSaveButton onSaveDraft={handleSaveDraft} />
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
+              <Save className="h-4 w-4 mr-2" />
+              Salvar
+            </Button>
+          </div>
         </div>
       </div>
     </div>
