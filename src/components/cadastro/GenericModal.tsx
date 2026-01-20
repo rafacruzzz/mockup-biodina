@@ -1,11 +1,12 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X, Save } from "lucide-react";
+import { X, Save, FileText } from "lucide-react";
+import { useDraft } from "@/hooks/useDraft";
+import { DraftIndicator, DraftSaveButton } from "@/components/cadastro/DraftIndicator";
 
 interface GenericModalProps {
   isOpen: boolean;
@@ -24,14 +25,45 @@ interface GenericModalProps {
 const GenericModal = ({ isOpen, onClose, title, moduleName, fields = [] }: GenericModalProps) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
 
+  // Hook de rascunho - usa moduleName como entityType para diferenciar
+  const { 
+    hasDraft, 
+    draftInfo, 
+    saveDraft, 
+    loadDraft, 
+    discardDraft, 
+    clearDraftOnSave 
+  } = useDraft<Record<string, string>>({
+    moduleName: 'cadastro',
+    entityType: moduleName.toLowerCase().replace(/\s+/g, '_'),
+    expirationDays: 7
+  });
+
+  const handleRestoreDraft = () => {
+    const draftData = loadDraft();
+    if (draftData) {
+      setFormData(draftData);
+    }
+  };
+
+  // Reset form when modal opens/closes
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData({});
+    }
+  }, [isOpen]);
+
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
     console.log(`Salvando ${title}:`, formData);
+    clearDraftOnSave();
     onClose();
   };
+
+  const isFormEmpty = Object.values(formData).every(v => !v);
 
   const renderField = (field: any) => {
     switch (field.type) {
@@ -82,6 +114,18 @@ const GenericModal = ({ isOpen, onClose, title, moduleName, fields = [] }: Gener
         </div>
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+          {/* Draft Indicator */}
+          {hasDraft && (
+            <div className="mb-4">
+              <DraftIndicator
+                hasDraft={hasDraft}
+                draftInfo={draftInfo}
+                onRestore={handleRestoreDraft}
+                onDiscard={discardDraft}
+              />
+            </div>
+          )}
+
           {fields.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {fields.map((field) => (
@@ -102,6 +146,10 @@ const GenericModal = ({ isOpen, onClose, title, moduleName, fields = [] }: Gener
         </div>
 
         <div className="flex justify-end gap-4 p-6 border-t">
+          <DraftSaveButton
+            onSaveDraft={() => saveDraft(formData)}
+            disabled={isFormEmpty}
+          />
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>

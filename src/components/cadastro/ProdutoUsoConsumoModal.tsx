@@ -7,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import UnidadeMedidaSelect from "@/components/estoque/UnidadeMedidaSelect";
 import { modules } from "@/data/cadastroModules";
 import { useToast } from "@/hooks/use-toast";
+import { useDraft } from "@/hooks/useDraft";
+import { DraftIndicator, DraftSaveButton } from "@/components/cadastro/DraftIndicator";
+import { FileText } from "lucide-react";
 
 interface ProdutoUsoConsumoModalProps {
   isOpen: boolean;
@@ -18,6 +21,33 @@ const ProdutoUsoConsumoModal = ({ isOpen, onClose }: ProdutoUsoConsumoModalProps
   const [nome, setNome] = useState("");
   const [categoria, setCategoria] = useState("");
   const [unidade, setUnidade] = useState("");
+
+  // Hook de rascunho
+  const { 
+    hasDraft, 
+    draftInfo, 
+    saveDraft, 
+    loadDraft, 
+    discardDraft, 
+    clearDraftOnSave 
+  } = useDraft<{ nome: string; categoria: string; unidade: string }>({
+    moduleName: 'cadastro',
+    entityType: 'produtos_uso_consumo',
+    expirationDays: 7
+  });
+
+  const handleRestoreDraft = () => {
+    const draftData = loadDraft();
+    if (draftData) {
+      setNome(draftData.nome);
+      setCategoria(draftData.categoria);
+      setUnidade(draftData.unidade);
+    }
+  };
+
+  const handleSaveDraft = () => {
+    saveDraft({ nome, categoria, unidade });
+  };
 
   // Pegar categorias do módulo de categorias
   const categorias = modules.categorias?.subModules?.categorias?.data || [];
@@ -40,8 +70,11 @@ const ProdutoUsoConsumoModal = ({ isOpen, onClose }: ProdutoUsoConsumoModalProps
       description: "Produto de uso e consumo cadastrado com sucesso!",
     });
 
+    clearDraftOnSave();
     handleClose();
   };
+
+  const isFormEmpty = !nome && !categoria && !unidade;
 
   const handleClose = () => {
     setNome("");
@@ -56,6 +89,16 @@ const ProdutoUsoConsumoModal = ({ isOpen, onClose }: ProdutoUsoConsumoModalProps
         <DialogHeader>
           <DialogTitle>Novo Produto de Uso e Consumo</DialogTitle>
         </DialogHeader>
+
+        {/* Draft Indicator */}
+        {hasDraft && (
+          <DraftIndicator
+            hasDraft={hasDraft}
+            draftInfo={draftInfo}
+            onRestore={handleRestoreDraft}
+            onDiscard={discardDraft}
+          />
+        )}
 
         <div className="space-y-6 py-4">
           <div className="space-y-2">
@@ -93,6 +136,10 @@ const ProdutoUsoConsumoModal = ({ isOpen, onClose }: ProdutoUsoConsumoModalProps
         </div>
 
         <div className="flex justify-end gap-3">
+          <DraftSaveButton
+            onSaveDraft={handleSaveDraft}
+            disabled={isFormEmpty}
+          />
           <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>

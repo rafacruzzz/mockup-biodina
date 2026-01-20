@@ -6,7 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Building2, MapPin, Package, Loader2 } from "lucide-react";
+import { Building2, MapPin, Package, Loader2, FileText } from "lucide-react";
+import { useDraft } from "@/hooks/useDraft";
+import { DraftIndicator, DraftSaveButton } from "@/components/cadastro/DraftIndicator";
 import { Filial } from "@/types/super";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { SeletorModulosDetalhado } from "./SeletorModulosDetalhado";
@@ -62,6 +64,27 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
   const { empresaAtual, adicionarFilial, atualizarFilial } = useEmpresa();
   const { lookupCep, loading: cepLoading } = useCepLookup();
   const [activeTab, setActiveTab] = useState("info");
+
+  // Hook de rascunho
+  const { 
+    hasDraft, 
+    draftInfo, 
+    saveDraft, 
+    loadDraft, 
+    discardDraft, 
+    clearDraftOnSave 
+  } = useDraft<any>({
+    moduleName: 'cadastro',
+    entityType: 'filiais',
+    expirationDays: 7
+  });
+
+  const handleRestoreDraft = () => {
+    const draftData = loadDraft();
+    if (draftData) {
+      setFormData(draftData);
+    }
+  };
   const [formData, setFormData] = useState<Partial<Filial> & { modulosDetalhados?: ModuloEmpresa[] }>({
     nome: '',
     razaoSocial: '',
@@ -213,8 +236,11 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
       toast.success("Filial cadastrada com sucesso!");
     }
 
+    clearDraftOnSave();
     onOpenChange(false);
   };
+
+  const isFormEmpty = !formData.nome && !formData.cnpj;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -236,6 +262,18 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
+          {/* Draft Indicator */}
+          {hasDraft && !filial && (
+            <div className="mb-4">
+              <DraftIndicator
+                hasDraft={hasDraft}
+                draftInfo={draftInfo}
+                onRestore={handleRestoreDraft}
+                onDiscard={discardDraft}
+              />
+            </div>
+          )}
+
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="info">
               <Building2 className="h-4 w-4 mr-2" />
@@ -497,6 +535,12 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
         </Tabs>
 
         <div className="flex justify-end gap-3 pt-4 border-t">
+          {!filial && (
+            <DraftSaveButton
+              onSaveDraft={() => saveDraft(formData)}
+              disabled={isFormEmpty}
+            />
+          )}
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>

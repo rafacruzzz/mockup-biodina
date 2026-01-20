@@ -7,12 +7,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, AlertCircle } from 'lucide-react';
+import { CalendarIcon, AlertCircle, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { RegistroAnvisa, assuntosProdutosSaude, assuntosDiagnosticoInVitro } from '@/types/anvisa';
 import { toast } from '@/hooks/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useDraft } from '@/hooks/useDraft';
+import { DraftIndicator, DraftSaveButton } from '@/components/cadastro/DraftIndicator';
 
 interface RegistroAnvisaFormProps {
   onSubmit: (registro: RegistroAnvisa) => void;
@@ -35,6 +37,27 @@ export const RegistroAnvisaForm = ({ onSubmit, onCancel, initialData }: Registro
   });
 
   const [showInstrucaoAlert, setShowInstrucaoAlert] = useState(false);
+
+  // Hook de rascunho
+  const { 
+    hasDraft, 
+    draftInfo, 
+    saveDraft, 
+    loadDraft, 
+    discardDraft, 
+    clearDraftOnSave 
+  } = useDraft<RegistroAnvisa>({
+    moduleName: 'cadastro',
+    entityType: 'registro_anvisa',
+    expirationDays: 7
+  });
+
+  const handleRestoreDraft = () => {
+    const draftData = loadDraft();
+    if (draftData) {
+      setFormData(draftData);
+    }
+  };
 
   useEffect(() => {
     if (initialData) {
@@ -79,12 +102,15 @@ export const RegistroAnvisaForm = ({ onSubmit, onCancel, initialData }: Registro
       status = 'publicado';
     }
 
+    clearDraftOnSave();
     onSubmit({
       ...formData,
       status: status as any,
       updatedAt: new Date().toISOString()
     });
   };
+
+  const isFormEmpty = !formData.nomeProduto && !formData.processo;
 
   const getAssuntosOptions = () => {
     return formData.areaAnvisa === 'produtos_saude' ? assuntosProdutosSaude : assuntosDiagnosticoInVitro;
@@ -97,6 +123,16 @@ export const RegistroAnvisaForm = ({ onSubmit, onCancel, initialData }: Registro
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Draft Indicator */}
+      {hasDraft && !initialData && (
+        <DraftIndicator
+          hasDraft={hasDraft}
+          draftInfo={draftInfo}
+          onRestore={handleRestoreDraft}
+          onDiscard={discardDraft}
+        />
+      )}
+
       {/* Registro/Notificação */}
       <Card>
         <CardHeader>
@@ -318,6 +354,12 @@ export const RegistroAnvisaForm = ({ onSubmit, onCancel, initialData }: Registro
       </Card>
 
       <div className="flex justify-end space-x-2">
+        {!initialData && (
+          <DraftSaveButton
+            onSaveDraft={() => saveDraft(formData)}
+            disabled={isFormEmpty}
+          />
+        )}
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancelar
         </Button>

@@ -4,7 +4,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Save, User, Bell, UserMinus, AlertTriangle, Monitor, Shield, AlertCircle } from "lucide-react";
+import { Save, User, Bell, UserMinus, AlertTriangle, Monitor, Shield, AlertCircle, FileText } from "lucide-react";
+import { useDraft } from "@/hooks/useDraft";
+import { DraftIndicator, DraftSaveButton } from "@/components/cadastro/DraftIndicator";
 import { ColaboradorData } from "@/types/colaborador";
 import { ModuloUsuario, EmpresaVinculada } from "@/types/permissions";
 import { getSolicitacoesByColaborador } from "@/data/solicitacoes";
@@ -46,6 +48,20 @@ const ColaboradorModal = ({
   const { empresaAtual, filiais } = useEmpresa();
   const [isDesligarModalOpen, setIsDesligarModalOpen] = useState(false);
   const [colaboradorDesligado, setColaboradorDesligado] = useState(!!colaboradorData?.desligamento);
+  
+  // Hook de rascunho
+  const { 
+    hasDraft, 
+    draftInfo, 
+    saveDraft, 
+    loadDraft, 
+    discardDraft, 
+    clearDraftOnSave 
+  } = useDraft<any>({
+    moduleName: 'rh',
+    entityType: 'colaboradores',
+    expirationDays: 7
+  });
   
   const [formData, setFormData] = useState<ColaboradorData & {
     planoCarreira?: string;
@@ -300,10 +316,20 @@ const ColaboradorModal = ({
     }
   };
 
+  const handleRestoreDraft = () => {
+    const draftData = loadDraft();
+    if (draftData) {
+      setFormData(draftData);
+    }
+  };
+
   const handleSave = () => {
     console.log('Salvando colaborador:', formData);
+    clearDraftOnSave();
     onClose();
   };
+
+  const isFormEmpty = !formData.dadosPessoais.nome && !formData.dadosPessoais.email;
 
   const dadosProfissionaisWithSuggestion = {
     ...formData.dadosProfissionais,
@@ -381,6 +407,18 @@ const ColaboradorModal = ({
           </DialogHeader>
 
           <div className="flex-1 min-h-0 overflow-hidden">
+            {/* Draft Indicator */}
+            {hasDraft && !editMode && (
+              <div className="mb-4 px-1">
+                <DraftIndicator
+                  hasDraft={hasDraft}
+                  draftInfo={draftInfo}
+                  onRestore={handleRestoreDraft}
+                  onDiscard={discardDraft}
+                />
+              </div>
+            )}
+
             <Tabs defaultValue="usuario" className="h-full flex flex-col">
               <div className="flex-shrink-0 overflow-x-auto pb-2">
                 <TabsList className="inline-flex w-max min-w-full h-12 p-1 gap-1">
@@ -685,6 +723,12 @@ const ColaboradorModal = ({
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t flex-shrink-0">
+            {!editMode && (
+              <DraftSaveButton
+                onSaveDraft={() => saveDraft(formData)}
+                disabled={isFormEmpty}
+              />
+            )}
             <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>

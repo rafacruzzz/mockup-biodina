@@ -4,7 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { X, Save } from "lucide-react";
+import { X, Save, FileText } from "lucide-react";
+import { useDraft } from "@/hooks/useDraft";
+import { DraftIndicator, DraftSaveButton } from "@/components/cadastro/DraftIndicator";
 
 interface ContaBancariaModalProps {
   isOpen: boolean;
@@ -26,6 +28,27 @@ const ContaBancariaModal = ({ isOpen, onClose }: ContaBancariaModalProps) => {
     emite_boletos: false,
     incluido: true
   });
+
+  // Hook de rascunho
+  const { 
+    hasDraft, 
+    draftInfo, 
+    saveDraft, 
+    loadDraft, 
+    discardDraft, 
+    clearDraftOnSave 
+  } = useDraft<typeof formData>({
+    moduleName: 'cadastro',
+    entityType: 'contas_bancarias',
+    expirationDays: 7
+  });
+
+  const handleRestoreDraft = () => {
+    const draftData = loadDraft();
+    if (draftData) {
+      setFormData(draftData);
+    }
+  };
 
   const bancos = [
     "Banco do Brasil",
@@ -79,8 +102,11 @@ const ContaBancariaModal = ({ isOpen, onClose }: ContaBancariaModalProps) => {
     };
     
     console.log("Salvando Conta Bancária:", finalData);
+    clearDraftOnSave();
     onClose();
   };
+
+  const isFormEmpty = !formData.nome_conta && !formData.instituicao;
 
   if (!isOpen) return null;
 
@@ -95,6 +121,18 @@ const ContaBancariaModal = ({ isOpen, onClose }: ContaBancariaModalProps) => {
         </div>
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+          {/* Draft Indicator */}
+          {hasDraft && (
+            <div className="mb-4">
+              <DraftIndicator
+                hasDraft={hasDraft}
+                draftInfo={draftInfo}
+                onRestore={handleRestoreDraft}
+                onDiscard={discardDraft}
+              />
+            </div>
+          )}
+
           <div className="space-y-6">
             {/* Informações Básicas */}
             <div className="border rounded-lg p-4">
@@ -271,6 +309,10 @@ const ContaBancariaModal = ({ isOpen, onClose }: ContaBancariaModalProps) => {
         </div>
 
         <div className="flex justify-end gap-4 p-6 border-t">
+          <DraftSaveButton
+            onSaveDraft={() => saveDraft(formData)}
+            disabled={isFormEmpty}
+          />
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
