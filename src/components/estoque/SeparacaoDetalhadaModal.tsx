@@ -222,7 +222,6 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Package className="h-5 w-5" />
                     Informações do Pedido
                     <Badge variant="outline" className="ml-2 text-amber-600 border-amber-300 bg-amber-50">
                       <Lock className="h-3 w-3 mr-1" />
@@ -240,20 +239,8 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
                     <Input value={pedido.vendedor} disabled className="bg-muted" />
                   </div>
                   <div>
-                    <Label>Data de Entrega</Label>
+                    <Label>Data</Label>
                     <Input value={new Date(pedido.data_entrega).toLocaleDateString('pt-BR')} disabled className="bg-muted" />
-                  </div>
-                  <div>
-                    <Label>Nº Pedido / NOP</Label>
-                    <Input value={`${pedido.numero_pedido} / ${pedido.nop}`} disabled className="bg-muted" />
-                  </div>
-                  <div>
-                    <Label>Estado do Cliente</Label>
-                    <Input value={pedido.cliente_estado} disabled className="bg-muted" />
-                  </div>
-                  <div>
-                    <Label>Região</Label>
-                    <Input value={pedido.regiao} disabled className="bg-muted" />
                   </div>
                 </CardContent>
               </Card>
@@ -276,15 +263,18 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
               <Card>
                 <CardHeader>
                   <CardTitle>Natureza da Operação</CardTitle>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Selecione a operação e seu descritivo específico
+                  </p>
                 </CardHeader>
                 <CardContent className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label>Operação</Label>
-                    <Input value={pedido.nop || 'Não definida'} disabled className="bg-muted" />
+                    <Label>Qual natureza da operação? *</Label>
+                    <Input value={pedido.nop || 'Não definida'} disabled className="bg-muted mt-2" />
                   </div>
                   <div>
-                    <Label>Descritivo</Label>
-                    <Input value="Venda de Mercadoria" disabled className="bg-muted" />
+                    <Label>Descritivo da Operação *</Label>
+                    <Input value="VENDA DE MERCADORIA" disabled className="bg-muted mt-2" />
                   </div>
                 </CardContent>
               </Card>
@@ -296,7 +286,7 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
                 </CardHeader>
                 <CardContent>
                   <div className="flex justify-between items-center mb-2">
-                    <p className="text-sm font-medium text-gray-500">Itens Separados</p>
+                    <p className="text-sm font-medium text-muted-foreground">Itens Separados</p>
                     <p className="text-sm font-medium">{pedido.progresso.separados}/{pedido.progresso.total} itens</p>
                   </div>
                   <Progress value={progressPercentage} className="h-2" />
