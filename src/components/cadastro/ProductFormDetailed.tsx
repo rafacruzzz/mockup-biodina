@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { X, Save, Upload } from "lucide-react";
+import { useDraft } from "@/hooks/useDraft";
+import { DraftIndicator, DraftSaveButton } from "./DraftIndicator";
 
 interface ProductFormDetailedProps {
   isOpen: boolean;
@@ -14,6 +16,7 @@ interface ProductFormDetailedProps {
 }
 
 const ProductFormDetailed = ({ isOpen, onClose }: ProductFormDetailedProps) => {
+  const [draftRestored, setDraftRestored] = useState(false);
   const [formData, setFormData] = useState({
     // Aba Geral
     nome: "",
@@ -35,13 +38,45 @@ const ProductFormDetailed = ({ isOpen, onClose }: ProductFormDetailedProps) => {
     arquivos: []
   });
 
+  // Hook de rascunho
+  const { 
+    hasDraft, 
+    draftInfo, 
+    saveDraft, 
+    loadDraft, 
+    discardDraft, 
+    clearDraftOnSave 
+  } = useDraft({
+    moduleName: 'cadastro',
+    entityType: 'produtos',
+    expirationDays: 7
+  });
+
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
     console.log("Salvando produto:", formData);
+    clearDraftOnSave();
     onClose();
+  };
+
+  const handleSaveDraft = () => {
+    saveDraft(formData);
+  };
+
+  const handleRestoreDraft = () => {
+    const draftData = loadDraft();
+    if (draftData) {
+      setFormData(prev => ({ ...prev, ...draftData }));
+      setDraftRestored(true);
+    }
+  };
+
+  const handleDiscardDraft = () => {
+    discardDraft();
+    setDraftRestored(false);
   };
 
   if (!isOpen) return null;
@@ -57,6 +92,17 @@ const ProductFormDetailed = ({ isOpen, onClose }: ProductFormDetailedProps) => {
         </div>
 
         <div className="p-6 overflow-y-auto max-h-[calc(95vh-140px)]">
+          {/* Indicador de Rascunho */}
+          {!draftRestored && (
+            <DraftIndicator
+              hasDraft={hasDraft}
+              draftInfo={draftInfo}
+              onRestore={handleRestoreDraft}
+              onDiscard={handleDiscardDraft}
+              entityLabel="produto"
+            />
+          )}
+          
           <Tabs defaultValue="geral" className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="geral">Geral</TabsTrigger>
@@ -225,14 +271,17 @@ const ProductFormDetailed = ({ isOpen, onClose }: ProductFormDetailedProps) => {
           </Tabs>
         </div>
 
-        <div className="flex justify-end gap-4 p-6 border-t bg-gray-50">
-          <Button variant="outline" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
-            <Save className="h-4 w-4 mr-2" />
-            Salvar Produto
-          </Button>
+        <div className="flex justify-between gap-4 p-6 border-t bg-gray-50">
+          <DraftSaveButton onSaveDraft={handleSaveDraft} />
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
+              <Save className="h-4 w-4 mr-2" />
+              Salvar Produto
+            </Button>
+          </div>
         </div>
       </div>
     </div>

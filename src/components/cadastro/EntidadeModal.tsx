@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,9 +9,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { X, Save, Upload, Trash2, FileText, Plus, Link2 } from "lucide-react";
 import { useCepLookup } from "@/hooks/useCepLookup";
+import { useDraft } from "@/hooks/useDraft";
 import { mockCertificados } from "@/data/boasPraticas";
 import { getStatusLabel, getStatusColor, getAlertaVencimento } from "@/types/boasPraticas";
 import { EmpresasVisiveis, EmpresaVisivel } from "./EmpresasVisiveis";
+import { DraftIndicator, DraftSaveButton } from "./DraftIndicator";
 
 interface EntidadeModalProps {
   isOpen: boolean;
@@ -26,8 +28,23 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
   const [certificadoSelecionado, setCertificadoSelecionado] = useState<string>("");
   const [empresasVisiveis, setEmpresasVisiveis] = useState<EmpresaVisivel[]>([]);
   const [todasEmpresas, setTodasEmpresas] = useState(true);
+  const [draftRestored, setDraftRestored] = useState(false);
 
   const isFornecedor = tipoEntidade.startsWith('fornecedores_');
+
+  // Hook de rascunho
+  const { 
+    hasDraft, 
+    draftInfo, 
+    saveDraft, 
+    loadDraft, 
+    discardDraft, 
+    clearDraftOnSave 
+  } = useDraft({
+    moduleName: 'cadastro',
+    entityType: tipoEntidade,
+    expirationDays: 7
+  });
 
   const [formData, setFormData] = useState({
     // Dados Gerais
@@ -176,7 +193,25 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
   const handleSave = () => {
     console.log("Salvando entidade:", formData);
     console.log("Documentos anexados:", uploadedDocs);
+    clearDraftOnSave(); // Limpa o rascunho ao salvar definitivamente
     onClose();
+  };
+
+  const handleSaveDraft = () => {
+    saveDraft(formData);
+  };
+
+  const handleRestoreDraft = () => {
+    const draftData = loadDraft();
+    if (draftData) {
+      setFormData(prev => ({ ...prev, ...draftData }));
+      setDraftRestored(true);
+    }
+  };
+
+  const handleDiscardDraft = () => {
+    discardDraft();
+    setDraftRestored(false);
   };
 
 
@@ -206,6 +241,17 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
         </div>
 
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+          {/* Indicador de Rascunho */}
+          {!draftRestored && (
+            <DraftIndicator
+              hasDraft={hasDraft}
+              draftInfo={draftInfo}
+              onRestore={handleRestoreDraft}
+              onDiscard={handleDiscardDraft}
+              entityLabel={getTipoLabel(tipoEntidade)}
+            />
+          )}
+          
           <Tabs defaultValue="dados-gerais" className="w-full">
             <TabsList className={`grid w-full ${isFornecedor ? 'grid-cols-9' : 'grid-cols-8'}`}>
               <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
@@ -1162,14 +1208,17 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
           </Tabs>
         </div>
 
-        <div className="flex justify-end gap-4 p-6 border-t">
-          <Button variant="outline" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSave}>
-            <Save className="h-4 w-4 mr-2" />
-            Salvar
-          </Button>
+        <div className="flex justify-between gap-4 p-6 border-t">
+          <DraftSaveButton onSaveDraft={handleSaveDraft} />
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSave}>
+              <Save className="h-4 w-4 mr-2" />
+              Salvar
+            </Button>
+          </div>
         </div>
       </div>
     </div>
