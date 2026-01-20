@@ -30,8 +30,10 @@ import {
   Truck,
   Wallet,
   AlertTriangle,
-  Info
+  Info,
+  Link as LinkIcon
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { PedidoSeparacao, ItemPedidoSeparacao, StatusItemSeparacao, EstoqueDisponivel } from "@/types/estoque";
 import EstoqueDisponivelModal from "./EstoqueDisponivelModal";
 import { mockEstoquesDisponiveis } from "@/data/estoqueModules";
@@ -473,46 +475,125 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
                 </div>
               </div>
 
+              {/* Card 1: Vinculação e Origem */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Configurações de Estoque</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <LinkIcon className="h-5 w-5" />
+                    Vinculação e Origem
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-2 gap-4">
+                <CardContent className="space-y-3">
                   <div>
-                    <Label>Tem Validade Mínima?</Label>
-                    <Input value="Sim" disabled className="bg-muted" />
+                    <Label>Projeto de Origem *</Label>
+                    <div className="relative mt-2">
+                      <Input value="PROJ-2024-001" disabled className="bg-muted pr-10" />
+                      <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    </div>
                   </div>
-                  <div>
-                    <Label>Validade Mínima Global</Label>
-                    <Input value="30/06/2025" disabled className="bg-muted" />
-                  </div>
-                  <div>
-                    <Label>Previsão de Consumo</Label>
-                    <Input value="100 unidades/mês" disabled className="bg-muted" />
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-start gap-2">
+                      <Info className="h-5 w-5 text-blue-600 mt-0.5" />
+                      <p className="text-sm text-blue-800">
+                        Este pedido está vinculado automaticamente ao projeto de origem da oportunidade.
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
+              {/* Card 2: Configurações Fiscais */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Documentos</CardTitle>
+                  <CardTitle>Configurações Fiscais</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between p-4 rounded-lg border bg-muted/30">
+                    <div className="space-y-1">
+                      <Label className="text-base font-medium">Deve destacar IR?</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Destacar Imposto de Renda na nota fiscal
+                      </p>
+                    </div>
+                    <Switch checked={true} disabled />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Percentual de IR (%)</Label>
+                      <Input value="1.5" disabled className="bg-muted mt-2" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Card 3: Comunicação e Envio */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Comunicação e Envio</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary">Nota Fiscal</Badge>
-                    <Badge variant="secondary">Certificado de Qualidade</Badge>
-                    <Badge variant="secondary">Laudo Técnico</Badge>
+                  <div>
+                    <Label>E-mails para envio das notas fiscais</Label>
+                    <Textarea
+                      value="FINANCEIRO@EMPRESA.COM, COMPRAS@CLIENTE.COM"
+                      disabled
+                      className="bg-muted mt-2"
+                      rows={3}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">E-mails separados por vírgula</p>
                   </div>
                 </CardContent>
               </Card>
 
+              {/* Card 4: Documentação para Envio junto à NF */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Informações Complementares</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Documentação para Envio junto à NF
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-start gap-2">
+                      <Info className="h-5 w-5 text-blue-600 mt-0.5" />
+                      <p className="text-sm text-blue-800">
+                        ℹ️ A documentação pode vir pré-selecionada do projeto inicial pela equipe comercial
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="border rounded-lg p-3 space-y-2 bg-muted/30">
+                    <h4 className="font-semibold text-sm">Documentos Selecionados (3)</h4>
+                    <div className="space-y-1">
+                      {['NOTA FISCAL', 'CERTIFICADO DE QUALIDADE', 'LAUDO TÉCNICO'].map(doc => (
+                        <div key={doc} className="flex items-center p-2 bg-background rounded border">
+                          <span className="text-sm">{doc}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label>Observações sobre a Documentação</Label>
+                    <Textarea
+                      value="ENVIAR VIA E-MAIL APÓS DESPACHO"
+                      disabled
+                      className="bg-muted mt-2"
+                      rows={3}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Card 5: Informações Complementares da NF */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Informações Complementares da NF</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Textarea
-                    value="Entregar com cuidado. Produtos sensíveis à temperatura."
+                    value="ENTREGAR COM CUIDADO. PRODUTOS SENSÍVEIS À TEMPERATURA."
                     disabled
                     className="bg-muted"
                     rows={4}
