@@ -21,6 +21,7 @@ import {
   Package, 
   AlertCircle, 
   CheckCircle, 
+  CheckCircle2,
   Clock, 
   Printer, 
   Calendar as CalendarIcon, 
@@ -31,8 +32,10 @@ import {
   Wallet,
   AlertTriangle,
   Info,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Shield
 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { PedidoSeparacao, ItemPedidoSeparacao, StatusItemSeparacao, EstoqueDisponivel } from "@/types/estoque";
 import EstoqueDisponivelModal from "./EstoqueDisponivelModal";
@@ -640,14 +643,20 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
                 <CardHeader>
                   <CardTitle>Responsabilidades</CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Frete a Pagar Por</Label>
-                    <Input value="EMPRESA" disabled className="bg-muted" />
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Frete a Pagar Por</Label>
+                      <Input value="EMPRESA" disabled className="bg-muted" />
+                    </div>
+                    <div>
+                      <Label>Frete a Retirar Por</Label>
+                      <Input value="DESTINO FINAL" disabled className="bg-muted" />
+                    </div>
                   </div>
                   <div>
-                    <Label>Frete a Retirar Por</Label>
-                    <Input value="DESTINO FINAL" disabled className="bg-muted" />
+                    <Label>Entregar/Retirar aos Cuidados de Quem</Label>
+                    <Input value="MARIA DA SILVA" disabled className="bg-muted" />
                   </div>
                 </CardContent>
               </Card>
@@ -688,6 +697,87 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
                   <div>
                     <Label>Horários Permitidos</Label>
                     <Input value="Segunda a Sexta, 8h às 17h" disabled className="bg-muted" />
+                  </div>
+                  <div>
+                    <Label>Locais de Entrega Permitidos</Label>
+                    <Textarea 
+                      value="RECEPÇÃO PRINCIPAL, ALMOXARIFADO CENTRAL" 
+                      disabled 
+                      className="bg-muted" 
+                      rows={2} 
+                    />
+                  </div>
+                  <div>
+                    <Label>Mais Informações sobre a Entrega</Label>
+                    <Textarea 
+                      value="LIGAR 30 MINUTOS ANTES DA CHEGADA. ENTRAR PELO PORTÃO LATERAL."
+                      disabled 
+                      className="bg-muted" 
+                      rows={3} 
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-orange-500" />
+                    Urgência e Autorização
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Solicite aprovação do gestor para entregas urgentes
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-start space-x-3 p-4 border rounded-lg bg-muted/30">
+                    <Checkbox checked={true} disabled />
+                    <div className="flex-1">
+                      <Label className="font-semibold">
+                        Solicitar urgência ao gestor
+                      </Label>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Marque se esta entrega precisa de aprovação de urgência do gestor
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-orange-700 font-semibold">
+                      Justificar a Urgência *
+                    </Label>
+                    <Textarea
+                      value="CLIENTE NECESSITA DO PRODUTO URGENTE PARA PRODUÇÃO"
+                      disabled
+                      className="bg-muted mt-2"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <h5 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Informações de Autorização
+                    </h5>
+                    <div className="grid grid-cols-3 gap-3 text-sm">
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground text-xs">Autorizado Por:</p>
+                        <p className="font-medium text-blue-700">JOSÉ GERENTE</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground text-xs">Data de Autorização:</p>
+                        <p className="font-medium text-blue-700">15/01/2025</p>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-muted-foreground text-xs">Email do Autorizador:</p>
+                        <p className="font-medium text-blue-700 truncate">JOSE.GERENTE@EMPRESA.COM</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-lg border bg-green-50 border-green-200 flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    <span className="text-sm font-medium">Urgência aprovada pelo gestor</span>
                   </div>
                 </CardContent>
               </Card>
