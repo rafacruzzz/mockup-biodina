@@ -33,7 +33,12 @@ import {
   AlertTriangle,
   Info,
   Link as LinkIcon,
-  Shield
+  Shield,
+  Building,
+  DollarSign,
+  User,
+  Download,
+  ExternalLink
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
@@ -801,33 +806,101 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
                     Pagamento
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-2 gap-4">
+                <CardContent className="space-y-4">
+                  {/* Condições de Pagamento */}
                   <div>
-                    <Label>Forma de Pagamento</Label>
-                    <Input value="Boleto Bancário" disabled className="bg-muted" />
+                    <Label>Condições de Pagamento *</Label>
+                    <div className="relative mt-2">
+                      <Input value="30/60/90 dias" disabled className="bg-muted" />
+                      <span className="text-xs text-muted-foreground ml-1 mt-1 block">
+                        (pré-preenchido do projeto)
+                      </span>
+                    </div>
                   </div>
+                  
+                  {/* Conta Bancária Selecionada */}
                   <div>
-                    <Label>Condições</Label>
-                    <Input value="30/60/90 dias" disabled className="bg-muted" />
+                    <Label>Conta Bancária para Recebimento *</Label>
+                    <Input 
+                      value="Banco do Brasil - Ag: 1234 - Conta: 56789-0" 
+                      disabled 
+                      className="bg-muted mt-2" 
+                    />
                   </div>
-                  <div className="col-span-2">
-                    <Label>Conta Bancária</Label>
-                    <Input value="Banco do Brasil - Ag: 1234 / CC: 56789-0" disabled className="bg-muted" />
+                  
+                  {/* Card com detalhes bancários completos */}
+                  <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950/20 dark:to-blue-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                    <h4 className="font-semibold text-sm mb-2 flex items-center gap-2">
+                      <Building className="h-4 w-4" />
+                      Dados Bancários Selecionados:
+                    </h4>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Banco:</span>
+                        <span className="font-medium">BANCO DO BRASIL</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Agência:</span>
+                        <span className="font-medium">1234-5</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Conta:</span>
+                        <span className="font-medium">56789-0 (Corrente)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Gerente:</span>
+                        <span className="font-medium">MARIA SILVA</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Número de Parcelas */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Número de Parcelas *</Label>
+                      <Input value="3" type="number" disabled className="bg-muted mt-2 w-32" />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        3x de R$ 5.000,00
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Instruções do Boleto</CardTitle>
+                  <CardTitle>Instruções para Pagamento</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <Textarea
-                    value="Não aceitar pagamento em cheque. Multa de 2% após vencimento."
-                    disabled
-                    className="bg-muted"
-                    rows={3}
-                  />
+                <CardContent className="space-y-4">
+                  {/* Alerta de atenção para faturamento */}
+                  <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg border border-yellow-300 dark:border-yellow-800">
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="h-5 w-5 text-yellow-600 dark:text-yellow-500 mt-0.5 flex-shrink-0" />
+                      <div className="text-sm text-yellow-800 dark:text-yellow-300">
+                        <strong>ATENÇÃO:</strong> O departamento de faturamento deverá emitir 3 boletos e anexar junto à Nota Fiscal antes do envio ao cliente.
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label>Instruções para o Boleto</Label>
+                    <Textarea
+                      value="Não aceitar pagamento em cheque. Multa de 2% após vencimento."
+                      disabled
+                      className="bg-muted mt-2"
+                      rows={3}
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label>Condições (parcelas, vencimentos)</Label>
+                    <Textarea
+                      value="Entrada + 2x30/60 dias, Vencimento: todo dia 10"
+                      disabled
+                      className="bg-muted mt-2"
+                      rows={2}
+                    />
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -843,6 +916,27 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
                 </div>
               </div>
 
+              {/* Indicadores e Alertas */}
+              <div className="grid grid-cols-4 gap-4">
+                <div className="p-3 border rounded-lg bg-muted/30 text-center">
+                  <p className="text-2xl font-bold text-green-600">0</p>
+                  <p className="text-xs text-muted-foreground">Atraso Separação</p>
+                </div>
+                <div className="p-3 border rounded-lg bg-muted/30 text-center">
+                  <p className="text-2xl font-bold text-green-600">0</p>
+                  <p className="text-xs text-muted-foreground">Prazo Excedido</p>
+                </div>
+                <div className="p-3 border rounded-lg bg-muted/30 text-center">
+                  <p className="text-2xl font-bold text-yellow-600">1</p>
+                  <p className="text-xs text-muted-foreground">NF Pendente</p>
+                </div>
+                <div className="p-3 border rounded-lg bg-muted/30 text-center">
+                  <p className="text-2xl font-bold text-green-600">0</p>
+                  <p className="text-xs text-muted-foreground">Divergência Qtd</p>
+                </div>
+              </div>
+
+              {/* Progresso do Pedido */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -892,6 +986,247 @@ const SeparacaoDetalhadaModal = ({ pedido, isOpen, onOpenChange }: SeparacaoDeta
                           <p className="text-xs text-muted-foreground">Departamento de Expedição</p>
                         </div>
                       </div>
+                      <div className="flex items-start gap-3">
+                        <div className="p-2 rounded-full bg-orange-500 text-white">
+                          <AlertCircle className="h-4 w-4" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <p className="font-medium text-sm">Separação Iniciada</p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(pedido.data_entrega).toLocaleDateString('pt-BR')} às 14:30
+                            </p>
+                          </div>
+                          <p className="text-xs text-muted-foreground">Operador de Estoque</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Confirmação de Recebimento Interno */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Package className="h-5 w-5" />
+                    Confirmação de Recebimento Interno (Estoque/Expedição)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">Status Atual:</span>
+                    <Badge className="bg-blue-100 text-blue-800">Pronto para Faturamento</Badge>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      <CalendarIcon className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Data/Hora Recebimento</p>
+                        <p className="text-sm font-medium">15/01/2025 às 14:30</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Responsável</p>
+                        <p className="text-sm font-medium">CARLOS EXPEDIÇÃO</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Tabela de Itens Conferidos */}
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Código</TableHead>
+                        <TableHead>Descrição</TableHead>
+                        <TableHead className="text-right">Solicitado</TableHead>
+                        <TableHead className="text-right">Conferido</TableHead>
+                        <TableHead className="text-center">Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {pedido.itens.slice(0, 3).map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell className="font-medium">{item.codigo_produto}</TableCell>
+                          <TableCell className="max-w-[200px] truncate">{item.descricao_produto}</TableCell>
+                          <TableCell className="text-right">{item.quantidade_solicitada}</TableCell>
+                          <TableCell className="text-right">{item.quantidade_separada}</TableCell>
+                          <TableCell className="text-center">
+                            <Badge className="bg-green-100 text-green-800">
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              OK
+                            </Badge>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+
+              {/* Documentação Fiscal e Faturamento */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Documentação Fiscal e Faturamento
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* NF-e */}
+                  <div>
+                    <h4 className="text-sm font-semibold mb-3">Nota Fiscal Eletrônica (NF-e)</h4>
+                    <div className="p-4 bg-muted/50 rounded-lg space-y-3">
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Número NF</p>
+                          <p className="text-sm font-medium">123456</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Série</p>
+                          <p className="text-sm font-medium">001</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Data Emissão</p>
+                          <p className="text-sm font-medium">15/01/2025</p>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Valor Total</p>
+                          <p className="text-sm font-medium">R$ 15.000,00</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Status SEFAZ</p>
+                          <Badge className="bg-green-100 text-green-800">Autorizada</Badge>
+                        </div>
+                      </div>
+                      <div className="flex gap-2 pt-2">
+                        <Button size="sm" variant="outline" className="gap-2" disabled>
+                          <Download className="h-4 w-4" /> Download XML
+                        </Button>
+                        <Button size="sm" variant="outline" className="gap-2" disabled>
+                          <Download className="h-4 w-4" /> Download DANFE
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Boleto */}
+                  <div className="p-3 border rounded-lg">
+                    <h5 className="text-sm font-medium flex items-center gap-2 mb-2">
+                      <DollarSign className="h-4 w-4" /> Boleto Bancário
+                    </h5>
+                    <div className="grid grid-cols-3 gap-3 text-sm">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Vencimento</p>
+                        <p className="font-medium">15/02/2025</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Valor</p>
+                        <p className="font-medium">R$ 5.000,00</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Número</p>
+                        <p className="font-medium">001-12345</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Expedição e Logística */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Truck className="h-5 w-5" />
+                    Informações de Expedição e Logística
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Transportadora */}
+                  <div>
+                    <h4 className="text-sm font-semibold mb-3">Transportadora</h4>
+                    <div className="p-4 bg-muted/50 rounded-lg grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Nome</p>
+                        <p className="text-sm font-medium">TRANSPORTADORA ABC LTDA</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">CNPJ</p>
+                        <p className="text-sm font-medium">12.345.678/0001-90</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Telefone</p>
+                        <p className="text-sm font-medium">(11) 99999-9999</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Custo do Frete</p>
+                        <p className="text-sm font-medium">R$ 500,00</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* CT-e */}
+                  <div>
+                    <h4 className="text-sm font-semibold mb-3">Conhecimento de Transporte (CT-e)</h4>
+                    <div className="p-4 bg-muted/50 rounded-lg space-y-3">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-muted-foreground">CT-e</p>
+                          <p className="text-sm font-medium">789012</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Série</p>
+                          <p className="text-sm font-medium">001</p>
+                        </div>
+                      </div>
+                      <Button variant="outline" className="w-full gap-2" disabled>
+                        <ExternalLink className="h-4 w-4" /> Rastrear Entrega
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  {/* Status da Entrega */}
+                  <div>
+                    <h4 className="text-sm font-semibold mb-3">Status da Entrega</h4>
+                    <div className="p-4 bg-muted/50 rounded-lg space-y-3">
+                      <Badge className="bg-blue-100 text-blue-800">Em Trânsito</Badge>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Data de Saída</p>
+                          <p className="font-medium">16/01/2025</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Previsão de Entrega</p>
+                          <p className="font-medium">18/01/2025</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Feedback de Entrega */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5" />
+                    Feedback de Entrega
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">Status de Recebimento:</span>
+                    <Badge className="bg-green-100 text-green-800">Recebido OK</Badge>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold mb-2">Observações do Cliente</h4>
+                    <div className="p-3 bg-muted/50 rounded-lg">
+                      <p className="text-sm">PRODUTOS RECEBIDOS EM PERFEITO ESTADO.</p>
                     </div>
                   </div>
                 </CardContent>
