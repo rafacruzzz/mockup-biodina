@@ -7,7 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Save, User, Shield } from "lucide-react";
+import { Save, User, Shield, FileText } from "lucide-react";
+import { useDraft } from "@/hooks/useDraft";
+import { DraftIndicator, DraftSaveButton } from "@/components/cadastro/DraftIndicator";
 import { useColaboradores } from "@/hooks/useColaboradores";
 import { ModuleAccess, EmpresaVinculada } from "@/types/permissions";
 import { useEmpresa } from "@/contexts/EmpresaContext";
@@ -70,6 +72,27 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
     empresasVinculadas: userData?.empresasVinculadas || [],
   });
 
+  // Hook de rascunho
+  const { 
+    hasDraft, 
+    draftInfo, 
+    saveDraft, 
+    loadDraft, 
+    discardDraft, 
+    clearDraftOnSave 
+  } = useDraft<UserData>({
+    moduleName: 'cadastro',
+    entityType: 'usuarios',
+    expirationDays: 7
+  });
+
+  const handleRestoreDraft = () => {
+    const draftData = loadDraft();
+    if (draftData) {
+      setFormData(draftData);
+    }
+  };
+
   // Hook para calcular módulos disponíveis baseado nas empresas vinculadas
   const { modulosDisponiveis, verificarModuloDisponivel } = useModulosUsuario({
     empresaPrincipal: empresaAtual,
@@ -125,8 +148,11 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
 
   const handleSave = () => {
     console.log('Salvando usuário:', formData);
+    clearDraftOnSave();
     onClose();
   };
+
+  const isFormEmpty = !formData.username && !formData.nome && !formData.email;
 
   return (
     <>
@@ -149,6 +175,18 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto">
+            {/* Draft Indicator */}
+            {hasDraft && !editMode && (
+              <div className="mb-4">
+                <DraftIndicator
+                  hasDraft={hasDraft}
+                  draftInfo={draftInfo}
+                  onRestore={handleRestoreDraft}
+                  onDiscard={discardDraft}
+                />
+              </div>
+            )}
+
             <Tabs defaultValue="usuario" className="h-full flex flex-col">
               <TabsList className="grid w-full grid-cols-2 mb-4">
                 <TabsTrigger value="usuario">
@@ -372,6 +410,12 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t">
+            {!editMode && (
+              <DraftSaveButton
+                onSaveDraft={() => saveDraft(formData)}
+                disabled={isFormEmpty}
+              />
+            )}
             <Button variant="outline" onClick={onClose}>
               Cancelar
             </Button>
