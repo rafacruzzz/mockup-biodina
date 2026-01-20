@@ -381,8 +381,24 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
                   <Input
                     id="telefone"
                     value={formData.telefone}
-                    onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                    onChange={(e) => {
+                      // Remove tudo que não é número
+                      const apenasNumeros = e.target.value.replace(/\D/g, '');
+                      // Aplica máscara de telefone brasileiro
+                      let telefoneFormatado = '';
+                      if (apenasNumeros.length > 0) {
+                        telefoneFormatado = '(' + apenasNumeros.substring(0, 2);
+                        if (apenasNumeros.length > 2) {
+                          telefoneFormatado += ') ' + apenasNumeros.substring(2, 7);
+                          if (apenasNumeros.length > 7) {
+                            telefoneFormatado += '-' + apenasNumeros.substring(7, 11);
+                          }
+                        }
+                      }
+                      setFormData({ ...formData, telefone: telefoneFormatado });
+                    }}
                     placeholder="(00) 00000-0000"
+                    maxLength={15}
                   />
                 </div>
               </div>
