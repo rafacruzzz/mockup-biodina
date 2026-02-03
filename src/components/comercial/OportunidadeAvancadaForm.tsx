@@ -128,7 +128,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   const [showLicitanteModal, setShowLicitanteModal] = useState(false);
   const [showAprovacaoEmpresaModal, setShowAprovacaoEmpresaModal] = useState(false);
   
-  // Estados para empresa participante
+  // Estados para empresa participante 1
   const [empresaParticipante, setEmpresaParticipante] = useState({
     empresaParticipanteId: oportunidade?.empresaParticipanteId || '',
     empresaParticipanteNome: oportunidade?.empresaParticipanteNome || '',
@@ -136,6 +136,16 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   });
   const [aprovacaoEmpresa, setAprovacaoEmpresa] = useState<AprovacaoEmpresa | undefined>(
     oportunidade?.aprovacaoEmpresa
+  );
+  
+  // Estados para empresa participante 2 (segunda empresa)
+  const [empresaParticipante2, setEmpresaParticipante2] = useState({
+    empresaParticipanteId: oportunidade?.empresaParticipanteId2 || '',
+    empresaParticipanteNome: oportunidade?.empresaParticipanteNome2 || '',
+    empresaParticipanteCNPJ: oportunidade?.empresaParticipanteCNPJ2 || ''
+  });
+  const [aprovacaoEmpresa2, setAprovacaoEmpresa2] = useState<AprovacaoEmpresa | undefined>(
+    oportunidade?.aprovacaoEmpresa2
   );
   
   // Estado para múltiplas tabelas de licitantes (inicia com uma tabela padrão)
@@ -222,6 +232,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     resumoEdital: oportunidade?.resumoEdital || '',
     impugnacaoEdital: oportunidade?.impugnacaoEdital || '',
     valorMinimoFinal: oportunidade?.valorMinimoFinal || 0,
+    valorMinimoFinal2: oportunidade?.valorMinimoFinal2 || 0, // Valor mínimo para segunda empresa
     participantes: oportunidade?.participantes || [],
     
     // Campos adicionais da licitação
@@ -332,7 +343,11 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
       ...formData, 
       tabelasLicitantes,
       ...empresaParticipante,
-      aprovacaoEmpresa 
+      aprovacaoEmpresa,
+      empresaParticipanteId2: empresaParticipante2.empresaParticipanteId,
+      empresaParticipanteNome2: empresaParticipante2.empresaParticipanteNome,
+      empresaParticipanteCNPJ2: empresaParticipante2.empresaParticipanteCNPJ,
+      aprovacaoEmpresa2
     });
   };
   
@@ -359,6 +374,31 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   
   const handleAprovacaoEmpresa = (aprovacao: AprovacaoEmpresa) => {
     setAprovacaoEmpresa(aprovacao);
+  };
+  
+  // Handlers para segunda empresa
+  const handleEmpresaParticipante2Change = (data: {
+    empresaParticipanteId: string;
+    empresaParticipanteNome: string;
+    empresaParticipanteCNPJ: string;
+  }) => {
+    setEmpresaParticipante2(data);
+    setAprovacaoEmpresa2(undefined);
+  };
+  
+  const handleSolicitarAprovacao2 = () => {
+    setAprovacaoEmpresa2({
+      status: 'pendente',
+      observacao: 'Aguardando aprovação gerencial'
+    });
+    toast({
+      title: "Solicitação enviada",
+      description: "A solicitação de aprovação da segunda empresa foi enviada ao gestor comercial.",
+    });
+  };
+  
+  const handleAprovacaoEmpresa2 = (aprovacao: AprovacaoEmpresa) => {
+    setAprovacaoEmpresa2(aprovacao);
   };
   
   // Verifica se pode avançar para fase de proposta
@@ -1074,6 +1114,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </div>
         </div>
 
+        {/* 1. Análise Técnica */}
         <div>
           <Label htmlFor="analiseTecnicaLicitacao">Análise Técnica</Label>
           <Textarea
@@ -1090,31 +1131,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </p>
         </div>
 
-        <div>
-          <Label htmlFor="impugnacaoEdital">Impugnação do Edital</Label>
-          <Textarea
-            id="impugnacaoEdital"
-            value={formData.impugnacaoEdital}
-            onChange={(e) => handleInputChange('impugnacaoEdital', e.target.value)}
-            placeholder="Detalhes sobre impugnação do edital"
-            rows={3}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-
-        <div>
-          <Label htmlFor="valorMinimoFinal">Valor mínimo Final (R$)</Label>
-          <Input
-            id="valorMinimoFinal"
-            type="number"
-            step="0.01"
-            value={formData.valorMinimoFinal}
-            onChange={(e) => handleInputChange('valorMinimoFinal', parseFloat(e.target.value) || 0)}
-            placeholder="0,00"
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-
+        {/* 2. Análise de Estratégia */}
         <div>
           <Label htmlFor="analiseEstrategia">Análise de Estratégia</Label>
           <Textarea
@@ -1127,6 +1144,100 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           />
         </div>
 
+        {/* 3. Empresa Participante 1 + Valor Mínimo 1 */}
+        <Card className="border-2 border-primary/20 bg-gradient-to-r from-blue-50 to-transparent">
+          <CardContent className="pt-4 space-y-4">
+            <h4 className="text-base font-semibold text-gray-800 flex items-center gap-2">
+              <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span>
+              Empresa Participante 1
+            </h4>
+            <EmpresaParticipanteSelect
+              empresaParticipanteId={empresaParticipante.empresaParticipanteId}
+              empresaParticipanteNome={empresaParticipante.empresaParticipanteNome}
+              empresaParticipanteCNPJ={empresaParticipante.empresaParticipanteCNPJ}
+              aprovacaoEmpresa={aprovacaoEmpresa}
+              onChange={handleEmpresaParticipanteChange}
+              onSolicitarAprovacao={handleSolicitarAprovacao}
+              onAprovar={handleAprovacaoEmpresa}
+              onRejeitar={handleAprovacaoEmpresa}
+              licitacaoData={{
+                id: oportunidade?.id || 0,
+                numeroPregao: oportunidade?.codigo || formData.numeroPregao || '',
+                nomeInstituicao: oportunidade?.cliente || formData.cliente || '',
+                objetoLicitacao: oportunidade?.descricao || formData.descricao || ''
+              }}
+              disabled={isReadOnlyMode()}
+              required={true}
+            />
+            <div>
+              <Label htmlFor="valorMinimoFinal">Valor mínimo Final - Empresa 1 (R$)</Label>
+              <Input
+                id="valorMinimoFinal"
+                type="number"
+                step="0.01"
+                value={formData.valorMinimoFinal}
+                onChange={(e) => handleInputChange('valorMinimoFinal', parseFloat(e.target.value) || 0)}
+                placeholder="0,00"
+                disabled={isReadOnlyMode()}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 4. Empresa Participante 2 + Valor Mínimo 2 */}
+        <Card className="border-2 border-secondary/20 bg-gradient-to-r from-green-50 to-transparent">
+          <CardContent className="pt-4 space-y-4">
+            <h4 className="text-base font-semibold text-gray-800 flex items-center gap-2">
+              <span className="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span>
+              Empresa Participante 2 (Opcional)
+            </h4>
+            <EmpresaParticipanteSelect
+              empresaParticipanteId={empresaParticipante2.empresaParticipanteId}
+              empresaParticipanteNome={empresaParticipante2.empresaParticipanteNome}
+              empresaParticipanteCNPJ={empresaParticipante2.empresaParticipanteCNPJ}
+              aprovacaoEmpresa={aprovacaoEmpresa2}
+              onChange={handleEmpresaParticipante2Change}
+              onSolicitarAprovacao={handleSolicitarAprovacao2}
+              onAprovar={handleAprovacaoEmpresa2}
+              onRejeitar={handleAprovacaoEmpresa2}
+              licitacaoData={{
+                id: oportunidade?.id || 0,
+                numeroPregao: oportunidade?.codigo || formData.numeroPregao || '',
+                nomeInstituicao: oportunidade?.cliente || formData.cliente || '',
+                objetoLicitacao: oportunidade?.descricao || formData.descricao || ''
+              }}
+              disabled={isReadOnlyMode()}
+              required={false}
+            />
+            <div>
+              <Label htmlFor="valorMinimoFinal2">Valor mínimo Final - Empresa 2 (R$)</Label>
+              <Input
+                id="valorMinimoFinal2"
+                type="number"
+                step="0.01"
+                value={formData.valorMinimoFinal2}
+                onChange={(e) => handleInputChange('valorMinimoFinal2', parseFloat(e.target.value) || 0)}
+                placeholder="0,00"
+                disabled={isReadOnlyMode()}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 5. Impugnação do Edital */}
+        <div>
+          <Label htmlFor="impugnacaoEdital">Impugnação do Edital</Label>
+          <Textarea
+            id="impugnacaoEdital"
+            value={formData.impugnacaoEdital}
+            onChange={(e) => handleInputChange('impugnacaoEdital', e.target.value)}
+            placeholder="Detalhes sobre impugnação do edital"
+            rows={3}
+            disabled={isReadOnlyMode()}
+          />
+        </div>
+
+        {/* 6. Razões para Recurso */}
         <div>
           <Label htmlFor="manifestacaoRecorrer">Razões para Recurso</Label>
           <Textarea
@@ -1272,26 +1383,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
       {/* Estratégia e Planejamento */}
       <div className="border rounded-lg p-4 space-y-4 bg-green-50">
         <h3 className="text-lg font-semibold text-gray-800">Estratégia e Planejamento</h3>
-        
-        {/* Empresa Participante - Campo Obrigatório */}
-        <EmpresaParticipanteSelect
-          empresaParticipanteId={empresaParticipante.empresaParticipanteId}
-          empresaParticipanteNome={empresaParticipante.empresaParticipanteNome}
-          empresaParticipanteCNPJ={empresaParticipante.empresaParticipanteCNPJ}
-          aprovacaoEmpresa={aprovacaoEmpresa}
-          onChange={handleEmpresaParticipanteChange}
-          onSolicitarAprovacao={handleSolicitarAprovacao}
-          onAprovar={handleAprovacaoEmpresa}
-          onRejeitar={handleAprovacaoEmpresa}
-          licitacaoData={{
-            id: oportunidade?.id || 0,
-            numeroPregao: oportunidade?.codigo || formData.numeroPregao || '',
-            nomeInstituicao: oportunidade?.cliente || formData.cliente || '',
-            objetoLicitacao: oportunidade?.descricao || formData.descricao || ''
-          }}
-          disabled={isReadOnlyMode()}
-          required={true}
-        />
         
         <div>
           <Label htmlFor="estrategiaParticipacao">Estratégia de Participação</Label>
