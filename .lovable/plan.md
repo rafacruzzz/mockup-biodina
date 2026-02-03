@@ -1,200 +1,234 @@
 
-## Plano: Criar Módulo de Configuração com Perfil da Empresa
+## Plano: Sincronizacao Bidirecional de Empresa Participante entre Contratacao e Licitacao
 
 ### Objetivo
-Criar um novo módulo **Configuração** no menu lateral com submódulo **Perfil da Empresa**, permitindo que usuários autorizados editem os dados da empresa atual (principal ou filial selecionada no switcher).
+Quando uma licitacao for vinculada a uma contratacao, exibir as empresas participantes selecionadas na licitacao original. Permitir que o usuario altere a empresa escolhida diretamente na contratacao, e essa alteracao deve atualizar automaticamente a licitacao vinculada (sincronizacao bidirecional).
 
 ---
 
-### Análise
-
-A empresa atualmente não possui todos os campos que as filiais possuem (endereço, emissão, etc.). Precisamos:
-1. Atualizar o tipo `Empresa` para incluir os mesmos campos das filiais
-2. Criar uma página de Configuração com o submódulo Perfil da Empresa
-3. Adicionar ao menu lateral e à árvore de permissões
-
-### Estrutura Proposta
+### Fluxo Atual vs Proposto
 
 ```text
-Menu Lateral:
-├── BI
-├── Cadastro
-├── ...
-├── Solicitações
-├── Configuração          <-- NOVO
-│   └── Perfil da Empresa
-└── Personalizar Navegação
+FLUXO ATUAL:
+Licitacao                           Contratacao
++-----------------------+           +-----------------------+
+| Empresa 1: ESS        |    -->    | Vincula Licitacao     |
+| Empresa 2: (opcional) |           | (nao mostra empresa)  |
++-----------------------+           +-----------------------+
+
+FLUXO PROPOSTO:
+Licitacao                           Contratacao
++-----------------------+    <->    +-----------------------+
+| Empresa 1: ESS        |           | Licitacao: PE-001     |
+| Empresa 2: ABC        |           | Empresa: ESS          |
++-----------------------+           | [Alterar Empresa]     |
+        ^                           +-----------------------+
+        |                                    |
+        +-------- Atualiza automaticamente --+
 ```
 
 ---
 
-### Arquivos a Criar/Modificar
+### Alteracoes Necessarias
 
-| Arquivo | Ação | Descrição |
+#### 1. Atualizar Tipos de Dados
+
+**Arquivo:** `src/data/licitacaoMockData.ts`
+
+Adicionar campos de empresa participante ao tipo `licitacoesGanhasDetalhadas`:
+
+| Campo Novo | Tipo | Descricao |
+|------------|------|-----------|
+| `empresaParticipanteId` | string | ID da empresa 1 |
+| `empresaParticipanteNome` | string | Nome da empresa 1 |
+| `empresaParticipanteCNPJ` | string | CNPJ da empresa 1 |
+| `empresaParticipanteId2` | string | ID da empresa 2 (opcional) |
+| `empresaParticipanteNome2` | string | Nome da empresa 2 (opcional) |
+| `empresaParticipanteCNPJ2` | string | CNPJ da empresa 2 (opcional) |
+
+---
+
+#### 2. Criar Contexto de Licitacoes Ganhas
+
+**Novo Arquivo:** `src/contexts/LicitacoesGanhasContext.tsx`
+
+Criar contexto para gerenciar estado global das licitacoes ganhas, permitindo atualizacao bidirecional:
+
+```typescript
+// Funcoes do contexto:
+- licitacoesGanhas: array com todas as licitacoes ganhas
+- atualizarEmpresaLicitacao: atualiza empresa de uma licitacao especifica
+- getLicitacaoById: busca licitacao por ID
+```
+
+---
+
+#### 3. Modificar ContratacaoSimplesForm.tsx
+
+**Secao:** Card "Vincular Licitacao Ganha"
+
+**Alteracoes na Interface:**
+
+Quando uma licitacao for vinculada, exibir:
+
+```text
++---------------------------------------------------------------+
+| Vincular Licitacao Ganha                                       |
++---------------------------------------------------------------+
+| Selecionar Licitacao: [PE-2024-001 - Prefeitura SP ▼]         |
+|                                                                |
+| +-----------------------------------------------------------+ |
+| | LICITACAO VINCULADA: PE-2024-001                          | |
+| | Objeto: Aquisicao de equipamentos medicos                  | |
+| |                                                            | |
+| | EMPRESA PARTICIPANTE:                                      | |
+| | +--------------------------------------------------------+ | |
+| | | Empresa: iMuv Tecnologia LTDA                          | | |
+| | | CNPJ: 12.345.678/0001-00                               | | |
+| | | [Alterar Empresa ▼]                                     | | |
+| | +--------------------------------------------------------+ | |
+| |                                                            | |
+| | (Se houver segunda empresa)                                | |
+| | EMPRESA PARTICIPANTE 2:                                    | |
+| | +--------------------------------------------------------+ | |
+| | | Empresa: iMuv Filial SP                                | | |
+| | | CNPJ: 12.345.678/0002-81                               | | |
+| | | [Alterar Empresa ▼]                                     | | |
+| | +--------------------------------------------------------+ | |
+| +-----------------------------------------------------------+ |
++---------------------------------------------------------------+
+```
+
+**Novos Estados:**
+
+```typescript
+const [empresaContrato, setEmpresaContrato] = useState({
+  empresaParticipanteId: '',
+  empresaParticipanteNome: '',
+  empresaParticipanteCNPJ: ''
+});
+
+const [empresaContrato2, setEmpresaContrato2] = useState({
+  empresaParticipanteId: '',
+  empresaParticipanteNome: '',
+  empresaParticipanteCNPJ: ''
+});
+```
+
+**Nova Funcao de Sincronizacao:**
+
+```typescript
+const handleAlterarEmpresaContrato = (novaEmpresa) => {
+  setEmpresaContrato(novaEmpresa);
+  
+  // Atualizar licitacao original via contexto
+  if (licitacaoVinculada) {
+    atualizarEmpresaLicitacao(licitacaoVinculada, novaEmpresa);
+    toast.success('Empresa atualizada na licitacao e contratacao!');
+  }
+};
+```
+
+---
+
+#### 4. Atualizar handleVincularLicitacao
+
+Ao vincular uma licitacao, carregar tambem os dados da empresa participante:
+
+```typescript
+const handleVincularLicitacao = (licitacaoId: string) => {
+  const licitacao = licitacoesGanhas.find(l => l.id.toString() === licitacaoId);
+  
+  // ... codigo existente ...
+  
+  // NOVO: Carregar empresa participante da licitacao
+  setEmpresaContrato({
+    empresaParticipanteId: licitacao.empresaParticipanteId || '',
+    empresaParticipanteNome: licitacao.empresaParticipanteNome || '',
+    empresaParticipanteCNPJ: licitacao.empresaParticipanteCNPJ || ''
+  });
+  
+  setEmpresaContrato2({
+    empresaParticipanteId: licitacao.empresaParticipanteId2 || '',
+    empresaParticipanteNome: licitacao.empresaParticipanteNome2 || '',
+    empresaParticipanteCNPJ: licitacao.empresaParticipanteCNPJ2 || ''
+  });
+};
+```
+
+---
+
+### Arquivos a Modificar/Criar
+
+| Arquivo | Acao | Descricao |
 |---------|------|-----------|
-| `src/types/super.ts` | Modificar | Adicionar campos de endereço e emissão à interface `Empresa` |
-| `src/pages/Configuracao.tsx` | **NOVO** | Página do módulo Configuração |
-| `src/components/configuracao/PerfilEmpresaContent.tsx` | **NOVO** | Componente com abas Informações, Endereço, Emissão |
-| `src/data/sistemaModulosCompletos.ts` | Modificar | Adicionar módulo "configuracao" com submódulo "perfil_empresa" |
-| `src/components/SidebarLayout.tsx` | Modificar | Adicionar item "Configuração" ao menu |
-| `src/App.tsx` | Modificar | Adicionar rota `/configuracao` |
-| `src/data/superModules.ts` | Modificar | Adicionar "configuracao" ao `modulosDisponiveis` |
+| `src/contexts/LicitacoesGanhasContext.tsx` | **CRIAR** | Contexto para gerenciar licitacoes ganhas com estado global |
+| `src/data/licitacaoMockData.ts` | Modificar | Adicionar campos de empresa participante aos dados mock |
+| `src/components/comercial/ContratacaoSimplesForm.tsx` | Modificar | Exibir empresa participante e permitir alteracao |
+| `src/App.tsx` | Modificar | Envolver app com LicitacoesGanhasProvider |
 
 ---
 
-### Detalhes de Implementação
+### Detalhes Tecnicos
 
-#### 1. Atualizar Tipo `Empresa` (src/types/super.ts)
-
-Adicionar os mesmos campos que existem em `Filial`:
+#### Contexto LicitacoesGanhasContext
 
 ```typescript
-export interface Empresa {
+interface LicitacaoGanha {
+  id: number;
+  numeroPregao: string;
   // ... campos existentes ...
-  
-  // NOVOS CAMPOS
-  endereco?: {
-    cep: string;
-    logradouro: string;
-    numero: string;
-    complemento?: string;
-    bairro: string;
-    cidade: string;
-    uf: string;
-  };
-  
-  // Dados do Emitente
-  inscricaoEstadual?: string;
-  inscricaoMunicipal?: string;
-  regimeTributario?: '1' | '2' | '3' | '4';
-  email?: string;
-  telefone?: string;
-  discriminaImpostos?: boolean;
-  
-  // Certificado Digital e Configuração NF-e
-  certificadoDigital?: { ... };
-  nfeConfig?: { ... };
+  empresaParticipanteId?: string;
+  empresaParticipanteNome?: string;
+  empresaParticipanteCNPJ?: string;
+  empresaParticipanteId2?: string;
+  empresaParticipanteNome2?: string;
+  empresaParticipanteCNPJ2?: string;
+}
+
+interface LicitacoesGanhasContextType {
+  licitacoesGanhas: LicitacaoGanha[];
+  atualizarEmpresaLicitacao: (
+    licitacaoId: string,
+    empresa: { id: string; nome: string; cnpj: string },
+    empresaNumero: 1 | 2
+  ) => void;
 }
 ```
 
-#### 2. Criar Página `Configuracao.tsx`
+#### Componente de Selecao de Empresa na Contratacao
 
-Página com sidebar similar às outras páginas do sistema:
-
-```text
-+------------------------------------------------------------------+
-| CONFIGURAÇÃO                                                       |
-+------------------------------------------------------------------+
-|                                                                    |
-| Sidebar:                  | Conteúdo:                             |
-| ├── Perfil da Empresa     | [Tabs: Informações | Endereço | Emissão] |
-|                           |                                        |
-|                           | [Campos editáveis baseados no          |
-|                           |  FilialModal, reutilizando EmissaoTab] |
-+------------------------------------------------------------------+
-```
-
-#### 3. Criar `PerfilEmpresaContent.tsx`
-
-Componente com 3 abas:
-- **Informações**: Nome Fantasia, Razão Social, CNPJ, IE, IM, Regime Tributário, E-mail, Telefone
-- **Endereço**: CEP com busca automática, Logradouro, Número, Complemento, Bairro, Cidade, UF
-- **Emissão**: Reutilizar `EmissaoTab` existente
-
-#### 4. Adicionar ao `sistemaModulosCompletos.ts`
+Reutilizar o mesmo Select usado no EmpresaParticipanteSelect, mas simplificado:
 
 ```typescript
-{
-  key: 'configuracao',
-  name: 'Configuração',
-  icon: '⚙️',
-  subModulos: [
-    { key: 'perfil_empresa', name: 'Perfil da Empresa' }
-  ]
-}
-```
-
-Posição: após "Solicitações" e antes de "Personalizar Navegação"
-
-#### 5. Adicionar ao Menu Lateral
-
-```typescript
-{ 
-  name: "Configuração", 
-  path: "/configuracao", 
-  icon: <Settings size={20} />, 
-  id: "configuracao" 
-}
-```
-
-#### 6. Adicionar ao `superModules.ts`
-
-```typescript
-{
-  id: 'configuracao',
-  nome: 'Configuração',
-  descricao: 'Configurações da empresa',
-  icon: '⚙️',
-  cor: 'slate'
-}
+<Select value={empresaContrato.empresaParticipanteId} onValueChange={handleAlterarEmpresa}>
+  <SelectTrigger>
+    <SelectValue placeholder="Selecione a empresa" />
+  </SelectTrigger>
+  <SelectContent>
+    {empresasDisponiveis.map((empresa) => (
+      <SelectItem key={empresa.id} value={empresa.id}>
+        {empresa.nome} - {empresa.cnpj}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
 ```
 
 ---
 
 ### Comportamento do Sistema
 
-1. **Empresa Principal selecionada**: Perfil da Empresa edita os dados da empresa principal
-2. **Filial selecionada**: Perfil da Empresa edita os dados da filial (alternativa ao FilialModal)
-3. **Permissões**: Apenas usuários com acesso ao módulo Configuração > Perfil da Empresa podem editar
+1. **Ao vincular licitacao**: Carrega automaticamente a(s) empresa(s) participante(s) definida(s) na licitacao
+2. **Exibicao**: Mostra qual empresa foi escolhida para aquela licitacao
+3. **Alteracao**: Usuario pode trocar a empresa selecionada
+4. **Sincronizacao**: Ao salvar ou alterar, atualiza a licitacao original
+5. **Feedback**: Toast informando que a alteracao foi sincronizada
 
 ---
 
-### Interface Visual da Página
+### Validacoes
 
-```text
-┌─────────────────────────────────────────────────────────────────────┐
-│  ⚙️ Configuração                                                    │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  Sidebar:          │  ┌───────────────────────────────────────────┐ │
-│  ┌─────────────┐   │  │ Perfil da Empresa: iMuv Master            │ │
-│  │ ● Perfil    │   │  │                                           │ │
-│  │   da Empresa│   │  │ [Informações] [Endereço] [Emissão]       │ │
-│  └─────────────┘   │  │                                           │ │
-│                    │  │ ┌─────────────────────────────────────┐   │ │
-│                    │  │ │ Nome Fantasia: [iMuv Master      ]  │   │ │
-│                    │  │ │ Razão Social:  [iMuv Tecno...    ]  │   │ │
-│                    │  │ │ CNPJ:          [12.345.678/0001-99] │   │ │
-│                    │  │ │ ...                                 │   │ │
-│                    │  │ └─────────────────────────────────────┘   │ │
-│                    │  │                                           │ │
-│                    │  │               [💾 Salvar Alterações]      │ │
-│                    │  └───────────────────────────────────────────┘ │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-### Resumo das Alterações
-
-| Arquivo | Tipo | Descrição |
-|---------|------|-----------|
-| `src/types/super.ts` | Modificar | Adicionar campos de endereço/emissão à `Empresa` |
-| `src/pages/Configuracao.tsx` | **NOVO** | Página principal do módulo |
-| `src/components/configuracao/PerfilEmpresaContent.tsx` | **NOVO** | Conteúdo do perfil com 3 abas |
-| `src/components/configuracao/ConfiguracaoSidebar.tsx` | **NOVO** | Sidebar do módulo |
-| `src/data/sistemaModulosCompletos.ts` | Modificar | Adicionar módulo "configuracao" |
-| `src/data/superModules.ts` | Modificar | Adicionar ao array de módulos |
-| `src/components/SidebarLayout.tsx` | Modificar | Adicionar item ao menu |
-| `src/App.tsx` | Modificar | Adicionar rota /configuracao |
-
----
-
-### Resultado Esperado
-
-- Novo módulo **Configuração** visível no menu lateral
-- Submódulo **Perfil da Empresa** permite editar dados completos
-- Funciona tanto para empresa principal quanto para filiais
-- Controle de acesso via permissões de usuário (módulos/submódulos)
-- Dados salvos automaticamente via contexto `EmpresaContext`
+- A licitacao vinculada nao pode ser editada diretamente (esta "fechada")
+- Mas atraves da contratacao, a empresa pode ser alterada
+- A alteracao e registrada no historico da licitacao (opcional, para auditoria)
