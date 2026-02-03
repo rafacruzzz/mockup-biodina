@@ -74,6 +74,27 @@ export interface Filial {
   email?: string;
   telefone?: string;
   discriminaImpostos?: boolean;
+  
+  // Certificado Digital e Configuração NF-e
+  certificadoDigital?: {
+    nomeArquivo: string;
+    serialCertificado: string;
+    idctx: string;
+    inicio: string;
+    expiracao: string;
+    ambienteEmissao: 'homologacao' | 'producao';
+  };
+  
+  nfeConfig?: {
+    homologacao: {
+      serie: number;
+      proximoNumero: number;
+    };
+    producao: {
+      serie: number;
+      proximoNumero: number;
+    };
+  };
 }
 
 export type ModuloSistema = 

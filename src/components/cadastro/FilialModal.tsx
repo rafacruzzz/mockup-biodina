@@ -16,6 +16,7 @@ import { useCepLookup } from "@/hooks/useCepLookup";
 import { toast } from "sonner";
 import { ModuloEmpresa } from "@/types/permissions";
 import { modulosCompletosSistema } from "@/data/sistemaModulosCompletos";
+import EmissaoTab from "./EmissaoTab";
 
 interface FilialModalProps {
   open: boolean;
@@ -274,7 +275,7 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
             </div>
           )}
 
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="info">
               <Building2 className="h-4 w-4 mr-2" />
               Informações
@@ -286,6 +287,10 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
             <TabsTrigger value="modulos">
               <Package className="h-4 w-4 mr-2" />
               Módulos
+            </TabsTrigger>
+            <TabsTrigger value="emissao">
+              <FileText className="h-4 w-4 mr-2" />
+              Emissão
             </TabsTrigger>
           </TabsList>
 
@@ -547,6 +552,10 @@ const FilialModal = ({ open, onOpenChange, filial }: FilialModalProps) => {
               onChange={(modulos) => setFormData({ ...formData, modulosDetalhados: modulos })}
               modulosDisponiveis={modulosDisponiveisDetalhados.map(m => typeof m === 'string' ? m : (m as any).key)}
             />
+          </TabsContent>
+
+          <TabsContent value="emissao" className="space-y-4">
+            <EmissaoTab formData={formData} setFormData={setFormData} />
           </TabsContent>
         </Tabs>
 

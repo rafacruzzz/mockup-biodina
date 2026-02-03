@@ -428,13 +428,6 @@ const Financeiro = () => {
         { id: 'relatorios_tesouraria', title: 'Relatórios' }
       ]
     },
-    {
-      id: 'emissao',
-      title: 'Emissão',
-      description: 'Configuração de emissão de documentos fiscais',
-      icon: Receipt,
-      subModules: []
-    },
   ];
 
   const renderMainModules = () => (
