@@ -45,6 +45,7 @@ export const useModulosUsuario = ({
   }, [empresaPrincipal, empresasVinculadas, filiais]);
 
   // Retorna os módulos do usuário para a empresa atualmente selecionada
+  // Este hook agora sempre é chamado, independente das condições
   const modulosUsuarioAtual = useMemo((): ModuloUsuario[] => {
     if (!empresaAtualId || empresasVinculadas.length === 0) {
       return [];
@@ -54,6 +55,7 @@ export const useModulosUsuario = ({
     return empresaAtiva?.moduleAccess || [];
   }, [empresaAtualId, empresasVinculadas]);
 
+  // Funções helper - não são hooks, podem ter condições
   const verificarModuloDisponivel = (modulo: ModuloSistema): {
     disponivel: boolean;
     empresasComModulo: string[];
@@ -62,7 +64,6 @@ export const useModulosUsuario = ({
     const empresasComModulo: string[] = [];
     const empresasSemModulo: string[] = [];
 
-    // Guard: se não tem empresa principal, retorna valores vazios
     if (!empresaPrincipal) {
       return {
         disponivel: false,
@@ -71,14 +72,12 @@ export const useModulosUsuario = ({
       };
     }
 
-    // Verifica empresa principal
     if (empresaPrincipal.modulosHabilitados.includes(modulo)) {
       empresasComModulo.push(empresaPrincipal.nome);
     } else {
       empresasSemModulo.push(empresaPrincipal.nome);
     }
 
-    // Verifica filiais vinculadas
     const filiaisVinculadas = empresasVinculadas.filter(e => e.tipo === 'filial');
     
     filiaisVinculadas.forEach(empresaVinculada => {
@@ -99,13 +98,11 @@ export const useModulosUsuario = ({
     };
   };
 
-  // Verifica se o usuário tem acesso a um módulo específico na empresa atual
   const verificarAcessoModulo = (moduloKey: string): boolean => {
     const modulo = modulosUsuarioAtual.find(m => m.key === moduloKey);
-    return modulo?.habilitado && modulo?.subModulos?.some(s => s.habilitado) || false;
+    return (modulo?.habilitado && modulo?.subModulos?.some(s => s.habilitado)) || false;
   };
 
-  // Verifica se o usuário tem acesso a um submódulo específico na empresa atual
   const verificarAcessoSubModulo = (moduloKey: string, subModuloKey: string): {
     habilitado: boolean;
     permissions: { view: boolean; create: boolean; edit: boolean; delete: boolean };
