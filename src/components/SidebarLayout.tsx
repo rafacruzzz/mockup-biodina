@@ -49,6 +49,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
     { name: "RH", path: "/rh", icon: <UserCheck size={20} />, id: "rh" },
     { name: "TI", path: "/ti", icon: <Cpu size={20} />, id: "ti" },
     { name: "Solicitações", path: "/solicitacoes", icon: <FileText size={20} />, id: "solicitacoes" },
+    { name: "Configuração", path: "/configuracao", icon: <Settings size={20} />, id: "configuracao" },
     { name: "Personalizar Navegação", path: "/personalizar-navegacao", icon: <Settings size={20} />, id: "personalizar-navegacao" },
   ];
 
@@ -56,13 +57,15 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
   const getMenuItems = () => {
     if (!navOverrides) return defaultMenuItems;
 
-    // Keep "Solicitações" and "Personalizar Navegação" as fixed items
+    // Keep "Solicitações", "Configuração" and "Personalizar Navegação" as fixed items
     const solicitacoes = defaultMenuItems.find(item => item.id === "solicitacoes");
+    const configuracao = defaultMenuItems.find(item => item.id === "configuracao");
     const personalizar = defaultMenuItems.find(item => item.id === "personalizar-navegacao");
     
     // Get the module items (excluding fixed items)
     const moduleItems = defaultMenuItems.filter(item => 
       item.id !== "solicitacoes" && 
+      item.id !== "configuracao" &&
       item.id !== "personalizar-navegacao"
     );
 
@@ -85,13 +88,14 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
     return [
       ...orderedModuleItems,
       solicitacoes!,
+      configuracao!,
       personalizar!
     ];
   };
 
   const menuItems = getMenuItems().filter(item => {
-    // Sempre mostrar: Solicitações, Personalizar
-    if (['solicitacoes', 'personalizar-navegacao'].includes(item.id)) {
+    // Sempre mostrar: Solicitações, Configuração, Personalizar
+    if (['solicitacoes', 'configuracao', 'personalizar-navegacao'].includes(item.id)) {
       return true;
     }
     // SUPER apenas para usuário super@super.com.br

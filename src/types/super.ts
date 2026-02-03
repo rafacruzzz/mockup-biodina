@@ -46,6 +46,45 @@ export interface Empresa {
     totalVendas: number;
     espacoUtilizado: string;
   };
+  
+  // Dados do Emitente (mesmos campos da Filial)
+  endereco?: {
+    cep: string;
+    logradouro: string;
+    numero: string;
+    complemento?: string;
+    bairro: string;
+    cidade: string;
+    uf: string;
+  };
+  
+  inscricaoEstadual?: string;
+  inscricaoMunicipal?: string;
+  regimeTributario?: '1' | '2' | '3' | '4';
+  email?: string;
+  telefone?: string;
+  discriminaImpostos?: boolean;
+  
+  // Certificado Digital e Configuração NF-e
+  certificadoDigital?: {
+    nomeArquivo: string;
+    serialCertificado: string;
+    idctx: string;
+    inicio: string;
+    expiracao: string;
+    ambienteEmissao: 'homologacao' | 'producao';
+  };
+  
+  nfeConfig?: {
+    homologacao: {
+      serie: number;
+      proximoNumero: number;
+    };
+    producao: {
+      serie: number;
+      proximoNumero: number;
+    };
+  };
 }
 
 export interface Filial {
@@ -109,7 +148,8 @@ export type ModuloSistema =
   | 'ti'
   | 'administrativo'
   | 'solicitacoes'
-  | 'bi';
+  | 'bi'
+  | 'configuracao';
 
 export interface ModuloConfig {
   id: ModuloSistema;

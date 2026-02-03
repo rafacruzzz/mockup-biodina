@@ -28,6 +28,7 @@ import EditarPerfil from "./pages/EditarPerfil";
 import CandidaturaPublica from "./pages/CandidaturaPublica";
 import PersonalizarNavegacao from "./pages/PersonalizarNavegacao";
 import MeuPlano from "./pages/MeuPlano";
+import Configuracao from "./pages/Configuracao";
 import NotFound from "./pages/NotFound";
 
 // Create QueryClient instance outside of component to avoid recreation
@@ -69,6 +70,7 @@ const App: React.FC = () => {
               <Route path="/editar-perfil" element={<EditarPerfil />} />
               <Route path="/meu-plano" element={<MeuPlano />} />
               <Route path="/personalizar-navegacao" element={<PersonalizarNavegacao />} />
+              <Route path="/configuracao" element={<Configuracao />} />
               {/* Rota pública para candidatura */}
               <Route path="/candidatura/:linkId" element={<CandidaturaPublica />} />
               {/* Rota pública para seleção de planos */}
