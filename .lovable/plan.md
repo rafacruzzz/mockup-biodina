@@ -1,161 +1,200 @@
 
-## Plano: Mover Emissão do Financeiro para Filiais
+## Plano: Criar Módulo de Configuração com Perfil da Empresa
 
 ### Objetivo
-Adicionar uma nova aba "Emissão" no modal de cadastro/edição de filiais contendo as configurações de certificado digital e NF-e, e remover o submódulo "Emissão" do módulo Financeiro.
+Criar um novo módulo **Configuração** no menu lateral com submódulo **Perfil da Empresa**, permitindo que usuários autorizados editem os dados da empresa atual (principal ou filial selecionada no switcher).
 
 ---
 
-### Análise dos Campos
+### Análise
 
-**Campos JA EXISTENTES no FilialModal (nao duplicar):**
-| Campo | Localizado em |
-|-------|---------------|
-| Nome Fantasia | Aba "Informacoes" |
-| Razao Social | Aba "Informacoes" |
-| CNPJ | Aba "Informacoes" |
-| Inscricao Estadual | Aba "Informacoes" |
-| Inscricao Municipal | Aba "Informacoes" |
-| Regime Tributario | Aba "Informacoes" |
-| E-mail | Aba "Informacoes" |
-| Telefone | Aba "Informacoes" |
-| Discriminar impostos | Aba "Informacoes" |
-| Endereco completo | Aba "Endereco" |
+A empresa atualmente não possui todos os campos que as filiais possuem (endereço, emissão, etc.). Precisamos:
+1. Atualizar o tipo `Empresa` para incluir os mesmos campos das filiais
+2. Criar uma página de Configuração com o submódulo Perfil da Empresa
+3. Adicionar ao menu lateral e à árvore de permissões
 
-**Campos NOVOS para a aba Emissao:**
-| Campo | Secao |
-|-------|-------|
-| Upload certificado (.pfx/.p12) | Certificado Digital |
-| Ambiente de emissao (Homologacao/Producao) | Certificado Digital |
-| Senha do certificado | Certificado Digital |
-| Info certificado (Serial, IDCTX, validade) | Certificado Digital |
-| Serie - Homologacao | Configuracao NF-e |
-| Proximo Numero - Homologacao | Configuracao NF-e |
-| Serie - Producao | Configuracao NF-e |
-| Proximo Numero - Producao | Configuracao NF-e |
-
----
-
-### Alteracoes de Arquivos
-
-#### 1. Atualizar Tipo `Filial` (`src/types/super.ts`)
-
-Adicionar campos de emissao:
-
-```typescript
-// Adicionar ao interface Filial
-certificadoDigital?: {
-  nomeArquivo: string;
-  serialCertificado: string;
-  idctx: string;
-  inicio: string;
-  expiracao: string;
-  ambienteEmissao: 'homologacao' | 'producao';
-};
-
-nfeConfig?: {
-  homologacao: {
-    serie: number;
-    proximoNumero: number;
-  };
-  producao: {
-    serie: number;
-    proximoNumero: number;
-  };
-};
-```
-
-#### 2. Modificar `FilialModal.tsx`
-
-**Alteracoes:**
-- Adicionar nova aba "Emissao" no TabsList (4 abas no total)
-- Criar TabsContent para "emissao" com layout responsivo
-- Adicionar estados para gerenciar certificado e configuracoes NF-e
-- Importar icones necessarios (Lock, FileText, Upload)
-
-**Estrutura da Nova Aba:**
+### Estrutura Proposta
 
 ```text
-+---------------------------------------------------------------+
-| Emissao                                                       |
-+---------------------------------------------------------------+
-|                                                               |
-| CERTIFICADO DIGITAL                                           |
-| +-----------------------------------------------------------+ |
-| |  [Area de drag & drop para upload .pfx/.p12]              | |
-| |                                                           | |
-| |  Ambiente de Emissao:                                     | |
-| |  [Homologacao]  [Producao]                                | |
-| |                                                           | |
-| |  Informacoes do Certificado (apos upload):               | |
-| |  Serial: XXXX   IDCTX: XXXX   Validade: XX/XX/XXXX       | |
-| +-----------------------------------------------------------+ |
-|                                                               |
-| CONFIGURACAO NF-e                                             |
-| +-----------------------------------------------------------+ |
-| |  AMBIENTE DE HOMOLOGACAO                                  | |
-| |  Serie: [____]   Proximo Numero: [____]                  | |
-| +-----------------------------------------------------------+ |
-| +-----------------------------------------------------------+ |
-| |  AMBIENTE DE PRODUCAO                                     | |
-| |  Serie: [____]   Proximo Numero: [____]                  | |
-| +-----------------------------------------------------------+ |
-|                                                               |
-+---------------------------------------------------------------+
+Menu Lateral:
+├── BI
+├── Cadastro
+├── ...
+├── Solicitações
+├── Configuração          <-- NOVO
+│   └── Perfil da Empresa
+└── Personalizar Navegação
 ```
-
-#### 3. Remover Emissao do Financeiro (`src/pages/Financeiro.tsx`)
-
-**Alteracoes:**
-- Remover o objeto `{ id: 'emissao', ... }` do array `mainModules` (linhas 431-437)
-- Remover o bloco `if (activeModule === 'emissao')` (linhas 567-591)
-
-#### 4. Remover do menu de modulos (`src/data/sistemaModulosCompletos.ts`)
-
-- Remover `{ key: 'emissao', name: 'Emissao' }` do array `subModulos` da Contabilidade (linha 105)
 
 ---
 
-### Detalhes Tecnicos
+### Arquivos a Criar/Modificar
 
-**Imports adicionais no FilialModal:**
-```typescript
-import { Lock, FileText, Upload } from "lucide-react";
-```
-
-**Novos estados:**
-```typescript
-const [certificadoData, setCertificadoData] = useState<CertificadoData | null>(null);
-const [nomeArquivo, setNomeArquivo] = useState<string>("");
-const [isDragging, setIsDragging] = useState(false);
-const [ambienteEmissao, setAmbienteEmissao] = useState<'homologacao' | 'producao'>('homologacao');
-const [nfeConfig, setNfeConfig] = useState<NfeConfig>({
-  homologacao: { serie: 1, proximoNumero: 1 },
-  producao: { serie: 1, proximoNumero: 1 }
-});
-```
-
-**Funcoes de upload (copiar do EmissaoConfig):**
-- `handleFileUpload`
-- `handleFileInputChange`
-- `handleDrop`
-- `handleDragOver`
-- `handleDragLeave`
-- `handleNfeConfigChange`
+| Arquivo | Ação | Descrição |
+|---------|------|-----------|
+| `src/types/super.ts` | Modificar | Adicionar campos de endereço e emissão à interface `Empresa` |
+| `src/pages/Configuracao.tsx` | **NOVO** | Página do módulo Configuração |
+| `src/components/configuracao/PerfilEmpresaContent.tsx` | **NOVO** | Componente com abas Informações, Endereço, Emissão |
+| `src/data/sistemaModulosCompletos.ts` | Modificar | Adicionar módulo "configuracao" com submódulo "perfil_empresa" |
+| `src/components/SidebarLayout.tsx` | Modificar | Adicionar item "Configuração" ao menu |
+| `src/App.tsx` | Modificar | Adicionar rota `/configuracao` |
+| `src/data/superModules.ts` | Modificar | Adicionar "configuracao" ao `modulosDisponiveis` |
 
 ---
 
-### Resultado Final
+### Detalhes de Implementação
 
-| Arquivo | Acao |
-|---------|------|
-| `src/types/super.ts` | Adicionar campos `certificadoDigital` e `nfeConfig` |
-| `src/components/cadastro/FilialModal.tsx` | Adicionar 4a aba "Emissao" com todo o conteudo |
-| `src/pages/Financeiro.tsx` | Remover modulo "Emissao" |
-| `src/data/sistemaModulosCompletos.ts` | Remover "emissao" dos submodulos da Contabilidade |
+#### 1. Atualizar Tipo `Empresa` (src/types/super.ts)
 
-**Comportamento:**
-- Ao criar/editar filial, a aba "Emissao" permitira configurar certificado e NF-e
-- O modal tera 4 abas: Informacoes, Endereco, Modulos, Emissao
-- O modulo Financeiro nao tera mais o card "Emissao"
-- Cada filial tera sua propria configuracao de emissao de notas fiscais
+Adicionar os mesmos campos que existem em `Filial`:
+
+```typescript
+export interface Empresa {
+  // ... campos existentes ...
+  
+  // NOVOS CAMPOS
+  endereco?: {
+    cep: string;
+    logradouro: string;
+    numero: string;
+    complemento?: string;
+    bairro: string;
+    cidade: string;
+    uf: string;
+  };
+  
+  // Dados do Emitente
+  inscricaoEstadual?: string;
+  inscricaoMunicipal?: string;
+  regimeTributario?: '1' | '2' | '3' | '4';
+  email?: string;
+  telefone?: string;
+  discriminaImpostos?: boolean;
+  
+  // Certificado Digital e Configuração NF-e
+  certificadoDigital?: { ... };
+  nfeConfig?: { ... };
+}
+```
+
+#### 2. Criar Página `Configuracao.tsx`
+
+Página com sidebar similar às outras páginas do sistema:
+
+```text
++------------------------------------------------------------------+
+| CONFIGURAÇÃO                                                       |
++------------------------------------------------------------------+
+|                                                                    |
+| Sidebar:                  | Conteúdo:                             |
+| ├── Perfil da Empresa     | [Tabs: Informações | Endereço | Emissão] |
+|                           |                                        |
+|                           | [Campos editáveis baseados no          |
+|                           |  FilialModal, reutilizando EmissaoTab] |
++------------------------------------------------------------------+
+```
+
+#### 3. Criar `PerfilEmpresaContent.tsx`
+
+Componente com 3 abas:
+- **Informações**: Nome Fantasia, Razão Social, CNPJ, IE, IM, Regime Tributário, E-mail, Telefone
+- **Endereço**: CEP com busca automática, Logradouro, Número, Complemento, Bairro, Cidade, UF
+- **Emissão**: Reutilizar `EmissaoTab` existente
+
+#### 4. Adicionar ao `sistemaModulosCompletos.ts`
+
+```typescript
+{
+  key: 'configuracao',
+  name: 'Configuração',
+  icon: '⚙️',
+  subModulos: [
+    { key: 'perfil_empresa', name: 'Perfil da Empresa' }
+  ]
+}
+```
+
+Posição: após "Solicitações" e antes de "Personalizar Navegação"
+
+#### 5. Adicionar ao Menu Lateral
+
+```typescript
+{ 
+  name: "Configuração", 
+  path: "/configuracao", 
+  icon: <Settings size={20} />, 
+  id: "configuracao" 
+}
+```
+
+#### 6. Adicionar ao `superModules.ts`
+
+```typescript
+{
+  id: 'configuracao',
+  nome: 'Configuração',
+  descricao: 'Configurações da empresa',
+  icon: '⚙️',
+  cor: 'slate'
+}
+```
+
+---
+
+### Comportamento do Sistema
+
+1. **Empresa Principal selecionada**: Perfil da Empresa edita os dados da empresa principal
+2. **Filial selecionada**: Perfil da Empresa edita os dados da filial (alternativa ao FilialModal)
+3. **Permissões**: Apenas usuários com acesso ao módulo Configuração > Perfil da Empresa podem editar
+
+---
+
+### Interface Visual da Página
+
+```text
+┌─────────────────────────────────────────────────────────────────────┐
+│  ⚙️ Configuração                                                    │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  Sidebar:          │  ┌───────────────────────────────────────────┐ │
+│  ┌─────────────┐   │  │ Perfil da Empresa: iMuv Master            │ │
+│  │ ● Perfil    │   │  │                                           │ │
+│  │   da Empresa│   │  │ [Informações] [Endereço] [Emissão]       │ │
+│  └─────────────┘   │  │                                           │ │
+│                    │  │ ┌─────────────────────────────────────┐   │ │
+│                    │  │ │ Nome Fantasia: [iMuv Master      ]  │   │ │
+│                    │  │ │ Razão Social:  [iMuv Tecno...    ]  │   │ │
+│                    │  │ │ CNPJ:          [12.345.678/0001-99] │   │ │
+│                    │  │ │ ...                                 │   │ │
+│                    │  │ └─────────────────────────────────────┘   │ │
+│                    │  │                                           │ │
+│                    │  │               [💾 Salvar Alterações]      │ │
+│                    │  └───────────────────────────────────────────┘ │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Resumo das Alterações
+
+| Arquivo | Tipo | Descrição |
+|---------|------|-----------|
+| `src/types/super.ts` | Modificar | Adicionar campos de endereço/emissão à `Empresa` |
+| `src/pages/Configuracao.tsx` | **NOVO** | Página principal do módulo |
+| `src/components/configuracao/PerfilEmpresaContent.tsx` | **NOVO** | Conteúdo do perfil com 3 abas |
+| `src/components/configuracao/ConfiguracaoSidebar.tsx` | **NOVO** | Sidebar do módulo |
+| `src/data/sistemaModulosCompletos.ts` | Modificar | Adicionar módulo "configuracao" |
+| `src/data/superModules.ts` | Modificar | Adicionar ao array de módulos |
+| `src/components/SidebarLayout.tsx` | Modificar | Adicionar item ao menu |
+| `src/App.tsx` | Modificar | Adicionar rota /configuracao |
+
+---
+
+### Resultado Esperado
+
+- Novo módulo **Configuração** visível no menu lateral
+- Submódulo **Perfil da Empresa** permite editar dados completos
+- Funciona tanto para empresa principal quanto para filiais
+- Controle de acesso via permissões de usuário (módulos/submódulos)
+- Dados salvos automaticamente via contexto `EmpresaContext`
