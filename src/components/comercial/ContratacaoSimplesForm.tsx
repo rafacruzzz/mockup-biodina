@@ -10,14 +10,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone, Building2, RefreshCw } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { mockChecklistVendas } from '@/data/faturamentoModules';
 import { PedidoCompleto } from '@/types/comercial';
 import { Chamado, StatusChamado } from '@/types/chamado';
-import { licitacoesGanhasDetalhadas } from '@/data/licitacaoMockData';
 import { useColaboradores } from '@/hooks/useColaboradores';
+import { useLicitacoesGanhas, EmpresaParticipanteData } from '@/contexts/LicitacoesGanhasContext';
+import { useEmpresa } from '@/contexts/EmpresaContext';
 import ChatInterno from './ChatInterno';
 import PedidoModal from './PedidoModal';
 import ChamadosTab from './ChamadosTab';
@@ -54,7 +55,21 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     observacao: ''
   });
 
+  // Estados para empresa participante
+  const [empresaContrato, setEmpresaContrato] = useState<EmpresaParticipanteData>({
+    empresaParticipanteId: '',
+    empresaParticipanteNome: '',
+    empresaParticipanteCNPJ: ''
+  });
+  const [empresaContrato2, setEmpresaContrato2] = useState<EmpresaParticipanteData>({
+    empresaParticipanteId: '',
+    empresaParticipanteNome: '',
+    empresaParticipanteCNPJ: ''
+  });
+
   const { colaboradores } = useColaboradores();
+  const { licitacoesGanhas, atualizarEmpresaLicitacao, getLicitacaoById } = useLicitacoesGanhas();
+  const { empresas, filiais, empresaAtual } = useEmpresa();
   
   const [formData, setFormData] = useState({
     // Dados do Cliente
@@ -121,15 +136,29 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       setLicitacaoVinculada('');
       setDocumentosLicitacao([]);
       setHistoricoLicitacao([]);
+      setEmpresaContrato({ empresaParticipanteId: '', empresaParticipanteNome: '', empresaParticipanteCNPJ: '' });
+      setEmpresaContrato2({ empresaParticipanteId: '', empresaParticipanteNome: '', empresaParticipanteCNPJ: '' });
       return;
     }
 
-    const licitacao = licitacoesGanhasDetalhadas.find(l => l.id.toString() === licitacaoId);
+    const licitacao = getLicitacaoById(licitacaoId);
     if (!licitacao) return;
 
     setLicitacaoVinculada(licitacaoId);
     setDocumentosLicitacao(licitacao.documentos);
     setHistoricoLicitacao(licitacao.historico);
+
+    // Carregar empresas participantes da licitação
+    setEmpresaContrato({
+      empresaParticipanteId: licitacao.empresaParticipanteId || '',
+      empresaParticipanteNome: licitacao.empresaParticipanteNome || '',
+      empresaParticipanteCNPJ: licitacao.empresaParticipanteCNPJ || ''
+    });
+    setEmpresaContrato2({
+      empresaParticipanteId: licitacao.empresaParticipanteId2 || '',
+      empresaParticipanteNome: licitacao.empresaParticipanteNome2 || '',
+      empresaParticipanteCNPJ: licitacao.empresaParticipanteCNPJ2 || ''
+    });
 
     // Preencher automaticamente os campos da contratação
     setFormData(prev => ({
@@ -149,6 +178,62 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       analiseTecnica: licitacao.analiseTecnica
     }));
   };
+
+  // Função para alterar empresa e sincronizar com licitação
+  const handleAlterarEmpresaContrato = (empresaId: string, empresaNumero: 1 | 2) => {
+    // Buscar dados da empresa selecionada
+    let empresaSelecionada: EmpresaParticipanteData = {
+      empresaParticipanteId: '',
+      empresaParticipanteNome: '',
+      empresaParticipanteCNPJ: ''
+    };
+
+    // Buscar na empresa atual e filiais
+    if (empresaAtual && empresaId === empresaAtual.id) {
+      empresaSelecionada = {
+        empresaParticipanteId: empresaAtual.id,
+        empresaParticipanteNome: empresaAtual.nome,
+        empresaParticipanteCNPJ: empresaAtual.cnpj
+      };
+    } else {
+      const filial = filiais.find(f => f.id === empresaId);
+      if (filial) {
+        empresaSelecionada = {
+          empresaParticipanteId: filial.id,
+          empresaParticipanteNome: filial.nome,
+          empresaParticipanteCNPJ: filial.cnpj
+        };
+      } else {
+        const empresa = empresas.find(e => e.id === empresaId);
+        if (empresa) {
+          empresaSelecionada = {
+            empresaParticipanteId: empresa.id,
+            empresaParticipanteNome: empresa.nome,
+            empresaParticipanteCNPJ: empresa.cnpj
+          };
+        }
+      }
+    }
+
+    // Atualizar estado local
+    if (empresaNumero === 1) {
+      setEmpresaContrato(empresaSelecionada);
+    } else {
+      setEmpresaContrato2(empresaSelecionada);
+    }
+
+    // Sincronizar com a licitação original
+    if (licitacaoVinculada) {
+      atualizarEmpresaLicitacao(licitacaoVinculada, empresaSelecionada, empresaNumero);
+      toast.success(`Empresa ${empresaNumero} atualizada na licitação e contratação!`);
+    }
+  };
+
+  // Lista de empresas disponíveis para seleção
+  const empresasDisponiveis = [
+    ...(empresaAtual ? [{ id: empresaAtual.id, nome: empresaAtual.nome, cnpj: empresaAtual.cnpj }] : []),
+    ...filiais.map(f => ({ id: f.id, nome: f.nome, cnpj: f.cnpj }))
+  ];
 
   const handleAdicionarChamado = (novoChamado: Omit<Chamado, 'id' | 'dataAbertura' | 'status'>) => {
     const chamado: Chamado = {
@@ -273,7 +358,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     toast.success(`Pedido #${pedido.id.toString().slice(-6)} enviado para Expedição!`);
   };
 
-  const licitacaoVinculadaData = licitacoesGanhasDetalhadas.find(l => l.id.toString() === licitacaoVinculada);
+  const licitacaoVinculadaData = getLicitacaoById(licitacaoVinculada);
 
   return (
     <>
@@ -354,7 +439,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                           <SelectValue placeholder="Selecione uma licitação ganha para vincular" />
                         </SelectTrigger>
                         <SelectContent>
-                          {licitacoesGanhasDetalhadas.map((licitacao) => (
+                          {licitacoesGanhas.map((licitacao) => (
                             <SelectItem key={licitacao.id} value={licitacao.id.toString()}>
                               {licitacao.numeroPregao} - {licitacao.nomeInstituicao} ({formatCurrency(licitacao.estrategiaValorFinal)})
                             </SelectItem>
@@ -363,16 +448,116 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                       </Select>
                     </div>
                     {licitacaoVinculadaData && (
-                      <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                        <p className="text-sm text-green-800">
-                          <strong>Licitação Vinculada:</strong> {licitacaoVinculadaData.numeroPregao}
-                        </p>
-                        <p className="text-sm text-green-600">
-                          {licitacaoVinculadaData.objetoLicitacao}
-                        </p>
-                        <p className="text-xs text-green-600 mt-1">
-                          Os dados do cliente, documentos, histórico e pedidos foram importados automaticamente.
-                        </p>
+                      <div className="space-y-4">
+                        <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <p className="text-sm text-green-800">
+                            <strong>Licitação Vinculada:</strong> {licitacaoVinculadaData.numeroPregao}
+                          </p>
+                          <p className="text-sm text-green-600">
+                            {licitacaoVinculadaData.objetoLicitacao}
+                          </p>
+                          <p className="text-xs text-green-600 mt-1">
+                            Os dados do cliente, documentos, histórico e pedidos foram importados automaticamente.
+                          </p>
+                        </div>
+
+                        {/* Empresa Participante 1 */}
+                        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                          <div className="flex items-center gap-2 mb-3">
+                            <Building2 className="h-5 w-5 text-blue-600" />
+                            <span className="font-medium text-blue-800">Empresa Participante 1</span>
+                          </div>
+                          {empresaContrato.empresaParticipanteId ? (
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-sm font-medium text-blue-900">{empresaContrato.empresaParticipanteNome}</p>
+                                  <p className="text-xs text-blue-600">CNPJ: {empresaContrato.empresaParticipanteCNPJ}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <RefreshCw className="h-4 w-4 text-blue-600" />
+                                <Select value={empresaContrato.empresaParticipanteId} onValueChange={(val) => handleAlterarEmpresaContrato(val, 1)}>
+                                  <SelectTrigger className="h-8">
+                                    <SelectValue placeholder="Alterar empresa" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {empresasDisponiveis.map((empresa) => (
+                                      <SelectItem key={empresa.id} value={empresa.id}>
+                                        {empresa.nome} - {empresa.cnpj}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              <p className="text-xs text-blue-600">Nenhuma empresa definida</p>
+                              <Select value="" onValueChange={(val) => handleAlterarEmpresaContrato(val, 1)}>
+                                <SelectTrigger className="h-8">
+                                  <SelectValue placeholder="Selecionar empresa" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {empresasDisponiveis.map((empresa) => (
+                                    <SelectItem key={empresa.id} value={empresa.id}>
+                                      {empresa.nome} - {empresa.cnpj}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Empresa Participante 2 */}
+                        <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                          <div className="flex items-center gap-2 mb-3">
+                            <Building2 className="h-5 w-5 text-purple-600" />
+                            <span className="font-medium text-purple-800">Empresa Participante 2 (Opcional)</span>
+                          </div>
+                          {empresaContrato2.empresaParticipanteId ? (
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-sm font-medium text-purple-900">{empresaContrato2.empresaParticipanteNome}</p>
+                                  <p className="text-xs text-purple-600">CNPJ: {empresaContrato2.empresaParticipanteCNPJ}</p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <RefreshCw className="h-4 w-4 text-purple-600" />
+                                <Select value={empresaContrato2.empresaParticipanteId} onValueChange={(val) => handleAlterarEmpresaContrato(val, 2)}>
+                                  <SelectTrigger className="h-8">
+                                    <SelectValue placeholder="Alterar empresa" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {empresasDisponiveis.map((empresa) => (
+                                      <SelectItem key={empresa.id} value={empresa.id}>
+                                        {empresa.nome} - {empresa.cnpj}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              <p className="text-xs text-purple-600">Nenhuma empresa definida (opcional)</p>
+                              <Select value="" onValueChange={(val) => handleAlterarEmpresaContrato(val, 2)}>
+                                <SelectTrigger className="h-8">
+                                  <SelectValue placeholder="Selecionar empresa (opcional)" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {empresasDisponiveis.map((empresa) => (
+                                    <SelectItem key={empresa.id} value={empresa.id}>
+                                      {empresa.nome} - {empresa.cnpj}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
