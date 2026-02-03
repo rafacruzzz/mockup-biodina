@@ -7,21 +7,16 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Save, User, Shield, FileText } from "lucide-react";
+import { Save, User, Shield } from "lucide-react";
 import { useDraft } from "@/hooks/useDraft";
 import { DraftIndicator, DraftSaveButton } from "@/components/cadastro/DraftIndicator";
 import { useColaboradores } from "@/hooks/useColaboradores";
-import { ModuleAccess, EmpresaVinculada } from "@/types/permissions";
+import { EmpresaVinculada } from "@/types/permissions";
 import { useEmpresa } from "@/contexts/EmpresaContext";
-import { useModulosUsuario } from "@/hooks/useModulosUsuario";
 import ColaboradorSelector from "./ColaboradorSelector";
 import UserColaboradorLink from "./UserColaboradorLink";
 import ColaboradorModal from "../rh/ColaboradorModal";
-import ModuleAccessTree from "./ModuleAccessTree";
 import { EmpresasDoUsuario } from "./EmpresasDoUsuario";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ModuloUsuario } from "@/types/permissions";
-import { AlertCircle } from "lucide-react";
 
 interface UserData {
   // Campos específicos do usuário
@@ -38,8 +33,7 @@ interface UserData {
   // Controle de sistema
   isActive: boolean;
   userType: string;
-  moduleAccess: ModuloUsuario[];
-  // Vínculo com empresas
+  // Vínculo com empresas (cada empresa tem seu próprio moduleAccess)
   empresasVinculadas: EmpresaVinculada[];
 }
 
@@ -68,7 +62,6 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
     colaboradorId: userData?.colaboradorId || '',
     isActive: userData?.isActive ?? true,
     userType: userData?.userType || '',
-    moduleAccess: userData?.moduleAccess || [],
     empresasVinculadas: userData?.empresasVinculadas || [],
   });
 
@@ -92,13 +85,6 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
       setFormData(draftData);
     }
   };
-
-  // Hook para calcular módulos disponíveis baseado nas empresas vinculadas
-  const { modulosDisponiveis, verificarModuloDisponivel } = useModulosUsuario({
-    empresaPrincipal: empresaAtual,
-    empresasVinculadas: formData.empresasVinculadas,
-    filiais: filiais,
-  });
 
   // Guard: não renderizar modal se não houver empresa atual (DEPOIS de todos os hooks)
   if (!empresaAtual) {
@@ -126,20 +112,7 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
     }));
   };
 
-  const handleModuleAccessChange = (modules: ModuloUsuario[]) => {
-    // Filtrar apenas módulos que estão disponíveis nas empresas vinculadas
-    const modulosFiltrados = modules.filter(module => 
-      modulosDisponiveis.includes(module.key as any)
-    );
-    
-    setFormData(prev => ({
-      ...prev,
-      moduleAccess: modulosFiltrados
-    }));
-  };
-
   const handleEmpresasChange = (empresas: EmpresaVinculada[]) => {
-    // Não força mais a empresa principal - usuário pode estar apenas em filiais
     setFormData(prev => ({
       ...prev,
       empresasVinculadas: empresas
@@ -153,6 +126,11 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
   };
 
   const isFormEmpty = !formData.username && !formData.nome && !formData.email;
+
+  // Verificar se há pelo menos uma empresa com módulos configurados
+  const hasModulosConfigurados = formData.empresasVinculadas.some(empresa => 
+    empresa.moduleAccess?.some(m => m.habilitado && m.subModulos?.some(s => s.habilitado))
+  );
 
   return (
     <>
@@ -358,13 +336,13 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
               <TabsContent value="controle-sistema" className="mt-0">
                 <div className="space-y-6 pb-4">
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-4">Permissões e Controles de Sistema</h3>
-                    <p className="text-sm text-gray-600 mb-6">
-                      Configure as empresas vinculadas e as permissões de acesso aos módulos do sistema.
+                    <h3 className="font-semibold text-gray-900 mb-2">Empresas e Permissões</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Selecione as empresas que o usuário terá acesso e configure os módulos e permissões específicos de cada uma.
                     </p>
                   </div>
 
-                  {/* Empresas do Usuário */}
+                  {/* Empresas do Usuário com Configuração de Módulos Integrada */}
                   <EmpresasDoUsuario
                     empresaPrincipal={empresaAtual}
                     filiais={filiais}
@@ -372,38 +350,15 @@ const UserModal = ({ isOpen, onClose, userData, editMode = false }: UserModalPro
                     onEmpresasChange={handleEmpresasChange}
                   />
 
-                  {/* Alerta sobre módulos disponíveis */}
-                  {formData.empresasVinculadas.length > 1 && (
-                    <Alert>
-                      <AlertCircle className="h-4 w-4" />
-                      <AlertDescription>
-                        Os módulos disponíveis são determinados pela interseção das empresas vinculadas.
-                        Apenas módulos presentes em todas as empresas estarão disponíveis.
-                      </AlertDescription>
-                    </Alert>
-                  )}
-
-                  {/* Árvore de Permissões Detalhadas */}
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-4">Permissões Detalhadas</h4>
-                      <p className="text-sm text-gray-600 mb-4">
-                        Configure permissões específicas para cada módulo e submódulo. Selecione quais funcionalidades o usuário poderá acessar.
+                  {/* Alerta se nenhum módulo configurado */}
+                  {formData.empresasVinculadas.length > 0 && !hasModulosConfigurados && (
+                    <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                      <p className="text-sm text-amber-800">
+                        <strong>Atenção:</strong> Nenhum módulo foi configurado ainda. 
+                        Clique em "Configurar Módulos" em cada empresa para definir as permissões do usuário.
                       </p>
-                      {modulosDisponiveis.length > 0 && (
-                        <div className="mb-4 p-3 bg-blue-50 rounded-lg">
-                          <p className="text-sm text-blue-800">
-                            <strong>Módulos limitados pelas empresas:</strong> Apenas módulos habilitados nas empresas vinculadas estão disponíveis para seleção.
-                          </p>
-                        </div>
-                      )}
-                      <ModuleAccessTree 
-                        modules={formData.moduleAccess}
-                        onModuleChange={handleModuleAccessChange}
-                        modulosDisponiveis={modulosDisponiveis as string[]}
-                      />
                     </div>
-                  </div>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
