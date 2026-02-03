@@ -101,8 +101,7 @@ export const modulosCompletosSistema: ModuloDefinicao[] = [
       { key: 'lancamentos', name: 'Lançamentos' },
       { key: 'plano_contas', name: 'Plano de Contas' },
       { key: 'demonstrativos', name: 'Demonstrativos' },
-      { key: 'fiscal', name: 'Fiscal' },
-      { key: 'emissao', name: 'Emissão' }
+      { key: 'fiscal', name: 'Fiscal' }
     ]
   },
   {
