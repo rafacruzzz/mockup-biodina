@@ -92,6 +92,14 @@ export const licitacoesGanhasDetalhadas = [
     estrategiaValorFinal: 145000.00,
     dataAbertura: '2024-03-15',
     status: 'ganha',
+    // Empresa participante 1
+    empresaParticipanteId: '1',
+    empresaParticipanteNome: 'iMuv Tecnologia Ltda',
+    empresaParticipanteCNPJ: '12.345.678/0001-90',
+    // Empresa participante 2 (opcional)
+    empresaParticipanteId2: '',
+    empresaParticipanteNome2: '',
+    empresaParticipanteCNPJ2: '',
     documentos: [
       {
         nome: 'Edital PE-2024-001.pdf',
@@ -197,6 +205,14 @@ export const licitacoesGanhasDetalhadas = [
     estrategiaValorFinal: 89000.00,
     dataAbertura: '2024-04-20',
     status: 'ganha',
+    // Empresa participante 1
+    empresaParticipanteId: '2',
+    empresaParticipanteNome: 'iMuv Filial SP',
+    empresaParticipanteCNPJ: '12.345.678/0002-71',
+    // Empresa participante 2
+    empresaParticipanteId2: '1',
+    empresaParticipanteNome2: 'iMuv Tecnologia Ltda',
+    empresaParticipanteCNPJ2: '12.345.678/0001-90',
     documentos: [
       {
         nome: 'Edital PP-2024-015.pdf',

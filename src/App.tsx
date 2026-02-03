@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "@/contexts/UserContext";
 import { EmpresaProvider } from "@/contexts/EmpresaContext";
+import { LicitacoesGanhasProvider } from "@/contexts/LicitacoesGanhasContext";
 import Index from "./pages/Index";
 import Super from "./pages/Super";
 import Login from "./pages/Login";
@@ -50,36 +51,38 @@ const App: React.FC = () => {
         <BrowserRouter>
           <UserProvider>
             <EmpresaProvider>
-              <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/home" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/bi-geral" element={<BIGeral />} />
-              <Route path="/cadastro" element={<Cadastro />} />
-              <Route path="/comercial" element={<Comercial />} />
-              <Route path="/compras" element={<Compras />} />
-              <Route path="/estoque" element={<Estoque />} />
-              <Route path="/financeiro" element={<Financeiro />} />
-              <Route path="/contabilidade" element={<Contabilidade />} />
-              <Route path="/administrativo" element={<Administrativo />} />
-        <Route path="/rh" element={<RH />} />
-        <Route path="/ti" element={<TI />} />
-        <Route path="/rh/rescisao/:colaboradorId" element={<ProcessoRescisao />} />
-              <Route path="/solicitacoes" element={<Solicitacoes />} />
-              <Route path="/super" element={<Super />} />
-              <Route path="/editar-perfil" element={<EditarPerfil />} />
-              <Route path="/meu-plano" element={<MeuPlano />} />
-              <Route path="/personalizar-navegacao" element={<PersonalizarNavegacao />} />
-              <Route path="/configuracao" element={<Configuracao />} />
-              {/* Rota pública para candidatura */}
-              <Route path="/candidatura/:linkId" element={<CandidaturaPublica />} />
-              {/* Rota pública para seleção de planos */}
-              <Route path="/select-plan/:webformId" element={<SelectPlan />} />
-              {/* Rota pública para registro via webform */}
-              <Route path="/register/:webformId" element={<Register />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-              </Routes>
+              <LicitacoesGanhasProvider>
+                <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/home" element={<Index />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/bi-geral" element={<BIGeral />} />
+                <Route path="/cadastro" element={<Cadastro />} />
+                <Route path="/comercial" element={<Comercial />} />
+                <Route path="/compras" element={<Compras />} />
+                <Route path="/estoque" element={<Estoque />} />
+                <Route path="/financeiro" element={<Financeiro />} />
+                <Route path="/contabilidade" element={<Contabilidade />} />
+                <Route path="/administrativo" element={<Administrativo />} />
+          <Route path="/rh" element={<RH />} />
+          <Route path="/ti" element={<TI />} />
+          <Route path="/rh/rescisao/:colaboradorId" element={<ProcessoRescisao />} />
+                <Route path="/solicitacoes" element={<Solicitacoes />} />
+                <Route path="/super" element={<Super />} />
+                <Route path="/editar-perfil" element={<EditarPerfil />} />
+                <Route path="/meu-plano" element={<MeuPlano />} />
+                <Route path="/personalizar-navegacao" element={<PersonalizarNavegacao />} />
+                <Route path="/configuracao" element={<Configuracao />} />
+                {/* Rota pública para candidatura */}
+                <Route path="/candidatura/:linkId" element={<CandidaturaPublica />} />
+                {/* Rota pública para seleção de planos */}
+                <Route path="/select-plan/:webformId" element={<SelectPlan />} />
+                {/* Rota pública para registro via webform */}
+                <Route path="/register/:webformId" element={<Register />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+                </Routes>
+              </LicitacoesGanhasProvider>
             </EmpresaProvider>
           </UserProvider>
         </BrowserRouter>
