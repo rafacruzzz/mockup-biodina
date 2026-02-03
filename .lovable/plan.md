@@ -1,219 +1,161 @@
 
-## Plano: Permissões de Módulos Específicas por Empresa (Criar e Editar)
+## Plano: Mover Emissão do Financeiro para Filiais
 
-### Contexto e Problema Atual
-
-Atualmente, o sistema configura as permissões de módulos de forma **global** para o usuário. Quando um usuário está vinculado a múltiplas empresas/filiais, ele tem o **mesmo** conjunto de permissões em todas elas.
-
-A solicitação é permitir configurar permissões **diferentes por empresa**, por exemplo:
-- Na **Empresa A**: acesso ao Financeiro
-- Na **Empresa B**: acesso ao Financeiro e Contabilidade
-
-Esta funcionalidade deve estar disponível tanto ao **criar novo usuário** quanto ao **editar usuário existente**.
+### Objetivo
+Adicionar uma nova aba "Emissão" no modal de cadastro/edição de filiais contendo as configurações de certificado digital e NF-e, e remover o submódulo "Emissão" do módulo Financeiro.
 
 ---
 
-### Nova Estrutura de Dados
+### Análise dos Campos
 
-#### Tipo Atual:
-```typescript
-interface EmpresaVinculada {
-  id: string;
-  tipo: 'principal' | 'filial';
-  nome: string;
-}
+**Campos JA EXISTENTES no FilialModal (nao duplicar):**
+| Campo | Localizado em |
+|-------|---------------|
+| Nome Fantasia | Aba "Informacoes" |
+| Razao Social | Aba "Informacoes" |
+| CNPJ | Aba "Informacoes" |
+| Inscricao Estadual | Aba "Informacoes" |
+| Inscricao Municipal | Aba "Informacoes" |
+| Regime Tributario | Aba "Informacoes" |
+| E-mail | Aba "Informacoes" |
+| Telefone | Aba "Informacoes" |
+| Discriminar impostos | Aba "Informacoes" |
+| Endereco completo | Aba "Endereco" |
 
-interface UserData {
-  // ...campos
-  moduleAccess: ModuloUsuario[];  // GLOBAL para todas empresas
-  empresasVinculadas: EmpresaVinculada[];
-}
-```
-
-#### Novo Tipo Proposto:
-```typescript
-interface EmpresaVinculada {
-  id: string;
-  tipo: 'principal' | 'filial';
-  nome: string;
-  moduleAccess: ModuloUsuario[];  // Permissões ESPECÍFICAS desta empresa
-}
-
-interface UserData {
-  // ...campos
-  // REMOVE: moduleAccess global
-  empresasVinculadas: EmpresaVinculada[];
-}
-```
+**Campos NOVOS para a aba Emissao:**
+| Campo | Secao |
+|-------|-------|
+| Upload certificado (.pfx/.p12) | Certificado Digital |
+| Ambiente de emissao (Homologacao/Producao) | Certificado Digital |
+| Senha do certificado | Certificado Digital |
+| Info certificado (Serial, IDCTX, validade) | Certificado Digital |
+| Serie - Homologacao | Configuracao NF-e |
+| Proximo Numero - Homologacao | Configuracao NF-e |
+| Serie - Producao | Configuracao NF-e |
+| Proximo Numero - Producao | Configuracao NF-e |
 
 ---
 
-### Arquivos a Modificar
+### Alteracoes de Arquivos
 
-| Arquivo | Alteração |
-|---------|-----------|
-| `src/types/permissions.ts` | Adicionar `moduleAccess` ao tipo `EmpresaVinculada` |
-| `src/components/cadastro/EmpresasDoUsuario.tsx` | Adicionar accordion para configurar módulos de cada empresa |
-| `src/components/cadastro/UserModal.tsx` | Remover moduleAccess global, integrar permissões por empresa |
-| `src/components/layout/EmpresaUsuarioSwitcher.tsx` | Atualizar filtro para usar `empresa.moduleAccess` |
-| `src/hooks/useModulosUsuario.ts` | Atualizar para retornar módulos da empresa ativa |
+#### 1. Atualizar Tipo `Filial` (`src/types/super.ts`)
 
----
-
-### Nova Interface Visual
-
-Quando uma empresa estiver vinculada (toggle ON), aparecerá um botão "Configurar Módulos" que expande a árvore de permissões específica daquela empresa:
-
-```text
-┌─────────────────────────────────────────────────────────────────────┐
-│ 🏢 Empresas do Usuário                                             │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│ ┌──────────────────────────┐ ┌──────────────────────────┐          │
-│ │ [⚫] iMuv Master         │ │ [⚫] iMuv - Filial SP     │          │
-│ │     Principal            │ │     3 módulos            │          │
-│ │ [▼ Configurar Módulos]   │ │ [▼ Configurar Módulos]   │          │
-│ └──────────────────────────┘ └──────────────────────────┘          │
-│                                                                     │
-│ ▼ Configurar Módulos: iMuv - Filial SP                             │
-│   ┌─────────────────────────────────────────────────────────────┐   │
-│   │ [x] 📈 BI Geral                           2/3 submódulos    │   │
-│   │     ├── [x] Dashboards      ○ Ver  ● Ver/Editar  ○ Excluir  │   │
-│   │     ├── [x] Relatórios      ● Ver  ○ Ver/Editar  ○ Excluir  │   │
-│   │     └── [ ] Indicadores                                      │   │
-│   │                                                              │   │
-│   │ [x] 💰 Financeiro                         3/5 submódulos    │   │
-│   │ [ ] 🧮 Contabilidade                      0/5 submódulos    │   │
-│   └─────────────────────────────────────────────────────────────┘   │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-### Implementação Detalhada
-
-#### 1. Atualizar Tipo `EmpresaVinculada` (permissions.ts)
+Adicionar campos de emissao:
 
 ```typescript
-export interface EmpresaVinculada {
-  id: string;
-  tipo: 'principal' | 'filial';
-  nome: string;
-  moduleAccess: ModuloUsuario[]; // NOVO: permissões específicas desta empresa
-}
-```
+// Adicionar ao interface Filial
+certificadoDigital?: {
+  nomeArquivo: string;
+  serialCertificado: string;
+  idctx: string;
+  inicio: string;
+  expiracao: string;
+  ambienteEmissao: 'homologacao' | 'producao';
+};
 
-#### 2. Criar Componente `EmpresaModulosConfig`
-
-Novo componente que encapsula o accordion com a árvore de módulos para cada empresa:
-
-- Recebe: empresa vinculada, módulos habilitados da empresa/filial
-- Reutiliza: `ModuleAccessTree` existente
-- Callback: `onModuleChange(empresaId, modules)`
-
-#### 3. Refatorar `EmpresasDoUsuario`
-
-- Quando toggle ON → mostrar botão "Configurar Módulos"
-- Ao clicar → expandir accordion com `ModuleAccessTree`
-- Passar apenas os módulos disponíveis daquela empresa/filial
-- Exibir contador "X módulos" ao lado do nome
-
-#### 4. Refatorar `UserModal`
-
-**Aba "Controle de Sistema":**
-- Remover seção separada "Permissões Detalhadas"
-- O `EmpresasDoUsuario` agora cuida de tudo
-- Remover campo `moduleAccess` global do `formData`
-
-**Funciona igual para:**
-- `editMode = false` (criar usuário)
-- `editMode = true` (editar usuário)
-
-Ao editar, os dados de `userData.empresasVinculadas` já virão com `moduleAccess` preenchido.
-
-#### 5. Atualizar `EmpresaUsuarioSwitcher`
-
-```typescript
-// Antes: verificava moduleAccess global
-const temAcesso = temModuloHabilitado(moduleAccess);
-
-// Depois: verifica moduleAccess dentro de cada empresa
-const filtrarEmpresasComAcesso = (empresasVinculadas) => {
-  return empresasVinculadas.filter(empresa => 
-    empresa.moduleAccess?.some(m => 
-      m.habilitado && m.subModulos?.some(s => s.habilitado)
-    )
-  );
+nfeConfig?: {
+  homologacao: {
+    serie: number;
+    proximoNumero: number;
+  };
+  producao: {
+    serie: number;
+    proximoNumero: number;
+  };
 };
 ```
 
-#### 6. Atualizar `useModulosUsuario`
+#### 2. Modificar `FilialModal.tsx`
 
-O hook deve retornar os módulos da empresa **atualmente selecionada** no contexto:
+**Alteracoes:**
+- Adicionar nova aba "Emissao" no TabsList (4 abas no total)
+- Criar TabsContent para "emissao" com layout responsivo
+- Adicionar estados para gerenciar certificado e configuracoes NF-e
+- Importar icones necessarios (Lock, FileText, Upload)
 
-```typescript
-// Buscar empresa ativa e retornar seu moduleAccess
-const empresaAtiva = empresasVinculadas.find(e => e.id === empresaAtualId);
-return empresaAtiva?.moduleAccess || [];
+**Estrutura da Nova Aba:**
+
+```text
++---------------------------------------------------------------+
+| Emissao                                                       |
++---------------------------------------------------------------+
+|                                                               |
+| CERTIFICADO DIGITAL                                           |
+| +-----------------------------------------------------------+ |
+| |  [Area de drag & drop para upload .pfx/.p12]              | |
+| |                                                           | |
+| |  Ambiente de Emissao:                                     | |
+| |  [Homologacao]  [Producao]                                | |
+| |                                                           | |
+| |  Informacoes do Certificado (apos upload):               | |
+| |  Serial: XXXX   IDCTX: XXXX   Validade: XX/XX/XXXX       | |
+| +-----------------------------------------------------------+ |
+|                                                               |
+| CONFIGURACAO NF-e                                             |
+| +-----------------------------------------------------------+ |
+| |  AMBIENTE DE HOMOLOGACAO                                  | |
+| |  Serie: [____]   Proximo Numero: [____]                  | |
+| +-----------------------------------------------------------+ |
+| +-----------------------------------------------------------+ |
+| |  AMBIENTE DE PRODUCAO                                     | |
+| |  Serie: [____]   Proximo Numero: [____]                  | |
+| +-----------------------------------------------------------+ |
+|                                                               |
++---------------------------------------------------------------+
 ```
 
----
+#### 3. Remover Emissao do Financeiro (`src/pages/Financeiro.tsx`)
 
-### Fluxo de Uso
+**Alteracoes:**
+- Remover o objeto `{ id: 'emissao', ... }` do array `mainModules` (linhas 431-437)
+- Remover o bloco `if (activeModule === 'emissao')` (linhas 567-591)
 
-**Criar Usuário:**
-1. Abrir modal de novo usuário
-2. Ir para aba "Controle de Sistema"
-3. Ativar empresas desejadas (toggle ON)
-4. Clicar "Configurar Módulos" em cada empresa
-5. Selecionar módulos/submódulos e níveis de permissão
-6. Salvar → cada empresa tem sua configuração independente
+#### 4. Remover do menu de modulos (`src/data/sistemaModulosCompletos.ts`)
 
-**Editar Usuário:**
-1. Abrir modal de edição
-2. Ir para aba "Controle de Sistema"
-3. Ver empresas já vinculadas com seus módulos configurados
-4. Expandir "Configurar Módulos" para ajustar permissões
-5. Adicionar/remover empresas conforme necessário
-6. Salvar alterações
+- Remover `{ key: 'emissao', name: 'Emissao' }` do array `subModulos` da Contabilidade (linha 105)
 
 ---
 
-### Validações
+### Detalhes Tecnicos
 
-- Cada empresa vinculada deve ter pelo menos um submódulo habilitado
-- Exibir aviso se empresa estiver vinculada mas sem módulos configurados
-- Manter regra de pelo menos uma empresa vinculada
+**Imports adicionais no FilialModal:**
+```typescript
+import { Lock, FileText, Upload } from "lucide-react";
+```
+
+**Novos estados:**
+```typescript
+const [certificadoData, setCertificadoData] = useState<CertificadoData | null>(null);
+const [nomeArquivo, setNomeArquivo] = useState<string>("");
+const [isDragging, setIsDragging] = useState(false);
+const [ambienteEmissao, setAmbienteEmissao] = useState<'homologacao' | 'producao'>('homologacao');
+const [nfeConfig, setNfeConfig] = useState<NfeConfig>({
+  homologacao: { serie: 1, proximoNumero: 1 },
+  producao: { serie: 1, proximoNumero: 1 }
+});
+```
+
+**Funcoes de upload (copiar do EmissaoConfig):**
+- `handleFileUpload`
+- `handleFileInputChange`
+- `handleDrop`
+- `handleDragOver`
+- `handleDragLeave`
+- `handleNfeConfigChange`
 
 ---
 
-### Migração (Compatibilidade com Dados Existentes)
+### Resultado Final
 
-Para usuários existentes com `moduleAccess` global:
-- Na primeira edição, copiar o `moduleAccess` para todas as empresas vinculadas
-- O sistema detecta se `empresasVinculadas[].moduleAccess` está vazio e aplica fallback
+| Arquivo | Acao |
+|---------|------|
+| `src/types/super.ts` | Adicionar campos `certificadoDigital` e `nfeConfig` |
+| `src/components/cadastro/FilialModal.tsx` | Adicionar 4a aba "Emissao" com todo o conteudo |
+| `src/pages/Financeiro.tsx` | Remover modulo "Emissao" |
+| `src/data/sistemaModulosCompletos.ts` | Remover "emissao" dos submodulos da Contabilidade |
 
----
-
-### Resumo de Alterações
-
-| Arquivo | Tipo | Descrição |
-|---------|------|-----------|
-| `src/types/permissions.ts` | Modificar | Adicionar `moduleAccess` em `EmpresaVinculada` |
-| `src/components/cadastro/EmpresaModulosConfig.tsx` | **NOVO** | Accordion com árvore de módulos por empresa |
-| `src/components/cadastro/EmpresasDoUsuario.tsx` | Modificar | Integrar `EmpresaModulosConfig` |
-| `src/components/cadastro/UserModal.tsx` | Modificar | Remover moduleAccess global |
-| `src/components/layout/EmpresaUsuarioSwitcher.tsx` | Modificar | Filtrar por `empresa.moduleAccess` |
-| `src/hooks/useModulosUsuario.ts` | Modificar | Retornar módulos da empresa ativa |
-
----
-
-### Resultado Esperado
-
-Ao final da implementação:
-- Cada empresa vinculada ao usuário terá sua própria configuração de módulos
-- O mesmo usuário pode ter acesso ao Financeiro na Empresa A e ao Financeiro + Contabilidade na Empresa B
-- Funciona identicamente para criar e editar usuário
-- O switcher de empresas mostra apenas empresas com módulos configurados
-- O sistema usa as permissões corretas baseado na empresa selecionada
+**Comportamento:**
+- Ao criar/editar filial, a aba "Emissao" permitira configurar certificado e NF-e
+- O modal tera 4 abas: Informacoes, Endereco, Modulos, Emissao
+- O modulo Financeiro nao tera mais o card "Emissao"
+- Cada filial tera sua propria configuracao de emissao de notas fiscais
