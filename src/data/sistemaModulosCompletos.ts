@@ -140,9 +140,17 @@ export const modulosCompletosSistema: ModuloDefinicao[] = [
     ]
   },
   {
+    key: 'configuracao',
+    name: 'Configuração',
+    icon: '⚙️',
+    subModulos: [
+      { key: 'perfil_empresa', name: 'Perfil da Empresa' }
+    ]
+  },
+  {
     key: 'personalizar_navegacao',
     name: 'Personalizar Navegação',
-    icon: '⚙️',
+    icon: '🎨',
     subModulos: [
       { key: 'menu', name: 'Menu Principal' },
       { key: 'favoritos', name: 'Favoritos' },

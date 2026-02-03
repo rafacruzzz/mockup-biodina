@@ -84,6 +84,13 @@ export const modulosDisponiveis: ModuloConfig[] = [
     descricao: 'Business Intelligence e relatórios',
     icon: '📈',
     cor: 'red'
+  },
+  {
+    id: 'configuracao',
+    nome: 'Configuração',
+    descricao: 'Configurações da empresa',
+    icon: '⚙️',
+    cor: 'slate'
   }
 ];
 
