@@ -24,6 +24,7 @@ export interface EmpresaVinculada {
   id: string;
   tipo: 'principal' | 'filial';
   nome: string;
+  moduleAccess: ModuloUsuario[]; // Permissões específicas desta empresa
 }
 
 export interface AccessProfile {

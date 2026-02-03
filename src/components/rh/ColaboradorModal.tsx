@@ -214,6 +214,7 @@ const ColaboradorModal = ({
       id: empresaAtual.id,
       tipo: 'principal',
       nome: empresaAtual.nome,
+      moduleAccess: [],
     }] : []
   });
 
