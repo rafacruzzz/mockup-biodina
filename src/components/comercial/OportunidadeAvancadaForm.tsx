@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/RichTextEditor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -1088,12 +1089,11 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
         <div className="space-y-2">
           <Label htmlFor="resumoEdital">Resumo do Edital</Label>
-          <Textarea
-            id="resumoEdital"
-            value={formData.resumoEdital}
-            onChange={(e) => setFormData({ ...formData, resumoEdital: e.target.value })}
+          <RichTextEditor
+            content={formData.resumoEdital}
+            onChange={(html) => setFormData({ ...formData, resumoEdital: html })}
             placeholder="Descreva o resumo do edital..."
-            className="min-h-[120px] resize-y"
+            disabled={isReadOnlyMode()}
           />
         </div>
 

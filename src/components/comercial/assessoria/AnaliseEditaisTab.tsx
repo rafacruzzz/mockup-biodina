@@ -369,7 +369,7 @@ export function AnaliseEditaisTab() {
                 <label className="text-sm font-medium text-muted-foreground">
                   Resumo do Edital
                 </label>
-                <p className="mt-1 text-sm">{selectedLicitacao.resumoEdital}</p>
+                <div className="mt-1 text-sm prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: selectedLicitacao.resumoEdital || '' }} />
               </div>
 
               <div>
