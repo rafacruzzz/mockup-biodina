@@ -73,6 +73,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [empresaPendente, setEmpresaPendente] = useState<{id: string, numero: 1|2} | null>(null);
   const aditivoFileInputRef = useRef<HTMLInputElement>(null);
   const [osExpandida, setOsExpandida] = useState<string | null>(null);
+  const [osDtExpandida, setOsDtExpandida] = useState<string | null>(null);
 
   // Dados mock de OSs vinculadas à contratação
   const osVinculadas: Array<{id: string; numero: string; tipo: string; status: string; assessor: string; dataAgendada: string; descricao: string}> = [
@@ -93,6 +94,28 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       assessor: 'Dra. Maria Santos',
       dataAgendada: '2025-05-20',
       descricao: 'Visita de acompanhamento para verificação de performance do equipamento após 30 dias de uso. Avaliação de controle de qualidade interno e externo, revisão de procedimentos operacionais.'
+    }
+  ];
+
+  // Dados mock de OSs do Departamento Técnico
+  const osDepartamentoTecnico: Array<{id: string; numero: string; tipo: string; status: string; tecnico: string; dataAgendada: string; descricao: string}> = [
+    {
+      id: 'os-dt-001',
+      numero: 'OS-DT-2025-001',
+      tipo: 'Manutenção Corretiva',
+      status: 'CONCLUÍDA',
+      tecnico: 'Eng. Rafael Lima',
+      dataAgendada: '2025-03-15',
+      descricao: 'Manutenção corretiva no módulo de detecção do analisador. Substituição do sensor óptico principal e recalibração completa do sistema. Equipamento retornou à operação normal após testes de validação.'
+    },
+    {
+      id: 'os-dt-002',
+      numero: 'OS-DT-2025-002',
+      tipo: 'Instalação de Equipamento',
+      status: 'EM_ANDAMENTO',
+      tecnico: 'Téc. André Souza',
+      dataAgendada: '2025-06-01',
+      descricao: 'Instalação do novo analisador hematológico no setor de urgência. Inclui montagem, configuração de parâmetros, integração com sistema LIS e validação de resultados com amostras controle.'
     }
   ];
 
@@ -429,7 +452,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
           </DialogHeader>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`grid w-full ${oportunidade ? 'grid-cols-8' : 'grid-cols-7'}`}>
+            <TabsList className={`grid w-full ${oportunidade ? 'grid-cols-9' : 'grid-cols-8'}`}>
               <TabsTrigger value="dados-gerais" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Dados Gerais
@@ -443,6 +466,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               <TabsTrigger value="analise-tecnica" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Análise Técnica
+              </TabsTrigger>
+              <TabsTrigger value="dt" className="flex items-center gap-2">
+                <Wrench className="h-4 w-4" />
+                DT
               </TabsTrigger>
               <TabsTrigger value="historico-chat" className="flex items-center gap-2">
                 <MessageSquare className="h-4 w-4" />
@@ -1427,6 +1454,89 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                       </Table>
                       <div className="mt-4 text-sm text-muted-foreground text-right">
                         Total: {osVinculadas.length} {osVinculadas.length === 1 ? 'ordem de serviço vinculada' : 'ordens de serviço vinculadas'}
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="dt" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Wrench className="h-5 w-5" />
+                    Ordens de Serviço - Departamento Técnico
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {osDepartamentoTecnico.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-8">
+                      Nenhuma ordem de serviço do Departamento Técnico vinculada a esta contratação.
+                    </p>
+                  ) : (
+                    <>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>N. OS</TableHead>
+                            <TableHead>Tipo</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Técnico</TableHead>
+                            <TableHead>Data</TableHead>
+                            <TableHead className="text-center">Ação</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {osDepartamentoTecnico.map((os) => (
+                            <React.Fragment key={os.id}>
+                              <TableRow>
+                                <TableCell className="font-medium">{os.numero}</TableCell>
+                                <TableCell>{os.tipo}</TableCell>
+                                <TableCell>
+                                  <Badge className={
+                                    os.status === 'CONCLUÍDA'
+                                      ? 'bg-green-100 text-green-800 border-green-200'
+                                      : os.status === 'EM_ANDAMENTO'
+                                      ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                                      : 'bg-blue-100 text-blue-800 border-blue-200'
+                                  }>
+                                    {os.status === 'CONCLUÍDA' ? 'Concluída' : os.status === 'EM_ANDAMENTO' ? 'Em Andamento' : os.status}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>{os.tecnico}</TableCell>
+                                <TableCell>{new Date(os.dataAgendada).toLocaleDateString('pt-BR')}</TableCell>
+                                <TableCell className="text-center">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setOsDtExpandida(osDtExpandida === os.id ? null : os.id)}
+                                  >
+                                    {osDtExpandida === os.id ? (
+                                      <ChevronUp className="h-4 w-4" />
+                                    ) : (
+                                      <ChevronDown className="h-4 w-4" />
+                                    )}
+                                    <span className="ml-1 text-xs">Ver {osDtExpandida === os.id ? 'Menos' : 'Mais'}</span>
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                              {osDtExpandida === os.id && (
+                                <TableRow>
+                                  <TableCell colSpan={6} className="bg-muted/30 border-l-4 border-primary">
+                                    <div className="py-2 px-4">
+                                      <p className="text-sm font-medium mb-1">Descrição do Serviço:</p>
+                                      <p className="text-sm text-muted-foreground">{os.descricao}</p>
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                            </React.Fragment>
+                          ))}
+                        </TableBody>
+                      </Table>
+                      <div className="mt-4 text-sm text-muted-foreground text-right">
+                        Total: {osDepartamentoTecnico.length} {osDepartamentoTecnico.length === 1 ? 'ordem de serviço vinculada' : 'ordens de serviço vinculadas'}
                       </div>
                     </>
                   )}
