@@ -1,56 +1,94 @@
 
 
-## Plano: Adicionar Aba "DT" (Departamento Técnico) na Contratação
+## Plano: Editor Rico (Rich Text) no Campo "Resumo do Edital"
 
 ### Objetivo
-Criar uma nova aba chamada "DT" no formulário de Contratação, com a mesma estrutura visual da aba "Análise Técnica", mas exibindo Ordens de Serviço provenientes do módulo de Departamento Técnico.
+Substituir o campo Textarea simples do "Resumo do Edital" na Licitacao por um editor rico estilo Word, permitindo:
+- Digitacao de texto com formatacao basica (negrito, italico, listas)
+- Colar e inserir imagens diretamente no campo
+- Redimensionar imagens coladas/inseridas
+- Manter tudo inline, sem necessidade de storage externo (imagens ficam como base64 no conteudo HTML)
 
 ---
 
-### Alterações
+### Biblioteca Escolhida: TipTap
 
-#### Arquivo: `src/components/comercial/ContratacaoSimplesForm.tsx`
+TipTap e um editor rico baseado em ProseMirror, leve, modular e com excelente integracao React. Pacotes necessarios:
 
-**1. Adicionar dados mock de OSs do Departamento Técnico**
+- `@tiptap/react` - Integracao React
+- `@tiptap/starter-kit` - Extensoes basicas (negrito, italico, listas, headings)
+- `@tiptap/extension-image` - Suporte a imagens
+- `tiptap-extension-resizable-image` - Redimensionamento de imagens
 
-Novo array `osDepartamentoTecnico` com 2 OSs de exemplo (dados diferentes da Análise Técnica):
+---
 
-| Campo | OS 1 | OS 2 |
-|-------|------|------|
-| Número | OS-DT-2025-001 | OS-DT-2025-002 |
-| Tipo | Manutenção Corretiva | Instalação de Equipamento |
-| Status | CONCLUÍDA | EM_ANDAMENTO |
-| Técnico | Eng. Rafael Lima | Téc. André Souza |
-| Data | 2025-03-15 | 2025-06-01 |
+### Arquivos a Criar/Modificar
 
-**2. Adicionar estado para expansão da aba DT**
+| Arquivo | Acao |
+|---------|------|
+| `src/components/ui/RichTextEditor.tsx` | **Novo** - Componente reutilizavel de editor rico |
+| `src/components/comercial/OportunidadeAvancadaForm.tsx` | Substituir Textarea por RichTextEditor no campo resumoEdital |
 
+---
+
+### Detalhes da Implementacao
+
+#### 1. Componente `RichTextEditor.tsx`
+
+Componente reutilizavel que encapsula o TipTap com:
+
+- **Barra de ferramentas** com botoes para:
+  - Negrito, Italico
+  - Lista com marcadores, Lista numerada
+  - Inserir imagem (via botao de upload)
+- **Area de edicao** com suporte a:
+  - Colar imagens do clipboard (Ctrl+V de prints)
+  - Arrastar e soltar imagens
+  - Redimensionar imagens clicando e arrastando
+- **Props**:
+  - `content: string` (HTML)
+  - `onChange: (html: string) => void`
+  - `placeholder?: string`
+  - `disabled?: boolean`
+
+As imagens coladas serao convertidas para base64 e armazenadas inline no HTML. Isso e adequado para este caso de uso pois o conteudo e textual com imagens pontuais de prints/tabelas.
+
+#### 2. Modificacao do `OportunidadeAvancadaForm.tsx`
+
+Substituir apenas o bloco do campo "Resumo do Edital" (linhas 1089-1098):
+
+**Antes:**
 ```typescript
-const [osDtExpandida, setOsDtExpandida] = useState<string | null>(null);
+<Textarea
+  id="resumoEdital"
+  value={formData.resumoEdital}
+  onChange={(e) => setFormData({ ...formData, resumoEdital: e.target.value })}
+  placeholder="Descreva o resumo do edital..."
+  className="min-h-[120px] resize-y"
+/>
 ```
 
-**3. Adicionar TabsTrigger "DT" na TabsList**
+**Depois:**
+```typescript
+<RichTextEditor
+  content={formData.resumoEdital}
+  onChange={(html) => setFormData({ ...formData, resumoEdital: html })}
+  placeholder="Descreva o resumo do edital..."
+  disabled={isReadOnlyMode()}
+/>
+```
 
-Inserir a nova aba logo após "Análise Técnica", com ícone `Wrench`. Ajustar o grid-cols de 8/7 para 9/8.
+O campo `resumoEdital` passara a armazenar HTML em vez de texto puro. Locais que exibem o resumo (como `AnaliseEditaisTab.tsx`) serao atualizados para renderizar HTML com `dangerouslySetInnerHTML`.
 
-**4. Adicionar TabsContent "dt"**
+#### 3. Atualizacao da exibicao em `AnaliseEditaisTab.tsx`
 
-Mesmo layout da aba "Análise Técnica":
-- Card com título "Ordens de Serviço - Departamento Técnico"
-- Tabela com colunas: N. OS, Tipo, Status, Técnico, Data, Ação
-- Botão "Ver Mais/Menos" com expansão da descrição
-- Rodapé com total de OSs
+Onde hoje mostra `<p>{selectedLicitacao.resumoEdital}</p>`, substituir por renderizacao HTML para exibir corretamente o conteudo formatado com imagens.
 
 ---
 
-### Resumo de Alterações
+### Resultado Esperado
 
-| Arquivo | Ação |
-|---------|------|
-| `src/components/comercial/ContratacaoSimplesForm.tsx` | Adicionar aba DT com tabela de OSs do Departamento Técnico |
-
-### Resultado
-- Nova aba "DT" visível ao lado de "Análise Técnica"
-- Tabela com 2 OSs de exemplo do Departamento Técnico
-- Mesma interação de expandir/recolher descrição
-
+- Campo "Resumo do Edital" funciona como um mini editor de texto
+- Usuario pode digitar texto, formatar (negrito, listas) e colar prints/imagens
+- Imagens podem ser redimensionadas dentro do editor
+- Componente reutilizavel para outros campos no futuro se necessario
