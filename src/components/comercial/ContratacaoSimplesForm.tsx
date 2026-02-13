@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone, Building2, RefreshCw } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone, Building2, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { mockChecklistVendas } from '@/data/faturamentoModules';
@@ -72,6 +72,29 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [aditivoFile, setAditivoFile] = useState<File | null>(null);
   const [empresaPendente, setEmpresaPendente] = useState<{id: string, numero: 1|2} | null>(null);
   const aditivoFileInputRef = useRef<HTMLInputElement>(null);
+  const [osExpandida, setOsExpandida] = useState<string | null>(null);
+
+  // Dados mock de OSs vinculadas à contratação
+  const osVinculadas: Array<{id: string; numero: string; tipo: string; status: string; assessor: string; dataAgendada: string; descricao: string}> = [
+    {
+      id: 'os-cont-001',
+      numero: 'OS-2025-010',
+      tipo: 'Treinamento Inicial',
+      status: 'CONCLUÍDA',
+      assessor: 'Dr. Carlos Mendes',
+      dataAgendada: '2025-04-10',
+      descricao: 'Treinamento inicial da equipe do laboratório para operação do analisador bioquímico. Foram treinados 6 profissionais em 2 turnos, cobrindo operação básica, manutenção preventiva e interpretação de resultados.'
+    },
+    {
+      id: 'os-cont-002',
+      numero: 'OS-2025-015',
+      tipo: 'Acompanhamento de Rotina',
+      status: 'EM_ANDAMENTO',
+      assessor: 'Dra. Maria Santos',
+      dataAgendada: '2025-05-20',
+      descricao: 'Visita de acompanhamento para verificação de performance do equipamento após 30 dias de uso. Avaliação de controle de qualidade interno e externo, revisão de procedimentos operacionais.'
+    }
+  ];
 
   const { colaboradores } = useColaboradores();
   const { licitacoesGanhas, atualizarEmpresaLicitacao, getLicitacaoById } = useLicitacoesGanhas();
@@ -1331,16 +1354,82 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             <TabsContent value="analise-tecnica" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Análise Técnica-Científica</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Wrench className="h-5 w-5" />
+                    Ordens de Serviço - Análise Técnica
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Textarea
-                    value={formData.analiseTecnica}
-                    onChange={(e) => handleInputChange('analiseTecnica', e.target.value)}
-                    placeholder="Digite a análise técnica-científica da oportunidade..."
-                    rows={15}
-                    className="w-full"
-                  />
+                  {osVinculadas.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-8">
+                      Nenhuma ordem de serviço vinculada a esta contratação.
+                    </p>
+                  ) : (
+                    <>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>N. OS</TableHead>
+                            <TableHead>Tipo</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Assessor</TableHead>
+                            <TableHead>Data</TableHead>
+                            <TableHead className="text-center">Ação</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {osVinculadas.map((os) => (
+                            <React.Fragment key={os.id}>
+                              <TableRow key={os.id}>
+                                <TableCell className="font-medium">{os.numero}</TableCell>
+                                <TableCell>{os.tipo}</TableCell>
+                                <TableCell>
+                                  <Badge className={
+                                    os.status === 'CONCLUÍDA'
+                                      ? 'bg-green-100 text-green-800 border-green-200'
+                                      : os.status === 'EM_ANDAMENTO'
+                                      ? 'bg-yellow-100 text-yellow-800 border-yellow-200'
+                                      : 'bg-blue-100 text-blue-800 border-blue-200'
+                                  }>
+                                    {os.status === 'CONCLUÍDA' ? 'Concluída' : os.status === 'EM_ANDAMENTO' ? 'Em Andamento' : os.status}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>{os.assessor}</TableCell>
+                                <TableCell>{new Date(os.dataAgendada).toLocaleDateString('pt-BR')}</TableCell>
+                                <TableCell className="text-center">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => setOsExpandida(osExpandida === os.id ? null : os.id)}
+                                  >
+                                    {osExpandida === os.id ? (
+                                      <ChevronUp className="h-4 w-4" />
+                                    ) : (
+                                      <ChevronDown className="h-4 w-4" />
+                                    )}
+                                    <span className="ml-1 text-xs">Ver {osExpandida === os.id ? 'Menos' : 'Mais'}</span>
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                              {osExpandida === os.id && (
+                                <TableRow key={`${os.id}-desc`}>
+                                  <TableCell colSpan={6} className="bg-muted/30 border-l-4 border-primary">
+                                    <div className="py-2 px-4">
+                                      <p className="text-sm font-medium mb-1">Descrição do Serviço:</p>
+                                      <p className="text-sm text-muted-foreground">{os.descricao}</p>
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                            </React.Fragment>
+                          ))}
+                        </TableBody>
+                      </Table>
+                      <div className="mt-4 text-sm text-muted-foreground text-right">
+                        Total: {osVinculadas.length} {osVinculadas.length === 1 ? 'ordem de serviço vinculada' : 'ordens de serviço vinculadas'}
+                      </div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
