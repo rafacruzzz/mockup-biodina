@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -66,6 +66,12 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     empresaParticipanteNome: '',
     empresaParticipanteCNPJ: ''
   });
+
+  // Estados para modal de aditivo obrigatório
+  const [modalAditivoOpen, setModalAditivoOpen] = useState(false);
+  const [aditivoFile, setAditivoFile] = useState<File | null>(null);
+  const [empresaPendente, setEmpresaPendente] = useState<{id: string, numero: 1|2} | null>(null);
+  const aditivoFileInputRef = useRef<HTMLInputElement>(null);
 
   const { colaboradores } = useColaboradores();
   const { licitacoesGanhas, atualizarEmpresaLicitacao, getLicitacaoById } = useLicitacoesGanhas();
@@ -179,44 +185,42 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     }));
   };
 
-  // Função para alterar empresa e sincronizar com licitação
+  // Função para alterar empresa - agora abre modal de aditivo
   const handleAlterarEmpresaContrato = (empresaId: string, empresaNumero: 1 | 2) => {
-    // Buscar dados da empresa selecionada
-    let empresaSelecionada: EmpresaParticipanteData = {
-      empresaParticipanteId: '',
-      empresaParticipanteNome: '',
-      empresaParticipanteCNPJ: ''
-    };
+    // Verificar se realmente mudou
+    const empresaAtualSel = empresaNumero === 1 ? empresaContrato : empresaContrato2;
+    if (empresaId === empresaAtualSel.empresaParticipanteId) return;
 
-    // Buscar na empresa atual e filiais
+    // Salvar pendente e abrir modal
+    setEmpresaPendente({ id: empresaId, numero: empresaNumero });
+    setAditivoFile(null);
+    setModalAditivoOpen(true);
+  };
+
+  // Resolver empresa por ID
+  const resolverEmpresaPorId = (empresaId: string): EmpresaParticipanteData => {
     if (empresaAtual && empresaId === empresaAtual.id) {
-      empresaSelecionada = {
-        empresaParticipanteId: empresaAtual.id,
-        empresaParticipanteNome: empresaAtual.nome,
-        empresaParticipanteCNPJ: empresaAtual.cnpj
-      };
-    } else {
-      const filial = filiais.find(f => f.id === empresaId);
-      if (filial) {
-        empresaSelecionada = {
-          empresaParticipanteId: filial.id,
-          empresaParticipanteNome: filial.nome,
-          empresaParticipanteCNPJ: filial.cnpj
-        };
-      } else {
-        const empresa = empresas.find(e => e.id === empresaId);
-        if (empresa) {
-          empresaSelecionada = {
-            empresaParticipanteId: empresa.id,
-            empresaParticipanteNome: empresa.nome,
-            empresaParticipanteCNPJ: empresa.cnpj
-          };
-        }
-      }
+      return { empresaParticipanteId: empresaAtual.id, empresaParticipanteNome: empresaAtual.nome, empresaParticipanteCNPJ: empresaAtual.cnpj };
     }
+    const filial = filiais.find(f => f.id === empresaId);
+    if (filial) {
+      return { empresaParticipanteId: filial.id, empresaParticipanteNome: filial.nome, empresaParticipanteCNPJ: filial.cnpj };
+    }
+    const empresa = empresas.find(e => e.id === empresaId);
+    if (empresa) {
+      return { empresaParticipanteId: empresa.id, empresaParticipanteNome: empresa.nome, empresaParticipanteCNPJ: empresa.cnpj };
+    }
+    return { empresaParticipanteId: '', empresaParticipanteNome: '', empresaParticipanteCNPJ: '' };
+  };
+
+  // Confirmar alteração de empresa com aditivo
+  const handleConfirmarAlteracaoEmpresa = () => {
+    if (!empresaPendente || !aditivoFile) return;
+
+    const empresaSelecionada = resolverEmpresaPorId(empresaPendente.id);
 
     // Atualizar estado local
-    if (empresaNumero === 1) {
+    if (empresaPendente.numero === 1) {
       setEmpresaContrato(empresaSelecionada);
     } else {
       setEmpresaContrato2(empresaSelecionada);
@@ -224,9 +228,27 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
 
     // Sincronizar com a licitação original
     if (licitacaoVinculada) {
-      atualizarEmpresaLicitacao(licitacaoVinculada, empresaSelecionada, empresaNumero);
-      toast.success(`Empresa ${empresaNumero} atualizada na licitação e contratação!`);
+      atualizarEmpresaLicitacao(licitacaoVinculada, empresaSelecionada, empresaPendente.numero);
     }
+
+    // Adicionar documento do aditivo à aba Documentos
+    setDocumentosLicitacao(prev => [...prev, {
+      nome: aditivoFile.name,
+      tipo: 'Aditivo de Mudança de Empresa',
+      data: new Date().toISOString().split('T')[0],
+      url: URL.createObjectURL(aditivoFile)
+    }]);
+
+    toast.success(`Empresa ${empresaPendente.numero} atualizada! Aditivo anexado aos documentos.`);
+    setModalAditivoOpen(false);
+    setAditivoFile(null);
+    setEmpresaPendente(null);
+  };
+
+  const handleCancelarAlteracaoEmpresa = () => {
+    setModalAditivoOpen(false);
+    setAditivoFile(null);
+    setEmpresaPendente(null);
   };
 
   // Lista de empresas disponíveis para seleção
@@ -510,11 +532,12 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                           )}
                         </div>
 
-                        {/* Empresa Participante 2 */}
+                        {/* Empresa Participante 2 - só aparece se a licitação tiver empresa 2 */}
+                        {licitacaoVinculadaData?.empresaParticipanteId2 && (
                         <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
                           <div className="flex items-center gap-2 mb-3">
                             <Building2 className="h-5 w-5 text-purple-600" />
-                            <span className="font-medium text-purple-800">Empresa Participante 2 (Opcional)</span>
+                            <span className="font-medium text-purple-800">Empresa Participante 2</span>
                           </div>
                           {empresaContrato2.empresaParticipanteId ? (
                             <div className="space-y-2">
@@ -542,10 +565,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                             </div>
                           ) : (
                             <div className="space-y-2">
-                              <p className="text-xs text-purple-600">Nenhuma empresa definida (opcional)</p>
+                              <p className="text-xs text-purple-600">Nenhuma empresa definida</p>
                               <Select value="" onValueChange={(val) => handleAlterarEmpresaContrato(val, 2)}>
                                 <SelectTrigger className="h-8">
-                                  <SelectValue placeholder="Selecionar empresa (opcional)" />
+                                  <SelectValue placeholder="Selecionar empresa" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {empresasDisponiveis.map((empresa) => (
@@ -558,6 +581,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                             </div>
                           )}
                         </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -1624,6 +1648,86 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
         onSave={handleSalvarPedido}
         oportunidade={oportunidade || { nomeFantasia: 'Cliente Novo', id: 'novo' }}
       />
+
+      {/* Modal de Aditivo Obrigatório */}
+      <Dialog open={modalAditivoOpen} onOpenChange={(open) => { if (!open) handleCancelarAlteracaoEmpresa(); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Upload className="h-5 w-5 text-orange-500" />
+              Aditivo de Mudança de Empresa
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="p-3 bg-orange-50 border border-orange-200 rounded-lg">
+              <p className="text-sm text-orange-800">
+                Você está alterando a empresa participante {empresaPendente?.numero}.
+              </p>
+              <p className="text-sm text-orange-700 mt-1">
+                É <strong>obrigatório</strong> anexar o aditivo contratual de mudança de empresa.
+              </p>
+            </div>
+
+            {aditivoFile ? (
+              <div className="flex items-center justify-between p-3 border border-green-200 bg-green-50 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-green-600" />
+                  <div>
+                    <p className="text-sm font-medium text-green-800">{aditivoFile.name}</p>
+                    <p className="text-xs text-green-600">
+                      {(aditivoFile.size / 1024).toFixed(1)} KB
+                    </p>
+                  </div>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setAditivoFile(null)} className="text-red-600">
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <div
+                className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 transition-colors"
+                onClick={() => aditivoFileInputRef.current?.click()}
+              >
+                <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-600">Clique para selecionar ou arraste o arquivo</p>
+                <p className="text-xs text-gray-400 mt-1">PDF, DOC, DOCX (máx. 10MB)</p>
+              </div>
+            )}
+
+            <input
+              ref={aditivoFileInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  if (file.size > 10 * 1024 * 1024) {
+                    toast.error('Arquivo muito grande. Máximo 10MB.');
+                    return;
+                  }
+                  setAditivoFile(file);
+                }
+                if (aditivoFileInputRef.current) aditivoFileInputRef.current.value = '';
+              }}
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 mt-2">
+            <Button variant="outline" onClick={handleCancelarAlteracaoEmpresa}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleConfirmarAlteracaoEmpresa}
+              disabled={!aditivoFile}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              Confirmar Alteração
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
