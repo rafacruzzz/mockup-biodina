@@ -1,102 +1,56 @@
 
 
-## Plano: Substituir Textarea por Tabela de OSs na Aba "Análise Técnica" da Contratação
+## Plano: Adicionar Aba "DT" (Departamento Técnico) na Contratação
 
 ### Objetivo
-Substituir o campo de texto (Textarea) da aba "Análise Técnica" na Contratação por uma tabela resumida das Ordens de Serviço vinculadas àquela contratação, com botão "Ver Mais" para expandir a descrição de cada OS.
+Criar uma nova aba chamada "DT" no formulário de Contratação, com a mesma estrutura visual da aba "Análise Técnica", mas exibindo Ordens de Serviço provenientes do módulo de Departamento Técnico.
 
 ---
 
-### O que muda
+### Alterações
 
-A aba "Análise Técnica" deixa de ser um campo de digitação livre e passa a exibir uma tabela com as OSs geradas para aquela contratação no módulo de Assessoria Científica.
+#### Arquivo: `src/components/comercial/ContratacaoSimplesForm.tsx`
 
-```text
-ANTES:
-┌─────────────────────────────────────┐
-│ Análise Técnica-Científica          │
-│ ┌─────────────────────────────────┐ │
-│ │ [Textarea para digitação]       │ │
-│ │                                 │ │
-│ └─────────────────────────────────┘ │
-└─────────────────────────────────────┘
+**1. Adicionar dados mock de OSs do Departamento Técnico**
 
-DEPOIS:
-┌──────────────────────────────────────────────────────────────┐
-│ Análise Técnica - Ordens de Serviço                          │
-│                                                              │
-│ N. OS      | Tipo            | Status      | Assessor | Ação │
-│ OS-2025-001| Treinamento     | Concluída   | Carlos   | [+]  │
-│   └─ Descrição expandida ao clicar "Ver Mais"...             │
-│ OS-2025-003| Acomp. Rotina   | Em Andamento| Maria    | [+]  │
-│                                                              │
-│ Total: 2 ordens de serviço vinculadas                        │
-└──────────────────────────────────────────────────────────────┘
+Novo array `osDepartamentoTecnico` com 2 OSs de exemplo (dados diferentes da Análise Técnica):
+
+| Campo | OS 1 | OS 2 |
+|-------|------|------|
+| Número | OS-DT-2025-001 | OS-DT-2025-002 |
+| Tipo | Manutenção Corretiva | Instalação de Equipamento |
+| Status | CONCLUÍDA | EM_ANDAMENTO |
+| Técnico | Eng. Rafael Lima | Téc. André Souza |
+| Data | 2025-03-15 | 2025-06-01 |
+
+**2. Adicionar estado para expansão da aba DT**
+
+```typescript
+const [osDtExpandida, setOsDtExpandida] = useState<string | null>(null);
 ```
 
+**3. Adicionar TabsTrigger "DT" na TabsList**
+
+Inserir a nova aba logo após "Análise Técnica", com ícone `Wrench`. Ajustar o grid-cols de 8/7 para 9/8.
+
+**4. Adicionar TabsContent "dt"**
+
+Mesmo layout da aba "Análise Técnica":
+- Card com título "Ordens de Serviço - Departamento Técnico"
+- Tabela com colunas: N. OS, Tipo, Status, Técnico, Data, Ação
+- Botão "Ver Mais/Menos" com expansão da descrição
+- Rodapé com total de OSs
+
 ---
 
-### Arquivo a Modificar
+### Resumo de Alterações
 
-| Arquivo | Acao |
+| Arquivo | Ação |
 |---------|------|
-| `src/components/comercial/ContratacaoSimplesForm.tsx` | Substituir Textarea por tabela de OSs com dados mock e botão "Ver Mais" |
+| `src/components/comercial/ContratacaoSimplesForm.tsx` | Adicionar aba DT com tabela de OSs do Departamento Técnico |
 
----
+### Resultado
+- Nova aba "DT" visível ao lado de "Análise Técnica"
+- Tabela com 2 OSs de exemplo do Departamento Técnico
+- Mesma interação de expandir/recolher descrição
 
-### Detalhes da Implementacao
-
-#### 1. Adicionar dados mock de OSs vinculadas
-
-Criar um array local com 2 OSs de exemplo vinculadas à contratação:
-
-```typescript
-const osVinculadas = [
-  {
-    id: 'os-cont-001',
-    numero: 'OS-2025-010',
-    tipo: 'Treinamento Inicial',
-    status: 'CONCLUÍDA',
-    assessor: 'Dr. Carlos Mendes',
-    dataAgendada: '2025-04-10',
-    descricao: 'Treinamento inicial da equipe do laboratório para operação do analisador bioquímico. Foram treinados 6 profissionais em 2 turnos, cobrindo operação básica, manutenção preventiva e interpretação de resultados.'
-  },
-  {
-    id: 'os-cont-002',
-    numero: 'OS-2025-015',
-    tipo: 'Acompanhamento de Rotina',
-    status: 'EM_ANDAMENTO',
-    assessor: 'Dra. Maria Santos',
-    dataAgendada: '2025-05-20',
-    descricao: 'Visita de acompanhamento para verificação de performance do equipamento após 30 dias de uso. Avaliação de controle de qualidade interno e externo, revisão de procedimentos operacionais.'
-  }
-];
-```
-
-#### 2. Substituir conteúdo da aba (linhas 1331-1346)
-
-Remover o Card com Textarea e substituir por:
-
-- Card com titulo "Ordens de Serviço - Análise Técnica"
-- Tabela com colunas: N. OS, Tipo, Status, Assessor, Data, Ação
-- Cada linha com botão "Ver Mais" (ícone ChevronDown/ChevronUp)
-- Ao clicar, expande uma linha abaixo com a descrição completa da OS
-- Badge colorido para o status (verde=Concluída, amarelo=Em Andamento, etc.)
-- Rodapé com total de OSs vinculadas
-
-#### 3. Estado para controlar expansão
-
-```typescript
-const [osExpandida, setOsExpandida] = useState<string | null>(null);
-```
-
-Ao clicar em "Ver Mais", alterna a expansão daquela OS específica.
-
----
-
-### Resultado Esperado
-
-- Aba "Análise Técnica" mostra tabela resumida das OSs vinculadas à contratação
-- Cada OS tem um botão para expandir e ver a descrição completa
-- 2 OSs de exemplo para demonstração visual
-- Sem campo de digitação - apenas visualização das OSs
