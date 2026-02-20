@@ -31,12 +31,10 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
   const { empresaAtual, filialAtual, isMasterUser, modulosDisponiveis } = useEmpresa();
   const { user } = useUser();
 
-  // Nome da empresa/filial atual
   const nomeEmpresaAtual = filialAtual?.nome || empresaAtual?.nome || 'iMuv';
 
   const defaultMenuItems = [
-    // { name: "Aplicativos", path: "/home", icon: <Home size={20} />, id: "aplicativos" }, // Escondido temporariamente
-    { name: "SUPER", path: "/super", icon: <Crown size={20} />, id: "super" }, // Temporariamente escondido
+    { name: "SUPER", path: "/super", icon: <Crown size={20} />, id: "super" },
     { name: "Pessoal", path: "/pessoal", icon: <Users size={20} />, id: "pessoal" },
     { name: "BI", path: "/bi-geral", icon: <BarChart2 size={20} />, id: "bi" },
     { name: "Cadastro", path: "/cadastro", icon: <FileText size={20} />, id: "cadastro" },
@@ -53,56 +51,32 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
     { name: "Personalizar Navegação", path: "/personalizar-navegacao", icon: <Settings size={20} />, id: "personalizar-navegacao" },
   ];
 
-  // Apply navigation overrides if provided
   const getMenuItems = () => {
     if (!navOverrides) return defaultMenuItems;
-
-    // Keep "Solicitações", "Configuração" and "Personalizar Navegação" as fixed items
     const solicitacoes = defaultMenuItems.find(item => item.id === "solicitacoes");
     const configuracao = defaultMenuItems.find(item => item.id === "configuracao");
     const personalizar = defaultMenuItems.find(item => item.id === "personalizar-navegacao");
-    
-    // Get the module items (excluding fixed items)
     const moduleItems = defaultMenuItems.filter(item => 
-      item.id !== "solicitacoes" && 
-      item.id !== "configuracao" &&
-      item.id !== "personalizar-navegacao"
+      item.id !== "solicitacoes" && item.id !== "configuracao" && item.id !== "personalizar-navegacao"
     );
-
-    // Reorder according to navOverrides.order if provided
     let orderedModuleItems = moduleItems;
     if (navOverrides.order) {
       orderedModuleItems = navOverrides.order
         .map(id => moduleItems.find(item => item.id === id))
         .filter(Boolean) as typeof moduleItems;
     }
-
-    // Apply label overrides if provided
     if (navOverrides.labels) {
       orderedModuleItems = orderedModuleItems.map(item => ({
         ...item,
         name: navOverrides.labels![item.id] || item.name
       }));
     }
-
-    return [
-      ...orderedModuleItems,
-      solicitacoes!,
-      configuracao!,
-      personalizar!
-    ];
+    return [...orderedModuleItems, solicitacoes!, configuracao!, personalizar!];
   };
 
   const menuItems = getMenuItems().filter(item => {
-    // Sempre mostrar: Solicitações, Configuração, Personalizar
-    if (['solicitacoes', 'configuracao', 'personalizar-navegacao'].includes(item.id)) {
-      return true;
-    }
-    // SUPER apenas para usuário super@super.com.br
-    if (item.id === 'super') {
-      return user?.email === 'super@super.com.br';
-    }
-    // Outros módulos: verificar se empresa tem acesso
+    if (['solicitacoes', 'configuracao', 'personalizar-navegacao'].includes(item.id)) return true;
+    if (item.id === 'super') return user?.email === 'super@super.com.br';
     return modulosDisponiveis.includes(item.id as any);
   });
 
@@ -119,22 +93,26 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
           <button 
             onClick={() => setIsEmpresaSwitcherOpen(true)}
             className={cn(
-              "flex items-center gap-1 hover:bg-gray-50 rounded-lg p-2 transition-colors cursor-pointer",
+              "flex items-center gap-2 hover:bg-gray-50 rounded-lg p-2 transition-colors cursor-pointer",
               !isSidebarOpen && "justify-center w-full"
             )}
             title="Trocar empresa"
           >
-            <span className={cn("text-xl font-bold text-biodina-blue truncate max-w-[140px]", !isSidebarOpen && "hidden")}>
-              {nomeEmpresaAtual}
-            </span>
-            <span className={cn("text-sm text-biodina-gold", !isSidebarOpen && "hidden")}>
-              Sistemas
-            </span>
-            <ChevronDown className={cn("h-4 w-4 text-muted-foreground ml-1", !isSidebarOpen && "hidden")} />
+            {isSidebarOpen ? (
+              <>
+                <img src="/logos/preta.png" alt="iMuv" className="h-6" />
+                <span className="text-lg font-bold text-imuv-dark truncate max-w-[120px]">
+                  {nomeEmpresaAtual}
+                </span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground ml-1" />
+              </>
+            ) : (
+              <img src="/logos/icone_imuv-03.png" alt="iMuv" className="h-8 w-8" />
+            )}
           </button>
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-            className="text-gray-400 hover:text-biodina-blue p-2 rounded-lg hover:bg-gray-50 transition-colors"
+            className="text-gray-400 hover:text-imuv-blue p-2 rounded-lg hover:bg-gray-50 transition-colors"
           >
             {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -148,7 +126,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
                   to={item.path}
                   className={cn(
                     "flex items-center p-3 text-sm font-medium rounded-xl transition-all duration-200",
-                    location.pathname === item.path && "bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md hover:from-biodina-blue/90 hover:to-biodina-blue/80",
+                    location.pathname === item.path && "bg-gradient-to-r from-imuv-blue to-imuv-navy text-white shadow-md hover:from-imuv-navy hover:to-imuv-blue",
                     location.pathname !== item.path && "hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100",
                     !isSidebarOpen && "justify-center"
                   )}
@@ -177,18 +155,20 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
         <header className="bg-white h-16 shadow-sm flex items-center px-6 border-b border-gray-100">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-gray-600 hover:text-biodina-blue p-2 lg:hidden rounded-lg hover:bg-gray-50"
+            className="text-gray-600 hover:text-imuv-blue p-2 lg:hidden rounded-lg hover:bg-gray-50"
           >
             <Menu size={20} />
           </button>
           <div className="flex items-center justify-between w-full">
-            <h2 className="text-xl font-semibold text-biodina-blue ml-4">iMuv Sistemas</h2>
+            <div className="flex items-center gap-3 ml-4">
+              <img src="/logos/preta.png" alt="iMuv" className="h-6" />
+              <h2 className="text-xl font-semibold text-imuv-dark">Sistemas</h2>
+            </div>
             
-            {/* User Profile Menu */}
             <div className="ml-auto flex items-center gap-4">
               <button 
                 onClick={() => setIsSidebarOpen(false)}
-                className="p-2 text-gray-600 hover:text-biodina-blue rounded-lg hover:bg-gray-50 transition-colors"
+                className="p-2 text-gray-600 hover:text-imuv-blue rounded-lg hover:bg-gray-50 transition-colors"
                 title="Fechar menu"
               >
                 <X size={20} />
@@ -203,10 +183,8 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
         </main>
       </div>
 
-      {/* Chat Flutuante */}
       <FloatingChat />
 
-      {/* Modal de troca de empresa */}
       <EmpresaUsuarioSwitcher 
         isOpen={isEmpresaSwitcherOpen} 
         onClose={() => setIsEmpresaSwitcherOpen(false)} 

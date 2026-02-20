@@ -3,26 +3,25 @@ import LoginForm from "@/components/LoginForm";
 
 const Login = () => {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 md:p-6 bg-gray-900 relative overflow-hidden">
-      {/* Background Image with proper sizing */}
+    <div className="min-h-screen w-full flex items-center justify-center p-4 md:p-6 relative overflow-hidden bg-gradient-to-br from-imuv-dark via-imuv-navy to-imuv-dark">
+      {/* Subtle geometric pattern overlay */}
       <div 
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 opacity-10"
         style={{
-          backgroundImage: "url('/lovable-uploads/e11acdc5-5efc-406a-aa43-b4299398ecb9.png')",
-          backgroundSize: 'contain',
-          backgroundPosition: 'center center',
-          backgroundRepeat: 'no-repeat',
-          opacity: 0.8
+          backgroundImage: `radial-gradient(circle at 25% 25%, #0BB8F6 1px, transparent 1px),
+                           radial-gradient(circle at 75% 75%, #0000FE 1px, transparent 1px)`,
+          backgroundSize: '60px 60px',
         }}
       />
       
-      {/* Subtle overlay for better contrast */}
-      <div className="absolute inset-0 bg-gradient-to-br from-biodina-darkblue/40 via-transparent to-biodina-darkblue/40 z-0" />
+      {/* Glow effects */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-imuv-cyan/10 rounded-full blur-3xl z-0" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-imuv-blue/10 rounded-full blur-3xl z-0" />
       
-      {/* Header with company branding */}
+      {/* Header with white logo */}
       <div className="absolute top-8 left-8 z-10">
-        <h2 className="text-3xl font-bold text-white tracking-tight drop-shadow-lg">iMuv</h2>
-        <p className="text-gray-200 text-sm mt-1 drop-shadow">Sistemas Inteligentes</p>
+        <img src="/logos/branca.png" alt="iMuv" className="h-10 drop-shadow-lg" />
+        <p className="text-imuv-cyan text-sm mt-2 font-medium tracking-wide">Sistemas Inteligentes</p>
       </div>
       
       {/* Login form container */}
@@ -32,7 +31,7 @@ const Login = () => {
         {/* Link para Cadastro */}
         <p className="text-center text-sm text-muted-foreground mt-6">
           Ainda não tem conta?{" "}
-          <a href="/register/wf-1" className="text-primary hover:underline font-medium">
+          <a href="/register/wf-1" className="text-imuv-cyan hover:underline font-medium">
             Cadastre-se
           </a>
         </p>
@@ -40,7 +39,7 @@ const Login = () => {
       
       {/* Footer */}
       <div className="absolute bottom-6 text-center w-full z-10">
-        <p className="text-gray-200 text-sm drop-shadow">© 2025 iMuv. Todos os direitos reservados.</p>
+        <p className="text-gray-400 text-sm">© 2025 iMuv. Todos os direitos reservados.</p>
       </div>
     </div>
   );
