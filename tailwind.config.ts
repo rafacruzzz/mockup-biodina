@@ -69,6 +69,13 @@ export default {
 				navy: '#1122A9',
 				dark: '#29324F',
 				green: '#00ED9F',
+			},
+			// Aliases legados para compatibilidade com componentes existentes
+			biodina: {
+				blue: '#0000FE',
+				gold: '#0BB8F6',
+				darkblue: '#1122A9',
+				green: '#00ED9F',
 			}
 			},
 			borderRadius: {
