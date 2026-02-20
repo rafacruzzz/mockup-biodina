@@ -1,53 +1,58 @@
 
+## Plano: Separar Documentos por Empresa na Aba Documentos da Contratacao
 
-## Plano: Corrigir Logos que Nao Carregam Dentro do Sistema
+### Situacao Atual
+A aba "Documentos" no modal de Contratacao (`ContratacaoSimplesForm.tsx`) exibe todos os documentos importados da licitacao em uma lista unica, sem distinção de qual empresa participante cada documento pertence.
 
-### Problema
-Os logos aparecem na tela de login mas nao carregam no header e na aba do navegador (favicon). O favicon tambem aparece quebrado.
+### O Que Sera Feito
+Quando a contratacao possuir **mais de uma empresa participante** (Empresa 1 e Empresa 2), a aba Documentos sera reorganizada para:
 
-### Causa
-Os logos estao referenciados como caminhos estaticos (`/logos/preta.png`) que podem falhar dependendo do cache do navegador ou da forma como o Vite resolve os assets. A abordagem mais confiavel e importar os logos como modulos ES6.
+1. **Mostrar documentos separados por empresa** - Cada empresa tera sua propria secao/card com titulo indicando o nome da empresa e CNPJ
+2. **Documentos compartilhados** - Documentos que nao sao especificos de uma empresa (ex: Edital) ficarao em uma secao "Documentos Gerais da Licitacao"
+3. **Upload separado** - A area de upload de novos documentos tambem permitira selecionar a qual empresa o documento pertence
+4. **Caso de empresa unica** - Se houver apenas 1 empresa participante, o layout permanece como esta hoje (sem separacao)
 
-### Solucao
+### Layout Proposto
 
-#### 1. Copiar logos para `src/assets/`
-Mover os logos de `public/logos/` para `src/assets/logos/` para que o Vite os processe corretamente:
-- `src/assets/logos/preta.png`
-- `src/assets/logos/branca.png`
-- `src/assets/logos/azul.png`
-- `src/assets/logos/icone_imuv-03.png`
+```text
++------------------------------------------+
+| Documentos Gerais da Licitacao           |
+|  - Edital PP-2024-015.pdf               |
+|  - Catalogo Produtos.pdf                |
++------------------------------------------+
 
-Manter tambem em `public/logos/` para o favicon e og:image.
++------------------------------------------+
+| Empresa 1: iMuv Master (12.345.678/0001)|
+|  - Proposta_Empresa1.pdf                |
+|  - Aditivo de Mudanca de Empresa.pdf    |
++------------------------------------------+
 
-#### 2. Atualizar `SidebarLayout.tsx`
-Importar os logos como modulos ES6:
-```typescript
-import logoPreta from "@/assets/logos/preta.png";
-import logoIcone from "@/assets/logos/icone_imuv-03.png";
++------------------------------------------+
+| Empresa 2: iMuv Filial (12.345.678/0002)|
+|  - Proposta_Empresa2.pdf                |
+|  - Aditivo de Mudanca de Empresa.pdf    |
++------------------------------------------+
+
++------------------------------------------+
+| Adicionar Novos Documentos              |
+|  [Selecionar Empresa: dropdown]         |
+|  [Arraste e solte arquivos aqui]        |
++------------------------------------------+
 ```
-E usar nas tags `<img src={logoPreta} />` em vez de `<img src="/logos/preta.png" />`.
 
-#### 3. Atualizar `Login.tsx`
-```typescript
-import logoBranca from "@/assets/logos/branca.png";
-import logoAzul from "@/assets/logos/azul.png";
-```
+### Detalhes Tecnicos
 
-#### 4. Atualizar `LoginForm.tsx`
-```typescript
-import logoAzul from "@/assets/logos/azul.png";
-```
+**Arquivo a modificar:** `src/components/comercial/ContratacaoSimplesForm.tsx`
 
-### Arquivos a Modificar
-| Arquivo | Acao |
-|---------|------|
-| `src/assets/logos/` | Copiar 4 logos para esta pasta |
-| `src/components/SidebarLayout.tsx` | Importar e usar logos como ES6 modules |
-| `src/pages/Login.tsx` | Importar e usar logos como ES6 modules |
-| `src/components/LoginForm.tsx` | Importar e usar logo como ES6 module |
+**Escopo:** Apenas a aba "Documentos" (TabsContent value="documentos") - nenhuma outra aba sera alterada.
 
-### Resultado Esperado
-- Logos carregam corretamente em todas as paginas do sistema
-- Vite processa e otimiza os assets automaticamente
-- Sem dependencia de cache do navegador para carregar as imagens
+**Logica de separacao:**
+- Cada documento na lista `documentosLicitacao` recebera um campo `empresaId` indicando a qual empresa pertence (ou `null` para documentos gerais)
+- Ao vincular licitacao, os documentos serao categorizados automaticamente com base no tipo (Edital = geral, Aditivo de Mudanca de Empresa = empresa especifica)
+- A condicao `empresaContrato2.empresaParticipanteId` sera usada para verificar se existe uma segunda empresa e decidir se mostra o layout separado
 
+**Mudancas:**
+1. Adicionar campo `empresaId` aos documentos no estado `documentosLicitacao`
+2. Na aba Documentos, filtrar e agrupar documentos por empresa quando houver 2 empresas
+3. Exibir cards separados com header mostrando nome e CNPJ de cada empresa
+4. No card "Adicionar Novos Documentos", incluir um Select para escolher a qual empresa vincular o novo documento (visivel apenas quando ha 2 empresas)
