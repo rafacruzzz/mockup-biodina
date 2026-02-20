@@ -38,6 +38,20 @@ interface HistoricoVisita {
   observacao: string;
 }
 
+interface AditivoContrato {
+  id: string;
+  tipo: string;
+  valor: number;
+  justificativa: string;
+  empresaId: string;
+  empresaNome: string;
+  empresaCNPJ: string;
+  documentoNome: string;
+  documentoUrl: string;
+  criadoPor: string;
+  criadoEm: string;
+}
+
 const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: ContratacaoSimplesFormProps) => {
   const [activeTab, setActiveTab] = useState('dados-gerais');
   const [pedidos, setPedidos] = useState<PedidoCompleto[]>([]);
@@ -75,6 +89,62 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [osExpandida, setOsExpandida] = useState<string | null>(null);
   const [osDtExpandida, setOsDtExpandida] = useState<string | null>(null);
   const [empresaUploadSelecionada, setEmpresaUploadSelecionada] = useState<string>('geral');
+
+  // Estados para aditivos contratuais
+  const [aditivos, setAditivos] = useState<AditivoContrato[]>([]);
+  const [modalNovoAditivoOpen, setModalNovoAditivoOpen] = useState(false);
+  const [novoAditivo, setNovoAditivo] = useState({
+    tipo: '',
+    valor: '',
+    justificativa: '',
+    empresaId: '',
+  });
+  const [aditivoDocFile, setAditivoDocFile] = useState<File | null>(null);
+  const aditivoDocFileInputRef = useRef<HTMLInputElement>(null);
+
+
+  const handleAdicionarAditivo = () => {
+    if (!novoAditivo.tipo) { toast.error('Selecione o tipo do aditivo.'); return; }
+    if (!novoAditivo.valor) { toast.error('Informe o valor do aditivo.'); return; }
+    if (novoAditivo.justificativa.length < 50) { toast.error('A justificativa deve ter no mínimo 50 caracteres.'); return; }
+    if (temDuasEmpresas && !novoAditivo.empresaId) { toast.error('Selecione a empresa vinculada.'); return; }
+    if (!aditivoDocFile) { toast.error('Anexe o documento do aditivo.'); return; }
+
+    const empresaId = temDuasEmpresas ? novoAditivo.empresaId : empresaContrato.empresaParticipanteId;
+    const empresaInfo = empresaId === empresaContrato.empresaParticipanteId
+      ? empresaContrato
+      : empresaContrato2;
+
+    const novo: AditivoContrato = {
+      id: `aditivo_${Date.now()}`,
+      tipo: novoAditivo.tipo,
+      valor: parseFloat(novoAditivo.valor),
+      justificativa: novoAditivo.justificativa,
+      empresaId: empresaId,
+      empresaNome: empresaInfo.empresaParticipanteNome,
+      empresaCNPJ: empresaInfo.empresaParticipanteCNPJ,
+      documentoNome: aditivoDocFile.name,
+      documentoUrl: URL.createObjectURL(aditivoDocFile),
+      criadoPor: formData.colaboradoresResponsaveis || 'Usuário',
+      criadoEm: new Date().toISOString(),
+    };
+
+    setAditivos(prev => [...prev, novo]);
+
+    // Adicionar documento à aba Documentos
+    setDocumentosLicitacao(prev => [...prev, {
+      nome: aditivoDocFile.name,
+      tipo: `Aditivo - ${novoAditivo.tipo}`,
+      data: new Date().toISOString().split('T')[0],
+      url: URL.createObjectURL(aditivoDocFile),
+      empresaId: empresaId
+    }]);
+
+    toast.success('Aditivo registrado com sucesso!');
+    setModalNovoAditivoOpen(false);
+    setNovoAditivo({ tipo: '', valor: '', justificativa: '', empresaId: '' });
+    setAditivoDocFile(null);
+  };
 
   // Dados mock de OSs vinculadas à contratação
   const osVinculadas: Array<{id: string; numero: string; tipo: string; status: string; assessor: string; dataAgendada: string; descricao: string}> = [
@@ -174,6 +244,11 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     // Modalidade
     modalidade: 'contratacao_simples'
   });
+
+  const temDuasEmpresas = !!empresaContrato2.empresaParticipanteId;
+  const valorOriginal = formData.valorNegocio || 0;
+  const somaAditivos = aditivos.reduce((sum, a) => sum + a.valor, 0);
+  const valorAtualizado = valorOriginal + somaAditivos;
 
   const [concorrentes, setConcorrentes] = useState(oportunidade?.concorrentes || []);
 
@@ -781,15 +856,77 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                         </Select>
                       </div>
                       <div>
-                        <Label htmlFor="valorNegocio">Valor do Negócio *</Label>
+                        <Label htmlFor="valorNegocio">Valor Original do Contrato</Label>
                         <Input
                           id="valorNegocio"
                           type="number"
                           value={formData.valorNegocio}
-                          onChange={(e) => handleInputChange('valorNegocio', parseFloat(e.target.value) || 0)}
-                          placeholder="Digite o valor"
+                          disabled
+                          className="bg-muted cursor-not-allowed"
+                          placeholder="Valor definido pela licitação"
                         />
                       </div>
+                    </div>
+
+                    {/* Valor Atualizado e Aditivos */}
+                    {aditivos.length > 0 && (
+                      <div className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg border">
+                        <div>
+                          <span className="text-xs text-muted-foreground">Valor Original</span>
+                          <p className="font-semibold">{formatCurrency(valorOriginal)}</p>
+                        </div>
+                        <span className="text-muted-foreground">→</span>
+                        <div>
+                          <span className="text-xs text-muted-foreground">Valor Atualizado</span>
+                          <p className="font-bold text-primary">{formatCurrency(valorAtualizado)}</p>
+                        </div>
+                        <Badge variant="outline" className="ml-auto">{aditivos.length} aditivo(s)</Badge>
+                      </div>
+                    )}
+
+                    {/* Seção Aditivos Contratuais */}
+                    <div className="mt-4 pt-4 border-t border-border">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-md font-medium">Aditivos Contratuais</h4>
+                        <Button type="button" size="sm" onClick={() => setModalNovoAditivoOpen(true)}>
+                          <Plus className="h-4 w-4 mr-1" /> Novo Aditivo
+                        </Button>
+                      </div>
+
+                      {aditivos.length > 0 ? (
+                        <div className="border rounded-lg overflow-hidden">
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Data</TableHead>
+                                <TableHead>Tipo</TableHead>
+                                <TableHead>Valor</TableHead>
+                                <TableHead>Empresa</TableHead>
+                                <TableHead>Documento</TableHead>
+                                <TableHead>Registrado por</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {aditivos.map(aditivo => (
+                                <TableRow key={aditivo.id}>
+                                  <TableCell className="text-xs">{new Date(aditivo.criadoEm).toLocaleDateString('pt-BR')}</TableCell>
+                                  <TableCell><Badge variant="outline" className="text-xs">{aditivo.tipo}</Badge></TableCell>
+                                  <TableCell className={aditivo.valor >= 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>{formatCurrency(aditivo.valor)}</TableCell>
+                                  <TableCell className="text-xs">{aditivo.empresaNome}<br/><span className="text-muted-foreground">{aditivo.empresaCNPJ}</span></TableCell>
+                                  <TableCell>
+                                    <a href={aditivo.documentoUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
+                                      <FileText className="h-3 w-3" />{aditivo.documentoNome}
+                                    </a>
+                                  </TableCell>
+                                  <TableCell className="text-xs">{aditivo.criadoPor}</TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-muted-foreground text-center py-4">Nenhum aditivo registrado.</p>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -1194,7 +1331,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               <TabsContent value="saldo-cliente" className="space-y-6">
                 {(() => {
                   // Cálculos do saldo
-                  const valorNegocio = formData.valorNegocio || 0;
+                  const valorNegocio = valorAtualizado;
                   const totalPedidos = pedidos.reduce((sum, pedido) => sum + (pedido.valorTotal || 0), 0);
                   const totalServicos = 0; // Preparado para futuro
                   const totalChamados = 0; // Preparado para futuro - chamados não têm valor ainda
@@ -2045,6 +2182,110 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             >
               Confirmar Alteração
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Novo Aditivo Contratual */}
+      <Dialog open={modalNovoAditivoOpen} onOpenChange={(open) => { if (!open) { setModalNovoAditivoOpen(false); setNovoAditivo({ tipo: '', valor: '', justificativa: '', empresaId: '' }); setAditivoDocFile(null); } }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="h-5 w-5" />
+              Novo Aditivo Contratual
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <Label>Tipo do Aditivo *</Label>
+              <Select value={novoAditivo.tipo} onValueChange={(v) => setNovoAditivo(prev => ({ ...prev, tipo: v }))}>
+                <SelectTrigger><SelectValue placeholder="Selecione o tipo" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Acréscimo de Valor">Acréscimo de Valor</SelectItem>
+                  <SelectItem value="Supressão de Valor">Supressão de Valor</SelectItem>
+                  <SelectItem value="Prorrogação de Prazo">Prorrogação de Prazo</SelectItem>
+                  <SelectItem value="Outros">Outros</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label>Valor do Aditivo (R$) *</Label>
+              <Input
+                type="number"
+                value={novoAditivo.valor}
+                onChange={(e) => setNovoAditivo(prev => ({ ...prev, valor: e.target.value }))}
+                placeholder="Ex: 15000 para acréscimo, -5000 para supressão"
+              />
+            </div>
+
+            <div>
+              <Label>Justificativa * <span className="text-xs text-muted-foreground">(mín. 50 caracteres - {novoAditivo.justificativa.length}/50)</span></Label>
+              <Textarea
+                value={novoAditivo.justificativa}
+                onChange={(e) => setNovoAditivo(prev => ({ ...prev, justificativa: e.target.value }))}
+                placeholder="Descreva a justificativa do aditivo (mínimo 50 caracteres)"
+                rows={3}
+              />
+            </div>
+
+            {temDuasEmpresas && (
+              <div>
+                <Label>Empresa Vinculada *</Label>
+                <Select value={novoAditivo.empresaId} onValueChange={(v) => setNovoAditivo(prev => ({ ...prev, empresaId: v }))}>
+                  <SelectTrigger><SelectValue placeholder="Selecione a empresa" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={empresaContrato.empresaParticipanteId}>
+                      {empresaContrato.empresaParticipanteNome} ({empresaContrato.empresaParticipanteCNPJ})
+                    </SelectItem>
+                    <SelectItem value={empresaContrato2.empresaParticipanteId}>
+                      {empresaContrato2.empresaParticipanteNome} ({empresaContrato2.empresaParticipanteCNPJ})
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div>
+              <Label>Documento do Aditivo *</Label>
+              {aditivoDocFile ? (
+                <div className="flex items-center justify-between p-3 border rounded-lg bg-muted/50 mt-1">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    <span className="text-sm">{aditivoDocFile.name}</span>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => setAditivoDocFile(null)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div
+                  className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-primary/50 transition-colors mt-1"
+                  onClick={() => aditivoDocFileInputRef.current?.click()}
+                >
+                  <Upload className="h-6 w-6 mx-auto mb-1 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">Clique para selecionar o arquivo</p>
+                  <p className="text-xs text-muted-foreground">PDF, DOC, DOCX</p>
+                </div>
+              )}
+              <input
+                ref={aditivoDocFileInputRef}
+                type="file"
+                accept=".pdf,.doc,.docx"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) setAditivoDocFile(file);
+                  if (aditivoDocFileInputRef.current) aditivoDocFileInputRef.current.value = '';
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 mt-2">
+            <Button variant="outline" onClick={() => setModalNovoAditivoOpen(false)}>Cancelar</Button>
+            <Button onClick={handleAdicionarAditivo}>Registrar Aditivo</Button>
           </div>
         </DialogContent>
       </Dialog>
