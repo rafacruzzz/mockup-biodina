@@ -1,94 +1,113 @@
 
 
-## Plano: Editor Rico (Rich Text) no Campo "Resumo do Edital"
+## Plano: Rebranding Visual Completo - Novas Cores e Logos iMuv
 
 ### Objetivo
-Substituir o campo Textarea simples do "Resumo do Edital" na Licitacao por um editor rico estilo Word, permitindo:
-- Digitacao de texto com formatacao basica (negrito, italico, listas)
-- Colar e inserir imagens diretamente no campo
-- Redimensionar imagens coladas/inseridas
-- Manter tudo inline, sem necessidade de storage externo (imagens ficam como base64 no conteudo HTML)
+Aplicar a nova identidade visual do cliente iMuv em todo o sistema, substituindo as cores antigas (biodina) pelas novas cores da marca, e posicionando os logos enviados nos locais estrategicos.
 
 ---
 
-### Biblioteca Escolhida: TipTap
+### Paleta de Cores Selecionada
 
-TipTap e um editor rico baseado em ProseMirror, leve, modular e com excelente integracao React. Pacotes necessarios:
+Das 8 cores enviadas, selecionei as que melhor combinam com os logos e criam um visual moderno e profissional:
 
-- `@tiptap/react` - Integracao React
-- `@tiptap/starter-kit` - Extensoes basicas (negrito, italico, listas, headings)
-- `@tiptap/extension-image` - Suporte a imagens
-- `tiptap-extension-resizable-image` - Redimensionamento de imagens
+| Token | Cor | Uso |
+|-------|-----|-----|
+| `imuv-blue` | `#0000FE` | Cor primaria (menus ativos, titulos, botoes principais) |
+| `imuv-cyan` | `#0BB8F6` | Destaque/accent (o ponto do logo, links, hover) |
+| `imuv-navy` | `#1122A9` | Variacao escura (backgrounds de sidebar, gradientes) |
+| `imuv-dark` | `#29324F` | Fundo escuro (tela de login, header) |
+| `imuv-green` | `#00ED9F` | Sucesso/destaque secundario (badges, indicadores) |
+
+Cores descartadas: `#000000` (ja e padrao), `#ae0de7` (roxo - muito chamativo como cor principal), `#01fe00` (verde neon - muito vibrante para UI corporativa).
 
 ---
 
-### Arquivos a Criar/Modificar
+### Logos e Onde Serao Usados
+
+| Logo | Arquivo | Onde |
+|------|---------|------|
+| `azul.png` | Logo completa azul | Tela de login (dentro do card do formulario) |
+| `branca.png` | Logo completa branca | Tela de login (canto superior, sobre fundo escuro) |
+| `icone_imuv-03.png` | Icone "mu" azul | Sidebar quando colapsada |
+| `preta.png` | Logo completa preta | Header principal (ao lado do nome) |
+
+---
+
+### Arquivos a Modificar
 
 | Arquivo | Acao |
 |---------|------|
-| `src/components/ui/RichTextEditor.tsx` | **Novo** - Componente reutilizavel de editor rico |
-| `src/components/comercial/OportunidadeAvancadaForm.tsx` | Substituir Textarea por RichTextEditor no campo resumoEdital |
+| `tailwind.config.ts` | Substituir tokens `biodina` por `imuv` com as novas cores |
+| `src/index.css` | Atualizar background da tela de login e scrollbar com novas cores |
+| `src/pages/Login.tsx` | Redesign com novos logos e cores, visual moderno |
+| `src/components/LoginForm.tsx` | Atualizar cores dos inputs, botoes, links |
+| `src/components/SidebarLayout.tsx` | Adicionar logo no sidebar, atualizar cores |
+| **~155 arquivos com `biodina`** | Substituir `biodina-blue` por `imuv-blue`, `biodina-gold` por `imuv-cyan`, `biodina-darkblue` por `imuv-dark` em todos os componentes |
 
 ---
 
 ### Detalhes da Implementacao
 
-#### 1. Componente `RichTextEditor.tsx`
+#### 1. Tailwind Config - Novas Cores
 
-Componente reutilizavel que encapsula o TipTap com:
+Substituir o bloco `biodina` por:
 
-- **Barra de ferramentas** com botoes para:
-  - Negrito, Italico
-  - Lista com marcadores, Lista numerada
-  - Inserir imagem (via botao de upload)
-- **Area de edicao** com suporte a:
-  - Colar imagens do clipboard (Ctrl+V de prints)
-  - Arrastar e soltar imagens
-  - Redimensionar imagens clicando e arrastando
-- **Props**:
-  - `content: string` (HTML)
-  - `onChange: (html: string) => void`
-  - `placeholder?: string`
-  - `disabled?: boolean`
-
-As imagens coladas serao convertidas para base64 e armazenadas inline no HTML. Isso e adequado para este caso de uso pois o conteudo e textual com imagens pontuais de prints/tabelas.
-
-#### 2. Modificacao do `OportunidadeAvancadaForm.tsx`
-
-Substituir apenas o bloco do campo "Resumo do Edital" (linhas 1089-1098):
-
-**Antes:**
 ```typescript
-<Textarea
-  id="resumoEdital"
-  value={formData.resumoEdital}
-  onChange={(e) => setFormData({ ...formData, resumoEdital: e.target.value })}
-  placeholder="Descreva o resumo do edital..."
-  className="min-h-[120px] resize-y"
-/>
+imuv: {
+  blue: '#0000FE',
+  cyan: '#0BB8F6', 
+  navy: '#1122A9',
+  dark: '#29324F',
+  green: '#00ED9F',
+}
 ```
 
-**Depois:**
-```typescript
-<RichTextEditor
-  content={formData.resumoEdital}
-  onChange={(html) => setFormData({ ...formData, resumoEdital: html })}
-  placeholder="Descreva o resumo do edital..."
-  disabled={isReadOnlyMode()}
-/>
+#### 2. Tela de Login - Redesign
+
+- Fundo com gradiente de `imuv-dark` para `imuv-navy`
+- Logo branca (`branca.png`) no canto superior esquerdo
+- Logo azul (`azul.png`) dentro do card do formulario, acima do titulo
+- Botao de login com gradiente `imuv-blue` para `imuv-navy`
+- Link "Esqueci minha senha" em `imuv-cyan`
+- Subtitulo "Sistemas Inteligentes" em `imuv-cyan`
+
+#### 3. Sidebar - Logo e Cores
+
+- Quando aberta: mostrar nome da empresa (como hoje) com cor `imuv-blue`
+- Quando colapsada: mostrar icone `icone_imuv-03.png` no lugar do texto
+- Menu ativo: gradiente de `imuv-blue` para `imuv-navy`
+- Header: "iMuv Sistemas" com logo preta ao lado
+
+#### 4. Substituicao Global de Cores
+
+Mapeamento de substituicao em todos os 155 arquivos:
+
+```text
+biodina-blue    -->  imuv-blue
+biodina-gold    -->  imuv-cyan
+biodina-darkblue --> imuv-dark
 ```
 
-O campo `resumoEdital` passara a armazenar HTML em vez de texto puro. Locais que exibem o resumo (como `AnaliseEditaisTab.tsx`) serao atualizados para renderizar HTML com `dangerouslySetInnerHTML`.
+Isso inclui classes como:
+- `text-biodina-blue` --> `text-imuv-blue`
+- `bg-biodina-gold` --> `bg-imuv-cyan`
+- `border-biodina-blue` --> `border-imuv-blue`
+- `from-biodina-darkblue` --> `from-imuv-dark`
+- E todas as variacoes com opacity (`/10`, `/20`, `/80`, `/90`, etc.)
 
-#### 3. Atualizacao da exibicao em `AnaliseEditaisTab.tsx`
+#### 5. Scrollbar e Detalhes CSS
 
-Onde hoje mostra `<p>{selectedLicitacao.resumoEdital}</p>`, substituir por renderizacao HTML para exibir corretamente o conteudo formatado com imagens.
+Atualizar as cores do scrollbar customizado de roxo para `imuv-cyan`:
+- Thumb: `#0BB8F6` (cyan)
+- Thumb hover: `#0000FE` (blue)
 
 ---
 
 ### Resultado Esperado
 
-- Campo "Resumo do Edital" funciona como um mini editor de texto
-- Usuario pode digitar texto, formatar (negrito, listas) e colar prints/imagens
-- Imagens podem ser redimensionadas dentro do editor
-- Componente reutilizavel para outros campos no futuro se necessario
+- Visual moderno e profissional com a identidade iMuv
+- Logos posicionados de forma elegante na login e no sidebar
+- Paleta coesa de azul/cyan em todo o sistema
+- Transicao suave sem quebrar nenhum componente existente
+
