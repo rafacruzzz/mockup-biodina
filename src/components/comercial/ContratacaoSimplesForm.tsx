@@ -74,6 +74,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const aditivoFileInputRef = useRef<HTMLInputElement>(null);
   const [osExpandida, setOsExpandida] = useState<string | null>(null);
   const [osDtExpandida, setOsDtExpandida] = useState<string | null>(null);
+  const [empresaUploadSelecionada, setEmpresaUploadSelecionada] = useState<string>('geral');
 
   // Dados mock de OSs vinculadas à contratação
   const osVinculadas: Array<{id: string; numero: string; tipo: string; status: string; assessor: string; dataAgendada: string; descricao: string}> = [
@@ -197,7 +198,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     if (!licitacao) return;
 
     setLicitacaoVinculada(licitacaoId);
-    setDocumentosLicitacao(licitacao.documentos);
+    setDocumentosLicitacao(licitacao.documentos.map((doc: any) => ({
+      ...doc,
+      empresaId: doc.tipo === 'Edital' || doc.tipo === 'Catálogo' ? null : null
+    })));
     setHistoricoLicitacao(licitacao.historico);
 
     // Carregar empresas participantes da licitação
@@ -277,12 +281,13 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       atualizarEmpresaLicitacao(licitacaoVinculada, empresaSelecionada, empresaPendente.numero);
     }
 
-    // Adicionar documento do aditivo à aba Documentos
+    // Adicionar documento do aditivo à aba Documentos com empresaId
     setDocumentosLicitacao(prev => [...prev, {
       nome: aditivoFile.name,
       tipo: 'Aditivo de Mudança de Empresa',
       data: new Date().toISOString().split('T')[0],
-      url: URL.createObjectURL(aditivoFile)
+      url: URL.createObjectURL(aditivoFile),
+      empresaId: empresaPendente.numero === 1 ? empresaContrato.empresaParticipanteId : empresaContrato2.empresaParticipanteId
     }]);
 
     toast.success(`Empresa ${empresaPendente.numero} atualizada! Aditivo anexado aos documentos.`);
@@ -1597,24 +1602,77 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             </TabsContent>
 
             <TabsContent value="documentos" className="space-y-4">
-              {/* Documentos importados da licitação */}
-              {documentosLicitacao.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <FileText className="h-5 w-5" />
-                      Documentos Importados da Licitação
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {documentosLicitacao.map((doc, index) => (
+              {(() => {
+                const temDuasEmpresas = !!empresaContrato2.empresaParticipanteId;
+
+                if (!temDuasEmpresas) {
+                  // Layout original: empresa única
+                  return (
+                    <>
+                      {documentosLicitacao.length > 0 && (
+                        <Card>
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              <FileText className="h-5 w-5" />
+                              Documentos Importados da Licitação
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-3">
+                              {documentosLicitacao.map((doc, index) => (
+                                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                                  <div className="flex items-center gap-3">
+                                    <FileText className="h-5 w-5 text-blue-500" />
+                                    <div>
+                                      <p className="font-medium text-sm">{doc.nome}</p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {doc.tipo} • {new Date(doc.data).toLocaleDateString('pt-BR')}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <Button variant="ghost" size="sm">
+                                    <Download className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )}
+
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Adicionar Novos Documentos</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
+                            <Upload className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
+                            <p className="text-muted-foreground mb-4">Arraste e solte arquivos aqui ou clique para selecionar</p>
+                            <Button variant="outline">Selecionar Arquivos</Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </>
+                  );
+                }
+
+                // Layout separado por empresa
+                const docsGerais = documentosLicitacao.filter(doc => !doc.empresaId);
+                const docsEmpresa1 = documentosLicitacao.filter(doc => doc.empresaId === empresaContrato.empresaParticipanteId);
+                const docsEmpresa2 = documentosLicitacao.filter(doc => doc.empresaId === empresaContrato2.empresaParticipanteId);
+
+                const renderDocList = (docs: any[]) => (
+                  <div className="space-y-2">
+                    {docs.length === 0 ? (
+                      <p className="text-sm text-muted-foreground text-center py-4">Nenhum documento nesta seção</p>
+                    ) : (
+                      docs.map((doc, index) => (
                         <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                           <div className="flex items-center gap-3">
                             <FileText className="h-5 w-5 text-blue-500" />
                             <div>
                               <p className="font-medium text-sm">{doc.nome}</p>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-muted-foreground">
                                 {doc.tipo} • {new Date(doc.data).toLocaleDateString('pt-BR')}
                               </p>
                             </div>
@@ -1623,26 +1681,89 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                             <Download className="h-4 w-4" />
                           </Button>
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Adicionar Novos Documentos</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600 mb-4">Arraste e solte arquivos aqui ou clique para selecionar</p>
-                    <Button variant="outline">
-                      Selecionar Arquivos
-                    </Button>
+                      ))
+                    )}
                   </div>
-                </CardContent>
-              </Card>
+                );
+
+                return (
+                  <>
+                    {/* Documentos Gerais */}
+                    <Card>
+                      <CardHeader className="pb-3">
+                        <CardTitle className="flex items-center gap-2 text-base">
+                          <FileText className="h-5 w-5" />
+                          Documentos Gerais da Licitação
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>{renderDocList(docsGerais)}</CardContent>
+                    </Card>
+
+                    {/* Empresa 1 */}
+                    <Card className="border-l-4 border-l-blue-500">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="flex items-center gap-2 text-base">
+                          <Building2 className="h-5 w-5 text-blue-500" />
+                          <span>Empresa 1: {empresaContrato.empresaParticipanteNome || 'Não definida'}</span>
+                          {empresaContrato.empresaParticipanteCNPJ && (
+                            <Badge variant="outline" className="ml-2 text-xs font-normal">
+                              {empresaContrato.empresaParticipanteCNPJ}
+                            </Badge>
+                          )}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>{renderDocList(docsEmpresa1)}</CardContent>
+                    </Card>
+
+                    {/* Empresa 2 */}
+                    <Card className="border-l-4 border-l-emerald-500">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="flex items-center gap-2 text-base">
+                          <Building2 className="h-5 w-5 text-emerald-500" />
+                          <span>Empresa 2: {empresaContrato2.empresaParticipanteNome || 'Não definida'}</span>
+                          {empresaContrato2.empresaParticipanteCNPJ && (
+                            <Badge variant="outline" className="ml-2 text-xs font-normal">
+                              {empresaContrato2.empresaParticipanteCNPJ}
+                            </Badge>
+                          )}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>{renderDocList(docsEmpresa2)}</CardContent>
+                    </Card>
+
+                    {/* Upload com seletor de empresa */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Adicionar Novos Documentos</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div>
+                          <Label className="text-sm font-medium mb-2 block">Vincular documento a:</Label>
+                          <Select value={empresaUploadSelecionada} onValueChange={setEmpresaUploadSelecionada}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Selecione a empresa" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="geral">Documentos Gerais da Licitação</SelectItem>
+                              <SelectItem value={empresaContrato.empresaParticipanteId || 'emp1'}>
+                                Empresa 1: {empresaContrato.empresaParticipanteNome || 'Não definida'}
+                              </SelectItem>
+                              <SelectItem value={empresaContrato2.empresaParticipanteId || 'emp2'}>
+                                Empresa 2: {empresaContrato2.empresaParticipanteNome || 'Não definida'}
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
+                          <Upload className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
+                          <p className="text-muted-foreground mb-4">Arraste e solte arquivos aqui ou clique para selecionar</p>
+                          <Button variant="outline">Selecionar Arquivos</Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </>
+                );
+              })()}
             </TabsContent>
 
             <TabsContent value="pedidos" className="space-y-4">
