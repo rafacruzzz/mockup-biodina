@@ -10,7 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 import { formatarCNPJCPF, validarCNPJ, validarCPF, validarSenhaForte } from "@/utils/webformUtils";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
-// Mock - Em produção, buscar do backend
 import { webformsMock, planosMock } from "@/data/superModules";
 
 const Register = () => {
@@ -33,71 +32,44 @@ const Register = () => {
   });
 
   useEffect(() => {
-    // Buscar webform pelo ID
     const webformEncontrado = webformsMock.find(w => w.id === webformId);
     
     if (!webformEncontrado) {
-      toast({
-        title: "Webform Não Encontrado",
-        description: "O link que você acessou não é válido.",
-        variant: "destructive",
-      });
+      toast({ title: "Webform Não Encontrado", description: "O link que você acessou não é válido.", variant: "destructive" });
       navigate("/login");
       return;
     }
 
     if (webformEncontrado.status !== 'ativo') {
-      toast({
-        title: "Webform Inativo",
-        description: "Este formulário de cadastro não está mais disponível.",
-        variant: "destructive",
-      });
+      toast({ title: "Webform Inativo", description: "Este formulário de cadastro não está mais disponível.", variant: "destructive" });
       navigate("/login");
       return;
     }
 
     setWebform(webformEncontrado);
 
-    // ====== LÓGICA DE PLANOS ======
-    
-    // Se webform TEM plano atrelado
     if (webformEncontrado.planoId) {
       const plano = planosMock.find(p => p.id === webformEncontrado.planoId);
-      if (plano) {
-        setPlanoSelecionado(plano);
-      }
-    } 
-    // Se webform NÃO tem plano E não veio planId na URL
-    else if (!planIdFromUrl) {
-      // Redireciona para seleção de planos
+      if (plano) setPlanoSelecionado(plano);
+    } else if (!planIdFromUrl) {
       navigate(`/select-plan/${webformId}`);
       return;
-    }
-    // Se veio planId na URL
-    else {
+    } else {
       const plano = planosMock.find(p => p.id === planIdFromUrl);
       if (plano) {
         setPlanoSelecionado(plano);
       } else {
-        toast({
-          title: "Plano Inválido",
-          description: "O plano selecionado não existe.",
-          variant: "destructive",
-        });
+        toast({ title: "Plano Inválido", description: "O plano selecionado não existe.", variant: "destructive" });
         navigate(`/select-plan/${webformId}`);
         return;
       }
     }
     
-    // Incrementar contador de acessos (em produção, fazer via API)
     console.log("Acesso ao webform:", webformEncontrado.titulo);
   }, [webformId, planIdFromUrl, navigate, toast]);
 
   const handleEmailChange = (email: string) => {
-    setFormData({
-      ...formData,
-      email,
-    });
+    setFormData({ ...formData, email });
   };
 
   const handleCnpjCpfChange = (value: string) => {
@@ -109,59 +81,39 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Validações
     if (!formData.nome.trim()) {
-      toast({
-        title: "Erro de Validação",
-        description: "O nome da empresa é obrigatório.",
-        variant: "destructive",
-      });
+      toast({ title: "Erro de Validação", description: "O nome da empresa é obrigatório.", variant: "destructive" });
       setLoading(false);
       return;
     }
 
     if (!validarCNPJ(formData.cnpjCpf)) {
-      toast({
-        title: "CNPJ Inválido",
-        description: "Por favor, insira um CNPJ válido com 14 dígitos.",
-        variant: "destructive",
-      });
+      toast({ title: "CNPJ Inválido", description: "Por favor, insira um CNPJ válido com 14 dígitos.", variant: "destructive" });
       setLoading(false);
       return;
     }
 
     if (!formData.email.includes('@')) {
-      toast({
-        title: "E-mail Inválido",
-        description: "Por favor, insira um e-mail válido.",
-        variant: "destructive",
-      });
+      toast({ title: "E-mail Inválido", description: "Por favor, insira um e-mail válido.", variant: "destructive" });
       setLoading(false);
       return;
     }
 
     const validacaoSenha = validarSenhaForte(formData.senha);
     if (!validacaoSenha.valida) {
-      toast({
-        title: "Senha Fraca",
-        description: validacaoSenha.mensagem,
-        variant: "destructive",
-      });
+      toast({ title: "Senha Fraca", description: validacaoSenha.mensagem, variant: "destructive" });
       setLoading(false);
       return;
     }
 
-    // Simular criação de empresa
     setTimeout(() => {
       const diasTrial = planoSelecionado?.diasTrialGratuito || 0;
-      
       toast({
         title: "Cadastro Realizado com Sucesso! 🎉",
         description: diasTrial > 0
           ? `Sua conta foi criada com ${diasTrial} dias de trial gratuito no plano ${planoSelecionado?.nome}.`
           : `Sua conta foi criada com sucesso no plano ${planoSelecionado?.nome}. Faça login para acessar.`,
       });
-      
       setLoading(false);
       navigate("/login");
     }, 2000);
@@ -177,7 +129,6 @@ const Register = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 md:p-6 bg-gray-900 relative overflow-hidden">
-      {/* Background Image */}
       <div 
         className="absolute inset-0 z-0"
         style={{
@@ -189,17 +140,14 @@ const Register = () => {
         }}
       />
       
-      <div className="absolute inset-0 bg-gradient-to-br from-biodina-darkblue/40 via-transparent to-biodina-darkblue/40 z-0" />
+      <div className="absolute inset-0 bg-gradient-to-br from-imuv-dark/40 via-transparent to-imuv-dark/40 z-0" />
       
-      {/* Header */}
       <div className="absolute top-8 left-8 z-10">
         <h2 className="text-3xl font-bold text-white tracking-tight drop-shadow-lg">iMuv</h2>
         <p className="text-gray-200 text-sm mt-1 drop-shadow">Sistemas Inteligentes</p>
       </div>
       
-      {/* Form Container */}
       <div className="w-full max-w-xl bg-white/95 backdrop-blur-md p-8 md:p-10 rounded-2xl border border-white/20 shadow-2xl z-10 animate-fade-in">
-        {/* Header do Form */}
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">{webform.titulo}</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -207,7 +155,7 @@ const Register = () => {
           </p>
           {planoSelecionado && (
             <div className="flex flex-col gap-2 mt-3">
-              <Badge className="bg-biodina-blue">
+              <Badge className="bg-imuv-blue">
                 📦 Plano {planoSelecionado.nome} - R$ {planoSelecionado.valor.toFixed(2)}/mês
               </Badge>
               {planoSelecionado.diasTrialGratuito > 0 && (
@@ -220,112 +168,54 @@ const Register = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Informações da Empresa */}
           <div className="space-y-4 border-b pb-4">
             <h3 className="text-sm font-semibold text-gray-700">Informações da Empresa</h3>
-            
             <div className="space-y-2">
               <Label htmlFor="nome">Nome *</Label>
-              <Input
-                id="nome"
-                placeholder="Inserir Nome da Empresa"
-                value={formData.nome}
-                onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                required
-              />
+              <Input id="nome" placeholder="Inserir Nome da Empresa" value={formData.nome} onChange={(e) => setFormData({ ...formData, nome: e.target.value })} required />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="cnpjCpf">CNPJ *</Label>
-              <Input
-                id="cnpjCpf"
-                placeholder="00.000.000/0000-00"
-                value={formData.cnpjCpf}
-                onChange={(e) => handleCnpjCpfChange(e.target.value)}
-                maxLength={18}
-                required
-              />
+              <Input id="cnpjCpf" placeholder="00.000.000/0000-00" value={formData.cnpjCpf} onChange={(e) => handleCnpjCpfChange(e.target.value)} maxLength={18} required />
             </div>
           </div>
 
-          {/* Informações de Login */}
           <div className="space-y-4 border-b pb-4">
             <h3 className="text-sm font-semibold text-gray-700">Informações de Login</h3>
-            
             <div className="space-y-2">
               <Label htmlFor="email">E-mail *</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Inserir e-mail"
-                value={formData.email}
-                onChange={(e) => handleEmailChange(e.target.value)}
-                required
-              />
+              <Input id="email" type="email" placeholder="Inserir e-mail" value={formData.email} onChange={(e) => handleEmailChange(e.target.value)} required />
             </div>
           </div>
 
-          {/* Senha */}
           <div className="space-y-4">
-
             <div className="space-y-2">
               <Label htmlFor="senha">Senha *</Label>
               <div className="relative">
-                <Input
-                  id="senha"
-                  type={senhaVisivel ? "text" : "password"}
-                  placeholder="••••••••••••"
-                  value={formData.senha}
-                  onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0"
-                  onClick={() => setSenhaVisivel(!senhaVisivel)}
-                >
+                <Input id="senha" type={senhaVisivel ? "text" : "password"} placeholder="••••••••••••" value={formData.senha} onChange={(e) => setFormData({ ...formData, senha: e.target.value })} required />
+                <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0" onClick={() => setSenhaVisivel(!senhaVisivel)}>
                   {senhaVisivel ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
               <div className="flex items-center gap-2 mt-2">
-                <Checkbox
-                  id="senhaVisivel"
-                  checked={senhaVisivel}
-                  onCheckedChange={(checked) => setSenhaVisivel(checked as boolean)}
-                />
-                <Label htmlFor="senhaVisivel" className="text-sm font-normal cursor-pointer">
-                  Senha Visível
-                </Label>
+                <Checkbox id="senhaVisivel" checked={senhaVisivel} onCheckedChange={(checked) => setSenhaVisivel(checked as boolean)} />
+                <Label htmlFor="senhaVisivel" className="text-sm font-normal cursor-pointer">Senha Visível</Label>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Mínimo 8 caracteres, 1 maiúscula e 1 número
-              </p>
+              <p className="text-xs text-muted-foreground">Mínimo 8 caracteres, 1 maiúscula e 1 número</p>
             </div>
           </div>
 
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processando...
-              </>
-            ) : (
-              "Enviar"
-            )}
+            {loading ? (<><Loader2 className="mr-2 h-4 w-4 animate-spin" />Processando...</>) : "Enviar"}
           </Button>
         </form>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
           Já tem uma conta?{" "}
-          <a href="/login" className="text-primary hover:underline font-medium">
-            Fazer Login
-          </a>
+          <a href="/login" className="text-primary hover:underline font-medium">Fazer Login</a>
         </p>
       </div>
       
-      {/* Footer */}
       <div className="absolute bottom-6 text-center w-full z-10">
         <p className="text-gray-200 text-sm drop-shadow">© 2025 iMuv. Todos os direitos reservados.</p>
       </div>

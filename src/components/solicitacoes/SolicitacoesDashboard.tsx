@@ -18,7 +18,6 @@ const SolicitacoesDashboard = () => {
 
   if (!user) return null;
 
-  // Estatísticas das solicitações do usuário
   const minhasSolicitacoes = solicitacoesMock.filter(s => s.id_usuario_solicitante === user.id);
   const stats = {
     total: minhasSolicitacoes.length,
@@ -29,24 +28,22 @@ const SolicitacoesDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-biodina-blue">Central de Solicitações</h1>
+          <h1 className="text-3xl font-bold text-imuv-blue">Central de Solicitações</h1>
           <p className="text-gray-600 mt-1">
             Gerencie suas solicitações para todos os setores da empresa
           </p>
         </div>
         <Button 
           onClick={() => setActiveTab('nova-solicitacao')}
-          className="bg-biodina-gold hover:bg-biodina-gold/90"
+          className="bg-imuv-cyan hover:bg-imuv-cyan/90"
         >
           <Plus className="h-4 w-4 mr-2" />
           Nova Solicitação
         </Button>
       </div>
 
-      {/* Cards de Estatísticas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -54,7 +51,7 @@ const SolicitacoesDashboard = () => {
             <Building className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-biodina-blue">{stats.total}</div>
+            <div className="text-2xl font-bold text-imuv-blue">{stats.total}</div>
             <p className="text-xs text-gray-500">Solicitações criadas</p>
           </CardContent>
         </Card>
@@ -93,7 +90,6 @@ const SolicitacoesDashboard = () => {
         </Card>
       </div>
 
-      {/* Conteúdo Principal */}
       <Card>
         <CardContent className="p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">

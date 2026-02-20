@@ -34,13 +34,13 @@ const CargoModal = ({ isOpen, onClose, cargo }: CargoModalProps) => {
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden">
         <div className="flex items-center justify-between p-6 border-b">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-biodina-blue/10 rounded-lg">
-              <svg className="h-6 w-6 text-biodina-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="p-2 bg-imuv-blue/10 rounded-lg">
+              <svg className="h-6 w-6 text-imuv-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m-8 0V6a2 2 0 00-2 2v6" />
               </svg>
             </div>
             <div>
-              <h2 className="text-xl font-bold text-biodina-blue">
+              <h2 className="text-xl font-bold text-imuv-blue">
                 {cargo ? "Editar Cargo" : "Novo Cargo"}
               </h2>
               <p className="text-gray-600 text-sm">
@@ -81,7 +81,7 @@ const CargoModal = ({ isOpen, onClose, cargo }: CargoModalProps) => {
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
+          <Button onClick={handleSave} className="bg-imuv-cyan hover:bg-imuv-cyan/90">
             <Save className="h-4 w-4 mr-2" />
             Salvar
           </Button>

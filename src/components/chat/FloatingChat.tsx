@@ -56,7 +56,7 @@ const FloatingChat = () => {
     <div className="fixed bottom-6 right-6 z-50">
       {isOpen && (
         <Card className="mb-4 w-80 shadow-lg border-0 bg-white">
-          <CardHeader className="bg-biodina-blue text-white">
+          <CardHeader className="bg-imuv-blue text-white">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Users className="h-5 w-5" />
@@ -83,7 +83,7 @@ const FloatingChat = () => {
                     onClick={() => setSelectedUser(user.id)}
                   >
                     <div className="relative">
-                      <div className="w-10 h-10 rounded-full bg-biodina-blue text-white flex items-center justify-center text-sm font-medium">
+                      <div className="w-10 h-10 rounded-full bg-imuv-blue text-white flex items-center justify-center text-sm font-medium">
                         {user.avatar}
                       </div>
                       {user.online && (
@@ -118,7 +118,7 @@ const FloatingChat = () => {
 
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="h-14 w-14 rounded-full bg-biodina-blue hover:bg-biodina-blue/90 shadow-lg relative"
+        className="h-14 w-14 rounded-full bg-imuv-blue hover:bg-imuv-blue/90 shadow-lg relative"
         size="icon"
       >
         <MessageCircle className="h-6 w-6 text-white" />

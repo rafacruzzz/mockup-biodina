@@ -61,7 +61,7 @@ const InformacoesPessoaisTab = ({ onSave, onCancel }: InformacoesPessoaisTabProp
       <div className="flex items-center gap-4">
         <Avatar className="h-20 w-20">
           <AvatarImage src={user?.profilePicture} alt={user?.name} />
-          <AvatarFallback className="bg-biodina-blue text-white text-lg">
+          <AvatarFallback className="bg-imuv-blue text-white text-lg">
             {user ? getInitials(user.name) : 'U'}
           </AvatarFallback>
         </Avatar>

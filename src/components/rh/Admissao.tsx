@@ -174,7 +174,7 @@ const Admissao = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center">
-              <UserCheck className="h-8 w-8 text-biodina-blue" />
+              <UserCheck className="h-8 w-8 text-imuv-blue" />
               <div className="ml-3">
                 <p className="text-sm font-medium text-gray-600">Total</p>
                 <p className="text-2xl font-bold text-gray-900">{estatisticas.total}</p>
@@ -278,8 +278,8 @@ const Admissao = () => {
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-start gap-4">
-                      <div className="p-2 rounded-full bg-biodina-blue/10">
-                        <User className="h-6 w-6 text-biodina-blue" />
+                      <div className="p-2 rounded-full bg-imuv-blue/10">
+                        <User className="h-6 w-6 text-imuv-blue" />
                       </div>
                       
                       <div className="flex-1">

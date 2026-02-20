@@ -173,12 +173,12 @@ const EtapasSelecao = () => {
                             className="p-3 bg-gray-50 rounded-lg border"
                           >
                             <div className="flex items-start gap-2">
-                              <div className="p-1.5 rounded bg-biodina-blue/10 text-biodina-blue">
+                              <div className="p-1.5 rounded bg-imuv-blue/10 text-imuv-blue">
                                 {getTipoEtapaIcon(etapa.tipo)}
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2">
-                                  <span className="text-xs bg-biodina-gold/20 text-biodina-gold px-1.5 py-0.5 rounded font-medium">
+                                  <span className="text-xs bg-imuv-cyan/20 text-imuv-cyan px-1.5 py-0.5 rounded font-medium">
                                     #{etapa.ordem}
                                   </span>
                                   <h5 className="font-medium text-sm text-gray-900 truncate">
