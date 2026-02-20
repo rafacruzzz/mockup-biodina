@@ -7,6 +7,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthDemo } from "@/hooks/useAuthDemo";
 import { useUser } from "@/contexts/UserContext";
+import { modulosCompletosSistema } from "@/data/sistemaModulosCompletos";
+import { ModuloUsuario } from "@/types/permissions";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -17,6 +19,22 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const { setCurrentUser } = useAuthDemo();
   const { updateUser } = useUser();
+
+  // Gera moduleAccess completo com todas as permissões
+  const gerarAcessoCompleto = (): ModuloUsuario[] => {
+    return modulosCompletosSistema.map(modulo => ({
+      key: modulo.key,
+      name: modulo.name,
+      icon: modulo.icon,
+      habilitado: true,
+      subModulos: modulo.subModulos.map(sub => ({
+        key: sub.key,
+        name: sub.name,
+        habilitado: true,
+        permissions: { view: true, create: true, edit: true, delete: true }
+      }))
+    }));
+  };
 
   // Credenciais de demonstração
   const demoAccounts = [
@@ -84,11 +102,11 @@ const LoginForm = () => {
           empresaId: 'master-001',
           role: 'Gerente de TI',
           empresasVinculadas: [
-            { id: 'master-001', tipo: 'principal', nome: 'iMuv Master', moduleAccess: [] },
-            { id: 'filial-sp-001', tipo: 'filial', nome: 'iMuv - Filial São Paulo', moduleAccess: [] },
-            { id: 'filial-rj-001', tipo: 'filial', nome: 'iMuv - Filial Rio de Janeiro', moduleAccess: [] },
-            { id: 'filial-mg-001', tipo: 'filial', nome: 'iMuv - Filial Belo Horizonte', moduleAccess: [] },
-            { id: 'filial-pr-001', tipo: 'filial', nome: 'iMuv - Filial Curitiba', moduleAccess: [] }
+            { id: 'master-001', tipo: 'principal', nome: 'iMuv Master', moduleAccess: gerarAcessoCompleto() },
+            { id: 'filial-sp-001', tipo: 'filial', nome: 'iMuv - Filial São Paulo', moduleAccess: gerarAcessoCompleto() },
+            { id: 'filial-rj-001', tipo: 'filial', nome: 'iMuv - Filial Rio de Janeiro', moduleAccess: gerarAcessoCompleto() },
+            { id: 'filial-mg-001', tipo: 'filial', nome: 'iMuv - Filial Belo Horizonte', moduleAccess: gerarAcessoCompleto() },
+            { id: 'filial-pr-001', tipo: 'filial', nome: 'iMuv - Filial Curitiba', moduleAccess: gerarAcessoCompleto() }
           ]
         });
         localStorage.setItem('empresaAtualId', 'master-001');
