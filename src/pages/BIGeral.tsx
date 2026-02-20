@@ -23,10 +23,10 @@ const BIGeral = () => {
   ];
 
   const estoqueReservadoData = [
-    { name: 'Cliente A', value: 35, color: '#0A2342' },
-    { name: 'Cliente B', value: 25, color: '#D5A021' },
-    { name: 'Cliente C', value: 20, color: '#1E4D8C' },
-    { name: 'Cliente D', value: 20, color: '#061325' },
+    { name: 'Cliente A', value: 35, color: '#0000FE' },
+    { name: 'Cliente B', value: 25, color: '#0BB8F6' },
+    { name: 'Cliente C', value: 20, color: '#1122A9' },
+    { name: 'Cliente D', value: 20, color: '#29324F' },
   ];
 
   const faturamentoData = [
@@ -163,7 +163,7 @@ const BIGeral = () => {
     <SidebarLayout>
       <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-biodina-blue mb-2">BI Geral</h1>
+          <h1 className="text-3xl font-bold text-imuv-blue mb-2">BI Geral</h1>
           <p className="text-gray-600">Dashboard executivo com indicadores principais</p>
         </header>
         
@@ -172,7 +172,7 @@ const BIGeral = () => {
           <Card className="shadow-lg hover:shadow-xl transition-shadow col-span-1 lg:col-span-2">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl flex items-center gap-2">
-                <Package className="h-5 w-5 text-biodina-blue" />
+                <Package className="h-5 w-5 text-imuv-blue" />
                 Posição de Estoque
               </CardTitle>
             </CardHeader>
@@ -184,8 +184,8 @@ const BIGeral = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="quantidade" fill="#0A2342" name="Quantidade Atual" />
-                  <Bar dataKey="minimo" fill="#D5A021" name="Estoque Mínimo" />
+                  <Bar dataKey="quantidade" fill="#0000FE" name="Quantidade Atual" />
+                  <Bar dataKey="minimo" fill="#0BB8F6" name="Estoque Mínimo" />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
@@ -235,8 +235,8 @@ const BIGeral = () => {
                   <Tooltip formatter={(value) => formatCurrency(Number(value))} />
                   <Legend />
                   <Bar dataKey="ano2023" fill="#94a3b8" name="2023" />
-                  <Bar dataKey="ano2024" fill="#0A2342" name="2024" />
-                  <Line type="monotone" dataKey="ano2024" stroke="#D5A021" strokeWidth={2} name="Tendência 2024" />
+                  <Bar dataKey="ano2024" fill="#0000FE" name="2024" />
+                  <Line type="monotone" dataKey="ano2024" stroke="#0BB8F6" strokeWidth={2} name="Tendência 2024" />
                 </ComposedChart>
               </ResponsiveContainer>
             </CardContent>
@@ -246,14 +246,14 @@ const BIGeral = () => {
           <Card className="shadow-lg hover:shadow-xl transition-shadow">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl flex items-center gap-2">
-                <DollarSign className="h-5 w-5 text-biodina-gold" />
+                <DollarSign className="h-5 w-5 text-imuv-cyan" />
                 Caixa Contábil
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-biodina-blue">R$ 2.847.520</p>
+                  <p className="text-3xl font-bold text-imuv-blue">R$ 2.847.520</p>
                   <p className="text-sm text-gray-600">Saldo Atual</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-center">
@@ -274,7 +274,7 @@ const BIGeral = () => {
           <Card className="shadow-lg hover:shadow-xl transition-shadow col-span-1 lg:col-span-2">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-biodina-gold" />
+                <AlertCircle className="h-5 w-5 text-imuv-cyan" />
                 Contas a Pagar/Receber - Detalhado
               </CardTitle>
             </CardHeader>
@@ -310,7 +310,7 @@ const BIGeral = () => {
                         {formatCurrency(contasDetalhadasData.aPagar.emDia)}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center p-2 bg-biodina-blue text-white rounded">
+                    <div className="flex justify-between items-center p-2 bg-imuv-blue text-white rounded">
                       <span className="text-sm font-semibold">Total</span>
                       <span className="font-bold">
                         {formatCurrency(contasDetalhadasData.aPagar.total)}
@@ -387,7 +387,7 @@ const BIGeral = () => {
                         {formatCurrency(contasDetalhadasData.aReceber.lost)}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center p-2 bg-biodina-blue text-white rounded">
+                    <div className="flex justify-between items-center p-2 bg-imuv-blue text-white rounded">
                       <span className="text-sm font-semibold">Total</span>
                       <span className="font-bold">
                         {formatCurrency(contasDetalhadasData.aReceber.total)}
@@ -451,8 +451,8 @@ const BIGeral = () => {
                   <YAxis tickFormatter={(value) => `R$ ${(value / 1000)}k`} />
                   <Tooltip formatter={(value) => formatCurrency(Number(value))} />
                   <Legend />
-                  <Area type="monotone" dataKey="receita" stackId="1" stroke="#0A2342" fill="#0A2342" name="Receita" />
-                  <Area type="monotone" dataKey="despesa" stackId="2" stroke="#D5A021" fill="#D5A021" name="Despesa" />
+                  <Area type="monotone" dataKey="receita" stackId="1" stroke="#0000FE" fill="#0000FE" name="Receita" />
+                  <Area type="monotone" dataKey="despesa" stackId="2" stroke="#0BB8F6" fill="#0BB8F6" name="Despesa" />
                 </AreaChart>
               </ResponsiveContainer>
             </CardContent>
@@ -462,7 +462,7 @@ const BIGeral = () => {
           <Card className="shadow-lg hover:shadow-xl transition-shadow col-span-1 lg:col-span-2">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-biodina-blue" />
+                <MapPin className="h-5 w-5 text-imuv-blue" />
                 Projetos Principais
               </CardTitle>
             </CardHeader>
@@ -480,7 +480,7 @@ const BIGeral = () => {
                       </Badge>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="font-bold text-biodina-blue">
+                      <span className="font-bold text-imuv-blue">
                         {formatCurrency(projeto.valor)}
                       </span>
                       <span className="text-sm text-gray-600">
@@ -489,7 +489,7 @@ const BIGeral = () => {
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                       <div 
-                        className="bg-biodina-gold h-2 rounded-full transition-all duration-300"
+                        className="bg-imuv-cyan h-2 rounded-full transition-all duration-300"
                         style={{ width: `${projeto.progresso}%` }}
                       ></div>
                     </div>
@@ -516,7 +516,7 @@ const BIGeral = () => {
                     </div>
                     <p className="text-xs text-gray-600 mb-1">{imp.fornecedor}</p>
                     <p className="text-xs font-medium">{imp.produto}</p>
-                    <p className="text-xs text-biodina-blue mt-1">Etapa: {imp.etapa}</p>
+                    <p className="text-xs text-imuv-blue mt-1">Etapa: {imp.etapa}</p>
                   </div>
                 ))}
               </div>
@@ -527,7 +527,7 @@ const BIGeral = () => {
           <Card className="shadow-lg hover:shadow-xl transition-shadow col-span-1 lg:col-span-2">
             <CardHeader className="pb-4">
               <CardTitle className="text-xl flex items-center gap-2">
-                <CalendarIcon className="h-5 w-5 text-biodina-blue" />
+                <CalendarIcon className="h-5 w-5 text-imuv-blue" />
                 Programação de Férias
               </CardTitle>
             </CardHeader>

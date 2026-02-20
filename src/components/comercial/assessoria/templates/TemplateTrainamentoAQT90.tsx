@@ -17,11 +17,11 @@ export const TemplateTrainamentoAQT90 = () => {
   ];
 
   return (
-    <Card className="border-biodina-blue/20">
+    <Card className="border-imuv-blue/20">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">Registro de Treinamento - AQT90 FLEX</CardTitle>
-          <Badge variant="outline" className="bg-biodina-blue/10 text-biodina-blue">
+          <Badge variant="outline" className="bg-imuv-blue/10 text-imuv-blue">
             Química Clínica
           </Badge>
         </div>
@@ -39,7 +39,7 @@ export const TemplateTrainamentoAQT90 = () => {
           <div className="space-y-2">
             {topicos.map((topico, index) => (
               <div key={index} className="flex items-start gap-2">
-                <CheckCircle2 className="h-4 w-4 text-biodina-green mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="h-4 w-4 text-imuv-green mt-0.5 flex-shrink-0" />
                 <span className="text-sm">{topico}</span>
               </div>
             ))}

@@ -158,10 +158,10 @@ const EmissaoTab = ({ formData, setFormData }: EmissaoTabProps) => {
   return (
     <div className="space-y-6">
       {/* Seção: Certificado Digital */}
-      <Card className="border-l-4 border-l-biodina-gold">
+      <Card className="border-l-4 border-l-imuv-cyan">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-lg">
-            <Shield className="h-5 w-5 text-biodina-gold" />
+            <Shield className="h-5 w-5 text-imuv-cyan" />
             Certificado Digital
           </CardTitle>
         </CardHeader>
@@ -170,8 +170,8 @@ const EmissaoTab = ({ formData, setFormData }: EmissaoTabProps) => {
           <div
             className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer ${
               isDragging 
-                ? 'border-biodina-gold bg-biodina-gold/5' 
-                : 'border-muted-foreground/25 hover:border-biodina-gold/50'
+                ? 'border-imuv-cyan bg-imuv-cyan/5' 
+                : 'border-muted-foreground/25 hover:border-imuv-cyan/50'
             }`}
             onDrop={handleDrop}
             onDragOver={handleDragOver}
@@ -185,7 +185,7 @@ const EmissaoTab = ({ formData, setFormData }: EmissaoTabProps) => {
               className="hidden"
               onChange={handleFileInputChange}
             />
-            <Upload className={`h-10 w-10 mx-auto mb-3 ${isDragging ? 'text-biodina-gold' : 'text-muted-foreground'}`} />
+            <Upload className={`h-10 w-10 mx-auto mb-3 ${isDragging ? 'text-imuv-cyan' : 'text-muted-foreground'}`} />
             {nomeArquivo ? (
               <div>
                 <p className="text-sm font-medium text-foreground">{nomeArquivo}</p>

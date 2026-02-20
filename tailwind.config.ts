@@ -63,11 +63,13 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				biodina: {
-					blue: '#0A2342',
-					gold: '#D5A021',
-					darkblue: '#061325',
-				}
+			imuv: {
+				blue: '#0000FE',
+				cyan: '#0BB8F6',
+				navy: '#1122A9',
+				dark: '#29324F',
+				green: '#00ED9F',
+			}
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -108,7 +110,7 @@ export default {
 				'fade-in': 'fade-in 0.5s ease-out'
 			},
 			backgroundImage: {
-				'login-gradient': 'linear-gradient(135deg, #061325 0%, #0A2342 100%)',
+				'login-gradient': 'linear-gradient(135deg, #29324F 0%, #1122A9 100%)',
 			}
 		}
 	},

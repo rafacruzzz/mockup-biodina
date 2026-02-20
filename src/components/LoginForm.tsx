@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuthDemo } from "@/hooks/useAuthDemo";
 import { useUser } from "@/contexts/UserContext";
-import { Badge } from "@/components/ui/badge";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -47,7 +45,6 @@ const LoginForm = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Verificar se é um dos usuários de demonstração
     const demoUser = demoAccounts.find(
       acc => acc.email === email && acc.password === password
     );
@@ -63,7 +60,6 @@ const LoginForm = () => {
         });
         navigate("/bi-geral");
       } else if (email === "super@super.com.br" && password === "super") {
-        // Login do usuário SUPER (acesso ao módulo SUPER)
         updateUser({
           id: 'user-master',
           name: 'Admin Master',
@@ -72,17 +68,13 @@ const LoginForm = () => {
           empresaId: 'master-001',
           role: 'Super Admin',
         });
-        
-        // Definir empresa master para acesso ao SUPER
         localStorage.setItem('empresaAtualId', 'master-001');
-        
         toast({
           title: "Login SUPER bem-sucedido",
           description: "Bem-vindo, Admin Master!",
         });
         navigate("/super");
       } else if (email === "danilo@tecnologiadc.com.br" && password === "123") {
-        // Login do usuário master Danilo Silva (empresa iMuv)
         updateUser({
           id: 'user-biodina',
           name: 'Danilo Silva',
@@ -90,7 +82,7 @@ const LoginForm = () => {
           username: 'danilo.silva',
           empresaId: 'master-001',
           role: 'Gerente de TI',
-        empresasVinculadas: [
+          empresasVinculadas: [
             { id: 'master-001', tipo: 'principal', nome: 'iMuv Master', moduleAccess: [] },
             { id: 'filial-sp-001', tipo: 'filial', nome: 'iMuv - Filial São Paulo', moduleAccess: [] },
             { id: 'filial-rj-001', tipo: 'filial', nome: 'iMuv - Filial Rio de Janeiro', moduleAccess: [] },
@@ -98,17 +90,13 @@ const LoginForm = () => {
             { id: 'filial-pr-001', tipo: 'filial', nome: 'iMuv - Filial Curitiba', moduleAccess: [] }
           ]
         });
-        
-        // Garantir que a empresa correta seja carregada
         localStorage.setItem('empresaAtualId', 'master-001');
-        
         toast({
           title: "Login bem-sucedido",
           description: "Bem-vindo de volta, Danilo!",
         });
         navigate("/bi-geral");
       } else if (email === "admin@biodina.com.br" && password === "admin123") {
-        // Login alternativo para o usuário master
         updateUser({
           id: 'user-master',
           name: 'Admin Master',
@@ -117,9 +105,7 @@ const LoginForm = () => {
           empresaId: 'master-001',
           role: 'Super Admin',
         });
-        
         localStorage.setItem('empresaAtualId', 'master-001');
-        
         toast({
           title: "Login SUPER bem-sucedido",
           description: "Bem-vindo, Admin Master!",
@@ -137,9 +123,14 @@ const LoginForm = () => {
 
   return (
     <div className="w-full max-w-md">
+      {/* Logo azul inside card */}
+      <div className="flex justify-center mb-6">
+        <img src="/logos/azul.png" alt="iMuv" className="h-12" />
+      </div>
+      
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-biodina-blue mb-2">Bem-vindo</h1>
-        <p className="text-gray-600">Acesse sua conta para continuar</p>
+        <h1 className="text-3xl font-bold text-imuv-dark mb-2">Bem-vindo</h1>
+        <p className="text-gray-500">Acesse sua conta para continuar</p>
       </div>
       
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -149,7 +140,7 @@ const LoginForm = () => {
             <Input
               type="email"
               placeholder="Seu e-mail"
-              className="pl-12 h-12 bg-gray-50 border-gray-200 text-biodina-blue placeholder:text-gray-400 focus:border-biodina-gold focus:ring-biodina-gold rounded-xl"
+              className="pl-12 h-12 bg-gray-50 border-gray-200 text-imuv-dark placeholder:text-gray-400 focus:border-imuv-cyan focus:ring-imuv-cyan rounded-xl"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -161,7 +152,7 @@ const LoginForm = () => {
             <Input
               type={showPassword ? "text" : "password"}
               placeholder="Sua senha"
-              className="pl-12 pr-12 h-12 bg-gray-50 border-gray-200 text-biodina-blue placeholder:text-gray-400 focus:border-biodina-gold focus:ring-biodina-gold rounded-xl"
+              className="pl-12 pr-12 h-12 bg-gray-50 border-gray-200 text-imuv-dark placeholder:text-gray-400 focus:border-imuv-cyan focus:ring-imuv-cyan rounded-xl"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -181,7 +172,7 @@ const LoginForm = () => {
         </div>
         
         <div className="flex justify-end">
-          <a href="#" className="text-sm text-biodina-gold hover:text-biodina-gold/80 font-medium transition-colors">
+          <a href="#" className="text-sm text-imuv-cyan hover:text-imuv-blue font-medium transition-colors">
             Esqueci minha senha
           </a>
         </div>
@@ -189,7 +180,7 @@ const LoginForm = () => {
         <Button 
           type="submit" 
           disabled={isLoading} 
-          className="w-full bg-biodina-gold hover:bg-biodina-gold/90 text-white font-semibold flex items-center justify-center gap-2 h-12 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+          className="w-full bg-gradient-to-r from-imuv-blue to-imuv-navy hover:from-imuv-navy hover:to-imuv-blue text-white font-semibold flex items-center justify-center gap-2 h-12 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
         >
           {isLoading ? "Entrando..." : "Entrar"}
           {!isLoading && <ArrowRight className="h-4 w-4" />}
