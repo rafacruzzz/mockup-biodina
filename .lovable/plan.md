@@ -1,50 +1,53 @@
 
 
-## Plano: Substituicao Global de Cores biodina para imuv em TODO o Sistema
+## Plano: Corrigir Logos que Nao Carregam Dentro do Sistema
 
 ### Problema
-Apenas ~20 arquivos foram atualizados na ultima alteracao. Restam **113 arquivos com 1838 ocorrencias** de cores `biodina-*` que precisam ser substituidas. Isso inclui sidebars de modulos, modais, formularios, tabs, botoes, badges, e o chat flutuante — tudo aparecendo com cores em branco/transparente porque os tokens `biodina-*` nao existem mais no Tailwind config.
+Os logos aparecem na tela de login mas nao carregam no header e na aba do navegador (favicon). O favicon tambem aparece quebrado.
 
-### Mapeamento de Substituicao
+### Causa
+Os logos estao referenciados como caminhos estaticos (`/logos/preta.png`) que podem falhar dependendo do cache do navegador ou da forma como o Vite resolve os assets. A abordagem mais confiavel e importar os logos como modulos ES6.
 
-| De | Para | Uso |
-|----|------|-----|
-| `biodina-blue` | `imuv-blue` | Cor primaria (titulos, menus, icones, avatares) |
-| `biodina-gold` | `imuv-cyan` | Accent (botoes de acao, badges, submenus ativos) |
-| `biodina-darkblue` | `imuv-dark` | Fundo escuro (gradientes, headers) |
+### Solucao
 
-Todas as variacoes com opacidade serao mantidas (ex: `biodina-blue/10` vira `imuv-blue/10`, `biodina-gold/90` vira `imuv-cyan/90`).
+#### 1. Copiar logos para `src/assets/`
+Mover os logos de `public/logos/` para `src/assets/logos/` para que o Vite os processe corretamente:
+- `src/assets/logos/preta.png`
+- `src/assets/logos/branca.png`
+- `src/assets/logos/azul.png`
+- `src/assets/logos/icone_imuv-03.png`
 
-### Arquivos Afetados (113 arquivos)
+Manter tambem em `public/logos/` para o favicon e og:image.
 
-Incluem todos os modulos do sistema:
+#### 2. Atualizar `SidebarLayout.tsx`
+Importar os logos como modulos ES6:
+```typescript
+import logoPreta from "@/assets/logos/preta.png";
+import logoIcone from "@/assets/logos/icone_imuv-03.png";
+```
+E usar nas tags `<img src={logoPreta} />` em vez de `<img src="/logos/preta.png" />`.
 
-**Sidebars de Modulos:**
-- `EstoqueSidebar.tsx`, `ComprasSidebar.tsx`, `FinanceiroSidebar.tsx`, `ContabilidadeSidebar.tsx`, `RHSidebar.tsx`, `TISidebar.tsx`, `ComercialSidebar.tsx`, `AdministrativoSidebar.tsx`, `SolicitacoesSidebar.tsx`, `ConfiguracaoSidebar.tsx`
+#### 3. Atualizar `Login.tsx`
+```typescript
+import logoBranca from "@/assets/logos/branca.png";
+import logoAzul from "@/assets/logos/azul.png";
+```
 
-**Chat Flutuante:**
-- `FloatingChat.tsx`, `ChatWindow.tsx`
+#### 4. Atualizar `LoginForm.tsx`
+```typescript
+import logoAzul from "@/assets/logos/azul.png";
+```
 
-**Modulos Principais (paginas):**
-- `Administrativo.tsx`, `Estoque.tsx`, `Comercial.tsx`, `RH.tsx`, `TI.tsx`, `Financeiro.tsx`, `Contabilidade.tsx`, `Compras.tsx`, `Solicitacoes.tsx`, `Configuracao.tsx`
-
-**Componentes de cada modulo:**
-- Todos os formularios, modais, tabs, tabelas, templates de treinamento, views de importacao, dashboards, etc.
-
-**Componentes globais:**
-- `UserProfileMenu.tsx` (avatar fallback)
-
-### Abordagem
-
-Substituicao direta em todos os 113 arquivos:
-1. `biodina-blue` → `imuv-blue` (todas as ocorrencias)
-2. `biodina-gold` → `imuv-cyan` (todas as ocorrencias)
-3. `biodina-darkblue` → `imuv-dark` (todas as ocorrencias)
-
-Nao serao alterados textos de mock data que mencionam "Biodina" como nome de empresa (ex: "BIODINA LTDA" em dados ficticios) — apenas as classes CSS de cor.
+### Arquivos a Modificar
+| Arquivo | Acao |
+|---------|------|
+| `src/assets/logos/` | Copiar 4 logos para esta pasta |
+| `src/components/SidebarLayout.tsx` | Importar e usar logos como ES6 modules |
+| `src/pages/Login.tsx` | Importar e usar logos como ES6 modules |
+| `src/components/LoginForm.tsx` | Importar e usar logo como ES6 module |
 
 ### Resultado Esperado
-- Sistema inteiro com visual coeso nas cores imuv
-- Todos os botoes, titulos, menus, sidebars, modais, badges com as cores corretas
-- Chat flutuante com cor azul imuv
-- Nenhum elemento em branco/transparente por falta de token de cor
+- Logos carregam corretamente em todas as paginas do sistema
+- Vite processa e otimiza os assets automaticamente
+- Sem dependencia de cache do navegador para carregar as imagens
+
