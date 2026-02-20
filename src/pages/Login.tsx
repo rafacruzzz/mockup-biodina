@@ -1,5 +1,5 @@
-
 import LoginForm from "@/components/LoginForm";
+import logoBranca from "@/assets/logos/branca.png";
 
 const Login = () => {
   return (
@@ -20,7 +20,7 @@ const Login = () => {
       
       {/* Header with white logo */}
       <div className="absolute top-8 left-8 z-10">
-        <img src="/logos/branca.png" alt="iMuv" className="h-10 drop-shadow-lg" />
+        <img src={logoBranca} alt="iMuv" className="h-10 drop-shadow-lg" />
         <p className="text-imuv-cyan text-sm mt-2 font-medium tracking-wide">Sistemas Inteligentes</p>
       </div>
       
