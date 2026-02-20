@@ -47,7 +47,7 @@ const UserProfileMenu = () => {
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
             <AvatarImage src={user.profilePicture} alt={user.name} />
-            <AvatarFallback className="bg-biodina-blue text-white">
+            <AvatarFallback className="bg-imuv-blue text-white">
               {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
@@ -58,7 +58,7 @@ const UserProfileMenu = () => {
           <div className="flex items-center gap-3 mb-4">
             <Avatar className="h-12 w-12">
               <AvatarImage src={user.profilePicture} alt={user.name} />
-              <AvatarFallback className="bg-biodina-blue text-white">
+              <AvatarFallback className="bg-imuv-blue text-white">
                 {getInitials(user.name)}
               </AvatarFallback>
             </Avatar>

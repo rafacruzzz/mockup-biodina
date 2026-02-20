@@ -61,11 +61,11 @@ const PlanoCarreiraModal = ({ isOpen, onClose }: PlanoCarreiraModalProps) => {
       <DialogContent className="max-w-2xl">
         <DialogHeader className="pb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-biodina-gold/10 rounded-lg">
-              <Trophy className="h-6 w-6 text-biodina-gold" />
+            <div className="p-2 bg-imuv-cyan/10 rounded-lg">
+              <Trophy className="h-6 w-6 text-imuv-cyan" />
             </div>
             <div>
-              <DialogTitle className="text-2xl font-bold text-biodina-blue">
+              <DialogTitle className="text-2xl font-bold text-imuv-blue">
                 Novo Plano de Carreira
               </DialogTitle>
               <p className="text-gray-600">Cadastre um novo plano de carreira</p>
@@ -136,7 +136,7 @@ const PlanoCarreiraModal = ({ isOpen, onClose }: PlanoCarreiraModalProps) => {
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
+          <Button onClick={handleSave} className="bg-imuv-cyan hover:bg-imuv-cyan/90">
             <Save className="h-4 w-4 mr-2" />
             Salvar Plano
           </Button>

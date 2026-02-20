@@ -85,11 +85,11 @@ const NiveisProgressaoModal = ({ isOpen, onClose }: NiveisProgressaoModalProps) 
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="pb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-biodina-gold/10 rounded-lg">
-              <TrendingUp className="h-6 w-6 text-biodina-gold" />
+            <div className="p-2 bg-imuv-cyan/10 rounded-lg">
+              <TrendingUp className="h-6 w-6 text-imuv-cyan" />
             </div>
             <div>
-              <DialogTitle className="text-2xl font-bold text-biodina-blue">
+              <DialogTitle className="text-2xl font-bold text-imuv-blue">
                 Gerenciar Níveis de Progressão
               </DialogTitle>
               <p className="text-gray-600">Edite os valores e requisitos dos níveis</p>
@@ -145,7 +145,7 @@ const NiveisProgressaoModal = ({ isOpen, onClose }: NiveisProgressaoModalProps) 
           {niveisEdicao.length > 0 && (
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <Edit className="h-5 w-5 text-biodina-gold" />
+                <Edit className="h-5 w-5 text-imuv-cyan" />
                 <h3 className="text-lg font-semibold">Níveis de Progressão</h3>
               </div>
 
@@ -154,7 +154,7 @@ const NiveisProgressaoModal = ({ isOpen, onClose }: NiveisProgressaoModalProps) 
                   <div key={nivel.id} className="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 border rounded-lg bg-gray-50">
                     <div className="space-y-2">
                       <Label className="text-sm font-medium">Nível</Label>
-                      <div className="bg-white p-2 rounded border text-center font-semibold text-biodina-blue">
+                      <div className="bg-white p-2 rounded border text-center font-semibold text-imuv-blue">
                         {nivel.nivel}
                       </div>
                     </div>
@@ -229,7 +229,7 @@ const NiveisProgressaoModal = ({ isOpen, onClose }: NiveisProgressaoModalProps) 
           </Button>
           <Button 
             onClick={handleSave} 
-            className="bg-biodina-gold hover:bg-biodina-gold/90"
+            className="bg-imuv-cyan hover:bg-imuv-cyan/90"
             disabled={niveisEdicao.length === 0}
           >
             <Save className="h-4 w-4 mr-2" />

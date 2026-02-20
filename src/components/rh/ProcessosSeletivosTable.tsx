@@ -69,7 +69,7 @@ const ProcessosSeletivosTable: React.FC<ProcessosSeletivosTableProps> = ({ onVie
           <h2 className="text-2xl font-bold text-gray-900">Processos Seletivos</h2>
           <p className="text-gray-600">Gerencie todos os processos seletivos da empresa</p>
         </div>
-        <Button onClick={() => setIsModalOpen(true)} className="bg-biodina-blue hover:bg-biodina-blue/90">
+        <Button onClick={() => setIsModalOpen(true)} className="bg-imuv-blue hover:bg-imuv-blue/90">
           <Plus className="h-4 w-4 mr-2" />
           Novo Processo Seletivo
         </Button>

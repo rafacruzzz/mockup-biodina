@@ -58,7 +58,7 @@ const ChatWindow = ({ user, onBack, onClose }: ChatWindowProps) => {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <Card className="w-96 h-96 shadow-lg border-0 bg-white flex flex-col">
-        <CardHeader className="bg-biodina-blue text-white p-4 flex-shrink-0">
+        <CardHeader className="bg-imuv-blue text-white p-4 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Button
@@ -114,7 +114,7 @@ const ChatWindow = ({ user, onBack, onClose }: ChatWindowProps) => {
                   className={cn(
                     "max-w-xs px-3 py-2 rounded-lg text-sm",
                     msg.isFromMe
-                      ? "bg-biodina-blue text-white"
+                      ? "bg-imuv-blue text-white"
                       : "bg-gray-100 text-gray-800"
                   )}
                 >
@@ -142,7 +142,7 @@ const ChatWindow = ({ user, onBack, onClose }: ChatWindowProps) => {
             <Button
               onClick={handleSendMessage}
               disabled={!message.trim()}
-              className="bg-biodina-blue hover:bg-biodina-blue/90"
+              className="bg-imuv-blue hover:bg-imuv-blue/90"
               size="icon"
             >
               <Send className="h-4 w-4" />

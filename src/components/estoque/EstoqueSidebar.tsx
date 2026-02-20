@@ -42,10 +42,10 @@ const EstoqueSidebar = ({
       {/* Header */}
       <div className="flex h-16 items-center justify-between px-4 border-b border-gray-100">
         <div className={cn("flex items-center", isCollapsed && "justify-center w-full")}>
-          <span className={cn("text-xl font-bold text-biodina-blue", isCollapsed && "hidden")}>
+          <span className={cn("text-xl font-bold text-imuv-blue", isCollapsed && "hidden")}>
             Estoque
           </span>
-          <span className={cn("text-sm text-biodina-gold ml-2", isCollapsed && "hidden")}>
+          <span className={cn("text-sm text-imuv-cyan ml-2", isCollapsed && "hidden")}>
             Sistemas
           </span>
         </div>
@@ -74,7 +74,7 @@ const EstoqueSidebar = ({
                 className={cn(
                   "w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200",
                   activeModule === key 
-                    ? 'bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md' 
+                    ? 'bg-gradient-to-r from-imuv-blue to-imuv-blue/90 text-white shadow-md' 
                     : 'hover:bg-gray-50 text-gray-700'
                 )}
                 title={isCollapsed ? module.name : undefined}
@@ -82,11 +82,11 @@ const EstoqueSidebar = ({
                 <div className="flex items-center gap-3">
                   <div className={cn(
                     "p-2 rounded-lg",
-                    activeModule === key ? 'bg-white/20' : 'bg-biodina-gold/10'
+                    activeModule === key ? 'bg-white/20' : 'bg-imuv-cyan/10'
                   )}>
                     <module.icon className={cn(
                       "h-5 w-5",
-                      activeModule === key ? 'text-white' : 'text-biodina-gold'
+                      activeModule === key ? 'text-white' : 'text-imuv-cyan'
                     )} />
                   </div>
                   {!isCollapsed && <span className="font-medium">{module.name}</span>}
@@ -110,7 +110,7 @@ const EstoqueSidebar = ({
                       className={cn(
                         "w-full flex items-center gap-2 p-3 text-sm ml-4 rounded-xl transition-all duration-200",
                         activeModule === key && activeSubModule === subKey
-                          ? 'bg-biodina-gold text-white shadow-sm'
+                          ? 'bg-imuv-cyan text-white shadow-sm'
                           : 'hover:bg-gray-50 text-gray-600'
                       )}
                     >
@@ -118,7 +118,7 @@ const EstoqueSidebar = ({
                         "w-2 h-2 rounded-full",
                         activeModule === key && activeSubModule === subKey
                           ? 'bg-white'
-                          : 'bg-biodina-gold/60'
+                          : 'bg-imuv-cyan/60'
                       )} />
                       {subModule.name}
                     </button>

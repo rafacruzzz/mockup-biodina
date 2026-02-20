@@ -237,7 +237,7 @@ const ConfigurarEtapasModal = ({ isOpen, onClose, processo }: ConfigurarEtapasMo
                     <div className="flex items-center gap-2">
                       <GripVertical className="h-4 w-4 text-gray-400 cursor-move" />
                       <Badge variant="outline">#{index + 1}</Badge>
-                      <div className="flex items-center gap-1 text-biodina-blue">
+                      <div className="flex items-center gap-1 text-imuv-blue">
                         {getTipoIcon(etapa.tipo)}
                       </div>
                     </div>

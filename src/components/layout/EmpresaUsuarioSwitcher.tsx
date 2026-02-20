@@ -93,7 +93,7 @@ const EmpresaUsuarioSwitcher = ({ isOpen, onClose }: EmpresaUsuarioSwitcherProps
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-biodina-gold" />
+            <Building2 className="h-5 w-5 text-imuv-cyan" />
             Trocar Empresa
           </DialogTitle>
         </DialogHeader>
@@ -118,7 +118,7 @@ const EmpresaUsuarioSwitcher = ({ isOpen, onClose }: EmpresaUsuarioSwitcherProps
                     variant="outline"
                     className={cn(
                       "w-full justify-start h-auto py-3 px-4",
-                      isSelected(empresa.id, empresa.tipo) && "border-biodina-gold bg-biodina-gold/5"
+                      isSelected(empresa.id, empresa.tipo) && "border-imuv-cyan bg-imuv-cyan/5"
                     )}
                     onClick={() => handleSelectEmpresa(empresa.id, empresa.tipo)}
                   >
@@ -143,7 +143,7 @@ const EmpresaUsuarioSwitcher = ({ isOpen, onClose }: EmpresaUsuarioSwitcherProps
                         </div>
                       </div>
                       {isSelected(empresa.id, empresa.tipo) && (
-                        <Check className="h-4 w-4 text-biodina-gold" />
+                        <Check className="h-4 w-4 text-imuv-cyan" />
                       )}
                     </div>
                   </Button>

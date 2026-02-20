@@ -33,7 +33,7 @@ const ComprasSidebar = ({
     <div className="w-80 bg-white border-r border-gray-200/80 overflow-y-auto shadow-sm">
       <div className="p-6 border-b border-gray-100 flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-biodina-blue mb-2">CPR (Compras para Revenda)</h2>
+          <h2 className="text-2xl font-bold text-imuv-blue mb-2">CPR (Compras para Revenda)</h2>
           <p className="text-gray-600 text-sm">Gerencie pedidos, compras fiscais e importações</p>
         </div>
         <button
@@ -53,18 +53,18 @@ const ComprasSidebar = ({
               className={cn(
                 "w-full flex items-center justify-between p-3 rounded-xl transition-all duration-200",
                 activeModule === key 
-                  ? 'bg-gradient-to-r from-biodina-blue to-biodina-blue/90 text-white shadow-md' 
+                  ? 'bg-gradient-to-r from-imuv-blue to-imuv-blue/90 text-white shadow-md' 
                   : 'hover:bg-gray-50 text-gray-700 hover:shadow-sm'
               )}
             >
               <div className="flex items-center gap-3">
                 <div className={cn(
                   "p-2 rounded-lg",
-                  activeModule === key ? 'bg-white/20' : 'bg-biodina-gold/10'
+                  activeModule === key ? 'bg-white/20' : 'bg-imuv-cyan/10'
                 )}>
                   <module.icon className={cn(
                     "h-5 w-5",
-                    activeModule === key ? 'text-white' : 'text-biodina-gold'
+                    activeModule === key ? 'text-white' : 'text-imuv-cyan'
                   )} />
                 </div>
                 <span className="font-medium">{module.name}</span>
@@ -94,7 +94,7 @@ const ComprasSidebar = ({
                     className={cn(
                       "w-full text-left p-3 rounded-lg text-sm transition-all duration-200",
                       activeModule === key && activeSubModule === subKey
-                        ? 'bg-biodina-gold text-white shadow-sm'
+                        ? 'bg-imuv-cyan text-white shadow-sm'
                         : 'hover:bg-gray-50 text-gray-600'
                     )}
                   >
@@ -103,7 +103,7 @@ const ComprasSidebar = ({
                         "w-2 h-2 rounded-full",
                         activeModule === key && activeSubModule === subKey
                           ? 'bg-white'
-                          : 'bg-biodina-gold/60'
+                          : 'bg-imuv-cyan/60'
                       )} />
                       {subModule.name}
                     </div>
