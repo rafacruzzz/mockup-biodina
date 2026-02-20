@@ -1,4 +1,6 @@
 import { useState } from "react";
+import logoPreta from "@/assets/logos/preta.png";
+import logoIcone from "@/assets/logos/icone_imuv-03.png";
 import { useLocation, Link } from "react-router-dom";
 import { 
   Menu, X, Home, Users, Settings, 
@@ -100,14 +102,14 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
           >
             {isSidebarOpen ? (
               <>
-                <img src="/logos/preta.png" alt="iMuv" className="h-6" />
+                <img src={logoPreta} alt="iMuv" className="h-6" />
                 <span className="text-lg font-bold text-imuv-dark truncate max-w-[120px]">
                   {nomeEmpresaAtual}
                 </span>
                 <ChevronDown className="h-4 w-4 text-muted-foreground ml-1" />
               </>
             ) : (
-              <img src="/logos/icone_imuv-03.png" alt="iMuv" className="h-8 w-8" />
+              <img src={logoIcone} alt="iMuv" className="h-8 w-8" />
             )}
           </button>
           <button 
@@ -161,7 +163,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
           </button>
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3 ml-4">
-              <img src="/logos/preta.png" alt="iMuv" className="h-6" />
+              <img src={logoPreta} alt="iMuv" className="h-6" />
               <h2 className="text-xl font-semibold text-imuv-dark">Sistemas</h2>
             </div>
             

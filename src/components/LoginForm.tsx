@@ -1,4 +1,5 @@
 import { useState } from "react";
+import logoAzul from "@/assets/logos/azul.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff, Mail, Key, ArrowRight, User } from "lucide-react";
@@ -125,7 +126,7 @@ const LoginForm = () => {
     <div className="w-full max-w-md">
       {/* Logo azul inside card */}
       <div className="flex justify-center mb-6">
-        <img src="/logos/azul.png" alt="iMuv" className="h-12" />
+        <img src={logoAzul} alt="iMuv" className="h-12" />
       </div>
       
       <div className="text-center mb-8">
