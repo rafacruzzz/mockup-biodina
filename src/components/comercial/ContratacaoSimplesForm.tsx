@@ -545,7 +545,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               )}
               <TabsTrigger value="analise-tecnica" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
-                Análise Técnica
+                Assessoria Científica
               </TabsTrigger>
               <TabsTrigger value="dt" className="flex items-center gap-2">
                 <Wrench className="h-4 w-4" />
@@ -1426,7 +1426,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Wrench className="h-5 w-5" />
-                    Ordens de Serviço - Análise Técnica
+                    Ordens de Serviço - Assessoria Científica
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
