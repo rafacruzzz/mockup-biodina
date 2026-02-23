@@ -1,52 +1,56 @@
 
+## Plano: Sistema de Anexos com Respostas na Queixa Tecnica
 
-## Plano: Bloquear Valor do Contrato e Criar Sistema de Aditivos com Historico
+### O Que Sera Feito
 
-### 1. Bloquear o campo "Valor do Negocio"
+Adicionar uma nova secao **"Anexos e Respostas"** ao final da tela de Queixa Tecnica (apos a secao 8), onde o usuario podera registrar as respostas da empresa a ANVISA e outros documentos vinculados a queixa.
 
-O campo "Valor do Negocio" na aba "Dados do Projeto" da Contratacao sera tornado **somente leitura** (disabled), com estilo visual de campo bloqueado (fundo cinza). O valor vem da licitacao vinculada ou e definido na criacao e nao pode ser alterado diretamente.
+### Como Vai Funcionar
 
-Para alterar o valor, o usuario precisara criar um **aditivo de valor**.
+1. **Botao "Adicionar Anexo"** no topo da secao
+2. Ao clicar, abre um formulario inline (ou modal) pedindo:
+   - **Tipo do Anexo** (select): Resposta a ANVISA, Laudo Tecnico, Relatorio de Investigacao, Evidencia Fotografica, Outros
+   - **Titulo/Descricao** do anexo (campo texto)
+   - **Data** (preenchida automaticamente, editavel)
+   - **Observacoes** (textarea opcional)
+   - **Arquivo** (upload obrigatorio - PDF, DOC, imagem)
+3. Ao salvar, o anexo aparece na lista como um **card minimizado** (colapsado), mostrando apenas:
+   - Icone do tipo + Titulo + Tipo do Anexo (badge) + Data
+   - Seta para expandir/colapsar
+4. Ao clicar na seta ou no card, ele **expande** e mostra todos os campos preenchidos (tipo, titulo, descricao, observacoes, arquivo anexado com opcao de visualizar/baixar)
+5. Os anexos ficam **empilhados verticalmente**, um embaixo do outro, todos minimizados por padrao
 
-### 2. Criar sistema de Aditivos Contratuais com historico
+### Layout Visual
 
-Sera adicionada uma secao "Aditivos Contratuais" abaixo do campo "Valor do Negocio" (ou na mesma area de Dados do Projeto), contendo:
+```text
++--------------------------------------------------+
+| 9 - Anexos e Respostas          [+ Adicionar Anexo]|
++--------------------------------------------------+
 
-**Botao "Novo Aditivo"** que abre um modal com os seguintes campos obrigatorios:
-- **Tipo do Aditivo**: select com opcoes (Acrescimo de Valor, Supressao de Valor, Prorrogacao de Prazo, Outros)
-- **Valor do Aditivo**: campo numerico (positivo para acrescimo, negativo para supressao)
-- **Justificativa**: textarea com minimo de 50 caracteres
-- **Selecao de Empresa**: dropdown obrigatorio quando houver mais de 1 empresa participante (lista Empresa 1 e Empresa 2 com nome e CNPJ)
-- **Documento do Aditivo**: upload obrigatorio de arquivo PDF/DOC
+  > Resposta a ANVISA - Carta resposta ref...  | 05/04/2024
+  
+  > Laudo Tecnico - Analise do sensor cas...   | 06/04/2024
 
-**Historico de Aditivos**: lista/tabela abaixo do botao mostrando todos os aditivos ja registrados, com:
-- Data do aditivo
-- Tipo
-- Valor
-- Empresa vinculada (nome e CNPJ)
-- Justificativa
-- Nome do documento anexado
-- Usuario que registrou
-
-**Valor atualizado**: O valor total do contrato sera recalculado automaticamente somando o valor original + todos os aditivos de valor, exibido como "Valor Atualizado" ao lado do "Valor Original".
+  v Relatorio de Investigacao - Invest...      | 07/04/2024
+  +----------------------------------------------+
+  | Tipo: Relatorio de Investigacao              |
+  | Titulo: Investigacao causa raiz sensor       |
+  | Data: 07/04/2024                             |
+  | Observacoes: Investigacao concluida...       |
+  | Arquivo: [relatorio_inv.pdf] [Visualizar]    |
+  +----------------------------------------------+
+```
 
 ### Detalhes Tecnicos
 
-**Arquivo a modificar:** `src/components/comercial/ContratacaoSimplesForm.tsx`
-
-**Escopo:** Apenas a aba que contem "Dados do Projeto" (aba "geral") - nenhuma outra aba sera alterada.
+**Arquivo a modificar:** `src/components/administrativo/qualidade/QueixaTecnicaTab.tsx`
 
 **Mudancas especificas:**
 
-1. Adicionar `disabled` e classes visuais de bloqueio ao Input de `valorNegocio` (linha ~785-791)
-2. Criar interface `AditivoContrato` com campos: id, tipo, valor, justificativa, empresaId, empresaNome, empresaCNPJ, documentoNome, documentoUrl, criadoPor, criadoEm
-3. Adicionar estado `aditivos: AditivoContrato[]` e `modalNovoAditivoOpen`
-4. Criar modal "Novo Aditivo" com formulario completo incluindo:
-   - Select de tipo
-   - Input de valor
-   - Textarea de justificativa (validacao min 50 chars)
-   - Select de empresa (visivel apenas quando ha 2 empresas)
-   - Upload de documento (obrigatorio)
-5. Ao confirmar aditivo, adicionar ao array de historico e atualizar o documento na aba Documentos
-6. Exibir historico de aditivos em uma mini-tabela com todas as informacoes
-7. Mostrar "Valor Original" bloqueado + "Valor Atualizado" calculado (original + soma dos aditivos)
+1. Criar interface `AnexoQueixa` com campos: id, tipo (enum com as opcoes acima), titulo, data, observacoes, arquivo (File | null), nomeArquivo, tamanhoArquivo
+2. Adicionar estados: `anexos: AnexoQueixa[]`, `formNovoAnexo` (dados do formulario), `mostrarFormAnexo: boolean`, `anexosExpandidos: string[]` (IDs dos anexos abertos)
+3. Adicionar nova secao "9 - Anexos e Respostas" apos a secao 8, usando o componente `Collapsible` do Radix UI para o comportamento de expandir/colapsar cada anexo
+4. Formulario de novo anexo com Select para tipo, Input para titulo, Input date para data, Textarea para observacoes, e area de upload de arquivo
+5. Validacao: tipo e titulo obrigatorios, arquivo obrigatorio
+6. Ao salvar, adiciona ao array `anexos` e fecha o formulario
+7. Cada anexo renderizado como card colapsavel com `ChevronDown`/`ChevronUp` para indicar estado
