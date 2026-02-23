@@ -1,19 +1,133 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Upload, FileText, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Upload, FileText, AlertCircle, CheckCircle2, Plus, ChevronDown, ChevronUp, FileCheck, FileSearch, Camera, File, Trash2, Download } from 'lucide-react';
 import { queixaTecnicaMockada } from '@/data/queixaTecnicaData';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
+import { toast as sonnerToast } from 'sonner';
+
+type TipoAnexo = 'Resposta à ANVISA' | 'Laudo Técnico' | 'Relatório de Investigação' | 'Evidência Fotográfica' | 'Outros';
+
+interface AnexoQueixa {
+  id: string;
+  tipo: TipoAnexo;
+  titulo: string;
+  data: string;
+  observacoes: string;
+  arquivo: File | null;
+  nomeArquivo: string;
+  tamanhoArquivo: number;
+}
 
 export const QueixaTecnicaTab = () => {
   const [documentoAnexado, setDocumentoAnexado] = useState(false);
   const [dadosImportados, setDadosImportados] = useState(false);
   const { toast } = useToast();
+
+  // Estados para Anexos e Respostas
+  const [anexos, setAnexos] = useState<AnexoQueixa[]>([]);
+  const [mostrarFormAnexo, setMostrarFormAnexo] = useState(false);
+  const [anexosExpandidos, setAnexosExpandidos] = useState<string[]>([]);
+  const [novoAnexo, setNovoAnexo] = useState<Partial<AnexoQueixa>>({
+    tipo: undefined,
+    titulo: '',
+    data: format(new Date(), 'yyyy-MM-dd'),
+    observacoes: '',
+    arquivo: null,
+    nomeArquivo: '',
+    tamanhoArquivo: 0,
+  });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const toggleAnexoExpandido = (id: string) => {
+    setAnexosExpandidos(prev =>
+      prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id]
+    );
+  };
+
+  const formatarTamanho = (bytes: number) => {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+  };
+
+  const getIconeAnexo = (tipo: TipoAnexo) => {
+    switch (tipo) {
+      case 'Resposta à ANVISA': return <FileCheck className="h-4 w-4 text-primary" />;
+      case 'Laudo Técnico': return <FileSearch className="h-4 w-4 text-blue-600" />;
+      case 'Relatório de Investigação': return <FileText className="h-4 w-4 text-orange-600" />;
+      case 'Evidência Fotográfica': return <Camera className="h-4 w-4 text-green-600" />;
+      default: return <File className="h-4 w-4 text-muted-foreground" />;
+    }
+  };
+
+  const handleSalvarAnexo = () => {
+    if (!novoAnexo.tipo) {
+      sonnerToast.error('Selecione o tipo do anexo.');
+      return;
+    }
+    if (!novoAnexo.titulo?.trim()) {
+      sonnerToast.error('Informe o título do anexo.');
+      return;
+    }
+    if (!novoAnexo.arquivo) {
+      sonnerToast.error('Anexe um arquivo.');
+      return;
+    }
+
+    const novo: AnexoQueixa = {
+      id: crypto.randomUUID(),
+      tipo: novoAnexo.tipo as TipoAnexo,
+      titulo: novoAnexo.titulo || '',
+      data: novoAnexo.data || format(new Date(), 'yyyy-MM-dd'),
+      observacoes: novoAnexo.observacoes || '',
+      arquivo: novoAnexo.arquivo,
+      nomeArquivo: novoAnexo.nomeArquivo || '',
+      tamanhoArquivo: novoAnexo.tamanhoArquivo || 0,
+    };
+
+    setAnexos(prev => [...prev, novo]);
+    setNovoAnexo({
+      tipo: undefined,
+      titulo: '',
+      data: format(new Date(), 'yyyy-MM-dd'),
+      observacoes: '',
+      arquivo: null,
+      nomeArquivo: '',
+      tamanhoArquivo: 0,
+    });
+    setMostrarFormAnexo(false);
+    sonnerToast.success('Anexo adicionado com sucesso!');
+  };
+
+  const handleRemoverAnexo = (id: string) => {
+    setAnexos(prev => prev.filter(a => a.id !== id));
+    sonnerToast.success('Anexo removido.');
+  };
+
+  const handleFileAnexo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      sonnerToast.error('Arquivo muito grande. Máximo 10MB.');
+      return;
+    }
+    setNovoAnexo(prev => ({
+      ...prev,
+      arquivo: file,
+      nomeArquivo: file.name,
+      tamanhoArquivo: file.size,
+    }));
+  };
 
   const handleSimularImportacao = () => {
     setDocumentoAnexado(true);
@@ -536,6 +650,174 @@ export const QueixaTecnicaTab = () => {
                 <Label>8.8. Observações:</Label>
                 <Textarea value={queixaTecnicaMockada.observacoes || ''} readOnly className="bg-muted/50" rows={3} />
               </div>
+            </CardContent>
+          </Card>
+
+          {/* 9 - Anexos e Respostas */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>9 - Anexos e Respostas</CardTitle>
+                <Button size="sm" onClick={() => setMostrarFormAnexo(true)} disabled={mostrarFormAnexo}>
+                  <Plus className="h-4 w-4 mr-1" />
+                  Adicionar Anexo
+                </Button>
+              </div>
+              <CardDescription>Respostas à ANVISA e documentos vinculados à queixa técnica</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {/* Formulário de novo anexo */}
+              {mostrarFormAnexo && (
+                <Card className="border-dashed border-primary/40">
+                  <CardContent className="pt-4 space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <Label>Tipo do Anexo *</Label>
+                        <Select
+                          value={novoAnexo.tipo || ''}
+                          onValueChange={(v) => setNovoAnexo(prev => ({ ...prev, tipo: v as TipoAnexo }))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o tipo" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Resposta à ANVISA">Resposta à ANVISA</SelectItem>
+                            <SelectItem value="Laudo Técnico">Laudo Técnico</SelectItem>
+                            <SelectItem value="Relatório de Investigação">Relatório de Investigação</SelectItem>
+                            <SelectItem value="Evidência Fotográfica">Evidência Fotográfica</SelectItem>
+                            <SelectItem value="Outros">Outros</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-1">
+                        <Label>Data</Label>
+                        <Input
+                          type="date"
+                          value={novoAnexo.data || ''}
+                          onChange={(e) => setNovoAnexo(prev => ({ ...prev, data: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label>Título / Descrição *</Label>
+                      <Input
+                        value={novoAnexo.titulo || ''}
+                        onChange={(e) => setNovoAnexo(prev => ({ ...prev, titulo: e.target.value }))}
+                        placeholder="Ex: Carta resposta referente à notificação nº..."
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label>Observações</Label>
+                      <Textarea
+                        value={novoAnexo.observacoes || ''}
+                        onChange={(e) => setNovoAnexo(prev => ({ ...prev, observacoes: e.target.value }))}
+                        placeholder="Informações adicionais (opcional)"
+                        rows={2}
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label>Arquivo *</Label>
+                      {!novoAnexo.arquivo ? (
+                        <div>
+                          <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+                            <Upload className="h-4 w-4 mr-2" />
+                            Selecionar Arquivo
+                          </Button>
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                            onChange={handleFileAnexo}
+                            className="hidden"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 p-2 border border-green-200 bg-green-50 rounded text-sm">
+                          <FileText className="h-4 w-4 text-green-600" />
+                          <span className="font-medium text-green-800">{novoAnexo.nomeArquivo}</span>
+                          <span className="text-green-600 text-xs">({formatarTamanho(novoAnexo.tamanhoArquivo || 0)})</span>
+                          <Button type="button" variant="ghost" size="sm" className="ml-auto h-6 px-2" onClick={() => {
+                            setNovoAnexo(prev => ({ ...prev, arquivo: null, nomeArquivo: '', tamanhoArquivo: 0 }));
+                          }}>
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2 pt-2">
+                      <Button size="sm" onClick={handleSalvarAnexo}>Salvar Anexo</Button>
+                      <Button size="sm" variant="outline" onClick={() => {
+                        setMostrarFormAnexo(false);
+                        setNovoAnexo({ tipo: undefined, titulo: '', data: format(new Date(), 'yyyy-MM-dd'), observacoes: '', arquivo: null, nomeArquivo: '', tamanhoArquivo: 0 });
+                      }}>
+                        Cancelar
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Lista de anexos */}
+              {anexos.length === 0 && !mostrarFormAnexo && (
+                <p className="text-sm text-muted-foreground text-center py-6">Nenhum anexo adicionado.</p>
+              )}
+
+              {anexos.map((anexo) => {
+                const expandido = anexosExpandidos.includes(anexo.id);
+                return (
+                  <Collapsible key={anexo.id} open={expandido} onOpenChange={() => toggleAnexoExpandido(anexo.id)}>
+                    <div className="border rounded-lg">
+                      <CollapsibleTrigger asChild>
+                        <button className="w-full flex items-center gap-3 p-3 hover:bg-muted/50 transition-colors text-left">
+                          {expandido ? <ChevronUp className="h-4 w-4 shrink-0" /> : <ChevronDown className="h-4 w-4 shrink-0" />}
+                          {getIconeAnexo(anexo.tipo)}
+                          <span className="font-medium text-sm truncate flex-1">{anexo.titulo}</span>
+                          <Badge variant="secondary" className="text-xs shrink-0">{anexo.tipo}</Badge>
+                          <span className="text-xs text-muted-foreground shrink-0">
+                            {anexo.data ? format(new Date(anexo.data + 'T00:00:00'), 'dd/MM/yyyy') : ''}
+                          </span>
+                        </button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <div className="border-t px-4 py-3 space-y-2 bg-muted/20">
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div><span className="font-medium">Tipo:</span> {anexo.tipo}</div>
+                            <div><span className="font-medium">Data:</span> {anexo.data ? format(new Date(anexo.data + 'T00:00:00'), 'dd/MM/yyyy') : ''}</div>
+                          </div>
+                          <div className="text-sm"><span className="font-medium">Título:</span> {anexo.titulo}</div>
+                          {anexo.observacoes && (
+                            <div className="text-sm"><span className="font-medium">Observações:</span> {anexo.observacoes}</div>
+                          )}
+                          <div className="flex items-center justify-between pt-1">
+                            <div className="flex items-center gap-2 text-sm">
+                              <FileText className="h-4 w-4 text-primary" />
+                              <span>{anexo.nomeArquivo}</span>
+                              <span className="text-xs text-muted-foreground">({formatarTamanho(anexo.tamanhoArquivo)})</span>
+                            </div>
+                            <div className="flex gap-1">
+                              <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => {
+                                if (anexo.arquivo) {
+                                  const url = URL.createObjectURL(anexo.arquivo);
+                                  window.open(url, '_blank');
+                                }
+                              }}>
+                                <Download className="h-3 w-3 mr-1" /> Visualizar
+                              </Button>
+                              <Button variant="ghost" size="sm" className="h-7 text-xs text-destructive hover:text-destructive" onClick={() => handleRemoverAnexo(anexo.id)}>
+                                <Trash2 className="h-3 w-3 mr-1" /> Remover
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </CollapsibleContent>
+                    </div>
+                  </Collapsible>
+                );
+              })}
             </CardContent>
           </Card>
         </>
