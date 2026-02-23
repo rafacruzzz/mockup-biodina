@@ -1641,70 +1641,30 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
 
             <TabsContent value="documentos" className="space-y-4">
               {(() => {
-                const temDuasEmpresas = !!empresaContrato2.empresaParticipanteId;
+                // Categorias de documentos
+                type CategoriaDoc = 'licitacao' | 'ata' | 'contrato' | 'aditivo' | 'outros';
+                
+                const categoriasConfig: { id: CategoriaDoc; label: string; icon: React.ReactNode }[] = [
+                  { id: 'licitacao', label: 'Documentos Importados da Licitação', icon: <Link2 className="h-5 w-5" /> },
+                  { id: 'ata', label: 'Ata', icon: <FileText className="h-5 w-5" /> },
+                  { id: 'contrato', label: 'Contrato', icon: <FileText className="h-5 w-5" /> },
+                  { id: 'aditivo', label: 'Aditivos Contratuais', icon: <FileText className="h-5 w-5" /> },
+                  { id: 'outros', label: 'Outros Documentos', icon: <FileText className="h-5 w-5" /> },
+                ];
 
-                if (!temDuasEmpresas) {
-                  // Layout original: empresa única
-                  return (
-                    <>
-                      {documentosLicitacao.length > 0 && (
-                        <Card>
-                          <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                              <FileText className="h-5 w-5" />
-                              Documentos Importados da Licitação
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-3">
-                              {documentosLicitacao.map((doc, index) => (
-                                <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                                  <div className="flex items-center gap-3">
-                                    <FileText className="h-5 w-5 text-blue-500" />
-                                    <div>
-                                      <p className="font-medium text-sm">{doc.nome}</p>
-                                      <p className="text-xs text-muted-foreground">
-                                        {doc.tipo} • {new Date(doc.data).toLocaleDateString('pt-BR')}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <Button variant="ghost" size="sm">
-                                    <Download className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              ))}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      )}
-
-                      <Card>
-                        <CardHeader>
-                          <CardTitle>Adicionar Novos Documentos</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
-                            <Upload className="h-12 w-12 text-muted-foreground/40 mx-auto mb-4" />
-                            <p className="text-muted-foreground mb-4">Arraste e solte arquivos aqui ou clique para selecionar</p>
-                            <Button variant="outline">Selecionar Arquivos</Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </>
-                  );
-                }
-
-                // Layout separado por empresa
-                const docsGerais = documentosLicitacao.filter(doc => !doc.empresaId);
-                const docsEmpresa1 = documentosLicitacao.filter(doc => doc.empresaId === empresaContrato.empresaParticipanteId);
-                const docsEmpresa2 = documentosLicitacao.filter(doc => doc.empresaId === empresaContrato2.empresaParticipanteId);
+                const getDocsByCategoria = (cat: CategoriaDoc) => {
+                  if (cat === 'licitacao') {
+                    return documentosLicitacao.filter(doc => !doc.categoria || doc.categoria === 'licitacao');
+                  }
+                  return documentosLicitacao.filter(doc => doc.categoria === cat);
+                };
 
                 const renderDocList = (docs: any[]) => (
                   <div className="space-y-2">
                     {docs.length === 0 ? (
                       <p className="text-sm text-muted-foreground text-center py-4">Nenhum documento nesta seção</p>
                     ) : (
-                      docs.map((doc, index) => (
+                      docs.map((doc: any, index: number) => (
                         <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                           <div className="flex items-center gap-3">
                             <FileText className="h-5 w-5 text-blue-500" />
@@ -1726,69 +1686,35 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
 
                 return (
                   <>
-                    {/* Documentos Gerais */}
-                    <Card>
-                      <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center gap-2 text-base">
-                          <FileText className="h-5 w-5" />
-                          Documentos Gerais da Licitação
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>{renderDocList(docsGerais)}</CardContent>
-                    </Card>
+                    {categoriasConfig.map((cat) => (
+                      <Card key={cat.id}>
+                        <CardHeader className="pb-3">
+                          <CardTitle className="flex items-center gap-2 text-base">
+                            {cat.icon}
+                            {cat.label}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>{renderDocList(getDocsByCategoria(cat.id))}</CardContent>
+                      </Card>
+                    ))}
 
-                    {/* Empresa 1 */}
-                    <Card className="border-l-4 border-l-blue-500">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center gap-2 text-base">
-                          <Building2 className="h-5 w-5 text-blue-500" />
-                          <span>Empresa 1: {empresaContrato.empresaParticipanteNome || 'Não definida'}</span>
-                          {empresaContrato.empresaParticipanteCNPJ && (
-                            <Badge variant="outline" className="ml-2 text-xs font-normal">
-                              {empresaContrato.empresaParticipanteCNPJ}
-                            </Badge>
-                          )}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>{renderDocList(docsEmpresa1)}</CardContent>
-                    </Card>
-
-                    {/* Empresa 2 */}
-                    <Card className="border-l-4 border-l-emerald-500">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="flex items-center gap-2 text-base">
-                          <Building2 className="h-5 w-5 text-emerald-500" />
-                          <span>Empresa 2: {empresaContrato2.empresaParticipanteNome || 'Não definida'}</span>
-                          {empresaContrato2.empresaParticipanteCNPJ && (
-                            <Badge variant="outline" className="ml-2 text-xs font-normal">
-                              {empresaContrato2.empresaParticipanteCNPJ}
-                            </Badge>
-                          )}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>{renderDocList(docsEmpresa2)}</CardContent>
-                    </Card>
-
-                    {/* Upload com seletor de empresa */}
+                    {/* Upload com seletor de seção */}
                     <Card>
                       <CardHeader>
                         <CardTitle>Adicionar Novos Documentos</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
                         <div>
-                          <Label className="text-sm font-medium mb-2 block">Vincular documento a:</Label>
+                          <Label className="text-sm font-medium mb-2 block">Seção do documento:</Label>
                           <Select value={empresaUploadSelecionada} onValueChange={setEmpresaUploadSelecionada}>
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Selecione a empresa" />
+                              <SelectValue placeholder="Selecione a seção" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="geral">Documentos Gerais da Licitação</SelectItem>
-                              <SelectItem value={empresaContrato.empresaParticipanteId || 'emp1'}>
-                                Empresa 1: {empresaContrato.empresaParticipanteNome || 'Não definida'}
-                              </SelectItem>
-                              <SelectItem value={empresaContrato2.empresaParticipanteId || 'emp2'}>
-                                Empresa 2: {empresaContrato2.empresaParticipanteNome || 'Não definida'}
-                              </SelectItem>
+                              <SelectItem value="ata">Ata</SelectItem>
+                              <SelectItem value="contrato">Contrato</SelectItem>
+                              <SelectItem value="aditivo">Aditivos Contratuais</SelectItem>
+                              <SelectItem value="outros">Outros Documentos</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
