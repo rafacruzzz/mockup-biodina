@@ -10,7 +10,8 @@ export const tipoDocumentoLabels: Record<TipoDocumentoAcaoCampo, string> = {
   [TipoDocumentoAcaoCampo.FAC3]: 'FAC3',
   [TipoDocumentoAcaoCampo.PROTOCOLO_ABERTURA_ANVISA]: 'Protocolo de Abertura na Anvisa',
   [TipoDocumentoAcaoCampo.PROTOCOLO_ENCERRAMENTO_ANVISA]: 'Protocolo de Encerramento na Anvisa',
-  [TipoDocumentoAcaoCampo.ADICIONAL]: 'Documento Adicional'
+  [TipoDocumentoAcaoCampo.ADICIONAL]: 'Documento Adicional',
+  [TipoDocumentoAcaoCampo.NOTIFICACAO_ACAO_CAMPO_PREENCHIVEL]: 'Formulário de Notificação de Ação de Campo'
 };
 
 export const statusAcaoCampoLabels: Record<StatusAcaoCampo, string> = {
@@ -85,10 +86,8 @@ export const criarDocumentosEnvioAnvisa = (baseId: string): { documentos: Docume
     },
     {
       id: `${baseId}-anv-4`,
-      tipo: TipoDocumentoAcaoCampo.ADICIONAL,
+      tipo: TipoDocumentoAcaoCampo.NOTIFICACAO_ACAO_CAMPO_PREENCHIVEL,
       nome: 'Formulário de Notificação de Ação de Campo',
-      nomeOriginal: 'Formulario-de-Notificacao-de-Acao-de-Campo-v2-5.pdf',
-      url: '/documents/Formulario-de-Notificacao-de-Acao-de-Campo-v2-5.pdf',
       requerAssinatura: false
     },
     {
