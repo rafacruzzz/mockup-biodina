@@ -1,41 +1,41 @@
 
 
-## Plano: Integrar Contas a Pagar com Calendário + Ações de Pagamento Inline
+## Plano: Expandir Nova Conta Recorrente com todos os campos de Nova Conta a Pagar + integração com Calendário
 
 ### Resumo
 
-Transformar o calendário de vencimentos para exibir as contas salvas em "Nova Conta a Pagar" como links clicáveis por data de vencimento. Ao clicar, abrir modal com detalhes + documentos anexados. Adicionar campos inline no calendário: "Pago na data" (Sim/Não), data do pagamento (se Não), e banco/agência/conta (bidirecional com Nova Conta a Pagar).
+1. Expandir o modal `NovaContaRecorrenteModal` para incluir todos os campos que existem em `NovaContaPagarModal` (tipo requisição, departamento, vincular a projeto/departamento, descrição, pagamento efetuado, dados bancários, multa/juros/desconto)
+2. Adicionar campo "Há alteração de valor?" (Sim/Não) — se Não, valor fixo repetido; se Sim, valor vem em branco a cada mês (mas editável em ambos os casos)
+3. Salvar contas recorrentes em estado compartilhado e gerar ocorrências no calendário com base na periodicidade
+4. No calendário, exibir contas recorrentes como links clicáveis com controles inline (pago na data, dados bancários, documentos anexados)
 
 ### Arquivos a modificar
 
-1. **`src/components/financeiro/CalendarioVencimentos.tsx`**
-   - Receber `contasSalvas: ContaPagar[]` como prop (vindas de APagarPagosView)
-   - Gerar os vencimentos dinamicamente a partir das contas (incluindo parcelas individuais com label "Parcela X de Y")
-   - Manter mock data existente como fallback enquanto não houver contas reais
-   - No card de cada conta no calendário: adicionar controles inline:
-     - Switch "Pago na data" (Sim/Não)
-     - Se Não: campo de data do pagamento
-     - Campos banco, agência, conta (editáveis)
-   - Ao alterar esses campos, chamar callback `onUpdateConta` para sincronizar com APagarPagosView
+1. **`src/types/financeiro.ts`**
+   - Expandir `ContaRecorrenteEnhanced` com os campos: `tipo`, `departamentoSolicitante`, `vincularA`, `projetoCliente`, `departamento`, `descricao`, `pagamentoEfetuado`, `bancoPagamento`, `agenciaPagamento`, `contaPagamento`, `multa`, `juros`, `desconto`, `alteracaoValor: boolean`
+   - Adicionar interface `OcorrenciaRecorrente` para representar cada mês gerado: `{ id, contaRecorrenteId, dataVencimento, valor, pago, dataPagamento, bancoPagamento, agenciaPagamento, contaPagamento, multa, juros, desconto }`
 
-2. **`src/components/financeiro/DetalhesContaModal.tsx`**
-   - Expandir interface para aceitar dados de `ContaPagar`
-   - Mostrar documentos anexados (lista de anexos com ícone de visualização)
-   - Mostrar campos "Pago na data", banco, agência, conta
-   - Mostrar informações de parcelas quando aplicável
+2. **`src/components/financeiro/NovaContaRecorrenteModal.tsx`**
+   - Adicionar todos os campos que existem em `NovaContaPagarModal`: tipo requisição, departamento solicitante, vincular a (projeto/departamento), fornecedor, descrição, valor, forma de pagamento, data primeiro vencimento, periodicidade
+   - Adicionar campo Switch "Há alteração de valor?" (Sim/Não)
+   - Adicionar campos: pagamento efetuado (Sim/Não), dados bancários, multa/juros/desconto
+   - Manter campo de anexos existente
+   - Atualizar `onSave` para incluir todos os novos campos
 
 3. **`src/components/financeiro/APagarPagosView.tsx`**
-   - Passar `contasSalvas` e `onUpdateConta` como props ao `CalendarioVencimentos`
-   - Implementar handler `handleUpdateContaCalendario` que atualiza o estado da conta (pagamentoEfetuado, dataPagamento, dados bancários) e reflete na lista principal
-   - Manter estado compartilhado entre a aba Programação e a aba Calendário
+   - Criar estado `contasRecorrentesSalvas: ContaRecorrenteEnhanced[]`
+   - No `onSave` do `NovaContaRecorrenteModal`, salvar no estado e gerar ocorrências para os próximos meses
+   - Converter contas recorrentes em `ContaPagar[]` para passar ao `CalendarioVencimentos` junto com `contasSalvas`
+   - Implementar handler para atualizar ocorrências recorrentes vindas do calendário
 
-4. **`src/types/financeiro.ts`**
-   - Verificar se `ContaPagar` já tem todos os campos necessários (pagamentoEfetuado, bancoPagamento, agenciaPagamento, contaPagamento) — já deve ter da implementação anterior
+4. **`src/components/financeiro/CalendarioVencimentos.tsx`**
+   - Receber contas recorrentes convertidas junto com as contas normais (já recebe `contasSalvas`)
+   - Exibir contas recorrentes com badge identificador "Recorrente" no calendário
+   - Manter os controles inline existentes (pago na data, dados bancários) funcionando para recorrentes
 
 ### Detalhes técnicos
 
-- O calendário agrupará contas por `dataVencimento`. Para contas parceladas, cada parcela aparecerá na sua data de vencimento específica com label "Parcela X de Y"
-- Ao clicar no link/card da conta no calendário, abre `DetalhesContaModal` com os dados completos + lista de anexos
-- Os campos banco/agência/conta editados no calendário serão sincronizados de volta para a conta em APagarPagosView (bidirecional)
-- O switch "Pago na data" no calendário atualizará o campo `pagamentoEfetuado` da conta
+- O campo "Há alteração de valor?" controla se, ao gerar a próxima ocorrência no calendário, o valor vem preenchido (repetido) ou em branco para preenchimento manual
+- Mesmo quando "Não" (valor fixo), o campo permanece editável para casos de atraso/multa
+- As contas recorrentes serão convertidas em objetos `ContaPagar` com um campo extra para identificá-las como recorrentes, permitindo reutilizar toda a lógica do calendário já implementada
 
