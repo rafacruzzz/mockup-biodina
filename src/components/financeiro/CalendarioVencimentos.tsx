@@ -22,6 +22,8 @@ const vencimentosCalendario = [
         origem: "Chamado Comercial #CH-2025-045",
         setor: "Comercial",
         solicitante: "João Oliveira",
+        parcelaAtual: 1,
+        totalParcelas: 2,
         detalhes: {
           projeto: "Projeto Alpha - Cliente XYZ Corp",
           justificativa: "Materiais necessários para conclusão da fase 2 do projeto",
@@ -516,6 +518,11 @@ const CalendarioVencimentos = () => {
                             {conta.descricao.length > 18 ? conta.descricao.substring(0, 18) + '...' : conta.descricao}
                           </div>
                         </div>
+                        {(conta as any).parcelaAtual && (conta as any).totalParcelas && (
+                          <div className="text-[8px] font-semibold text-primary">
+                            Parcela {(conta as any).parcelaAtual} de {(conta as any).totalParcelas}
+                          </div>
+                        )}
                         <div className="flex items-center justify-between mt-0.5">
                           <span className="font-semibold text-foreground text-[10px]">
                             {formatCurrency(conta.valor)}
