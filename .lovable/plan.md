@@ -1,56 +1,48 @@
 
-## Plano: Sistema de Anexos com Respostas na Queixa Tecnica
 
-### O Que Sera Feito
+## Plano: Exibir todos os campos de Dados Gerais ao selecionar cliente na Reclamacao
 
-Adicionar uma nova secao **"Anexos e Respostas"** ao final da tela de Queixa Tecnica (apos a secao 8), onde o usuario podera registrar as respostas da empresa a ANVISA e outros documentos vinculados a queixa.
+### O que sera feito
 
-### Como Vai Funcionar
+Ao selecionar um cliente na aba "Reclamacao de Clientes", o painel de dados exibidos sera expandido para mostrar **todos** os campos da aba "Dados Gerais" do cadastro de clientes, organizados nas mesmas secoes.
 
-1. **Botao "Adicionar Anexo"** no topo da secao
-2. Ao clicar, abre um formulario inline (ou modal) pedindo:
-   - **Tipo do Anexo** (select): Resposta a ANVISA, Laudo Tecnico, Relatorio de Investigacao, Evidencia Fotografica, Outros
-   - **Titulo/Descricao** do anexo (campo texto)
-   - **Data** (preenchida automaticamente, editavel)
-   - **Observacoes** (textarea opcional)
-   - **Arquivo** (upload obrigatorio - PDF, DOC, imagem)
-3. Ao salvar, o anexo aparece na lista como um **card minimizado** (colapsado), mostrando apenas:
-   - Icone do tipo + Titulo + Tipo do Anexo (badge) + Data
-   - Seta para expandir/colapsar
-4. Ao clicar na seta ou no card, ele **expande** e mostra todos os campos preenchidos (tipo, titulo, descricao, observacoes, arquivo anexado com opcao de visualizar/baixar)
-5. Os anexos ficam **empilhados verticalmente**, um embaixo do outro, todos minimizados por padrao
+### Campos a adicionar (alem dos ja existentes)
 
-### Layout Visual
+Atualmente exibe: Nome do Cliente, Razao Social, Nome Fantasia, CNPJ/CPF, Situacao Cadastral, Nome do Mantenedor, CNPJ do Mantenedor.
 
-```text
-+--------------------------------------------------+
-| 9 - Anexos e Respostas          [+ Adicionar Anexo]|
-+--------------------------------------------------+
+**Campos novos a exibir:**
+- Tipo de Cliente
+- CIN/RG
+- Data de Cadastro
+- Telefone 1, 2, 3, 4
+- Telefone Fixo 1, 2, 3
+- Telefone WhatsApp
+- E-mail 1, 2, 3, 4
+- Website, Instagram, Facebook, LinkedIn, X (Twitter)
+- Contato Comercial: Nome, Cargo, Telefone, E-mail
+- Servico/Produto Oferecido
 
-  > Resposta a ANVISA - Carta resposta ref...  | 05/04/2024
-  
-  > Laudo Tecnico - Analise do sensor cas...   | 06/04/2024
+### Implementacao
 
-  v Relatorio de Investigacao - Invest...      | 07/04/2024
-  +----------------------------------------------+
-  | Tipo: Relatorio de Investigacao              |
-  | Titulo: Investigacao causa raiz sensor       |
-  | Data: 07/04/2024                             |
-  | Observacoes: Investigacao concluida...       |
-  | Arquivo: [relatorio_inv.pdf] [Visualizar]    |
-  +----------------------------------------------+
-```
+**Arquivo:** `src/components/administrativo/qualidade/ReclamacaoClientesTab.tsx`
 
-### Detalhes Tecnicos
+1. Expandir a interface `Cliente` para incluir todos os campos de Dados Gerais (tipoCliente, cinRg, dataCadastro, telefone1-4, telefoneFixo1-3, telefoneWhatsapp, email1-4, website, instagram, facebook, linkedin, xTwitter, contatoNome, contatoCargo, contatoTelefone, contatoEmail, servicoProdutoOferecido)
 
-**Arquivo a modificar:** `src/components/administrativo/qualidade/QueixaTecnicaTab.tsx`
+2. Expandir a interface `Reclamacao` e o estado `novaReclamacao` com os mesmos campos
 
-**Mudancas especificas:**
+3. Atualizar o mapeamento em `useMemo` dos clientes para extrair todos esses campos do `modules.pessoas.subModules.clientes.data`
 
-1. Criar interface `AnexoQueixa` com campos: id, tipo (enum com as opcoes acima), titulo, data, observacoes, arquivo (File | null), nomeArquivo, tamanhoArquivo
-2. Adicionar estados: `anexos: AnexoQueixa[]`, `formNovoAnexo` (dados do formulario), `mostrarFormAnexo: boolean`, `anexosExpandidos: string[]` (IDs dos anexos abertos)
-3. Adicionar nova secao "9 - Anexos e Respostas" apos a secao 8, usando o componente `Collapsible` do Radix UI para o comportamento de expandir/colapsar cada anexo
-4. Formulario de novo anexo com Select para tipo, Input para titulo, Input date para data, Textarea para observacoes, e area de upload de arquivo
-5. Validacao: tipo e titulo obrigatorios, arquivo obrigatorio
-6. Ao salvar, adiciona ao array `anexos` e fecha o formulario
-7. Cada anexo renderizado como card colapsavel com `ChevronDown`/`ChevronUp` para indicar estado
+4. Atualizar `selecionarCliente` e `limparCliente` para incluir todos os campos
+
+5. Reorganizar o painel de dados exibidos (bg-muted/50) em sub-secoes com separadores visuais, espelhando a estrutura do cadastro:
+   - Dados principais (grid 2 colunas): Tipo, Nome, Razao Social, Nome Fantasia, CNPJ/CPF, CIN/RG, Situacao Cadastral, Data Cadastro, Mantenedor, CNPJ Mantenedor
+   - Telefones (grid 2 colunas): Telefone 1-4
+   - Telefones Fixos (grid 3 colunas): Fixo 1-3
+   - WhatsApp
+   - E-mails (grid 2 colunas): E-mail 1-4
+   - Web e Redes Sociais (grid 2 colunas): Website, Instagram, Facebook, LinkedIn, X
+   - Contato Comercial (grid 2 colunas): Nome, Cargo, Telefone, E-mail
+   - Servico/Produto Oferecido (texto livre)
+
+6. Atualizar os dados mock dos clientes existentes para incluir exemplos dos novos campos
+
