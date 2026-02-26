@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { DocumentoAcaoCampo, NotificacaoAcaoCampoData } from "@/types/acaoCampo";
 import { NotificacaoAcaoCampoForm } from "./NotificacaoAcaoCampoForm";
 import { gerarNotificacaoAcaoCampoPDF } from "./utils/notificacaoAcaoCampoPDF";
-import { FileText, Edit, FileCheck, Download } from "lucide-react";
+import { FileText, Edit, Download, FileCheck } from "lucide-react";
 import { toast } from "sonner";
 
 interface Props {
@@ -24,24 +24,8 @@ export const NotificacaoAcaoCampoCard = ({ documento, onSave, onGeneratePDF }: P
     toast.success("Formulário salvo com sucesso!");
   };
 
-  const handleGeneratePDF = () => {
-    if (!documento.dadosNotificacao) {
-      toast.error("Preencha o formulário antes de gerar o PDF");
-      return;
-    }
-    try {
-      const pdfBlob = gerarNotificacaoAcaoCampoPDF(documento.dadosNotificacao);
-      const url = URL.createObjectURL(pdfBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `Notificacao_Acao_Campo_${new Date().toISOString().split('T')[0]}.pdf`;
-      link.click();
-      onGeneratePDF();
-      toast.success("PDF gerado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao gerar PDF:", error);
-      toast.error("Erro ao gerar o PDF");
-    }
+  const handleDownload = () => {
+    toast.info("Funcionalidade de download será implementada.");
   };
 
   const dados = documento.dadosNotificacao;
@@ -97,8 +81,8 @@ export const NotificacaoAcaoCampoCard = ({ documento, onSave, onGeneratePDF }: P
                 <Button variant="outline" size="sm" onClick={() => setShowForm(true)} className="flex-1">
                   <Edit className="h-4 w-4 mr-1" />Editar
                 </Button>
-                <Button variant="default" size="sm" onClick={handleGeneratePDF} className="flex-1">
-                  <Download className="h-4 w-4 mr-1" />{dados.pdfGerado ? 'Baixar PDF' : 'Gerar PDF'}
+                <Button variant="default" size="sm" onClick={handleDownload} className="flex-1">
+                  <Download className="h-4 w-4 mr-1" />Baixar
                 </Button>
               </div>
             </div>

@@ -5,8 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DocumentoAcaoCampo, FieldActionEffectivenessData } from "@/types/acaoCampo";
 import { FieldActionEffectivenessForm } from "./FieldActionEffectivenessForm";
-import { gerarFieldActionPDF } from "./utils/fieldActionPDF";
-import { FileText, Edit, FileCheck, Download, Eye } from "lucide-react";
+import { FileText, Edit, FileCheck, Download } from "lucide-react";
 import { toast } from "sonner";
 
 interface DocumentoPreenchívelCardProps {
@@ -29,28 +28,8 @@ export const DocumentoPreenchívelCard = ({
     toast.success("Formulário salvo com sucesso!");
   };
 
-  const handleGeneratePDF = () => {
-    if (!documento.dadosFormulario) {
-      toast.error("Por favor, preencha o formulário antes de gerar o PDF");
-      return;
-    }
-
-    try {
-      const pdfBlob = gerarFieldActionPDF(documento.dadosFormulario);
-      const pdfUrl = URL.createObjectURL(pdfBlob);
-      
-      // Criar link para download
-      const link = document.createElement('a');
-      link.href = pdfUrl;
-      link.download = `Field_Action_Effectiveness_${new Date().toISOString().split('T')[0]}.pdf`;
-      link.click();
-      
-      onGeneratePDF();
-      toast.success("PDF gerado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao gerar PDF:", error);
-      toast.error("Erro ao gerar o PDF");
-    }
+  const handleDownload = () => {
+    toast.info("Funcionalidade de download será implementada.");
   };
 
   const getStatusBadge = () => {
@@ -128,27 +107,15 @@ export const DocumentoPreenchívelCard = ({
                   Editar
                 </Button>
 
-                {!documento.dadosFormulario.pdfGerado ? (
                   <Button
                     variant="default"
                     size="sm"
-                    onClick={handleGeneratePDF}
+                    onClick={handleDownload}
                     className="flex-1"
                   >
                     <Download className="h-4 w-4 mr-1" />
-                    Gerar PDF
+                    Baixar
                   </Button>
-                ) : (
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={handleGeneratePDF}
-                    className="flex-1"
-                  >
-                    <Download className="h-4 w-4 mr-1" />
-                    Baixar PDF
-                  </Button>
-                )}
               </div>
             </div>
           )}
