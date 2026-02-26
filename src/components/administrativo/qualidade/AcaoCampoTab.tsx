@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { DocumentoAcaoCampoCard } from "./DocumentoAcaoCampoCard";
 import { DocumentoPreenchívelCard } from "./DocumentoPreenchívelCard";
+import { NotificacaoAcaoCampoCard } from "./NotificacaoAcaoCampoCard";
 import { NovoDocumentoAdicionalModal } from "./NovoDocumentoAdicionalModal";
 import { 
   AcaoCampo, 
@@ -15,6 +16,7 @@ import {
   StatusAcaoCampo, 
   TipoDocumentoAcaoCampo, 
   FieldActionEffectivenessData,
+  NotificacaoAcaoCampoData,
   SecaoAcaoCampo 
 } from "@/types/acaoCampo";
 import { 
@@ -432,6 +434,44 @@ export const AcaoCampoTab = () => {
 
   const stats = calcularEstatisticas();
 
+  const handleSalvarNotificacao = (acaoId: string, secaoId: string, docId: string, dados: NotificacaoAcaoCampoData) => {
+    setAcoesCampo(acoes =>
+      acoes.map(acao => {
+        if (acao.id !== acaoId) return acao;
+        const secoes = acao.secoes.map(secao => {
+          if (secao.id !== secaoId) return secao;
+          const documentos = secao.documentos.map(doc => {
+            if (doc.id !== docId) return doc;
+            return { ...doc, dadosNotificacao: dados };
+          });
+          return { ...secao, documentos };
+        });
+        const acaoAtualizada = { ...acao, secoes };
+        if (acaoSelecionada?.id === acaoId) setAcaoSelecionada(acaoAtualizada);
+        return acaoAtualizada;
+      })
+    );
+  };
+
+  const handleGerarPDFNotificacao = (acaoId: string, secaoId: string, docId: string) => {
+    setAcoesCampo(acoes =>
+      acoes.map(acao => {
+        if (acao.id !== acaoId) return acao;
+        const secoes = acao.secoes.map(secao => {
+          if (secao.id !== secaoId) return secao;
+          const documentos = secao.documentos.map(doc => {
+            if (doc.id !== docId || !doc.dadosNotificacao) return doc;
+            return { ...doc, dadosNotificacao: { ...doc.dadosNotificacao, pdfGerado: true, dataPdfGerado: new Date().toISOString() } };
+          });
+          return { ...secao, documentos };
+        });
+        const acaoAtualizada = { ...acao, secoes };
+        if (acaoSelecionada?.id === acaoId) setAcaoSelecionada(acaoAtualizada);
+        return acaoAtualizada;
+      })
+    );
+  };
+
   const renderDocumentoCard = (doc: DocumentoAcaoCampo, secaoId: string) => {
     if (doc.tipo === TipoDocumentoAcaoCampo.FIELD_ACTION_EFFECTIVENESS_PREENCHIVEL) {
       return (
@@ -440,6 +480,16 @@ export const AcaoCampoTab = () => {
           documento={doc}
           onSave={(dados) => handleSalvarFormulario(acaoSelecionada!.id, secaoId, doc.id, dados)}
           onGeneratePDF={() => handleGerarPDF(acaoSelecionada!.id, secaoId, doc.id)}
+        />
+      );
+    }
+    if (doc.tipo === TipoDocumentoAcaoCampo.NOTIFICACAO_ACAO_CAMPO_PREENCHIVEL) {
+      return (
+        <NotificacaoAcaoCampoCard
+          key={doc.id}
+          documento={doc}
+          onSave={(dados) => handleSalvarNotificacao(acaoSelecionada!.id, secaoId, doc.id, dados)}
+          onGeneratePDF={() => handleGerarPDFNotificacao(acaoSelecionada!.id, secaoId, doc.id)}
         />
       );
     }

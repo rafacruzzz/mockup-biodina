@@ -9,7 +9,8 @@ export enum TipoDocumentoAcaoCampo {
   FAC3 = 'fac3',
   PROTOCOLO_ABERTURA_ANVISA = 'protocolo_abertura_anvisa',
   PROTOCOLO_ENCERRAMENTO_ANVISA = 'protocolo_encerramento_anvisa',
-  ADICIONAL = 'adicional'
+  ADICIONAL = 'adicional',
+  NOTIFICACAO_ACAO_CAMPO_PREENCHIVEL = 'notificacao_acao_campo_preenchivel'
 }
 
 // Dados do Formulário Field Action Effectiveness
@@ -35,6 +36,99 @@ export interface AssinaturaDocumento {
   cargo?: string;
 }
 
+// Produto da Notificação
+export interface ProdutoNotificacao {
+  nomeComercial: string;
+  nomeTecnico: string;
+  registroNotificacao: string;
+  classeRisco: string;
+  codigoReferencia: string;
+  modelo: string;
+  loteSerie: string;
+}
+
+// Distribuição para outros países
+export interface DistribuicaoPais {
+  pais: string;
+  loteSerie: string;
+  quantidade: string;
+}
+
+// Plano de Ação
+export interface PlanoAcaoItem {
+  numero: number;
+  descricao: string;
+  inicio: string;
+  fim: string;
+  situacao: string;
+  observacoes: string;
+}
+
+// Dados do Formulário Notificação de Ação de Campo
+export interface NotificacaoAcaoCampoData {
+  // Aba 1 - Informações Gerais
+  cnpj: string;
+  razaoSocial: string;
+  endereco: string;
+  uf: string;
+  municipio: string;
+  responsavelNome: string;
+  responsavelCargo: string;
+  responsavelTelefone: string;
+  responsavelEmail: string;
+  dataInicioAcao: string;
+  codigoAcao: string;
+
+  // Aba 2 - Produto
+  tipoProduto: string;
+  produtos: ProdutoNotificacao[];
+  fabricanteNome: string;
+  fabricantePais: string;
+  fabricanteEndereco: string;
+  quantidadeTotalEnvolvidos: string;
+  quantidadeTotalComercializada: string;
+  quantidadeEstoque: string;
+  quantidadeImplantada: string;
+  tipoUnidadeInformada: string;
+  distribuicaoUsoResidencial: boolean;
+  distribuicaoImplantados: boolean;
+  distribuicaoServicoseSaude: boolean;
+  distribuicaoEstoqueFabricante: boolean;
+  distribuicaoUFs: string[];
+  distribuicaoPaises: DistribuicaoPais[];
+
+  // Aba 3 - Ação de Campo
+  classificacaoRisco: string;
+  classificacaoAcao: string[];
+  classificacaoAcaoOutraEspecificar: string;
+  destinacaoFinal: string;
+  destinacaoFinalOutraEspecificar: string;
+  enquadramento: string[];
+  enquadramentoOutraEspecificar: string;
+
+  // Aba 4 - Descrição do Problema
+  dataIdentificacaoProblema: string;
+  descricaoProblema: string;
+  avaliacaoRisco: string;
+  possiveisConsequencias: string;
+  recomendacaoUsuarios: string;
+  notificacoesNotivisa: boolean;
+  numerosNotificacoes: string;
+
+  // Aba 5 - Plano de Ação
+  planosAcao: PlanoAcaoItem[];
+
+  // Aba 6 - Observações
+  observacoes: string;
+  local: string;
+  data: string;
+  nomeLegivel: string;
+
+  // Metadata
+  pdfGerado?: boolean;
+  dataPdfGerado?: string;
+}
+
 // Documento de Ação de Campo
 export interface DocumentoAcaoCampo {
   id: string;
@@ -48,6 +142,7 @@ export interface DocumentoAcaoCampo {
   requerAssinatura: boolean;
   assinatura?: AssinaturaDocumento;
   dadosFormulario?: FieldActionEffectivenessData;
+  dadosNotificacao?: NotificacaoAcaoCampoData;
 }
 
 // Seção de Ação de Campo (NOVA)
