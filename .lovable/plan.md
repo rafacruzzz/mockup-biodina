@@ -1,45 +1,35 @@
 
 
-## Plano: Formulário preenchível "Sumário de Alerta" na Seção 2
+## Plano: Aprimorar Nova Conta a Pagar com pagamento efetuado, parcelamento, multa/juros/desconto e dados bancários
 
 ### Resumo
 
-Transformar o documento "Sumário de Alerta" (anv-6) da Seção 2 de um documento estático (ADICIONAL) em um documento preenchível com 22 campos, seguindo o mesmo padrão dos outros formulários (Preencher, Editar, Baixar).
+Adicionar ao modal "Nova Conta a Pagar" e à interface `ContaPagar`:
+1. Campo "Pagamento Efetuado" (Sim/Não) — se Não, campo para data futura do pagamento
+2. Dados bancários do pagamento (banco, agência, conta)
+3. Campos de multa, juros e desconto no valor total
+4. Opção pagamento único vs parcelado — se parcelado: número de parcelas, e para cada parcela: data, valor, multa, juros, desconto
+5. No calendário, exibir "Parcela X de Y" quando parcelado
 
-### Campos do formulário
+### Arquivos a modificar
 
-1. **Título** — textarea (padrão "Alerta XXXX...")
-2. **Identificação do produto** — textarea (separar por ponto-e-vírgula)
-3. **Local de distribuição do produto** — textarea (UFs)
-4. **Nome Comercial** — input texto
-5. **Nome Técnico** — input texto
-6. **Nº registro/notificação ANVISA** — input texto
-7. **Tipo de produto** — select (Equipamento médico, Material de uso em saúde, IVD, SaMD)
-8. **Classe de Risco** — select (I, II, III, IV)
-9. **Modelo/apresentação afetado** — input texto
-10. **Números de série/lote ou versão de software** — textarea
-11. **Problema** — textarea (max 1500 chars)
-12. **Data identificação do problema** — input date
-13. **Ação** — textarea
-14. **Histórico** — textarea
-15. **Empresa detentora do registro** — textarea (nome, CNPJ, endereço, telefone, e-mail)
-16. **Fabricante do produto** — textarea (nome, endereço, país)
-17. **Recomendações ao público-alvo** — textarea (max 1000 chars)
-18. **Anexos do alerta** — textarea
-19. **Link SISTEC** — input texto
-20. **Link Painéis Tecnovigilância** — input texto
-21. **Informações Complementares** — textarea
-22. **TAG/Descritores** — textarea
+1. **`src/types/financeiro.ts`**
+   - Adicionar à interface `ContaPagar`: `pagamentoEfetuado: boolean`, `dataPagamentoEfetuado?: Date`, `bancoPagamento?: string`, `agenciaPagamento?: string`, `contaPagamento?: string`, `multa?: number`, `juros?: number`, `desconto?: number`, `tipoPagamento: 'unico' | 'parcelado'`, `numeroParcelas?: number`, `parcelas?: ParcelaConta[]`
+   - Criar interface `ParcelaConta`: `numero: number`, `dataVencimento: Date`, `valor: number`, `multa?: number`, `juros?: number`, `desconto?: number`, `pago?: boolean`, `dataPagamento?: Date`
 
-### Arquivos a criar/modificar
+2. **`src/components/financeiro/NovaContaPagarModal.tsx`**
+   - Adicionar campo Switch/RadioGroup "Pagamento Efetuado" (Sim/Não)
+   - Se Não: mostrar date picker para data do pagamento
+   - Adicionar campos banco, agência, conta (inputs texto)
+   - Adicionar campos multa, juros, desconto (MoneyInput)
+   - Adicionar RadioGroup "Pagamento Único / Parcelado"
+   - Se parcelado: input número de parcelas + tabela dinâmica com colunas (Parcela, Data, Valor, Multa, Juros, Desconto) para cada parcela
+   - Ao alterar número de parcelas, gerar linhas automaticamente dividindo o valor total
 
-1. **`src/types/acaoCampo.ts`** — Adicionar enum `SUMARIO_ALERTA_PREENCHIVEL`, interface `SumarioAlertaData` com os 22 campos, adicionar `dadosSumarioAlerta?: SumarioAlertaData` ao `DocumentoAcaoCampo`
+3. **`src/components/financeiro/CalendarioVencimentos.tsx`**
+   - Na exibição das contas no calendário, quando a conta for parcelada, exibir "Parcela X de Y" na descrição
 
-2. **`src/components/administrativo/qualidade/SumarioAlertaForm.tsx`** (criar) — Formulário simples com os 22 campos, sem abas
-
-3. **`src/components/administrativo/qualidade/SumarioAlertaCard.tsx`** (criar) — Card com botões Preencher/Editar/Baixar, seguindo padrão do `PlanilhaAcaoCampoCard`
-
-4. **`src/data/acaoCampoData.ts`** — Alterar documento `anv-6` de `ADICIONAL` para `SUMARIO_ALERTA_PREENCHIVEL`, adicionar label no `tipoDocumentoLabels`
-
-5. **`src/components/administrativo/qualidade/AcaoCampoTab.tsx`** — Adicionar condição no `renderDocumentoCard` para `SUMARIO_ALERTA_PREENCHIVEL`, adicionar handlers `handleSalvarSumarioAlerta` e `handleGerarPDFSumarioAlerta`, importar novos componentes e tipos
+4. **`src/components/financeiro/PagarContaModal.tsx`**
+   - Adicionar campos multa, juros, desconto ao confirmar pagamento
+   - Adicionar campos banco, agência, conta
 
