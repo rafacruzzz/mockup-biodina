@@ -437,6 +437,7 @@ export interface ContaPagar {
   tipoPagamento: 'unico' | 'parcelado';
   numeroParcelas?: number;
   parcelas?: ParcelaConta[];
+  isRecorrente?: boolean; // flag para identificar contas recorrentes no calendário
 }
 
 // Simplified enums for the new modals
@@ -470,6 +471,39 @@ export interface ContaRecorrenteEnhanced extends Omit<ContaRecorrente, 'forneced
   formaPagamento: FormaPagamento;
   anexos?: string[];
   status: StatusConta;
+  // Campos herdados de ContaPagar
+  tipo?: TipoRequisicaoSimples;
+  departamentoSolicitante?: string;
+  vincularA?: 'projeto' | 'departamento';
+  projetoCliente?: string;
+  departamento?: string;
+  descricao?: string;
+  pagamentoEfetuado?: boolean;
+  dataPagamentoEfetuado?: Date;
+  bancoPagamento?: string;
+  agenciaPagamento?: string;
+  contaPagamento?: string;
+  multa?: number;
+  juros?: number;
+  desconto?: number;
+  alteracaoValor: boolean; // true = valor muda a cada mês (vem em branco)
+  isRecorrente?: boolean; // flag para identificar no calendário
+}
+
+// Interface para cada ocorrência mensal gerada de uma conta recorrente
+export interface OcorrenciaRecorrente {
+  id: string;
+  contaRecorrenteId: string;
+  dataVencimento: Date;
+  valor: number;
+  pago: boolean;
+  dataPagamento?: Date;
+  bancoPagamento?: string;
+  agenciaPagamento?: string;
+  contaPagamento?: string;
+  multa?: number;
+  juros?: number;
+  desconto?: number;
 }
 
 // Interface para alíquotas por estado
