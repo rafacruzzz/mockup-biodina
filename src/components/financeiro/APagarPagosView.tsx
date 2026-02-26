@@ -35,6 +35,11 @@ const APagarPagosView = () => {
   const [showEditarModal, setShowEditarModal] = useState(false);
   const [contaSelecionada, setContaSelecionada] = useState<ContaPagar | null>(null);
   const [contasPagas, setContasPagas] = useState<string[]>([]);
+  const [contasSalvas, setContasSalvas] = useState<ContaPagar[]>([]);
+
+  const handleUpdateContaCalendario = (contaId: string, updates: Partial<ContaPagar>) => {
+    setContasSalvas(prev => prev.map(c => c.id === contaId ? { ...c, ...updates } : c));
+  };
 
   const resumoGeral = {
     totalPendente: 47500.00,
@@ -414,7 +419,7 @@ const APagarPagosView = () => {
         </TabsContent>
 
         <TabsContent value="calendario" className="space-y-4">
-          <CalendarioVencimentos />
+          <CalendarioVencimentos contasSalvas={contasSalvas} onUpdateConta={handleUpdateContaCalendario} />
         </TabsContent>
 
         <TabsContent value="conciliacao" className="space-y-4">
@@ -467,8 +472,19 @@ const APagarPagosView = () => {
         isOpen={showNovaContaModal}
         onClose={() => setShowNovaContaModal(false)}
         onSave={(novaConta) => {
-          console.log('Nova conta criada:', novaConta);
-          // Aqui você adicionaria a lógica para salvar a conta
+          const contaCompleta: ContaPagar = {
+            ...(novaConta as any),
+            id: `CP-${Date.now()}`,
+            numero: `CP-${String(contasSalvas.length + 1).padStart(3, '0')}`,
+            status: 'programado' as any,
+            createdAt: new Date(),
+          };
+          setContasSalvas(prev => [...prev, contaCompleta]);
+          toast({
+            title: "Conta salva",
+            description: `Conta ${contaCompleta.numero} adicionada com sucesso.`,
+            className: "bg-green-50 border-green-200 text-green-800",
+          });
         }}
       />
 
