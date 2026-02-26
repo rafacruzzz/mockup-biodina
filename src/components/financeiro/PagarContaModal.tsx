@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { MoneyInput } from '@/components/ui/money-input';
 import { CalendarIcon, Upload, X, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -21,6 +22,12 @@ interface PagarContaModalProps {
     dataPagamento: Date;
     contaBancariaSaida: string;
     comprovante: File | null;
+    bancoPagamento?: string;
+    agenciaPagamento?: string;
+    contaPagamento?: string;
+    multa?: number;
+    juros?: number;
+    desconto?: number;
   }) => void;
 }
 
@@ -40,7 +47,13 @@ export const PagarContaModal: React.FC<PagarContaModalProps> = ({
   const [formData, setFormData] = useState({
     dataPagamento: new Date(),
     contaBancariaSaida: '',
-    comprovante: null as File | null
+    comprovante: null as File | null,
+    bancoPagamento: '',
+    agenciaPagamento: '',
+    contaPagamento: '',
+    multa: '',
+    juros: '',
+    desconto: ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -74,7 +87,13 @@ export const PagarContaModal: React.FC<PagarContaModalProps> = ({
         contaId: conta.id,
         dataPagamento: formData.dataPagamento,
         contaBancariaSaida: formData.contaBancariaSaida,
-        comprovante: formData.comprovante
+        comprovante: formData.comprovante,
+        bancoPagamento: formData.bancoPagamento || undefined,
+        agenciaPagamento: formData.agenciaPagamento || undefined,
+        contaPagamento: formData.contaPagamento || undefined,
+        multa: formData.multa ? parseFloat(formData.multa) / 100 : undefined,
+        juros: formData.juros ? parseFloat(formData.juros) / 100 : undefined,
+        desconto: formData.desconto ? parseFloat(formData.desconto) / 100 : undefined,
       });
       
       handleClose();
@@ -85,7 +104,13 @@ export const PagarContaModal: React.FC<PagarContaModalProps> = ({
     setFormData({
       dataPagamento: new Date(),
       contaBancariaSaida: '',
-      comprovante: null
+      comprovante: null,
+      bancoPagamento: '',
+      agenciaPagamento: '',
+      contaPagamento: '',
+      multa: '',
+      juros: '',
+      desconto: ''
     });
     setErrors({});
     onClose();
@@ -244,6 +269,68 @@ export const PagarContaModal: React.FC<PagarContaModalProps> = ({
                 )}
               </div>
               {errors.comprovante && <span className="text-sm text-destructive">{errors.comprovante}</span>}
+            </div>
+
+            {/* Dados Bancários */}
+            <div className="space-y-3">
+              <h4 className="font-medium text-sm">Dados Bancários do Pagamento</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Banco</Label>
+                  <Input
+                    value={formData.bancoPagamento}
+                    onChange={(e) => setFormData(prev => ({ ...prev, bancoPagamento: e.target.value }))}
+                    placeholder="Ex: 001 - Banco do Brasil"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Agência</Label>
+                  <Input
+                    value={formData.agenciaPagamento}
+                    onChange={(e) => setFormData(prev => ({ ...prev, agenciaPagamento: e.target.value }))}
+                    placeholder="Ex: 1234-5"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Conta</Label>
+                  <Input
+                    value={formData.contaPagamento}
+                    onChange={(e) => setFormData(prev => ({ ...prev, contaPagamento: e.target.value }))}
+                    placeholder="Ex: 12345-6"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Multa, Juros e Desconto */}
+            <div className="space-y-3">
+              <h4 className="font-medium text-sm">Multa, Juros e Desconto</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Multa</Label>
+                  <MoneyInput
+                    value={formData.multa}
+                    onChange={(value) => setFormData(prev => ({ ...prev, multa: value }))}
+                    currency="BRL"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Juros</Label>
+                  <MoneyInput
+                    value={formData.juros}
+                    onChange={(value) => setFormData(prev => ({ ...prev, juros: value }))}
+                    currency="BRL"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Desconto</Label>
+                  <MoneyInput
+                    value={formData.desconto}
+                    onChange={(value) => setFormData(prev => ({ ...prev, desconto: value }))}
+                    currency="BRL"
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Aviso importante */}

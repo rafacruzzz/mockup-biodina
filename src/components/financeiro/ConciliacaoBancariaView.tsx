@@ -34,7 +34,9 @@ const ConciliacaoBancariaView = () => {
       dataVencimento: new Date('2025-09-25'),
       formaPagamentoSugerida: FormaPagamento.PIX,
       status: StatusConta.PENDENTE,
-      createdAt: new Date()
+      createdAt: new Date(),
+      pagamentoEfetuado: false,
+      tipoPagamento: 'unico' as const
     },
     {
       id: 'CP-002',
@@ -50,7 +52,9 @@ const ConciliacaoBancariaView = () => {
       dataVencimento: new Date('2025-09-15'),
       formaPagamentoSugerida: FormaPagamento.BOLETO,
       status: StatusConta.VENCIDO,
-      createdAt: new Date()
+      createdAt: new Date(),
+      pagamentoEfetuado: false,
+      tipoPagamento: 'unico' as const
     },
     {
       id: 'CP-003',
@@ -66,7 +70,9 @@ const ConciliacaoBancariaView = () => {
       dataVencimento: new Date('2025-09-30'),
       formaPagamentoSugerida: FormaPagamento.DEBITO_AUTOMATICO,
       status: StatusConta.PROGRAMADO,
-      createdAt: new Date()
+      createdAt: new Date(),
+      pagamentoEfetuado: false,
+      tipoPagamento: 'unico' as const
     }
   ]);
   

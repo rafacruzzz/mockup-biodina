@@ -391,6 +391,18 @@ export const URGENCIA_COLORS: Record<UrgenciaVencimento, string> = {
   [UrgenciaVencimento.CRITICA]: 'bg-red-600 text-white'
 };
 
+// Interface para parcelas de pagamento
+export interface ParcelaConta {
+  numero: number;
+  dataVencimento: Date;
+  valor: number;
+  multa?: number;
+  juros?: number;
+  desconto?: number;
+  pago?: boolean;
+  dataPagamento?: Date;
+}
+
 // Simplified ContaPagar interface for the modals
 export interface ContaPagar {
   id: string;
@@ -413,6 +425,18 @@ export interface ContaPagar {
   contaBancariaSaida?: string;
   comprovantePagamento?: string;
   createdAt: Date;
+  // Novos campos de pagamento
+  pagamentoEfetuado: boolean;
+  dataPagamentoEfetuado?: Date;
+  bancoPagamento?: string;
+  agenciaPagamento?: string;
+  contaPagamento?: string;
+  multa?: number;
+  juros?: number;
+  desconto?: number;
+  tipoPagamento: 'unico' | 'parcelado';
+  numeroParcelas?: number;
+  parcelas?: ParcelaConta[];
 }
 
 // Simplified enums for the new modals

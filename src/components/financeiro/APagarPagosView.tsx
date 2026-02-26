@@ -218,7 +218,9 @@ const APagarPagosView = () => {
                               dataVencimento: new Date('2025-01-25'),
                               formaPagamentoSugerida: 'pix' as any,
                               status: 'pendente' as any,
-                              createdAt: new Date()
+                              createdAt: new Date(),
+                              pagamentoEfetuado: false,
+                              tipoPagamento: 'unico' as const
                             });
                             setShowVisualizarModal(true);
                           }}
@@ -243,7 +245,9 @@ const APagarPagosView = () => {
                               dataVencimento: new Date('2025-01-25'),
                               formaPagamentoSugerida: 'pix' as any,
                               status: 'pendente' as any,
-                              createdAt: new Date()
+                              createdAt: new Date(),
+                              pagamentoEfetuado: false,
+                              tipoPagamento: 'unico' as const
                             });
                             setShowPagarModal(true);
                           }}
@@ -289,7 +293,9 @@ const APagarPagosView = () => {
                               dataVencimento: new Date('2025-01-15'),
                               formaPagamentoSugerida: 'boleto' as any,
                               status: 'vencido' as any,
-                              createdAt: new Date()
+                              createdAt: new Date(),
+                              pagamentoEfetuado: false,
+                              tipoPagamento: 'unico' as const
                             });
                             setShowVisualizarModal(true);
                           }}
@@ -314,7 +320,9 @@ const APagarPagosView = () => {
                               dataVencimento: new Date('2025-01-15'),
                               formaPagamentoSugerida: 'boleto' as any,
                               status: 'vencido' as any,
-                              createdAt: new Date()
+                              createdAt: new Date(),
+                              pagamentoEfetuado: false,
+                              tipoPagamento: 'unico' as const
                             });
                             setShowPagarModal(true);
                           }}
@@ -360,7 +368,9 @@ const APagarPagosView = () => {
                               dataVencimento: new Date('2025-01-30'),
                               formaPagamentoSugerida: 'debito_automatico' as any,
                               status: 'programado' as any,
-                              createdAt: new Date()
+                              createdAt: new Date(),
+                              pagamentoEfetuado: false,
+                              tipoPagamento: 'unico' as const
                             });
                             setShowVisualizarModal(true);
                           }}
@@ -385,7 +395,9 @@ const APagarPagosView = () => {
                               dataVencimento: new Date('2025-01-30'),
                               formaPagamentoSugerida: 'debito_automatico' as any,
                               status: 'programado' as any,
-                              createdAt: new Date()
+                              createdAt: new Date(),
+                              pagamentoEfetuado: false,
+                              tipoPagamento: 'unico' as const
                             });
                             setShowEditarModal(true);
                           }}
