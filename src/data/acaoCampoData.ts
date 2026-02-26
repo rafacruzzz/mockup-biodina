@@ -11,7 +11,8 @@ export const tipoDocumentoLabels: Record<TipoDocumentoAcaoCampo, string> = {
   [TipoDocumentoAcaoCampo.PROTOCOLO_ABERTURA_ANVISA]: 'Protocolo de Abertura na Anvisa',
   [TipoDocumentoAcaoCampo.PROTOCOLO_ENCERRAMENTO_ANVISA]: 'Protocolo de Encerramento na Anvisa',
   [TipoDocumentoAcaoCampo.ADICIONAL]: 'Documento Adicional',
-  [TipoDocumentoAcaoCampo.NOTIFICACAO_ACAO_CAMPO_PREENCHIVEL]: 'Formulário de Notificação de Ação de Campo'
+  [TipoDocumentoAcaoCampo.NOTIFICACAO_ACAO_CAMPO_PREENCHIVEL]: 'Formulário de Notificação de Ação de Campo',
+  [TipoDocumentoAcaoCampo.PLANILHA_ACAO_CAMPO_PREENCHIVEL]: 'Planilha de Ação de Campo'
 };
 
 export const statusAcaoCampoLabels: Record<StatusAcaoCampo, string> = {
@@ -92,10 +93,8 @@ export const criarDocumentosEnvioAnvisa = (baseId: string): { documentos: Docume
     },
     {
       id: `${baseId}-anv-5`,
-      tipo: TipoDocumentoAcaoCampo.ADICIONAL,
+      tipo: TipoDocumentoAcaoCampo.PLANILHA_ACAO_CAMPO_PREENCHIVEL,
       nome: 'Planilha de Ação de Campo',
-      nomeOriginal: 'Acao-de-Campo-915-428-ABL800-pH-Distribuicao.pdf',
-      url: '/documents/Acao-de-Campo-915-428-ABL800-pH-Distribuicao.pdf',
       requerAssinatura: false
     },
     {

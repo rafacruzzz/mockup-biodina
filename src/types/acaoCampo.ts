@@ -10,7 +10,8 @@ export enum TipoDocumentoAcaoCampo {
   PROTOCOLO_ABERTURA_ANVISA = 'protocolo_abertura_anvisa',
   PROTOCOLO_ENCERRAMENTO_ANVISA = 'protocolo_encerramento_anvisa',
   ADICIONAL = 'adicional',
-  NOTIFICACAO_ACAO_CAMPO_PREENCHIVEL = 'notificacao_acao_campo_preenchivel'
+  NOTIFICACAO_ACAO_CAMPO_PREENCHIVEL = 'notificacao_acao_campo_preenchivel',
+  PLANILHA_ACAO_CAMPO_PREENCHIVEL = 'planilha_acao_campo_preenchivel'
 }
 
 // Dados do Formulário Field Action Effectiveness
@@ -129,6 +130,22 @@ export interface NotificacaoAcaoCampoData {
   dataPdfGerado?: string;
 }
 
+// Dados do Formulário Planilha de Ação de Campo
+export interface PlanilhaAcaoCampoData {
+  clienteId: string;
+  clienteNome: string;
+  uf: string;
+  modelo: string;
+  nsLote: string;
+  setor: string;
+  email: string;
+  telefone: string;
+  versaoWindows: string;
+  versaoSoftware: string;
+  pdfGerado?: boolean;
+  dataPdfGerado?: string;
+}
+
 // Documento de Ação de Campo
 export interface DocumentoAcaoCampo {
   id: string;
@@ -143,6 +160,7 @@ export interface DocumentoAcaoCampo {
   assinatura?: AssinaturaDocumento;
   dadosFormulario?: FieldActionEffectivenessData;
   dadosNotificacao?: NotificacaoAcaoCampoData;
+  dadosPlanilha?: PlanilhaAcaoCampoData;
 }
 
 // Seção de Ação de Campo (NOVA)
