@@ -1,445 +1,390 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, ChevronRight, Calendar, DollarSign } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
+import { ChevronLeft, ChevronRight, Calendar, DollarSign, CalendarIcon, Building2 } from "lucide-react";
+import { ContaPagar } from "@/types/financeiro";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 import DetalhesContaModal from "./DetalhesContaModal";
 
-// Mock data enriquecido com exemplos de diferentes setores e tipos de solicitação
-const vencimentosCalendario = [
+interface CalendarContaItem {
+  contaId: string;
+  conta: ContaPagar;
+  parcelaIndex?: number; // undefined = pagamento único
+  descricao: string;
+  valor: number;
+  dataVencimento: Date;
+  parcelaLabel?: string; // "Parcela 1 de 3"
+}
+
+interface CalendarioVencimentosProps {
+  contasSalvas?: ContaPagar[];
+  onUpdateConta?: (contaId: string, updates: Partial<ContaPagar>) => void;
+}
+
+// Mock data fallback
+const mockContas: ContaPagar[] = [
   {
-    id: 1,
-    data: "terça-feira, 3 de setembro",
-    dataObj: new Date(2025, 8, 3),
-    contas: [
-      {
-        id: "CP-001",
-        descricao: "Aquisição de materiais - Projeto Alpha",
-        valor: 15000.00,
-        fornecedor: "Distribuidora ABC Ltda",
-        status: "normal",
-        tipo: "suprimentos",
-        origem: "Chamado Comercial #CH-2025-045",
-        setor: "Comercial",
-        solicitante: "João Oliveira",
-        parcelaAtual: 1,
-        totalParcelas: 2,
-        detalhes: {
-          projeto: "Projeto Alpha - Cliente XYZ Corp",
-          justificativa: "Materiais necessários para conclusão da fase 2 do projeto",
-          urgencia: "Alta - impacta cronograma de entrega",
-          aprovacao: "Aguardando aprovação do gestor comercial"
-        }
-      }
+    id: 'mock-001',
+    empresaId: 'biodina-001',
+    numero: 'CP-001',
+    tipo: 'compra' as any,
+    departamentoSolicitante: 'Comercial',
+    vincularA: 'projeto',
+    projetoCliente: 'Projeto Alpha - Cliente XYZ',
+    fornecedor: 'Distribuidora ABC Ltda',
+    descricao: 'Aquisição de materiais - Projeto Alpha',
+    valor: 30000,
+    dataVencimento: new Date(2025, 8, 3),
+    formaPagamentoSugerida: 'boleto' as any,
+    status: 'pendente' as any,
+    createdAt: new Date(),
+    pagamentoEfetuado: false,
+    tipoPagamento: 'parcelado',
+    numeroParcelas: 2,
+    parcelas: [
+      { numero: 1, dataVencimento: new Date(2025, 8, 3), valor: 15000 },
+      { numero: 2, dataVencimento: new Date(2025, 9, 3), valor: 15000 },
     ],
-    totalValor: 15000.00,
-    totalContas: 1
+    anexos: ['boleto_001.pdf', 'nota_fiscal_001.pdf'],
   },
   {
-    id: 2,
-    data: "sexta-feira, 6 de setembro", 
-    dataObj: new Date(2025, 8, 6),
-    contas: [
-      {
-        id: "CP-002",
-        descricao: "Curso capacitação técnica - RH",
-        valor: 3200.00,
-        fornecedor: "Instituto Profissionalizante",
-        status: "normal",
-        tipo: "treinamento",
-        origem: "Solicitação Interna RH",
-        setor: "Recursos Humanos",
-        solicitante: "Maria Silva",
-        detalhes: {
-          beneficiados: "5 colaboradores da produção",
-          justificativa: "Atualização em novas tecnologias de processo",
-          periodo: "3 dias - 15 a 17 de setembro",
-          local: "Presencial - São Paulo"
-        }
-      }
-    ],
-    totalValor: 3200.00,
-    totalContas: 1
+    id: 'mock-002',
+    empresaId: 'biodina-001',
+    numero: 'CP-002',
+    tipo: 'outros' as any,
+    departamentoSolicitante: 'RH',
+    vincularA: 'departamento',
+    departamento: 'RH',
+    fornecedor: 'Instituto Profissionalizante',
+    descricao: 'Curso capacitação técnica - RH',
+    valor: 3200,
+    dataVencimento: new Date(2025, 8, 6),
+    formaPagamentoSugerida: 'pix' as any,
+    status: 'pendente' as any,
+    createdAt: new Date(),
+    pagamentoEfetuado: false,
+    tipoPagamento: 'unico',
   },
   {
-    id: 3,
-    data: "segunda-feira, 9 de setembro",
-    dataObj: new Date(2025, 8, 9),
-    contas: [
-      {
-        id: "CP-003",
-        descricao: "Passagem aérea - Projeto Beta",
-        valor: 2800.00,
-        fornecedor: "Agência de Viagens",
-        status: "aprovado",
-        tipo: "passagem",
-        origem: "Chamado Comercial #CH-2025-051",
-        setor: "Comercial",
-        solicitante: "Ana Santos",
-        detalhes: {
-          destino: "Rio de Janeiro - Reunião com cliente",
-          periodo: "12 a 14 de setembro",
-          projeto: "Projeto Beta - Expansão Sul",
-          aprovacao: "Aprovado pelo gestor comercial e financeiro"
-        }
-      },
-      {
-        id: "CP-004",
-        descricao: "Licenças Office 365 - TI",
-        valor: 1500.00,
-        fornecedor: "Microsoft Brasil",
-        status: "recorrente",
-        tipo: "software",
-        origem: "Conta Recorrente",
-        setor: "Tecnologia da Informação",
-        solicitante: "Pedro Costa",
-        detalhes: {
-          usuarios: "25 licenças mensais",
-          renovacao: "Automática",
-          categoria: "Software essencial",
-          proximoVencimento: "9 de outubro"
-        }
-      }
-    ],
-    totalValor: 4300.00,
-    totalContas: 2
+    id: 'mock-003',
+    empresaId: 'biodina-001',
+    numero: 'CP-003',
+    tipo: 'passagem' as any,
+    departamentoSolicitante: 'Comercial',
+    vincularA: 'projeto',
+    projetoCliente: 'Projeto Beta',
+    fornecedor: 'Agência de Viagens',
+    descricao: 'Passagem aérea - Projeto Beta',
+    valor: 2800,
+    dataVencimento: new Date(2025, 8, 9),
+    formaPagamentoSugerida: 'cartao_credito' as any,
+    status: 'programado' as any,
+    createdAt: new Date(),
+    pagamentoEfetuado: true,
+    tipoPagamento: 'unico',
+    bancoPagamento: 'Banco do Brasil',
+    agenciaPagamento: '1234',
+    contaPagamento: '56789-0',
   },
   {
-    id: 4,
-    data: "quinta-feira, 12 de setembro",
-    dataObj: new Date(2025, 8, 12),
-    contas: [
-      {
-        id: "CP-005",
-        descricao: "Manutenção equipamento A1 - Produção",
-        valor: 4500.00,
-        fornecedor: "TecnoMec Manutenção",
-        status: "urgente",
-        tipo: "manutencao",
-        origem: "Chamado Técnico #CH-2025-038",
-        setor: "Produção",
-        solicitante: "Carlos Mendes",
-        detalhes: {
-          equipamento: "Linha de produção A1",
-          problema: "Falha no sistema hidráulico",
-          impacto: "Parada total da linha - perdas diárias de R$ 25.000",
-          prazo: "Manutenção emergencial - 48h máximo"
-        }
-      }
-    ],
-    totalValor: 4500.00,
-    totalContas: 1
+    id: 'mock-004',
+    empresaId: 'biodina-001',
+    numero: 'CP-004',
+    tipo: 'outros' as any,
+    departamentoSolicitante: 'TI',
+    vincularA: 'departamento',
+    departamento: 'TI',
+    fornecedor: 'Microsoft Brasil',
+    descricao: 'Licenças Office 365 - TI',
+    valor: 1500,
+    dataVencimento: new Date(2025, 8, 9),
+    formaPagamentoSugerida: 'debito_automatico' as any,
+    status: 'programado' as any,
+    createdAt: new Date(),
+    pagamentoEfetuado: false,
+    tipoPagamento: 'unico',
   },
   {
-    id: 5,
-    data: "domingo, 15 de setembro",
-    dataObj: new Date(2025, 8, 15),
-    contas: [
-      {
-        id: "CP-006",
-        descricao: "Aluguel - Galpão Produção",
-        valor: 12000.00,
-        fornecedor: "Imobiliária XYZ Ltda",
-        status: "recorrente",
-        tipo: "aluguel",
-        origem: "Conta Recorrente",
-        setor: "Administração",
-        solicitante: "Sistema Automático",
-        detalhes: {
-          contrato: "Aluguel galpão principal",
-          area: "2.500m² - Zona Industrial",
-          vigencia: "Contrato até dezembro/2025",
-          reajuste: "Próximo reajuste: janeiro/2026"
-        }
-      }
-    ],
-    totalValor: 12000.00,
-    totalContas: 1
+    id: 'mock-005',
+    empresaId: 'biodina-001',
+    numero: 'CP-005',
+    tipo: 'outros' as any,
+    departamentoSolicitante: 'Produção',
+    vincularA: 'departamento',
+    departamento: 'Produção',
+    fornecedor: 'TecnoMec Manutenção',
+    descricao: 'Manutenção equipamento A1 - Produção',
+    valor: 4500,
+    dataVencimento: new Date(2025, 8, 12),
+    formaPagamentoSugerida: 'boleto' as any,
+    status: 'vencido' as any,
+    createdAt: new Date(),
+    pagamentoEfetuado: false,
+    tipoPagamento: 'unico',
+    anexos: ['orcamento_manutencao.pdf'],
   },
-  {
-    id: 6,
-    data: "quarta-feira, 18 de setembro",
-    dataObj: new Date(2025, 8, 18),
-    contas: [
-      {
-        id: "CP-007",
-        descricao: "Auditoria ISO 9001 - Qualidade",
-        valor: 8500.00,
-        fornecedor: "QualityCert Consultoria",
-        status: "normal",
-        tipo: "consultoria",
-        origem: "Solicitação Qualidade",
-        setor: "Qualidade",
-        solicitante: "Regina Oliveira",
-        detalhes: {
-          servico: "Auditoria para renovação ISO 9001",
-          prazo: "15 dias - inclui relatório final",
-          importancia: "Certificação obrigatória para manter contratos",
-          historico: "Última auditoria: setembro/2023"
-        }
-      },
-      {
-        id: "CP-008",
-        descricao: "Material promocional - Marketing",
-        valor: 2800.00,
-        fornecedor: "Gráfica Digital Plus",
-        status: "normal",
-        tipo: "marketing",
-        origem: "Chamado Comercial #CH-2025-053",
-        setor: "Comercial",
-        solicitante: "Lucia Fernandes",
-        detalhes: {
-          evento: "Feira Industrial São Paulo",
-          itens: "Banners, folders, brindes personalizados",
-          prazo: "Entrega até 25 de setembro",
-          aprovacao: "Aguardando aprovação da arte final"
-        }
-      }
-    ],
-    totalValor: 11300.00,
-    totalContas: 2
-  },
-  {
-    id: 7,
-    data: "sábado, 21 de setembro",
-    dataObj: new Date(2025, 8, 21),
-    contas: [
-      {
-        id: "CP-009",
-        descricao: "Telecomunicações - Pacote Completo",
-        valor: 1200.00,
-        fornecedor: "TelecomBR",
-        status: "recorrente",
-        tipo: "telecom",
-        origem: "Conta Recorrente",
-        setor: "Administração",
-        solicitante: "Sistema Automático",
-        detalhes: {
-          servicos: "Internet, telefonia fixa e móvel",
-          plano: "Empresarial 500MB + 20 linhas móveis",
-          vencimento: "Todo dia 21",
-          contrato: "Vigente até agosto/2026"
-        }
-      }
-    ],
-    totalValor: 1200.00,
-    totalContas: 1
-  },
-  {
-    id: 8,
-    data: "terça-feira, 24 de setembro",
-    dataObj: new Date(2025, 8, 24),
-    contas: [
-      {
-        id: "CP-010",
-        descricao: "Assessoria jurídica - Contratos",
-        valor: 5500.00,
-        fornecedor: "Advocacia Silva & Associados",
-        status: "normal",
-        tipo: "juridico",
-        origem: "Solicitação Diretoria",
-        setor: "Jurídico",
-        solicitante: "Director Executivo",
-        detalhes: {
-          servico: "Revisão de contratos comerciais complexos",
-          quantidade: "5 contratos de grande porte",
-          prazo: "20 dias úteis",
-          importancia: "Contratos acima de R$ 500mil cada"
-        }
-      }
-    ],
-    totalValor: 5500.00,
-    totalContas: 1
-  },
-  {
-    id: 9,
-    data: "sexta-feira, 27 de setembro",
-    dataObj: new Date(2025, 8, 27),
-    contas: [
-      {
-        id: "CP-011",
-        descricao: "Combustível frota - Logística",
-        valor: 3200.00,
-        fornecedor: "Posto Rodoviário Ltda",
-        status: "normal",
-        tipo: "combustivel",
-        origem: "Solicitação Logística",
-        setor: "Logística",
-        solicitante: "Roberto Lima",
-        detalhes: {
-          finalidade: "Abastecimento frota de entregas",
-          periodo: "Quinzena 15-30 de setembro",
-          veiculos: "8 veículos de entrega",
-          controle: "Cartão combustível com limite mensal"
-        }
-      },
-      {
-        id: "CP-012",
-        descricao: "Hospedagem equipe - Projeto Gamma",
-        valor: 1800.00,
-        fornecedor: "Hotel Business Center",
-        status: "aprovado",
-        tipo: "hospedagem",
-        origem: "Chamado Comercial #CH-2025-061",
-        setor: "Comercial",
-        solicitante: "Fernando Souza",
-        detalhes: {
-          destino: "Belo Horizonte - Instalação equipamentos",
-          periodo: "3 diárias - 30 de setembro a 2 de outubro",
-          equipe: "2 técnicos + 1 supervisor",
-          projeto: "Projeto Gamma - Cliente MG Solutions"
-        }
-      }
-    ],
-    totalValor: 5000.00,
-    totalContas: 2
-  }
 ];
 
-const CalendarioVencimentos = () => {
+const CalendarioVencimentos = ({ contasSalvas, onUpdateConta }: CalendarioVencimentosProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedConta, setSelectedConta] = useState(null);
+  const [selectedContaDetalhes, setSelectedContaDetalhes] = useState<ContaPagar | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleContaClick = (conta: any) => {
-    setSelectedConta(conta);
+  const contas = contasSalvas && contasSalvas.length > 0 ? contasSalvas : mockContas;
+
+  // Flatten contas into calendar items (one per parcela or one per conta única)
+  const calendarItems = useMemo(() => {
+    const items: CalendarContaItem[] = [];
+    contas.forEach(conta => {
+      if (conta.tipoPagamento === 'parcelado' && conta.parcelas && conta.parcelas.length > 0) {
+        conta.parcelas.forEach((parcela, idx) => {
+          items.push({
+            contaId: conta.id,
+            conta,
+            parcelaIndex: idx,
+            descricao: conta.descricao,
+            valor: parcela.valor,
+            dataVencimento: new Date(parcela.dataVencimento),
+            parcelaLabel: `Parcela ${parcela.numero} de ${conta.numeroParcelas || conta.parcelas!.length}`,
+          });
+        });
+      } else {
+        items.push({
+          contaId: conta.id,
+          conta,
+          descricao: conta.descricao,
+          valor: conta.valor,
+          dataVencimento: new Date(conta.dataVencimento),
+        });
+      }
+    });
+    return items;
+  }, [contas]);
+
+  const handleContaClick = (item: CalendarContaItem) => {
+    setSelectedContaDetalhes(item.conta);
     setIsModalOpen(true);
   };
 
+  const handlePagoNaData = (contaId: string, pago: boolean) => {
+    if (onUpdateConta) {
+      onUpdateConta(contaId, {
+        pagamentoEfetuado: pago,
+        dataPagamentoEfetuado: pago ? new Date() : undefined,
+      });
+    }
+  };
+
+  const handleDataPagamento = (contaId: string, date: Date | undefined) => {
+    if (onUpdateConta && date) {
+      onUpdateConta(contaId, { dataPagamentoEfetuado: date });
+    }
+  };
+
+  const handleBancoChange = (contaId: string, field: 'bancoPagamento' | 'agenciaPagamento' | 'contaPagamento', value: string) => {
+    if (onUpdateConta) {
+      onUpdateConta(contaId, { [field]: value });
+    }
+  };
+
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);  
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
-  const nextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+  const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+  const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+  const getMonthName = () => currentMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+
+  const getStatusColor = (conta: ContaPagar) => {
+    if (conta.pagamentoEfetuado) return { bg: 'hsl(var(--chart-2) / 0.1)', border: 'hsl(var(--chart-2) / 0.3)' };
+    if (conta.status === 'vencido') return { bg: 'hsl(var(--destructive) / 0.1)', border: 'hsl(var(--destructive) / 0.3)' };
+    return { bg: 'hsl(var(--primary) / 0.1)', border: 'hsl(var(--primary) / 0.3)' };
   };
 
-  const prevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+  const getStatusBadge = (conta: ContaPagar) => {
+    if (conta.pagamentoEfetuado) return { label: 'PAGO', className: 'bg-green-100 text-green-700 border-green-200' };
+    if (conta.status === 'vencido') return { label: 'VENC', className: 'bg-red-100 text-red-700 border-red-200' };
+    if (conta.status === 'programado') return { label: 'PROG', className: 'bg-blue-100 text-blue-700 border-blue-200' };
+    return { label: 'PEN', className: 'bg-orange-100 text-orange-700 border-orange-200' };
   };
 
-  const getMonthName = () => {
-    return currentMonth.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-  };
-
-  // Funções para estilização das contas
-  const getTipoIcon = (tipo: string) => {
-    switch (tipo) {
-      case 'suprimentos': return '📦';
-      case 'passagem': return '✈️';
-      case 'hospedagem': return '🏨';
-      case 'treinamento': return '🎓';
-      case 'software': return '💻';
-      case 'manutencao': return '🔧';
-      case 'aluguel': return '🏢';
-      case 'consultoria': return '👥';
-      case 'marketing': return '📢';
-      case 'telecom': return '📞';
-      case 'juridico': return '⚖️';
-      case 'combustivel': return '⛽';
-      default: return '📄';
-    }
-  };
-
-  const getContaBackgroundColor = (status: string, tipo: string) => {
-    if (status === 'urgente') return 'hsl(var(--destructive) / 0.1)';
-    if (status === 'aprovado') return 'hsl(var(--chart-2) / 0.1)';
-    if (status === 'recorrente') return 'hsl(var(--chart-3) / 0.1)';
-    return 'hsl(var(--primary) / 0.1)';
-  };
-
-  const getContaBorderColor = (status: string, tipo: string) => {
-    if (status === 'urgente') return 'hsl(var(--destructive) / 0.3)';
-    if (status === 'aprovado') return 'hsl(var(--chart-2) / 0.3)';
-    if (status === 'recorrente') return 'hsl(var(--chart-3) / 0.3)';
-    return 'hsl(var(--primary) / 0.3)';
-  };
-
-  const getStatusBadgeStyle = (status: string) => {
-    switch (status) {
-      case 'urgente': return 'bg-red-100 text-red-700 border-red-200';
-      case 'aprovado': return 'bg-green-100 text-green-700 border-green-200';
-      case 'recorrente': return 'bg-purple-100 text-purple-700 border-purple-200';
-      default: return 'bg-blue-100 text-blue-700 border-blue-200';
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'urgente': return 'URG';
-      case 'aprovado': return 'APR';
-      case 'recorrente': return 'REC';
-      default: return 'PEN';
-    }
-  };
-
-  // Função para gerar a grade do calendário
   const generateCalendarGrid = () => {
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
-    
-    // Primeiro dia do mês
     const firstDay = new Date(year, month, 1);
-    // Último dia do mês
     const lastDay = new Date(year, month + 1, 0);
-    
-    // Dia da semana do primeiro dia (0-6, domingo = 0)
     const startingDayOfWeek = firstDay.getDay();
-    // Quantos dias tem o mês
     const daysInMonth = lastDay.getDate();
-    
-    const calendarDays = [];
-    
-    // Adicionar dias do mês anterior para completar a primeira semana
-    const prevMonth = new Date(year, month - 1, 0);
-    const daysInPrevMonth = prevMonth.getDate();
-    
+    const calendarDays: { day: number; date: Date; isCurrentMonth: boolean; items: CalendarContaItem[] }[] = [];
+
+    const prev = new Date(year, month - 1, 0);
+    const daysInPrevMonth = prev.getDate();
     for (let i = startingDayOfWeek - 1; i >= 0; i--) {
       const day = daysInPrevMonth - i;
-      calendarDays.push({
-        day,
-        date: new Date(year, month - 1, day),
-        isCurrentMonth: false,
-        vencimentos: []
-      });
+      calendarDays.push({ day, date: new Date(year, month - 1, day), isCurrentMonth: false, items: [] });
     }
-    
-    // Adicionar dias do mês atual
+
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
-      const vencimentos = vencimentosCalendario.filter(v => 
-        v.dataObj.getDate() === day && 
-        v.dataObj.getMonth() === month && 
-        v.dataObj.getFullYear() === year
-      );
-      
-      calendarDays.push({
-        day,
-        date,
-        isCurrentMonth: true,
-        vencimentos
+      const dayItems = calendarItems.filter(item => {
+        const d = item.dataVencimento;
+        return d.getDate() === day && d.getMonth() === month && d.getFullYear() === year;
       });
+      calendarDays.push({ day, date, isCurrentMonth: true, items: dayItems });
     }
-    
-    // Adicionar dias do próximo mês para completar a grade
-    const remainingDays = 42 - calendarDays.length; // 6 semanas * 7 dias
+
+    const remainingDays = 42 - calendarDays.length;
     for (let day = 1; day <= remainingDays; day++) {
-      calendarDays.push({
-        day,
-        date: new Date(year, month + 1, day),
-        isCurrentMonth: false,
-        vencimentos: []
-      });
+      calendarDays.push({ day, date: new Date(year, month + 1, day), isCurrentMonth: false, items: [] });
     }
-    
     return calendarDays;
   };
 
   const calendarDays = generateCalendarGrid();
   const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+  // Inline controls for a specific conta (shown in popover)
+  const InlineControls = ({ item }: { item: CalendarContaItem }) => {
+    const conta = item.conta;
+    const colors = getStatusColor(conta);
+    const badge = getStatusBadge(conta);
+    
+    return (
+      <Popover>
+        <PopoverTrigger asChild>
+          <div
+            className="text-xs rounded p-1.5 cursor-pointer transition-colors border hover:shadow-sm"
+            style={{ backgroundColor: colors.bg, borderColor: colors.border }}
+          >
+            <div className="font-medium truncate text-foreground text-[10px]" title={item.descricao}>
+              {item.descricao.length > 18 ? item.descricao.substring(0, 18) + '...' : item.descricao}
+            </div>
+            {item.parcelaLabel && (
+              <div className="text-[8px] font-semibold text-primary">{item.parcelaLabel}</div>
+            )}
+            <div className="flex items-center justify-between mt-0.5">
+              <span className="font-semibold text-foreground text-[10px]">{formatCurrency(item.valor)}</span>
+              <Badge variant="outline" className={`text-[8px] px-1 py-0 h-3 ${badge.className}`}>
+                {badge.label}
+              </Badge>
+            </div>
+            <div className="text-[8px] text-muted-foreground truncate mt-0.5">
+              {conta.fornecedor.length > 15 ? conta.fornecedor.substring(0, 15) + '...' : conta.fornecedor}
+            </div>
+          </div>
+        </PopoverTrigger>
+        <PopoverContent className="w-80 p-4 z-50" align="start" side="right">
+          <div className="space-y-3">
+            {/* Header */}
+            <div>
+              <h4 className="font-semibold text-sm">{conta.descricao}</h4>
+              <p className="text-xs text-muted-foreground">{conta.fornecedor} • {conta.numero}</p>
+              {item.parcelaLabel && (
+                <Badge variant="outline" className="text-xs mt-1 text-primary border-primary">{item.parcelaLabel}</Badge>
+              )}
+              <p className="text-sm font-bold mt-1">{formatCurrency(item.valor)}</p>
+            </div>
+
+            {/* Anexos link */}
+            {conta.anexos && conta.anexos.length > 0 && (
+              <div>
+                <Label className="text-xs font-medium text-muted-foreground">Anexos ({conta.anexos.length})</Label>
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="p-0 h-auto text-xs"
+                  onClick={(e) => { e.stopPropagation(); handleContaClick(item); }}
+                >
+                  Ver documentos anexados →
+                </Button>
+              </div>
+            )}
+
+            {/* Pago na data */}
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={conta.pagamentoEfetuado}
+                onCheckedChange={(checked) => handlePagoNaData(conta.id, checked)}
+              />
+              <Label className="text-xs">Pago na data</Label>
+            </div>
+
+            {/* Data do pagamento (se não pago na data) */}
+            {!conta.pagamentoEfetuado && (
+              <div>
+                <Label className="text-xs font-medium text-muted-foreground">Data do pagamento</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={cn("w-full justify-start text-left text-xs h-8", !conta.dataPagamentoEfetuado && "text-muted-foreground")}
+                    >
+                      <CalendarIcon className="h-3 w-3 mr-1" />
+                      {conta.dataPagamentoEfetuado ? format(new Date(conta.dataPagamentoEfetuado), "dd/MM/yyyy") : "Selecionar data"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 z-[60]" align="start">
+                    <CalendarPicker
+                      mode="single"
+                      selected={conta.dataPagamentoEfetuado ? new Date(conta.dataPagamentoEfetuado) : undefined}
+                      onSelect={(date) => handleDataPagamento(conta.id, date)}
+                      className="p-3 pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            )}
+
+            {/* Dados bancários */}
+            <div className="space-y-2">
+              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                <Building2 className="h-3 w-3" /> Dados bancários do pagamento
+              </Label>
+              <Input
+                placeholder="Banco"
+                className="h-7 text-xs"
+                value={conta.bancoPagamento || ''}
+                onChange={(e) => handleBancoChange(conta.id, 'bancoPagamento', e.target.value)}
+              />
+              <div className="grid grid-cols-2 gap-2">
+                <Input
+                  placeholder="Agência"
+                  className="h-7 text-xs"
+                  value={conta.agenciaPagamento || ''}
+                  onChange={(e) => handleBancoChange(conta.id, 'agenciaPagamento', e.target.value)}
+                />
+                <Input
+                  placeholder="Conta"
+                  className="h-7 text-xs"
+                  value={conta.contaPagamento || ''}
+                  onChange={(e) => handleBancoChange(conta.id, 'contaPagamento', e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* Botão ver detalhes completos */}
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full text-xs"
+              onClick={(e) => { e.stopPropagation(); handleContaClick(item); }}
+            >
+              Ver detalhes completos
+            </Button>
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  };
 
   return (
     <Card className="shadow-lg">
@@ -450,102 +395,49 @@ const CalendarioVencimentos = () => {
             Calendário de Vencimentos
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={prevMonth}
-            >
+            <Button variant="outline" size="sm" onClick={prevMonth}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <span className="text-lg font-semibold min-w-48 text-center capitalize">
-              {getMonthName()}
-            </span>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={nextMonth}
-            >
+            <span className="text-lg font-semibold min-w-48 text-center capitalize">{getMonthName()}</span>
+            <Button variant="outline" size="sm" onClick={nextMonth}>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </CardHeader>
       <CardContent className="p-4">
-        {/* Cabeçalho com dias da semana */}
         <div className="grid grid-cols-7 gap-1 mb-2">
           {weekDays.map((day) => (
-            <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">
-              {day}
-            </div>
+            <div key={day} className="text-center text-sm font-medium text-muted-foreground py-2">{day}</div>
           ))}
         </div>
-        
-        {/* Grade do calendário */}
+
         <div className="grid grid-cols-7 gap-1">
           {calendarDays.map((calendarDay, index) => (
             <div
               key={index}
               className={`min-h-[120px] border rounded-lg p-2 ${
-                calendarDay.isCurrentMonth 
-                  ? 'bg-background border-border hover:bg-accent/5' 
+                calendarDay.isCurrentMonth
+                  ? 'bg-background border-border hover:bg-accent/5'
                   : 'bg-muted/30 border-muted text-muted-foreground'
               }`}
             >
-              {/* Número do dia */}
-              <div className={`text-sm font-medium mb-1 ${
-                calendarDay.isCurrentMonth ? 'text-foreground' : 'text-muted-foreground'
-              }`}>
+              <div className={`text-sm font-medium mb-1 ${calendarDay.isCurrentMonth ? 'text-foreground' : 'text-muted-foreground'}`}>
                 {calendarDay.day}
+                {calendarDay.items.length > 0 && (
+                  <Badge variant="secondary" className="ml-1 text-[8px] px-1 py-0 h-3">
+                    {calendarDay.items.length}
+                  </Badge>
+                )}
               </div>
-              
-              {/* Vencimentos do dia */}
+
               <div className="space-y-1">
-                {calendarDay.vencimentos.slice(0, 3).map((vencimento) => (
-                  <div key={vencimento.id} className="space-y-1">
-                    {vencimento.contas.map((conta) => (
-                      <div
-                        key={conta.id}
-                        className="text-xs rounded p-1.5 cursor-pointer transition-colors border hover:shadow-sm"
-                        style={{
-                          backgroundColor: getContaBackgroundColor(conta.status, conta.tipo),
-                          borderColor: getContaBorderColor(conta.status, conta.tipo)
-                        }}
-                        onClick={() => handleContaClick(conta)}
-                      >
-                        <div className="flex items-start gap-1 mb-1">
-                          <span className="text-xs">{getTipoIcon(conta.tipo)}</span>
-                          <div className="font-medium truncate text-foreground" title={conta.descricao}>
-                            {conta.descricao.length > 18 ? conta.descricao.substring(0, 18) + '...' : conta.descricao}
-                          </div>
-                        </div>
-                        {(conta as any).parcelaAtual && (conta as any).totalParcelas && (
-                          <div className="text-[8px] font-semibold text-primary">
-                            Parcela {(conta as any).parcelaAtual} de {(conta as any).totalParcelas}
-                          </div>
-                        )}
-                        <div className="flex items-center justify-between mt-0.5">
-                          <span className="font-semibold text-foreground text-[10px]">
-                            {formatCurrency(conta.valor)}
-                          </span>
-                          <Badge 
-                            variant="outline"
-                            className={`text-[8px] px-1 py-0 h-3 ${getStatusBadgeStyle(conta.status)}`}
-                          >
-                            {getStatusLabel(conta.status)}
-                          </Badge>
-                        </div>
-                        <div className="text-[8px] text-muted-foreground truncate mt-0.5" title={conta.setor}>
-                          {conta.setor} • {conta.fornecedor.length > 12 ? conta.fornecedor.substring(0, 12) + '...' : conta.fornecedor}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                {calendarDay.items.slice(0, 3).map((item, idx) => (
+                  <InlineControls key={`${item.contaId}-${item.parcelaIndex ?? 'u'}-${idx}`} item={item} />
                 ))}
-                
-                {/* Indicador de mais vencimentos */}
-                {calendarDay.vencimentos.length > 3 && (
+                {calendarDay.items.length > 3 && (
                   <div className="text-[10px] text-muted-foreground text-center py-1">
-                    +{calendarDay.vencimentos.length - 3} mais...
+                    +{calendarDay.items.length - 3} mais...
                   </div>
                 )}
               </div>
@@ -557,7 +449,7 @@ const CalendarioVencimentos = () => {
       <DetalhesContaModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        conta={selectedConta}
+        conta={selectedContaDetalhes}
       />
     </Card>
   );
