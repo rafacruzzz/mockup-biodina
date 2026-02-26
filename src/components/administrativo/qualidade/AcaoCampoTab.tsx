@@ -10,6 +10,7 @@ import { DocumentoAcaoCampoCard } from "./DocumentoAcaoCampoCard";
 import { DocumentoPreenchívelCard } from "./DocumentoPreenchívelCard";
 import { NotificacaoAcaoCampoCard } from "./NotificacaoAcaoCampoCard";
 import { PlanilhaAcaoCampoCard } from "./PlanilhaAcaoCampoCard";
+import { SumarioAlertaCard } from "./SumarioAlertaCard";
 import { NovoDocumentoAdicionalModal } from "./NovoDocumentoAdicionalModal";
 import { 
   AcaoCampo, 
@@ -19,6 +20,7 @@ import {
   FieldActionEffectivenessData,
   NotificacaoAcaoCampoData,
   PlanilhaAcaoCampoData,
+  SumarioAlertaData,
   SecaoAcaoCampo 
 } from "@/types/acaoCampo";
 import { 
@@ -512,6 +514,44 @@ export const AcaoCampoTab = () => {
     );
   };
 
+  const handleSalvarSumarioAlerta = (acaoId: string, secaoId: string, docId: string, dados: SumarioAlertaData) => {
+    setAcoesCampo(acoes =>
+      acoes.map(acao => {
+        if (acao.id !== acaoId) return acao;
+        const secoes = acao.secoes.map(secao => {
+          if (secao.id !== secaoId) return secao;
+          const documentos = secao.documentos.map(doc => {
+            if (doc.id !== docId) return doc;
+            return { ...doc, dadosSumarioAlerta: dados };
+          });
+          return { ...secao, documentos };
+        });
+        const acaoAtualizada = { ...acao, secoes };
+        if (acaoSelecionada?.id === acaoId) setAcaoSelecionada(acaoAtualizada);
+        return acaoAtualizada;
+      })
+    );
+  };
+
+  const handleGerarPDFSumarioAlerta = (acaoId: string, secaoId: string, docId: string) => {
+    setAcoesCampo(acoes =>
+      acoes.map(acao => {
+        if (acao.id !== acaoId) return acao;
+        const secoes = acao.secoes.map(secao => {
+          if (secao.id !== secaoId) return secao;
+          const documentos = secao.documentos.map(doc => {
+            if (doc.id !== docId || !doc.dadosSumarioAlerta) return doc;
+            return { ...doc, dadosSumarioAlerta: { ...doc.dadosSumarioAlerta, pdfGerado: true, dataPdfGerado: new Date().toISOString() } };
+          });
+          return { ...secao, documentos };
+        });
+        const acaoAtualizada = { ...acao, secoes };
+        if (acaoSelecionada?.id === acaoId) setAcaoSelecionada(acaoAtualizada);
+        return acaoAtualizada;
+      })
+    );
+  };
+
   const renderDocumentoCard = (doc: DocumentoAcaoCampo, secaoId: string) => {
     if (doc.tipo === TipoDocumentoAcaoCampo.FIELD_ACTION_EFFECTIVENESS_PREENCHIVEL) {
       return (
@@ -540,6 +580,16 @@ export const AcaoCampoTab = () => {
           documento={doc}
           onSave={(dados) => handleSalvarPlanilha(acaoSelecionada!.id, secaoId, doc.id, dados)}
           onGeneratePDF={() => handleGerarPDFPlanilha(acaoSelecionada!.id, secaoId, doc.id)}
+        />
+      );
+    }
+    if (doc.tipo === TipoDocumentoAcaoCampo.SUMARIO_ALERTA_PREENCHIVEL) {
+      return (
+        <SumarioAlertaCard
+          key={doc.id}
+          documento={doc}
+          onSave={(dados) => handleSalvarSumarioAlerta(acaoSelecionada!.id, secaoId, doc.id, dados)}
+          onGeneratePDF={() => handleGerarPDFSumarioAlerta(acaoSelecionada!.id, secaoId, doc.id)}
         />
       );
     }

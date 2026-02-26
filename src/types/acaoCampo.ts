@@ -11,7 +11,8 @@ export enum TipoDocumentoAcaoCampo {
   PROTOCOLO_ENCERRAMENTO_ANVISA = 'protocolo_encerramento_anvisa',
   ADICIONAL = 'adicional',
   NOTIFICACAO_ACAO_CAMPO_PREENCHIVEL = 'notificacao_acao_campo_preenchivel',
-  PLANILHA_ACAO_CAMPO_PREENCHIVEL = 'planilha_acao_campo_preenchivel'
+  PLANILHA_ACAO_CAMPO_PREENCHIVEL = 'planilha_acao_campo_preenchivel',
+  SUMARIO_ALERTA_PREENCHIVEL = 'sumario_alerta_preenchivel'
 }
 
 // Dados do Formulário Field Action Effectiveness
@@ -146,6 +147,34 @@ export interface PlanilhaAcaoCampoData {
   dataPdfGerado?: string;
 }
 
+// Dados do Formulário Sumário de Alerta
+export interface SumarioAlertaData {
+  titulo: string;
+  identificacaoProduto: string;
+  localDistribuicao: string;
+  nomeComercial: string;
+  nomeTecnico: string;
+  registroAnvisa: string;
+  tipoProduto: string;
+  classeRisco: string;
+  modeloAfetado: string;
+  numerosSerieOuVersao: string;
+  problema: string;
+  dataIdentificacaoProblema: string;
+  acao: string;
+  historico: string;
+  empresaDetentoraRegistro: string;
+  fabricanteProduto: string;
+  recomendacoesPublico: string;
+  anexosAlerta: string;
+  linkSistec: string;
+  linkPaineisTecnovigilancia: string;
+  informacoesComplementares: string;
+  tagDescritores: string;
+  pdfGerado?: boolean;
+  dataPdfGerado?: string;
+}
+
 // Documento de Ação de Campo
 export interface DocumentoAcaoCampo {
   id: string;
@@ -161,6 +190,7 @@ export interface DocumentoAcaoCampo {
   dadosFormulario?: FieldActionEffectivenessData;
   dadosNotificacao?: NotificacaoAcaoCampoData;
   dadosPlanilha?: PlanilhaAcaoCampoData;
+  dadosSumarioAlerta?: SumarioAlertaData;
 }
 
 // Seção de Ação de Campo (NOVA)
