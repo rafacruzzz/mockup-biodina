@@ -12,7 +12,8 @@ export const tipoDocumentoLabels: Record<TipoDocumentoAcaoCampo, string> = {
   [TipoDocumentoAcaoCampo.PROTOCOLO_ENCERRAMENTO_ANVISA]: 'Protocolo de Encerramento na Anvisa',
   [TipoDocumentoAcaoCampo.ADICIONAL]: 'Documento Adicional',
   [TipoDocumentoAcaoCampo.NOTIFICACAO_ACAO_CAMPO_PREENCHIVEL]: 'Formulário de Notificação de Ação de Campo',
-  [TipoDocumentoAcaoCampo.PLANILHA_ACAO_CAMPO_PREENCHIVEL]: 'Planilha de Ação de Campo'
+  [TipoDocumentoAcaoCampo.PLANILHA_ACAO_CAMPO_PREENCHIVEL]: 'Planilha de Ação de Campo',
+  [TipoDocumentoAcaoCampo.SUMARIO_ALERTA_PREENCHIVEL]: 'Sumário de Alerta'
 };
 
 export const statusAcaoCampoLabels: Record<StatusAcaoCampo, string> = {
@@ -99,10 +100,8 @@ export const criarDocumentosEnvioAnvisa = (baseId: string): { documentos: Docume
     },
     {
       id: `${baseId}-anv-6`,
-      tipo: TipoDocumentoAcaoCampo.ADICIONAL,
+      tipo: TipoDocumentoAcaoCampo.SUMARIO_ALERTA_PREENCHIVEL,
       nome: 'Sumário de Alerta',
-      nomeOriginal: 'Sumario-do-Alerta-Acao-de-Campo-v2-5.pdf',
-      url: '/documents/Sumario-do-Alerta-Acao-de-Campo-v2-5.pdf',
       requerAssinatura: false
     }
   ],
