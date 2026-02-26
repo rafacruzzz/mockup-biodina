@@ -97,10 +97,10 @@ export const DocumentoPreenchívelCard = ({
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium">Formulário Preenchido</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Produto: {documento.dadosFormulario.productName}
+                      Product: {documento.dadosFormulario.product}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      Cliente: {documento.dadosFormulario.customerName}
+                      Account: {documento.dadosFormulario.accountNumberOrName}
                     </p>
                   </div>
                 </div>

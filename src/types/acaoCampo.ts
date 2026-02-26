@@ -14,16 +14,15 @@ export enum TipoDocumentoAcaoCampo {
 
 // Dados do Formulário Field Action Effectiveness
 export interface FieldActionEffectivenessData {
-  productName: string;
-  productModel: string;
-  serialNumber: string;
-  lotNumber: string;
-  customerName: string;
-  customerCity: string;
-  fieldActionDescription: string;
-  actionDate: string;
-  effectivenessResult: 'effective' | 'partially_effective' | 'not_effective';
-  observations: string;
+  product: string;
+  accountNumberOrName: string;
+  submissionDate: string;
+  reminder1SentDate: string;
+  reminder2SentDate: string;
+  recallResponseFormReceived: boolean;
+  newOsVersionInstalled: boolean;
+  stateVersion: string;
+  remarks: string;
   pdfGerado?: boolean;
   dataPdfGerado?: string;
 }
