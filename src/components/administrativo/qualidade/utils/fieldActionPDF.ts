@@ -4,162 +4,96 @@ import { FieldActionEffectivenessData } from '@/types/acaoCampo';
 export const gerarFieldActionPDF = (data: FieldActionEffectivenessData): Blob => {
   const doc = new jsPDF();
   
-  // Configurações
   const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 20;
   let yPosition = 20;
 
-  // Cabeçalho
-  doc.setFontSize(18);
+  // Header
+  doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
   doc.text('FIELD ACTION EFFECTIVENESS DATA SHEET', pageWidth / 2, yPosition, { align: 'center' });
   
-  yPosition += 15;
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  doc.text('Biodina - Representações Médico-Hospitalares', pageWidth / 2, yPosition, { align: 'center' });
-  
-  // Linha separadora
-  yPosition += 10;
+  yPosition += 12;
   doc.setLineWidth(0.5);
   doc.line(margin, yPosition, pageWidth - margin, yPosition);
-  
-  // Informações do Produto
-  yPosition += 15;
-  doc.setFontSize(14);
+
+  // Section 1: Subsidiary/Distributor Entry
+  yPosition += 12;
+  doc.setFontSize(13);
   doc.setFont('helvetica', 'bold');
-  doc.text('1. INFORMAÇÕES DO PRODUTO', margin, yPosition);
+  doc.text('1. Subsidiary/Distributor Entry', margin, yPosition);
   
-  yPosition += 10;
+  yPosition += 9;
   doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
-  doc.text('Nome do Produto:', margin, yPosition);
+  doc.text('Product:', margin, yPosition);
   doc.setFont('helvetica', 'normal');
-  doc.text(data.productName, margin + 45, yPosition);
+  doc.text(data.product || '-', margin + 40, yPosition);
   
   yPosition += 7;
-  if (data.productModel) {
-    doc.setFont('helvetica', 'bold');
-    doc.text('Modelo:', margin, yPosition);
-    doc.setFont('helvetica', 'normal');
-    doc.text(data.productModel, margin + 45, yPosition);
-    yPosition += 7;
-  }
-  
-  if (data.serialNumber) {
-    doc.setFont('helvetica', 'bold');
-    doc.text('Número de Série:', margin, yPosition);
-    doc.setFont('helvetica', 'normal');
-    doc.text(data.serialNumber, margin + 45, yPosition);
-    yPosition += 7;
-  }
-  
-  if (data.lotNumber) {
-    doc.setFont('helvetica', 'bold');
-    doc.text('Número do Lote:', margin, yPosition);
-    doc.setFont('helvetica', 'normal');
-    doc.text(data.lotNumber, margin + 45, yPosition);
-    yPosition += 7;
-  }
-  
-  // Informações do Cliente
-  yPosition += 8;
-  doc.setFontSize(14);
   doc.setFont('helvetica', 'bold');
-  doc.text('2. INFORMAÇÕES DO CLIENTE', margin, yPosition);
-  
+  doc.text('Account:', margin, yPosition);
+  doc.setFont('helvetica', 'normal');
+  doc.text(data.accountNumberOrName || '-', margin + 40, yPosition);
+
+  // Advisory Letter to Customer
   yPosition += 10;
   doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
-  doc.text('Cliente:', margin, yPosition);
-  doc.setFont('helvetica', 'normal');
-  doc.text(data.customerName, margin + 45, yPosition);
-  
+  doc.text('Advisory Letter to Customer', margin + 5, yPosition);
+
   yPosition += 7;
-  if (data.customerCity) {
-    doc.setFont('helvetica', 'bold');
-    doc.text('Cidade:', margin, yPosition);
-    doc.setFont('helvetica', 'normal');
-    doc.text(data.customerCity, margin + 45, yPosition);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Submission Date: ${data.submissionDate || '-'}`, margin + 10, yPosition);
+  yPosition += 7;
+  doc.text(`Reminder 1 Sent Date: ${data.reminder1SentDate || '-'}`, margin + 10, yPosition);
+  yPosition += 7;
+  doc.text(`Reminder 2 Sent Date: ${data.reminder2SentDate || '-'}`, margin + 10, yPosition);
+
+  // Section 2: Customer Response
+  yPosition += 12;
+  doc.setFontSize(13);
+  doc.setFont('helvetica', 'bold');
+  doc.text('2. Customer Response', margin, yPosition);
+
+  yPosition += 9;
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Recall Response Form received: ${data.recallResponseFormReceived ? 'Yes' : 'No'}`, margin, yPosition);
+  yPosition += 7;
+  doc.text(`New OS version installed: ${data.newOsVersionInstalled ? 'Yes' : 'No'}`, margin, yPosition);
+
+  if (data.newOsVersionInstalled && data.stateVersion) {
     yPosition += 7;
+    doc.text(`State version: ${data.stateVersion}`, margin + 10, yPosition);
   }
-  
-  // Data da Ação
-  yPosition += 8;
-  doc.setFontSize(14);
+
+  // Section 4: Remarks
+  yPosition += 12;
+  doc.setFontSize(13);
   doc.setFont('helvetica', 'bold');
-  doc.text('3. DATA DA AÇÃO', margin, yPosition);
-  
-  yPosition += 10;
+  doc.text('4. Remarks', margin, yPosition);
+
+  yPosition += 9;
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
-  const dataFormatada = new Date(data.actionDate).toLocaleDateString('pt-BR');
-  doc.text(dataFormatada, margin, yPosition);
-  
-  // Descrição da Ação
-  yPosition += 13;
-  doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.text('4. DESCRIÇÃO DA AÇÃO DE CAMPO', margin, yPosition);
-  
-  yPosition += 10;
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'normal');
-  const descriptionLines = doc.splitTextToSize(data.fieldActionDescription, pageWidth - (2 * margin));
-  doc.text(descriptionLines, margin, yPosition);
-  yPosition += (descriptionLines.length * 7);
-  
-  // Resultado da Efetividade
-  yPosition += 13;
-  doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.text('5. RESULTADO DA EFETIVIDADE', margin, yPosition);
-  
-  yPosition += 10;
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'normal');
-  
-  let resultText = '';
-  switch (data.effectivenessResult) {
-    case 'effective':
-      resultText = '✓ EFETIVO - A ação resolveu completamente o problema';
-      break;
-    case 'partially_effective':
-      resultText = '○ PARCIALMENTE EFETIVO - A ação resolveu parcialmente o problema';
-      break;
-    case 'not_effective':
-      resultText = '✗ NÃO EFETIVO - A ação não resolveu o problema';
-      break;
+  if (data.remarks) {
+    const remarksLines = doc.splitTextToSize(data.remarks, pageWidth - (2 * margin));
+    doc.text(remarksLines, margin, yPosition);
+  } else {
+    doc.text('-', margin, yPosition);
   }
-  doc.text(resultText, margin, yPosition);
-  
-  // Observações
-  if (data.observations) {
-    yPosition += 13;
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.text('6. OBSERVAÇÕES ADICIONAIS', margin, yPosition);
-    
-    yPosition += 10;
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    const observationsLines = doc.splitTextToSize(data.observations, pageWidth - (2 * margin));
-    doc.text(observationsLines, margin, yPosition);
-    yPosition += (observationsLines.length * 7);
-  }
-  
-  // Rodapé
-  const bottomMargin = 20;
-  const footerY = doc.internal.pageSize.getHeight() - bottomMargin;
+
+  // Footer
+  const footerY = doc.internal.pageSize.getHeight() - 20;
   doc.setFontSize(9);
   doc.setFont('helvetica', 'italic');
   doc.text(
-    `Documento gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`,
+    `Generated on ${new Date().toLocaleDateString('pt-BR')} at ${new Date().toLocaleTimeString('pt-BR')}`,
     pageWidth / 2,
     footerY,
     { align: 'center' }
   );
-  
-  // Retornar como Blob
+
   return doc.output('blob');
 };

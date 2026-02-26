@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import { FieldActionEffectivenessData } from "@/types/acaoCampo";
 import { toast } from "sonner";
 
@@ -20,158 +20,156 @@ export const FieldActionEffectivenessForm = ({
 }: FieldActionEffectivenessFormProps) => {
   const [formData, setFormData] = useState<FieldActionEffectivenessData>(
     initialData || {
-      productName: "",
-      productModel: "",
-      serialNumber: "",
-      lotNumber: "",
-      customerName: "",
-      customerCity: "",
-      fieldActionDescription: "",
-      actionDate: new Date().toISOString().split('T')[0],
-      effectivenessResult: "effective",
-      observations: ""
+      product: "",
+      accountNumberOrName: "",
+      submissionDate: "",
+      reminder1SentDate: "",
+      reminder2SentDate: "",
+      recallResponseFormReceived: false,
+      newOsVersionInstalled: false,
+      stateVersion: "",
+      remarks: ""
     }
   );
 
   const handleSubmit = () => {
-    // Validação
-    if (!formData.productName.trim()) {
-      toast.error("Por favor, preencha o nome do produto");
+    if (!formData.product.trim()) {
+      toast.error("Por favor, preencha o campo Product");
       return;
     }
-    if (!formData.customerName.trim()) {
-      toast.error("Por favor, preencha o nome do cliente");
-      return;
-    }
-    if (!formData.fieldActionDescription.trim()) {
-      toast.error("Por favor, preencha a descrição da ação de campo");
-      return;
-    }
-
     onSave(formData);
   };
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="productName">Nome do Produto *</Label>
-          <Input
-            id="productName"
-            value={formData.productName}
-            onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
-            placeholder="Ex: Monitor Cardíaco MC-500"
-          />
+      {/* Seção 1: Subsidiary/Distributor Entry */}
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-foreground border-b pb-2">
+          1. Subsidiary/Distributor Entry
+        </h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="product">Product *</Label>
+            <Input
+              id="product"
+              value={formData.product}
+              onChange={(e) => setFormData({ ...formData, product: e.target.value })}
+              placeholder="Product name or identifier"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="accountNumberOrName">Account number or name</Label>
+            <Input
+              id="accountNumberOrName"
+              value={formData.accountNumberOrName}
+              onChange={(e) => setFormData({ ...formData, accountNumberOrName: e.target.value })}
+              placeholder="Account number or name"
+            />
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="productModel">Modelo</Label>
-          <Input
-            id="productModel"
-            value={formData.productModel}
-            onChange={(e) => setFormData({ ...formData, productModel: e.target.value })}
-            placeholder="Ex: MC-500A"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="serialNumber">Número de Série</Label>
-          <Input
-            id="serialNumber"
-            value={formData.serialNumber}
-            onChange={(e) => setFormData({ ...formData, serialNumber: e.target.value })}
-            placeholder="Ex: SN123456789"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="lotNumber">Número do Lote</Label>
-          <Input
-            id="lotNumber"
-            value={formData.lotNumber}
-            onChange={(e) => setFormData({ ...formData, lotNumber: e.target.value })}
-            placeholder="Ex: LOT-2024-001"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="customerName">Nome do Cliente *</Label>
-          <Input
-            id="customerName"
-            value={formData.customerName}
-            onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-            placeholder="Ex: Hospital São Lucas"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="customerCity">Cidade</Label>
-          <Input
-            id="customerCity"
-            value={formData.customerCity}
-            onChange={(e) => setFormData({ ...formData, customerCity: e.target.value })}
-            placeholder="Ex: São Paulo - SP"
-          />
-        </div>
-
-        <div className="space-y-2 col-span-2">
-          <Label htmlFor="actionDate">Data da Ação</Label>
-          <Input
-            id="actionDate"
-            type="date"
-            value={formData.actionDate}
-            onChange={(e) => setFormData({ ...formData, actionDate: e.target.value })}
-          />
+        {/* Subseção: Advisory Letter to Customer */}
+        <div className="ml-4 space-y-3 border-l-2 border-muted pl-4">
+          <h4 className="text-sm font-medium text-muted-foreground">
+            Advisory Letter to Customer
+          </h4>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="submissionDate">Submission Date</Label>
+              <Input
+                id="submissionDate"
+                type="date"
+                value={formData.submissionDate}
+                onChange={(e) => setFormData({ ...formData, submissionDate: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reminder1SentDate">Reminder 1 Sent Date</Label>
+              <Input
+                id="reminder1SentDate"
+                type="date"
+                value={formData.reminder1SentDate}
+                onChange={(e) => setFormData({ ...formData, reminder1SentDate: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reminder2SentDate">Reminder 2 Sent Date</Label>
+              <Input
+                id="reminder2SentDate"
+                type="date"
+                value={formData.reminder2SentDate}
+                onChange={(e) => setFormData({ ...formData, reminder2SentDate: e.target.value })}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="fieldActionDescription">Descrição da Ação de Campo *</Label>
-        <Textarea
-          id="fieldActionDescription"
-          value={formData.fieldActionDescription}
-          onChange={(e) => setFormData({ ...formData, fieldActionDescription: e.target.value })}
-          placeholder="Descreva detalhadamente a ação de campo realizada..."
-          rows={4}
-        />
+      {/* Seção 2: Customer Response */}
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-foreground border-b pb-2">
+          2. Customer Response
+        </h3>
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="recallResponseFormReceived"
+              checked={formData.recallResponseFormReceived}
+              onCheckedChange={(checked) =>
+                setFormData({ ...formData, recallResponseFormReceived: checked === true })
+              }
+            />
+            <Label htmlFor="recallResponseFormReceived" className="font-normal cursor-pointer">
+              Recall Response Form received
+            </Label>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="newOsVersionInstalled"
+              checked={formData.newOsVersionInstalled}
+              onCheckedChange={(checked) =>
+                setFormData({
+                  ...formData,
+                  newOsVersionInstalled: checked === true,
+                  stateVersion: checked === true ? formData.stateVersion : ""
+                })
+              }
+            />
+            <Label htmlFor="newOsVersionInstalled" className="font-normal cursor-pointer">
+              New (unaffected) OS version is installed
+            </Label>
+          </div>
+
+          {formData.newOsVersionInstalled && (
+            <div className="ml-6 space-y-2">
+              <Label htmlFor="stateVersion">State version</Label>
+              <Input
+                id="stateVersion"
+                value={formData.stateVersion}
+                onChange={(e) => setFormData({ ...formData, stateVersion: e.target.value })}
+                placeholder="Installed version"
+              />
+            </div>
+          )}
+        </div>
       </div>
 
+      {/* Seção 4: Remarks */}
       <div className="space-y-3">
-        <Label>Resultado da Efetividade *</Label>
-        <RadioGroup
-          value={formData.effectivenessResult}
-          onValueChange={(value: any) => setFormData({ ...formData, effectivenessResult: value })}
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="effective" id="effective" />
-            <Label htmlFor="effective" className="font-normal cursor-pointer">
-              Efetivo - A ação resolveu completamente o problema
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="partially_effective" id="partially_effective" />
-            <Label htmlFor="partially_effective" className="font-normal cursor-pointer">
-              Parcialmente Efetivo - A ação resolveu parcialmente o problema
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="not_effective" id="not_effective" />
-            <Label htmlFor="not_effective" className="font-normal cursor-pointer">
-              Não Efetivo - A ação não resolveu o problema
-            </Label>
-          </div>
-        </RadioGroup>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="observations">Observações Adicionais</Label>
-        <Textarea
-          id="observations"
-          value={formData.observations}
-          onChange={(e) => setFormData({ ...formData, observations: e.target.value })}
-          placeholder="Informações complementares sobre a ação e seus resultados..."
-          rows={3}
-        />
+        <h3 className="text-sm font-semibold text-foreground border-b pb-2">
+          4. Remarks
+        </h3>
+        <div className="space-y-2">
+          <Label htmlFor="remarks">Remarks</Label>
+          <Textarea
+            id="remarks"
+            value={formData.remarks}
+            onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
+            placeholder="Notes, comments or relevant observations..."
+            rows={4}
+          />
+        </div>
       </div>
 
       <div className="flex gap-3 pt-4">
