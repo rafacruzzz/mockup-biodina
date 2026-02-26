@@ -270,6 +270,9 @@ const CalendarioVencimentos = ({ contasSalvas, onUpdateConta }: CalendarioVencim
             {item.parcelaLabel && (
               <div className="text-[8px] font-semibold text-primary">{item.parcelaLabel}</div>
             )}
+            {(item.conta as any).isRecorrente && (
+              <div className="text-[8px] font-semibold text-purple-600">Recorrente</div>
+            )}
             <div className="flex items-center justify-between mt-0.5">
               <span className="font-semibold text-foreground text-[10px]">{formatCurrency(item.valor)}</span>
               <Badge variant="outline" className={`text-[8px] px-1 py-0 h-3 ${badge.className}`}>
@@ -289,6 +292,9 @@ const CalendarioVencimentos = ({ contasSalvas, onUpdateConta }: CalendarioVencim
               <p className="text-xs text-muted-foreground">{conta.fornecedor} • {conta.numero}</p>
               {item.parcelaLabel && (
                 <Badge variant="outline" className="text-xs mt-1 text-primary border-primary">{item.parcelaLabel}</Badge>
+              )}
+              {(conta as any).isRecorrente && (
+                <Badge variant="outline" className="text-xs mt-1 ml-1 border-purple-400 text-purple-600 bg-purple-50">Recorrente</Badge>
               )}
               <p className="text-sm font-bold mt-1">{formatCurrency(item.valor)}</p>
             </div>

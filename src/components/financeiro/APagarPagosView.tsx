@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,10 +17,11 @@ import { NovaContaRecorrenteModal } from "./NovaContaRecorrenteModal";
 import { VisualizarContaModal } from "./VisualizarContaModal";
 import { PagarContaModal } from "./PagarContaModal";
 import { EditarContaModal } from "./EditarContaModal";
-import { ContaPagar } from "@/types/financeiro";
+import { ContaPagar, ContaRecorrenteEnhanced, Periodicidade } from "@/types/financeiro";
 import { useToast } from "@/hooks/use-toast";
 import ContratosTabContent from "./ContratosTabContent";
 import { useEmpresa } from "@/contexts/EmpresaContext";
+import { addMonths } from "date-fns";
 
 const APagarPagosView = () => {
   const { toast } = useToast();
@@ -36,10 +37,63 @@ const APagarPagosView = () => {
   const [contaSelecionada, setContaSelecionada] = useState<ContaPagar | null>(null);
   const [contasPagas, setContasPagas] = useState<string[]>([]);
   const [contasSalvas, setContasSalvas] = useState<ContaPagar[]>([]);
+  const [contasRecorrentesSalvas, setContasRecorrentesSalvas] = useState<ContaRecorrenteEnhanced[]>([]);
 
   const handleUpdateContaCalendario = (contaId: string, updates: Partial<ContaPagar>) => {
     setContasSalvas(prev => prev.map(c => c.id === contaId ? { ...c, ...updates } : c));
   };
+
+  // Helper to get months offset for a given periodicidade
+  const getMesesOffset = (periodicidade: Periodicidade): number => {
+    switch (periodicidade) {
+      case 'mensal': return 1;
+      case 'bimestral': return 2;
+      case 'trimestral': return 3;
+      case 'semestral': return 6;
+      case 'anual': return 12;
+      default: return 1;
+    }
+  };
+
+  // Convert recurring accounts into ContaPagar[] for the calendar (12 occurrences)
+  const contasRecorrentesParaCalendario = useMemo(() => {
+    const result: ContaPagar[] = [];
+    contasRecorrentesSalvas.forEach(rec => {
+      const offset = getMesesOffset(rec.periodicidade);
+      for (let i = 0; i < 12; i++) {
+        const dataVenc = addMonths(new Date(rec.dataPrimeiroVencimento), offset * i);
+        result.push({
+          id: `${rec.id}-occ-${i}`,
+          empresaId: rec.empresaId,
+          numero: `REC-${rec.id.slice(-3)}-${i + 1}`,
+          tipo: (rec.tipo || 'outros') as any,
+          departamentoSolicitante: rec.departamentoSolicitante || '',
+          vincularA: rec.vincularA || 'departamento',
+          projetoCliente: rec.projetoCliente,
+          departamento: rec.departamento,
+          fornecedor: rec.fornecedor,
+          descricao: rec.descricao || rec.nome,
+          valor: rec.alteracaoValor ? 0 : rec.valor,
+          dataVencimento: dataVenc,
+          formaPagamentoSugerida: rec.formaPagamento,
+          status: 'programado' as any,
+          createdAt: new Date(),
+          pagamentoEfetuado: false,
+          tipoPagamento: 'unico',
+          anexos: rec.anexos,
+          bancoPagamento: rec.bancoPagamento,
+          agenciaPagamento: rec.agenciaPagamento,
+          contaPagamento: rec.contaPagamento,
+          isRecorrente: true,
+        } as ContaPagar & { isRecorrente?: boolean });
+      }
+    });
+    return result;
+  }, [contasRecorrentesSalvas]);
+
+  const todasContasCalendario = useMemo(() => {
+    return [...contasSalvas, ...contasRecorrentesParaCalendario];
+  }, [contasSalvas, contasRecorrentesParaCalendario]);
 
   const resumoGeral = {
     totalPendente: 47500.00,
@@ -419,7 +473,7 @@ const APagarPagosView = () => {
         </TabsContent>
 
         <TabsContent value="calendario" className="space-y-4">
-          <CalendarioVencimentos contasSalvas={contasSalvas} onUpdateConta={handleUpdateContaCalendario} />
+          <CalendarioVencimentos contasSalvas={todasContasCalendario} onUpdateConta={handleUpdateContaCalendario} />
         </TabsContent>
 
         <TabsContent value="conciliacao" className="space-y-4">
@@ -492,8 +546,18 @@ const APagarPagosView = () => {
         isOpen={showNovaRecorrenteModal}
         onClose={() => setShowNovaRecorrenteModal(false)}
         onSave={(novaConta) => {
-          console.log('Nova conta recorrente criada:', novaConta);
-          // Aqui você adicionaria a lógica para salvar a conta recorrente
+          const contaCompleta: ContaRecorrenteEnhanced = {
+            ...(novaConta as any),
+            id: `REC-${Date.now()}`,
+            status: 'programado' as any,
+            proximoVencimento: novaConta.dataPrimeiroVencimento,
+          };
+          setContasRecorrentesSalvas(prev => [...prev, contaCompleta]);
+          toast({
+            title: "Conta recorrente salva",
+            description: `Conta recorrente "${contaCompleta.nome}" adicionada com sucesso. Ocorrências geradas no calendário.`,
+            className: "bg-green-50 border-green-200 text-green-800",
+          });
         }}
       />
 
