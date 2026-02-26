@@ -1,35 +1,41 @@
 
 
-## Plano: Aprimorar Nova Conta a Pagar com pagamento efetuado, parcelamento, multa/juros/desconto e dados bancários
+## Plano: Integrar Contas a Pagar com Calendário + Ações de Pagamento Inline
 
 ### Resumo
 
-Adicionar ao modal "Nova Conta a Pagar" e à interface `ContaPagar`:
-1. Campo "Pagamento Efetuado" (Sim/Não) — se Não, campo para data futura do pagamento
-2. Dados bancários do pagamento (banco, agência, conta)
-3. Campos de multa, juros e desconto no valor total
-4. Opção pagamento único vs parcelado — se parcelado: número de parcelas, e para cada parcela: data, valor, multa, juros, desconto
-5. No calendário, exibir "Parcela X de Y" quando parcelado
+Transformar o calendário de vencimentos para exibir as contas salvas em "Nova Conta a Pagar" como links clicáveis por data de vencimento. Ao clicar, abrir modal com detalhes + documentos anexados. Adicionar campos inline no calendário: "Pago na data" (Sim/Não), data do pagamento (se Não), e banco/agência/conta (bidirecional com Nova Conta a Pagar).
 
 ### Arquivos a modificar
 
-1. **`src/types/financeiro.ts`**
-   - Adicionar à interface `ContaPagar`: `pagamentoEfetuado: boolean`, `dataPagamentoEfetuado?: Date`, `bancoPagamento?: string`, `agenciaPagamento?: string`, `contaPagamento?: string`, `multa?: number`, `juros?: number`, `desconto?: number`, `tipoPagamento: 'unico' | 'parcelado'`, `numeroParcelas?: number`, `parcelas?: ParcelaConta[]`
-   - Criar interface `ParcelaConta`: `numero: number`, `dataVencimento: Date`, `valor: number`, `multa?: number`, `juros?: number`, `desconto?: number`, `pago?: boolean`, `dataPagamento?: Date`
+1. **`src/components/financeiro/CalendarioVencimentos.tsx`**
+   - Receber `contasSalvas: ContaPagar[]` como prop (vindas de APagarPagosView)
+   - Gerar os vencimentos dinamicamente a partir das contas (incluindo parcelas individuais com label "Parcela X de Y")
+   - Manter mock data existente como fallback enquanto não houver contas reais
+   - No card de cada conta no calendário: adicionar controles inline:
+     - Switch "Pago na data" (Sim/Não)
+     - Se Não: campo de data do pagamento
+     - Campos banco, agência, conta (editáveis)
+   - Ao alterar esses campos, chamar callback `onUpdateConta` para sincronizar com APagarPagosView
 
-2. **`src/components/financeiro/NovaContaPagarModal.tsx`**
-   - Adicionar campo Switch/RadioGroup "Pagamento Efetuado" (Sim/Não)
-   - Se Não: mostrar date picker para data do pagamento
-   - Adicionar campos banco, agência, conta (inputs texto)
-   - Adicionar campos multa, juros, desconto (MoneyInput)
-   - Adicionar RadioGroup "Pagamento Único / Parcelado"
-   - Se parcelado: input número de parcelas + tabela dinâmica com colunas (Parcela, Data, Valor, Multa, Juros, Desconto) para cada parcela
-   - Ao alterar número de parcelas, gerar linhas automaticamente dividindo o valor total
+2. **`src/components/financeiro/DetalhesContaModal.tsx`**
+   - Expandir interface para aceitar dados de `ContaPagar`
+   - Mostrar documentos anexados (lista de anexos com ícone de visualização)
+   - Mostrar campos "Pago na data", banco, agência, conta
+   - Mostrar informações de parcelas quando aplicável
 
-3. **`src/components/financeiro/CalendarioVencimentos.tsx`**
-   - Na exibição das contas no calendário, quando a conta for parcelada, exibir "Parcela X de Y" na descrição
+3. **`src/components/financeiro/APagarPagosView.tsx`**
+   - Passar `contasSalvas` e `onUpdateConta` como props ao `CalendarioVencimentos`
+   - Implementar handler `handleUpdateContaCalendario` que atualiza o estado da conta (pagamentoEfetuado, dataPagamento, dados bancários) e reflete na lista principal
+   - Manter estado compartilhado entre a aba Programação e a aba Calendário
 
-4. **`src/components/financeiro/PagarContaModal.tsx`**
-   - Adicionar campos multa, juros, desconto ao confirmar pagamento
-   - Adicionar campos banco, agência, conta
+4. **`src/types/financeiro.ts`**
+   - Verificar se `ContaPagar` já tem todos os campos necessários (pagamentoEfetuado, bancoPagamento, agenciaPagamento, contaPagamento) — já deve ter da implementação anterior
+
+### Detalhes técnicos
+
+- O calendário agrupará contas por `dataVencimento`. Para contas parceladas, cada parcela aparecerá na sua data de vencimento específica com label "Parcela X de Y"
+- Ao clicar no link/card da conta no calendário, abre `DetalhesContaModal` com os dados completos + lista de anexos
+- Os campos banco/agência/conta editados no calendário serão sincronizados de volta para a conta em APagarPagosView (bidirecional)
+- O switch "Pago na data" no calendário atualizará o campo `pagamentoEfetuado` da conta
 
