@@ -9,24 +9,48 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { MoneyInput } from "@/components/ui/money-input";
 import { 
   Plus, Search, DollarSign, TrendingUp, User, FileText,
-  CheckCircle, Clock, Calculator, Target
+  CheckCircle, Clock, Calculator, Target, ArrowDownCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ComissaoPagar } from "@/types/comissoesPagar";
 
-const ComissoesPagarView = () => {
+interface ComissoesPagarViewProps {
+  comissoesPendentes?: ComissaoPagar[];
+  onComissaoSalva?: (comissao: ComissaoPagar) => void;
+}
+
+const ComissoesPagarView = ({ comissoesPendentes = [], onComissaoSalva }: ComissoesPagarViewProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("todos");
   const [showNovaComissaoModal, setShowNovaComissaoModal] = useState(false);
+  const [comissoesInternas, setComissoesInternas] = useState<ComissaoPagar[]>([]);
   const { toast } = useToast();
 
+  // Form state for new commission
+  const [formVendedor, setFormVendedor] = useState("");
+  const [formVenda, setFormVenda] = useState("");
+  const [formCliente, setFormCliente] = useState("");
+  const [formValorVenda, setFormValorVenda] = useState("");
+  const [formObservacoes, setFormObservacoes] = useState("");
+  const [formPercentual, setFormPercentual] = useState("");
+  const [formDataPagamento, setFormDataPagamento] = useState("");
+  const [formBanco, setFormBanco] = useState("");
+  const [formAgencia, setFormAgencia] = useState("");
+  const [formConta, setFormConta] = useState("");
+  const [formMulta, setFormMulta] = useState("");
+  const [formJuros, setFormJuros] = useState("");
+  const [formDesconto, setFormDesconto] = useState("");
+  const [editingComissao, setEditingComissao] = useState<ComissaoPagar | null>(null);
+
   // Mock data para comissões
-  const comissoes = [
+  const comissoesMock: ComissaoPagar[] = [
     {
       id: "COM001",
       vendedor: "João Silva",
-      venda: "VENDA-2024-120",
+      vendaId: "VENDA-2024-120",
       cliente: "Empresa ABC Ltda",
       valorVenda: 50000.00,
       percentualComissao: 3.5,
@@ -34,12 +58,13 @@ const ComissoesPagarView = () => {
       dataVenda: "2024-12-15",
       status: "Calculado",
       periodoCalculo: "Dezembro/2024",
-      observacoes: ""
+      observacoes: "",
+      origemContasReceber: false
     },
     {
       id: "COM002",
       vendedor: "Maria Santos",
-      venda: "VENDA-2024-121",
+      vendaId: "VENDA-2024-121",
       cliente: "Indústria XYZ S.A.",
       valorVenda: 85000.00,
       percentualComissao: 4.0,
@@ -47,12 +72,13 @@ const ComissoesPagarView = () => {
       dataVenda: "2024-12-20",
       status: "Pago",
       periodoCalculo: "Dezembro/2024",
-      observacoes: "Comissão paga via PIX"
+      observacoes: "Comissão paga via PIX",
+      origemContasReceber: false
     },
     {
       id: "COM003",
       vendedor: "Carlos Oliveira",
-      venda: "VENDA-2025-001",
+      vendaId: "VENDA-2025-001",
       cliente: "Comércio 123",
       valorVenda: 25000.00,
       percentualComissao: 2.5,
@@ -60,9 +86,13 @@ const ComissoesPagarView = () => {
       dataVenda: "2025-01-05",
       status: "Pendente Aprovação",
       periodoCalculo: "Janeiro/2025",
-      observacoes: "Aguardando confirmação do recebimento"
+      observacoes: "Aguardando confirmação do recebimento",
+      origemContasReceber: false
     }
   ];
+
+  // Merge all commissions
+  const todasComissoes = [...comissoesMock, ...comissoesInternas, ...comissoesPendentes];
 
   // Mock data para vendedores
   const vendedores = [
@@ -108,6 +138,8 @@ const ComissoesPagarView = () => {
         return 'bg-blue-500';
       case 'Pendente Aprovação':
         return 'bg-yellow-500';
+      case 'Pendente Pagamento':
+        return 'bg-orange-500';
       default:
         return 'bg-gray-500';
     }
@@ -120,184 +152,367 @@ const ComissoesPagarView = () => {
       case 'Calculado':
         return <Calculator className="h-4 w-4" />;
       case 'Pendente Aprovação':
+      case 'Pendente Pagamento':
         return <Clock className="h-4 w-4" />;
       default:
         return null;
     }
   };
 
+  const resetForm = () => {
+    setFormVendedor("");
+    setFormVenda("");
+    setFormCliente("");
+    setFormValorVenda("");
+    setFormObservacoes("");
+    setFormPercentual("");
+    setFormDataPagamento("");
+    setFormBanco("");
+    setFormAgencia("");
+    setFormConta("");
+    setFormMulta("");
+    setFormJuros("");
+    setFormDesconto("");
+    setEditingComissao(null);
+  };
+
+  const openEditComissao = (comissao: ComissaoPagar) => {
+    setEditingComissao(comissao);
+    setFormVendedor(comissao.vendedor);
+    setFormVenda(comissao.vendaId);
+    setFormCliente(comissao.cliente);
+    setFormValorVenda(String(Math.round(comissao.valorVenda * 100)));
+    setFormObservacoes(comissao.observacoes);
+    setFormPercentual(String(comissao.percentualComissao));
+    setFormDataPagamento(comissao.dataPagamento || "");
+    setFormBanco(comissao.bancoPagamento || "");
+    setFormAgencia(comissao.agenciaPagamento || "");
+    setFormConta(comissao.contaPagamento || "");
+    setFormMulta(comissao.multa ? String(Math.round(comissao.multa * 100)) : "");
+    setFormJuros(comissao.juros ? String(Math.round(comissao.juros * 100)) : "");
+    setFormDesconto(comissao.desconto ? String(Math.round(comissao.desconto * 100)) : "");
+    setShowNovaComissaoModal(true);
+  };
+
   const handleNovaComissao = () => {
+    const valorVenda = parseFloat(formValorVenda) / 100 || 0;
+    const percentual = parseFloat(formPercentual) || 0;
+    const novaComissao: ComissaoPagar = {
+      id: editingComissao?.id || `COM-${Date.now()}`,
+      vendedor: formVendedor || editingComissao?.vendedor || "",
+      vendaId: formVenda || editingComissao?.vendaId || "",
+      cliente: formCliente || editingComissao?.cliente || "",
+      valorVenda,
+      percentualComissao: percentual,
+      valorComissao: (valorVenda * percentual) / 100,
+      dataVenda: new Date().toISOString().split('T')[0],
+      status: "Pendente Pagamento",
+      periodoCalculo: new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }),
+      observacoes: formObservacoes,
+      origemContasReceber: editingComissao?.origemContasReceber || false,
+      dataPagamento: formDataPagamento || undefined,
+      bancoPagamento: formBanco || undefined,
+      agenciaPagamento: formAgencia || undefined,
+      contaPagamento: formConta || undefined,
+      multa: formMulta ? parseFloat(formMulta) / 100 : undefined,
+      juros: formJuros ? parseFloat(formJuros) / 100 : undefined,
+      desconto: formDesconto ? parseFloat(formDesconto) / 100 : undefined,
+    };
+
+    setComissoesInternas(prev => [...prev, novaComissao]);
+    onComissaoSalva?.(novaComissao);
+
     toast({
       title: "Sucesso",
-      description: "Nova comissão cadastrada com sucesso!"
+      description: editingComissao 
+        ? "Comissão atualizada com sucesso!" 
+        : "Nova comissão cadastrada com sucesso!"
     });
+    resetForm();
     setShowNovaComissaoModal(false);
   };
 
-  const NovaComissaoModal = () => (
-    <Dialog open={showNovaComissaoModal} onOpenChange={setShowNovaComissaoModal}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5" />
-            Nova Comissão
-          </DialogTitle>
-        </DialogHeader>
-        
-        <Tabs defaultValue="dados-gerais" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
-            <TabsTrigger value="calculo">Cálculo</TabsTrigger>
-            <TabsTrigger value="documentos">Documentos</TabsTrigger>
-          </TabsList>
+  const NovaComissaoModal = () => {
+    const isFromReceber = editingComissao?.origemContasReceber === true;
 
-          <TabsContent value="dados-gerais" className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="vendedor">Vendedor *</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o vendedor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="joao">João Silva</SelectItem>
-                    <SelectItem value="maria">Maria Santos</SelectItem>
-                    <SelectItem value="carlos">Carlos Oliveira</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="venda">Venda Relacionada *</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione a venda" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="venda-001">VENDA-2025-001</SelectItem>
-                    <SelectItem value="venda-002">VENDA-2025-002</SelectItem>
-                    <SelectItem value="venda-003">VENDA-2025-003</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cliente">Cliente</Label>
-                <Input 
-                  id="cliente"
-                  placeholder="Nome do cliente"
-                  disabled
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="valor-venda">Valor da Venda</Label>
-                <Input 
-                  id="valor-venda"
-                  placeholder="R$ 0,00"
-                  disabled
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="observacoes">Observações</Label>
-              <Textarea 
-                id="observacoes"
-                placeholder="Observações adicionais sobre a comissão"
-              />
-            </div>
-          </TabsContent>
+    return (
+      <Dialog open={showNovaComissaoModal} onOpenChange={(open) => {
+        if (!open) resetForm();
+        setShowNovaComissaoModal(open);
+      }}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5" />
+              {editingComissao ? "Editar Comissão" : "Nova Comissão"}
+              {isFromReceber && (
+                <Badge className="bg-purple-500 text-white ml-2">
+                  <ArrowDownCircle className="h-3 w-3 mr-1" />
+                  Recebido do Contas a Receber
+                </Badge>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <Tabs defaultValue="dados-gerais" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
+              <TabsTrigger value="calculo">Cálculo</TabsTrigger>
+              <TabsTrigger value="pagamento">Pagamento</TabsTrigger>
+              <TabsTrigger value="documentos">Documentos</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="calculo" className="space-y-4">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <div className="flex items-center gap-2">
-                <Calculator className="h-5 w-5 text-green-600" />
-                <h4 className="font-medium text-green-800">Cálculo Automático</h4>
-              </div>
-              <p className="text-sm text-green-700 mt-2">
-                As comissões são calculadas automaticamente baseadas no percentual definido para cada vendedor e o valor da venda confirmada.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="percentual">Percentual de Comissão (%)</Label>
-                <Input 
-                  id="percentual"
-                  placeholder="0.00"
-                  type="number"
-                  step="0.01"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="valor-comissao">Valor da Comissão</Label>
-                <Input 
-                  id="valor-comissao"
-                  placeholder="R$ 0,00"
-                  disabled
-                />
-              </div>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Histórico de Comissões do Vendedor</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div>
-                    <p className="text-2xl font-bold text-primary">R$ 6.250</p>
-                    <p className="text-sm text-muted-foreground">Total de Comissões</p>
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-green-600">3.4%</p>
-                    <p className="text-sm text-muted-foreground">Percentual Médio</p>
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-blue-600">15</p>
-                    <p className="text-sm text-muted-foreground">Vendas no Período</p>
-                  </div>
+            <TabsContent value="dados-gerais" className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="vendedor">Vendedor *</Label>
+                  {isFromReceber ? (
+                    <Input value={formVendedor} disabled />
+                  ) : (
+                    <Select value={formVendedor} onValueChange={setFormVendedor}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o vendedor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="João Silva">João Silva</SelectItem>
+                        <SelectItem value="Maria Santos">Maria Santos</SelectItem>
+                        <SelectItem value="Carlos Oliveira">Carlos Oliveira</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                <div className="space-y-2">
+                  <Label htmlFor="venda">Venda Relacionada *</Label>
+                  {isFromReceber ? (
+                    <Input value={formVenda} disabled />
+                  ) : (
+                    <Select value={formVenda} onValueChange={setFormVenda}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione a venda" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="VENDA-2025-001">VENDA-2025-001</SelectItem>
+                        <SelectItem value="VENDA-2025-002">VENDA-2025-002</SelectItem>
+                        <SelectItem value="VENDA-2025-003">VENDA-2025-003</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cliente">Cliente</Label>
+                  <Input 
+                    id="cliente"
+                    placeholder="Nome do cliente"
+                    value={formCliente}
+                    onChange={(e) => setFormCliente(e.target.value)}
+                    disabled={isFromReceber}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="valor-venda">Valor da Venda</Label>
+                  <MoneyInput
+                    value={formValorVenda}
+                    onChange={setFormValorVenda}
+                    disabled={isFromReceber}
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="observacoes">Observações</Label>
+                <Textarea 
+                  id="observacoes"
+                  placeholder="Observações adicionais sobre a comissão"
+                  value={formObservacoes}
+                  onChange={(e) => setFormObservacoes(e.target.value)}
+                />
+              </div>
+            </TabsContent>
 
-          <TabsContent value="documentos" className="space-y-4">
-            <div className="grid grid-cols-1 gap-4">
+            <TabsContent value="calculo" className="space-y-4">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="flex items-center gap-2">
+                  <Calculator className="h-5 w-5 text-green-600" />
+                  <h4 className="font-medium text-green-800">Cálculo Automático</h4>
+                </div>
+                <p className="text-sm text-green-700 mt-2">
+                  As comissões são calculadas automaticamente baseadas no percentual definido para cada vendedor e o valor da venda confirmada.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="percentual">Percentual de Comissão (%)</Label>
+                  <Input 
+                    id="percentual"
+                    placeholder="0.00"
+                    type="number"
+                    step="0.01"
+                    value={formPercentual}
+                    onChange={(e) => setFormPercentual(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="valor-comissao">Valor da Comissão</Label>
+                  <Input 
+                    id="valor-comissao"
+                    placeholder="R$ 0,00"
+                    disabled
+                    value={
+                      formValorVenda && formPercentual
+                        ? formatCurrency((parseFloat(formValorVenda) / 100) * (parseFloat(formPercentual) / 100))
+                        : ""
+                    }
+                  />
+                </div>
+              </div>
+
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Documentos Necessários</CardTitle>
+                  <CardTitle className="text-lg">Histórico de Comissões do Vendedor</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {[
-                    "Comprovante de Venda",
-                    "Relatório de Performance",
-                    "Autorização de Pagamento",
-                    "Recibo de Comissão"
-                  ].map((doc, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                      <span className="font-medium">{doc}</span>
-                      <Button variant="outline" size="sm">
-                        <FileText className="h-4 w-4 mr-2" />
-                        Anexar
-                      </Button>
+                <CardContent>
+                  <div className="grid grid-cols-3 gap-4 text-center">
+                    <div>
+                      <p className="text-2xl font-bold text-primary">R$ 6.250</p>
+                      <p className="text-sm text-muted-foreground">Total de Comissões</p>
                     </div>
-                  ))}
+                    <div>
+                      <p className="text-2xl font-bold text-green-600">3.4%</p>
+                      <p className="text-sm text-muted-foreground">Percentual Médio</p>
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-blue-600">15</p>
+                      <p className="text-sm text-muted-foreground">Vendas no Período</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+            </TabsContent>
 
-        <div className="flex justify-end gap-2 pt-4 border-t">
-          <Button variant="outline" onClick={() => setShowNovaComissaoModal(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={handleNovaComissao}>
-            Criar Comissão
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
+            <TabsContent value="pagamento" className="space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-5 w-5 text-blue-600" />
+                  <h4 className="font-medium text-blue-800">Dados de Pagamento</h4>
+                </div>
+                <p className="text-sm text-blue-700 mt-2">
+                  Defina os dados bancários e a data para efetuar o pagamento da comissão. Esses dados serão refletidos no Calendário de Vencimentos.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="data-pagamento">Data de Pagamento</Label>
+                  <Input 
+                    id="data-pagamento"
+                    type="date"
+                    value={formDataPagamento}
+                    onChange={(e) => setFormDataPagamento(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="banco">Banco</Label>
+                  <Select value={formBanco} onValueChange={setFormBanco}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o banco" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Banco do Brasil">Banco do Brasil</SelectItem>
+                      <SelectItem value="Caixa Econômica">Caixa Econômica</SelectItem>
+                      <SelectItem value="Itaú">Itaú</SelectItem>
+                      <SelectItem value="Bradesco">Bradesco</SelectItem>
+                      <SelectItem value="Santander">Santander</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="agencia">Agência</Label>
+                  <Input 
+                    id="agencia"
+                    placeholder="0000-0"
+                    value={formAgencia}
+                    onChange={(e) => setFormAgencia(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="conta">Conta</Label>
+                  <Input 
+                    id="conta"
+                    placeholder="00000-0"
+                    value={formConta}
+                    onChange={(e) => setFormConta(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <h4 className="font-medium mb-4">Ajustes Financeiros</h4>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="multa">Multa</Label>
+                    <MoneyInput
+                      value={formMulta}
+                      onChange={setFormMulta}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="juros">Juros</Label>
+                    <MoneyInput
+                      value={formJuros}
+                      onChange={setFormJuros}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="desconto">Desconto</Label>
+                    <MoneyInput
+                      value={formDesconto}
+                      onChange={setFormDesconto}
+                    />
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="documentos" className="space-y-4">
+              <div className="grid grid-cols-1 gap-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Documentos Necessários</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {[
+                      "Comprovante de Venda",
+                      "Relatório de Performance",
+                      "Autorização de Pagamento",
+                      "Recibo de Comissão"
+                    ].map((doc, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                        <span className="font-medium">{doc}</span>
+                        <Button variant="outline" size="sm">
+                          <FileText className="h-4 w-4 mr-2" />
+                          Anexar
+                        </Button>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <div className="flex justify-end gap-2 pt-4 border-t">
+            <Button variant="outline" onClick={() => { resetForm(); setShowNovaComissaoModal(false); }}>
+              Cancelar
+            </Button>
+            <Button onClick={handleNovaComissao}>
+              {editingComissao ? "Salvar Alterações" : "Criar Comissão"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -307,7 +522,7 @@ const ComissoesPagarView = () => {
           <h1 className="text-2xl font-bold text-foreground">Comissões a Pagar</h1>
           <p className="text-muted-foreground">Gestão de comissões de vendas e performance</p>
         </div>
-        <Button onClick={() => setShowNovaComissaoModal(true)}>
+        <Button onClick={() => { resetForm(); setShowNovaComissaoModal(true); }}>
           <Plus className="h-4 w-4 mr-2" />
           Nova Comissão
         </Button>
@@ -399,6 +614,7 @@ const ComissoesPagarView = () => {
                     <SelectItem value="calculado">Calculado</SelectItem>
                     <SelectItem value="pago">Pago</SelectItem>
                     <SelectItem value="pendente">Pendente Aprovação</SelectItem>
+                    <SelectItem value="pendente_pagamento">Pendente Pagamento</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -415,11 +631,12 @@ const ComissoesPagarView = () => {
                     <TableHead>%</TableHead>
                     <TableHead>Comissão</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Origem</TableHead>
                     <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {comissoes.map((comissao) => (
+                  {todasComissoes.map((comissao) => (
                     <TableRow key={comissao.id}>
                       <TableCell className="font-medium">{comissao.id}</TableCell>
                       <TableCell>
@@ -428,7 +645,7 @@ const ComissoesPagarView = () => {
                           {comissao.vendedor}
                         </div>
                       </TableCell>
-                      <TableCell>{comissao.venda}</TableCell>
+                      <TableCell>{comissao.vendaId}</TableCell>
                       <TableCell>{comissao.cliente}</TableCell>
                       <TableCell>{formatCurrency(comissao.valorVenda)}</TableCell>
                       <TableCell>{formatPercent(comissao.percentualComissao)}</TableCell>
@@ -442,7 +659,15 @@ const ComissoesPagarView = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Button size="sm" variant="outline">
+                        {comissao.origemContasReceber && (
+                          <Badge className="bg-purple-500 text-white text-xs">
+                            <ArrowDownCircle className="h-3 w-3 mr-1" />
+                            Contas a Receber
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Button size="sm" variant="outline" onClick={() => openEditComissao(comissao)}>
                           <FileText className="h-4 w-4" />
                         </Button>
                       </TableCell>
