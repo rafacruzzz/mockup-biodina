@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone, Building2, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone, Building2, RefreshCw, ChevronDown, ChevronUp, ExternalLink, Copy } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { mockChecklistVendas } from '@/data/faturamentoModules';
@@ -61,7 +61,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [documentosLicitacao, setDocumentosLicitacao] = useState<any[]>([]);
   const [historicoLicitacao, setHistoricoLicitacao] = useState<any[]>([]);
   const [historicoVisitas, setHistoricoVisitas] = useState<HistoricoVisita[]>(oportunidade?.historicoVisitas || []);
-  const [interfaceamentos, setInterfaceamentos] = useState<any[]>(oportunidade?.interfaceamentos || []);
+   const [interfaceamentos, setInterfaceamentos] = useState<any[]>(oportunidade?.interfaceamentos || []);
+  const [linkExternoRepresentacao, setLinkExternoRepresentacao] = useState('');
   const [modalHistoricoOpen, setModalHistoricoOpen] = useState(false);
   const [novaVisita, setNovaVisita] = useState({
     colaborador: '',
@@ -1136,6 +1137,42 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                     <CardTitle>Representação Comercial</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    {/* Gerar Link Externo */}
+                    <div className="flex flex-col gap-2 p-3 rounded-md border border-dashed border-muted-foreground/30 bg-muted/30">
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            const code = crypto.randomUUID().slice(0, 8);
+                            setLinkExternoRepresentacao(`${window.location.origin}/representacao/${code}`);
+                            toast.success('Link externo gerado com sucesso!');
+                          }}
+                        >
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Gerar Link Externo
+                        </Button>
+                        <span className="text-xs text-muted-foreground">Envie este link para o representante preencher as informações</span>
+                      </div>
+                      {linkExternoRepresentacao && (
+                        <div className="flex items-center gap-2">
+                          <code className="text-xs bg-background px-2 py-1 rounded border flex-1 truncate">{linkExternoRepresentacao}</code>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={async () => {
+                              await navigator.clipboard.writeText(linkExternoRepresentacao);
+                              toast.success('Link copiado!');
+                            }}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="representanteResponsavel">Representante Responsável</Label>
