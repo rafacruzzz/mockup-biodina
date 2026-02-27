@@ -1,4 +1,6 @@
-import React, { useState, lazy, Suspense } from "react";
+import React, { useState, lazy, Suspense, useCallback } from "react";
+import { ComissaoPagar } from "@/types/comissoesPagar";
+import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +40,31 @@ const Financeiro = () => {
   const [filterStatus, setFilterStatus] = useState('todos');
   const [filterPeriodo, setFilterPeriodo] = useState('mes');
   const [faturamentoTab, setFaturamentoTab] = useState('faturamento');
+  const [comissoesPendentes, setComissoesPendentes] = useState<ComissaoPagar[]>([]);
+  const { toast: finToast } = useToast();
+
+  const handleEnviarComissao = useCallback((conta: { id: string; cliente: string; descricao: string; valor: number; vencimento: string; status: string; vendedor: string }) => {
+    const novaComissao: ComissaoPagar = {
+      id: `COM-AR-${Date.now()}`,
+      vendedor: conta.vendedor,
+      vendaId: conta.id,
+      cliente: conta.cliente,
+      valorVenda: conta.valor,
+      percentualComissao: 0,
+      valorComissao: 0,
+      dataVenda: conta.vencimento,
+      status: "Pendente Pagamento",
+      periodoCalculo: new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }),
+      observacoes: conta.descricao,
+      origemContasReceber: true
+    };
+    setComissoesPendentes(prev => [...prev, novaComissao]);
+    finToast({
+      title: "Comissão enviada",
+      description: `Comissão do vendedor ${conta.vendedor} enviada ao Contas a Pagar com sucesso.`,
+      className: "bg-green-50 border-green-200 text-green-800",
+    });
+  }, [finToast]);
 
   // Listener para navegação de configurações fiscais
   React.useEffect(() => {
@@ -273,9 +300,22 @@ const Financeiro = () => {
                 </TableCell>
                 <TableCell>{conta.vendedor}</TableCell>
                 <TableCell>
-                  <Button size="sm" variant="outline">
-                    <Edit className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button size="sm" variant="outline">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    {conta.status === 'Recebido' && (
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        className="text-purple-600 border-purple-300 hover:bg-purple-50"
+                        onClick={() => handleEnviarComissao(conta)}
+                      >
+                        <DollarSign className="h-4 w-4 mr-1" />
+                        Enviar ao Contas a Pagar
+                      </Button>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -726,7 +766,7 @@ const Financeiro = () => {
                 Voltar
               </Button>
             </div>
-            <ComissoesPagarView />
+            <ComissoesPagarView comissoesPendentes={comissoesPendentes} />
           </div>
         );
       case 'caixa':
