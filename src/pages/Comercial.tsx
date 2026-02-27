@@ -21,6 +21,7 @@ import ContratacaoSimplesForm from "@/components/comercial/ContratacaoSimplesFor
 import ImportacaoDiretaForm from "@/components/comercial/ImportacaoDiretaForm";
 // import AssinaturasDigitaisView from "@/components/comercial/AssinaturasDigitaisView"; // COMENTADO - NÃO USAR NO MOMENTO
 import EmprestimosTable from "@/components/comercial/EmprestimosTable";
+import MeusPedidosView from "@/components/comercial/MeusPedidosView";
 import AgendaComercial from "@/components/comercial/AgendaComercial";
 import { 
   TrendingUp, Target, FileText, BarChart3, Plus, Search, Edit,
@@ -741,6 +742,7 @@ const Comercial = () => {
       { id: 'contratacao', label: 'Contratação', icon: Building2 },
       { id: 'importacao', label: 'Importação Direta', icon: Globe },
       { id: 'emprestimos', label: 'Gestão de Empréstimos', icon: HandCoins },
+      { id: 'meus-pedidos', label: 'Meus Pedidos', icon: ClipboardList },
     ];
 
     const renderContent = () => {
@@ -750,6 +752,7 @@ const Comercial = () => {
         case 'contratacao': return renderOportunidadesPorModalidade('contratacao_simples');
         case 'importacao': return renderOportunidadesPorModalidade('importacao_direta');
         case 'emprestimos': return <EmprestimosTable contexto="vendas" />;
+        case 'meus-pedidos': return <MeusPedidosView />;
         default: return renderIndicadoresEAnalise();
       }
     };
