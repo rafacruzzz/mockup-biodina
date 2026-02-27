@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import DetalhesContaModal from "./DetalhesContaModal";
+import BancoSelect from "./BancoSelect";
 
 interface CalendarContaItem {
   contaId: string;
@@ -355,26 +356,17 @@ const CalendarioVencimentos = ({ contasSalvas, onUpdateConta }: CalendarioVencim
               <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                 <Building2 className="h-3 w-3" /> Dados bancários do pagamento
               </Label>
-              <Input
-                placeholder="Banco"
-                className="h-7 text-xs"
+              <BancoSelect
+                compact
                 value={conta.bancoPagamento || ''}
-                onChange={(e) => handleBancoChange(conta.id, 'bancoPagamento', e.target.value)}
+                agencia={conta.agenciaPagamento || ''}
+                conta={conta.contaPagamento || ''}
+                onBancoSelect={(banco, agencia, contaBanco) => {
+                  handleBancoChange(conta.id, 'bancoPagamento', banco);
+                  handleBancoChange(conta.id, 'agenciaPagamento', agencia);
+                  handleBancoChange(conta.id, 'contaPagamento', contaBanco);
+                }}
               />
-              <div className="grid grid-cols-2 gap-2">
-                <Input
-                  placeholder="Agência"
-                  className="h-7 text-xs"
-                  value={conta.agenciaPagamento || ''}
-                  onChange={(e) => handleBancoChange(conta.id, 'agenciaPagamento', e.target.value)}
-                />
-                <Input
-                  placeholder="Conta"
-                  className="h-7 text-xs"
-                  value={conta.contaPagamento || ''}
-                  onChange={(e) => handleBancoChange(conta.id, 'contaPagamento', e.target.value)}
-                />
-              </div>
             </div>
 
             {/* Botão ver detalhes completos */}

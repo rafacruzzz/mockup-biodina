@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MoneyInput } from "@/components/ui/money-input";
+import BancoSelect from "./BancoSelect";
 import { 
   Plus, Search, DollarSign, TrendingUp, User, FileText,
   CheckCircle, Clock, Calculator, Target, ArrowDownCircle
@@ -411,39 +412,16 @@ const ComissoesPagarView = ({ comissoesPendentes = [], onComissaoSalva }: Comiss
                     onChange={(e) => setFormDataPagamento(e.target.value)}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="banco">Banco</Label>
-                  <Select value={formBanco} onValueChange={setFormBanco}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o banco" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Banco do Brasil">Banco do Brasil</SelectItem>
-                      <SelectItem value="Caixa Econômica">Caixa Econômica</SelectItem>
-                      <SelectItem value="Itaú">Itaú</SelectItem>
-                      <SelectItem value="Bradesco">Bradesco</SelectItem>
-                      <SelectItem value="Santander">Santander</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="agencia">Agência</Label>
-                  <Input 
-                    id="agencia"
-                    placeholder="0000-0"
-                    value={formAgencia}
-                    onChange={(e) => setFormAgencia(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="conta">Conta</Label>
-                  <Input 
-                    id="conta"
-                    placeholder="00000-0"
-                    value={formConta}
-                    onChange={(e) => setFormConta(e.target.value)}
-                  />
-                </div>
+                <BancoSelect
+                  value={formBanco}
+                  agencia={formAgencia}
+                  conta={formConta}
+                  onBancoSelect={(banco, agencia, conta) => {
+                    setFormBanco(banco);
+                    setFormAgencia(agencia);
+                    setFormConta(conta);
+                  }}
+                />
               </div>
 
               <div className="border-t pt-4">

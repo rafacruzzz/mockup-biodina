@@ -13,6 +13,7 @@ import { CalendarIcon, Upload, X, Plus, Trash2 } from 'lucide-react';
 import { format, addMonths } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import BancoSelect from './BancoSelect';
 import { TipoRequisicaoSimples, StatusConta, FormaPagamento, ContaPagar, ParcelaConta } from '@/types/financeiro';
 import { mockDepartamentosSimples, mockProjetosSimples, mockFornecedoresSimples, DOCUMENTOS_OBRIGATORIOS_MODAL } from '@/data/contasPagarData';
 import { Switch } from '@/components/ui/switch';
@@ -483,32 +484,12 @@ export const NovaContaPagarModal: React.FC<NovaContaPagarModalProps> = ({
                 </div>
 
                 {/* Dados bancários */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label>Banco</Label>
-                    <Input
-                      value={formData.bancoPagamento}
-                      onChange={(e) => setFormData(prev => ({ ...prev, bancoPagamento: e.target.value }))}
-                      placeholder="Ex: 001 - Banco do Brasil"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Agência</Label>
-                    <Input
-                      value={formData.agenciaPagamento}
-                      onChange={(e) => setFormData(prev => ({ ...prev, agenciaPagamento: e.target.value }))}
-                      placeholder="Ex: 1234-5"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Conta</Label>
-                    <Input
-                      value={formData.contaPagamento}
-                      onChange={(e) => setFormData(prev => ({ ...prev, contaPagamento: e.target.value }))}
-                      placeholder="Ex: 12345-6"
-                    />
-                  </div>
-                </div>
+                <BancoSelect
+                  value={formData.bancoPagamento}
+                  agencia={formData.agenciaPagamento}
+                  conta={formData.contaPagamento}
+                  onBancoSelect={(banco, agencia, conta) => setFormData(prev => ({ ...prev, bancoPagamento: banco, agenciaPagamento: agencia, contaPagamento: conta }))}
+                />
               </div>
             )}
 
