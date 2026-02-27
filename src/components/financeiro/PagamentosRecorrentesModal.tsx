@@ -52,7 +52,7 @@ const PagamentosRecorrentesModal = ({ isOpen, onClose, onNovaContaRecorrente }: 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto pt-10">
         <DialogHeader>
           <div className="flex justify-between items-center">
             <DialogTitle className="flex items-center gap-2">
