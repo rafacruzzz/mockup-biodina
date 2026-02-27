@@ -13,6 +13,7 @@ import { Switch } from '@/components/ui/switch';
 import { CalendarIcon, Upload, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import BancoSelect from './BancoSelect';
 import { ContaRecorrenteEnhanced, CategoriaContaRecorrente, Periodicidade, FormaPagamento, TipoRequisicaoSimples } from '@/types/financeiro';
 import { mockDepartamentosSimples, mockProjetosSimples, mockFornecedoresSimples } from '@/data/contasPagarData';
 
@@ -424,20 +425,13 @@ export const NovaContaRecorrenteModal: React.FC<NovaContaRecorrenteModalProps> =
                     </PopoverContent>
                   </Popover>
                 </div>
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="space-y-2">
-                    <Label className="text-xs">Banco</Label>
-                    <Input value={formData.bancoPagamento} onChange={(e) => setFormData(prev => ({ ...prev, bancoPagamento: e.target.value }))} placeholder="Banco" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs">Agência</Label>
-                    <Input value={formData.agenciaPagamento} onChange={(e) => setFormData(prev => ({ ...prev, agenciaPagamento: e.target.value }))} placeholder="Agência" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs">Conta</Label>
-                    <Input value={formData.contaPagamento} onChange={(e) => setFormData(prev => ({ ...prev, contaPagamento: e.target.value }))} placeholder="Conta" />
-                  </div>
-                </div>
+                <BancoSelect
+                  compact
+                  value={formData.bancoPagamento}
+                  agencia={formData.agenciaPagamento}
+                  conta={formData.contaPagamento}
+                  onBancoSelect={(banco, agencia, conta) => setFormData(prev => ({ ...prev, bancoPagamento: banco, agenciaPagamento: agencia, contaPagamento: conta }))}
+                />
               </div>
             )}
           </div>

@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { ContaPagar } from '@/types/financeiro';
+import BancoSelect from './BancoSelect';
 
 interface PagarContaModalProps {
   isOpen: boolean;
@@ -274,32 +275,12 @@ export const PagarContaModal: React.FC<PagarContaModalProps> = ({
             {/* Dados Bancários */}
             <div className="space-y-3">
               <h4 className="font-medium text-sm">Dados Bancários do Pagamento</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label>Banco</Label>
-                  <Input
-                    value={formData.bancoPagamento}
-                    onChange={(e) => setFormData(prev => ({ ...prev, bancoPagamento: e.target.value }))}
-                    placeholder="Ex: 001 - Banco do Brasil"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Agência</Label>
-                  <Input
-                    value={formData.agenciaPagamento}
-                    onChange={(e) => setFormData(prev => ({ ...prev, agenciaPagamento: e.target.value }))}
-                    placeholder="Ex: 1234-5"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Conta</Label>
-                  <Input
-                    value={formData.contaPagamento}
-                    onChange={(e) => setFormData(prev => ({ ...prev, contaPagamento: e.target.value }))}
-                    placeholder="Ex: 12345-6"
-                  />
-                </div>
-              </div>
+              <BancoSelect
+                value={formData.bancoPagamento}
+                agencia={formData.agenciaPagamento}
+                conta={formData.contaPagamento}
+                onBancoSelect={(banco, agencia, conta) => setFormData(prev => ({ ...prev, bancoPagamento: banco, agenciaPagamento: agencia, contaPagamento: conta }))}
+              />
             </div>
 
             {/* Multa, Juros e Desconto */}
