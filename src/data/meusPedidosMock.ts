@@ -1,0 +1,148 @@
+import { StatusPedido } from '@/types/comercial';
+
+export interface MeuPedido {
+  id: string;
+  numeroPedido: string;
+  contratacaoNome: string;
+  contratacaoCodigo: string;
+  cliente: string;
+  dataCriacao: string;
+  valorTotal: number;
+  statusAtual: StatusPedido;
+  criadoPor: string;
+  produtos: string;
+  ultimaAtualizacao: string;
+}
+
+export const meusPedidosMock: MeuPedido[] = [
+  {
+    id: '1',
+    numeroPedido: 'PED-2024-001',
+    contratacaoNome: 'Contratação Hospital São Paulo',
+    contratacaoCodigo: 'CT-001',
+    cliente: 'Hospital São Paulo',
+    dataCriacao: '2024-01-10',
+    valorTotal: 45000,
+    statusAtual: 'enviado',
+    criadoPor: 'Rafael Oliveira',
+    produtos: 'Kit Reagente PCR (3x), Ponteiras (10x)',
+    ultimaAtualizacao: '2024-01-12',
+  },
+  {
+    id: '2',
+    numeroPedido: 'PED-2024-002',
+    contratacaoNome: 'Contratação Lab Santa Casa',
+    contratacaoCodigo: 'CT-002',
+    cliente: 'Lab Santa Casa',
+    dataCriacao: '2024-01-15',
+    valorTotal: 32000,
+    statusAtual: 'em_separacao',
+    criadoPor: 'Rafael Oliveira',
+    produtos: 'Analisador Hematológico (1x)',
+    ultimaAtualizacao: '2024-01-18',
+  },
+  {
+    id: '3',
+    numeroPedido: 'PED-2024-003',
+    contratacaoNome: 'Contratação Hospital São Paulo',
+    contratacaoCodigo: 'CT-001',
+    cliente: 'Hospital São Paulo',
+    dataCriacao: '2024-01-20',
+    valorTotal: 18500,
+    statusAtual: 'faturado',
+    criadoPor: 'Rafael Oliveira',
+    produtos: 'Controles de Qualidade (5x)',
+    ultimaAtualizacao: '2024-01-25',
+  },
+  {
+    id: '4',
+    numeroPedido: 'PED-2024-004',
+    contratacaoNome: 'Contratação UBS Central',
+    contratacaoCodigo: 'CT-003',
+    cliente: 'UBS Central',
+    dataCriacao: '2024-02-01',
+    valorTotal: 67000,
+    statusAtual: 'entregue',
+    criadoPor: 'Rafael Oliveira',
+    produtos: 'Equipamento XPT-300 (1x), Reagentes (20x)',
+    ultimaAtualizacao: '2024-02-10',
+  },
+  {
+    id: '5',
+    numeroPedido: 'PED-2024-005',
+    contratacaoNome: 'Contratação Lab Santa Casa',
+    contratacaoCodigo: 'CT-002',
+    cliente: 'Lab Santa Casa',
+    dataCriacao: '2024-02-05',
+    valorTotal: 12000,
+    statusAtual: 'em_transito',
+    criadoPor: 'Rafael Oliveira',
+    produtos: 'Ponteiras descartáveis (50x)',
+    ultimaAtualizacao: '2024-02-08',
+  },
+  {
+    id: '6',
+    numeroPedido: 'PED-2024-006',
+    contratacaoNome: 'Contratação Hospital Albert Einstein',
+    contratacaoCodigo: 'CT-004',
+    cliente: 'Hospital Albert Einstein',
+    dataCriacao: '2024-02-12',
+    valorTotal: 95000,
+    statusAtual: 'recebido_estoque',
+    criadoPor: 'Rafael Oliveira',
+    produtos: 'Sistema Automatizado (1x), Calibradores (10x)',
+    ultimaAtualizacao: '2024-02-14',
+  },
+  {
+    id: '7',
+    numeroPedido: 'PED-2024-007',
+    contratacaoNome: 'Contratação Hospital São Paulo',
+    contratacaoCodigo: 'CT-001',
+    cliente: 'Hospital São Paulo',
+    dataCriacao: '2024-02-18',
+    valorTotal: 22000,
+    statusAtual: 'rascunho',
+    criadoPor: 'Rafael Oliveira',
+    produtos: 'Kit ELISA (8x)',
+    ultimaAtualizacao: '2024-02-18',
+  },
+  {
+    id: '8',
+    numeroPedido: 'PED-2024-008',
+    contratacaoNome: 'Contratação UBS Central',
+    contratacaoCodigo: 'CT-003',
+    cliente: 'UBS Central',
+    dataCriacao: '2024-02-20',
+    valorTotal: 8500,
+    statusAtual: 'cancelado',
+    criadoPor: 'Marcos Souza',
+    produtos: 'Tubos coleta (100x)',
+    ultimaAtualizacao: '2024-02-21',
+  },
+  {
+    id: '9',
+    numeroPedido: 'PED-2024-009',
+    contratacaoNome: 'Contratação Lab Santa Casa',
+    contratacaoCodigo: 'CT-002',
+    cliente: 'Lab Santa Casa',
+    dataCriacao: '2024-02-22',
+    valorTotal: 55000,
+    statusAtual: 'pronto_faturamento',
+    criadoPor: 'Marcos Souza',
+    produtos: 'Centrífuga (1x), Reagentes (15x)',
+    ultimaAtualizacao: '2024-02-24',
+  },
+  {
+    id: '10',
+    numeroPedido: 'PED-2024-010',
+    contratacaoNome: 'Contratação Hospital Albert Einstein',
+    contratacaoCodigo: 'CT-004',
+    cliente: 'Hospital Albert Einstein',
+    dataCriacao: '2024-03-01',
+    valorTotal: 41000,
+    statusAtual: 'enviado',
+    criadoPor: 'Marcos Souza',
+    produtos: 'Kit Bioquímica (12x)',
+    ultimaAtualizacao: '2024-03-02',
+  },
+];
