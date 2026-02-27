@@ -22,6 +22,10 @@ import { useToast } from "@/hooks/use-toast";
 import ContratosTabContent from "./ContratosTabContent";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { addMonths } from "date-fns";
+import { SolicitacaoPagamento } from "@/types/solicitacaoPagamento";
+import { SolicitacoesPagamentoModal } from "./SolicitacoesPagamentoModal";
+import { NovaSolicitacaoModal } from "./NovaSolicitacaoModal";
+import { Inbox } from "lucide-react";
 
 const APagarPagosView = () => {
   const { toast } = useToast();
@@ -38,6 +42,64 @@ const APagarPagosView = () => {
   const [contasPagas, setContasPagas] = useState<string[]>([]);
   const [contasSalvas, setContasSalvas] = useState<ContaPagar[]>([]);
   const [contasRecorrentesSalvas, setContasRecorrentesSalvas] = useState<ContaRecorrenteEnhanced[]>([]);
+  const [solicitacoes, setSolicitacoes] = useState<SolicitacaoPagamento[]>([]);
+  const [showSolicitacoesModal, setShowSolicitacoesModal] = useState(false);
+  const [showNovaSolicitacaoModal, setShowNovaSolicitacaoModal] = useState(false);
+
+  const solicitacoesPendentes = solicitacoes.filter(s => s.status === 'pendente_analise');
+  const temUrgentes = solicitacoesPendentes.some(s => {
+    const hoje = new Date(); hoje.setHours(0,0,0,0);
+    return new Date(s.dataVencimento) <= hoje;
+  });
+
+  const handleAceitarSolicitacao = (id: string) => {
+    const sol = solicitacoes.find(s => s.id === id);
+    if (!sol) return;
+    setSolicitacoes(prev => prev.map(s => s.id === id ? { ...s, status: 'aceita' as const } : s));
+    const novaConta: ContaPagar = {
+      id: `CP-SOL-${Date.now()}`,
+      empresaId: empresaAtivaId,
+      numero: `CP-SOL-${String(contasSalvas.length + 1).padStart(3, '0')}`,
+      tipo: 'pagamento' as any,
+      departamentoSolicitante: sol.departamentoSolicitante,
+      vincularA: 'departamento',
+      departamento: sol.departamentoSolicitante,
+      fornecedor: sol.fornecedor,
+      descricao: sol.descricao,
+      valor: sol.valor,
+      dataVencimento: new Date(sol.dataVencimento),
+      formaPagamentoSugerida: 'boleto' as any,
+      status: 'programado' as any,
+      createdAt: new Date(),
+      pagamentoEfetuado: false,
+      tipoPagamento: 'unico',
+      anexos: sol.anexos,
+    };
+    setContasSalvas(prev => [...prev, novaConta]);
+    toast({
+      title: "Solicitação Aceita",
+      description: `Pagamento de ${sol.fornecedor} incluído no calendário.`,
+      className: "bg-green-50 border-green-200 text-green-800",
+    });
+  };
+
+  const handleRejeitarSolicitacao = (id: string) => {
+    setSolicitacoes(prev => prev.map(s => s.id === id ? { ...s, status: 'rejeitada' as const } : s));
+    toast({
+      title: "Solicitação Rejeitada",
+      description: "A solicitação foi rejeitada.",
+      variant: "destructive",
+    });
+  };
+
+  const handleNovaSolicitacao = (sol: SolicitacaoPagamento) => {
+    setSolicitacoes(prev => [...prev, sol]);
+    toast({
+      title: "📩 Nova Solicitação Recebida!",
+      description: `${sol.departamentoSolicitante} enviou solicitação de pagamento para ${sol.fornecedor}.` + (sol.urgente ? ' ⚠️ URGENTE!' : ''),
+      className: sol.urgente ? "bg-red-50 border-red-200 text-red-800" : "bg-blue-50 border-blue-200 text-blue-800",
+    });
+  };
 
   const handleUpdateContaCalendario = (contaId: string, updates: Partial<ContaPagar>) => {
     setContasSalvas(prev => prev.map(c => c.id === contaId ? { ...c, ...updates } : c));
@@ -131,6 +193,23 @@ const APagarPagosView = () => {
           <Button onClick={() => setShowNovaContaModal(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Nova Conta a Pagar
+          </Button>
+          <Button
+            variant="outline"
+            className={temUrgentes ? "border-red-400 text-red-600 animate-pulse" : ""}
+            onClick={() => setShowSolicitacoesModal(true)}
+          >
+            <Inbox className="h-4 w-4 mr-2" />
+            Solicitações
+            {solicitacoesPendentes.length > 0 && (
+              <Badge variant={temUrgentes ? "destructive" : "default"} className="ml-2">
+                {solicitacoesPendentes.length}
+              </Badge>
+            )}
+          </Button>
+          <Button variant="outline" onClick={() => setShowNovaSolicitacaoModal(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Solicitação
           </Button>
         </div>
       </div>
@@ -595,6 +674,20 @@ const APagarPagosView = () => {
           console.log('Conta atualizada:', contaAtualizada);
           // Aqui você adicionaria a lógica para atualizar a conta
         }}
+      />
+
+      <SolicitacoesPagamentoModal
+        isOpen={showSolicitacoesModal}
+        onClose={() => setShowSolicitacoesModal(false)}
+        solicitacoes={solicitacoes}
+        onAceitar={handleAceitarSolicitacao}
+        onRejeitar={handleRejeitarSolicitacao}
+      />
+
+      <NovaSolicitacaoModal
+        isOpen={showNovaSolicitacaoModal}
+        onClose={() => setShowNovaSolicitacaoModal(false)}
+        onSave={handleNovaSolicitacao}
       />
     </div>
   );
