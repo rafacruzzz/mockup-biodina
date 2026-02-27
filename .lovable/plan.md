@@ -1,17 +1,29 @@
 
 
-## Plano: Botão "Gerar Link Externo" na seção Representação Comercial
+## Plano: Criar aba "Meus Pedidos" no módulo Comercial > Vendas
 
-### Arquivo a modificar
+### Contexto
 
-**`src/components/comercial/ContratacaoSimplesForm.tsx`**
+Usuários criam pedidos dentro de contratações (projetos), mas não têm uma visão consolidada de todos os seus pedidos. A nova aba "Meus Pedidos" reunirá todos os pedidos do usuário logado, de todas as contratações, com filtros para facilitar o acompanhamento.
 
-1. Adicionar estado `linkExternoRepresentacao` (string, inicialmente vazio)
-2. Na seção "Representação Comercial" (Card, linha ~1134), antes dos campos existentes, adicionar:
-   - Botão **"Gerar Link Externo"** com ícone de link externo
-   - Ao clicar, gera um link aleatório usando `window.location.origin + '/representacao/' + crypto.randomUUID().slice(0,8)` e salva no estado
-   - Abaixo do botão, quando o link existir, exibir o link em texto com botão "Copiar" ao lado
-   - Toast de sucesso ao copiar
-3. Adicionar texto explicativo pequeno: "Envie este link para o representante preencher as informações"
-4. Os campos existentes (Representante, Comissão, Histórico) permanecem inalterados
+### Arquivos a criar
+
+1. **`src/data/meusPedidosMock.ts`**
+   - Array mock de pedidos simulando pedidos criados por diferentes usuários em diferentes contratações
+   - Cada pedido terá: `id`, `numeroPedido`, `contratacaoNome`, `contratacaoCodigo`, `cliente`, `dataCriacao`, `valorTotal`, `statusAtual` (usando `StatusPedido` existente), `criadoPor` (nome do usuário), `produtos` (resumo), `ultimaAtualizacao`
+
+2. **`src/components/comercial/MeusPedidosView.tsx`**
+   - Componente principal da aba
+   - **Cards de resumo** no topo: Total de pedidos, Em andamento, Faturados, Entregues
+   - **Filtros**: por contratação (Select), por status do pedido (Select), por período/data (inputs de data)
+   - **Tabela** com colunas: Nº Pedido, Contratação, Cliente, Data, Valor, Status (badge colorido), Ações (botão ver detalhes)
+   - Filtra pedidos pelo usuário logado (usando `useUser()` do contexto existente)
+   - Status com badges coloridos reutilizando o padrão de cores do `AcompanhamentoPedidoTab`
+
+### Arquivos a modificar
+
+1. **`src/pages/Comercial.tsx`**
+   - Adicionar tab `{ id: 'meus-pedidos', label: 'Meus Pedidos', icon: ClipboardList }` após "Gestão de Empréstimos" no array `tabs` (~linha 743)
+   - Adicionar `case 'meus-pedidos': return <MeusPedidosView />;` no `renderContent` (~linha 752)
+   - Import do `MeusPedidosView`
 
