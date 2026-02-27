@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarPicker } from "@/components/ui/calendar";
 import { ChevronLeft, ChevronRight, Calendar, DollarSign, CalendarIcon, Building2 } from "lucide-react";
@@ -252,135 +253,171 @@ const CalendarioVencimentos = ({ contasSalvas, onUpdateConta }: CalendarioVencim
   const calendarDays = generateCalendarGrid();
   const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
-  // Inline controls for a specific conta (shown in popover)
+  // Inline controls for a specific conta (shown in dialog)
   const InlineControls = ({ item }: { item: CalendarContaItem }) => {
     const conta = item.conta;
     const colors = getStatusColor(conta);
     const badge = getStatusBadge(conta);
+    const [open, setOpen] = useState(false);
+    const [localPago, setLocalPago] = useState(conta.pagamentoEfetuado);
+    const [localDataPagamento, setLocalDataPagamento] = useState<Date | undefined>(
+      conta.dataPagamentoEfetuado ? new Date(conta.dataPagamentoEfetuado) : undefined
+    );
+    const [localBanco, setLocalBanco] = useState(conta.bancoPagamento || '');
+    const [localAgencia, setLocalAgencia] = useState(conta.agenciaPagamento || '');
+    const [localConta, setLocalConta] = useState(conta.contaPagamento || '');
+
+    const handleSave = () => {
+      if (onUpdateConta) {
+        onUpdateConta(conta.id, {
+          pagamentoEfetuado: localPago,
+          dataPagamentoEfetuado: localPago ? (localDataPagamento || new Date()) : localDataPagamento,
+          bancoPagamento: localBanco,
+          agenciaPagamento: localAgencia,
+          contaPagamento: localConta,
+        });
+      }
+      setOpen(false);
+    };
+
+    const handleOpenChange = (isOpen: boolean) => {
+      if (isOpen) {
+        // Reset local state from conta when opening
+        setLocalPago(conta.pagamentoEfetuado);
+        setLocalDataPagamento(conta.dataPagamentoEfetuado ? new Date(conta.dataPagamentoEfetuado) : undefined);
+        setLocalBanco(conta.bancoPagamento || '');
+        setLocalAgencia(conta.agenciaPagamento || '');
+        setLocalConta(conta.contaPagamento || '');
+      }
+      setOpen(isOpen);
+    };
     
     return (
-      <Popover>
-        <PopoverTrigger asChild>
-          <div
-            className="text-xs rounded p-1.5 cursor-pointer transition-colors border hover:shadow-sm"
-            style={{ backgroundColor: colors.bg, borderColor: colors.border }}
-          >
-            <div className="font-medium truncate text-foreground text-[10px]" title={item.descricao}>
-              {item.descricao.length > 18 ? item.descricao.substring(0, 18) + '...' : item.descricao}
-            </div>
-            {item.parcelaLabel && (
-              <div className="text-[8px] font-semibold text-primary">{item.parcelaLabel}</div>
-            )}
-            {(item.conta as any).isRecorrente && (
-              <div className="text-[8px] font-semibold text-purple-600">Recorrente</div>
-            )}
-            <div className="flex items-center justify-between mt-0.5">
-              <span className="font-semibold text-foreground text-[10px]">{formatCurrency(item.valor)}</span>
-              <Badge variant="outline" className={`text-[8px] px-1 py-0 h-3 ${badge.className}`}>
-                {badge.label}
-              </Badge>
-            </div>
-            <div className="text-[8px] text-muted-foreground truncate mt-0.5">
-              {conta.fornecedor.length > 15 ? conta.fornecedor.substring(0, 15) + '...' : conta.fornecedor}
-            </div>
+      <>
+        <div
+          className="text-xs rounded p-1.5 cursor-pointer transition-colors border hover:shadow-sm"
+          style={{ backgroundColor: colors.bg, borderColor: colors.border }}
+          onClick={() => handleOpenChange(true)}
+        >
+          <div className="font-medium truncate text-foreground text-[10px]" title={item.descricao}>
+            {item.descricao.length > 18 ? item.descricao.substring(0, 18) + '...' : item.descricao}
           </div>
-        </PopoverTrigger>
-        <PopoverContent className="w-80 p-4 z-50" align="start" side="right">
-          <div className="space-y-3">
-            {/* Header */}
-            <div>
-              <h4 className="font-semibold text-sm">{conta.descricao}</h4>
+          {item.parcelaLabel && (
+            <div className="text-[8px] font-semibold text-primary">{item.parcelaLabel}</div>
+          )}
+          {(item.conta as any).isRecorrente && (
+            <div className="text-[8px] font-semibold text-purple-600">Recorrente</div>
+          )}
+          <div className="flex items-center justify-between mt-0.5">
+            <span className="font-semibold text-foreground text-[10px]">{formatCurrency(item.valor)}</span>
+            <Badge variant="outline" className={`text-[8px] px-1 py-0 h-3 ${badge.className}`}>
+              {badge.label}
+            </Badge>
+          </div>
+          <div className="text-[8px] text-muted-foreground truncate mt-0.5">
+            {conta.fornecedor.length > 15 ? conta.fornecedor.substring(0, 15) + '...' : conta.fornecedor}
+          </div>
+        </div>
+
+        <Dialog open={open} onOpenChange={handleOpenChange}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-sm">{conta.descricao}</DialogTitle>
               <p className="text-xs text-muted-foreground">{conta.fornecedor} • {conta.numero}</p>
-              {item.parcelaLabel && (
-                <Badge variant="outline" className="text-xs mt-1 text-primary border-primary">{item.parcelaLabel}</Badge>
-              )}
-              {(conta as any).isRecorrente && (
-                <Badge variant="outline" className="text-xs mt-1 ml-1 border-purple-400 text-purple-600 bg-purple-50">Recorrente</Badge>
-              )}
-              <p className="text-sm font-bold mt-1">{formatCurrency(item.valor)}</p>
-            </div>
+            </DialogHeader>
 
-            {/* Anexos link */}
-            {conta.anexos && conta.anexos.length > 0 && (
-              <div>
-                <Label className="text-xs font-medium text-muted-foreground">Anexos ({conta.anexos.length})</Label>
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="p-0 h-auto text-xs"
-                  onClick={(e) => { e.stopPropagation(); handleContaClick(item); }}
-                >
-                  Ver documentos anexados →
-                </Button>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                {item.parcelaLabel && (
+                  <Badge variant="outline" className="text-xs text-primary border-primary">{item.parcelaLabel}</Badge>
+                )}
+                {(conta as any).isRecorrente && (
+                  <Badge variant="outline" className="text-xs border-purple-400 text-purple-600 bg-purple-50">Recorrente</Badge>
+                )}
               </div>
-            )}
+              <p className="text-sm font-bold">{formatCurrency(item.valor)}</p>
 
-            {/* Pago na data */}
-            <div className="flex items-center gap-2">
-              <Switch
-                checked={conta.pagamentoEfetuado}
-                onCheckedChange={(checked) => handlePagoNaData(conta.id, checked)}
-              />
-              <Label className="text-xs">Pago na data</Label>
-            </div>
+              {/* Anexos link */}
+              {conta.anexos && conta.anexos.length > 0 && (
+                <div>
+                  <Label className="text-xs font-medium text-muted-foreground">Anexos ({conta.anexos.length})</Label>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="p-0 h-auto text-xs"
+                    onClick={() => { setOpen(false); handleContaClick(item); }}
+                  >
+                    Ver documentos anexados →
+                  </Button>
+                </div>
+              )}
 
-            {/* Data do pagamento (se não pago na data) */}
-            {!conta.pagamentoEfetuado && (
-              <div>
-                <Label className="text-xs font-medium text-muted-foreground">Data do pagamento</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className={cn("w-full justify-start text-left text-xs h-8", !conta.dataPagamentoEfetuado && "text-muted-foreground")}
-                    >
-                      <CalendarIcon className="h-3 w-3 mr-1" />
-                      {conta.dataPagamentoEfetuado ? format(new Date(conta.dataPagamentoEfetuado), "dd/MM/yyyy") : "Selecionar data"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 z-[60]" align="start">
-                    <CalendarPicker
-                      mode="single"
-                      selected={conta.dataPagamentoEfetuado ? new Date(conta.dataPagamentoEfetuado) : undefined}
-                      onSelect={(date) => handleDataPagamento(conta.id, date)}
-                      className="p-3 pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
+              {/* Pago na data */}
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={localPago}
+                  onCheckedChange={setLocalPago}
+                />
+                <Label className="text-xs">Pago na data</Label>
               </div>
-            )}
 
-            {/* Dados bancários */}
-            <div className="space-y-2">
-              <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-                <Building2 className="h-3 w-3" /> Dados bancários do pagamento
-              </Label>
-              <BancoSelect
-                compact
-                value={conta.bancoPagamento || ''}
-                agencia={conta.agenciaPagamento || ''}
-                conta={conta.contaPagamento || ''}
-                onBancoSelect={(banco, agencia, contaBanco) => {
-                  handleBancoChange(conta.id, 'bancoPagamento', banco);
-                  handleBancoChange(conta.id, 'agenciaPagamento', agencia);
-                  handleBancoChange(conta.id, 'contaPagamento', contaBanco);
-                }}
-              />
+              {/* Data do pagamento */}
+              {!localPago && (
+                <div>
+                  <Label className="text-xs font-medium text-muted-foreground">Data do pagamento</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={cn("w-full justify-start text-left text-xs h-8", !localDataPagamento && "text-muted-foreground")}
+                      >
+                        <CalendarIcon className="h-3 w-3 mr-1" />
+                        {localDataPagamento ? format(localDataPagamento, "dd/MM/yyyy") : "Selecionar data"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 z-[60]" align="start">
+                      <CalendarPicker
+                        mode="single"
+                        selected={localDataPagamento}
+                        onSelect={setLocalDataPagamento}
+                        className="p-3 pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )}
+
+              {/* Dados bancários */}
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                  <Building2 className="h-3 w-3" /> Dados bancários do pagamento
+                </Label>
+                <BancoSelect
+                  compact
+                  value={localBanco}
+                  agencia={localAgencia}
+                  conta={localConta}
+                  onBancoSelect={(banco, agencia, contaBanco) => {
+                    setLocalBanco(banco);
+                    setLocalAgencia(agencia);
+                    setLocalConta(contaBanco);
+                  }}
+                />
+              </div>
             </div>
 
-            {/* Botão ver detalhes completos */}
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full text-xs"
-              onClick={(e) => { e.stopPropagation(); handleContaClick(item); }}
-            >
-              Ver detalhes completos
-            </Button>
-          </div>
-        </PopoverContent>
-      </Popover>
+            <DialogFooter className="flex gap-2 sm:gap-0">
+              <Button variant="outline" size="sm" className="text-xs" onClick={() => { setOpen(false); handleContaClick(item); }}>
+                Ver detalhes completos
+              </Button>
+              <Button size="sm" className="text-xs" onClick={handleSave}>
+                Salvar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </>
     );
   };
 
