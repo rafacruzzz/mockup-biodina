@@ -1,24 +1,17 @@
 
 
-## Plano: Corrigir interação do popover no Calendário
-
-### Problema
-
-O `Popover` do Radix fecha automaticamente quando o usuário interage com elementos internos (Switch, Select do banco, Calendar de data) porque esses componentes usam portais que tiram o foco do popover. Além disso, as alterações salvam automaticamente sem botão de confirmação.
-
-### Solução
-
-Substituir o `Popover` por um `Dialog` (modal) para os controles inline de cada conta no calendário. O Dialog não fecha ao interagir com elementos internos. Adicionar estado local temporário e botão "Salvar" para confirmar alterações.
+## Plano: Botão "Gerar Link Externo" na seção Representação Comercial
 
 ### Arquivo a modificar
 
-**`src/components/financeiro/CalendarioVencimentos.tsx`**
+**`src/components/comercial/ContratacaoSimplesForm.tsx`**
 
-1. No componente `InlineControls`, trocar `Popover`/`PopoverContent` por `Dialog`/`DialogContent`
-2. O clique no item do calendário abre o Dialog (mantém o card visual como trigger)
-3. Dentro do Dialog, manter todos os controles existentes (Switch, data, BancoSelect, botões)
-4. Adicionar estado local (`useState`) para armazenar alterações temporárias (pago, data, banco, agencia, conta)
-5. Adicionar botão **"Salvar"** que chama `onUpdateConta` com todas as alterações de uma vez
-6. Remover as chamadas diretas a `handlePagoNaData`, `handleDataPagamento`, `handleBancoChange` — essas passam a atualizar apenas o estado local
-7. Manter o popover interno de data (CalendarPicker) como está, pois dentro de um Dialog funciona corretamente
+1. Adicionar estado `linkExternoRepresentacao` (string, inicialmente vazio)
+2. Na seção "Representação Comercial" (Card, linha ~1134), antes dos campos existentes, adicionar:
+   - Botão **"Gerar Link Externo"** com ícone de link externo
+   - Ao clicar, gera um link aleatório usando `window.location.origin + '/representacao/' + crypto.randomUUID().slice(0,8)` e salva no estado
+   - Abaixo do botão, quando o link existir, exibir o link em texto com botão "Copiar" ao lado
+   - Toast de sucesso ao copiar
+3. Adicionar texto explicativo pequeno: "Envie este link para o representante preencher as informações"
+4. Os campos existentes (Representante, Comissão, Histórico) permanecem inalterados
 
