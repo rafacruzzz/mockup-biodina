@@ -1,45 +1,39 @@
 
 
-## Plano: Fluxo de Comissões — Contas a Receber → Contas a Pagar → Calendário
+## Plano: Sistema de Solicitações de Pagamento entre Departamentos
 
-### Resumo do fluxo solicitado
+### Resumo
 
-1. Em **Contas a Receber**, adicionar botão "Enviar ao Contas a Pagar" em cada linha
-2. **Comissões a Pagar** recebe a comissão com campos pré-preenchidos (Vendedor, Venda Relacionada, Cliente, Valor da Venda, Observações — conforme o print)
-3. No modal de Nova Comissão, adicionar uma **4ª aba "Pagamento"** com: data de pagamento, banco, agência, conta, multa, juros, desconto
-4. Ao receber/criar a comissão, ela é inserida no **Calendário de Vencimentos** do Contas a Pagar, onde banco/agência/conta são definidos e refletidos de volta na aba Pagamento
+Criar um sistema onde departamentos enviam solicitações de pagamento ao "Contas a Pagar". Um novo botão "Solicitações" (com badge de contagem) fica ao lado dos botões existentes. O sistema alerta automaticamente sobre urgência quando a data de pagamento é hoje ou já passou.
 
 ### Arquivos a criar
 
-1. **`src/types/comissoesPagar.ts`**
-   - Interface `ComissaoPagar` com todos os campos: id, vendedor, vendaId, cliente, valorVenda, percentualComissao, valorComissao, observacoes, status, dataPagamento, bancoPagamento, agenciaPagamento, contaPagamento, multa, juros, desconto, origemContasReceber (boolean)
+1. **`src/types/solicitacaoPagamento.ts`**
+   - Interface `SolicitacaoPagamento`: id, departamentoSolicitante, solicitadoPor, autorizadoPor, fornecedor, descricao, valor, dataVencimento, status (`pendente_analise` | `aceita` | `rejeitada`), notaFiscalUrl, emailsTrocados (string[]), anexos (string[]), urgente (boolean — calculado automaticamente se dataVencimento <= hoje), createdAt
+
+2. **`src/components/financeiro/SolicitacoesPagamentoModal.tsx`**
+   - Modal full-width listando todas as solicitações recebidas de outros departamentos
+   - Cada solicitação mostra: departamento, quem pediu, quem autorizou, NF, e-mails, valor, data de pagamento
+   - Badge vermelho "URGENTE: pagamento deve ser feito hoje" quando `dataVencimento <= hoje` (cálculo automático, sem botão manual)
+   - Botões "Aceitar" e "Rejeitar" em cada linha
+   - Ao aceitar: converte em `ContaPagar` e insere no calendário
+
+3. **`src/components/financeiro/NovaSolicitacaoModal.tsx`**
+   - Modal para criar solicitação (simulação de envio por outro departamento)
+   - Campos: departamento, solicitante, autorizador, fornecedor, descrição, valor, data de pagamento, NF (upload), e-mails trocados (upload/texto)
 
 ### Arquivos a modificar
 
-1. **`src/pages/Financeiro.tsx`**
-   - Adicionar estado compartilhado `comissoesPendentes` para comissões enviadas do Contas a Receber
-   - Na tabela de Contas a Receber, adicionar botão "Enviar ao Contas a Pagar" em cada linha com status "Recebido"
-   - Ao clicar, criar objeto `ComissaoPagar` com dados pré-preenchidos e adicioná-lo ao estado
-   - Passar `comissoesPendentes` como prop ao `ComissoesPagarView`
-   - Exibir notificação/toast ao enviar
+1. **`src/components/financeiro/APagarPagosView.tsx`**
+   - Adicionar estado `solicitacoesPendentes` e `solicitacoesRecebidas`
+   - Ao lado dos botões "Pagamentos Recorrentes" e "Nova Conta a Pagar", adicionar botão **"Solicitações"** com badge numérico (contagem de pendentes)
+   - Badge pisca/destaca quando há novas solicitações
+   - Ao aceitar solicitação, converter em `ContaPagar` e adicionar a `contasSalvas` (entra no calendário)
+   - Toast de alerta ao receber nova solicitação
 
-2. **`src/components/financeiro/ComissoesPagarView.tsx`**
-   - Receber prop `comissoesPendentes` e mesclá-las com as comissões existentes
-   - No modal `NovaComissaoModal`, adicionar **4ª aba "Pagamento"** com campos:
-     - Data de Pagamento (input date)
-     - Banco, Agência, Conta (selects/inputs — reutilizar padrão do NovaContaPagarModal)
-     - Multa, Juros, Desconto (MoneyInput)
-   - NÃO alterar as abas existentes (Dados Gerais, Cálculo, Documentos)
-   - Adicionar badge "Recebido do Contas a Receber" nas comissões que vieram do fluxo
-   - Ao salvar comissão, gerar entrada no formato `ContaPagar` para inclusão no Calendário
+### Alerta de urgência
 
-3. **`src/components/financeiro/APagarPagosView.tsx`**
-   - Receber comissões salvas e convertê-las em itens do calendário (similar ao fluxo de contas recorrentes)
-   - Sincronizar banco/agência/conta definidos no calendário de volta para a comissão
-
-### Detalhes técnicos
-
-- A aba "Pagamento" no modal reflete os dados definidos no Calendário (sincronização bidirecional)
-- Campos multa/juros/desconto seguem o mesmo padrão já usado em contas a pagar e recorrentes
-- As comissões enviadas do Contas a Receber chegam com status "Pendente Pagamento" e campos Vendedor, Cliente, Valor da Venda já preenchidos (campos disabled)
+- O sistema calcula automaticamente: se `dataVencimento <= new Date()`, marca como urgente
+- Exibe badge vermelho "URGENTE" na listagem e no botão de solicitações
+- Sem botão manual de urgência — evita abuso pelos solicitantes
 
