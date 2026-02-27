@@ -1,39 +1,42 @@
 
 
-## Plano: Sistema de Solicitações de Pagamento entre Departamentos
+## Plano: Substituir campos de texto de Banco por Select com dados mock de bancos cadastrados
 
-### Resumo
+### Contexto
 
-Criar um sistema onde departamentos enviam solicitações de pagamento ao "Contas a Pagar". Um novo botão "Solicitações" (com badge de contagem) fica ao lado dos botões existentes. O sistema alerta automaticamente sobre urgência quando a data de pagamento é hoje ou já passou.
+Atualmente, em vários locais do módulo financeiro, o campo "Banco" é um `Input` de texto livre. O usuário quer que seja um `Select` que puxa de uma lista de bancos cadastrados (mock), e ao selecionar o banco, agência e conta sejam preenchidos automaticamente.
+
+### Abordagem
+
+Criar um arquivo de dados mock com bancos cadastrados (cada um com agência e conta) e um componente reutilizável `BancoSelect` que, ao selecionar um banco, preenche automaticamente agência e conta.
 
 ### Arquivos a criar
 
-1. **`src/types/solicitacaoPagamento.ts`**
-   - Interface `SolicitacaoPagamento`: id, departamentoSolicitante, solicitadoPor, autorizadoPor, fornecedor, descricao, valor, dataVencimento, status (`pendente_analise` | `aceita` | `rejeitada`), notaFiscalUrl, emailsTrocados (string[]), anexos (string[]), urgente (boolean — calculado automaticamente se dataVencimento <= hoje), createdAt
+1. **`src/data/bancosCadastrados.ts`**
+   - Array mock de bancos cadastrados: `{ id, nome, codigo, agencia, conta }`
+   - Exemplos: Banco do Brasil (001, ag 1234-5, conta 56789-0), Itaú, Bradesco, Santander, Caixa, Nubank, Inter, C6 Bank
 
-2. **`src/components/financeiro/SolicitacoesPagamentoModal.tsx`**
-   - Modal full-width listando todas as solicitações recebidas de outros departamentos
-   - Cada solicitação mostra: departamento, quem pediu, quem autorizou, NF, e-mails, valor, data de pagamento
-   - Badge vermelho "URGENTE: pagamento deve ser feito hoje" quando `dataVencimento <= hoje` (cálculo automático, sem botão manual)
-   - Botões "Aceitar" e "Rejeitar" em cada linha
-   - Ao aceitar: converte em `ContaPagar` e insere no calendário
-
-3. **`src/components/financeiro/NovaSolicitacaoModal.tsx`**
-   - Modal para criar solicitação (simulação de envio por outro departamento)
-   - Campos: departamento, solicitante, autorizador, fornecedor, descrição, valor, data de pagamento, NF (upload), e-mails trocados (upload/texto)
+2. **`src/components/financeiro/BancoSelect.tsx`**
+   - Componente reutilizável com Select de banco
+   - Props: `value`, `onBancoSelect(banco, agencia, conta)` 
+   - Ao selecionar banco, chama callback com agência e conta do banco cadastrado
+   - Campos de agência e conta ficam read-only (preenchidos automaticamente)
 
 ### Arquivos a modificar
 
-1. **`src/components/financeiro/APagarPagosView.tsx`**
-   - Adicionar estado `solicitacoesPendentes` e `solicitacoesRecebidas`
-   - Ao lado dos botões "Pagamentos Recorrentes" e "Nova Conta a Pagar", adicionar botão **"Solicitações"** com badge numérico (contagem de pendentes)
-   - Badge pisca/destaca quando há novas solicitações
-   - Ao aceitar solicitação, converter em `ContaPagar` e adicionar a `contasSalvas` (entra no calendário)
-   - Toast de alerta ao receber nova solicitação
+1. **`src/components/financeiro/CalendarioVencimentos.tsx`** (linhas 358-376)
+   - Substituir Input de "Banco" por `BancoSelect`
+   - Ao selecionar, preencher agência e conta automaticamente via `handleBancoChange`
 
-### Alerta de urgência
+2. **`src/components/financeiro/NovaContaPagarModal.tsx`** (linhas 488-493)
+   - Substituir Input de "Banco" por `BancoSelect`
+   - Agência e conta preenchidos automaticamente
 
-- O sistema calcula automaticamente: se `dataVencimento <= new Date()`, marca como urgente
-- Exibe badge vermelho "URGENTE" na listagem e no botão de solicitações
-- Sem botão manual de urgência — evita abuso pelos solicitantes
+3. **`src/components/financeiro/NovaContaRecorrenteModal.tsx`** (linhas 429-435)
+   - Substituir Input de "Banco" por `BancoSelect`
+   - Agência e conta preenchidos automaticamente
+
+4. **`src/components/financeiro/ComissoesPagarView.tsx`** (linhas 416-427)
+   - Já usa Select mas com lista hardcoded — substituir por `BancoSelect` com dados do mock
+   - Agência e conta preenchidos automaticamente
 
