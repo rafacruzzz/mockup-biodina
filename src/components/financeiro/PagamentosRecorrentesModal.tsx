@@ -16,7 +16,7 @@ interface PagamentosRecorrentesModalProps {
   onNovaContaRecorrente?: () => void;
 }
 
-const PagamentosRecorrentesModal = ({ isOpen, onClose }: PagamentosRecorrentesModalProps) => {
+const PagamentosRecorrentesModal = ({ isOpen, onClose, onNovaContaRecorrente }: PagamentosRecorrentesModalProps) => {
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -59,7 +59,7 @@ const PagamentosRecorrentesModal = ({ isOpen, onClose }: PagamentosRecorrentesMo
               <Calendar className="h-5 w-5" />
               Pagamentos Recorrentes
             </DialogTitle>
-            <Button className="bg-biodina-gold hover:bg-biodina-gold/90">
+            <Button className="bg-biodina-gold hover:bg-biodina-gold/90" onClick={onNovaContaRecorrente}>
               <Plus className="h-4 w-4 mr-2" />
               Nova Conta Recorrente
             </Button>
