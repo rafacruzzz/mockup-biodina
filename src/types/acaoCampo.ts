@@ -119,6 +119,7 @@ export interface NotificacaoAcaoCampoData {
 
   // Aba 5 - Plano de Ação
   planosAcao: PlanoAcaoItem[];
+  previsaoEncerramento: string;
 
   // Aba 6 - Observações
   observacoes: string;

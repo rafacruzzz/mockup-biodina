@@ -49,7 +49,7 @@ const defaultData: NotificacaoAcaoCampoData = {
   dataIdentificacaoProblema: '', descricaoProblema: '', avaliacaoRisco: '',
   possiveisConsequencias: '', recomendacaoUsuarios: '',
   notificacoesNotivisa: false, numerosNotificacoes: ['', '', '', ''],
-  planosAcao: [planoAcaoVazio(1)],
+  planosAcao: [planoAcaoVazio(1)], previsaoEncerramento: '',
   observacoes: '', local: '', data: '', nomeLegivel: '',
   assinaturaDigitalBase64: ''
 };
@@ -533,6 +533,10 @@ export const NotificacaoAcaoCampoForm = ({ initialData, onSave, onCancel }: Prop
               </div>
             </div>
           ))}
+          <div className="space-y-1">
+            <Label className="text-xs">Previsão para encerramento desta ação de campo</Label>
+            <Input type="date" value={dados.previsaoEncerramento} onChange={e => set('previsaoEncerramento', e.target.value)} />
+          </div>
         </TabsContent>
 
         {/* ABA 6 - Observações e Assinatura */}
