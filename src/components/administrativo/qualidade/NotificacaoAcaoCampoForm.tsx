@@ -48,7 +48,7 @@ const defaultData: NotificacaoAcaoCampoData = {
   enquadramento: [], enquadramentoOutraEspecificar: '',
   dataIdentificacaoProblema: '', descricaoProblema: '', avaliacaoRisco: '',
   possiveisConsequencias: '', recomendacaoUsuarios: '',
-  notificacoesNotivisa: false, numerosNotificacoes: '',
+  notificacoesNotivisa: false, numerosNotificacoes: ['', '', '', ''],
   planosAcao: [planoAcaoVazio(1)],
   observacoes: '', local: '', data: '', nomeLegivel: '',
   assinaturaDigitalBase64: ''
@@ -457,7 +457,7 @@ export const NotificacaoAcaoCampoForm = ({ initialData, onSave, onCancel }: Prop
             <Label className="text-xs">Foram feitas notificações no Notivisa?</Label>
             <RadioGroup
               value={dados.notificacoesNotivisa ? 'sim' : 'nao'}
-              onValueChange={v => set('notificacoesNotivisa', v === 'sim')}
+              onValueChange={v => { set('notificacoesNotivisa', v === 'sim'); if (v === 'nao') set('numerosNotificacoes', ['', '', '', '']); }}
               className="flex gap-4"
             >
               <div className="flex items-center space-x-2">
@@ -471,9 +471,30 @@ export const NotificacaoAcaoCampoForm = ({ initialData, onSave, onCancel }: Prop
             </RadioGroup>
           </div>
           {dados.notificacoesNotivisa && (
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label className="text-xs">Números das Notificações</Label>
-              <Input value={dados.numerosNotificacoes} onChange={e => set('numerosNotificacoes', e.target.value)} placeholder="Informe os números das notificações" />
+              <div className="grid grid-cols-4 gap-2">
+                {dados.numerosNotificacoes.map((num, idx) => (
+                  <Input
+                    key={idx}
+                    value={num}
+                    onChange={e => {
+                      const updated = [...dados.numerosNotificacoes];
+                      updated[idx] = e.target.value;
+                      set('numerosNotificacoes', updated);
+                    }}
+                    placeholder={`Notificação ${idx + 1}`}
+                  />
+                ))}
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => set('numerosNotificacoes', [...dados.numerosNotificacoes, '', '', '', ''])}
+              >
+                <Plus className="h-4 w-4 mr-1" /> Adicionar campos
+              </Button>
             </div>
           )}
         </TabsContent>

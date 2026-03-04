@@ -85,7 +85,7 @@ export const gerarNotificacaoAcaoCampoPDF = (dados: NotificacaoAcaoCampoData): B
   field("Avaliação de Risco", dados.avaliacaoRisco);
   field("Possíveis Consequências", dados.possiveisConsequencias);
   field("Recomendação", dados.recomendacaoUsuarios);
-  field("Notificações Notivisa", dados.notificacoesNotivisa ? `Sim - ${dados.numerosNotificacoes}` : 'Não');
+  field("Notificações Notivisa", dados.notificacoesNotivisa ? `Sim - ${dados.numerosNotificacoes.filter(Boolean).join(', ')}` : 'Não');
 
   // 5
   if (y > 240) { doc.addPage(); y = 15; }

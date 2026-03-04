@@ -115,7 +115,7 @@ export interface NotificacaoAcaoCampoData {
   possiveisConsequencias: string;
   recomendacaoUsuarios: string;
   notificacoesNotivisa: boolean;
-  numerosNotificacoes: string;
+  numerosNotificacoes: string[];
 
   // Aba 5 - Plano de Ação
   planosAcao: PlanoAcaoItem[];
