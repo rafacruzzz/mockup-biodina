@@ -379,25 +379,29 @@ export const NotificacaoAcaoCampoForm = ({ initialData, onSave, onCancel }: Prop
             </div>
           </div>
 
-          {dados.classificacaoAcao.includes('Recolhimento') && (
-            <div>
-              <h3 className="font-semibold text-base mb-3">3.2.1 Destinação Final dos Produtos Recolhidos</h3>
-              <RadioGroup value={dados.destinacaoFinal} onValueChange={v => set('destinacaoFinal', v)} className="space-y-2">
-                {['Destruição', 'Devolução para fabricante', 'Outra'].map(d => (
-                  <div key={d} className="flex items-center space-x-2">
-                    <RadioGroupItem value={d} id={`dest-${d}`} />
-                    <Label htmlFor={`dest-${d}`} className="text-sm">{d}</Label>
-                  </div>
-                ))}
-              </RadioGroup>
-              {dados.destinacaoFinal === 'Outra' && (
-                <div className="ml-6 mt-2 space-y-1">
-                  <Label className="text-xs">Especificar</Label>
-                  <Input value={dados.destinacaoFinalOutraEspecificar} onChange={e => set('destinacaoFinalOutraEspecificar', e.target.value)} />
-                </div>
+          <div>
+              <h3 className="font-semibold text-base mb-3">3.2.1 Caso tenha respondido "Recolhimento" no item 3.2, informar a destinação final dos produtos recolhidos</h3>
+              {dados.classificacaoAcao.includes('Recolhimento') ? (
+                <>
+                  <RadioGroup value={dados.destinacaoFinal} onValueChange={v => set('destinacaoFinal', v)} className="space-y-2">
+                    {['Destruição', 'Devolução para o fabricante', 'Outra. Especificar'].map(d => (
+                      <div key={d} className="flex items-center space-x-2">
+                        <RadioGroupItem value={d} id={`dest-${d}`} />
+                        <Label htmlFor={`dest-${d}`} className="text-sm">{d}</Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                  {dados.destinacaoFinal === 'Outra. Especificar' && (
+                    <div className="ml-6 mt-2 space-y-1">
+                      <Label className="text-xs">Especificar</Label>
+                      <Input value={dados.destinacaoFinalOutraEspecificar} onChange={e => set('destinacaoFinalOutraEspecificar', e.target.value)} />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground italic">Selecione "Recolhimento" no item 3.2 para preencher este campo.</p>
               )}
-            </div>
-          )}
+          </div>
 
           <div>
             <h3 className="font-semibold text-base mb-3">3.3 Enquadramento</h3>
