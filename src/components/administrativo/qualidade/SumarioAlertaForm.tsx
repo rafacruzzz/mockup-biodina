@@ -44,6 +44,9 @@ const defaultData: SumarioAlertaData = {
   linkPaineisTecnovigilancia: "",
   informacoesComplementares: "",
   tagDescritores: "",
+  nomeEmpresa: "",
+  produtoSumario: "",
+  registroNotificacaoAnvisa: "",
 };
 
 export const SumarioAlertaForm = ({ initialData, onSave, onCancel }: Props) => {
@@ -230,6 +233,23 @@ export const SumarioAlertaForm = ({ initialData, onSave, onCancel }: Props) => {
         <Textarea value={formData.tagDescritores} onChange={e => handleChange("tagDescritores", e.target.value)} placeholder="Tecnovigilância, Alerta Sanitário, Produtos para a saúde..." rows={2} />
       </div>
 
+      {/* 23. Nome da Empresa */}
+      <div className="space-y-2">
+        <Label>23. Nome da Empresa</Label>
+        <Input value={formData.nomeEmpresa} onChange={e => handleChange("nomeEmpresa", e.target.value)} placeholder="Nome da empresa" />
+      </div>
+
+      {/* 24. Produto */}
+      <div className="space-y-2">
+        <Label>24. Produto</Label>
+        <Input value={formData.produtoSumario} onChange={e => handleChange("produtoSumario", e.target.value)} placeholder="Nome do produto" />
+      </div>
+
+      {/* 25. Registro/Notificação na ANVISA */}
+      <div className="space-y-2">
+        <Label>25. Registro/Notificação na ANVISA</Label>
+        <Input value={formData.registroNotificacaoAnvisa} onChange={e => handleChange("registroNotificacaoAnvisa", e.target.value)} placeholder="Número de registro ou notificação na ANVISA" />
+      </div>
       <div className="flex justify-end gap-2 pt-4">
         <Button variant="outline" onClick={onCancel}>Cancelar</Button>
         <Button onClick={handleSubmit}>Salvar</Button>
