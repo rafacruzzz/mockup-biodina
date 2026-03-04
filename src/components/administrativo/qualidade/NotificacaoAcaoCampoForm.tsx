@@ -279,9 +279,9 @@ export const NotificacaoAcaoCampoForm = ({ initialData, onSave, onCancel }: Prop
                 <Input value={dados.quantidadeTotalComercializada} onChange={e => set('quantidadeTotalComercializada', e.target.value)} /></div>
               <div className="space-y-1"><Label className="text-xs">Nº Estoque</Label>
                 <Input value={dados.quantidadeEstoque} onChange={e => set('quantidadeEstoque', e.target.value)} /></div>
-              <div className="space-y-1"><Label className="text-xs">Quantidade Implantada</Label>
+              <div className="space-y-1"><Label className="text-xs">Quantidade Implantada (Ex: Marcapassos, próteses...)</Label>
                 <Input value={dados.quantidadeImplantada} onChange={e => set('quantidadeImplantada', e.target.value)} /></div>
-              <div className="col-span-2 space-y-1"><Label className="text-xs">Tipo de Unidade Informada</Label>
+              <div className="col-span-2 space-y-1"><Label className="text-xs">Tipo de Unidade Informada (Unidades do produto, Caixas com 100 unidades, etc.)</Label>
                 <Input value={dados.tipoUnidadeInformada} onChange={e => set('tipoUnidadeInformada', e.target.value)} /></div>
             </div>
           </div>
