@@ -210,6 +210,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     // Dados da Oportunidade
     fonteLead: oportunidade?.fonteLead || '',
     valorNegocio: oportunidade?.valorNegocio || 0,
+    quantidade: 0,
     segmentoLead: oportunidade?.segmentoLead || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || '',
     procurandoPor: oportunidade?.procurandoPor || '',
@@ -766,6 +767,16 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                           disabled
                           className="bg-muted cursor-not-allowed"
                           placeholder="Valor definido pela licitação"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="quantidade">Quantidade</Label>
+                        <Input
+                          id="quantidade"
+                          type="number"
+                          value={formData.quantidade || ''}
+                          onChange={(e) => setFormData({ ...formData, quantidade: Number(e.target.value) })}
+                          placeholder="Ex: quantidade de testes, coletores, etc."
                         />
                       </div>
                     </div>
