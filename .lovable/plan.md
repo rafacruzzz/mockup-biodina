@@ -1,29 +1,20 @@
 
 
-## Plano: Criar aba "Meus Pedidos" no módulo Comercial > Vendas
+## Plano: Adicionar assinatura digital na aba 6 do Formulário de Notificação de Ação de Campo
 
-### Contexto
+### O que será feito
 
-Usuários criam pedidos dentro de contratações (projetos), mas não têm uma visão consolidada de todos os seus pedidos. A nova aba "Meus Pedidos" reunirá todos os pedidos do usuário logado, de todas as contratações, com filtros para facilitar o acompanhamento.
-
-### Arquivos a criar
-
-1. **`src/data/meusPedidosMock.ts`**
-   - Array mock de pedidos simulando pedidos criados por diferentes usuários em diferentes contratações
-   - Cada pedido terá: `id`, `numeroPedido`, `contratacaoNome`, `contratacaoCodigo`, `cliente`, `dataCriacao`, `valorTotal`, `statusAtual` (usando `StatusPedido` existente), `criadoPor` (nome do usuário), `produtos` (resumo), `ultimaAtualizacao`
-
-2. **`src/components/comercial/MeusPedidosView.tsx`**
-   - Componente principal da aba
-   - **Cards de resumo** no topo: Total de pedidos, Em andamento, Faturados, Entregues
-   - **Filtros**: por contratação (Select), por status do pedido (Select), por período/data (inputs de data)
-   - **Tabela** com colunas: Nº Pedido, Contratação, Cliente, Data, Valor, Status (badge colorido), Ações (botão ver detalhes)
-   - Filtra pedidos pelo usuário logado (usando `useUser()` do contexto existente)
-   - Status com badges coloridos reutilizando o padrão de cores do `AcompanhamentoPedidoTab`
+Na aba "6. Observações e Assinatura" do formulário, adicionar um campo de assinatura digital usando o componente `AssinaturaPad` já existente no projeto. O usuário poderá desenhar sua assinatura após preencher Local, Data e Nome Legível.
 
 ### Arquivos a modificar
 
-1. **`src/pages/Comercial.tsx`**
-   - Adicionar tab `{ id: 'meus-pedidos', label: 'Meus Pedidos', icon: ClipboardList }` após "Gestão de Empréstimos" no array `tabs` (~linha 743)
-   - Adicionar `case 'meus-pedidos': return <MeusPedidosView />;` no `renderContent` (~linha 752)
-   - Import do `MeusPedidosView`
+1. **`src/types/acaoCampo.ts`** — Adicionar campo opcional `assinaturaDigitalBase64?: string` na interface `NotificacaoAcaoCampoData`, após o campo `nomeLegivel`
+
+2. **`src/components/administrativo/qualidade/NotificacaoAcaoCampoForm.tsx`**
+   - Importar `AssinaturaPad` de `@/components/ui/assinatura-pad`
+   - Na aba 6 (`TabsContent value="aba6"`), após os campos Local/Data/Nome Legível, adicionar:
+     - Seção "Assinatura Digital" com o componente `AssinaturaPad`
+     - Ao assinar, salva o base64 no estado `dados.assinaturaDigitalBase64`
+     - Se já existir assinatura, exibir preview da imagem com botão para refazer
+   - Atualizar `defaultData` incluindo `assinaturaDigitalBase64: ''`
 
