@@ -6,7 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, RotateCcw } from "lucide-react";
+import { AssinaturaPad } from "@/components/ui/assinatura-pad";
 import {
   NotificacaoAcaoCampoData,
   ProdutoNotificacao,
@@ -49,7 +50,8 @@ const defaultData: NotificacaoAcaoCampoData = {
   possiveisConsequencias: '', recomendacaoUsuarios: '',
   notificacoesNotivisa: false, numerosNotificacoes: '',
   planosAcao: [planoAcaoVazio(1)],
-  observacoes: '', local: '', data: '', nomeLegivel: ''
+  observacoes: '', local: '', data: '', nomeLegivel: '',
+  assinaturaDigitalBase64: ''
 };
 
 interface Props {
@@ -522,6 +524,35 @@ export const NotificacaoAcaoCampoForm = ({ initialData, onSave, onCancel }: Prop
               <Input type="date" value={dados.data} onChange={e => set('data', e.target.value)} /></div>
             <div className="space-y-1"><Label className="text-xs">Nome Legível</Label>
               <Input value={dados.nomeLegivel} onChange={e => set('nomeLegivel', e.target.value)} /></div>
+          </div>
+
+          <div className="space-y-2 pt-4">
+            <h3 className="font-semibold text-base">Assinatura Digital</h3>
+            {dados.assinaturaDigitalBase64 ? (
+              <div className="space-y-3">
+                <div className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-4 bg-white">
+                  <img
+                    src={dados.assinaturaDigitalBase64}
+                    alt="Assinatura digital"
+                    className="max-h-[120px] mx-auto"
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => set('assinaturaDigitalBase64', '')}
+                >
+                  <RotateCcw className="h-4 w-4 mr-1" />
+                  Refazer Assinatura
+                </Button>
+              </div>
+            ) : (
+              <AssinaturaPad
+                onSave={(base64) => set('assinaturaDigitalBase64', base64)}
+                onClear={() => set('assinaturaDigitalBase64', '')}
+              />
+            )}
           </div>
         </TabsContent>
       </Tabs>
