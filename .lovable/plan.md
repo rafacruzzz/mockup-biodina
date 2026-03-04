@@ -1,25 +1,13 @@
 
 
-## Plano: Exibir Razão Social, CNPJ e Endereço no modal "Trocar Empresa"
+## Plano: Adicionar campo "Quantidade" no quadro "Dados do Projeto"
 
-### Problema
-O modal "Trocar Empresa" (`EmpresaUsuarioSwitcher.tsx`) exibe apenas o nome fantasia de cada empresa/filial. Para distinguir entre unidades, é necessário mostrar também a razão social, CNPJ e localização (cidade/UF).
+### Alteração
 
-### Alterações
+**Arquivo: `src/components/comercial/ContratacaoSimplesForm.tsx`**
 
-1. **`src/types/permissions.ts`** — Adicionar campos opcionais à interface `EmpresaVinculada`:
-   - `razaoSocial?: string`
-   - `cnpj?: string`
-   - `cidade?: string`
-   - `uf?: string`
+1. **Estado inicial (~linha 212)**: Adicionar `quantidade: 0` ao `formData`
+2. **Layout (~linha 770, após o fechamento do `div` do "Valor Original do Contrato")**: Inserir um novo campo Input "Quantidade" logo abaixo, com placeholder explicativo ("Ex: quantidade de testes, coletores, etc.")
 
-2. **`src/components/LoginForm.tsx`** — Atualizar os dados mock das `empresasVinculadas` para incluir `razaoSocial`, `cnpj`, `cidade` e `uf` em cada entrada (buscando os valores dos mocks de empresas e filiais existentes).
-
-3. **`src/components/cadastro/EmpresasDoUsuario.tsx`** — Ao vincular empresa/filial, incluir os novos campos (`razaoSocial`, `cnpj`, `cidade`, `uf`) copiados dos dados da empresa principal ou filial.
-
-4. **`src/components/layout/EmpresaUsuarioSwitcher.tsx`** — Atualizar o layout de cada item no modal para exibir:
-   - **Linha 1**: Razão Social (ou nome se razão não existir)
-   - **Linha 2**: CNPJ formatado
-   - **Linha 3**: Cidade/UF
-   - Badge de tipo (Principal/Filial) mantido
+Apenas o campo de input será adicionado — sem alterações em outras abas ou seções.
 
