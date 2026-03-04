@@ -102,11 +102,11 @@ const LoginForm = () => {
           empresaId: 'master-001',
           role: 'Gerente de TI',
           empresasVinculadas: [
-            { id: 'master-001', tipo: 'principal', nome: 'iMuv Master', moduleAccess: gerarAcessoCompleto() },
-            { id: 'filial-sp-001', tipo: 'filial', nome: 'iMuv - Filial São Paulo', moduleAccess: gerarAcessoCompleto() },
-            { id: 'filial-rj-001', tipo: 'filial', nome: 'iMuv - Filial Rio de Janeiro', moduleAccess: gerarAcessoCompleto() },
-            { id: 'filial-mg-001', tipo: 'filial', nome: 'iMuv - Filial Belo Horizonte', moduleAccess: gerarAcessoCompleto() },
-            { id: 'filial-pr-001', tipo: 'filial', nome: 'iMuv - Filial Curitiba', moduleAccess: gerarAcessoCompleto() }
+            { id: 'master-001', tipo: 'principal', nome: 'iMuv Master', razaoSocial: 'iMuv Sistemas Inteligentes Ltda', cnpj: '12.345.678/0001-90', cidade: 'São Paulo', uf: 'SP', moduleAccess: gerarAcessoCompleto() },
+            { id: 'filial-sp-001', tipo: 'filial', nome: 'iMuv - Filial São Paulo', razaoSocial: 'iMuv Sistemas Inteligentes Ltda - Filial SP', cnpj: '12.345.678/0002-71', cidade: 'São Paulo', uf: 'SP', moduleAccess: gerarAcessoCompleto() },
+            { id: 'filial-rj-001', tipo: 'filial', nome: 'iMuv - Filial Rio de Janeiro', razaoSocial: 'iMuv Sistemas Inteligentes Ltda - Filial RJ', cnpj: '12.345.678/0003-52', cidade: 'Rio de Janeiro', uf: 'RJ', moduleAccess: gerarAcessoCompleto() },
+            { id: 'filial-mg-001', tipo: 'filial', nome: 'iMuv - Filial Belo Horizonte', razaoSocial: 'iMuv Sistemas Inteligentes Ltda - Filial MG', cnpj: '12.345.678/0004-33', cidade: 'Belo Horizonte', uf: 'MG', moduleAccess: gerarAcessoCompleto() },
+            { id: 'filial-pr-001', tipo: 'filial', nome: 'iMuv - Filial Curitiba', razaoSocial: 'iMuv Sistemas Inteligentes Ltda - Filial PR', cnpj: '12.345.678/0005-14', cidade: 'Curitiba', uf: 'PR', moduleAccess: gerarAcessoCompleto() }
           ]
         });
         localStorage.setItem('empresaAtualId', 'master-001');
