@@ -125,6 +125,7 @@ export interface NotificacaoAcaoCampoData {
   local: string;
   data: string;
   nomeLegivel: string;
+  assinaturaDigitalBase64?: string;
 
   // Metadata
   pdfGerado?: boolean;
