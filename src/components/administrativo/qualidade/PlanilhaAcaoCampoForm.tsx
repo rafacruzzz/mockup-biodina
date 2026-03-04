@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PlanilhaAcaoCampoData } from "@/types/acaoCampo";
 import { modules } from "@/data/cadastroModules";
+import { produtosMock } from "@/data/produtos";
 
 interface Props {
   initialData?: PlanilhaAcaoCampoData;
@@ -17,6 +18,7 @@ const clientes = (modules as any).pessoas?.subModules?.clientes?.data || [];
 export const PlanilhaAcaoCampoForm = ({ initialData, onSave, onCancel }: Props) => {
   const [formData, setFormData] = useState<PlanilhaAcaoCampoData>(
     initialData || {
+      numeroAcaoCampo: '',
       clienteId: '',
       clienteNome: '',
       uf: '',
@@ -25,6 +27,8 @@ export const PlanilhaAcaoCampoForm = ({ initialData, onSave, onCancel }: Props) 
       setor: '',
       email: '',
       telefone: '',
+      produtoId: '',
+      produtoNome: '',
       versaoWindows: '',
       versaoSoftware: '',
     }
@@ -38,6 +42,17 @@ export const PlanilhaAcaoCampoForm = ({ initialData, onSave, onCancel }: Props) 
         clienteId: String(cliente.id),
         clienteNome: cliente.nome,
         uf: cliente.uf || '',
+      }));
+    }
+  };
+
+  const handleProdutoChange = (produtoId: string) => {
+    const produto = produtosMock.find(p => p.id === produtoId);
+    if (produto) {
+      setFormData(prev => ({
+        ...prev,
+        produtoId: produto.id,
+        produtoNome: produto.nome,
       }));
     }
   };
@@ -56,6 +71,11 @@ export const PlanilhaAcaoCampoForm = ({ initialData, onSave, onCancel }: Props) 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
+        <Label>Número da ação de campo</Label>
+        <Input value={formData.numeroAcaoCampo} onChange={e => handleChange('numeroAcaoCampo', e.target.value)} placeholder="Informe o número da ação de campo" />
+      </div>
+
+      <div className="space-y-2">
         <Label>Cliente</Label>
         <Select value={formData.clienteId} onValueChange={handleClienteChange}>
           <SelectTrigger>
@@ -72,6 +92,20 @@ export const PlanilhaAcaoCampoForm = ({ initialData, onSave, onCancel }: Props) 
       <div className="space-y-2">
         <Label>UF</Label>
         <Input value={formData.uf} disabled placeholder="Preenchido automaticamente" />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Produto</Label>
+        <Select value={formData.produtoId} onValueChange={handleProdutoChange}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione o produto" />
+          </SelectTrigger>
+          <SelectContent>
+            {produtosMock.map(p => (
+              <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="grid grid-cols-2 gap-4">

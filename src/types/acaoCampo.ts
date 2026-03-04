@@ -135,6 +135,7 @@ export interface NotificacaoAcaoCampoData {
 
 // Dados do Formulário Planilha de Ação de Campo
 export interface PlanilhaAcaoCampoData {
+  numeroAcaoCampo: string;
   clienteId: string;
   clienteNome: string;
   uf: string;
@@ -143,6 +144,8 @@ export interface PlanilhaAcaoCampoData {
   setor: string;
   email: string;
   telefone: string;
+  produtoId: string;
+  produtoNome: string;
   versaoWindows: string;
   versaoSoftware: string;
   pdfGerado?: boolean;
