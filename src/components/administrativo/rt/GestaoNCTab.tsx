@@ -13,15 +13,23 @@ import { naoConformidadesRTMockadas, responsaveisNCRT } from "@/data/rtModules";
 import type { NaoConformidadeRT, ImpactoNCRT, StatusNCRT } from "@/types/rt";
 
 export function GestaoNCTab() {
+  const [naoConformidades, setNaoConformidades] = useState(naoConformidadesRTMockadas);
   const [selectedNC, setSelectedNC] = useState<NaoConformidadeRT | null>(null);
   const [showModal, setShowModal] = useState(false);
 
   const handleOpenNC = (nc: NaoConformidadeRT) => {
-    setSelectedNC(nc);
+    setSelectedNC({ ...nc });
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedNC(null);
+  };
+
+  const handleSalvar = () => {
+    if (!selectedNC) return;
+    setNaoConformidades(prev => prev.map(nc => nc.id === selectedNC.id ? selectedNC : nc));
     setShowModal(false);
     setSelectedNC(null);
   };
@@ -82,11 +90,11 @@ export function GestaoNCTab() {
     }
   };
 
-  const totalNCs = naoConformidadesRTMockadas.length;
-  const ncsCriticas = naoConformidadesRTMockadas.filter(nc => nc.impacto === "Crítico").length;
-  const ncsModeradas = naoConformidadesRTMockadas.filter(nc => nc.impacto === "Moderado").length;
-  const ncsLeves = naoConformidadesRTMockadas.filter(nc => nc.impacto === "Leve").length;
-  const ncsAbertas = naoConformidadesRTMockadas.filter(nc => nc.status === "Aberta" || nc.status === "Em Análise" || nc.status === "Aguardando Ação").length;
+  const totalNCs = naoConformidades.length;
+  const ncsCriticas = naoConformidades.filter(nc => nc.impacto === "Crítico").length;
+  const ncsModeradas = naoConformidades.filter(nc => nc.impacto === "Moderado").length;
+  const ncsLeves = naoConformidades.filter(nc => nc.impacto === "Leve").length;
+  const ncsAbertas = naoConformidades.filter(nc => nc.status === "Aberta" || nc.status === "Em Análise" || nc.status === "Aguardando Ação").length;
 
   return (
     <div className="space-y-6">
@@ -159,7 +167,7 @@ export function GestaoNCTab() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {naoConformidadesRTMockadas.map((nc) => (
+              {naoConformidades.map((nc) => (
                 <TableRow key={nc.id}>
                   <TableCell className="font-medium">{nc.id}</TableCell>
                   <TableCell>{new Date(nc.data).toLocaleDateString('pt-BR')}</TableCell>
@@ -194,114 +202,111 @@ export function GestaoNCTab() {
 
           {selectedNC && (
             <div className="space-y-6">
-              {/* Informações Gerais */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Informações Gerais</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label>Data da NC</Label>
-                      <Input 
-                        value={new Date(selectedNC.data).toLocaleDateString('pt-BR')} 
-                        disabled 
-                      />
-                    </div>
+              {/* Linha 1: Data + Origem (disabled) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Data da NC</Label>
+                  <Input 
+                    value={new Date(selectedNC.data).toLocaleDateString('pt-BR')} 
+                    disabled 
+                  />
+                </div>
+                <div>
+                  <Label>Origem</Label>
+                  <Input value={selectedNC.origem} disabled />
+                </div>
+              </div>
 
-                    <div>
-                      <Label>Origem</Label>
-                      <Input value={selectedNC.origem} disabled />
-                    </div>
+              {/* Linha 2: Tipo */}
+              <div>
+                <Label>Tipo</Label>
+                <Select value={selectedNC.tipo} onValueChange={(val) => setSelectedNC({ ...selectedNC, tipo: val as any })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Documentação Desatualizada">Documentação Desatualizada</SelectItem>
+                    <SelectItem value="Treinamento Inadequado">Treinamento Inadequado</SelectItem>
+                    <SelectItem value="Falha de Processo">Falha de Processo</SelectItem>
+                    <SelectItem value="Produto Não Liberado">Produto Não Liberado</SelectItem>
+                    <SelectItem value="Não Conformidade Regulatória">Não Conformidade Regulatória</SelectItem>
+                    <SelectItem value="Outro">Outro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-                    <div>
-                      <Label>Tipo</Label>
-                      <Select value={selectedNC.tipo} disabled>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Documentação Desatualizada">Documentação Desatualizada</SelectItem>
-                          <SelectItem value="Treinamento Inadequado">Treinamento Inadequado</SelectItem>
-                          <SelectItem value="Falha de Processo">Falha de Processo</SelectItem>
-                          <SelectItem value="Produto Não Liberado">Produto Não Liberado</SelectItem>
-                          <SelectItem value="Não Conformidade Regulatória">Não Conformidade Regulatória</SelectItem>
-                          <SelectItem value="Outro">Outro</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+              {/* Linha 3: Impacto + Responsável */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Impacto</Label>
+                  <Select value={selectedNC.impacto} onValueChange={(val) => setSelectedNC({ ...selectedNC, impacto: val as ImpactoNCRT })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Crítico">Crítico</SelectItem>
+                      <SelectItem value="Moderado">Moderado</SelectItem>
+                      <SelectItem value="Leve">Leve</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Responsável</Label>
+                  <Select value={selectedNC.responsavel} onValueChange={(val) => setSelectedNC({ ...selectedNC, responsavel: val })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {responsaveisNCRT.map((resp) => (
+                        <SelectItem key={resp} value={resp}>{resp}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-                    <div>
-                      <Label>Impacto</Label>
-                      <Select value={selectedNC.impacto} disabled>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Crítico">Crítico</SelectItem>
-                          <SelectItem value="Moderado">Moderado</SelectItem>
-                          <SelectItem value="Leve">Leve</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+              {/* Prazo de Execução */}
+              <div>
+                <Label>Prazo de Execução</Label>
+                <Input 
+                  type="date" 
+                  value={selectedNC.prazoExecucao} 
+                  onChange={(e) => setSelectedNC({ ...selectedNC, prazoExecucao: e.target.value })}
+                />
+              </div>
 
-                    <div>
-                      <Label>Responsável</Label>
-                      <Select value={selectedNC.responsavel} disabled>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {responsaveisNCRT.map((resp) => (
-                            <SelectItem key={resp} value={resp}>{resp}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+              {/* Descrição */}
+              <div>
+                <Label>Descrição da NC</Label>
+                <Textarea 
+                  value={selectedNC.descricao} 
+                  onChange={(e) => setSelectedNC({ ...selectedNC, descricao: e.target.value })}
+                  className="min-h-[80px]"
+                />
+              </div>
 
-                    <div>
-                      <Label>Prazo de Execução</Label>
-                      <Input 
-                        type="date" 
-                        value={selectedNC.prazoExecucao} 
-                        disabled 
-                      />
-                    </div>
-                  </div>
+              {/* Ação Imediata */}
+              <div>
+                <Label>Ação Imediata</Label>
+                <Textarea 
+                  value={selectedNC.acaoImediata} 
+                  onChange={(e) => setSelectedNC({ ...selectedNC, acaoImediata: e.target.value })}
+                  className="min-h-[80px]"
+                />
+              </div>
 
-                  <div>
-                    <Label>Descrição da NC</Label>
-                    <Textarea 
-                      value={selectedNC.descricao} 
-                      disabled 
-                      className="min-h-[80px]"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Ação Imediata</Label>
-                    <Textarea 
-                      value={selectedNC.acaoImediata} 
-                      disabled 
-                      className="min-h-[80px]"
-                    />
-                  </div>
-
-                  {selectedNC.observacoes && (
-                    <div>
-                      <Label>Observações</Label>
-                      <Textarea 
-                        value={selectedNC.observacoes} 
-                        disabled 
-                        className="min-h-[60px]"
-                      />
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+              {/* Observações */}
+              <div>
+                <Label>Observações</Label>
+                <Textarea 
+                  value={selectedNC.observacoes || ""} 
+                  onChange={(e) => setSelectedNC({ ...selectedNC, observacoes: e.target.value })}
+                  className="min-h-[60px]"
+                />
+              </div>
 
               {/* Seção CAPA */}
-              <Card>
+              <Card className="border-2 border-primary/20">
                 <CardHeader>
                   <CardTitle className="text-lg">CAPA - Ação Corretiva e Preventiva</CardTitle>
                 </CardHeader>
@@ -310,7 +315,7 @@ export function GestaoNCTab() {
                     <Label>Ação Preventiva</Label>
                     <Textarea 
                       value={selectedNC.capa.acaoPreventiva} 
-                      disabled 
+                      onChange={(e) => setSelectedNC({ ...selectedNC, capa: { ...selectedNC.capa, acaoPreventiva: e.target.value } })}
                       className="min-h-[80px]"
                     />
                   </div>
@@ -319,7 +324,7 @@ export function GestaoNCTab() {
                     <Label>Ação Corretiva</Label>
                     <Textarea 
                       value={selectedNC.capa.acaoCorretiva} 
-                      disabled 
+                      onChange={(e) => setSelectedNC({ ...selectedNC, capa: { ...selectedNC.capa, acaoCorretiva: e.target.value } })}
                       className="min-h-[80px]"
                     />
                   </div>
@@ -329,48 +334,48 @@ export function GestaoNCTab() {
                       <Label>Gerenciamento da Execução de Tarefas</Label>
                       <Textarea 
                         value={selectedNC.capa.gerenciamentoTarefas} 
-                        disabled 
+                        onChange={(e) => setSelectedNC({ ...selectedNC, capa: { ...selectedNC.capa, gerenciamentoTarefas: e.target.value } })}
                         className="min-h-[80px]"
                       />
                     </div>
                   )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label>Prazo Final</Label>
                       <Input 
                         type="date" 
                         value={selectedNC.capa.prazoFinal} 
-                        disabled 
+                        onChange={(e) => setSelectedNC({ ...selectedNC, capa: { ...selectedNC.capa, prazoFinal: e.target.value } })}
                       />
                     </div>
-
                     <div>
                       <Label>Status CAPA</Label>
                       <div className="mt-2">
                         {getStatusCAPABadge(selectedNC.capa.status)}
                       </div>
                     </div>
+                  </div>
 
-                    <div>
-                      <Label>Responsável CAPA</Label>
-                      <Select value={selectedNC.capa.responsavel} disabled>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {responsaveisNCRT.map((resp) => (
-                            <SelectItem key={resp} value={resp}>{resp}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  <div>
+                    <Label>Responsável CAPA</Label>
+                    <Select value={selectedNC.capa.responsavel} onValueChange={(val) => setSelectedNC({ ...selectedNC, capa: { ...selectedNC.capa, responsavel: val } })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {responsaveisNCRT.map((resp) => (
+                          <SelectItem key={resp} value={resp}>{resp}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </CardContent>
               </Card>
 
-              <div className="flex justify-end">
-                <Button onClick={handleCloseModal}>Fechar</Button>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={handleCloseModal}>Cancelar</Button>
+                <Button onClick={handleSalvar}>Salvar Alterações</Button>
               </div>
             </div>
           )}
