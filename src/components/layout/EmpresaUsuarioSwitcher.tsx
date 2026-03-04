@@ -123,10 +123,18 @@ const EmpresaUsuarioSwitcher = ({ isOpen, onClose }: EmpresaUsuarioSwitcherProps
                     onClick={() => handleSelectEmpresa(empresa.id, empresa.tipo)}
                   >
                     <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-3">
-                        <Building2 className="h-4 w-4 text-muted-foreground" />
-                        <div className="text-left">
-                          <span className="font-medium">{empresa.nome}</span>
+                    <div className="flex items-center gap-3">
+                        <Building2 className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                        <div className="text-left min-w-0">
+                          <span className="font-medium text-sm block truncate">{empresa.razaoSocial || empresa.nome}</span>
+                          {empresa.cnpj && (
+                            <span className="text-xs text-muted-foreground block">{empresa.cnpj}</span>
+                          )}
+                          {(empresa.cidade || empresa.uf) && (
+                            <span className="text-xs text-muted-foreground block">
+                              {[empresa.cidade, empresa.uf].filter(Boolean).join(' / ')}
+                            </span>
+                          )}
                           <div className="flex items-center gap-2 mt-1">
                             <Badge 
                               variant={empresa.tipo === 'principal' ? 'default' : 'secondary'}

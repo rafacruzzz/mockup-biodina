@@ -24,6 +24,10 @@ export interface EmpresaVinculada {
   id: string;
   tipo: 'principal' | 'filial';
   nome: string;
+  razaoSocial?: string;
+  cnpj?: string;
+  cidade?: string;
+  uf?: string;
   moduleAccess: ModuloUsuario[]; // Permissões específicas desta empresa
 }
 

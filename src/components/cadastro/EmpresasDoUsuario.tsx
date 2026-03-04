@@ -39,6 +39,10 @@ export const EmpresasDoUsuario = ({
           id: empresaPrincipal.id,
           tipo: 'principal',
           nome: empresaPrincipal.nome,
+          razaoSocial: (empresaPrincipal as any).razaoSocial,
+          cnpj: (empresaPrincipal as any).cnpj,
+          cidade: (empresaPrincipal as any).cidade,
+          uf: (empresaPrincipal as any).uf,
           moduleAccess: [],
         },
       ]);
@@ -61,6 +65,10 @@ export const EmpresasDoUsuario = ({
             id: filial.id,
             tipo: 'filial',
             nome: filial.nome,
+            razaoSocial: (filial as any).razaoSocial,
+            cnpj: (filial as any).cnpj,
+            cidade: (filial as any).cidade,
+            uf: (filial as any).uf,
             moduleAccess: [],
           },
         ]);
