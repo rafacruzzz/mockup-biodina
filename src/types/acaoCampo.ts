@@ -176,6 +176,9 @@ export interface SumarioAlertaData {
   linkPaineisTecnovigilancia: string;
   informacoesComplementares: string;
   tagDescritores: string;
+  nomeEmpresa: string;
+  produtoSumario: string;
+  registroNotificacaoAnvisa: string;
   pdfGerado?: boolean;
   dataPdfGerado?: string;
 }
