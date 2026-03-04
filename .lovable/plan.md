@@ -1,24 +1,17 @@
 
 
-## Plano: Substituir campo único de notificações Notivisa por grid de 4 campos com botão "+"
+## Plano: Adicionar campos "Número da ação de campo" e "Produto" ao formulário Planilha de Ação de Campo
 
-### O que será feito
+### Alterações
 
-Na aba 4 (Problema), quando o usuário seleciona "Sim" em "Foram feitas notificações no Notivisa?", ao invés de um único campo de texto, serão exibidos **4 campos lado a lado** (em grid). Um botão "+" ao final permite adicionar mais 4 campos por vez (formando novas linhas de 4).
+1. **`src/types/acaoCampo.ts`** — Adicionar dois novos campos à interface `PlanilhaAcaoCampoData`:
+   - `numeroAcaoCampo: string`
+   - `produtoId: string` / `produtoNome: string`
 
-### Arquivos a modificar
-
-1. **`src/types/acaoCampo.ts`**
-   - Alterar `numerosNotificacoes: string` para `numerosNotificacoes: string[]` na interface `NotificacaoAcaoCampoData`
-
-2. **`src/components/administrativo/qualidade/NotificacaoAcaoCampoForm.tsx`**
-   - Alterar `defaultData` de `numerosNotificacoes: ''` para `numerosNotificacoes: ['', '', '', '']`
-   - Substituir o bloco condicional `{dados.notificacoesNotivisa && ...}` (linhas 473-478):
-     - Renderizar `dados.numerosNotificacoes` em grid `grid-cols-4` com inputs individuais
-     - Botão "+" (`Plus` icon) ao final que faz `push` de 4 strings vazias ao array
-     - Cada input atualiza sua posição no array via índice
-   - Ao mudar para "Não", resetar o array para `['', '', '', '']`
-
-3. **`src/components/administrativo/qualidade/utils/notificacaoAcaoCampoPDF.ts`**
-   - Ajustar a linha que usa `dados.numerosNotificacoes` para fazer `.filter(Boolean).join(', ')` ao invés de usar string direta
+2. **`src/components/administrativo/qualidade/PlanilhaAcaoCampoForm.tsx`**:
+   - Importar `produtosMock` de `@/data/produtos`
+   - Adicionar `numeroAcaoCampo: ''` e `produtoId: ''`, `produtoNome: ''` ao estado inicial
+   - Inserir como **primeiro campo** do formulário um Input "Número da ação de campo"
+   - Inserir um Select "Produto" logo após o campo "Cliente", puxando opções de `produtosMock` (cadastro de produtos existente)
+   - Ordem final dos campos: Número da ação de campo → Cliente → UF → Produto → Modelo → NS/Lote → restante
 
