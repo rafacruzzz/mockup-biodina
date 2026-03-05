@@ -531,7 +531,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[95vw] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -552,7 +552,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
           </DialogHeader>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`grid w-full ${oportunidade ? 'grid-cols-10' : 'grid-cols-9'}`}>
+            <TabsList className={`flex w-full overflow-x-auto ${oportunidade ? '' : ''}`}>
               <TabsTrigger value="dados-gerais" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Dados Gerais
