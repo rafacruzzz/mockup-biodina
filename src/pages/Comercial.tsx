@@ -59,7 +59,7 @@ const Comercial = () => {
   // const [showAssinaturas, setShowAssinaturas] = useState(false); // COMENTADO - NÃO USAR NO MOMENTO
 
   // Mock data com empresaId para filtrar por empresa
-  const todasOportunidades = [
+  const [todasOportunidades, setTodasOportunidades] = useState<any[]>([
     { 
       id: 1,
       empresaId: 'biodina-001', // Empresa principal
@@ -319,7 +319,7 @@ const Comercial = () => {
       produtos: ['Eletrodos pH e Gases', 'Gás Calibrador'],
       servicos: ['Instalação']
     }
-  ];
+  ]);
 
   // Filtrar oportunidades pela empresa atualmente logada
   const oportunidades = todasOportunidades.filter(op => op.empresaId === empresaAtivaId);
@@ -490,6 +490,41 @@ const Comercial = () => {
 
   const handleSaveOportunidade = (formData: any) => {
     console.log('Salvando oportunidade:', formData);
+    
+    if (editingOportunidade) {
+      // Editando existente
+      setTodasOportunidades(prev => prev.map(op => op.id === editingOportunidade.id ? { ...op, ...formData } : op));
+    } else {
+      // Criando nova oportunidade fake (front-end only)
+      const novaOportunidade = {
+        id: Date.now(),
+        empresaId: empresaAtivaId,
+        codigo: `NEW-${Date.now().toString().slice(-5)}`,
+        cliente: formData.cliente || formData.nomeCliente || 'Novo Cliente',
+        contato: formData.contato || '',
+        responsavel: formData.responsavel || formData.vendedor || 'Usuário',
+        origem: formData.origem || 'Vendas',
+        familiaComercial: formData.familiaComercial || '',
+        situacao: 'em_triagem',
+        status: 'Em Triagem',
+        resultadoOportunidade: 'em_andamento',
+        tipoAplicacao: formData.tipoAplicacao || 'venda',
+        tipoOportunidade: formData.tipoOportunidade || 'pontual',
+        valor: formData.valor || formData.valorContrato || 0,
+        dataAbertura: new Date().toLocaleDateString('pt-BR'),
+        dataContato: new Date().toLocaleDateString('pt-BR'),
+        termometro: 50,
+        fonteLead: formData.fonteLead || 'Direta',
+        segmento: formData.segmento || 'Privado',
+        modalidade: formData.modalidade || 'contratacao_simples',
+        descricao: formData.descricao || formData.objetoContrato || '',
+        produtos: formData.produtos || [],
+        servicos: formData.servicos || [],
+        ...formData,
+      };
+      setTodasOportunidades(prev => [...prev, novaOportunidade]);
+    }
+    
     setShowOportunidadeAvancadaForm(false);
     setShowContratacaoSimplesForm(false);
     setShowImportacaoDiretaForm(false);
