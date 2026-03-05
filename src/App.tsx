@@ -30,6 +30,7 @@ import CandidaturaPublica from "./pages/CandidaturaPublica";
 import PersonalizarNavegacao from "./pages/PersonalizarNavegacao";
 import MeuPlano from "./pages/MeuPlano";
 import Configuracao from "./pages/Configuracao";
+import AprovacaoSPIExterna from "./pages/AprovacaoSPIExterna";
 import NotFound from "./pages/NotFound";
 
 // Create QueryClient instance outside of component to avoid recreation
@@ -75,6 +76,8 @@ const App: React.FC = () => {
                 <Route path="/configuracao" element={<Configuracao />} />
                 {/* Rota pública para candidatura */}
                 <Route path="/candidatura/:linkId" element={<CandidaturaPublica />} />
+                {/* Rota pública para aprovação de SPI */}
+                <Route path="/aprovacao-spi/:linkId" element={<AprovacaoSPIExterna />} />
                 {/* Rota pública para seleção de planos */}
                 <Route path="/select-plan/:webformId" element={<SelectPlan />} />
                 {/* Rota pública para registro via webform */}

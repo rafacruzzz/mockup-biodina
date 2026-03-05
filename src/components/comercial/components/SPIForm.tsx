@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -5,6 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ExternalLink, Copy, Check } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import SPIProductsTable from './SPIProductsTable';
 import PIHistorySection from './PIHistorySection';
 import { formatUSD, calcularSubtotal, calcularPacking, calcularTotal } from '../utils/spiUtils';
@@ -20,7 +23,26 @@ interface SPIFormProps {
 
 const SPIForm = ({ formData, onInputChange, piHistory, piStatus, onPIStatusChange }: SPIFormProps) => {
   const isFieldsLocked = piStatus === 'aceito' || piStatus === 'em_analise';
-  
+  const [linkExterno, setLinkExterno] = useState<string | null>(null);
+  const [copiado, setCopiado] = useState(false);
+  const { toast } = useToast();
+
+  const handleGerarLink = () => {
+    const codigo = crypto.randomUUID().slice(0, 8);
+    const url = `${window.location.origin}/aprovacao-spi/${codigo}`;
+    setLinkExterno(url);
+    toast({ title: 'Link gerado com sucesso!' });
+  };
+
+  const handleCopiarLink = () => {
+    if (linkExterno) {
+      navigator.clipboard.writeText(linkExterno);
+      setCopiado(true);
+      toast({ title: 'Link copiado!' });
+      setTimeout(() => setCopiado(false), 2000);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Cabeçalho */}
@@ -429,7 +451,28 @@ const SPIForm = ({ formData, onInputChange, piHistory, piStatus, onPIStatusChang
                   </SelectContent>
                 </Select>
               </div>
+
+              <div className="flex flex-col justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleGerarLink}
+                  className="flex items-center gap-2"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Gerar Link Externo
+                </Button>
+              </div>
             </div>
+
+            {linkExterno && (
+              <div className="mt-4 flex items-center gap-2 p-3 bg-muted rounded border">
+                <Input value={linkExterno} readOnly className="flex-1 text-sm" />
+                <Button type="button" variant="outline" size="icon" onClick={handleCopiarLink}>
+                  {copiado ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Histórico de PI */}
