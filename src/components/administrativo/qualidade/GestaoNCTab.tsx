@@ -489,11 +489,11 @@ export const GestaoNCTab = () => {
               </Card>
 
               <div className="flex gap-2 justify-end">
-                <Button variant="outline" onClick={() => setModalAberto(false)}>
+                <Button variant="outline" onClick={() => { setModalAberto(false); setModoNovo(false); setNcSelecionada(null); }}>
                   Cancelar
                 </Button>
-                <Button onClick={atualizarNC}>
-                  Salvar Alterações
+                <Button onClick={salvarNC}>
+                  {modoNovo ? 'Criar Não Conformidade' : 'Salvar Alterações'}
                 </Button>
               </div>
             </div>
