@@ -1,31 +1,29 @@
 
 
-## Plano: Link Externo para Aprovação de SPI pelo Cliente
+## Plano: Reduzir abas da Licitação para apenas 4
 
-### Resumo
-Criar um botão "Gerar Link Externo" na aba SPI do formulário de Importação Direta. Esse link leva o cliente a uma página pública e responsiva onde ele visualiza o resumo da SPI (somente leitura) e pode aprovar ou rejeitar, com campo de observação obrigatório em caso de rejeição. A decisão reflete automaticamente no campo "Aprovação do Cliente" dentro do sistema.
+Conforme a imagem do usuário, o formulário de Licitação deve ter **apenas 4 abas**:
+1. **Dados Gerais**
+2. **Análise Técnica**
+3. **Histórico/Chat**
+4. **Documentos**
 
-### Alterações
+### Alteração em `src/components/comercial/OportunidadeAvancadaForm.tsx`
 
-**1. Nova página pública: `src/pages/AprovacaoSPIExterna.tsx`**
-- Rota pública `/aprovacao-spi/:linkId`
-- Layout responsivo, sem sidebar/login
-- Exibe em somente leitura os dados da SPI: cliente, CNPJ, endereço, número da SPI, data, fabricante, forma de pagamento, tabela de mercadorias com quantidades/valores, subtotal, packing, total, e observações
-- Dois botões: "Aprovar" e "Rejeitar"
-- Se rejeitar, campo de observação obrigatório aparece
-- Após decisão, tela de confirmação (sem possibilidade de alterar)
-- Dados armazenados em estado local (mock/front-end only, sem backend)
+**Remover 6 TabsTriggers e seus TabsContents** (linhas 1359-1438):
+- `documentos` → **manter**, mas reposicionar para o final
+- `AC` (analise-tecnica) → **renomear label** para "Análise Técnica"
+- `DT` → **remover**
+- `AJ` (analise-juridica) → **remover**
+- `AG` (analise-gerencial) → **remover**
+- `Empenho` → **remover**
+- `Pedidos` → **remover**
+- `Chamados` → **remover**
 
-**2. Alteração em `src/components/comercial/components/SPIForm.tsx`**
-- Na seção "Aprovação do Cliente", adicionar botão "Gerar Link Externo" (mesmo padrão já usado na Representação Comercial da Contratação)
-- Gera URL com código único: `/aprovacao-spi/{codigo}`
-- Exibe o link gerado com botão de copiar
-- Manter os campos existentes inalterados
+**Resultado final das abas (nesta ordem):**
+```
+[Dados Gerais]  [Análise Técnica]  [Histórico/Chat]  [Documentos]
+```
 
-**3. Alteração em `src/App.tsx`**
-- Adicionar rota pública: `<Route path="/aprovacao-spi/:linkId" element={<AprovacaoSPIExterna />} />`
-
-**4. Estado compartilhado (mock)**
-- Como não há backend, a página externa simulará os dados da SPI com valores de exemplo
-- O status de aprovação/rejeição será exibido na tela de confirmação mas não persistirá entre sessões (comportamento mock)
+Apenas os `TabsTrigger` e `TabsContent` das 4 abas permanecerão. O código dos placeholders removidos (DT, AJ, AG, Empenho, Pedidos, Chamados) será excluído, já que são apenas placeholders sem lógica real. As abas AC, DT, AJ, AG, Empenho, Pedidos e Chamados continuam existindo no formulário de **Contratação** (outro componente).
 
