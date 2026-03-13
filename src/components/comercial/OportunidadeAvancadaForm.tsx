@@ -1469,7 +1469,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               const count = (formData.analiseCientifica || []).filter((a: any) => a?.statusValidacao === status).length;
               return (
                 <div key={status} className="text-center">
-                  <div className={`w-12 h-12 rounded-full ${getStatusColor(status)} mx-auto mb-2 flex items-center justify-center text-white font-bold text-lg`}>
+                  <div className={`w-12 h-12 rounded-full ${getACStatusColor(status)} mx-auto mb-2 flex items-center justify-center text-white font-bold text-lg`}>
                     {count}
                   </div>
                   <p className="text-sm font-medium">{status}</p>
