@@ -60,9 +60,18 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [licitacaoVinculada, setLicitacaoVinculada] = useState<string>('');
   const [documentosLicitacao, setDocumentosLicitacao] = useState<any[]>([]);
   const [historicoLicitacao, setHistoricoLicitacao] = useState<any[]>([]);
-  const [historicoVisitas, setHistoricoVisitas] = useState<HistoricoVisita[]>(oportunidade?.historicoVisitas || []);
+   const [historicoVisitas, setHistoricoVisitas] = useState<HistoricoVisita[]>(oportunidade?.historicoVisitas || []);
    const [interfaceamentos, setInterfaceamentos] = useState<any[]>(oportunidade?.interfaceamentos || []);
   const [linkExternoRepresentacao, setLinkExternoRepresentacao] = useState('');
+
+  // Dynamic lists for Dados do Projeto
+  const [contatosComerciais, setContatosComerciais] = useState<Array<{id: string; nome: string; cargo: string; telefone: string; email: string}>>(
+    oportunidade?.contatosComerciais || []
+  );
+  const [representantesVinculados, setRepresentantesVinculados] = useState<Array<{id: string; nome: string; percentualComissao: number}>>(
+    oportunidade?.representantesVinculados || []
+  );
+  const [colaboradoresGestao, setColaboradoresGestao] = useState<string[]>(oportunidade?.colaboradoresGestao || []);
   const [modalHistoricoOpen, setModalHistoricoOpen] = useState(false);
   const [novaVisita, setNovaVisita] = useState({
     colaborador: '',
