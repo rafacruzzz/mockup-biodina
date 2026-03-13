@@ -101,6 +101,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   const [solicitouImpugnacao, setSolicitouImpugnacao] = useState(false);
   const [solicitouAnaliseCientifica, setSolicitouAnaliseCientifica] = useState(false);
   const [solicitouAnaliseGerencial, setSolicitouAnaliseGerencial] = useState(false);
+  const [solicitouRecurso, setSolicitouRecurso] = useState(false);
+  const [solicitouRecursoConcorrente, setSolicitouRecursoConcorrente] = useState(false);
   
   // Estados para modais
   const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
@@ -966,33 +968,96 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </div>
         )}
 
-        {/* 6. Razões para Recurso (read-only, editável na aba AJ) */}
-        <div>
-          <Label htmlFor="manifestacaoRecorrerDG">Razões para Recurso</Label>
-          <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
-          <Textarea
-            id="manifestacaoRecorrerDG"
-            value={formData.manifestacaoRecorrer}
-            readOnly
-            placeholder="Preenchido pela Análise Jurídica (aba AJ)"
-            rows={3}
-            className="bg-muted/50"
-          />
-        </div>
+        {/* 6. Seção de Recursos - condicional ao status "recursos" */}
+        {formData.situacaoPregao === 'recursos' && (
+          <Card className="border-orange-200 bg-orange-50/30">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                ⚖️ Recursos
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Selecione o tipo de recurso para solicitar análise jurídica</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant={solicitouRecurso ? "default" : "outline"}
+                  onClick={() => {
+                    setSolicitouRecurso(true);
+                    toast({ title: "Solicitação enviada", description: "Análise Jurídica para Recurso solicitada com sucesso." });
+                  }}
+                  className="flex-1"
+                >
+                  📄 Recurso
+                </Button>
+                <Button
+                  type="button"
+                  variant={solicitouRecursoConcorrente ? "default" : "outline"}
+                  onClick={() => {
+                    setSolicitouRecursoConcorrente(true);
+                  }}
+                  className="flex-1"
+                >
+                  📋 Recurso do Concorrente
+                </Button>
+              </div>
 
-        {/* Contrarrazões (read-only, editável na aba AJ) */}
-        <div>
-          <Label htmlFor="contrarrazoesDG">Contrarrazões</Label>
-          <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
-          <Textarea
-            id="contrarrazoesDG"
-            value={formData.contrarrazoes}
-            readOnly
-            placeholder="Preenchido pela Análise Jurídica (aba AJ)"
-            rows={3}
-            className="bg-muted/50"
-          />
-        </div>
+              {/* A - Recurso próprio */}
+              {solicitouRecurso && (
+                <div className="border rounded-lg p-4 space-y-2 bg-background">
+                  <Label htmlFor="manifestacaoRecorrerDG">Razões para Recurso</Label>
+                  <p className="text-xs text-muted-foreground">Preenchido pela Análise Jurídica (aba AJ)</p>
+                  <Textarea
+                    id="manifestacaoRecorrerDG"
+                    value={formData.manifestacaoRecorrer}
+                    readOnly
+                    placeholder="Aguardando resposta da Análise Jurídica..."
+                    rows={4}
+                    className="bg-muted/50"
+                  />
+                </div>
+              )}
+
+              {/* B - Recurso do concorrente */}
+              {solicitouRecursoConcorrente && (
+                <div className="border rounded-lg p-4 space-y-3 bg-background">
+                  <div className="space-y-2">
+                    <Label htmlFor="recursoConcorrenteDG">Recurso do Concorrente</Label>
+                    <p className="text-xs text-muted-foreground">Cole abaixo o recurso apresentado pelo concorrente</p>
+                    <Textarea
+                      id="recursoConcorrenteDG"
+                      value={formData.recursoConcorrente || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, recursoConcorrente: e.target.value }))}
+                      placeholder="Cole o recurso do concorrente aqui..."
+                      rows={4}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      toast({ title: "Solicitação enviada", description: "Recurso do concorrente enviado para Análise Jurídica." });
+                    }}
+                  >
+                    📨 Solicitar Análise Jurídica
+                  </Button>
+                  <div className="space-y-2 mt-3">
+                    <Label htmlFor="contrarrazoesDG">Contrarrazões</Label>
+                    <p className="text-xs text-muted-foreground">Preenchido pela Análise Jurídica (aba AJ)</p>
+                    <Textarea
+                      id="contrarrazoesDG"
+                      value={formData.contrarrazoes}
+                      readOnly
+                      placeholder="Aguardando resposta da Análise Jurídica..."
+                      rows={4}
+                      className="bg-muted/50"
+                    />
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Campos AG (read-only, só aparecem após solicitar) */}
         {solicitouAnaliseGerencial && (

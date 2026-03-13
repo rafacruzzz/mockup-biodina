@@ -1,42 +1,31 @@
 
 
-## Plano: Seção de Recurso condicional ao status "Recursos"
+## Plano: Link Externo para Aprovação de SPI pelo Cliente
 
-### Objetivo
-Quando `situacaoPregao === 'recursos'`, exibir uma seção especial com dois botões na aba Dados Gerais. Os campos read-only de "Razões para Recurso" e "Contrarrazões" (linhas 969-995) passam a aparecer apenas dentro dessa seção condicional.
+### Resumo
+Criar um botão "Gerar Link Externo" na aba SPI do formulário de Importação Direta. Esse link leva o cliente a uma página pública e responsiva onde ele visualiza o resumo da SPI (somente leitura) e pode aprovar ou rejeitar, com campo de observação obrigatório em caso de rejeição. A decisão reflete automaticamente no campo "Aprovação do Cliente" dentro do sistema.
 
-### Alterações em `OportunidadeAvancadaForm.tsx`
+### Alterações
 
-**1. Novos estados (~linha 103)**
-- `solicitouRecurso: boolean` (false)
-- `solicitouRecursoConcorrente: boolean` (false)
+**1. Nova página pública: `src/pages/AprovacaoSPIExterna.tsx`**
+- Rota pública `/aprovacao-spi/:linkId`
+- Layout responsivo, sem sidebar/login
+- Exibe em somente leitura os dados da SPI: cliente, CNPJ, endereço, número da SPI, data, fabricante, forma de pagamento, tabela de mercadorias com quantidades/valores, subtotal, packing, total, e observações
+- Dois botões: "Aprovar" e "Rejeitar"
+- Se rejeitar, campo de observação obrigatório aparece
+- Após decisão, tela de confirmação (sem possibilidade de alterar)
+- Dados armazenados em estado local (mock/front-end only, sem backend)
 
-**2. Substituir os blocos fixos de "Razões para Recurso" e "Contrarrazões" (linhas 969-995) por uma seção condicional:**
+**2. Alteração em `src/components/comercial/components/SPIForm.tsx`**
+- Na seção "Aprovação do Cliente", adicionar botão "Gerar Link Externo" (mesmo padrão já usado na Representação Comercial da Contratação)
+- Gera URL com código único: `/aprovacao-spi/{codigo}`
+- Exibe o link gerado com botão de copiar
+- Manter os campos existentes inalterados
 
-```
-{formData.situacaoPregao === 'recursos' && (
-  <Card>
-    <CardHeader>Recursos</CardHeader>
-    <CardContent>
-      <!-- Botão A: "Recurso" -->
-      Botão "Solicitar Análise Jurídica - Recurso"
-        → setSolicitouRecurso(true) + toast
-        → Se solicitouRecurso: exibe read-only "Razões para Recurso" (da aba AJ)
+**3. Alteração em `src/App.tsx`**
+- Adicionar rota pública: `<Route path="/aprovacao-spi/:linkId" element={<AprovacaoSPIExterna />} />`
 
-      <!-- Botão B: "Recurso do Concorrente" -->
-      Botão "Recurso do Concorrente"
-        → setSolicitouRecursoConcorrente(true)
-        → Se solicitouRecursoConcorrente:
-          1. Campo editável para colar o recurso do concorrente (formData.recursoConcorrente)
-          2. Botão "Solicitar Análise Jurídica" (envia para jurídico + toast)
-          3. Read-only "Contrarrazões" (da aba AJ)
-    </CardContent>
-  </Card>
-)}
-```
-
-**3. Remover a exibição fixa** dos campos "Razões para Recurso" (linhas 969-981) e "Contrarrazões" (linhas 983-995) que hoje aparecem sempre — eles passam a existir apenas dentro da seção condicional de recursos.
-
-### Resultado
-Os campos de recurso só aparecem quando o pregão está na fase "Recursos", e cada sub-seção só é revelada após o respectivo botão ser clicado, seguindo o mesmo padrão dos demais botões de solicitação.
+**4. Estado compartilhado (mock)**
+- Como não há backend, a página externa simulará os dados da SPI com valores de exemplo
+- O status de aprovação/rejeição será exibido na tela de confirmação mas não persistirá entre sessões (comportamento mock)
 
