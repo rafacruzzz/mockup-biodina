@@ -121,14 +121,8 @@ export const GestaoNCTab = () => {
 
   const abrirDetalhesNC = (nc: NaoConformidade) => {
     setNcSelecionada(nc);
+    setModoNovo(false);
     setModalAberto(true);
-  };
-
-  const atualizarNC = () => {
-    if (ncSelecionada) {
-      setNcs(ncs.map(nc => nc.id === ncSelecionada.id ? { ...ncSelecionada, dataAtualizacao: new Date() } : nc));
-      setModalAberto(false);
-    }
   };
 
   // Estatísticas
