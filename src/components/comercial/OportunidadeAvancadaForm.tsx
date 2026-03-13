@@ -11,23 +11,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle, UserPlus, Settings } from "lucide-react";
+import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import LicitacaoValidationModal from "./LicitacaoValidationModal";
 import ConcorrenteModal from "./ConcorrenteModal";
 import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
 import CustomAlertModal from "./components/CustomAlertModal";
-import SolicitacaoCadastroModal from "./SolicitacaoCadastroModal";
-import GerenciarSegmentosModal from "./GerenciarSegmentosModal";
 import EmpresaParticipanteSelect from "./EmpresaParticipanteSelect";
 import AprovacaoEmpresaModal from "./AprovacaoEmpresaModal";
 import { concorrentes as mockConcorrentes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
 import { AprovacaoEmpresa } from "@/types/licitacao";
+import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getAtendeEditalBadge } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { PedidoCompleto } from "@/types/comercial";
+import { useEmpresa } from "@/contexts/EmpresaContext";
+
+interface OportunidadeAvancadaFormProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (data: any) => void;
+  oportunidade?: any;
+}
 
 // Tipo para licitantes
 interface LicitanteItem {
@@ -51,40 +58,10 @@ interface TabelaLicitantes {
   licitantes: LicitanteItem[];
 }
 
-// Tipo para entidade (cliente ou lead)
-interface EntidadeItem {
-  id: number;
-  nome: string;
-  cpfCnpj: string;
-  tipo: 'cliente' | 'lead';
-  cadastroCompleto: boolean;
-}
-import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getAtendeEditalBadge } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
-import { useSegmentoLeadManager } from "@/hooks/useSegmentoLeadManager";
-import { PedidoCompleto } from "@/types/comercial";
-import { useEmpresa } from "@/contexts/EmpresaContext";
-
-interface OportunidadeAvancadaFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (data: any) => void;
-  oportunidade?: any;
-}
-
-// Mock data para clientes e leads combinados
-const mockEntidades: EntidadeItem[] = [
-  { id: 1, nome: "Associação das Pioneiras Sociais", cpfCnpj: "12.345.678/0001-90", tipo: 'cliente', cadastroCompleto: true },
-  { id: 2, nome: "Hospital São Francisco", cpfCnpj: "98.765.432/0001-10", tipo: 'cliente', cadastroCompleto: true },
-  { id: 3, nome: "Laboratório Central LTDA", cpfCnpj: "11.222.333/0001-44", tipo: 'cliente', cadastroCompleto: false },
-  { id: 4, nome: "Clínica Med Center", cpfCnpj: "55.666.777/0001-88", tipo: 'lead', cadastroCompleto: true },
-  { id: 5, nome: "Instituto de Pesquisas Médicas", cpfCnpj: "33.444.555/0001-22", tipo: 'lead', cadastroCompleto: false },
-  { id: 6, nome: "Centro Médico Regional", cpfCnpj: "44.555.666/0001-77", tipo: 'lead', cadastroCompleto: true },
-];
 
 const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: OportunidadeAvancadaFormProps) => {
   const { toast } = useToast();
-  const { segmentos } = useSegmentoLeadManager();
+  
   const { empresaAtual, filialAtual } = useEmpresa();
   
   // Empresa ativa é a filial se logado em uma filial, senão é a principal
@@ -118,9 +95,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     return labels[status] || status;
   };
   const [showEmprestimoAlert, setShowEmprestimoAlert] = useState(false);
-  const [showSolicitacaoCadastro, setShowSolicitacaoCadastro] = useState(false);
-  const [showGerenciarSegmentos, setShowGerenciarSegmentos] = useState(false);
-  const [clienteDropdownOpen, setClienteDropdownOpen] = useState(false);
   
   // Estados para modais
   const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
@@ -154,9 +128,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     { id: 1, numero: 1, titulo: 'Tabela de Licitantes 1', licitantes: [] }
   ]);
   
-  // Estado para rastrear entidades criadas via solicitação (cadastro incompleto)
-  const [entidadesDisponiveis, setEntidadesDisponiveis] = useState<EntidadeItem[]>(mockEntidades);
-  const [clienteSelecionadoCadastroIncompleto, setClienteSelecionadoCadastroIncompleto] = useState(false);
   
   // Estado para rastrear qual tabela está recebendo o novo licitante
   const [tabelaAtiva, setTabelaAtiva] = useState<number | null>(null);
@@ -205,22 +176,10 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   const [formData, setFormData] = useState({
     // Empresa - automaticamente definida pela empresa logada
     empresaId: oportunidade?.empresaId || empresaAtivaId,
-    
-    // Novos campos para cliente/lead
     cliente: oportunidade?.cliente || '',
-    clienteId: oportunidade?.clienteId || '',
     cpfCnpj: oportunidade?.cpfCnpj || '',
-    tipoEntidade: oportunidade?.tipoEntidade || '' as 'cliente' | 'lead' | '',
-    ativo: oportunidade?.ativo || true,
-    fonteLead: oportunidade?.fonteLead || '',
-    segmentoLead: oportunidade?.segmentoLead || '',
-    colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || [],
-    valorNegocio: oportunidade?.valorNegocio || 0,
-    metodoContato: oportunidade?.metodoContato || '',
-    tags: oportunidade?.tags || '',
-    caracteristicas: oportunidade?.caracteristicas || '',
-    fluxoTrabalho: oportunidade?.fluxoTrabalho || '',
     descricao: oportunidade?.descricao || '',
+    colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || [],
     analiseTecnica: oportunidade?.analiseTecnica || '',
     termometro: oportunidade?.termometro || 50,
     resultadoOportunidade: oportunidade?.resultadoOportunidade || 'em_andamento',
@@ -265,22 +224,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     solicitarAnaliseTecnica: oportunidade?.solicitarAnaliseTecnica || false,
   });
 
-  const handleClienteSelect = (entidade: EntidadeItem) => {
-    setFormData({
-      ...formData,
-      cliente: entidade.nome,
-      clienteId: entidade.id,
-      cpfCnpj: entidade.cpfCnpj,
-      tipoEntidade: entidade.tipo
-    });
-    setClienteSelecionadoCadastroIncompleto(!entidade.cadastroCompleto);
-    setClienteDropdownOpen(false);
-  };
-
-  const handleClienteCriadoViaSolicitacao = (novoCliente: EntidadeItem) => {
-    setEntidadesDisponiveis([...entidadesDisponiveis, novoCliente]);
-    handleClienteSelect(novoCliente);
-  };
 
   const handleAtualizarTituloTabela = (tabelaId: number, novoTitulo: string) => {
     setTabelasLicitantes(tabelasLicitantes.map(tabela =>
@@ -539,300 +482,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
   const renderDadosGerais = () => (
     <div className="space-y-6">
-      {/* Dados do Cliente/Lead */}
-      <div className="border rounded-lg p-4 space-y-4">
-        <h3 className="text-lg font-semibold text-gray-800">Dados do Cliente/Lead</h3>
-        
-        {/* Alerta de cadastro incompleto */}
-        {clienteSelecionadoCadastroIncompleto && formData.cliente && (
-          <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-            <AlertTriangle className="h-5 w-5 text-amber-600" />
-            <span className="text-sm text-amber-800 font-medium">
-              Cadastro incompleto - Este registro foi enviado para o setor de Cadastro para ser completado.
-            </span>
-          </div>
-        )}
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="cliente">Cliente/Lead *</Label>
-            <Popover open={clienteDropdownOpen} onOpenChange={setClienteDropdownOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={clienteDropdownOpen}
-                  className="w-full justify-between"
-                  disabled={isReadOnlyMode()}
-                >
-                  <div className="flex items-center gap-2">
-                    {formData.cliente || "Selecione um cliente ou lead..."}
-                    {formData.tipoEntidade && (
-                      <Badge 
-                        variant="outline" 
-                        className={formData.tipoEntidade === 'cliente' ? 'bg-blue-100 text-blue-700 border-blue-300' : 'bg-purple-100 text-purple-700 border-purple-300'}
-                      >
-                        {formData.tipoEntidade === 'cliente' ? 'Cliente' : 'Lead'}
-                      </Badge>
-                    )}
-                  </div>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-full p-0 bg-background" align="start">
-                <Command>
-                  <CommandInput placeholder="Buscar cliente ou lead..." />
-                  <CommandList>
-                    <CommandEmpty>Nenhum cliente ou lead encontrado.</CommandEmpty>
-                    <CommandGroup heading="Clientes">
-                      {entidadesDisponiveis.filter(e => e.tipo === 'cliente').map((entidade) => (
-                        <CommandItem
-                          key={`cliente-${entidade.id}`}
-                          value={entidade.nome}
-                          onSelect={() => handleClienteSelect(entidade)}
-                        >
-                          <div className="flex items-center justify-between w-full">
-                            <div className="flex flex-col">
-                              <span className="font-medium">{entidade.nome}</span>
-                              <span className="text-sm text-muted-foreground">{entidade.cpfCnpj}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-300">
-                                Cliente
-                              </Badge>
-                              {!entidade.cadastroCompleto && (
-                                <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-300">
-                                  Incompleto
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                    <CommandGroup heading="Leads">
-                      {entidadesDisponiveis.filter(e => e.tipo === 'lead').map((entidade) => (
-                        <CommandItem
-                          key={`lead-${entidade.id}`}
-                          value={entidade.nome}
-                          onSelect={() => handleClienteSelect(entidade)}
-                        >
-                          <div className="flex items-center justify-between w-full">
-                            <div className="flex flex-col">
-                              <span className="font-medium">{entidade.nome}</span>
-                              <span className="text-sm text-muted-foreground">{entidade.cpfCnpj}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Badge variant="outline" className="bg-purple-100 text-purple-700 border-purple-300">
-                                Lead
-                              </Badge>
-                              {!entidade.cadastroCompleto && (
-                                <Badge variant="outline" className="bg-amber-100 text-amber-700 border-amber-300">
-                                  Incompleto
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-            
-            {!isReadOnlyMode() && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="mt-2 text-blue-600 border-blue-600 hover:bg-blue-50"
-                onClick={() => setShowSolicitacaoCadastro(true)}
-              >
-                <UserPlus className="h-4 w-4 mr-2" />
-                Solicitação de cadastro
-              </Button>
-            )}
-          </div>
-          
-          <div>
-            <Label htmlFor="cpfCnpj">CPF/CNPJ</Label>
-            <Input
-              id="cpfCnpj"
-              value={formData.cpfCnpj}
-              placeholder="Selecione um cliente ou lead"
-              disabled={true}
-              className="bg-gray-50"
-            />
-          </div>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="ativo" 
-            checked={formData.ativo}
-            onCheckedChange={(checked) => setFormData({...formData, ativo: checked as boolean})}
-            disabled={isReadOnlyMode()}
-          />
-          <Label htmlFor="ativo">Ativo</Label>
-        </div>
-      </div>
-
-      {/* Dados do Lead/Negócio */}
-      <div className="border rounded-lg p-4 space-y-4">
-        <h3 className="text-lg font-semibold text-gray-800">Dados do Lead/Negócio</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="fonteLead">Fonte do Lead</Label>
-            <Select 
-              value={formData.fonteLead} 
-              onValueChange={(value) => setFormData({...formData, fonteLead: value})}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="site">Site</SelectItem>
-                <SelectItem value="indicacao">Indicação</SelectItem>
-                <SelectItem value="cold_call">Cold Call</SelectItem>
-                <SelectItem value="licitacao">Licitação</SelectItem>
-                <SelectItem value="referencia">Referência</SelectItem>
-                <SelectItem value="evento">Evento</SelectItem>
-                <SelectItem value="telefone">Telefone</SelectItem>
-                <SelectItem value="email">E-mail</SelectItem>
-                <SelectItem value="presencial">Presencial</SelectItem>
-                <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                <SelectItem value="video_chamada">Vídeo Chamada</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="segmentoLead">Segmento do Lead</Label>
-            <div className="flex gap-2">
-              <Select 
-                value={formData.segmentoLead} 
-                onValueChange={(value) => setFormData({...formData, segmentoLead: value})}
-                disabled={isReadOnlyMode()}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  {segmentos.map((segmento) => (
-                    <SelectItem key={segmento.id} value={segmento.value}>
-                      {segmento.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {!isReadOnlyMode() && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowGerenciarSegmentos(true)}
-                  className="shrink-0"
-                >
-                  <Settings className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          </div>
-          <div>
-            <Label htmlFor="valorNegocio">Valor do Negócio *</Label>
-            <Input
-              id="valorNegocio"
-              type="number"
-              step="0.01"
-              value={formData.valorNegocio}
-              onChange={(e) => setFormData({...formData, valorNegocio: Number(e.target.value)})}
-              placeholder="0,00"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="metodoContato">Método de contato</Label>
-            <Select 
-              value={formData.metodoContato} 
-              onValueChange={(value) => setFormData({...formData, metodoContato: value})}
-              disabled={isReadOnlyMode()}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="telefone">Telefone</SelectItem>
-                <SelectItem value="email">E-mail</SelectItem>
-                <SelectItem value="presencial">Presencial</SelectItem>
-                <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                <SelectItem value="video_chamada">Vídeo Chamada</SelectItem>
-                <SelectItem value="outros">Outros</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        
-        <div>
-          <Label htmlFor="tags">Tags</Label>
-          <Input
-            id="tags"
-            value={formData.tags}
-            onChange={(e) => setFormData({...formData, tags: e.target.value})}
-            placeholder="Separadas por vírgula"
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="caracteristicas">Características</Label>
-          <Textarea
-            id="caracteristicas"
-            value={formData.caracteristicas}
-            onChange={(e) => setFormData({...formData, caracteristicas: e.target.value})}
-            placeholder="Descreva as características da oportunidade"
-            rows={3}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="fluxoTrabalho">Fluxo de Trabalho (Status controlado pelo RH/Gestor)</Label>
-          <Select 
-            value={formData.fluxoTrabalho} 
-            onValueChange={(value) => setFormData({...formData, fluxoTrabalho: value})}
-            disabled={isReadOnlyMode()}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione o status do trabalho" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="aguardando_inicio">Aguardando Início</SelectItem>
-              <SelectItem value="em_andamento">Em Andamento</SelectItem>
-              <SelectItem value="em_revisao">Em Revisão</SelectItem>
-              <SelectItem value="aguardando_aprovacao">Aguardando Aprovação</SelectItem>
-              <SelectItem value="aprovado">Aprovado</SelectItem>
-              <SelectItem value="suspenso">Suspenso</SelectItem>
-              <SelectItem value="cancelado">Cancelado</SelectItem>
-              <SelectItem value="finalizado">Finalizado</SelectItem>
-            </SelectContent>
-          </Select>
-          <p className="text-sm text-gray-500 mt-1">
-            Este campo será incluído no Kanban para acompanhamento do funcionário
-          </p>
-        </div>
-        
-        <div>
-          <Label htmlFor="descricao">Descrição da Oportunidade</Label>
-          <Textarea
-            id="descricao"
-            value={formData.descricao}
-            onChange={(e) => setFormData({...formData, descricao: e.target.value})}
-            placeholder="Descrição detalhada da oportunidade"
-            rows={4}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-      </div>
-
       {/* Dados Específicos da Licitação */}
       <div className="border rounded-lg p-4 space-y-4 bg-yellow-50">
         <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
@@ -1837,24 +1486,11 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         />
       )}
 
-      {showGerenciarSegmentos && (
-        <GerenciarSegmentosModal
-          isOpen={showGerenciarSegmentos}
-          onClose={() => setShowGerenciarSegmentos(false)}
-        />
-      )}
-
       <CustomAlertModal
         isOpen={showEmprestimoAlert}
         title="Operação EMPRÉSTIMO Selecionada"
         message="A natureza da operação foi alterada para EMPRÉSTIMO. Esta operação pode requerer aprovação especial dependendo das políticas da empresa."
         onConfirm={() => setShowEmprestimoAlert(false)}
-      />
-
-      <SolicitacaoCadastroModal
-        isOpen={showSolicitacaoCadastro}
-        onClose={() => setShowSolicitacaoCadastro(false)}
-        onClienteCriado={handleClienteCriadoViaSolicitacao}
       />
 
       {/* Modal para adicionar licitante */}
