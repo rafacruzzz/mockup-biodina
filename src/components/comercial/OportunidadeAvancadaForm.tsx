@@ -101,6 +101,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   const [solicitouImpugnacao, setSolicitouImpugnacao] = useState(false);
   const [solicitouAnaliseCientifica, setSolicitouAnaliseCientifica] = useState(false);
   const [solicitouAnaliseGerencial, setSolicitouAnaliseGerencial] = useState(false);
+  const [solicitouRecurso, setSolicitouRecurso] = useState(false);
+  const [solicitouRecursoConcorrente, setSolicitouRecursoConcorrente] = useState(false);
   
   // Estados para modais
   const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
