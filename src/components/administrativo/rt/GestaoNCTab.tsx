@@ -8,29 +8,67 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { AlertCircle, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle2, Clock, Plus, XCircle } from "lucide-react";
 import { naoConformidadesRTMockadas, responsaveisNCRT } from "@/data/rtModules";
-import type { NaoConformidadeRT, ImpactoNCRT, StatusNCRT } from "@/types/rt";
+import type { NaoConformidadeRT, ImpactoNCRT, StatusNCRT, OrigemNCRT, TipoNCRT, StatusCAPART } from "@/types/rt";
 
 export function GestaoNCTab() {
   const [naoConformidades, setNaoConformidades] = useState(naoConformidadesRTMockadas);
   const [selectedNC, setSelectedNC] = useState<NaoConformidadeRT | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [modoNovo, setModoNovo] = useState(false);
+
+  const handleNovaNC = () => {
+    const novoId = `NC-RT-${Date.now()}`;
+    const sequencial = naoConformidades.length + 1;
+    const ano = new Date().getFullYear();
+    const novaNC: NaoConformidadeRT = {
+      id: `NC-RT-${ano}-${String(sequencial).padStart(3, '0')}`,
+      data: new Date().toISOString().split('T')[0],
+      origem: 'Outro' as OrigemNCRT,
+      tipo: 'Outro' as TipoNCRT,
+      impacto: 'Leve' as ImpactoNCRT,
+      descricao: '',
+      acaoImediata: '',
+      responsavel: responsaveisNCRT[0] || '',
+      prazoExecucao: new Date().toISOString().split('T')[0],
+      status: 'Aberta' as StatusNCRT,
+      observacoes: '',
+      capa: {
+        id: `capa-${novoId}`,
+        acaoPreventiva: '',
+        acaoCorretiva: '',
+        prazoFinal: new Date().toISOString().split('T')[0],
+        status: 'Pendente' as StatusCAPART,
+        responsavel: '',
+      },
+    };
+    setSelectedNC(novaNC);
+    setModoNovo(true);
+    setShowModal(true);
+  };
 
   const handleOpenNC = (nc: NaoConformidadeRT) => {
     setSelectedNC({ ...nc });
+    setModoNovo(false);
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setModoNovo(false);
     setSelectedNC(null);
   };
 
   const handleSalvar = () => {
     if (!selectedNC) return;
-    setNaoConformidades(prev => prev.map(nc => nc.id === selectedNC.id ? selectedNC : nc));
+    if (modoNovo) {
+      setNaoConformidades(prev => [...prev, selectedNC]);
+    } else {
+      setNaoConformidades(prev => prev.map(nc => nc.id === selectedNC.id ? selectedNC : nc));
+    }
     setShowModal(false);
+    setModoNovo(false);
     setSelectedNC(null);
   };
 
@@ -148,8 +186,12 @@ export function GestaoNCTab() {
 
       {/* Tabela de Não Conformidades */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Não Conformidades Abertas - RT</CardTitle>
+          <Button onClick={handleNovaNC} size="sm">
+            <Plus className="w-4 h-4 mr-1" />
+            Nova Não Conformidade
+          </Button>
         </CardHeader>
         <CardContent>
           <Table>
@@ -194,26 +236,46 @@ export function GestaoNCTab() {
       </Card>
 
       {/* Modal de Detalhes da NC */}
-      <Dialog open={showModal} onOpenChange={setShowModal}>
+      <Dialog open={showModal} onOpenChange={(open) => { setShowModal(open); if (!open) { setModoNovo(false); setSelectedNC(null); } }}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Detalhes da Não Conformidade - {selectedNC?.id}</DialogTitle>
+            <DialogTitle>{modoNovo ? 'Nova Não Conformidade - RT' : `Detalhes da Não Conformidade - ${selectedNC?.id}`}</DialogTitle>
           </DialogHeader>
 
           {selectedNC && (
             <div className="space-y-6">
-              {/* Linha 1: Data + Origem (disabled) */}
+              {/* Linha 1: Data + Origem */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>Data da NC</Label>
-                  <Input 
-                    value={new Date(selectedNC.data).toLocaleDateString('pt-BR')} 
-                    disabled 
-                  />
+                  {modoNovo ? (
+                    <Input
+                      type="date"
+                      value={selectedNC.data}
+                      onChange={(e) => setSelectedNC({ ...selectedNC, data: e.target.value })}
+                    />
+                  ) : (
+                    <Input value={new Date(selectedNC.data).toLocaleDateString('pt-BR')} disabled />
+                  )}
                 </div>
                 <div>
                   <Label>Origem</Label>
-                  <Input value={selectedNC.origem} disabled />
+                  {modoNovo ? (
+                    <Select value={selectedNC.origem} onValueChange={(val) => setSelectedNC({ ...selectedNC, origem: val as OrigemNCRT })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Auditoria">Auditoria</SelectItem>
+                        <SelectItem value="Treinamento">Treinamento</SelectItem>
+                        <SelectItem value="Liberação de Produto">Liberação de Produto</SelectItem>
+                        <SelectItem value="Documentação">Documentação</SelectItem>
+                        <SelectItem value="Outro">Outro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input value={selectedNC.origem} disabled />
+                  )}
                 </div>
               </div>
 
@@ -375,7 +437,7 @@ export function GestaoNCTab() {
 
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={handleCloseModal}>Cancelar</Button>
-                <Button onClick={handleSalvar}>Salvar Alterações</Button>
+                <Button onClick={handleSalvar}>{modoNovo ? 'Criar Não Conformidade' : 'Salvar Alterações'}</Button>
               </div>
             </div>
           )}
