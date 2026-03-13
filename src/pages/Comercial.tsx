@@ -77,6 +77,7 @@ const Comercial = () => {
       tipoOportunidade: 'pontual',
       valor: 782530,
       dataAbertura: '20/03/2024',
+      dataEncerramento: '20/06/2024',
       dataContato: '20/03/2024',
       termometro: 100,
       fonteLead: 'Site',
