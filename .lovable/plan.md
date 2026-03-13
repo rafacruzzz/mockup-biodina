@@ -1,31 +1,36 @@
 
 
-## Plano: Link Externo para Aprovação de SPI pelo Cliente
+## Plano: Remover seção de Lead do formulário de Licitação
 
-### Resumo
-Criar um botão "Gerar Link Externo" na aba SPI do formulário de Importação Direta. Esse link leva o cliente a uma página pública e responsiva onde ele visualiza o resumo da SPI (somente leitura) e pode aprovar ou rejeitar, com campo de observação obrigatório em caso de rejeição. A decisão reflete automaticamente no campo "Aprovação do Cliente" dentro do sistema.
+### Contexto
+Com a criação da aba dedicada "Leads" em Comercial > Vendas, os dados de Lead não precisam mais estar no formulário de Licitação (`OportunidadeAvancadaForm.tsx`). O usuário quer separar as responsabilidades: leads ficam na aba Leads, licitação foca apenas nos dados da licitação.
 
-### Alterações
+### Alterações em `src/components/comercial/OportunidadeAvancadaForm.tsx`
 
-**1. Nova página pública: `src/pages/AprovacaoSPIExterna.tsx`**
-- Rota pública `/aprovacao-spi/:linkId`
-- Layout responsivo, sem sidebar/login
-- Exibe em somente leitura os dados da SPI: cliente, CNPJ, endereço, número da SPI, data, fabricante, forma de pagamento, tabela de mercadorias com quantidades/valores, subtotal, packing, total, e observações
-- Dois botões: "Aprovar" e "Rejeitar"
-- Se rejeitar, campo de observação obrigatório aparece
-- Após decisão, tela de confirmação (sem possibilidade de alterar)
-- Dados armazenados em estado local (mock/front-end only, sem backend)
+**Remover da aba "Dados Gerais" (`renderDadosGerais`):**
 
-**2. Alteração em `src/components/comercial/components/SPIForm.tsx`**
-- Na seção "Aprovação do Cliente", adicionar botão "Gerar Link Externo" (mesmo padrão já usado na Representação Comercial da Contratação)
-- Gera URL com código único: `/aprovacao-spi/{codigo}`
-- Exibe o link gerado com botão de copiar
-- Manter os campos existentes inalterados
+1. **Remover o card "Dados do Cliente/Lead"** (linhas ~542-677)
+   - Seletor de cliente/lead com dropdown (Popover/Command)
+   - Campo CPF/CNPJ auto-preenchido
+   - Checkbox "Ativo"
+   - Botão "Solicitação de cadastro"
 
-**3. Alteração em `src/App.tsx`**
-- Adicionar rota pública: `<Route path="/aprovacao-spi/:linkId" element={<AprovacaoSPIExterna />} />`
+2. **Remover o card "Dados do Lead/Negócio"** (linhas ~679-834)
+   - Fonte do Lead
+   - Segmento do Lead (com gerenciador de segmentos)
+   - Valor do Negócio
+   - Método de contato
+   - Tags
+   - Características
+   - Fluxo de Trabalho
+   - Descrição da Oportunidade
 
-**4. Estado compartilhado (mock)**
-- Como não há backend, a página externa simulará os dados da SPI com valores de exemplo
-- O status de aprovação/rejeição será exibido na tela de confirmação mas não persistirá entre sessões (comportamento mock)
+3. **Limpar código órfão:**
+   - Remover estados: `entidadesDisponiveis`, `clienteSelecionadoCadastroIncompleto`, `clienteDropdownOpen`, `showSolicitacaoCadastro`, `showGerenciarSegmentos`
+   - Remover handlers: `handleClienteSelect`, `handleClienteCriadoViaSolicitacao`
+   - Remover campos do `formData`: `cliente`, `clienteId`, `cpfCnpj`, `tipoEntidade`, `ativo`, `fonteLead`, `segmentoLead`, `valorNegocio`, `metodoContato`, `tags`, `caracteristicas`, `fluxoTrabalho`, `descricao`
+   - Remover imports não mais utilizados (ex: `useSegmentoLeadManager`, `SolicitacaoCadastroModal`, `GerenciarSegmentosModal` se não usados em outro lugar)
+   - Remover `mockEntidades` e `EntidadeItem` interface se não usados em outro lugar
+
+A aba "Dados Gerais" começará diretamente com "Dados Específicos da Licitação" (linha ~836+).
 
