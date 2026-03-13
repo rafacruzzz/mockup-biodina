@@ -876,29 +876,59 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </CardContent>
         </Card>
 
-        {/* 5. Impugnação do Edital */}
+        {/* Pedido de Esclarecimento (read-only, editável na aba AJ) */}
         <div>
-          <Label htmlFor="impugnacaoEdital">Impugnação do Edital</Label>
+          <Label htmlFor="pedidoEsclarecimentoDG">Pedido de Esclarecimento</Label>
+          <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
           <Textarea
-            id="impugnacaoEdital"
-            value={formData.impugnacaoEdital}
-            onChange={(e) => handleInputChange('impugnacaoEdital', e.target.value)}
-            placeholder="Detalhes sobre impugnação do edital"
+            id="pedidoEsclarecimentoDG"
+            value={formData.pedidoEsclarecimento}
+            readOnly
+            placeholder="Preenchido pela Análise Jurídica (aba AJ)"
             rows={3}
-            disabled={isReadOnlyMode()}
+            className="bg-muted/50"
           />
         </div>
 
-        {/* 6. Razões para Recurso */}
+        {/* 5. Impugnação do Edital (read-only, editável na aba AJ) */}
         <div>
-          <Label htmlFor="manifestacaoRecorrer">Razões para Recurso</Label>
+          <Label htmlFor="impugnacaoEditalDG">Impugnação do Edital</Label>
+          <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
           <Textarea
-            id="manifestacaoRecorrer"
-            value={formData.manifestacaoRecorrer}
-            onChange={(e) => setFormData({...formData, manifestacaoRecorrer: e.target.value})}
-            placeholder="Descreva as razões para recurso, se aplicável"
+            id="impugnacaoEditalDG"
+            value={formData.impugnacaoEdital}
+            readOnly
+            placeholder="Preenchido pela Análise Jurídica (aba AJ)"
             rows={3}
-            disabled={isReadOnlyMode()}
+            className="bg-muted/50"
+          />
+        </div>
+
+        {/* 6. Razões para Recurso (read-only, editável na aba AJ) */}
+        <div>
+          <Label htmlFor="manifestacaoRecorrerDG">Razões para Recurso</Label>
+          <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
+          <Textarea
+            id="manifestacaoRecorrerDG"
+            value={formData.manifestacaoRecorrer}
+            readOnly
+            placeholder="Preenchido pela Análise Jurídica (aba AJ)"
+            rows={3}
+            className="bg-muted/50"
+          />
+        </div>
+
+        {/* Contrarrazões (read-only, editável na aba AJ) */}
+        <div>
+          <Label htmlFor="contrarrazoesDG">Contrarrazões</Label>
+          <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
+          <Textarea
+            id="contrarrazoesDG"
+            value={formData.contrarrazoes}
+            readOnly
+            placeholder="Preenchido pela Análise Jurídica (aba AJ)"
+            rows={3}
+            className="bg-muted/50"
           />
         </div>
 
