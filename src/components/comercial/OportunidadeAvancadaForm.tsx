@@ -997,14 +997,14 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         {/* Campos AG (read-only, só aparecem após solicitar) */}
         {solicitouAnaliseGerencial && (
           <>
-            {/* Empresa Participante (read-only, editável na aba AG) */}
-            {formData.empresaParticipanteAG && (
+            {/* Empresa Participante (read-only, da seleção na aba AG) */}
+            {empresaParticipante.empresaParticipanteNome && (
               <div>
                 <Label htmlFor="empresaParticipanteDG">Empresa Participante</Label>
-                <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
+                <p className="text-xs text-muted-foreground mb-1">Definida na aba AG</p>
                 <Input
                   id="empresaParticipanteDG"
-                  value={formData.empresaParticipanteAG}
+                  value={`${empresaParticipante.empresaParticipanteNome} - ${empresaParticipante.empresaParticipanteCNPJ}`}
                   readOnly
                   className="bg-muted/50"
                 />
