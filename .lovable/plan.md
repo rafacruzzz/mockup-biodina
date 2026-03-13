@@ -1,31 +1,31 @@
 
 
-## Plano: Link Externo para Aprovação de SPI pelo Cliente
+## Plano: Criar aba "AG" (Análise Gerencial) e mover "Situação/Status do Pregão" para o início
 
-### Resumo
-Criar um botão "Gerar Link Externo" na aba SPI do formulário de Importação Direta. Esse link leva o cliente a uma página pública e responsiva onde ele visualiza o resumo da SPI (somente leitura) e pode aprovar ou rejeitar, com campo de observação obrigatório em caso de rejeição. A decisão reflete automaticamente no campo "Aprovação do Cliente" dentro do sistema.
+### Alterações em `src/components/comercial/OportunidadeAvancadaForm.tsx`
 
-### Alterações
+**1. Adicionar campos no `formData`**
+- `estrategiaComercialAG: ''` (estratégia comercial da AG)
+- `valorEntradaAG: 0` (valor de entrada R$)
+- `valorLimiteAG: 0` (valor limite R$)
 
-**1. Nova página pública: `src/pages/AprovacaoSPIExterna.tsx`**
-- Rota pública `/aprovacao-spi/:linkId`
-- Layout responsivo, sem sidebar/login
-- Exibe em somente leitura os dados da SPI: cliente, CNPJ, endereço, número da SPI, data, fabricante, forma de pagamento, tabela de mercadorias com quantidades/valores, subtotal, packing, total, e observações
-- Dois botões: "Aprovar" e "Rejeitar"
-- Se rejeitar, campo de observação obrigatório aparece
-- Após decisão, tela de confirmação (sem possibilidade de alterar)
-- Dados armazenados em estado local (mock/front-end only, sem backend)
+**2. Adicionar TabsTrigger "AG" após "AJ"**
+```
+[Dados Gerais] [AC] [AJ] [AG] [Histórico/Chat] [Documentos]
+```
 
-**2. Alteração em `src/components/comercial/components/SPIForm.tsx`**
-- Na seção "Aprovação do Cliente", adicionar botão "Gerar Link Externo" (mesmo padrão já usado na Representação Comercial da Contratação)
-- Gera URL com código único: `/aprovacao-spi/{codigo}`
-- Exibe o link gerado com botão de copiar
-- Manter os campos existentes inalterados
+**3. Criar função `renderAnaliseGerencial()`** com:
+- **Empresa Participante 1** — reutilizar `EmpresaParticipanteSelect` (mesmo componente já usado em Dados Gerais), com `valorMinimoFinal` (Valor mínimo Final - Empresa 1)
+- **Empresa Participante 2 (Opcional)** — idem, com `valorMinimoFinal2`
+- **Estratégia Comercial** — Textarea de livre escrita → `formData.estrategiaComercialAG`
+- **Valor de Entrada (R$)** — Input numérico → `formData.valorEntradaAG`
+- **Valor Limite (R$)** — Input numérico → `formData.valorLimiteAG`
 
-**3. Alteração em `src/App.tsx`**
-- Adicionar rota pública: `<Route path="/aprovacao-spi/:linkId" element={<AprovacaoSPIExterna />} />`
+Os campos de Empresa Participante e Valor Mínimo já existem no `formData` e são os mesmos usados em Dados Gerais — a sincronização é automática.
 
-**4. Estado compartilhado (mock)**
-- Como não há backend, a página externa simulará os dados da SPI com valores de exemplo
-- O status de aprovação/rejeição será exibido na tela de confirmação mas não persistirá entre sessões (comportamento mock)
+**4. Espelhar campos da AG em Dados Gerais (read-only)**
+- Adicionar campos read-only para Estratégia Comercial, Valor de Entrada e Valor Limite na aba Dados Gerais, com nota "Editável na aba AG".
+
+**5. Mover "Situação/Status do Pregão" para o primeiro campo da aba Dados Gerais**
+- Atualmente está na linha ~703, após vários campos. Será movido para antes de "Data da Licitação" (linha ~497), tornando-se o **primeiro campo visível** ao abrir a licitação.
 
