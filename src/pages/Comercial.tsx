@@ -59,6 +59,8 @@ const Comercial = () => {
   const [showContratacaoSimplesForm, setShowContratacaoSimplesForm] = useState(false);
   const [showImportacaoDiretaForm, setShowImportacaoDiretaForm] = useState(false);
   const [subAbaContratacao, setSubAbaContratacao] = useState<'contratacoes' | 'pedidos'>('contratacoes');
+  const [showLeadModal, setShowLeadModal] = useState(false);
+  const [leadsSearchTerm, setLeadsSearchTerm] = useState('');
   // const [showAssinaturas, setShowAssinaturas] = useState(false); // COMENTADO - NÃO USAR NO MOMENTO
 
   // Mock data com empresaId para filtrar por empresa
