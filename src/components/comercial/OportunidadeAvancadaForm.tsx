@@ -166,21 +166,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     // Empresa - automaticamente definida pela empresa logada
     empresaId: oportunidade?.empresaId || empresaAtivaId,
     
-    // Novos campos para cliente/lead
-    cliente: oportunidade?.cliente || '',
-    clienteId: oportunidade?.clienteId || '',
-    cpfCnpj: oportunidade?.cpfCnpj || '',
-    tipoEntidade: oportunidade?.tipoEntidade || '' as 'cliente' | 'lead' | '',
-    ativo: oportunidade?.ativo || true,
-    fonteLead: oportunidade?.fonteLead || '',
-    segmentoLead: oportunidade?.segmentoLead || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || [],
-    valorNegocio: oportunidade?.valorNegocio || 0,
-    metodoContato: oportunidade?.metodoContato || '',
-    tags: oportunidade?.tags || '',
-    caracteristicas: oportunidade?.caracteristicas || '',
-    fluxoTrabalho: oportunidade?.fluxoTrabalho || '',
-    descricao: oportunidade?.descricao || '',
     analiseTecnica: oportunidade?.analiseTecnica || '',
     termometro: oportunidade?.termometro || 50,
     resultadoOportunidade: oportunidade?.resultadoOportunidade || 'em_andamento',
