@@ -1473,24 +1473,11 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         />
       )}
 
-      {showGerenciarSegmentos && (
-        <GerenciarSegmentosModal
-          isOpen={showGerenciarSegmentos}
-          onClose={() => setShowGerenciarSegmentos(false)}
-        />
-      )}
-
       <CustomAlertModal
         isOpen={showEmprestimoAlert}
         title="Operação EMPRÉSTIMO Selecionada"
         message="A natureza da operação foi alterada para EMPRÉSTIMO. Esta operação pode requerer aprovação especial dependendo das políticas da empresa."
         onConfirm={() => setShowEmprestimoAlert(false)}
-      />
-
-      <SolicitacaoCadastroModal
-        isOpen={showSolicitacaoCadastro}
-        onClose={() => setShowSolicitacaoCadastro(false)}
-        onClienteCriado={handleClienteCriadoViaSolicitacao}
       />
 
       {/* Modal para adicionar licitante */}
