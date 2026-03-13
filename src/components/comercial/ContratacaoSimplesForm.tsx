@@ -60,9 +60,18 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [licitacaoVinculada, setLicitacaoVinculada] = useState<string>('');
   const [documentosLicitacao, setDocumentosLicitacao] = useState<any[]>([]);
   const [historicoLicitacao, setHistoricoLicitacao] = useState<any[]>([]);
-  const [historicoVisitas, setHistoricoVisitas] = useState<HistoricoVisita[]>(oportunidade?.historicoVisitas || []);
+   const [historicoVisitas, setHistoricoVisitas] = useState<HistoricoVisita[]>(oportunidade?.historicoVisitas || []);
    const [interfaceamentos, setInterfaceamentos] = useState<any[]>(oportunidade?.interfaceamentos || []);
   const [linkExternoRepresentacao, setLinkExternoRepresentacao] = useState('');
+
+  // Dynamic lists for Dados do Projeto
+  const [contatosComerciais, setContatosComerciais] = useState<Array<{id: string; nome: string; cargo: string; telefone: string; email: string}>>(
+    oportunidade?.contatosComerciais || []
+  );
+  const [representantesVinculados, setRepresentantesVinculados] = useState<Array<{id: string; nome: string; percentualComissao: number}>>(
+    oportunidade?.representantesVinculados || []
+  );
+  const [colaboradoresGestao, setColaboradoresGestao] = useState<string[]>(oportunidade?.colaboradoresGestao || []);
   const [modalHistoricoOpen, setModalHistoricoOpen] = useState(false);
   const [novaVisita, setNovaVisita] = useState({
     colaborador: '',
@@ -225,34 +234,13 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     website: oportunidade?.website || '',
     ativo: oportunidade?.ativo || true,
     
-    // Dados da Oportunidade
+    // Dados do Projeto
+    segmentoProjeto: oportunidade?.segmentoProjeto || '',
+    numeroContrato: oportunidade?.numeroContrato || '',
     fonteLead: oportunidade?.fonteLead || '',
     valorNegocio: oportunidade?.valorNegocio || 0,
-    quantidade: 0,
-    segmentoLead: oportunidade?.segmentoLead || '',
-    colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || '',
-    procurandoPor: oportunidade?.procurandoPor || '',
     previsaoConsumoMensal: oportunidade?.previsaoConsumoMensal || '',
-    
-    // Contato Comercial
-    contatoComercialNome: oportunidade?.contatoComercialNome || '',
-    contatoComercialSetor: oportunidade?.contatoComercialSetor || '',
-    contatoComercialTelefone: oportunidade?.contatoComercialTelefone || '',
-    contatoComercialEmail: oportunidade?.contatoComercialEmail || '',
-    
-    // Organização
-    tags: oportunidade?.tags || '',
-    fluxoTrabalho: oportunidade?.fluxoTrabalho || '',
-    status: oportunidade?.status || 'em_triagem',
-    descricao: oportunidade?.descricao || '',
-    
-    // Outros
-    propostaNegociacao: oportunidade?.propostaNegociacao || false,
-    termometro: oportunidade?.termometro || 50,
-    
-    // Campos condicionais
-    motivoGanho: oportunidade?.motivoGanho || '',
-    motivoPerda: oportunidade?.motivoPerda || '',
+    colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || '',
     
     // Análise Técnica
     analiseTecnica: oportunidade?.analiseTecnica || '',
@@ -282,7 +270,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const somaAditivos = aditivos.reduce((sum, a) => sum + a.valor, 0);
   const valorAtualizado = valorOriginal + somaAditivos;
 
-  const [concorrentes, setConcorrentes] = useState(oportunidade?.concorrentes || []);
+  
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
@@ -334,10 +322,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       website: licitacao.linkEdital || '',
       fonteLead: 'licitacao',
       valorNegocio: licitacao.estrategiaValorFinal,
-      tags: licitacao.palavraChave,
-      fluxoTrabalho: `Contrato derivado da licitação ${licitacao.numeroPregao}`,
-      status: 'ganha',
-      descricao: licitacao.resumoEdital,
       analiseTecnica: licitacao.analiseTecnica
     }));
   };
@@ -446,7 +430,9 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const handleSave = () => {
     const dataToSave = {
       ...formData,
-      concorrentes,
+      contatosComerciais,
+      representantesVinculados,
+      colaboradoresGestao,
       pedidos,
       chamados,
       interfaceamentos,
@@ -465,32 +451,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     setIsPedidoModalOpen(false);
   };
 
-  const adicionarConcorrente = () => {
-    setConcorrentes([...concorrentes, { 
-      nome: '', 
-      marca: '', 
-      modelo: '', 
-      quantidade: 0,
-      quantidadeExamesMes: 0
-    }]);
-  };
 
-  const removerConcorrente = (index: number) => {
-    setConcorrentes(concorrentes.filter((_, i) => i !== index));
-  };
 
-  const atualizarConcorrente = (index: number, campo: string, valor: any) => {
-    const novosConcorrentes = [...concorrentes];
-    novosConcorrentes[index] = { ...novosConcorrentes[index], [campo]: valor };
-    setConcorrentes(novosConcorrentes);
-  };
-
-  const getTermometroColor = (valor: number) => {
-    if (valor < 30) return 'bg-red-500';
-    if (valor < 60) return 'bg-yellow-500';
-    if (valor < 80) return 'bg-orange-500';
-    return 'bg-green-500';
-  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -653,192 +615,99 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                 </CardContent>
               </Card>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Dados do Cliente */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Dados do Cliente</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="cpfCnpj">CPF/CNPJ *</Label>
-                        <Input
-                          id="cpfCnpj"
-                          value={formData.cpfCnpj}
-                          onChange={(e) => handleInputChange('cpfCnpj', e.target.value)}
-                          placeholder="Digite o CPF ou CNPJ"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="nomeFantasia">Nome/Nome Fantasia *</Label>
-                        <Input
-                          id="nomeFantasia"
-                          value={formData.nomeFantasia}
-                          onChange={(e) => handleInputChange('nomeFantasia', e.target.value)}
-                          placeholder="Digite o nome"
-                        />
-                      </div>
-                    </div>
-                    
+              {/* Dados do Cliente - Read-only Summary */}
+              <div className="p-4 rounded-lg border bg-muted/30 space-y-2">
+                <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Dados do Cliente</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-2">
+                  <div>
+                    <span className="text-xs text-muted-foreground">CNPJ</span>
+                    <p className="text-sm font-medium">{formData.cpfCnpj || '—'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">Nome Fantasia</span>
+                    <p className="text-sm font-medium">{formData.nomeFantasia || '—'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">Razão Social</span>
+                    <p className="text-sm font-medium">{formData.razaoSocial || '—'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">Endereço / UF</span>
+                    <p className="text-sm font-medium">{formData.endereco ? `${formData.endereco} - ${formData.uf}` : '—'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">E-mail</span>
+                    <p className="text-sm font-medium">{formData.email || '—'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">Telefone</span>
+                    <p className="text-sm font-medium">{formData.telefone || '—'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">Segmento do Cliente</span>
+                    <p className="text-sm font-medium">
+                      <Badge variant="outline">{formData.segmentoProjeto || 'Não definido'}</Badge>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dados do Projeto */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Dados do Projeto</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-5">
+                  {/* Segmento e Contrato */}
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="razaoSocial">Razão Social</Label>
-                      <Input
-                        id="razaoSocial"
-                        value={formData.razaoSocial}
-                        onChange={(e) => handleInputChange('razaoSocial', e.target.value)}
-                        placeholder="Digite a razão social"
-                      />
+                      <Label htmlFor="segmentoProjeto">Segmento</Label>
+                      <Select value={formData.segmentoProjeto} onValueChange={(value) => handleInputChange('segmentoProjeto', value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o segmento" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="hospitalar">Hospitalar</SelectItem>
+                          <SelectItem value="universitario">Universitário</SelectItem>
+                          <SelectItem value="publico">Público</SelectItem>
+                          <SelectItem value="privado">Privado</SelectItem>
+                          <SelectItem value="municipal">Municipal</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
-
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="col-span-2">
-                        <Label htmlFor="endereco">Endereço do Cliente</Label>
-                        <Input
-                          id="endereco"
-                          value={formData.endereco}
-                          onChange={(e) => handleInputChange('endereco', e.target.value)}
-                          placeholder="Digite o endereço"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="uf">UF</Label>
-                        <Select value={formData.uf} onValueChange={(value) => handleInputChange('uf', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="SP">SP</SelectItem>
-                            <SelectItem value="RJ">RJ</SelectItem>
-                            <SelectItem value="MG">MG</SelectItem>
-                            <SelectItem value="RS">RS</SelectItem>
-                            <SelectItem value="PR">PR</SelectItem>
-                            <SelectItem value="SC">SC</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="email">E-mail</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => handleInputChange('email', e.target.value)}
-                          placeholder="Digite o e-mail"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="telefone">Telefone</Label>
-                        <Input
-                          id="telefone"
-                          value={formData.telefone}
-                          onChange={(e) => handleInputChange('telefone', e.target.value)}
-                          placeholder="Digite o telefone"
-                        />
-                      </div>
-                    </div>
-
                     <div>
-                      <Label htmlFor="website">Website</Label>
+                      <Label htmlFor="numeroContrato">Contrato</Label>
                       <Input
-                        id="website"
-                        value={formData.website}
-                        onChange={(e) => handleInputChange('website', e.target.value)}
-                        placeholder="Digite o website"
+                        id="numeroContrato"
+                        value={formData.numeroContrato}
+                        onChange={(e) => handleInputChange('numeroContrato', e.target.value)}
+                        placeholder="Nº do contrato"
                       />
                     </div>
+                  </div>
 
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="ativo"
-                        checked={formData.ativo}
-                        onCheckedChange={(checked) => handleInputChange('ativo', checked)}
-                      />
-                      <Label htmlFor="ativo">Cliente Ativo</Label>
+                  {/* Aditivos Contratuais */}
+                  <div className="pt-4 border-t border-border">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-md font-medium">Aditivos Contratuais</h4>
+                      <Button type="button" size="sm" onClick={() => setModalNovoAditivoOpen(true)}>
+                        <Plus className="h-4 w-4 mr-1" /> Novo Aditivo
+                      </Button>
                     </div>
-                  </CardContent>
-                </Card>
-
-                {/* Dados da Oportunidade */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Dados do Projeto</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="fonteLead">Fonte do Lead</Label>
-                        <Select value={formData.fonteLead} onValueChange={(value) => handleInputChange('fonteLead', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="site">Site</SelectItem>
-                            <SelectItem value="indicacao">Indicação</SelectItem>
-                            <SelectItem value="cold_call">Cold Call</SelectItem>
-                            <SelectItem value="licitacao">Licitação</SelectItem>
-                            <SelectItem value="referencia">Referência</SelectItem>
-                            <SelectItem value="evento">Evento</SelectItem>
-                            <SelectItem value="telefone">Telefone</SelectItem>
-                            <SelectItem value="email">E-mail</SelectItem>
-                            <SelectItem value="presencial">Presencial</SelectItem>
-                            <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                            <SelectItem value="video_chamada">Vídeo Chamada</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="valorNegocio">Valor Original do Contrato</Label>
-                        <Input
-                          id="valorNegocio"
-                          type="number"
-                          value={formData.valorNegocio}
-                          disabled
-                          className="bg-muted cursor-not-allowed"
-                          placeholder="Valor definido pela licitação"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="quantidade">Quantidade</Label>
-                        <Input
-                          id="quantidade"
-                          type="number"
-                          value={formData.quantidade || ''}
-                          onChange={(e) => setFormData({ ...formData, quantidade: Number(e.target.value) })}
-                          placeholder="Ex: quantidade de testes, coletores, etc."
-                        />
-                      </div>
-                    </div>
-
-                    {/* Valor Atualizado e Aditivos */}
-                    {aditivos.length > 0 && (
-                      <div className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg border">
-                        <div>
-                          <span className="text-xs text-muted-foreground">Valor Original</span>
-                          <p className="font-semibold">{formatCurrency(valorOriginal)}</p>
+                    {aditivos.length > 0 ? (
+                      <>
+                        <div className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg border mb-3">
+                          <div>
+                            <span className="text-xs text-muted-foreground">Valor Original</span>
+                            <p className="font-semibold">{formatCurrency(valorOriginal)}</p>
+                          </div>
+                          <span className="text-muted-foreground">→</span>
+                          <div>
+                            <span className="text-xs text-muted-foreground">Valor Atualizado</span>
+                            <p className="font-bold text-primary">{formatCurrency(valorAtualizado)}</p>
+                          </div>
+                          <Badge variant="outline" className="ml-auto">{aditivos.length} aditivo(s)</Badge>
                         </div>
-                        <span className="text-muted-foreground">→</span>
-                        <div>
-                          <span className="text-xs text-muted-foreground">Valor Atualizado</span>
-                          <p className="font-bold text-primary">{formatCurrency(valorAtualizado)}</p>
-                        </div>
-                        <Badge variant="outline" className="ml-auto">{aditivos.length} aditivo(s)</Badge>
-                      </div>
-                    )}
-
-                    {/* Seção Aditivos Contratuais */}
-                    <div className="mt-4 pt-4 border-t border-border">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-md font-medium">Aditivos Contratuais</h4>
-                        <Button type="button" size="sm" onClick={() => setModalNovoAditivoOpen(true)}>
-                          <Plus className="h-4 w-4 mr-1" /> Novo Aditivo
-                        </Button>
-                      </div>
-
-                      {aditivos.length > 0 ? (
                         <div className="border rounded-lg overflow-hidden">
                           <Table>
                             <TableHeader>
@@ -869,443 +738,239 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                             </TableBody>
                           </Table>
                         </div>
-                      ) : (
-                        <p className="text-sm text-muted-foreground text-center py-4">Nenhum aditivo registrado.</p>
-                      )}
-                    </div>
+                      </>
+                    ) : (
+                      <p className="text-sm text-muted-foreground text-center py-4">Nenhum aditivo registrado.</p>
+                    )}
+                  </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="segmentoLead">Segmento do Lead</Label>
-                        <Select value={formData.segmentoLead} onValueChange={(value) => handleInputChange('segmentoLead', value)}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="hospitalar">Hospitalar</SelectItem>
-                            <SelectItem value="universitario">Universitário</SelectItem>
-                            <SelectItem value="publico">Público</SelectItem>
-                            <SelectItem value="privado">Privado</SelectItem>
-                            <SelectItem value="municipal">Municipal</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
+                  {/* Valor Original e Previsão */}
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="colaboradoresResponsaveis">Colaboradores Responsáveis</Label>
+                      <Label htmlFor="valorNegocio">Valor Original do Contrato</Label>
                       <Input
-                        id="colaboradoresResponsaveis"
-                        value={formData.colaboradoresResponsaveis}
-                        onChange={(e) => handleInputChange('colaboradoresResponsaveis', e.target.value)}
-                        placeholder="Digite os responsáveis"
+                        id="valorNegocio"
+                        type="number"
+                        value={formData.valorNegocio}
+                        disabled
+                        className="bg-muted cursor-not-allowed"
+                        placeholder="Valor definido pela licitação"
                       />
                     </div>
-
                     <div>
-                      <Label htmlFor="procurandoPor">Procurando Por (Contatos vinculados)</Label>
-                      <Input
-                        id="procurandoPor"
-                        value={formData.procurandoPor}
-                        onChange={(e) => handleInputChange('procurandoPor', e.target.value)}
-                        placeholder="Digite os contatos"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="previsaoConsumoMensal">Previsão de consumo mensal?</Label>
+                      <Label htmlFor="previsaoConsumoMensal">Previsão de Consumo Mensal</Label>
                       <Input
                         id="previsaoConsumoMensal"
                         type="text"
                         value={formData.previsaoConsumoMensal}
                         onChange={(e) => handleInputChange('previsaoConsumoMensal', e.target.value)}
-                        placeholder="Digite a quantidade de testes"
+                        placeholder="Quantidade de testes/mês"
                       />
                     </div>
+                  </div>
 
-                    {/* Seção Contato Comercial */}
-                    <div className="mt-6 pt-4 border-t border-gray-200">
-                      <h4 className="text-lg font-medium text-gray-900 mb-4">Contato Comercial</h4>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="contatoComercialNome">Nome do Contato Comercial</Label>
-                          <Input
-                            id="contatoComercialNome"
-                            value={formData.contatoComercialNome}
-                            onChange={(e) => handleInputChange('contatoComercialNome', e.target.value)}
-                            placeholder="Digite o nome do contato"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="contatoComercialSetor">Setor do Contato Comercial</Label>
-                          <Input
-                            id="contatoComercialSetor"
-                            value={formData.contatoComercialSetor}
-                            onChange={(e) => handleInputChange('contatoComercialSetor', e.target.value)}
-                            placeholder="Digite o setor"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="contatoComercialTelefone">Telefone do Contato Comercial</Label>
-                          <Input
-                            id="contatoComercialTelefone"
-                            type="tel"
-                            value={formData.contatoComercialTelefone}
-                            onChange={(e) => handleInputChange('contatoComercialTelefone', e.target.value)}
-                            placeholder="Digite o telefone"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="contatoComercialEmail">E-mail do Contato Comercial</Label>
-                          <Input
-                            id="contatoComercialEmail"
-                            type="email"
-                            value={formData.contatoComercialEmail}
-                            onChange={(e) => handleInputChange('contatoComercialEmail', e.target.value)}
-                            placeholder="Digite o e-mail"
-                          />
-                        </div>
+                  {/* Contatos Comerciais do Cliente */}
+                  <div className="pt-4 border-t border-border">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-md font-medium">Contato Comercial do Cliente</h4>
+                      <Button type="button" variant="outline" size="sm" onClick={() => {
+                        setContatosComerciais(prev => [...prev, { id: `cc_${Date.now()}`, nome: '', cargo: '', telefone: '', email: '' }]);
+                      }}>
+                        <Plus className="h-4 w-4 mr-1" /> Adicionar Contato
+                      </Button>
+                    </div>
+                    {contatosComerciais.length > 0 ? (
+                      <div className="space-y-3">
+                        {contatosComerciais.map((contato) => (
+                          <div key={contato.id} className="p-3 border rounded-lg relative">
+                            <Button type="button" variant="ghost" size="sm" className="absolute top-1 right-1" onClick={() => {
+                              setContatosComerciais(prev => prev.filter(c => c.id !== contato.id));
+                            }}>
+                              <X className="h-3 w-3" />
+                            </Button>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                              <div>
+                                <Label className="text-xs">Nome</Label>
+                                <Input placeholder="Nome" value={contato.nome} onChange={(e) => {
+                                  setContatosComerciais(prev => prev.map(c => c.id === contato.id ? {...c, nome: e.target.value} : c));
+                                }} />
+                              </div>
+                              <div>
+                                <Label className="text-xs">Cargo/Função</Label>
+                                <Input placeholder="Cargo" value={contato.cargo} onChange={(e) => {
+                                  setContatosComerciais(prev => prev.map(c => c.id === contato.id ? {...c, cargo: e.target.value} : c));
+                                }} />
+                              </div>
+                              <div>
+                                <Label className="text-xs">Telefone</Label>
+                                <Input placeholder="Telefone" value={contato.telefone} onChange={(e) => {
+                                  setContatosComerciais(prev => prev.map(c => c.id === contato.id ? {...c, telefone: e.target.value} : c));
+                                }} />
+                              </div>
+                              <div>
+                                <Label className="text-xs">E-mail</Label>
+                                <Input type="email" placeholder="E-mail" value={contato.email} onChange={(e) => {
+                                  setContatosComerciais(prev => prev.map(c => c.id === contato.id ? {...c, email: e.target.value} : c));
+                                }} />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Organização */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Organização</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <Label htmlFor="tags">Tags</Label>
-                      <Input
-                        id="tags"
-                        value={formData.tags}
-                        onChange={(e) => handleInputChange('tags', e.target.value)}
-                        placeholder="Digite as tags separadas por vírgula"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="fluxoTrabalho">Fluxo de Trabalho</Label>
-                      <Textarea
-                        id="fluxoTrabalho"
-                        value={formData.fluxoTrabalho}
-                        onChange={(e) => handleInputChange('fluxoTrabalho', e.target.value)}
-                        placeholder="Descreva o fluxo de trabalho"
-                        rows={3}
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="status">Status</Label>
-                      <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="em_triagem">Em Triagem</SelectItem>
-                          <SelectItem value="em_acompanhamento">Em Acompanhamento</SelectItem>
-                          <SelectItem value="ganha">Ganha</SelectItem>
-                          <SelectItem value="perdida">Perdida</SelectItem>
-                          <SelectItem value="cancelada">Cancelada</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {formData.status === 'ganha' && (
-                      <div>
-                        <Label htmlFor="motivoGanho">Motivo do Ganho</Label>
-                        <Textarea
-                          id="motivoGanho"
-                          value={formData.motivoGanho}
-                          onChange={(e) => handleInputChange('motivoGanho', e.target.value)}
-                          placeholder="Descreva o motivo do ganho"
-                          rows={3}
-                        />
-                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground text-center py-3">Nenhum contato adicionado.</p>
                     )}
+                  </div>
 
-                    {formData.status === 'perdida' && (
-                      <div>
-                        <Label htmlFor="motivoPerda">Motivo de Perda</Label>
-                        <Textarea
-                          id="motivoPerda"
-                          value={formData.motivoPerda}
-                          onChange={(e) => handleInputChange('motivoPerda', e.target.value)}
-                          placeholder="Descreva o motivo da perda"
-                          rows={3}
-                        />
-                      </div>
-                    )}
-
-                    <div>
-                      <Label htmlFor="descricao">Descrição</Label>
-                      <Textarea
-                        id="descricao"
-                        value={formData.descricao}
-                        onChange={(e) => handleInputChange('descricao', e.target.value)}
-                        placeholder="Descrição geral da oportunidade"
-                        rows={4}
-                      />
+                  {/* Representantes Vinculados */}
+                  <div className="pt-4 border-t border-border">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-md font-medium">Representantes Vinculados</h4>
+                      <Button type="button" variant="outline" size="sm" onClick={() => {
+                        setRepresentantesVinculados(prev => [...prev, { id: `rep_${Date.now()}`, nome: '', percentualComissao: 0 }]);
+                      }}>
+                        <Plus className="h-4 w-4 mr-1" /> Adicionar Representante
+                      </Button>
                     </div>
-                  </CardContent>
-                </Card>
-
-                {/* Análise da Concorrência */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Análise da Concorrência</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-3">
-                      {concorrentes.map((concorrente, index) => (
-                        <div key={index} className="p-3 border rounded-lg">
-                          <div className="flex justify-between items-start mb-2">
-                            <span className="text-sm font-medium">Concorrente {index + 1}</span>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removerConcorrente(index)}
-                            >
+                    {representantesVinculados.length > 0 ? (
+                      <div className="space-y-2">
+                        {representantesVinculados.map((rep) => (
+                          <div key={rep.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                            <div className="flex-1">
+                              <Select value={rep.nome} onValueChange={(value) => {
+                                setRepresentantesVinculados(prev => prev.map(r => r.id === rep.id ? {...r, nome: value} : r));
+                              }}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Selecione o representante" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {colaboradores.map((colab) => (
+                                    <SelectItem key={colab.id} value={colab.nome}>{colab.nome}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="w-32">
+                              <Input
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="0.1"
+                                placeholder="Comissão %"
+                                value={rep.percentualComissao || ''}
+                                onChange={(e) => {
+                                  setRepresentantesVinculados(prev => prev.map(r => r.id === rep.id ? {...r, percentualComissao: parseFloat(e.target.value) || 0} : r));
+                                }}
+                              />
+                            </div>
+                            <Button type="button" variant="ghost" size="sm" onClick={() => {
+                              setRepresentantesVinculados(prev => prev.filter(r => r.id !== rep.id));
+                            }}>
                               <X className="h-4 w-4" />
                             </Button>
                           </div>
-                          <div className="space-y-2">
-                            <Input
-                              placeholder="Nome do concorrente"
-                              value={concorrente.nome}
-                              onChange={(e) => atualizarConcorrente(index, 'nome', e.target.value)}
-                            />
-                            <div className="grid grid-cols-2 gap-2">
-                              <Input
-                                placeholder="Marca do concorrente"
-                                value={concorrente.marca}
-                                onChange={(e) => atualizarConcorrente(index, 'marca', e.target.value)}
-                              />
-                              <Input
-                                placeholder="Modelo do concorrente"
-                                value={concorrente.modelo}
-                                onChange={(e) => atualizarConcorrente(index, 'modelo', e.target.value)}
-                              />
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground text-center py-3">Nenhum representante vinculado.</p>
+                    )}
+                  </div>
+
+                  {/* Colaboradores Responsáveis pela Gestão */}
+                  <div className="pt-4 border-t border-border">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-md font-medium">Colaboradores Responsáveis pela Gestão</h4>
+                      <Button type="button" variant="outline" size="sm" onClick={() => {
+                        setColaboradoresGestao(prev => [...prev, '']);
+                      }}>
+                        <Plus className="h-4 w-4 mr-1" /> Adicionar Colaborador
+                      </Button>
+                    </div>
+                    {colaboradoresGestao.length > 0 ? (
+                      <div className="space-y-2">
+                        {colaboradoresGestao.map((colabId, idx) => (
+                          <div key={idx} className="flex items-center gap-3">
+                            <div className="flex-1">
+                              <Select value={colabId} onValueChange={(value) => {
+                                setColaboradoresGestao(prev => prev.map((c, i) => i === idx ? value : c));
+                              }}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Selecione um colaborador" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {colaboradores.filter(c => c.status === 'Ativo').map((colab) => (
+                                    <SelectItem key={colab.id} value={colab.id}>{colab.nome} - {colab.cargo}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </div>
-                            <div className="grid grid-cols-2 gap-2">
-                              <div>
-                                <Label>Quantidade</Label>
-                                <Input
-                                  type="number"
-                                  placeholder="Quantidade"
-                                  value={concorrente.quantidade}
-                                  onChange={(e) => atualizarConcorrente(index, 'quantidade', parseFloat(e.target.value) || 0)}
-                                />
-                              </div>
-                              <div>
-                                <Label>Quantidade de exames/mês</Label>
-                                <Input
-                                  type="number"
-                                  placeholder="Quantidade de exames/mês"
-                                  value={concorrente.quantidadeExamesMes}
-                                  onChange={(e) => atualizarConcorrente(index, 'quantidadeExamesMes', parseFloat(e.target.value) || 0)}
-                                />
-                              </div>
-                            </div>
+                            <Button type="button" variant="ghost" size="sm" onClick={() => {
+                              setColaboradoresGestao(prev => prev.filter((_, i) => i !== idx));
+                            }}>
+                              <X className="h-4 w-4" />
+                            </Button>
                           </div>
-                        </div>
-                      ))}
-                      
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground text-center py-3">Nenhum colaborador adicionado.</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Resumo Biodina Rep */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Network className="h-5 w-5" />
+                    Resumo Biodina Rep
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3 p-4 rounded-lg border border-dashed border-muted-foreground/30 bg-muted/20">
+                    <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50">Integração Pendente</Badge>
+                    <p className="text-sm text-muted-foreground">Dados disponíveis após aval da Gerência Comercial para inclusão dos dados do representante.</p>
+                  </div>
+
+                  <div className="flex flex-col gap-2 p-3 rounded-md border border-dashed border-muted-foreground/30 bg-muted/30">
+                    <div className="flex items-center gap-2">
                       <Button
                         type="button"
                         variant="outline"
-                        onClick={adicionarConcorrente}
-                        className="w-full"
+                        size="sm"
+                        onClick={() => {
+                          const code = crypto.randomUUID().slice(0, 8);
+                          setLinkExternoRepresentacao(`${window.location.origin}/representacao/${code}`);
+                          toast.success('Link externo gerado com sucesso!');
+                        }}
                       >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Adicionar Concorrente
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Gerar Link Externo
                       </Button>
+                      <span className="text-xs text-muted-foreground">Envie este link para o representante preencher as informações</span>
                     </div>
-
-                    <div className="space-y-4 mt-6">
-                      <div className="flex items-center space-x-2">
-                        <Checkbox
-                          id="propostaNegociacao"
-                          checked={formData.propostaNegociacao}
-                          onCheckedChange={(checked) => handleInputChange('propostaNegociacao', checked)}
-                        />
-                        <Label htmlFor="propostaNegociacao">Proposta em Negociação</Label>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="termometro" className="flex items-center gap-2">
-                          <Thermometer className="h-4 w-4" />
-                          Termômetro: {formData.termometro}°
-                        </Label>
-                        <div className="mt-2">
-                          <input
-                            type="range"
-                            id="termometro"
-                            min="0"
-                            max="100"
-                            value={formData.termometro}
-                            onChange={(e) => handleInputChange('termometro', parseInt(e.target.value))}
-                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                          />
-                          <div className="flex justify-between text-xs text-gray-500 mt-1">
-                            <span>0°</span>
-                            <span>50°</span>
-                            <span>100°</span>
-                          </div>
-                        </div>
-                      <div className="mt-2 flex items-center gap-2">
-                          <div 
-                            className={`w-4 h-4 rounded-full ${getTermometroColor(formData.termometro)}`}
-                            title={`Termômetro: ${formData.termometro}°`}
-                          />
-                          <span className="text-sm text-muted-foreground">
-                            {formData.termometro < 30 ? 'Frio' : 
-                             formData.termometro < 60 ? 'Morno' : 
-                             formData.termometro < 80 ? 'Quente' : 'Muito Quente'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Representação Comercial */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Representação Comercial</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {/* Gerar Link Externo */}
-                    <div className="flex flex-col gap-2 p-3 rounded-md border border-dashed border-muted-foreground/30 bg-muted/30">
+                    {linkExternoRepresentacao && (
                       <div className="flex items-center gap-2">
+                        <code className="text-xs bg-background px-2 py-1 rounded border flex-1 truncate">{linkExternoRepresentacao}</code>
                         <Button
                           type="button"
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
-                          onClick={() => {
-                            const code = crypto.randomUUID().slice(0, 8);
-                            setLinkExternoRepresentacao(`${window.location.origin}/representacao/${code}`);
-                            toast.success('Link externo gerado com sucesso!');
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(linkExternoRepresentacao);
+                            toast.success('Link copiado!');
                           }}
                         >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Gerar Link Externo
-                        </Button>
-                        <span className="text-xs text-muted-foreground">Envie este link para o representante preencher as informações</span>
-                      </div>
-                      {linkExternoRepresentacao && (
-                        <div className="flex items-center gap-2">
-                          <code className="text-xs bg-background px-2 py-1 rounded border flex-1 truncate">{linkExternoRepresentacao}</code>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            onClick={async () => {
-                              await navigator.clipboard.writeText(linkExternoRepresentacao);
-                              toast.success('Link copiado!');
-                            }}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="representanteResponsavel">Representante Responsável</Label>
-                        <Select
-                          value={formData.representanteResponsavel}
-                          onValueChange={(value) => handleInputChange('representanteResponsavel', value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o representante" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {colaboradores.map((colab) => (
-                              <SelectItem key={colab.id} value={colab.nome}>
-                                {colab.nome}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="percentualComissao">Percentual de Comissão (%)</Label>
-                        <Input
-                          id="percentualComissao"
-                          type="number"
-                          min="0"
-                          max="100"
-                          step="0.1"
-                          value={formData.percentualComissao}
-                          onChange={(e) => handleInputChange('percentualComissao', parseFloat(e.target.value) || 0)}
-                          placeholder="Ex: 5.5"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Histórico de Visitas */}
-                    <div className="mt-4 pt-4 border-t">
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="text-base font-medium flex items-center gap-2">
-                          <Calendar className="h-5 w-5" />
-                          Histórico de Visitas
-                        </h4>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setModalHistoricoOpen(true)}
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Adicionar Histórico
+                          <Copy className="h-4 w-4" />
                         </Button>
                       </div>
-                      
-                      {historicoVisitas.length === 0 ? (
-                        <div className="text-center py-6 text-muted-foreground">
-                          <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                          <p className="text-sm">Nenhuma visita registrada</p>
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>Data</TableHead>
-                                <TableHead>Colaborador</TableHead>
-                                <TableHead>Observação</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {historicoVisitas
-                                .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
-                                .map((visita) => (
-                                <TableRow key={visita.id}>
-                                  <TableCell className="font-medium">
-                                    {new Date(visita.data).toLocaleDateString('pt-BR')}
-                                  </TableCell>
-                                  <TableCell>{visita.colaborador}</TableCell>
-                                  <TableCell className="text-sm text-muted-foreground">
-                                    {visita.observacao}
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
+
 
             {/* Aba Empenho */}
             <TabsContent value="empenho" className="space-y-6">
@@ -2267,8 +1932,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                   cliente: formData.nomeFantasia || formData.razaoSocial,
                   responsavel: formData.colaboradoresResponsaveis,
                   valor: formData.valorNegocio,
-                  status: formData.status,
-                  segmento: formData.segmentoLead
+                  status: 'em_andamento',
+                  segmento: formData.segmentoProjeto
                 }}
               />
             </TabsContent>
