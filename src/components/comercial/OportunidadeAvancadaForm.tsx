@@ -809,6 +809,18 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               <FlaskConical className="h-4 w-4" />
               {solicitouAnaliseCientifica ? "✓ Análise Científica Solicitada" : "Solicitar Análise da Assessoria Científica"}
             </Button>
+            <Button
+              variant={solicitouAnaliseGerencial ? "secondary" : "outline"}
+              onClick={() => {
+                setSolicitouAnaliseGerencial(true);
+                toast({ title: "Solicitação enviada", description: "Análise Gerencial solicitada ao Gerente Comercial com sucesso." });
+              }}
+              disabled={isReadOnlyMode() || solicitouAnaliseGerencial}
+              className="gap-2"
+            >
+              <BarChart3 className="h-4 w-4" />
+              {solicitouAnaliseGerencial ? "✓ Análise Gerencial Solicitada" : "Solicitar Análise Gerencial"}
+            </Button>
           </CardContent>
         </Card>
 
