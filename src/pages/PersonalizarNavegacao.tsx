@@ -170,8 +170,7 @@ const initialTreeStructure: Record<string, TreeItem[]> = {
         { id: 'vendas-licitacao', name: 'Licitação', type: 'item', parentId: 'vendas-group' },
         { id: 'vendas-contratacao', name: 'Contratação', type: 'item', parentId: 'vendas-group' },
         { id: 'vendas-importacao-direta', name: 'Importação Direta', type: 'item', parentId: 'vendas-group' },
-        { id: 'vendas-emprestimos', name: 'Empréstimos', type: 'item', parentId: 'vendas-group' },
-        { id: 'vendas-meus-pedidos', name: 'Meus Pedidos', type: 'item', parentId: 'vendas-group' }
+        { id: 'vendas-emprestimos', name: 'Empréstimos', type: 'item', parentId: 'vendas-group' }
       ]
     },
     {

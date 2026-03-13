@@ -777,17 +777,42 @@ const Comercial = () => {
       { id: 'contratacao', label: 'Contratação', icon: Building2 },
       { id: 'importacao', label: 'Importação Direta', icon: Globe },
       { id: 'emprestimos', label: 'Gestão de Empréstimos', icon: HandCoins },
-      { id: 'meus-pedidos', label: 'Meus Pedidos', icon: ClipboardList },
     ];
+
+    const renderContratacaoComSubAbas = () => (
+      <div className="space-y-4">
+        <div className="flex gap-2 border-b border-border pb-2">
+          <Button
+            variant={subAbaContratacao === 'contratacoes' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setSubAbaContratacao('contratacoes')}
+          >
+            <Building2 className="h-4 w-4 mr-1" />
+            Contratações
+          </Button>
+          <Button
+            variant={subAbaContratacao === 'pedidos' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setSubAbaContratacao('pedidos')}
+          >
+            <ClipboardList className="h-4 w-4 mr-1" />
+            Meus Pedidos
+          </Button>
+        </div>
+        {subAbaContratacao === 'contratacoes'
+          ? renderOportunidadesPorModalidade('contratacao_simples')
+          : <MeusPedidosView />
+        }
+      </div>
+    );
 
     const renderContent = () => {
       switch (activeTab) {
         case 'indicadores': return renderIndicadoresEAnalise();
         case 'licitacao': return renderOportunidadesPorModalidade('licitacao');
-        case 'contratacao': return renderOportunidadesPorModalidade('contratacao_simples');
+        case 'contratacao': return renderContratacaoComSubAbas();
         case 'importacao': return renderOportunidadesPorModalidade('importacao_direta');
         case 'emprestimos': return <EmprestimosTable contexto="vendas" />;
-        case 'meus-pedidos': return <MeusPedidosView />;
         default: return renderIndicadoresEAnalise();
       }
     };
