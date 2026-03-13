@@ -1438,6 +1438,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
               <TabsTrigger value="analise-tecnica">AC</TabsTrigger>
               <TabsTrigger value="analise-juridica">AJ</TabsTrigger>
+              <TabsTrigger value="analise-gerencial">AG</TabsTrigger>
               <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
               <TabsTrigger value="documentos">Documentos</TabsTrigger>
             </TabsList>
