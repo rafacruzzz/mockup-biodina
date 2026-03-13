@@ -1,31 +1,29 @@
 
 
-## Plano: Link Externo para Aprovação de SPI pelo Cliente
+## Plano: Adicionar botão "Nova Não Conformidade" nas abas de Gestão de NC (Qualidade e RT)
 
 ### Resumo
-Criar um botão "Gerar Link Externo" na aba SPI do formulário de Importação Direta. Esse link leva o cliente a uma página pública e responsiva onde ele visualiza o resumo da SPI (somente leitura) e pode aprovar ou rejeitar, com campo de observação obrigatório em caso de rejeição. A decisão reflete automaticamente no campo "Aprovação do Cliente" dentro do sistema.
+Adicionar um botão "Nova Não Conformidade" em ambas as abas de Gestão de NC (módulos Qualidade e RT). Ao clicar, abre o mesmo modal de detalhes já existente, porém com todos os campos editáveis e vazios para criação.
 
 ### Alterações
 
-**1. Nova página pública: `src/pages/AprovacaoSPIExterna.tsx`**
-- Rota pública `/aprovacao-spi/:linkId`
-- Layout responsivo, sem sidebar/login
-- Exibe em somente leitura os dados da SPI: cliente, CNPJ, endereço, número da SPI, data, fabricante, forma de pagamento, tabela de mercadorias com quantidades/valores, subtotal, packing, total, e observações
-- Dois botões: "Aprovar" e "Rejeitar"
-- Se rejeitar, campo de observação obrigatório aparece
-- Após decisão, tela de confirmação (sem possibilidade de alterar)
-- Dados armazenados em estado local (mock/front-end only, sem backend)
+**1. `src/components/administrativo/qualidade/GestaoNCTab.tsx`**
+- Adicionar estado `modoNovo` (boolean) para distinguir criação vs edição
+- Adicionar botão "Nova Não Conformidade" ao lado do título do Card da tabela (com ícone `Plus`)
+- Ao clicar, setar `ncSelecionada` com um objeto vazio/defaults (novo ID, data atual, campos vazios) e abrir o modal
+- No modal, quando `modoNovo`: todos os campos editáveis (incluindo Data da NC como input date, Origem como Select em vez de disabled)
+- Gerar `numeroNC` automático (ex: `NC-{ano}-{sequencial}`)
+- No "Salvar", adicionar a nova NC à lista `ncs` em vez de atualizar existente
 
-**2. Alteração em `src/components/comercial/components/SPIForm.tsx`**
-- Na seção "Aprovação do Cliente", adicionar botão "Gerar Link Externo" (mesmo padrão já usado na Representação Comercial da Contratação)
-- Gera URL com código único: `/aprovacao-spi/{codigo}`
-- Exibe o link gerado com botão de copiar
-- Manter os campos existentes inalterados
+**2. `src/components/administrativo/rt/GestaoNCTab.tsx`**
+- Mesma lógica: estado `modoNovo`, botão "Nova Não Conformidade"
+- Ao clicar, criar objeto `NaoConformidadeRT` com defaults vazios e abrir modal
+- No modal em modo novo: Data e Origem editáveis (selects com as opções de `OrigemNCRT`)
+- No "Salvar", adicionar à lista `naoConformidades`
 
-**3. Alteração em `src/App.tsx`**
-- Adicionar rota pública: `<Route path="/aprovacao-spi/:linkId" element={<AprovacaoSPIExterna />} />`
-
-**4. Estado compartilhado (mock)**
-- Como não há backend, a página externa simulará os dados da SPI com valores de exemplo
-- O status de aprovação/rejeição será exibido na tela de confirmação mas não persistirá entre sessões (comportamento mock)
+### Detalhes técnicos
+- O modal reutiliza a mesma estrutura já existente de "Ver Detalhes"
+- A diferença no modo criação: campos Data e Origem ficam editáveis (não `disabled`), e o título do modal muda para "Nova Não Conformidade"
+- Botão de salvar muda texto para "Criar Não Conformidade" no modo novo
+- Os campos de CAPA iniciam vazios mas editáveis, permitindo já definir ações preventivas/corretivas na criação
 
