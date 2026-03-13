@@ -24,6 +24,17 @@ import EmpresaParticipanteSelect from "./EmpresaParticipanteSelect";
 import AprovacaoEmpresaModal from "./AprovacaoEmpresaModal";
 import { concorrentes as mockConcorrentes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
 import { AprovacaoEmpresa } from "@/types/licitacao";
+import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getAtendeEditalBadge } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
+import { PedidoCompleto } from "@/types/comercial";
+import { useEmpresa } from "@/contexts/EmpresaContext";
+
+interface OportunidadeAvancadaFormProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (data: any) => void;
+  oportunidade?: any;
+}
 
 // Tipo para licitantes
 interface LicitanteItem {
