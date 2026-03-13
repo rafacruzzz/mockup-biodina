@@ -103,6 +103,7 @@ const Comercial = () => {
       tipoOportunidade: 'periodica',
       valor: 450000,
       dataAbertura: '15/03/2024',
+      dataEncerramento: '',
       dataContato: '16/03/2024',
       termometro: 85,
       fonteLead: 'Indicação',
