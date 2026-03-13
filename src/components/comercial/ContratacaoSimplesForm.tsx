@@ -430,7 +430,9 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const handleSave = () => {
     const dataToSave = {
       ...formData,
-      concorrentes,
+      contatosComerciais,
+      representantesVinculados,
+      colaboradoresGestao,
       pedidos,
       chamados,
       interfaceamentos,
