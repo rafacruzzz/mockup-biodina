@@ -262,7 +262,19 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     percentualComissao: oportunidade?.percentualComissao || 0,
     
     // Modalidade
-    modalidade: 'contratacao_simples'
+    modalidade: 'contratacao_simples',
+    
+    // Análise Jurídica
+    parecerJuridico: oportunidade?.parecerJuridico || '',
+    statusJuridico: oportunidade?.statusJuridico || '',
+    responsavelJuridico: oportunidade?.responsavelJuridico || '',
+    dataAnaliseJuridica: oportunidade?.dataAnaliseJuridica || '',
+    
+    // Análise Gerencial
+    parecerGerencial: oportunidade?.parecerGerencial || '',
+    aprovacaoGerencial: oportunidade?.aprovacaoGerencial || '',
+    responsavelGerencial: oportunidade?.responsavelGerencial || '',
+    dataAnaliseGerencial: oportunidade?.dataAnaliseGerencial || '',
   });
 
   const temDuasEmpresas = !!empresaContrato2.empresaParticipanteId;
@@ -557,31 +569,33 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                 <FileText className="h-4 w-4" />
                 Dados Gerais
               </TabsTrigger>
-              <TabsTrigger value="empenho" className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4" />
-                Empenho
+              <TabsTrigger value="documentos" className="flex items-center gap-2">
+                <Upload className="h-4 w-4" />
+                Documentos
               </TabsTrigger>
-              {oportunidade && (
-                <TabsTrigger value="saldo-cliente" className="flex items-center gap-2">
-                  <Wallet className="h-4 w-4" />
-                  Saldo do Cliente
-                </TabsTrigger>
-              )}
               <TabsTrigger value="analise-tecnica" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
-                Assessoria Científica
+                AC
               </TabsTrigger>
               <TabsTrigger value="dt" className="flex items-center gap-2">
                 <Wrench className="h-4 w-4" />
                 DT
               </TabsTrigger>
+              <TabsTrigger value="analise-juridica" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                AJ
+              </TabsTrigger>
+              <TabsTrigger value="analise-gerencial" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                AG
+              </TabsTrigger>
               <TabsTrigger value="historico-chat" className="flex items-center gap-2">
                 <MessageSquare className="h-4 w-4" />
                 Histórico/Chat
               </TabsTrigger>
-              <TabsTrigger value="documentos" className="flex items-center gap-2">
-                <Upload className="h-4 w-4" />
-                Documentos
+              <TabsTrigger value="empenho" className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4" />
+                Empenho
               </TabsTrigger>
               <TabsTrigger value="pedidos" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
@@ -590,10 +604,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               <TabsTrigger value="chamados" className="flex items-center gap-2">
                 <Headphones className="h-4 w-4" />
                 Chamados
-              </TabsTrigger>
-              <TabsTrigger value="interfaceamento" className="flex items-center gap-2">
-                <Network className="h-4 w-4" />
-                Interfaceamento
               </TabsTrigger>
             </TabsList>
 
@@ -1548,8 +1558,114 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               </Card>
             </TabsContent>
 
-            {/* Aba Saldo do Cliente - Apenas em modo edição */}
-            {oportunidade && (
+            {/* Aba Análise Jurídica */}
+            <TabsContent value="analise-juridica" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Análise Jurídica (AJ)</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <Label htmlFor="parecerJuridico">Parecer Jurídico</Label>
+                    <Textarea
+                      id="parecerJuridico"
+                      value={formData.parecerJuridico || ''}
+                      onChange={(e) => handleInputChange('parecerJuridico', e.target.value)}
+                      placeholder="Digite o parecer jurídico"
+                      rows={4}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="statusJuridico">Status</Label>
+                    <Select value={formData.statusJuridico || ''} onValueChange={(value) => handleInputChange('statusJuridico', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pendente">Pendente</SelectItem>
+                        <SelectItem value="em_analise">Em Análise</SelectItem>
+                        <SelectItem value="aprovado">Aprovado</SelectItem>
+                        <SelectItem value="reprovado">Reprovado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="responsavelJuridico">Responsável</Label>
+                    <Input
+                      id="responsavelJuridico"
+                      value={formData.responsavelJuridico || ''}
+                      onChange={(e) => handleInputChange('responsavelJuridico', e.target.value)}
+                      placeholder="Nome do responsável"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="dataAnaliseJuridica">Data da Análise</Label>
+                    <Input
+                      id="dataAnaliseJuridica"
+                      type="date"
+                      value={formData.dataAnaliseJuridica || ''}
+                      onChange={(e) => handleInputChange('dataAnaliseJuridica', e.target.value)}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Aba Análise Gerencial */}
+            <TabsContent value="analise-gerencial" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Análise Gerencial (AG)</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <Label htmlFor="parecerGerencial">Parecer Gerencial</Label>
+                    <Textarea
+                      id="parecerGerencial"
+                      value={formData.parecerGerencial || ''}
+                      onChange={(e) => handleInputChange('parecerGerencial', e.target.value)}
+                      placeholder="Digite o parecer gerencial"
+                      rows={4}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="aprovacaoGerencial">Aprovação</Label>
+                    <Select value={formData.aprovacaoGerencial || ''} onValueChange={(value) => handleInputChange('aprovacaoGerencial', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pendente">Pendente</SelectItem>
+                        <SelectItem value="aprovado">Aprovado</SelectItem>
+                        <SelectItem value="reprovado">Reprovado</SelectItem>
+                        <SelectItem value="condicional">Condicional</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="responsavelGerencial">Responsável</Label>
+                    <Input
+                      id="responsavelGerencial"
+                      value={formData.responsavelGerencial || ''}
+                      onChange={(e) => handleInputChange('responsavelGerencial', e.target.value)}
+                      placeholder="Nome do responsável"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="dataAnaliseGerencial">Data</Label>
+                    <Input
+                      id="dataAnaliseGerencial"
+                      type="date"
+                      value={formData.dataAnaliseGerencial || ''}
+                      onChange={(e) => handleInputChange('dataAnaliseGerencial', e.target.value)}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Saldo do Cliente removido */}
+            {false && oportunidade && (
               <TabsContent value="saldo-cliente" className="space-y-6">
                 {(() => {
                   // Cálculos do saldo
@@ -2157,21 +2273,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               />
             </TabsContent>
 
-            <TabsContent value="interfaceamento" className="space-y-4">
-              <InterfaceamentoTab 
-                oportunidade={{
-                  id: oportunidade?.id,
-                  codigo: oportunidade?.codigo || oportunidade?.id || `OPP-${Date.now()}`,
-                  cliente: formData.nomeFantasia || formData.razaoSocial,
-                  responsavel: formData.colaboradoresResponsaveis,
-                  valor: formData.valorNegocio,
-                  status: formData.status,
-                  segmento: formData.segmentoLead
-                }}
-                formData={formData}
-                onInputChange={handleInputChange}
-              />
-            </TabsContent>
+            {/* Interfaceamento removido */}
           </Tabs>
 
           <div className="flex justify-end gap-2 mt-6 pt-4 border-t">

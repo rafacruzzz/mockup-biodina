@@ -1705,27 +1705,87 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </DialogHeader>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="flex w-full overflow-x-auto">
               <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
-              <TabsTrigger value="analise-tecnica">Análise Técnica</TabsTrigger>
-              <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
               <TabsTrigger value="documentos">Documentos</TabsTrigger>
+              <TabsTrigger value="analise-tecnica">AC</TabsTrigger>
+              <TabsTrigger value="dt">DT</TabsTrigger>
+              <TabsTrigger value="analise-juridica">AJ</TabsTrigger>
+              <TabsTrigger value="analise-gerencial">AG</TabsTrigger>
+              <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
+              <TabsTrigger value="empenho">Empenho</TabsTrigger>
+              <TabsTrigger value="pedidos">Pedidos</TabsTrigger>
+              <TabsTrigger value="chamados">Chamados</TabsTrigger>
             </TabsList>
 
             <TabsContent value="dados-gerais" className="mt-6">
               {renderDadosGerais()}
             </TabsContent>
 
+            <TabsContent value="documentos" className="mt-6">
+              {renderDocumentos()}
+            </TabsContent>
+
             <TabsContent value="analise-tecnica" className="mt-6">
               {renderAnaliseTecnica()}
+            </TabsContent>
+
+            <TabsContent value="dt" className="mt-6">
+              <Card>
+                <CardHeader><CardTitle>Departamento Técnico (DT)</CardTitle></CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground text-center py-8">Conteúdo do Departamento Técnico será implementado em breve.</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="analise-juridica" className="mt-6">
+              <Card>
+                <CardHeader><CardTitle>Análise Jurídica (AJ)</CardTitle></CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground text-center py-8">Conteúdo da Análise Jurídica será implementado em breve.</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="analise-gerencial" className="mt-6">
+              <Card>
+                <CardHeader><CardTitle>Análise Gerencial (AG)</CardTitle></CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground text-center py-8">Conteúdo da Análise Gerencial será implementado em breve.</p>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="historico" className="mt-6">
               {renderHistorico()}
             </TabsContent>
 
-            <TabsContent value="documentos" className="mt-6">
-              {renderDocumentos()}
+            <TabsContent value="empenho" className="mt-6">
+              <Card>
+                <CardHeader><CardTitle>Empenho</CardTitle></CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground text-center py-8">Conteúdo de Empenho será implementado em breve.</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="pedidos" className="mt-6">
+              <Card>
+                <CardHeader><CardTitle>Pedidos</CardTitle></CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground text-center py-8">Conteúdo de Pedidos será implementado em breve.</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="chamados" className="mt-6">
+              <Card>
+                <CardHeader><CardTitle>Chamados</CardTitle></CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground text-center py-8">Conteúdo de Chamados será implementado em breve.</p>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <div className="flex justify-end gap-2 pt-6 border-t mt-6">
