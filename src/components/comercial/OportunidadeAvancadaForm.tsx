@@ -213,6 +213,9 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     dataAssinaturaAta: oportunidade?.dataAssinaturaAta || '',
     analiseEstrategia: oportunidade?.analiseEstrategia || '',
     manifestacaoRecorrer: oportunidade?.manifestacaoRecorrer || '',
+    pedidoEsclarecimento: oportunidade?.pedidoEsclarecimento || '',
+    recursoConcorrente: oportunidade?.recursoConcorrente || '',
+    contrarrazoes: oportunidade?.contrarrazoes || '',
     motivosFracasso: oportunidade?.motivosFracasso || '',
     observacaoGeral: oportunidade?.observacaoGeral || '',
     
