@@ -225,34 +225,13 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     website: oportunidade?.website || '',
     ativo: oportunidade?.ativo || true,
     
-    // Dados da Oportunidade
+    // Dados do Projeto
+    segmentoProjeto: oportunidade?.segmentoProjeto || '',
+    numeroContrato: oportunidade?.numeroContrato || '',
     fonteLead: oportunidade?.fonteLead || '',
     valorNegocio: oportunidade?.valorNegocio || 0,
-    quantidade: 0,
-    segmentoLead: oportunidade?.segmentoLead || '',
-    colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || '',
-    procurandoPor: oportunidade?.procurandoPor || '',
     previsaoConsumoMensal: oportunidade?.previsaoConsumoMensal || '',
-    
-    // Contato Comercial
-    contatoComercialNome: oportunidade?.contatoComercialNome || '',
-    contatoComercialSetor: oportunidade?.contatoComercialSetor || '',
-    contatoComercialTelefone: oportunidade?.contatoComercialTelefone || '',
-    contatoComercialEmail: oportunidade?.contatoComercialEmail || '',
-    
-    // Organização
-    tags: oportunidade?.tags || '',
-    fluxoTrabalho: oportunidade?.fluxoTrabalho || '',
-    status: oportunidade?.status || 'em_triagem',
-    descricao: oportunidade?.descricao || '',
-    
-    // Outros
-    propostaNegociacao: oportunidade?.propostaNegociacao || false,
-    termometro: oportunidade?.termometro || 50,
-    
-    // Campos condicionais
-    motivoGanho: oportunidade?.motivoGanho || '',
-    motivoPerda: oportunidade?.motivoPerda || '',
+    colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || '',
     
     // Análise Técnica
     analiseTecnica: oportunidade?.analiseTecnica || '',
