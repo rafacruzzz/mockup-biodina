@@ -155,6 +155,7 @@ const Comercial = () => {
       tipoOportunidade: 'pontual',
       valor: 1250000,
       dataAbertura: '05/03/2024',
+      dataEncerramento: '15/05/2024',
       dataContato: '08/03/2024',
       termometro: 75,
       fonteLead: 'Licitação',
