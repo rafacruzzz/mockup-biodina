@@ -2251,8 +2251,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                   cliente: formData.nomeFantasia || formData.razaoSocial,
                   responsavel: formData.colaboradoresResponsaveis,
                   valor: formData.valorNegocio,
-                  status: formData.status,
-                  segmento: formData.segmentoLead
+                  status: 'em_andamento',
+                  segmento: formData.segmentoProjeto
                 }}
               />
             </TabsContent>
