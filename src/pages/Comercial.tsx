@@ -129,6 +129,7 @@ const Comercial = () => {
       tipoOportunidade: 'pontual',
       valor: 280000,
       dataAbertura: '10/03/2024',
+      dataEncerramento: '',
       dataContato: '12/03/2024',
       termometro: 45,
       fonteLead: 'Cold Call',
