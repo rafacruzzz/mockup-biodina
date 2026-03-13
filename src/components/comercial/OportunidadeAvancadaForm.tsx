@@ -50,7 +50,7 @@ interface TabelaLicitantes {
 
 const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: OportunidadeAvancadaFormProps) => {
   const { toast } = useToast();
-  const { segmentos } = useSegmentoLeadManager();
+  
   const { empresaAtual, filialAtual } = useEmpresa();
   
   // Empresa ativa é a filial se logado em uma filial, senão é a principal
