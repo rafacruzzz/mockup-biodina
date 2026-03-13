@@ -84,9 +84,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     return labels[status] || status;
   };
   const [showEmprestimoAlert, setShowEmprestimoAlert] = useState(false);
-  const [showSolicitacaoCadastro, setShowSolicitacaoCadastro] = useState(false);
-  const [showGerenciarSegmentos, setShowGerenciarSegmentos] = useState(false);
-  const [clienteDropdownOpen, setClienteDropdownOpen] = useState(false);
   
   // Estados para modais
   const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
