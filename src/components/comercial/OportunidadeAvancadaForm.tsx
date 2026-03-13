@@ -497,7 +497,36 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           Dados Específicos da Licitação
         </h3>
         
-        <div className="grid grid-cols-2 gap-4">
+        {/* Situação/Status do Pregão - PRIMEIRO CAMPO */}
+        <div>
+          <Label htmlFor="situacaoPregao" className="text-base font-semibold">Situação/Status do Pregão *</Label>
+          <Select 
+            value={formData.situacaoPregao} 
+            onValueChange={(value) => setFormData({...formData, situacaoPregao: value})}
+            disabled={isReadOnlyMode()}
+          >
+            <SelectTrigger className="border-2 border-primary/30">
+              <SelectValue placeholder="Selecione a situação" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="cadastro_proposta">Cadastro de proposta</SelectItem>
+              <SelectItem value="em_analise">Em análise</SelectItem>
+              <SelectItem value="etapa_lances">Etapa de lances</SelectItem>
+              <SelectItem value="visualizacao_propostas">Visualização de Propostas</SelectItem>
+              <SelectItem value="aceitacao_propostas">Aceitação de Propostas</SelectItem>
+              <SelectItem value="habilitacao_fornecedores">Habilitação de Fornecedores</SelectItem>
+              <SelectItem value="negociacao_preco">Negociação de Preço</SelectItem>
+              <SelectItem value="recursos">Recursos</SelectItem>
+              <SelectItem value="suspenso">Suspenso</SelectItem>
+              <SelectItem value="adjudicacao">Adjudicação</SelectItem>
+              <SelectItem value="homologacao">Homologação</SelectItem>
+              <SelectItem value="ata_contrato">Ata/Contrato</SelectItem>
+              <SelectItem value="empenho">Empenho</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+      <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="dataLicitacao">Data da Licitação</Label>
             <Input
