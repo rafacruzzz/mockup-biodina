@@ -230,6 +230,10 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     estrategiaComercialAG: oportunidade?.estrategiaComercialAG || '',
     valorEntradaAG: oportunidade?.valorEntradaAG || 0,
     valorLimiteAG: oportunidade?.valorLimiteAG || 0,
+    
+    // Campos da Análise Científica (AC)
+    analiseCientifica: oportunidade?.analiseCientifica || [],
+    conclusaoAnaliseCientifica: oportunidade?.conclusaoAnaliseCientifica || '',
   });
 
 
