@@ -1385,8 +1385,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                       </div>
                       {analise.statusValidacao && (
                         <div className="flex items-center gap-2">
-                          {getStatusIcon(analise.statusValidacao)}
-                          <Badge className={getStatusColor(analise.statusValidacao) + " text-white"}>
+                          {getACStatusIcon(analise.statusValidacao)}
+                          <Badge className={getACStatusColor(analise.statusValidacao) + " text-white"}>
                             {analise.statusValidacao}
                           </Badge>
                         </div>
