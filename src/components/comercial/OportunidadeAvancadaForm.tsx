@@ -211,22 +211,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     solicitarAnaliseTecnica: oportunidade?.solicitarAnaliseTecnica || false,
   });
 
-  const handleClienteSelect = (entidade: EntidadeItem) => {
-    setFormData({
-      ...formData,
-      cliente: entidade.nome,
-      clienteId: entidade.id,
-      cpfCnpj: entidade.cpfCnpj,
-      tipoEntidade: entidade.tipo
-    });
-    setClienteSelecionadoCadastroIncompleto(!entidade.cadastroCompleto);
-    setClienteDropdownOpen(false);
-  };
-
-  const handleClienteCriadoViaSolicitacao = (novoCliente: EntidadeItem) => {
-    setEntidadesDisponiveis([...entidadesDisponiveis, novoCliente]);
-    handleClienteSelect(novoCliente);
-  };
 
   const handleAtualizarTituloTabela = (tabelaId: number, novoTitulo: string) => {
     setTabelasLicitantes(tabelasLicitantes.map(tabela =>
