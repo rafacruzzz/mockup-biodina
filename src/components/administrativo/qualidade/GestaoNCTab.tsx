@@ -8,15 +8,58 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { AlertCircle, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Clock, Plus, XCircle } from 'lucide-react';
 import { naoConformidadesMockadas, responsaveisNC } from '@/data/qualidadeData';
-import { NaoConformidade, ImpactoNC, TipoNC, StatusCAPA } from '@/types/qualidade';
+import { NaoConformidade, ImpactoNC, TipoNC, StatusCAPA, OrigemNC } from '@/types/qualidade';
 import { format } from 'date-fns';
 
 export const GestaoNCTab = () => {
   const [ncs, setNcs] = useState<NaoConformidade[]>(naoConformidadesMockadas);
   const [ncSelecionada, setNcSelecionada] = useState<NaoConformidade | null>(null);
   const [modalAberto, setModalAberto] = useState(false);
+  const [modoNovo, setModoNovo] = useState(false);
+
+  const handleNovaNC = () => {
+    const novoId = `nc-${Date.now()}`;
+    const sequencial = ncs.length + 1;
+    const ano = new Date().getFullYear();
+    const novaNC: NaoConformidade = {
+      id: novoId,
+      numeroNC: `NC-${ano}-${String(sequencial).padStart(3, '0')}`,
+      origem: 'Outro' as OrigemNC,
+      tipo: 'Material Não Conforme' as TipoNC,
+      impacto: 'Leve' as ImpactoNC,
+      responsavel: responsaveisNC[0] || '',
+      prazo: new Date(),
+      status: 'Aberta',
+      descricao: '',
+      acaoImediata: '',
+      dataCriacao: new Date(),
+      capa: {
+        id: `capa-${novoId}`,
+        acaoPreventiva: '',
+        acaoCorretiva: '',
+        prazoFinal: new Date(),
+        status: 'Pendente' as StatusCAPA,
+        responsavel: '',
+      },
+    };
+    setNcSelecionada(novaNC);
+    setModoNovo(true);
+    setModalAberto(true);
+  };
+
+  const salvarNC = () => {
+    if (!ncSelecionada) return;
+    if (modoNovo) {
+      setNcs(prev => [...prev, { ...ncSelecionada, dataCriacao: new Date() }]);
+    } else {
+      setNcs(prev => prev.map(nc => nc.id === ncSelecionada.id ? { ...ncSelecionada, dataAtualizacao: new Date() } : nc));
+    }
+    setModalAberto(false);
+    setModoNovo(false);
+    setNcSelecionada(null);
+  };
 
   const getImpactoBadge = (impacto: ImpactoNC) => {
     switch (impacto) {
