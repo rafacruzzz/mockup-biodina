@@ -262,7 +262,19 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     percentualComissao: oportunidade?.percentualComissao || 0,
     
     // Modalidade
-    modalidade: 'contratacao_simples'
+    modalidade: 'contratacao_simples',
+    
+    // Análise Jurídica
+    parecerJuridico: oportunidade?.parecerJuridico || '',
+    statusJuridico: oportunidade?.statusJuridico || '',
+    responsavelJuridico: oportunidade?.responsavelJuridico || '',
+    dataAnaliseJuridica: oportunidade?.dataAnaliseJuridica || '',
+    
+    // Análise Gerencial
+    parecerGerencial: oportunidade?.parecerGerencial || '',
+    aprovacaoGerencial: oportunidade?.aprovacaoGerencial || '',
+    responsavelGerencial: oportunidade?.responsavelGerencial || '',
+    dataAnaliseGerencial: oportunidade?.dataAnaliseGerencial || '',
   });
 
   const temDuasEmpresas = !!empresaContrato2.empresaParticipanteId;
