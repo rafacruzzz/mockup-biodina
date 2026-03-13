@@ -637,11 +637,361 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                 </CardContent>
               </Card>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Dados do Cliente */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Dados do Cliente</CardTitle>
+              {/* Dados do Cliente - Read-only Summary */}
+              <div className="p-4 rounded-lg border bg-muted/30 space-y-2">
+                <h4 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Dados do Cliente</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-2">
+                  <div>
+                    <span className="text-xs text-muted-foreground">CNPJ</span>
+                    <p className="text-sm font-medium">{formData.cpfCnpj || '—'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">Nome Fantasia</span>
+                    <p className="text-sm font-medium">{formData.nomeFantasia || '—'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">Razão Social</span>
+                    <p className="text-sm font-medium">{formData.razaoSocial || '—'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">Endereço / UF</span>
+                    <p className="text-sm font-medium">{formData.endereco ? `${formData.endereco} - ${formData.uf}` : '—'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">E-mail</span>
+                    <p className="text-sm font-medium">{formData.email || '—'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">Telefone</span>
+                    <p className="text-sm font-medium">{formData.telefone || '—'}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-muted-foreground">Segmento do Cliente</span>
+                    <p className="text-sm font-medium">
+                      <Badge variant="outline">{formData.segmentoProjeto || 'Não definido'}</Badge>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dados do Projeto */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Dados do Projeto</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-5">
+                  {/* Segmento e Contrato */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="segmentoProjeto">Segmento</Label>
+                      <Select value={formData.segmentoProjeto} onValueChange={(value) => handleInputChange('segmentoProjeto', value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o segmento" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="hospitalar">Hospitalar</SelectItem>
+                          <SelectItem value="universitario">Universitário</SelectItem>
+                          <SelectItem value="publico">Público</SelectItem>
+                          <SelectItem value="privado">Privado</SelectItem>
+                          <SelectItem value="municipal">Municipal</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="numeroContrato">Contrato</Label>
+                      <Input
+                        id="numeroContrato"
+                        value={formData.numeroContrato}
+                        onChange={(e) => handleInputChange('numeroContrato', e.target.value)}
+                        placeholder="Nº do contrato"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Aditivos Contratuais */}
+                  <div className="pt-4 border-t border-border">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-md font-medium">Aditivos Contratuais</h4>
+                      <Button type="button" size="sm" onClick={() => setModalNovoAditivoOpen(true)}>
+                        <Plus className="h-4 w-4 mr-1" /> Novo Aditivo
+                      </Button>
+                    </div>
+                    {aditivos.length > 0 ? (
+                      <>
+                        <div className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg border mb-3">
+                          <div>
+                            <span className="text-xs text-muted-foreground">Valor Original</span>
+                            <p className="font-semibold">{formatCurrency(valorOriginal)}</p>
+                          </div>
+                          <span className="text-muted-foreground">→</span>
+                          <div>
+                            <span className="text-xs text-muted-foreground">Valor Atualizado</span>
+                            <p className="font-bold text-primary">{formatCurrency(valorAtualizado)}</p>
+                          </div>
+                          <Badge variant="outline" className="ml-auto">{aditivos.length} aditivo(s)</Badge>
+                        </div>
+                        <div className="border rounded-lg overflow-hidden">
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>Data</TableHead>
+                                <TableHead>Tipo</TableHead>
+                                <TableHead>Valor</TableHead>
+                                <TableHead>Empresa</TableHead>
+                                <TableHead>Documento</TableHead>
+                                <TableHead>Registrado por</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {aditivos.map(aditivo => (
+                                <TableRow key={aditivo.id}>
+                                  <TableCell className="text-xs">{new Date(aditivo.criadoEm).toLocaleDateString('pt-BR')}</TableCell>
+                                  <TableCell><Badge variant="outline" className="text-xs">{aditivo.tipo}</Badge></TableCell>
+                                  <TableCell className={aditivo.valor >= 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>{formatCurrency(aditivo.valor)}</TableCell>
+                                  <TableCell className="text-xs">{aditivo.empresaNome}<br/><span className="text-muted-foreground">{aditivo.empresaCNPJ}</span></TableCell>
+                                  <TableCell>
+                                    <a href={aditivo.documentoUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
+                                      <FileText className="h-3 w-3" />{aditivo.documentoNome}
+                                    </a>
+                                  </TableCell>
+                                  <TableCell className="text-xs">{aditivo.criadoPor}</TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-sm text-muted-foreground text-center py-4">Nenhum aditivo registrado.</p>
+                    )}
+                  </div>
+
+                  {/* Valor Original e Previsão */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="valorNegocio">Valor Original do Contrato</Label>
+                      <Input
+                        id="valorNegocio"
+                        type="number"
+                        value={formData.valorNegocio}
+                        disabled
+                        className="bg-muted cursor-not-allowed"
+                        placeholder="Valor definido pela licitação"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="previsaoConsumoMensal">Previsão de Consumo Mensal</Label>
+                      <Input
+                        id="previsaoConsumoMensal"
+                        type="text"
+                        value={formData.previsaoConsumoMensal}
+                        onChange={(e) => handleInputChange('previsaoConsumoMensal', e.target.value)}
+                        placeholder="Quantidade de testes/mês"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Contatos Comerciais do Cliente */}
+                  <div className="pt-4 border-t border-border">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-md font-medium">Contato Comercial do Cliente</h4>
+                      <Button type="button" variant="outline" size="sm" onClick={() => {
+                        setContatosComerciais(prev => [...prev, { id: `cc_${Date.now()}`, nome: '', cargo: '', telefone: '', email: '' }]);
+                      }}>
+                        <Plus className="h-4 w-4 mr-1" /> Adicionar Contato
+                      </Button>
+                    </div>
+                    {contatosComerciais.length > 0 ? (
+                      <div className="space-y-3">
+                        {contatosComerciais.map((contato) => (
+                          <div key={contato.id} className="p-3 border rounded-lg relative">
+                            <Button type="button" variant="ghost" size="sm" className="absolute top-1 right-1" onClick={() => {
+                              setContatosComerciais(prev => prev.filter(c => c.id !== contato.id));
+                            }}>
+                              <X className="h-3 w-3" />
+                            </Button>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                              <div>
+                                <Label className="text-xs">Nome</Label>
+                                <Input placeholder="Nome" value={contato.nome} onChange={(e) => {
+                                  setContatosComerciais(prev => prev.map(c => c.id === contato.id ? {...c, nome: e.target.value} : c));
+                                }} />
+                              </div>
+                              <div>
+                                <Label className="text-xs">Cargo/Função</Label>
+                                <Input placeholder="Cargo" value={contato.cargo} onChange={(e) => {
+                                  setContatosComerciais(prev => prev.map(c => c.id === contato.id ? {...c, cargo: e.target.value} : c));
+                                }} />
+                              </div>
+                              <div>
+                                <Label className="text-xs">Telefone</Label>
+                                <Input placeholder="Telefone" value={contato.telefone} onChange={(e) => {
+                                  setContatosComerciais(prev => prev.map(c => c.id === contato.id ? {...c, telefone: e.target.value} : c));
+                                }} />
+                              </div>
+                              <div>
+                                <Label className="text-xs">E-mail</Label>
+                                <Input type="email" placeholder="E-mail" value={contato.email} onChange={(e) => {
+                                  setContatosComerciais(prev => prev.map(c => c.id === contato.id ? {...c, email: e.target.value} : c));
+                                }} />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground text-center py-3">Nenhum contato adicionado.</p>
+                    )}
+                  </div>
+
+                  {/* Representantes Vinculados */}
+                  <div className="pt-4 border-t border-border">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-md font-medium">Representantes Vinculados</h4>
+                      <Button type="button" variant="outline" size="sm" onClick={() => {
+                        setRepresentantesVinculados(prev => [...prev, { id: `rep_${Date.now()}`, nome: '', percentualComissao: 0 }]);
+                      }}>
+                        <Plus className="h-4 w-4 mr-1" /> Adicionar Representante
+                      </Button>
+                    </div>
+                    {representantesVinculados.length > 0 ? (
+                      <div className="space-y-2">
+                        {representantesVinculados.map((rep) => (
+                          <div key={rep.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                            <div className="flex-1">
+                              <Select value={rep.nome} onValueChange={(value) => {
+                                setRepresentantesVinculados(prev => prev.map(r => r.id === rep.id ? {...r, nome: value} : r));
+                              }}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Selecione o representante" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {colaboradores.map((colab) => (
+                                    <SelectItem key={colab.id} value={colab.nome}>{colab.nome}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="w-32">
+                              <Input
+                                type="number"
+                                min="0"
+                                max="100"
+                                step="0.1"
+                                placeholder="Comissão %"
+                                value={rep.percentualComissao || ''}
+                                onChange={(e) => {
+                                  setRepresentantesVinculados(prev => prev.map(r => r.id === rep.id ? {...r, percentualComissao: parseFloat(e.target.value) || 0} : r));
+                                }}
+                              />
+                            </div>
+                            <Button type="button" variant="ghost" size="sm" onClick={() => {
+                              setRepresentantesVinculados(prev => prev.filter(r => r.id !== rep.id));
+                            }}>
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground text-center py-3">Nenhum representante vinculado.</p>
+                    )}
+                  </div>
+
+                  {/* Colaboradores Responsáveis pela Gestão */}
+                  <div className="pt-4 border-t border-border">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-md font-medium">Colaboradores Responsáveis pela Gestão</h4>
+                      <Button type="button" variant="outline" size="sm" onClick={() => {
+                        setColaboradoresGestao(prev => [...prev, '']);
+                      }}>
+                        <Plus className="h-4 w-4 mr-1" /> Adicionar Colaborador
+                      </Button>
+                    </div>
+                    {colaboradoresGestao.length > 0 ? (
+                      <div className="space-y-2">
+                        {colaboradoresGestao.map((colabId, idx) => (
+                          <div key={idx} className="flex items-center gap-3">
+                            <div className="flex-1">
+                              <Select value={colabId} onValueChange={(value) => {
+                                setColaboradoresGestao(prev => prev.map((c, i) => i === idx ? value : c));
+                              }}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Selecione um colaborador" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {colaboradores.filter(c => c.status === 'Ativo').map((colab) => (
+                                    <SelectItem key={colab.id} value={colab.id}>{colab.nome} - {colab.cargo}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <Button type="button" variant="ghost" size="sm" onClick={() => {
+                              setColaboradoresGestao(prev => prev.filter((_, i) => i !== idx));
+                            }}>
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground text-center py-3">Nenhum colaborador adicionado.</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Resumo Biodina Rep */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Network className="h-5 w-5" />
+                    Resumo Biodina Rep
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center gap-3 p-4 rounded-lg border border-dashed border-muted-foreground/30 bg-muted/20">
+                    <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50">Integração Pendente</Badge>
+                    <p className="text-sm text-muted-foreground">Dados disponíveis após aval da Gerência Comercial para inclusão dos dados do representante.</p>
+                  </div>
+
+                  <div className="flex flex-col gap-2 p-3 rounded-md border border-dashed border-muted-foreground/30 bg-muted/30">
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const code = crypto.randomUUID().slice(0, 8);
+                          setLinkExternoRepresentacao(`${window.location.origin}/representacao/${code}`);
+                          toast.success('Link externo gerado com sucesso!');
+                        }}
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Gerar Link Externo
+                      </Button>
+                      <span className="text-xs text-muted-foreground">Envie este link para o representante preencher as informações</span>
+                    </div>
+                    {linkExternoRepresentacao && (
+                      <div className="flex items-center gap-2">
+                        <code className="text-xs bg-background px-2 py-1 rounded border flex-1 truncate">{linkExternoRepresentacao}</code>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={async () => {
+                            await navigator.clipboard.writeText(linkExternoRepresentacao);
+                            toast.success('Link copiado!');
+                          }}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
