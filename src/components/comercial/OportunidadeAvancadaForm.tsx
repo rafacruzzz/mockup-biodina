@@ -176,7 +176,9 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   const [formData, setFormData] = useState({
     // Empresa - automaticamente definida pela empresa logada
     empresaId: oportunidade?.empresaId || empresaAtivaId,
-    
+    cliente: oportunidade?.cliente || '',
+    cpfCnpj: oportunidade?.cpfCnpj || '',
+    descricao: oportunidade?.descricao || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || [],
     analiseTecnica: oportunidade?.analiseTecnica || '',
     termometro: oportunidade?.termometro || 50,
