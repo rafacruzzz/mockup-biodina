@@ -225,6 +225,11 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     
     // Campo para solicitação de análise técnica
     solicitarAnaliseTecnica: oportunidade?.solicitarAnaliseTecnica || false,
+    
+    // Campos da Análise Gerencial (AG)
+    estrategiaComercialAG: oportunidade?.estrategiaComercialAG || '',
+    valorEntradaAG: oportunidade?.valorEntradaAG || 0,
+    valorLimiteAG: oportunidade?.valorLimiteAG || 0,
   });
 
 
@@ -492,7 +497,36 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           Dados Específicos da Licitação
         </h3>
         
-        <div className="grid grid-cols-2 gap-4">
+        {/* Situação/Status do Pregão - PRIMEIRO CAMPO */}
+        <div>
+          <Label htmlFor="situacaoPregao" className="text-base font-semibold">Situação/Status do Pregão *</Label>
+          <Select 
+            value={formData.situacaoPregao} 
+            onValueChange={(value) => setFormData({...formData, situacaoPregao: value})}
+            disabled={isReadOnlyMode()}
+          >
+            <SelectTrigger className="border-2 border-primary/30">
+              <SelectValue placeholder="Selecione a situação" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="cadastro_proposta">Cadastro de proposta</SelectItem>
+              <SelectItem value="em_analise">Em análise</SelectItem>
+              <SelectItem value="etapa_lances">Etapa de lances</SelectItem>
+              <SelectItem value="visualizacao_propostas">Visualização de Propostas</SelectItem>
+              <SelectItem value="aceitacao_propostas">Aceitação de Propostas</SelectItem>
+              <SelectItem value="habilitacao_fornecedores">Habilitação de Fornecedores</SelectItem>
+              <SelectItem value="negociacao_preco">Negociação de Preço</SelectItem>
+              <SelectItem value="recursos">Recursos</SelectItem>
+              <SelectItem value="suspenso">Suspenso</SelectItem>
+              <SelectItem value="adjudicacao">Adjudicação</SelectItem>
+              <SelectItem value="homologacao">Homologação</SelectItem>
+              <SelectItem value="ata_contrato">Ata/Contrato</SelectItem>
+              <SelectItem value="empenho">Empenho</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+      <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="dataLicitacao">Data da Licitação</Label>
             <Input
@@ -700,33 +734,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </div>
         )}
 
-        <div>
-          <Label htmlFor="situacaoPregao">Situação/Status do Pregão *</Label>
-          <Select 
-            value={formData.situacaoPregao} 
-            onValueChange={(value) => setFormData({...formData, situacaoPregao: value})}
-            disabled={isReadOnlyMode()}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione a situação" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="cadastro_proposta">Cadastro de proposta</SelectItem>
-              <SelectItem value="em_analise">Em análise</SelectItem>
-              <SelectItem value="etapa_lances">Etapa de lances</SelectItem>
-              <SelectItem value="visualizacao_propostas">Visualização de Propostas</SelectItem>
-              <SelectItem value="aceitacao_propostas">Aceitação de Propostas</SelectItem>
-              <SelectItem value="habilitacao_fornecedores">Habilitação de Fornecedores</SelectItem>
-              <SelectItem value="negociacao_preco">Negociação de Preço</SelectItem>
-              <SelectItem value="recursos">Recursos</SelectItem>
-              <SelectItem value="suspenso">Suspenso</SelectItem>
-              <SelectItem value="adjudicacao">Adjudicação</SelectItem>
-              <SelectItem value="homologacao">Homologação</SelectItem>
-              <SelectItem value="ata_contrato">Ata/Contrato</SelectItem>
-              <SelectItem value="empenho">Empenho</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
 
         <div>
           <Label htmlFor="dataAssinaturaAta">Data da Assinatura e Envio da ATA</Label>
@@ -930,6 +937,46 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             rows={3}
             className="bg-muted/50"
           />
+        </div>
+
+        {/* Estratégia Comercial (read-only, editável na aba AG) */}
+        <div>
+          <Label htmlFor="estrategiaComercialDG">Estratégia Comercial</Label>
+          <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
+          <Textarea
+            id="estrategiaComercialDG"
+            value={formData.estrategiaComercialAG}
+            readOnly
+            placeholder="Preenchido pela Análise Gerencial (aba AG)"
+            rows={3}
+            className="bg-muted/50"
+          />
+        </div>
+
+        {/* Valor de Entrada e Valor Limite (read-only, editável na aba AG) */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="valorEntradaDG">Valor de Entrada (R$)</Label>
+            <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
+            <Input
+              id="valorEntradaDG"
+              type="number"
+              value={formData.valorEntradaAG}
+              readOnly
+              className="bg-muted/50"
+            />
+          </div>
+          <div>
+            <Label htmlFor="valorLimiteDG">Valor Limite (R$)</Label>
+            <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
+            <Input
+              id="valorLimiteDG"
+              type="number"
+              value={formData.valorLimiteAG}
+              readOnly
+              className="bg-muted/50"
+            />
+          </div>
         </div>
 
         {/* Tabelas de Licitantes */}
@@ -1391,6 +1438,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
               <TabsTrigger value="analise-tecnica">AC</TabsTrigger>
               <TabsTrigger value="analise-juridica">AJ</TabsTrigger>
+              <TabsTrigger value="analise-gerencial">AG</TabsTrigger>
               <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
               <TabsTrigger value="documentos">Documentos</TabsTrigger>
             </TabsList>
@@ -1469,6 +1517,138 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                         rows={4}
                         disabled={isReadOnlyMode()}
                       />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="analise-gerencial" className="mt-6">
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Análise Gerencial</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Empresa Participante 1 */}
+                    <Card className="border-2 border-primary/20 bg-gradient-to-r from-blue-50 to-transparent">
+                      <CardContent className="pt-4 space-y-4">
+                        <h4 className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                          <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span>
+                          Empresa Participante 1
+                        </h4>
+                        <EmpresaParticipanteSelect
+                          empresaParticipanteId={empresaParticipante.empresaParticipanteId}
+                          empresaParticipanteNome={empresaParticipante.empresaParticipanteNome}
+                          empresaParticipanteCNPJ={empresaParticipante.empresaParticipanteCNPJ}
+                          aprovacaoEmpresa={aprovacaoEmpresa}
+                          onChange={handleEmpresaParticipanteChange}
+                          onSolicitarAprovacao={handleSolicitarAprovacao}
+                          onAprovar={handleAprovacaoEmpresa}
+                          onRejeitar={handleAprovacaoEmpresa}
+                          licitacaoData={{
+                            id: oportunidade?.id || 0,
+                            numeroPregao: oportunidade?.codigo || formData.numeroPregao || '',
+                            nomeInstituicao: oportunidade?.cliente || formData.cliente || '',
+                            objetoLicitacao: oportunidade?.descricao || formData.descricao || ''
+                          }}
+                          disabled={isReadOnlyMode()}
+                          required={true}
+                        />
+                        <div>
+                          <Label htmlFor="valorMinimoFinalAG">Valor mínimo Final - Empresa 1 (R$)</Label>
+                          <Input
+                            id="valorMinimoFinalAG"
+                            type="number"
+                            step="0.01"
+                            value={formData.valorMinimoFinal}
+                            onChange={(e) => handleInputChange('valorMinimoFinal', parseFloat(e.target.value) || 0)}
+                            placeholder="0,00"
+                            disabled={isReadOnlyMode()}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Empresa Participante 2 */}
+                    <Card className="border-2 border-secondary/20 bg-gradient-to-r from-green-50 to-transparent">
+                      <CardContent className="pt-4 space-y-4">
+                        <h4 className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                          <span className="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span>
+                          Empresa Participante 2 (Opcional)
+                        </h4>
+                        <EmpresaParticipanteSelect
+                          empresaParticipanteId={empresaParticipante2.empresaParticipanteId}
+                          empresaParticipanteNome={empresaParticipante2.empresaParticipanteNome}
+                          empresaParticipanteCNPJ={empresaParticipante2.empresaParticipanteCNPJ}
+                          aprovacaoEmpresa={aprovacaoEmpresa2}
+                          onChange={handleEmpresaParticipante2Change}
+                          onSolicitarAprovacao={handleSolicitarAprovacao2}
+                          onAprovar={handleAprovacaoEmpresa2}
+                          onRejeitar={handleAprovacaoEmpresa2}
+                          licitacaoData={{
+                            id: oportunidade?.id || 0,
+                            numeroPregao: oportunidade?.codigo || formData.numeroPregao || '',
+                            nomeInstituicao: oportunidade?.cliente || formData.cliente || '',
+                            objetoLicitacao: oportunidade?.descricao || formData.descricao || ''
+                          }}
+                          disabled={isReadOnlyMode()}
+                          required={false}
+                        />
+                        <div>
+                          <Label htmlFor="valorMinimoFinal2AG">Valor mínimo Final - Empresa 2 (R$)</Label>
+                          <Input
+                            id="valorMinimoFinal2AG"
+                            type="number"
+                            step="0.01"
+                            value={formData.valorMinimoFinal2}
+                            onChange={(e) => handleInputChange('valorMinimoFinal2', parseFloat(e.target.value) || 0)}
+                            placeholder="0,00"
+                            disabled={isReadOnlyMode()}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Estratégia Comercial */}
+                    <div>
+                      <Label htmlFor="estrategiaComercialAG">Estratégia Comercial</Label>
+                      <Textarea
+                        id="estrategiaComercialAG"
+                        value={formData.estrategiaComercialAG}
+                        onChange={(e) => handleInputChange('estrategiaComercialAG', e.target.value)}
+                        placeholder="Descreva a estratégia comercial..."
+                        rows={5}
+                        disabled={isReadOnlyMode()}
+                      />
+                    </div>
+
+                    {/* Valor de Entrada e Valor Limite */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="valorEntradaAG">Valor de Entrada (R$)</Label>
+                        <Input
+                          id="valorEntradaAG"
+                          type="number"
+                          step="0.01"
+                          value={formData.valorEntradaAG}
+                          onChange={(e) => handleInputChange('valorEntradaAG', parseFloat(e.target.value) || 0)}
+                          placeholder="0,00"
+                          disabled={isReadOnlyMode()}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="valorLimiteAG">Valor Limite (R$)</Label>
+                        <Input
+                          id="valorLimiteAG"
+                          type="number"
+                          step="0.01"
+                          value={formData.valorLimiteAG}
+                          onChange={(e) => handleInputChange('valorLimiteAG', parseFloat(e.target.value) || 0)}
+                          placeholder="0,00"
+                          disabled={isReadOnlyMode()}
+                        />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
