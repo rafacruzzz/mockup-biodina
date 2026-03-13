@@ -117,9 +117,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     { id: 1, numero: 1, titulo: 'Tabela de Licitantes 1', licitantes: [] }
   ]);
   
-  // Estado para rastrear entidades criadas via solicitação (cadastro incompleto)
-  const [entidadesDisponiveis, setEntidadesDisponiveis] = useState<EntidadeItem[]>(mockEntidades);
-  const [clienteSelecionadoCadastroIncompleto, setClienteSelecionadoCadastroIncompleto] = useState(false);
   
   // Estado para rastrear qual tabela está recebendo o novo licitante
   const [tabelaAtiva, setTabelaAtiva] = useState<number | null>(null);
