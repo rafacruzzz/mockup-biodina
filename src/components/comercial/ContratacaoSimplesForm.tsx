@@ -995,15 +995,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
 
 
                         <Input
-                          id="cpfCnpj"
-                          value={formData.cpfCnpj}
-                          onChange={(e) => handleInputChange('cpfCnpj', e.target.value)}
-                          placeholder="Digite o CPF ou CNPJ"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="nomeFantasia">Nome/Nome Fantasia *</Label>
-                        <Input
                           id="nomeFantasia"
                           value={formData.nomeFantasia}
                           onChange={(e) => handleInputChange('nomeFantasia', e.target.value)}
