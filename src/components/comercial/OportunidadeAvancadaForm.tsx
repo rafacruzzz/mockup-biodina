@@ -20,8 +20,6 @@ import ConcorrenteModal from "./ConcorrenteModal";
 import ChatInterno from "./ChatInterno";
 import PedidoForm from "./PedidoForm";
 import CustomAlertModal from "./components/CustomAlertModal";
-import SolicitacaoCadastroModal from "./SolicitacaoCadastroModal";
-import GerenciarSegmentosModal from "./GerenciarSegmentosModal";
 import EmpresaParticipanteSelect from "./EmpresaParticipanteSelect";
 import AprovacaoEmpresaModal from "./AprovacaoEmpresaModal";
 import { concorrentes as mockConcorrentes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
