@@ -1389,7 +1389,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="flex w-full overflow-x-auto">
               <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
-              <TabsTrigger value="analise-tecnica">Análise Técnica</TabsTrigger>
+              <TabsTrigger value="analise-tecnica">AC</TabsTrigger>
+              <TabsTrigger value="analise-juridica">AJ</TabsTrigger>
               <TabsTrigger value="historico">Histórico/Chat</TabsTrigger>
               <TabsTrigger value="documentos">Documentos</TabsTrigger>
             </TabsList>
@@ -1400,6 +1401,78 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
 
             <TabsContent value="analise-tecnica" className="mt-6">
               {renderAnaliseTecnica()}
+            </TabsContent>
+
+            <TabsContent value="analise-juridica" className="mt-6">
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Análise Jurídica</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="pedidoEsclarecimento">Pedido de Esclarecimento</Label>
+                      <Textarea
+                        id="pedidoEsclarecimento"
+                        value={formData.pedidoEsclarecimento}
+                        onChange={(e) => handleInputChange('pedidoEsclarecimento', e.target.value)}
+                        placeholder="Descreva o pedido de esclarecimento..."
+                        rows={4}
+                        disabled={isReadOnlyMode()}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="impugnacaoEditalAJ">Impugnação do Edital</Label>
+                      <Textarea
+                        id="impugnacaoEditalAJ"
+                        value={formData.impugnacaoEdital}
+                        onChange={(e) => handleInputChange('impugnacaoEdital', e.target.value)}
+                        placeholder="Descreva a impugnação do edital..."
+                        rows={4}
+                        disabled={isReadOnlyMode()}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="manifestacaoRecorrerAJ">Razões para Recurso</Label>
+                      <Textarea
+                        id="manifestacaoRecorrerAJ"
+                        value={formData.manifestacaoRecorrer}
+                        onChange={(e) => handleInputChange('manifestacaoRecorrer', e.target.value)}
+                        placeholder="Descreva as razões para recurso..."
+                        rows={4}
+                        disabled={isReadOnlyMode()}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="recursoConcorrente">Recurso do Concorrente</Label>
+                      <p className="text-xs text-muted-foreground mb-1">Réplica enviada pela equipe de licitação</p>
+                      <Textarea
+                        id="recursoConcorrente"
+                        value={formData.recursoConcorrente}
+                        onChange={(e) => handleInputChange('recursoConcorrente', e.target.value)}
+                        placeholder="Reproduza o recurso do concorrente..."
+                        rows={4}
+                        disabled={isReadOnlyMode()}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="contrarrazoes">Contrarrazões</Label>
+                      <Textarea
+                        id="contrarrazoes"
+                        value={formData.contrarrazoes}
+                        onChange={(e) => handleInputChange('contrarrazoes', e.target.value)}
+                        placeholder="Descreva as contrarrazões..."
+                        rows={4}
+                        disabled={isReadOnlyMode()}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
 
             <TabsContent value="historico" className="mt-6">
