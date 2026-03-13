@@ -47,36 +47,6 @@ interface TabelaLicitantes {
   licitantes: LicitanteItem[];
 }
 
-// Tipo para entidade (cliente ou lead)
-interface EntidadeItem {
-  id: number;
-  nome: string;
-  cpfCnpj: string;
-  tipo: 'cliente' | 'lead';
-  cadastroCompleto: boolean;
-}
-import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getAtendeEditalBadge } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
-import { useSegmentoLeadManager } from "@/hooks/useSegmentoLeadManager";
-import { PedidoCompleto } from "@/types/comercial";
-import { useEmpresa } from "@/contexts/EmpresaContext";
-
-interface OportunidadeAvancadaFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (data: any) => void;
-  oportunidade?: any;
-}
-
-// Mock data para clientes e leads combinados
-const mockEntidades: EntidadeItem[] = [
-  { id: 1, nome: "Associação das Pioneiras Sociais", cpfCnpj: "12.345.678/0001-90", tipo: 'cliente', cadastroCompleto: true },
-  { id: 2, nome: "Hospital São Francisco", cpfCnpj: "98.765.432/0001-10", tipo: 'cliente', cadastroCompleto: true },
-  { id: 3, nome: "Laboratório Central LTDA", cpfCnpj: "11.222.333/0001-44", tipo: 'cliente', cadastroCompleto: false },
-  { id: 4, nome: "Clínica Med Center", cpfCnpj: "55.666.777/0001-88", tipo: 'lead', cadastroCompleto: true },
-  { id: 5, nome: "Instituto de Pesquisas Médicas", cpfCnpj: "33.444.555/0001-22", tipo: 'lead', cadastroCompleto: false },
-  { id: 6, nome: "Centro Médico Regional", cpfCnpj: "44.555.666/0001-77", tipo: 'lead', cadastroCompleto: true },
-];
 
 const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: OportunidadeAvancadaFormProps) => {
   const { toast } = useToast();
