@@ -489,7 +489,11 @@ const Comercial = () => {
     }
   };
 
-  const handleSaveOportunidade = (formData: any) => {
+  const handleExcluirOportunidade = (id: number) => {
+    setTodasOportunidades(prev => prev.filter(op => op.id !== id));
+  };
+
+
     console.log('Salvando oportunidade:', formData);
     
     if (editingOportunidade) {
