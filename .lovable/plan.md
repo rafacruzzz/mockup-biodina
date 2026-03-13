@@ -1,31 +1,34 @@
 
 
-## Plano: Link Externo para Aprovação de SPI pelo Cliente
+## Plano: Integrar Análise Científica completa na aba "AC" da Licitação
 
-### Resumo
-Criar um botão "Gerar Link Externo" na aba SPI do formulário de Importação Direta. Esse link leva o cliente a uma página pública e responsiva onde ele visualiza o resumo da SPI (somente leitura) e pode aprovar ou rejeitar, com campo de observação obrigatório em caso de rejeição. A decisão reflete automaticamente no campo "Aprovação do Cliente" dentro do sistema.
+### Contexto
+Atualmente a aba "AC" tem apenas um campo de texto livre e uma tabela de concorrentes. O usuário quer replicar o quadro de **Análise Científica** (componente `AnaliseCientificaStep`) com as 6 questões predefinidas, cada uma com campo de resposta, status de validação e observações. Após salvar, os dados devem aparecer como **somente-leitura** na aba "Dados Gerais".
 
-### Alterações
+### Alterações em `src/components/comercial/OportunidadeAvancadaForm.tsx`
 
-**1. Nova página pública: `src/pages/AprovacaoSPIExterna.tsx`**
-- Rota pública `/aprovacao-spi/:linkId`
-- Layout responsivo, sem sidebar/login
-- Exibe em somente leitura os dados da SPI: cliente, CNPJ, endereço, número da SPI, data, fabricante, forma de pagamento, tabela de mercadorias com quantidades/valores, subtotal, packing, total, e observações
-- Dois botões: "Aprovar" e "Rejeitar"
-- Se rejeitar, campo de observação obrigatório aparece
-- Após decisão, tela de confirmação (sem possibilidade de alterar)
-- Dados armazenados em estado local (mock/front-end only, sem backend)
+**1. Adicionar campo `analiseCientifica` no `formData`**
+- `analiseCientifica: []` — array de objetos com `pergunta`, `resposta`, `statusValidacao`, `observacoes`
+- `conclusaoAnaliseCientifica: ''`
 
-**2. Alteração em `src/components/comercial/components/SPIForm.tsx`**
-- Na seção "Aprovação do Cliente", adicionar botão "Gerar Link Externo" (mesmo padrão já usado na Representação Comercial da Contratação)
-- Gera URL com código único: `/aprovacao-spi/{codigo}`
-- Exibe o link gerado com botão de copiar
-- Manter os campos existentes inalterados
+**2. Atualizar `renderAnaliseTecnica()`**
+- **Manter** o campo "Análise Técnica-Científica" (textarea existente) e a tabela de concorrentes
+- **Adicionar** o componente `AnaliseCientificaStep` integrado diretamente (ou replicar a lógica) com as 6 questões:
+  1. Identificação dos diferenciais técnicos do produto
+  2. Levantamento de concorrentes diretos e indiretos
+  3. Avaliação do nível de qualidade
+  4. Avaliação do nível de modernidade
+  5. Parecer pessoal do assessor científico
+  6. Observações gerais
+- Cada questão tem: Textarea de resposta, Select de status (Validado/Parcialmente Validado/Não Validado), Textarea de observações
+- Resumo visual com contagem por status (círculos coloridos)
+- Campo de Conclusão da Análise Científica
 
-**3. Alteração em `src/App.tsx`**
-- Adicionar rota pública: `<Route path="/aprovacao-spi/:linkId" element={<AprovacaoSPIExterna />} />`
+**3. Espelhar na aba "Dados Gerais" (somente-leitura)**
+- Adicionar seção "Análise Científica (AC)" com cards read-only mostrando cada questão, resposta e status
+- Campo de conclusão read-only
+- Nota "Editável na aba AC"
 
-**4. Estado compartilhado (mock)**
-- Como não há backend, a página externa simulará os dados da SPI com valores de exemplo
-- O status de aprovação/rejeição será exibido na tela de confirmação mas não persistirá entre sessões (comportamento mock)
+### Resultado
+A aba AC terá o formulário completo de análise científica editável. Na aba Dados Gerais, os mesmos dados aparecem como somente-leitura para consulta rápida.
 
