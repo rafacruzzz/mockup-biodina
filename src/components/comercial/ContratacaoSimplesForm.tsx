@@ -933,6 +933,43 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                     <p className="text-sm text-muted-foreground">Dados disponíveis após aval da Gerência Comercial para inclusão dos dados do representante.</p>
                   </div>
 
+                  {/* Análise da Concorrência pelo Comercial Local */}
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold text-foreground">1 - Análise da Concorrência pelo Comercial Local</h4>
+                    
+                    {[1, 2].map((num) => (
+                      <div key={num} className="rounded-lg border border-border p-4 space-y-3">
+                        <p className="text-sm font-medium text-foreground">Concorrente {num}</p>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Nome do Concorrente</Label>
+                          <Input readOnly className="bg-muted/50 cursor-not-allowed" placeholder="—" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <Label className="text-xs text-muted-foreground">Marca do Concorrente</Label>
+                            <Input readOnly className="bg-muted/50 cursor-not-allowed" placeholder="—" />
+                          </div>
+                          <div>
+                            <Label className="text-xs text-muted-foreground">Modelo do Concorrente</Label>
+                            <Input readOnly className="bg-muted/50 cursor-not-allowed" placeholder="—" />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <Label className="text-xs text-muted-foreground">Quantidade</Label>
+                            <Input readOnly type="number" className="bg-muted/50 cursor-not-allowed" placeholder="—" />
+                          </div>
+                          <div>
+                            <Label className="text-xs text-muted-foreground">Quantidade de exames/mês</Label>
+                            <Input readOnly type="number" className="bg-muted/50 cursor-not-allowed" placeholder="—" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    <p className="text-xs text-muted-foreground italic">Resumo da análise completa disponível no BiodinaRep</p>
+                  </div>
+
                   <div className="flex flex-col gap-2 p-3 rounded-md border border-dashed border-muted-foreground/30 bg-muted/30">
                     <div className="flex items-center gap-2">
                       <Button
