@@ -18,20 +18,57 @@ export function GestaoNCTab() {
   const [showModal, setShowModal] = useState(false);
   const [modoNovo, setModoNovo] = useState(false);
 
+  const handleNovaNC = () => {
+    const novoId = `NC-RT-${Date.now()}`;
+    const sequencial = naoConformidades.length + 1;
+    const ano = new Date().getFullYear();
+    const novaNC: NaoConformidadeRT = {
+      id: `NC-RT-${ano}-${String(sequencial).padStart(3, '0')}`,
+      data: new Date().toISOString().split('T')[0],
+      origem: 'Outro' as OrigemNCRT,
+      tipo: 'Outro' as TipoNCRT,
+      impacto: 'Leve' as ImpactoNCRT,
+      descricao: '',
+      acaoImediata: '',
+      responsavel: responsaveisNCRT[0] || '',
+      prazoExecucao: new Date().toISOString().split('T')[0],
+      status: 'Aberta' as StatusNCRT,
+      observacoes: '',
+      capa: {
+        id: `capa-${novoId}`,
+        acaoPreventiva: '',
+        acaoCorretiva: '',
+        prazoFinal: new Date().toISOString().split('T')[0],
+        status: 'Pendente' as StatusCAPART,
+        responsavel: '',
+      },
+    };
+    setSelectedNC(novaNC);
+    setModoNovo(true);
+    setShowModal(true);
+  };
+
   const handleOpenNC = (nc: NaoConformidadeRT) => {
     setSelectedNC({ ...nc });
+    setModoNovo(false);
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setModoNovo(false);
     setSelectedNC(null);
   };
 
   const handleSalvar = () => {
     if (!selectedNC) return;
-    setNaoConformidades(prev => prev.map(nc => nc.id === selectedNC.id ? selectedNC : nc));
+    if (modoNovo) {
+      setNaoConformidades(prev => [...prev, selectedNC]);
+    } else {
+      setNaoConformidades(prev => prev.map(nc => nc.id === selectedNC.id ? selectedNC : nc));
+    }
     setShowModal(false);
+    setModoNovo(false);
     setSelectedNC(null);
   };
 
