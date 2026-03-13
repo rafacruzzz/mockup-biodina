@@ -28,7 +28,7 @@ import {
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
   ShoppingCart, Headphones, ArrowLeft, Package, Truck, ClipboardList,
   AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal,
-  Gavel, Building2, Globe, HandCoins, FileSpreadsheet // FileSignature COMENTADO - NÃO USAR NO MOMENTO
+  Gavel, Building2, Globe, HandCoins, FileSpreadsheet, Trash2 // FileSignature COMENTADO - NÃO USAR NO MOMENTO
 } from "lucide-react";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { 
@@ -77,6 +77,7 @@ const Comercial = () => {
       tipoOportunidade: 'pontual',
       valor: 782530,
       dataAbertura: '20/03/2024',
+      dataEncerramento: '20/06/2024',
       dataContato: '20/03/2024',
       termometro: 100,
       fonteLead: 'Site',
@@ -102,6 +103,7 @@ const Comercial = () => {
       tipoOportunidade: 'periodica',
       valor: 450000,
       dataAbertura: '15/03/2024',
+      dataEncerramento: '',
       dataContato: '16/03/2024',
       termometro: 85,
       fonteLead: 'Indicação',
@@ -127,6 +129,7 @@ const Comercial = () => {
       tipoOportunidade: 'pontual',
       valor: 280000,
       dataAbertura: '10/03/2024',
+      dataEncerramento: '',
       dataContato: '12/03/2024',
       termometro: 45,
       fonteLead: 'Cold Call',
@@ -152,6 +155,7 @@ const Comercial = () => {
       tipoOportunidade: 'pontual',
       valor: 1250000,
       dataAbertura: '05/03/2024',
+      dataEncerramento: '15/05/2024',
       dataContato: '08/03/2024',
       termometro: 75,
       fonteLead: 'Licitação',
@@ -487,6 +491,10 @@ const Comercial = () => {
     } else if (oportunidade.modalidade === 'importacao_direta') {
       setShowImportacaoDiretaForm(true);
     }
+  };
+
+  const handleExcluirOportunidade = (id: number) => {
+    setTodasOportunidades(prev => prev.filter(op => op.id !== id));
   };
 
   const handleSaveOportunidade = (formData: any) => {
@@ -964,9 +972,9 @@ const Comercial = () => {
                   <TableHead>Status</TableHead>
                   <TableHead>Fonte</TableHead>
                   <TableHead>Segmento</TableHead>
-                  <TableHead>Termômetro</TableHead>
-                  <TableHead>Valor</TableHead>
+                  <TableHead>Valor do Projeto</TableHead>
                   <TableHead>Data Abertura</TableHead>
+                  <TableHead>Data Encerramento</TableHead>
                   <TableHead>Ações</TableHead>
                 </TableRow>
               </TableHeader>
@@ -983,36 +991,23 @@ const Comercial = () => {
                     </TableCell>
                     <TableCell>{oportunidade.fonteLead}</TableCell>
                     <TableCell>{oportunidade.segmento}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1">
-                          <Thermometer className="h-4 w-4" />
-                          <span className="text-sm font-medium">{oportunidade.termometro}°</span>
-                        </div>
-                        <div 
-                          className={`w-3 h-3 rounded-full ${getTermometroColor(oportunidade.termometro)}`}
-                          title={`Termômetro: ${oportunidade.termometro}°`}
-                        />
-                      </div>
-                    </TableCell>
                     <TableCell>{formatCurrency(oportunidade.valor)}</TableCell>
                     <TableCell>{oportunidade.dataAbertura}</TableCell>
+                    <TableCell>{oportunidade.dataEncerramento || '-'}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline" onClick={() => handleEditOportunidade(oportunidade)}>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        {modalidade !== 'licitacao' && (
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            onClick={() => handleGerarPedido(oportunidade)}
-                            disabled={oportunidade.status !== 'Ganha'}
-                            title={oportunidade.status !== 'Ganha' ? 'Pedidos só podem ser gerados para oportunidades ganhas' : 'Gerar pedido'}
-                          >
-                            <FileText className="h-4 w-4" />
-                          </Button>
-                        )}
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="text-destructive hover:bg-destructive/10"
+                          onClick={() => handleExcluirOportunidade(oportunidade.id)}
+                          title="Excluir oportunidade"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
