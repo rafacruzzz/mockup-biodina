@@ -983,36 +983,23 @@ const Comercial = () => {
                     </TableCell>
                     <TableCell>{oportunidade.fonteLead}</TableCell>
                     <TableCell>{oportunidade.segmento}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1">
-                          <Thermometer className="h-4 w-4" />
-                          <span className="text-sm font-medium">{oportunidade.termometro}°</span>
-                        </div>
-                        <div 
-                          className={`w-3 h-3 rounded-full ${getTermometroColor(oportunidade.termometro)}`}
-                          title={`Termômetro: ${oportunidade.termometro}°`}
-                        />
-                      </div>
-                    </TableCell>
                     <TableCell>{formatCurrency(oportunidade.valor)}</TableCell>
                     <TableCell>{oportunidade.dataAbertura}</TableCell>
+                    <TableCell>{oportunidade.dataEncerramento || '-'}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
                         <Button size="sm" variant="outline" onClick={() => handleEditOportunidade(oportunidade)}>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        {modalidade !== 'licitacao' && (
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            onClick={() => handleGerarPedido(oportunidade)}
-                            disabled={oportunidade.status !== 'Ganha'}
-                            title={oportunidade.status !== 'Ganha' ? 'Pedidos só podem ser gerados para oportunidades ganhas' : 'Gerar pedido'}
-                          >
-                            <FileText className="h-4 w-4" />
-                          </Button>
-                        )}
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="text-destructive hover:bg-destructive/10"
+                          onClick={() => handleExcluirOportunidade(oportunidade.id)}
+                          title="Excluir oportunidade"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
