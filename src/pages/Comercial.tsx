@@ -28,8 +28,10 @@ import {
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
   ShoppingCart, Headphones, ArrowLeft, Package, Truck, ClipboardList,
   AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal,
-  Gavel, Building2, Globe, HandCoins, FileSpreadsheet, Trash2 // FileSignature COMENTADO - NÃO USAR NO MOMENTO
+  Gavel, Building2, Globe, HandCoins, FileSpreadsheet, Trash2, Users // FileSignature COMENTADO - NÃO USAR NO MOMENTO
 } from "lucide-react";
+import { modules } from "@/data/cadastroModules";
+import EntidadeModal from "@/components/cadastro/EntidadeModal";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
