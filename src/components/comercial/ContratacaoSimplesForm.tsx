@@ -451,32 +451,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     setIsPedidoModalOpen(false);
   };
 
-  const adicionarConcorrente = () => {
-    setConcorrentes([...concorrentes, { 
-      nome: '', 
-      marca: '', 
-      modelo: '', 
-      quantidade: 0,
-      quantidadeExamesMes: 0
-    }]);
-  };
 
-  const removerConcorrente = (index: number) => {
-    setConcorrentes(concorrentes.filter((_, i) => i !== index));
-  };
 
-  const atualizarConcorrente = (index: number, campo: string, valor: any) => {
-    const novosConcorrentes = [...concorrentes];
-    novosConcorrentes[index] = { ...novosConcorrentes[index], [campo]: valor };
-    setConcorrentes(novosConcorrentes);
-  };
-
-  const getTermometroColor = (valor: number) => {
-    if (valor < 30) return 'bg-red-500';
-    if (valor < 60) return 'bg-yellow-500';
-    if (valor < 80) return 'bg-orange-500';
-    return 'bg-green-500';
-  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
