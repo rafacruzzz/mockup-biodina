@@ -1325,7 +1325,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     setFormData({ ...formData, analiseCientifica: updated });
   };
 
-  const getStatusIcon = (status: string) => {
+  const getACStatusIcon = (status: string) => {
     switch (status) {
       case 'Validado': return <CheckCircle2 className="h-4 w-4 text-green-600" />;
       case 'Parcialmente Validado': return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
@@ -1334,7 +1334,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getACStatusColor = (status: string) => {
     switch (status) {
       case 'Validado': return 'bg-green-500';
       case 'Parcialmente Validado': return 'bg-yellow-500';
