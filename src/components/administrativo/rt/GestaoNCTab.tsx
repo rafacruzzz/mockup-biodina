@@ -437,7 +437,7 @@ export function GestaoNCTab() {
 
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={handleCloseModal}>Cancelar</Button>
-                <Button onClick={handleSalvar}>Salvar Alterações</Button>
+                <Button onClick={handleSalvar}>{modoNovo ? 'Criar Não Conformidade' : 'Salvar Alterações'}</Button>
               </div>
             </div>
           )}
