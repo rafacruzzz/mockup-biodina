@@ -906,6 +906,7 @@ const Comercial = () => {
     const renderContent = () => {
       switch (activeTab) {
         case 'indicadores': return renderIndicadoresEAnalise();
+        case 'leads': return renderLeadsTab();
         case 'licitacao': return renderOportunidadesPorModalidade('licitacao');
         case 'contratacao': return renderContratacaoComSubAbas();
         case 'importacao': return renderOportunidadesPorModalidade('importacao_direta');
