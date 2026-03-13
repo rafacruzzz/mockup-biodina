@@ -8,14 +8,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { AlertCircle, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle2, Clock, Plus, XCircle } from "lucide-react";
 import { naoConformidadesRTMockadas, responsaveisNCRT } from "@/data/rtModules";
-import type { NaoConformidadeRT, ImpactoNCRT, StatusNCRT } from "@/types/rt";
+import type { NaoConformidadeRT, ImpactoNCRT, StatusNCRT, OrigemNCRT, TipoNCRT, StatusCAPART } from "@/types/rt";
 
 export function GestaoNCTab() {
   const [naoConformidades, setNaoConformidades] = useState(naoConformidadesRTMockadas);
   const [selectedNC, setSelectedNC] = useState<NaoConformidadeRT | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [modoNovo, setModoNovo] = useState(false);
 
   const handleOpenNC = (nc: NaoConformidadeRT) => {
     setSelectedNC({ ...nc });
