@@ -1,31 +1,81 @@
 
 
-## Plano: Link Externo para Aprovação de SPI pelo Cliente
+## Plano: Reestruturar aba "Dados Gerais" da Contratação
 
-### Resumo
-Criar um botão "Gerar Link Externo" na aba SPI do formulário de Importação Direta. Esse link leva o cliente a uma página pública e responsiva onde ele visualiza o resumo da SPI (somente leitura) e pode aprovar ou rejeitar, com campo de observação obrigatório em caso de rejeição. A decisão reflete automaticamente no campo "Aprovação do Cliente" dentro do sistema.
+### Situação atual
+A aba Dados Gerais tem layout confuso com cards separados: Licitação, Dados do Cliente (editável, muitos campos), Dados do Projeto (misturado com Segmento do Lead), Organização (tags, fluxo, status), Análise da Concorrência, e Representação Comercial. Campos são editáveis quando deveriam ser read-only.
 
-### Alterações
+### Alterações em `src/components/comercial/ContratacaoSimplesForm.tsx`
 
-**1. Nova página pública: `src/pages/AprovacaoSPIExterna.tsx`**
-- Rota pública `/aprovacao-spi/:linkId`
-- Layout responsivo, sem sidebar/login
-- Exibe em somente leitura os dados da SPI: cliente, CNPJ, endereço, número da SPI, data, fabricante, forma de pagamento, tabela de mercadorias com quantidades/valores, subtotal, packing, total, e observações
-- Dois botões: "Aprovar" e "Rejeitar"
-- Se rejeitar, campo de observação obrigatório aparece
-- Após decisão, tela de confirmação (sem possibilidade de alterar)
-- Dados armazenados em estado local (mock/front-end only, sem backend)
+**A - Selecionar Licitação** (manter como está, ok)
 
-**2. Alteração em `src/components/comercial/components/SPIForm.tsx`**
-- Na seção "Aprovação do Cliente", adicionar botão "Gerar Link Externo" (mesmo padrão já usado na Representação Comercial da Contratação)
-- Gera URL com código único: `/aprovacao-spi/{codigo}`
-- Exibe o link gerado com botão de copiar
-- Manter os campos existentes inalterados
+**B - Dados do Cliente** (linhas ~656-763)
+- Transformar em bloco resumido **read-only** logo abaixo da licitação (sem card separado, sem separação visual forte)
+- Campos exibidos como texto (não inputs): CNPJ, Nome Fantasia, Razão Social, Endereço/UF, Email, Telefone
+- **Adicionar campo "Segmento do Cliente"** (read-only, vem do cadastro do cliente/lead)
+- Remover checkbox "Cliente Ativo" e campo "Website"
 
-**3. Alteração em `src/App.tsx`**
-- Adicionar rota pública: `<Route path="/aprovacao-spi/:linkId" element={<AprovacaoSPIExterna />} />`
+**C - Dados do Projeto** (reorganizar completamente, abaixo dos dados do cliente)
+Nova ordem dos campos dentro do card:
+1. **Segmento** (select - não é "segmento do lead", é segmento do projeto)
+2. **Contrato** (número/referência do contrato - novo campo)
+3. **Aditivos Contratuais** + botão "+Novo Aditivo" (já existe, mover para cá)
+4. **Valor Original do Contrato** (já existe como `valorNegocio`, manter disabled)
+5. **Previsão de Consumo Mensal** (já existe)
+6. **Contato Comercial do Cliente** - transformar em lista dinâmica com botão "+Adicionar Contato" (nome, cargo/função, telefone, email por contato)
+7. **Representantes Vinculados** - mover de card separado para cá, como lista com nome do representante
+8. **Percentuais de Comissão** - para cada representante, campo de % ao lado
+9. **Colaboradores Responsáveis pela Gestão** - lista dinâmica com botão "+Adicionar Colaborador" (select de colaboradores)
 
-**4. Estado compartilhado (mock)**
-- Como não há backend, a página externa simulará os dados da SPI com valores de exemplo
-- O status de aprovação/rejeição será exibido na tela de confirmação mas não persistirá entre sessões (comportamento mock)
+**D - Remover card "Organização"** (linhas ~974-1055)
+- Remover completamente: Tags, Fluxo de Trabalho, Status, Motivo Ganho/Perda, Descrição
+- Esses campos serão tratados em aba futura de Lead
+
+**E - Resumo Biodina Rep** (novo bloco)
+- Adicionar card abaixo de Dados do Projeto com título "Resumo Biodina Rep"
+- Conteúdo placeholder: mensagem "Dados disponíveis após aval da Gerência Comercial" com badge "Integração Pendente"
+- Campo de link externo do representante (já existe em Representação Comercial, mover para cá)
+
+**Remover também:**
+- Card "Análise da Concorrência" (linhas ~1057-1175) - mover/manter em outra aba se necessário
+- Card "Representação Comercial" separado (linhas ~1177-1306) - conteúdo migrado para Dados do Projeto
+
+### Novos estados no formData
+- `segmentoProjeto` (string)
+- `numeroContrato` (string)  
+- `contatosComerciais` (array de `{nome, cargo, telefone, email}`)
+- `representantesVinculados` (array de `{nome, percentualComissao}`)
+- `colaboradoresGestao` (array de strings - IDs de colaboradores)
+
+### Resultado visual esperado
+```text
+┌─────────────────────────────────────────────┐
+│ Vincular Licitação Ganha          [Select]  │
+│ ✅ Vinculada à PE-001/2025                  │
+├─────────────────────────────────────────────┤
+│ Dados do Cliente (read-only, compacto)      │
+│ CNPJ: 00.000/0001-00  Nome: Hospital X     │
+│ Endereço: São Paulo-SP  Segmento: Hosp.Púb │
+├─────────────────────────────────────────────┤
+│ Dados do Projeto                            │
+│ Segmento [select]    Contrato [input]       │
+│ ┌ Aditivos Contratuais    [+Novo Aditivo] ┐│
+│ │ tabela de aditivos                       ││
+│ └──────────────────────────────────────────┘│
+│ Valor Original: R$ 150.000   Consumo: 500  │
+│ ┌ Contatos Comerciais     [+Add Contato]  ┐│
+│ │ Nome | Cargo | Tel | Email               ││
+│ └──────────────────────────────────────────┘│
+│ ┌ Representantes          [+Add Rep]      ┐│
+│ │ Nome | Comissão %                        ││
+│ └──────────────────────────────────────────┘│
+│ ┌ Colaboradores Gestão    [+Add Colab]    ┐│
+│ │ Nome do colaborador                      ││
+│ └──────────────────────────────────────────┘│
+├─────────────────────────────────────────────┤
+│ Resumo Biodina Rep                          │
+│ ⚠ Integração Pendente - Aguardando aval   │
+│ da Gerência Comercial                       │
+└─────────────────────────────────────────────┘
+```
 
