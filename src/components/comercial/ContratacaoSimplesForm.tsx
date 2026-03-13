@@ -270,7 +270,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const somaAditivos = aditivos.reduce((sum, a) => sum + a.valor, 0);
   const valorAtualizado = valorOriginal + somaAditivos;
 
-  const [concorrentes, setConcorrentes] = useState(oportunidade?.concorrentes || []);
+  
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
