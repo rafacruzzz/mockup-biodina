@@ -1287,69 +1287,9 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         </div>
       </div>
 
-      {/* Estratégia e Planejamento */}
-      <div className="border rounded-lg p-4 space-y-4 bg-green-50">
-        <h3 className="text-lg font-semibold text-gray-800">Estratégia e Planejamento</h3>
-        
-        <div>
-          <Label htmlFor="estrategiaParticipacao">Estratégia de Participação</Label>
-          <Textarea
-            id="estrategiaParticipacao"
-            value={formData.estrategiaParticipacao}
-            onChange={(e) => setFormData({...formData, estrategiaParticipacao: e.target.value})}
-            placeholder="Descreva a estratégia para participação nesta oportunidade..."
-            rows={4}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-        
-        <div>
-          <Label htmlFor="planejamentoComercial">Planejamento Comercial</Label>
-          <Textarea
-            id="planejamentoComercial"
-            value={formData.planejamentoComercial}
-            onChange={(e) => setFormData({...formData, planejamentoComercial: e.target.value})}
-            placeholder="Detalhe o planejamento comercial para esta oportunidade..."
-            rows={4}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
-      </div>
-
-      {/* Dados Técnicos */}
+      {/* Resultado e Observações */}
       <div className="border rounded-lg p-4 space-y-4">
-        <h3 className="text-lg font-semibold text-gray-800">Dados Técnicos</h3>
-        
-        <div>
-          <Label>Termômetro ({formData.termometro}°)</Label>
-          <div className="mt-2 space-y-2">
-            <div className="flex items-center gap-4">
-              <Slider
-                value={[formData.termometro]}
-                onValueChange={(value) => setFormData({...formData, termometro: value[0]})}
-                max={100}
-                min={0}
-                step={5}
-                className="flex-1"
-                disabled={isReadOnlyMode()}
-              />
-              <div 
-                className="w-6 h-6 rounded-full border-2 border-white shadow-lg"
-                style={{ backgroundColor: getTermometroColor(formData.termometro) }}
-              />
-            </div>
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>0°</span>
-              <span>25°</span>
-              <span>50°</span>
-              <span>75°</span>
-              <span>100°</span>
-            </div>
-            <p className="text-sm font-medium" style={{ color: getTermometroColor(formData.termometro) }}>
-              {getTermometroStage(formData.termometro)}
-            </p>
-          </div>
-        </div>
+        <h3 className="text-lg font-semibold text-foreground">Resultado e Observações</h3>
 
         <div>
           <Label htmlFor="resultadoOportunidade">Resultado da Licitação</Label>
@@ -1423,16 +1363,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             rows={4}
             disabled={isReadOnlyMode()}
           />
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="propostaNegociacao" 
-            checked={formData.propostaNegociacao}
-            onCheckedChange={(checked) => setFormData({...formData, propostaNegociacao: checked as boolean})}
-            disabled={isReadOnlyMode()}
-          />
-          <Label htmlFor="propostaNegociacao">Proposta em Negociação</Label>
         </div>
       </div>
     </div>
