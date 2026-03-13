@@ -964,9 +964,9 @@ const Comercial = () => {
                   <TableHead>Status</TableHead>
                   <TableHead>Fonte</TableHead>
                   <TableHead>Segmento</TableHead>
-                  <TableHead>Termômetro</TableHead>
-                  <TableHead>Valor</TableHead>
+                  <TableHead>Valor do Projeto</TableHead>
                   <TableHead>Data Abertura</TableHead>
+                  <TableHead>Data Encerramento</TableHead>
                   <TableHead>Ações</TableHead>
                 </TableRow>
               </TableHeader>
