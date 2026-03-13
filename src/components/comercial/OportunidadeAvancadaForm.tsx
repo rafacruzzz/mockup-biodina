@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle, CheckCircle2, XCircle, Scale, FlaskConical } from "lucide-react";
+import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle, CheckCircle2, XCircle, Scale, FlaskConical, BarChart3 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -100,6 +100,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   const [solicitouEsclarecimento, setSolicitouEsclarecimento] = useState(false);
   const [solicitouImpugnacao, setSolicitouImpugnacao] = useState(false);
   const [solicitouAnaliseCientifica, setSolicitouAnaliseCientifica] = useState(false);
+  const [solicitouAnaliseGerencial, setSolicitouAnaliseGerencial] = useState(false);
   
   // Estados para modais
   const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
@@ -808,6 +809,18 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               <FlaskConical className="h-4 w-4" />
               {solicitouAnaliseCientifica ? "✓ Análise Científica Solicitada" : "Solicitar Análise da Assessoria Científica"}
             </Button>
+            <Button
+              variant={solicitouAnaliseGerencial ? "secondary" : "outline"}
+              onClick={() => {
+                setSolicitouAnaliseGerencial(true);
+                toast({ title: "Solicitação enviada", description: "Análise Gerencial solicitada ao Gerente Comercial com sucesso." });
+              }}
+              disabled={isReadOnlyMode() || solicitouAnaliseGerencial}
+              className="gap-2"
+            >
+              <BarChart3 className="h-4 w-4" />
+              {solicitouAnaliseGerencial ? "✓ Análise Gerencial Solicitada" : "Solicitar Análise Gerencial"}
+            </Button>
           </CardContent>
         </Card>
 
@@ -981,45 +994,64 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           />
         </div>
 
-        {/* Estratégia Comercial (read-only, editável na aba AG) */}
-        <div>
-          <Label htmlFor="estrategiaComercialDG">Estratégia Comercial</Label>
-          <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
-          <Textarea
-            id="estrategiaComercialDG"
-            value={formData.estrategiaComercialAG}
-            readOnly
-            placeholder="Preenchido pela Análise Gerencial (aba AG)"
-            rows={3}
-            className="bg-muted/50"
-          />
-        </div>
+        {/* Campos AG (read-only, só aparecem após solicitar) */}
+        {solicitouAnaliseGerencial && (
+          <>
+            {/* Empresa Participante (read-only, da seleção na aba AG) */}
+            {empresaParticipante.empresaParticipanteNome && (
+              <div>
+                <Label htmlFor="empresaParticipanteDG">Empresa Participante</Label>
+                <p className="text-xs text-muted-foreground mb-1">Definida na aba AG</p>
+                <Input
+                  id="empresaParticipanteDG"
+                  value={`${empresaParticipante.empresaParticipanteNome} - ${empresaParticipante.empresaParticipanteCNPJ}`}
+                  readOnly
+                  className="bg-muted/50"
+                />
+              </div>
+            )}
 
-        {/* Valor de Entrada e Valor Limite (read-only, editável na aba AG) */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="valorEntradaDG">Valor de Entrada (R$)</Label>
-            <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
-            <Input
-              id="valorEntradaDG"
-              type="number"
-              value={formData.valorEntradaAG}
-              readOnly
-              className="bg-muted/50"
-            />
-          </div>
-          <div>
-            <Label htmlFor="valorLimiteDG">Valor Limite (R$)</Label>
-            <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
-            <Input
-              id="valorLimiteDG"
-              type="number"
-              value={formData.valorLimiteAG}
-              readOnly
-              className="bg-muted/50"
-            />
-          </div>
-        </div>
+            {/* Estratégia Comercial (read-only, editável na aba AG) */}
+            <div>
+              <Label htmlFor="estrategiaComercialDG">Estratégia Comercial</Label>
+              <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
+              <Textarea
+                id="estrategiaComercialDG"
+                value={formData.estrategiaComercialAG}
+                readOnly
+                placeholder="Preenchido pela Análise Gerencial (aba AG)"
+                rows={3}
+                className="bg-muted/50"
+              />
+            </div>
+
+            {/* Valor de Entrada e Valor Limite (read-only, editável na aba AG) */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="valorEntradaDG">Valor de Entrada (R$)</Label>
+                <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
+                <Input
+                  id="valorEntradaDG"
+                  type="number"
+                  value={formData.valorEntradaAG}
+                  readOnly
+                  className="bg-muted/50"
+                />
+              </div>
+              <div>
+                <Label htmlFor="valorLimiteDG">Valor Limite (R$)</Label>
+                <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
+                <Input
+                  id="valorLimiteDG"
+                  type="number"
+                  value={formData.valorLimiteAG}
+                  readOnly
+                  className="bg-muted/50"
+                />
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Análise Científica (read-only, só aparece após solicitar) */}
         {solicitouAnaliseCientifica && (formData.analiseCientifica || []).length > 0 && (
