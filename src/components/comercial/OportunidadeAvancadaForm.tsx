@@ -1264,6 +1264,46 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     </div>
   );
 
+  const perguntasCientificas = [
+    "Identificação dos diferenciais técnicos do produto",
+    "Levantamento de concorrentes diretos e indiretos",
+    "Avaliação do nível de qualidade (comparação com padrões nacionais e internacionais)",
+    "Avaliação do nível de modernidade (tendência, atualização tecnológica)",
+    "Parecer pessoal do assessor científico (no mínimo 3 assessores indicado pelo gestor)",
+    "Observações gerais"
+  ];
+
+  const handleAnaliseCientificaChange = (index: number, field: string, value: string) => {
+    const updated = [...(formData.analiseCientifica || [])];
+    if (!updated[index]) {
+      updated[index] = {};
+    }
+    updated[index] = {
+      ...updated[index],
+      pergunta: perguntasCientificas[index],
+      [field]: value
+    };
+    setFormData({ ...formData, analiseCientifica: updated });
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'Validado': return <CheckCircle2 className="h-4 w-4 text-green-600" />;
+      case 'Parcialmente Validado': return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
+      case 'Não Validado': return <XCircle className="h-4 w-4 text-red-600" />;
+      default: return null;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Validado': return 'bg-green-500';
+      case 'Parcialmente Validado': return 'bg-yellow-500';
+      case 'Não Validado': return 'bg-red-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
   const renderAnaliseTecnica = () => (
     <div className="space-y-6">
       <div>
@@ -1284,6 +1324,134 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         )}
       </div>
 
+      {/* Análise Científica - 6 Questões */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Análise Científica do Produto</CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Avalie os aspectos técnicos, competitivos e de qualidade do produto para análise científica.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            {perguntasCientificas.map((pergunta, index) => {
+              const analise = (formData.analiseCientifica || [])[index] || {};
+              return (
+                <Card key={index} className="border-l-4 border-l-blue-500">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm mb-1">Questão {index + 1}</h4>
+                        <p className="text-sm text-muted-foreground">{pergunta}</p>
+                      </div>
+                      {analise.statusValidacao && (
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(analise.statusValidacao)}
+                          <Badge className={getStatusColor(analise.statusValidacao) + " text-white"}>
+                            {analise.statusValidacao}
+                          </Badge>
+                        </div>
+                      )}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor={`ac-resposta-${index}`}>Resposta *</Label>
+                      <Textarea
+                        id={`ac-resposta-${index}`}
+                        value={analise.resposta || ""}
+                        onChange={(e) => handleAnaliseCientificaChange(index, 'resposta', e.target.value)}
+                        placeholder="Forneça uma resposta detalhada para esta questão..."
+                        rows={4}
+                        disabled={isReadOnlyMode()}
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor={`ac-status-${index}`}>Status de Validação *</Label>
+                        <Select
+                          value={analise.statusValidacao || ""}
+                          onValueChange={(value) => handleAnaliseCientificaChange(index, 'statusValidacao', value)}
+                          disabled={isReadOnlyMode()}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Validado">
+                              <div className="flex items-center gap-2">
+                                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                                Validado
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="Parcialmente Validado">
+                              <div className="flex items-center gap-2">
+                                <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                                Parcialmente Validado
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="Não Validado">
+                              <div className="flex items-center gap-2">
+                                <XCircle className="h-4 w-4 text-red-600" />
+                                Não Validado
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor={`ac-obs-${index}`}>Observações</Label>
+                        <Textarea
+                          id={`ac-obs-${index}`}
+                          value={analise.observacoes || ""}
+                          onChange={(e) => handleAnaliseCientificaChange(index, 'observacoes', e.target.value)}
+                          placeholder="Observações adicionais..."
+                          rows={3}
+                          disabled={isReadOnlyMode()}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Resumo da Análise Científica */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Resumo da Análise Científica</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {['Validado', 'Parcialmente Validado', 'Não Validado'].map((status) => {
+              const count = (formData.analiseCientifica || []).filter((a: any) => a?.statusValidacao === status).length;
+              return (
+                <div key={status} className="text-center">
+                  <div className={`w-12 h-12 rounded-full ${getStatusColor(status)} mx-auto mb-2 flex items-center justify-center text-white font-bold text-lg`}>
+                    {count}
+                  </div>
+                  <p className="text-sm font-medium">{status}</p>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+            <h4 className="font-medium mb-2">Conclusão da Análise Científica</h4>
+            <Textarea
+              value={formData.conclusaoAnaliseCientifica || ""}
+              onChange={(e) => setFormData({ ...formData, conclusaoAnaliseCientifica: e.target.value })}
+              placeholder="Escreva uma conclusão geral da análise científica..."
+              rows={4}
+              disabled={isReadOnlyMode()}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Análise da Concorrência */}
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold">Análise da Concorrência</h3>
