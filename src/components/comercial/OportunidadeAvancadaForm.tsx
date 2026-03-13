@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle, CheckCircle2, XCircle } from "lucide-react";
+import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle, CheckCircle2, XCircle, Scale, FlaskConical } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -95,6 +95,11 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     return labels[status] || status;
   };
   const [showEmprestimoAlert, setShowEmprestimoAlert] = useState(false);
+  
+  // Estados de solicitação
+  const [solicitouEsclarecimento, setSolicitouEsclarecimento] = useState(false);
+  const [solicitouImpugnacao, setSolicitouImpugnacao] = useState(false);
+  const [solicitouAnaliseCientifica, setSolicitouAnaliseCientifica] = useState(false);
   
   // Estados para modais
   const [showLicitacaoModal, setShowLicitacaoModal] = useState(false);
@@ -760,22 +765,51 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           />
         </div>
 
-        <div className="flex items-start space-x-2">
-          <Checkbox 
-            id="solicitarAnaliseTecnica"
-            checked={formData.solicitarAnaliseTecnica}
-            onCheckedChange={handleSolicitarAnaliseTecnica}
-            disabled={isReadOnlyMode()}
-          />
-          <div className="grid gap-1.5 leading-none">
-            <Label htmlFor="solicitarAnaliseTecnica" className="text-sm font-medium">
-              Solicitar análise técnica
-            </Label>
-            <p className="text-xs text-muted-foreground">
-              Enviar notificação para responsáveis pela análise técnica preencherem os campos necessários
-            </p>
-          </div>
-        </div>
+        {/* Botões de Solicitação */}
+        <Card className="bg-muted/30">
+          <CardHeader>
+            <CardTitle className="text-base">Solicitações de Análise</CardTitle>
+            <p className="text-xs text-muted-foreground">Clique nos botões abaixo para solicitar as análises necessárias</p>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-3">
+            <Button
+              variant={solicitouEsclarecimento ? "secondary" : "outline"}
+              onClick={() => {
+                setSolicitouEsclarecimento(true);
+                toast({ title: "Solicitação enviada", description: "Análise Jurídica - Pedido de Esclarecimento solicitado com sucesso." });
+              }}
+              disabled={isReadOnlyMode() || solicitouEsclarecimento}
+              className="gap-2"
+            >
+              <Scale className="h-4 w-4" />
+              {solicitouEsclarecimento ? "✓ Esclarecimento Solicitado" : "Solicitar Análise Jurídica - Pedido de Esclarecimento"}
+            </Button>
+            <Button
+              variant={solicitouImpugnacao ? "secondary" : "outline"}
+              onClick={() => {
+                setSolicitouImpugnacao(true);
+                toast({ title: "Solicitação enviada", description: "Análise Jurídica - Impugnação do Edital solicitada com sucesso." });
+              }}
+              disabled={isReadOnlyMode() || solicitouImpugnacao}
+              className="gap-2"
+            >
+              <Scale className="h-4 w-4" />
+              {solicitouImpugnacao ? "✓ Impugnação Solicitada" : "Solicitar Análise Jurídica - Impugnação do Edital"}
+            </Button>
+            <Button
+              variant={solicitouAnaliseCientifica ? "secondary" : "outline"}
+              onClick={() => {
+                setSolicitouAnaliseCientifica(true);
+                toast({ title: "Solicitação enviada", description: "Análise da Assessoria Científica solicitada com sucesso." });
+              }}
+              disabled={isReadOnlyMode() || solicitouAnaliseCientifica}
+              className="gap-2"
+            >
+              <FlaskConical className="h-4 w-4" />
+              {solicitouAnaliseCientifica ? "✓ Análise Científica Solicitada" : "Solicitar Análise da Assessoria Científica"}
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* 1. Análise Técnica */}
         <div>
@@ -887,33 +921,37 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </CardContent>
         </Card>
 
-        {/* Pedido de Esclarecimento (read-only, editável na aba AJ) */}
-        <div>
-          <Label htmlFor="pedidoEsclarecimentoDG">Pedido de Esclarecimento</Label>
-          <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
-          <Textarea
-            id="pedidoEsclarecimentoDG"
-            value={formData.pedidoEsclarecimento}
-            readOnly
-            placeholder="Preenchido pela Análise Jurídica (aba AJ)"
-            rows={3}
-            className="bg-muted/50"
-          />
-        </div>
+        {/* Pedido de Esclarecimento (read-only, só aparece após solicitar) */}
+        {solicitouEsclarecimento && (
+          <div>
+            <Label htmlFor="pedidoEsclarecimentoDG">Pedido de Esclarecimento</Label>
+            <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
+            <Textarea
+              id="pedidoEsclarecimentoDG"
+              value={formData.pedidoEsclarecimento}
+              readOnly
+              placeholder="Preenchido pela Análise Jurídica (aba AJ)"
+              rows={3}
+              className="bg-muted/50"
+            />
+          </div>
+        )}
 
-        {/* 5. Impugnação do Edital (read-only, editável na aba AJ) */}
-        <div>
-          <Label htmlFor="impugnacaoEditalDG">Impugnação do Edital</Label>
-          <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
-          <Textarea
-            id="impugnacaoEditalDG"
-            value={formData.impugnacaoEdital}
-            readOnly
-            placeholder="Preenchido pela Análise Jurídica (aba AJ)"
-            rows={3}
-            className="bg-muted/50"
-          />
-        </div>
+        {/* Impugnação do Edital (read-only, só aparece após solicitar) */}
+        {solicitouImpugnacao && (
+          <div>
+            <Label htmlFor="impugnacaoEditalDG">Impugnação do Edital</Label>
+            <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
+            <Textarea
+              id="impugnacaoEditalDG"
+              value={formData.impugnacaoEdital}
+              readOnly
+              placeholder="Preenchido pela Análise Jurídica (aba AJ)"
+              rows={3}
+              className="bg-muted/50"
+            />
+          </div>
+        )}
 
         {/* 6. Razões para Recurso (read-only, editável na aba AJ) */}
         <div>
@@ -983,8 +1021,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </div>
         </div>
 
-        {/* Análise Científica (read-only, editável na aba AC) */}
-        {(formData.analiseCientifica || []).length > 0 && (
+        {/* Análise Científica (read-only, só aparece após solicitar) */}
+        {solicitouAnaliseCientifica && (formData.analiseCientifica || []).length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Análise Científica (AC)</CardTitle>
