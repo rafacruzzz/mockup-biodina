@@ -970,39 +970,37 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                     <p className="text-xs text-muted-foreground italic">Resumo da análise completa disponível no BiodinaRep</p>
                   </div>
 
-                  <div className="flex flex-col gap-2 p-3 rounded-md border border-dashed border-muted-foreground/30 bg-muted/30">
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const code = crypto.randomUUID().slice(0, 8);
-                          setLinkExternoRepresentacao(`${window.location.origin}/representacao/${code}`);
-                          toast.success('Link externo gerado com sucesso!');
-                        }}
-                      >
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Gerar Link Externo
-                      </Button>
-                      <span className="text-xs text-muted-foreground">Envie este link para o representante preencher as informações</span>
-                    </div>
-                    {linkExternoRepresentacao && (
+                  {/* 2 - Agenda Comercial */}
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold text-foreground">2 - Agenda Comercial</h4>
+                    
+                    <div className="rounded-lg border border-border p-4 space-y-3">
                       <div className="flex items-center gap-2">
-                        <code className="text-xs bg-background px-2 py-1 rounded border flex-1 truncate">{linkExternoRepresentacao}</code>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={async () => {
-                            await navigator.clipboard.writeText(linkExternoRepresentacao);
-                            toast.success('Link copiado!');
-                          }}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <p className="text-sm font-medium text-foreground">Histórico de Visitas</p>
                       </div>
-                    )}
+
+                      <div className="border rounded-md overflow-hidden">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="bg-muted/50 border-b">
+                              <th className="text-left px-3 py-2 font-medium text-muted-foreground">Data da Visita</th>
+                              <th className="text-left px-3 py-2 font-medium text-muted-foreground">Representante</th>
+                              <th className="text-left px-3 py-2 font-medium text-muted-foreground">Observações</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td colSpan={3} className="text-center py-6 text-muted-foreground text-sm">
+                                Nenhuma visita registrada
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <p className="text-xs text-muted-foreground italic">Detalhamento completo disponível no BiodinaRep</p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
