@@ -28,8 +28,10 @@ import {
   DollarSign, Calendar, Phone, MapPin, Briefcase, Eye, Thermometer, Filter,
   ShoppingCart, Headphones, ArrowLeft, Package, Truck, ClipboardList,
   AlertTriangle, UserCheck, Clock, CreditCard, Flame, Rocket, Trophy, Medal,
-  Gavel, Building2, Globe, HandCoins, FileSpreadsheet, Trash2 // FileSignature COMENTADO - NÃO USAR NO MOMENTO
+  Gavel, Building2, Globe, HandCoins, FileSpreadsheet, Trash2, Users // FileSignature COMENTADO - NÃO USAR NO MOMENTO
 } from "lucide-react";
+import { modules } from "@/data/cadastroModules";
+import EntidadeModal from "@/components/cadastro/EntidadeModal";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
@@ -57,6 +59,8 @@ const Comercial = () => {
   const [showContratacaoSimplesForm, setShowContratacaoSimplesForm] = useState(false);
   const [showImportacaoDiretaForm, setShowImportacaoDiretaForm] = useState(false);
   const [subAbaContratacao, setSubAbaContratacao] = useState<'contratacoes' | 'pedidos'>('contratacoes');
+  const [showLeadModal, setShowLeadModal] = useState(false);
+  const [leadsSearchTerm, setLeadsSearchTerm] = useState('');
   // const [showAssinaturas, setShowAssinaturas] = useState(false); // COMENTADO - NÃO USAR NO MOMENTO
 
   // Mock data com empresaId para filtrar por empresa
@@ -782,11 +786,95 @@ const Comercial = () => {
   const renderVendasModule = () => {
     const tabs = [
       { id: 'indicadores', label: 'Indicadores Comerciais e Análise de Conversão', icon: BarChart3 },
+      { id: 'leads', label: 'Leads', icon: Users },
       { id: 'licitacao', label: 'Licitação', icon: Gavel },
       { id: 'contratacao', label: 'Contratação', icon: Building2 },
       { id: 'importacao', label: 'Importação Direta', icon: Globe },
       { id: 'emprestimos', label: 'Gestão de Empréstimos', icon: HandCoins },
     ];
+
+    const leadsData = modules.pessoas.subModules.leads.data;
+    const filteredLeads = leadsData.filter(lead =>
+      Object.values(lead).some(val =>
+        String(val).toLowerCase().includes(leadsSearchTerm.toLowerCase())
+      )
+    );
+
+    const renderLeadsTab = () => (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-foreground">Leads</h2>
+          <Button onClick={() => setShowLeadModal(true)} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Novo Lead
+          </Button>
+        </div>
+
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Buscar leads..."
+            value={leadsSearchTerm}
+            onChange={(e) => setLeadsSearchTerm(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+
+        <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/50">
+                <TableHead className="font-semibold">Nome</TableHead>
+                <TableHead className="font-semibold">CNPJ</TableHead>
+                <TableHead className="font-semibold">Cidade</TableHead>
+                <TableHead className="font-semibold">UF</TableHead>
+                <TableHead className="font-semibold">Telefone</TableHead>
+                <TableHead className="font-semibold">E-mail</TableHead>
+                <TableHead className="font-semibold text-center">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredLeads.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                    Nenhum lead encontrado
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredLeads.map((lead) => (
+                  <TableRow key={lead.id} className="hover:bg-muted/30 transition-colors">
+                    <TableCell className="font-medium">{lead.nome}</TableCell>
+                    <TableCell>{lead.cnpj}</TableCell>
+                    <TableCell>{lead.cidade}</TableCell>
+                    <TableCell>{lead.uf}</TableCell>
+                    <TableCell>{lead.telefone}</TableCell>
+                    <TableCell>{lead.email}</TableCell>
+                    <TableCell className="text-center">
+                      <div className="flex justify-center gap-1">
+                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                          <Eye className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                          <Edit className="h-4 w-4 text-muted-foreground" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        {showLeadModal && (
+          <EntidadeModal
+            isOpen={showLeadModal}
+            onClose={() => setShowLeadModal(false)}
+            tipoEntidade="leads"
+          />
+        )}
+      </div>
+    );
 
     const renderContratacaoComSubAbas = () => (
       <div className="space-y-4">
@@ -818,6 +906,7 @@ const Comercial = () => {
     const renderContent = () => {
       switch (activeTab) {
         case 'indicadores': return renderIndicadoresEAnalise();
+        case 'leads': return renderLeadsTab();
         case 'licitacao': return renderOportunidadesPorModalidade('licitacao');
         case 'contratacao': return renderContratacaoComSubAbas();
         case 'importacao': return renderOportunidadesPorModalidade('importacao_direta');
