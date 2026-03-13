@@ -225,6 +225,11 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     
     // Campo para solicitação de análise técnica
     solicitarAnaliseTecnica: oportunidade?.solicitarAnaliseTecnica || false,
+    
+    // Campos da Análise Gerencial (AG)
+    estrategiaComercialAG: oportunidade?.estrategiaComercialAG || '',
+    valorEntradaAG: oportunidade?.valorEntradaAG || 0,
+    valorLimiteAG: oportunidade?.valorLimiteAG || 0,
   });
 
 
