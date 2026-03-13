@@ -322,10 +322,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       website: licitacao.linkEdital || '',
       fonteLead: 'licitacao',
       valorNegocio: licitacao.estrategiaValorFinal,
-      tags: licitacao.palavraChave,
-      fluxoTrabalho: `Contrato derivado da licitação ${licitacao.numeroPregao}`,
-      status: 'ganha',
-      descricao: licitacao.resumoEdital,
       analiseTecnica: licitacao.analiseTecnica
     }));
   };
