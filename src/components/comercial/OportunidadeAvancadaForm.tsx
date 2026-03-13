@@ -1021,8 +1021,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </div>
         </div>
 
-        {/* Análise Científica (read-only, editável na aba AC) */}
-        {(formData.analiseCientifica || []).length > 0 && (
+        {/* Análise Científica (read-only, só aparece após solicitar) */}
+        {solicitouAnaliseCientifica && (formData.analiseCientifica || []).length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Análise Científica (AC)</CardTitle>
