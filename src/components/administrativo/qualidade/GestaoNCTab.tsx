@@ -184,8 +184,12 @@ export const GestaoNCTab = () => {
       </div>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Não Conformidades Abertas</CardTitle>
+          <Button onClick={handleNovaNC} size="sm">
+            <Plus className="w-4 h-4 mr-1" />
+            Nova Não Conformidade
+          </Button>
         </CardHeader>
         <CardContent>
           <Table>
