@@ -234,10 +234,10 @@ export const GestaoNCTab = () => {
       </Card>
 
       {/* Modal de Detalhes da NC */}
-      <Dialog open={modalAberto} onOpenChange={setModalAberto}>
+      <Dialog open={modalAberto} onOpenChange={(open) => { setModalAberto(open); if (!open) { setModoNovo(false); setNcSelecionada(null); } }}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Detalhes da Não Conformidade - {ncSelecionada?.numeroNC}</DialogTitle>
+            <DialogTitle>{modoNovo ? 'Nova Não Conformidade' : `Detalhes da Não Conformidade - ${ncSelecionada?.numeroNC}`}</DialogTitle>
           </DialogHeader>
           
           {ncSelecionada && (
@@ -246,11 +246,32 @@ export const GestaoNCTab = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>Data da NC</Label>
-                  <Input value={format(ncSelecionada.dataCriacao, 'dd/MM/yyyy')} disabled />
+                  {modoNovo ? (
+                    <Input
+                      type="date"
+                      value={format(ncSelecionada.dataCriacao, 'yyyy-MM-dd')}
+                      onChange={(e) => setNcSelecionada({ ...ncSelecionada, dataCriacao: new Date(e.target.value) })}
+                    />
+                  ) : (
+                    <Input value={format(ncSelecionada.dataCriacao, 'dd/MM/yyyy')} disabled />
+                  )}
                 </div>
                 <div>
                   <Label>Origem</Label>
-                  <Input value={ncSelecionada.origem} disabled />
+                  {modoNovo ? (
+                    <Select value={ncSelecionada.origem} onValueChange={(val: OrigemNC) => setNcSelecionada({ ...ncSelecionada, origem: val })}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Pesquisa">Pesquisa</SelectItem>
+                        <SelectItem value="Auditoria">Auditoria</SelectItem>
+                        <SelectItem value="Outro">Outro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input value={ncSelecionada.origem} disabled />
+                  )}
                 </div>
               </div>
 
