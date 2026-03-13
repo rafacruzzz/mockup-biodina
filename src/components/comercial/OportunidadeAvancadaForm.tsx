@@ -983,6 +983,45 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </div>
         </div>
 
+        {/* Análise Científica (read-only, editável na aba AC) */}
+        {(formData.analiseCientifica || []).length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Análise Científica (AC)</CardTitle>
+              <p className="text-xs text-muted-foreground">Editável na aba AC</p>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {(formData.analiseCientifica || []).map((analise: any, index: number) => (
+                analise?.resposta && (
+                  <div key={index} className="p-3 border rounded-lg bg-muted/50 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-sm font-medium">Questão {index + 1}: {analise.pergunta}</p>
+                      {analise.statusValidacao && (
+                        <Badge className={
+                          (analise.statusValidacao === 'Validado' ? 'bg-green-500' :
+                           analise.statusValidacao === 'Parcialmente Validado' ? 'bg-yellow-500' : 'bg-red-500') + ' text-white'
+                        }>
+                          {analise.statusValidacao}
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{analise.resposta}</p>
+                    {analise.observacoes && (
+                      <p className="text-xs text-muted-foreground italic">Obs: {analise.observacoes}</p>
+                    )}
+                  </div>
+                )
+              ))}
+              {formData.conclusaoAnaliseCientifica && (
+                <div className="p-3 border rounded-lg bg-muted/50">
+                  <p className="text-sm font-medium mb-1">Conclusão</p>
+                  <p className="text-sm text-muted-foreground">{formData.conclusaoAnaliseCientifica}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Tabelas de Licitantes */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
