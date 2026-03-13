@@ -557,31 +557,33 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                 <FileText className="h-4 w-4" />
                 Dados Gerais
               </TabsTrigger>
-              <TabsTrigger value="empenho" className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4" />
-                Empenho
+              <TabsTrigger value="documentos" className="flex items-center gap-2">
+                <Upload className="h-4 w-4" />
+                Documentos
               </TabsTrigger>
-              {oportunidade && (
-                <TabsTrigger value="saldo-cliente" className="flex items-center gap-2">
-                  <Wallet className="h-4 w-4" />
-                  Saldo do Cliente
-                </TabsTrigger>
-              )}
               <TabsTrigger value="analise-tecnica" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
-                Assessoria Científica
+                AC
               </TabsTrigger>
               <TabsTrigger value="dt" className="flex items-center gap-2">
                 <Wrench className="h-4 w-4" />
                 DT
               </TabsTrigger>
+              <TabsTrigger value="analise-juridica" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                AJ
+              </TabsTrigger>
+              <TabsTrigger value="analise-gerencial" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                AG
+              </TabsTrigger>
               <TabsTrigger value="historico-chat" className="flex items-center gap-2">
                 <MessageSquare className="h-4 w-4" />
                 Histórico/Chat
               </TabsTrigger>
-              <TabsTrigger value="documentos" className="flex items-center gap-2">
-                <Upload className="h-4 w-4" />
-                Documentos
+              <TabsTrigger value="empenho" className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4" />
+                Empenho
               </TabsTrigger>
               <TabsTrigger value="pedidos" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
@@ -590,10 +592,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               <TabsTrigger value="chamados" className="flex items-center gap-2">
                 <Headphones className="h-4 w-4" />
                 Chamados
-              </TabsTrigger>
-              <TabsTrigger value="interfaceamento" className="flex items-center gap-2">
-                <Network className="h-4 w-4" />
-                Interfaceamento
               </TabsTrigger>
             </TabsList>
 
