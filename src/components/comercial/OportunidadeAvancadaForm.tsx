@@ -921,33 +921,37 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </CardContent>
         </Card>
 
-        {/* Pedido de Esclarecimento (read-only, editável na aba AJ) */}
-        <div>
-          <Label htmlFor="pedidoEsclarecimentoDG">Pedido de Esclarecimento</Label>
-          <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
-          <Textarea
-            id="pedidoEsclarecimentoDG"
-            value={formData.pedidoEsclarecimento}
-            readOnly
-            placeholder="Preenchido pela Análise Jurídica (aba AJ)"
-            rows={3}
-            className="bg-muted/50"
-          />
-        </div>
+        {/* Pedido de Esclarecimento (read-only, só aparece após solicitar) */}
+        {solicitouEsclarecimento && (
+          <div>
+            <Label htmlFor="pedidoEsclarecimentoDG">Pedido de Esclarecimento</Label>
+            <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
+            <Textarea
+              id="pedidoEsclarecimentoDG"
+              value={formData.pedidoEsclarecimento}
+              readOnly
+              placeholder="Preenchido pela Análise Jurídica (aba AJ)"
+              rows={3}
+              className="bg-muted/50"
+            />
+          </div>
+        )}
 
-        {/* 5. Impugnação do Edital (read-only, editável na aba AJ) */}
-        <div>
-          <Label htmlFor="impugnacaoEditalDG">Impugnação do Edital</Label>
-          <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
-          <Textarea
-            id="impugnacaoEditalDG"
-            value={formData.impugnacaoEdital}
-            readOnly
-            placeholder="Preenchido pela Análise Jurídica (aba AJ)"
-            rows={3}
-            className="bg-muted/50"
-          />
-        </div>
+        {/* Impugnação do Edital (read-only, só aparece após solicitar) */}
+        {solicitouImpugnacao && (
+          <div>
+            <Label htmlFor="impugnacaoEditalDG">Impugnação do Edital</Label>
+            <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
+            <Textarea
+              id="impugnacaoEditalDG"
+              value={formData.impugnacaoEdital}
+              readOnly
+              placeholder="Preenchido pela Análise Jurídica (aba AJ)"
+              rows={3}
+              className="bg-muted/50"
+            />
+          </div>
+        )}
 
         {/* 6. Razões para Recurso (read-only, editável na aba AJ) */}
         <div>
