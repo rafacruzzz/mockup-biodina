@@ -994,45 +994,64 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           />
         </div>
 
-        {/* Estratégia Comercial (read-only, editável na aba AG) */}
-        <div>
-          <Label htmlFor="estrategiaComercialDG">Estratégia Comercial</Label>
-          <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
-          <Textarea
-            id="estrategiaComercialDG"
-            value={formData.estrategiaComercialAG}
-            readOnly
-            placeholder="Preenchido pela Análise Gerencial (aba AG)"
-            rows={3}
-            className="bg-muted/50"
-          />
-        </div>
+        {/* Campos AG (read-only, só aparecem após solicitar) */}
+        {solicitouAnaliseGerencial && (
+          <>
+            {/* Empresa Participante (read-only, editável na aba AG) */}
+            {formData.empresaParticipanteAG && (
+              <div>
+                <Label htmlFor="empresaParticipanteDG">Empresa Participante</Label>
+                <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
+                <Input
+                  id="empresaParticipanteDG"
+                  value={formData.empresaParticipanteAG}
+                  readOnly
+                  className="bg-muted/50"
+                />
+              </div>
+            )}
 
-        {/* Valor de Entrada e Valor Limite (read-only, editável na aba AG) */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="valorEntradaDG">Valor de Entrada (R$)</Label>
-            <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
-            <Input
-              id="valorEntradaDG"
-              type="number"
-              value={formData.valorEntradaAG}
-              readOnly
-              className="bg-muted/50"
-            />
-          </div>
-          <div>
-            <Label htmlFor="valorLimiteDG">Valor Limite (R$)</Label>
-            <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
-            <Input
-              id="valorLimiteDG"
-              type="number"
-              value={formData.valorLimiteAG}
-              readOnly
-              className="bg-muted/50"
-            />
-          </div>
-        </div>
+            {/* Estratégia Comercial (read-only, editável na aba AG) */}
+            <div>
+              <Label htmlFor="estrategiaComercialDG">Estratégia Comercial</Label>
+              <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
+              <Textarea
+                id="estrategiaComercialDG"
+                value={formData.estrategiaComercialAG}
+                readOnly
+                placeholder="Preenchido pela Análise Gerencial (aba AG)"
+                rows={3}
+                className="bg-muted/50"
+              />
+            </div>
+
+            {/* Valor de Entrada e Valor Limite (read-only, editável na aba AG) */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="valorEntradaDG">Valor de Entrada (R$)</Label>
+                <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
+                <Input
+                  id="valorEntradaDG"
+                  type="number"
+                  value={formData.valorEntradaAG}
+                  readOnly
+                  className="bg-muted/50"
+                />
+              </div>
+              <div>
+                <Label htmlFor="valorLimiteDG">Valor Limite (R$)</Label>
+                <p className="text-xs text-muted-foreground mb-1">Editável na aba AG</p>
+                <Input
+                  id="valorLimiteDG"
+                  type="number"
+                  value={formData.valorLimiteAG}
+                  readOnly
+                  className="bg-muted/50"
+                />
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Análise Científica (read-only, só aparece após solicitar) */}
         {solicitouAnaliseCientifica && (formData.analiseCientifica || []).length > 0 && (
