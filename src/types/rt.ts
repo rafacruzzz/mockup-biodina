@@ -81,8 +81,8 @@ export interface DocumentacaoRT {
 }
 
 // Gestão de Não Conformidades RT
-export type OrigemNCRT = 'Auditoria' | 'Treinamento' | 'Liberação de Produto' | 'Documentação' | 'Outro';
-export type TipoNCRT = 'Documentação Desatualizada' | 'Treinamento Inadequado' | 'Falha de Processo' | 'Produto Não Liberado' | 'Não Conformidade Regulatória' | 'Outro';
+export type OrigemNCRT = string;
+export type TipoNCRT = string;
 export type ImpactoNCRT = 'Crítico' | 'Moderado' | 'Leve';
 export type StatusNCRT = 'Aberta' | 'Em Análise' | 'Aguardando Ação' | 'Resolvida' | 'Fechada';
 export type StatusCAPART = 'Pendente' | 'Em Andamento' | 'Concluída' | 'Verificada';

@@ -269,19 +269,11 @@ export const GestaoNCTab = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label>Tipo</Label>
-                  <Select
+                  <Input
                     value={ncSelecionada.tipo}
-                    onValueChange={(value: TipoNC) => setNcSelecionada({ ...ncSelecionada, tipo: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Material Não Conforme">Material Não Conforme</SelectItem>
-                      <SelectItem value="Atendimento">Atendimento</SelectItem>
-                      <SelectItem value="Treinamento Falho">Treinamento Falho</SelectItem>
-                    </SelectContent>
-                  </Select>
+                    onChange={(e) => setNcSelecionada({ ...ncSelecionada, tipo: e.target.value })}
+                    placeholder="Ex: Material Não Conforme, Atendimento..."
+                  />
                 </div>
               </div>
 

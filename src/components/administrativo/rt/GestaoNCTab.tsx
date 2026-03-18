@@ -271,19 +271,11 @@ export function GestaoNCTab() {
               {/* Linha 2: Tipo */}
               <div>
                 <Label>Tipo</Label>
-                <Select value={selectedNC.tipo} onValueChange={(val) => setSelectedNC({ ...selectedNC, tipo: val as any })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Documentação Desatualizada">Documentação Desatualizada</SelectItem>
-                    <SelectItem value="Treinamento Inadequado">Treinamento Inadequado</SelectItem>
-                    <SelectItem value="Falha de Processo">Falha de Processo</SelectItem>
-                    <SelectItem value="Produto Não Liberado">Produto Não Liberado</SelectItem>
-                    <SelectItem value="Não Conformidade Regulatória">Não Conformidade Regulatória</SelectItem>
-                    <SelectItem value="Outro">Outro</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Input
+                  value={selectedNC.tipo}
+                  onChange={(e) => setSelectedNC({ ...selectedNC, tipo: e.target.value })}
+                  placeholder="Ex: Documentação Desatualizada, Falha de Processo..."
+                />
               </div>
 
               {/* Linha 3: Impacto + Responsável */}

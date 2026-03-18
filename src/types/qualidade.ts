@@ -40,8 +40,8 @@ export interface RegistroRastreabilidade {
   observacoes?: string;
 }
 
-export type OrigemNC = 'Pesquisa' | 'Auditoria' | 'Outro';
-export type TipoNC = 'Material Não Conforme' | 'Atendimento' | 'Treinamento Falho';
+export type OrigemNC = string;
+export type TipoNC = string;
 export type ImpactoNC = 'Crítico' | 'Moderado' | 'Leve';
 export type StatusNC = 'Aberta' | 'Em Análise' | 'Aguardando CAPA' | 'Resolvida' | 'Fechada';
 export type StatusCAPA = 'Pendente' | 'Em Andamento' | 'Concluída';
