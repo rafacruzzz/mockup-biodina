@@ -67,6 +67,10 @@ export interface NaoConformidade {
   status: StatusNC;
   descricao: string;
   acaoImediata?: string;
+  ncSolucionada?: string;
+  acaoFinal?: string;
+  dataAcao?: string;
+  observacoes?: string;
   capa?: AcaoCAPA;
   dataCriacao: Date;
   dataAtualizacao?: Date;

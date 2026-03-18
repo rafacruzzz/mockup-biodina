@@ -342,6 +342,42 @@ export const GestaoNCTab = () => {
                 />
               </div>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>NC Solucionada?</Label>
+                  <Select
+                    value={(ncSelecionada as any).ncSolucionada || ''}
+                    onValueChange={(val) => setNcSelecionada({ ...ncSelecionada, ncSolucionada: val } as any)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Sim">Sim</SelectItem>
+                      <SelectItem value="Não">Não</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Data da Ação</Label>
+                  <Input
+                    type="date"
+                    value={(ncSelecionada as any).dataAcao || ''}
+                    onChange={(e) => setNcSelecionada({ ...ncSelecionada, dataAcao: e.target.value } as any)}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Ação Final</Label>
+                <Textarea
+                  value={(ncSelecionada as any).acaoFinal || ''}
+                  onChange={(e) => setNcSelecionada({ ...ncSelecionada, acaoFinal: e.target.value } as any)}
+                  rows={2}
+                  placeholder="Descreva a ação final..."
+                />
+              </div>
+
               <div>
                 <Label>Observações</Label>
                 <Textarea
