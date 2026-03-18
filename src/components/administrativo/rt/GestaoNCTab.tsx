@@ -260,22 +260,11 @@ export function GestaoNCTab() {
                 </div>
                 <div>
                   <Label>Origem</Label>
-                  {modoNovo ? (
-                    <Select value={selectedNC.origem} onValueChange={(val) => setSelectedNC({ ...selectedNC, origem: val as OrigemNCRT })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Auditoria">Auditoria</SelectItem>
-                        <SelectItem value="Treinamento">Treinamento</SelectItem>
-                        <SelectItem value="Liberação de Produto">Liberação de Produto</SelectItem>
-                        <SelectItem value="Documentação">Documentação</SelectItem>
-                        <SelectItem value="Outro">Outro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <Input value={selectedNC.origem} disabled />
-                  )}
+                  <Input
+                    value={selectedNC.origem}
+                    onChange={(e) => setSelectedNC({ ...selectedNC, origem: e.target.value })}
+                    placeholder="Ex: Auditoria, Treinamento, Documentação..."
+                  />
                 </div>
               </div>
 
