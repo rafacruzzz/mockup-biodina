@@ -260,41 +260,22 @@ export function GestaoNCTab() {
                 </div>
                 <div>
                   <Label>Origem</Label>
-                  {modoNovo ? (
-                    <Select value={selectedNC.origem} onValueChange={(val) => setSelectedNC({ ...selectedNC, origem: val as OrigemNCRT })}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Auditoria">Auditoria</SelectItem>
-                        <SelectItem value="Treinamento">Treinamento</SelectItem>
-                        <SelectItem value="Liberação de Produto">Liberação de Produto</SelectItem>
-                        <SelectItem value="Documentação">Documentação</SelectItem>
-                        <SelectItem value="Outro">Outro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  ) : (
-                    <Input value={selectedNC.origem} disabled />
-                  )}
+                  <Input
+                    value={selectedNC.origem}
+                    onChange={(e) => setSelectedNC({ ...selectedNC, origem: e.target.value })}
+                    placeholder="Ex: Auditoria, Treinamento, Documentação..."
+                  />
                 </div>
               </div>
 
               {/* Linha 2: Tipo */}
               <div>
                 <Label>Tipo</Label>
-                <Select value={selectedNC.tipo} onValueChange={(val) => setSelectedNC({ ...selectedNC, tipo: val as any })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Documentação Desatualizada">Documentação Desatualizada</SelectItem>
-                    <SelectItem value="Treinamento Inadequado">Treinamento Inadequado</SelectItem>
-                    <SelectItem value="Falha de Processo">Falha de Processo</SelectItem>
-                    <SelectItem value="Produto Não Liberado">Produto Não Liberado</SelectItem>
-                    <SelectItem value="Não Conformidade Regulatória">Não Conformidade Regulatória</SelectItem>
-                    <SelectItem value="Outro">Outro</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Input
+                  value={selectedNC.tipo}
+                  onChange={(e) => setSelectedNC({ ...selectedNC, tipo: e.target.value })}
+                  placeholder="Ex: Documentação Desatualizada, Falha de Processo..."
+                />
               </div>
 
               {/* Linha 3: Impacto + Responsável */}
