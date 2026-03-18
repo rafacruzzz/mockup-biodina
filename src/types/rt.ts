@@ -105,6 +105,9 @@ export interface NaoConformidadeRT {
   impacto: ImpactoNCRT;
   descricao: string;
   acaoImediata: string;
+  ncSolucionada?: string;
+  acaoFinal?: string;
+  dataAcao?: string;
   responsavel: string;
   prazoExecucao: string;
   status: StatusNCRT;
