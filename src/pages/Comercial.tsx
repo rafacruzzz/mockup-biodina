@@ -878,24 +878,6 @@ const Comercial = () => {
 
     const renderContratacaoComSubAbas = () => (
       <div className="space-y-4">
-        <div className="flex gap-2 border-b border-border pb-2">
-          <Button
-            variant={subAbaContratacao === 'contratacoes' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setSubAbaContratacao('contratacoes')}
-          >
-            <Building2 className="h-4 w-4 mr-1" />
-            Contratações
-          </Button>
-          <Button
-            variant={subAbaContratacao === 'pedidos' ? 'default' : 'ghost'}
-            size="sm"
-            onClick={() => setSubAbaContratacao('pedidos')}
-          >
-            <ClipboardList className="h-4 w-4 mr-1" />
-            Meus Pedidos
-          </Button>
-        </div>
         {subAbaContratacao === 'contratacoes'
           ? renderOportunidadesPorModalidade('contratacao_simples')
           : <MeusPedidosView />
@@ -1012,6 +994,16 @@ const Comercial = () => {
                 <Button variant="outline">
                   <FileSpreadsheet className="h-4 w-4 mr-2" />
                   Modelo de Importação
+                </Button>
+              )}
+              {modalidade === 'contratacao_simples' && (
+                <Button
+                  variant={subAbaContratacao === 'pedidos' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSubAbaContratacao(subAbaContratacao === 'pedidos' ? 'contratacoes' : 'pedidos')}
+                >
+                  <ClipboardList className="h-4 w-4 mr-1" />
+                  Meus Pedidos
                 </Button>
               )}
               <Button 
