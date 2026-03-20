@@ -1244,7 +1244,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Empresa</TableHead>
+                        <TableHead>Licitante</TableHead>
+                        <TableHead>Objeto</TableHead>
                         <TableHead>Marca</TableHead>
                         <TableHead>Modelo</TableHead>
                         <TableHead>Valor Unitário</TableHead>
