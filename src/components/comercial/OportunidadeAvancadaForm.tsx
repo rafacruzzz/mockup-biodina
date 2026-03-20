@@ -452,6 +452,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     
     setNovoLicitante({
       empresa: '',
+      objeto: '',
       marca: '',
       modelo: '',
       valorUnitario: 0,
