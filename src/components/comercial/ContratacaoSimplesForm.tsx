@@ -272,9 +272,49 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const somaAditivos = aditivos.reduce((sum, a) => sum + a.valor, 0);
   const valorAtualizado = valorOriginal + somaAditivos;
 
-  
+  // Mock de clientes cadastrados
+  const clientesCadastrados = [
+    { id: 'cli-001', cpfCnpj: '12.345.678/0001-90', nomeFantasia: 'Hospital São Lucas', razaoSocial: 'Hospital São Lucas Ltda', endereco: 'Rua das Flores, 123', uf: 'SP', email: 'contato@saolucas.com.br', telefone: '(11) 3456-7890', segmento: 'hospitalar' },
+    { id: 'cli-002', cpfCnpj: '98.765.432/0001-10', nomeFantasia: 'Clínica Vida Nova', razaoSocial: 'Clínica Vida Nova S/A', endereco: 'Av. Brasil, 456', uf: 'RJ', email: 'contato@vidanova.com.br', telefone: '(21) 2345-6789', segmento: 'clinica' },
+    { id: 'cli-003', cpfCnpj: '45.678.901/0001-23', nomeFantasia: 'Lab Diagnóstico Plus', razaoSocial: 'Diagnóstico Plus Análises Clínicas Ltda', endereco: 'Rua Central, 789', uf: 'MG', email: 'lab@diagnosticoplus.com.br', telefone: '(31) 3456-1234', segmento: 'laboratorial' },
+    { id: 'cli-004', cpfCnpj: '11.222.333/0001-44', nomeFantasia: 'Centro Médico Esperança', razaoSocial: 'Centro Médico Esperança Ltda', endereco: 'Av. Paulista, 1000', uf: 'SP', email: 'admin@esperanca.com.br', telefone: '(11) 4567-8901', segmento: 'hospitalar' },
+    { id: 'cli-005', cpfCnpj: '55.666.777/0001-88', nomeFantasia: 'Farmácia Popular Saúde', razaoSocial: 'Farmácia Popular Saúde ME', endereco: 'Rua do Comércio, 50', uf: 'BA', email: 'farmacia@popularsaude.com.br', telefone: '(71) 3210-5678', segmento: 'farmacia' },
+  ];
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleSelecionarCliente = (clienteId: string) => {
+    setClienteParticular(clienteId);
+    const cliente = clientesCadastrados.find(c => c.id === clienteId);
+    if (cliente) {
+      setFormData(prev => ({
+        ...prev,
+        cpfCnpj: cliente.cpfCnpj,
+        nomeFantasia: cliente.nomeFantasia,
+        razaoSocial: cliente.razaoSocial,
+        endereco: `${cliente.endereco} - ${cliente.uf}`,
+        uf: cliente.uf,
+        email: cliente.email,
+        telefone: cliente.telefone,
+        segmentoProjeto: cliente.segmento,
+      }));
+    }
+  };
+
+  const handleTipoContratacaoChange = (tipo: 'licitacao' | 'particular') => {
+    setTipoContratacao(tipo);
+    // Limpar dados ao trocar tipo
+    setLicitacaoVinculada('');
+    setClienteParticular('');
+    setDocumentosLicitacao([]);
+    setHistoricoLicitacao([]);
+    setEmpresaContrato({ empresaParticipanteId: '', empresaParticipanteNome: '', empresaParticipanteCNPJ: '' });
+    setEmpresaContrato2({ empresaParticipanteId: '', empresaParticipanteNome: '', empresaParticipanteCNPJ: '' });
+    setFormData(prev => ({
+      ...prev,
+      cpfCnpj: '', nomeFantasia: '', razaoSocial: '', endereco: '', uf: '', email: '', telefone: '', segmentoProjeto: '',
+    }));
+  };
+
+
     setFormData(prev => ({
       ...prev,
       [field]: value
