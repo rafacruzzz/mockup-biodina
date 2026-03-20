@@ -1,21 +1,20 @@
 
 
-## Plano: Mover botão "Solicitar Análise da Assessoria Científica" para após "Resumo do Edital"
+## Plano: Mover botões de Esclarecimento e Impugnação para após Análise Técnica
+
+### Contexto
+Os botões "Solicitar Análise Jurídica - Pedido de Esclarecimento" e "Solicitar Análise Jurídica - Impugnação do Edital" já existem como estados (`solicitouEsclarecimento`, `solicitouImpugnacao`) e seus campos read-only já estão implementados (linhas 925-954). Precisamos apenas adicionar os botões visíveis e reposicionar os campos.
 
 ### Alterações em `OportunidadeAvancadaForm.tsx`
 
-**1. Após o campo "Resumo do Edital" (linha 812), inserir apenas o botão "Solicitar Análise da Assessoria Científica"** como um botão standalone (sem o Card wrapper de "Solicitações de Análise").
+**1. Após o campo "Análise Técnica" (linha 842), inserir dois botões:**
+- "Solicitar Análise Jurídica - Pedido de Esclarecimento" — ao clicar, seta `solicitouEsclarecimento = true` e exibe toast
+- "Solicitar Análise Jurídica - Impugnação do Edital" — ao clicar, seta `solicitouImpugnacao = true` e exibe toast
 
-**2. Remover da seção "Solicitações de Análise" (linhas 814-870):**
-- Remover o botão "Solicitar Análise da Assessoria Científica" (linhas 845-856) — já movido para cima.
-- Manter os outros 3 botões (Esclarecimento, Impugnação, Gerencial) na seção de Solicitações de Análise.
+**2. Mover os blocos read-only de Esclarecimento (linhas 925-938) e Impugnação (linhas 941-954) para logo abaixo dos respectivos botões** (após linha 842, junto dos botões). Cada campo só aparece após o clique no botão correspondente.
 
-**Correção**: Relendo a instrução — o pedido é **deixar SÓ o botão da Assessoria Científica e tirar os outros**. Ou seja:
-
-**2 (revisado). Substituir toda a seção "Solicitações de Análise" (linhas 814-870)** por apenas o botão "Solicitar Análise da Assessoria Científica", posicionado logo após o campo Resumo do Edital, sem o Card/header de "Solicitações de Análise".
-
-Os botões de Esclarecimento, Impugnação e Gerencial serão removidos deste local (eles já existem em outros contextos do formulário ou serão reposicionados separadamente se necessário).
+**3. Layout:** Botões lado a lado com `flex gap-3 flex-wrap`, seguidos dos campos condicionais.
 
 ### Resultado
-Após "Resumo do Edital", aparece apenas o botão "Solicitar Análise da Assessoria Científica", limpo e direto.
+Após "Análise Técnica" aparecem os dois botões de solicitação jurídica. Ao clicar, surge o campo read-only que replica o conteúdo preenchido na aba AJ.
 
