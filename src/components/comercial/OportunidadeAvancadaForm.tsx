@@ -11,7 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle, CheckCircle2, XCircle, Scale, FlaskConical, BarChart3, Briefcase } from "lucide-react";
+import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle, CheckCircle2, XCircle, Scale, FlaskConical, BarChart3, Briefcase, Clock } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -240,10 +241,12 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     valorEntradaAG: oportunidade?.valorEntradaAG || 0,
     valorLimiteAG: oportunidade?.valorLimiteAG || 0,
     
-    // Campos da Análise Científica (AC)
-    analiseCientifica: oportunidade?.analiseCientifica || [],
-    conclusaoAnaliseCientifica: oportunidade?.conclusaoAnaliseCientifica || '',
   });
+
+  // Estado para histórico de análises científicas versionadas
+  const [historicoAnalisesCientificas, setHistoricoAnalisesCientificas] = useState<Array<{id: number; texto: string; data: string; numero: number}>>(
+    oportunidade?.historicoAnalisesCientificas || []
+  );
 
 
   const handleAtualizarTituloTabela = (tabelaId: number, novoTitulo: string) => {
@@ -866,19 +869,30 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </Button>
         </div>
 
-        {/* Análise Técnica (read-only, só aparece após solicitar) */}
+        {/* Análises Científicas (read-only, só aparece após solicitar) */}
         {solicitouAnaliseCientifica && (
           <div>
-            <Label htmlFor="analiseTecnicaLicitacao">Análise Técnica</Label>
+            <Label>Análises Científicas</Label>
             <p className="text-xs text-muted-foreground mb-1">Editável na aba AC</p>
-            <Textarea
-              id="analiseTecnicaLicitacao"
-              value={formData.analiseTecnica}
-              readOnly={true}
-              placeholder="Este campo reflete automaticamente o conteúdo da Análise Técnica-Científica"
-              rows={3}
-              className="bg-muted/50 cursor-not-allowed"
-            />
+            {historicoAnalisesCientificas.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic p-3 border rounded-md bg-muted/50">Nenhuma análise científica salva ainda.</p>
+            ) : (
+              <div className="space-y-2">
+                {historicoAnalisesCientificas.map((analise) => (
+                  <Card key={analise.id} className="bg-muted/50">
+                    <CardHeader className="py-2 px-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Análise {analise.numero}</span>
+                        <span className="text-xs text-muted-foreground">{analise.data}</span>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="py-2 px-3">
+                      <p className="text-sm whitespace-pre-wrap">{analise.texto}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -1144,41 +1158,23 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </>
         )}
 
-        {/* Análise Científica (read-only, só aparece após solicitar) */}
-        {solicitouAnaliseCientifica && (formData.analiseCientifica || []).length > 0 && (
+        {/* Análise Científica - Histórico (read-only, só aparece após solicitar) */}
+        {solicitouAnaliseCientifica && historicoAnalisesCientificas.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Análise Científica (AC)</CardTitle>
               <p className="text-xs text-muted-foreground">Editável na aba AC</p>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {(formData.analiseCientifica || []).map((analise: any, index: number) => (
-                analise?.resposta && (
-                  <div key={index} className="p-3 border rounded-lg bg-muted/50 space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-medium">Questão {index + 1}: {analise.pergunta}</p>
-                      {analise.statusValidacao && (
-                        <Badge className={
-                          (analise.statusValidacao === 'Validado' ? 'bg-green-500' :
-                           analise.statusValidacao === 'Parcialmente Validado' ? 'bg-yellow-500' : 'bg-red-500') + ' text-white'
-                        }>
-                          {analise.statusValidacao}
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-muted-foreground">{analise.resposta}</p>
-                    {analise.observacoes && (
-                      <p className="text-xs text-muted-foreground italic">Obs: {analise.observacoes}</p>
-                    )}
+            <CardContent className="space-y-2">
+              {historicoAnalisesCientificas.map((analise) => (
+                <div key={analise.id} className="p-3 border rounded-lg bg-muted/50 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Análise {analise.numero}</span>
+                    <span className="text-xs text-muted-foreground">{analise.data}</span>
                   </div>
-                )
-              ))}
-              {formData.conclusaoAnaliseCientifica && (
-                <div className="p-3 border rounded-lg bg-muted/50">
-                  <p className="text-sm font-medium mb-1">Conclusão</p>
-                  <p className="text-sm text-muted-foreground">{formData.conclusaoAnaliseCientifica}</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{analise.texto}</p>
                 </div>
-              )}
+              ))}
             </CardContent>
           </Card>
         )}
@@ -1396,44 +1392,20 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     </div>
   );
 
-  const perguntasCientificas = [
-    "Identificação dos diferenciais técnicos do produto",
-    "Levantamento de concorrentes diretos e indiretos",
-    "Avaliação do nível de qualidade (comparação com padrões nacionais e internacionais)",
-    "Avaliação do nível de modernidade (tendência, atualização tecnológica)",
-    "Parecer pessoal do assessor científico (no mínimo 3 assessores indicado pelo gestor)",
-    "Observações gerais"
-  ];
-
-  const handleAnaliseCientificaChange = (index: number, field: string, value: string) => {
-    const updated = [...(formData.analiseCientifica || [])];
-    if (!updated[index]) {
-      updated[index] = {};
+  const handleSalvarAnalise = () => {
+    if (!formData.analiseTecnica.trim()) {
+      toast({ title: "Campo vazio", description: "Escreva a análise antes de salvar.", variant: "destructive" });
+      return;
     }
-    updated[index] = {
-      ...updated[index],
-      pergunta: perguntasCientificas[index],
-      [field]: value
+    const novaAnalise = {
+      id: Date.now(),
+      texto: formData.analiseTecnica,
+      data: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      numero: historicoAnalisesCientificas.length + 1
     };
-    setFormData({ ...formData, analiseCientifica: updated });
-  };
-
-  const getACStatusIcon = (status: string) => {
-    switch (status) {
-      case 'Validado': return <CheckCircle2 className="h-4 w-4 text-green-600" />;
-      case 'Parcialmente Validado': return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
-      case 'Não Validado': return <XCircle className="h-4 w-4 text-red-600" />;
-      default: return null;
-    }
-  };
-
-  const getACStatusColor = (status: string) => {
-    switch (status) {
-      case 'Validado': return 'bg-green-500';
-      case 'Parcialmente Validado': return 'bg-yellow-500';
-      case 'Não Validado': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
+    setHistoricoAnalisesCientificas([...historicoAnalisesCientificas, novaAnalise]);
+    setFormData({ ...formData, analiseTecnica: '' });
+    toast({ title: "Análise salva", description: `Análise ${novaAnalise.numero} registrada com sucesso.` });
   };
 
   const renderAnaliseTecnica = () => (
@@ -1444,144 +1416,42 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           id="analiseTecnicaCientifica"
           value={formData.analiseTecnica}
           onChange={(e) => setFormData({...formData, analiseTecnica: e.target.value})}
-          placeholder="Análise técnica detalhada"
+          placeholder="Digite sua análise técnica-científica aqui..."
           rows={6}
           disabled={isReadOnlyMode()}
         />
-        {!formData.analiseTecnica && (
-          <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
-            <AlertTriangle className="h-4 w-4" />
-            Campo obrigatório - Alarme diário até preenchimento
-          </p>
-        )}
+        <div className="flex justify-end mt-2">
+          <Button onClick={handleSalvarAnalise} disabled={isReadOnlyMode() || !formData.analiseTecnica.trim()} className="gap-2">
+            <Save className="h-4 w-4" />
+            Salvar Análise
+          </Button>
+        </div>
       </div>
 
-      {/* Análise Científica - 6 Questões */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Análise Científica do Produto</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Avalie os aspectos técnicos, competitivos e de qualidade do produto para análise científica.
-          </p>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {perguntasCientificas.map((pergunta, index) => {
-              const analise = (formData.analiseCientifica || [])[index] || {};
-              return (
-                <Card key={index} className="border-l-4 border-l-blue-500">
-                  <CardHeader className="pb-3">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <h4 className="font-medium text-sm mb-1">Questão {index + 1}</h4>
-                        <p className="text-sm text-muted-foreground">{pergunta}</p>
-                      </div>
-                      {analise.statusValidacao && (
-                        <div className="flex items-center gap-2">
-                          {getACStatusIcon(analise.statusValidacao)}
-                          <Badge className={getACStatusColor(analise.statusValidacao) + " text-white"}>
-                            {analise.statusValidacao}
-                          </Badge>
-                        </div>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <Label htmlFor={`ac-resposta-${index}`}>Resposta *</Label>
-                      <Textarea
-                        id={`ac-resposta-${index}`}
-                        value={analise.resposta || ""}
-                        onChange={(e) => handleAnaliseCientificaChange(index, 'resposta', e.target.value)}
-                        placeholder="Forneça uma resposta detalhada para esta questão..."
-                        rows={4}
-                        disabled={isReadOnlyMode()}
-                      />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor={`ac-status-${index}`}>Status de Validação *</Label>
-                        <Select
-                          value={analise.statusValidacao || ""}
-                          onValueChange={(value) => handleAnaliseCientificaChange(index, 'statusValidacao', value)}
-                          disabled={isReadOnlyMode()}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Validado">
-                              <div className="flex items-center gap-2">
-                                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                                Validado
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="Parcialmente Validado">
-                              <div className="flex items-center gap-2">
-                                <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                                Parcialmente Validado
-                              </div>
-                            </SelectItem>
-                            <SelectItem value="Não Validado">
-                              <div className="flex items-center gap-2">
-                                <XCircle className="h-4 w-4 text-red-600" />
-                                Não Validado
-                              </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor={`ac-obs-${index}`}>Observações</Label>
-                        <Textarea
-                          id={`ac-obs-${index}`}
-                          value={analise.observacoes || ""}
-                          onChange={(e) => handleAnaliseCientificaChange(index, 'observacoes', e.target.value)}
-                          placeholder="Observações adicionais..."
-                          rows={3}
-                          disabled={isReadOnlyMode()}
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Resumo da Análise Científica */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Resumo da Análise Científica</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {['Validado', 'Parcialmente Validado', 'Não Validado'].map((status) => {
-              const count = (formData.analiseCientifica || []).filter((a: any) => a?.statusValidacao === status).length;
-              return (
-                <div key={status} className="text-center">
-                  <div className={`w-12 h-12 rounded-full ${getACStatusColor(status)} mx-auto mb-2 flex items-center justify-center text-white font-bold text-lg`}>
-                    {count}
-                  </div>
-                  <p className="text-sm font-medium">{status}</p>
-                </div>
-              );
-            })}
-          </div>
-          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-            <h4 className="font-medium mb-2">Conclusão da Análise Científica</h4>
-            <Textarea
-              value={formData.conclusaoAnaliseCientifica || ""}
-              onChange={(e) => setFormData({ ...formData, conclusaoAnaliseCientifica: e.target.value })}
-              placeholder="Escreva uma conclusão geral da análise científica..."
-              rows={4}
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Histórico de Análises */}
+      {historicoAnalisesCientificas.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Histórico de Análises ({historicoAnalisesCientificas.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {historicoAnalisesCientificas.map((analise) => (
+              <Collapsible key={analise.id}>
+                <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-md border hover:bg-accent text-left">
+                  <span className="font-medium text-sm">Análise {analise.numero}</span>
+                  <span className="text-xs text-muted-foreground">{analise.data}</span>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="p-3 border border-t-0 rounded-b-md bg-muted/30">
+                  <p className="text-sm whitespace-pre-wrap">{analise.texto}</p>
+                </CollapsibleContent>
+              </Collapsible>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Análise da Concorrência */}
       <div className="space-y-6">
