@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle, CheckCircle2, XCircle, Scale, FlaskConical, BarChart3 } from "lucide-react";
+import { X, Save, Plus, Edit, Upload, Download, Eye, Calendar, AlertTriangle, CheckCircle2, XCircle, Scale, FlaskConical, BarChart3, Briefcase } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -848,6 +848,18 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           >
             <Scale className="h-4 w-4" />
             {solicitouImpugnacao ? "✓ Impugnação Solicitada" : "Solicitar Análise Jurídica - Impugnação do Edital"}
+          </Button>
+          <Button
+            variant={solicitouAnaliseGerencial ? "secondary" : "outline"}
+            onClick={() => {
+              setSolicitouAnaliseGerencial(true);
+              toast({ title: "Solicitação enviada", description: "Análise Gerencial solicitada com sucesso." });
+            }}
+            disabled={isReadOnlyMode() || solicitouAnaliseGerencial}
+            className="gap-2"
+          >
+            <Briefcase className="h-4 w-4" />
+            {solicitouAnaliseGerencial ? "✓ Análise Gerencial Solicitada" : "Solicitar Análise Gerencial"}
           </Button>
         </div>
 
