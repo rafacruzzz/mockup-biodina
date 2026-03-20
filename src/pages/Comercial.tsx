@@ -996,6 +996,16 @@ const Comercial = () => {
                   Modelo de Importação
                 </Button>
               )}
+              {modalidade === 'contratacao_simples' && (
+                <Button
+                  variant={subAbaContratacao === 'pedidos' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSubAbaContratacao(subAbaContratacao === 'pedidos' ? 'contratacoes' : 'pedidos')}
+                >
+                  <ClipboardList className="h-4 w-4 mr-1" />
+                  Meus Pedidos
+                </Button>
+              )}
               <Button 
                 className="bg-biodina-gold hover:bg-biodina-gold/90"
                 onClick={() => handleNovaOportunidade(modalidade as 'licitacao' | 'contratacao_simples' | 'importacao_direta')}
