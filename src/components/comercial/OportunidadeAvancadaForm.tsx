@@ -1260,7 +1260,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                     <TableBody>
                       {tabela.licitantes.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={isReadOnlyMode() ? 9 : 10} className="text-center text-muted-foreground py-8">
+                          <TableCell colSpan={isReadOnlyMode() ? 10 : 11} className="text-center text-muted-foreground py-8">
                             Nenhum licitante cadastrado. Clique em "Adicionar Licitante" para começar.
                           </TableCell>
                         </TableRow>
