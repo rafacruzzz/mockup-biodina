@@ -1,25 +1,21 @@
 
 
-## Plano: Múltiplos Produtos na Licitação
-
-### Objetivo
-Transformar o campo único "Produto" em uma lista dinâmica, permitindo adicionar vários produtos com valor estimado individual.
+## Plano: Mover botão "Solicitar Análise da Assessoria Científica" para após "Resumo do Edital"
 
 ### Alterações em `OportunidadeAvancadaForm.tsx`
 
-**1. Novo estado para lista de produtos (~linha 214)**
-- Substituir `produto: string` e `valorEstimado: number` por `produtos: Array<{ id: string; produto: string; valorEstimado: number }>` inicializado com 1 item vazio.
+**1. Após o campo "Resumo do Edital" (linha 812), inserir apenas o botão "Solicitar Análise da Assessoria Científica"** como um botão standalone (sem o Card wrapper de "Solicitações de Análise").
 
-**2. Substituir o bloco de Produto + Valor Estimado (linhas 663-692)**
-- Renderizar a lista `formData.produtos.map(...)`, cada item com:
-  - Select "Produto" (mesmo catálogo atual)
-  - Input "Valor Estimado"
-  - Botão de remover (ícone X, visível quando há mais de 1 item)
-- Após a lista, botão "+ Adicionar Produto"
-- Layout: cada produto em uma row com grid 2 colunas + botão remover
+**2. Remover da seção "Solicitações de Análise" (linhas 814-870):**
+- Remover o botão "Solicitar Análise da Assessoria Científica" (linhas 845-856) — já movido para cima.
+- Manter os outros 3 botões (Esclarecimento, Impugnação, Gerencial) na seção de Solicitações de Análise.
 
-**3. Manter os campos "Quantidade Equipamentos" e "Quantidade Exames" abaixo da lista, como estão hoje (linhas 693-714).**
+**Correção**: Relendo a instrução — o pedido é **deixar SÓ o botão da Assessoria Científica e tirar os outros**. Ou seja:
+
+**2 (revisado). Substituir toda a seção "Solicitações de Análise" (linhas 814-870)** por apenas o botão "Solicitar Análise da Assessoria Científica", posicionado logo após o campo Resumo do Edital, sem o Card/header de "Solicitações de Análise".
+
+Os botões de Esclarecimento, Impugnação e Gerencial serão removidos deste local (eles já existem em outros contextos do formulário ou serão reposicionados separadamente se necessário).
 
 ### Resultado
-O usuário poderá adicionar quantos produtos quiser à licitação, cada um com seu valor estimado, conforme a imagem de referência.
+Após "Resumo do Edital", aparece apenas o botão "Solicitar Análise da Assessoria Científica", limpo e direto.
 
