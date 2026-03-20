@@ -1,4 +1,8 @@
 import React, { useState, useRef } from 'react';
+import { format } from 'date-fns';
+import { Switch } from '@/components/ui/switch';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone, Building2, RefreshCw, ChevronDown, ChevronUp, ExternalLink, Copy } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar as CalendarIcon, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone, Building2, RefreshCw, ChevronDown, ChevronUp, ExternalLink, Copy, XCircle } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { mockChecklistVendas } from '@/data/faturamentoModules';
@@ -243,6 +247,16 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     valorNegocio: oportunidade?.valorNegocio || 0,
     previsaoConsumoMensal: oportunidade?.previsaoConsumoMensal || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || '',
+    dataInicioContrato: '',
+    dataFimContrato: '',
+    renovacaoAutomatica: false,
+    dataRenovacao: '',
+    quantidadeRenovacoes: 0,
+    historicoRenovacoes: [] as Array<{ data: string; registradoEm: string }>,
+    projetoEncerrado: false,
+    encerramentoPendente: false,
+    dataEncerramento: '',
+    encerramentoValidado: false,
     
     // Análise Técnica
     analiseTecnica: oportunidade?.analiseTecnica || '',
@@ -736,18 +750,13 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="segmentoProjeto">Segmento</Label>
-                      <Select value={formData.segmentoProjeto} onValueChange={(value) => handleInputChange('segmentoProjeto', value)}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o segmento" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="hospitalar">Hospitalar</SelectItem>
-                          <SelectItem value="universitario">Universitário</SelectItem>
-                          <SelectItem value="publico">Público</SelectItem>
-                          <SelectItem value="privado">Privado</SelectItem>
-                          <SelectItem value="municipal">Municipal</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Input
+                        id="segmentoProjeto"
+                        value={formData.segmentoProjeto || 'Não definido'}
+                        disabled
+                        className="bg-muted"
+                      />
+                      <span className="text-xs text-muted-foreground">Preenchido automaticamente pelo cadastro do cliente</span>
                     </div>
                     <div>
                       <Label htmlFor="numeroContrato">Contrato</Label>
@@ -758,6 +767,157 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                         placeholder="Nº do contrato"
                       />
                     </div>
+                  </div>
+
+                  {/* Datas do Contrato */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Data de Início do Contrato <span className="text-destructive">*</span></Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className="w-full justify-start text-left font-normal">
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {formData.dataInicioContrato ? format(new Date(formData.dataInicioContrato), 'dd/MM/yyyy') : 'Selecione a data'}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={formData.dataInicioContrato ? new Date(formData.dataInicioContrato) : undefined}
+                            onSelect={(date) => handleInputChange('dataInicioContrato', date ? date.toISOString() : '')}
+                            className="p-3 pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div>
+                      <Label>Data de Fim do Contrato {!formData.renovacaoAutomatica && <span className="text-destructive">*</span>}</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="outline" className="w-full justify-start text-left font-normal">
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {formData.dataFimContrato ? format(new Date(formData.dataFimContrato), 'dd/MM/yyyy') : 'Selecione a data'}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={formData.dataFimContrato ? new Date(formData.dataFimContrato) : undefined}
+                            onSelect={(date) => handleInputChange('dataFimContrato', date ? date.toISOString() : '')}
+                            className="p-3 pointer-events-auto"
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      {formData.renovacaoAutomatica && (
+                        <span className="text-xs text-muted-foreground">Opcional quando renovação automática está ativa</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Renovação Automática */}
+                  <div className="space-y-4 p-4 border border-border rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-sm font-medium">Renovação Automática</Label>
+                        <p className="text-xs text-muted-foreground">Ativar se o contrato possui renovação automática</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">{formData.renovacaoAutomatica ? 'Sim' : 'Não'}</span>
+                        <Switch
+                          checked={formData.renovacaoAutomatica}
+                          onCheckedChange={(checked) => handleInputChange('renovacaoAutomatica', checked)}
+                        />
+                      </div>
+                    </div>
+
+                    {formData.renovacaoAutomatica && (
+                      <div className="space-y-4 pt-3 border-t border-border">
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label>Data da Renovação</Label>
+                            <Input
+                              value={formData.dataRenovacao}
+                              onChange={(e) => handleInputChange('dataRenovacao', e.target.value)}
+                              placeholder="Ex: A cada 12 meses"
+                            />
+                          </div>
+                          <div>
+                            <Label>Qtd. de Renovações Automáticas</Label>
+                            <Input
+                              value={formData.quantidadeRenovacoes.toString()}
+                              disabled
+                              className="bg-muted"
+                            />
+                          </div>
+                          <div className="flex items-end">
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={() => {
+                                const novaRenovacao = {
+                                  data: formData.dataRenovacao || 'Sem data informada',
+                                  registradoEm: new Date().toISOString(),
+                                };
+                                setFormData(prev => ({
+                                  ...prev,
+                                  quantidadeRenovacoes: prev.quantidadeRenovacoes + 1,
+                                  historicoRenovacoes: [...(prev.historicoRenovacoes || []), novaRenovacao],
+                                }));
+                                toast.success('Renovação registrada com sucesso!');
+                              }}
+                            >
+                              <RefreshCw className="h-4 w-4 mr-1" /> Registrar Renovação
+                            </Button>
+                          </div>
+                        </div>
+
+                        {formData.historicoRenovacoes && formData.historicoRenovacoes.length > 0 && (
+                          <div className="space-y-2">
+                            <Label className="text-xs text-muted-foreground">Histórico de Renovações</Label>
+                            {formData.historicoRenovacoes.map((r, i) => (
+                              <div key={i} className="flex items-center gap-3 text-xs p-2 bg-muted/50 rounded">
+                                <Badge variant="outline" className="text-xs">Renovação {i + 1}</Badge>
+                                <span>{r.data}</span>
+                                <span className="text-muted-foreground">— {format(new Date(r.registradoEm), 'dd/MM/yyyy HH:mm')}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Encerrar Projeto */}
+                  <div className="p-4 border border-border rounded-lg space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-sm font-medium">Encerramento do Projeto</h4>
+                        <p className="text-xs text-muted-foreground">O encerramento requer validação do gerente da área Comercial</p>
+                      </div>
+                      {formData.encerramentoPendente && !formData.encerramentoValidado && (
+                        <Badge className="bg-amber-100 text-amber-800 border-amber-300">Encerramento Pendente de Validação</Badge>
+                      )}
+                      {formData.encerramentoValidado && (
+                        <Badge className="bg-red-100 text-red-800 border-red-300">Projeto Encerrado em {formData.dataEncerramento ? format(new Date(formData.dataEncerramento), 'dd/MM/yyyy') : ''}</Badge>
+                      )}
+                    </div>
+                    {!formData.encerramentoPendente && !formData.encerramentoValidado && (
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            encerramentoPendente: true,
+                            dataEncerramento: new Date().toISOString(),
+                          }));
+                          toast.info('Solicitação de encerramento enviada. Aguardando validação do gerente comercial.');
+                        }}
+                      >
+                        <XCircle className="h-4 w-4 mr-1" /> Encerrar Projeto
+                      </Button>
+                    )}
                   </div>
 
                   {/* Aditivos Contratuais */}
