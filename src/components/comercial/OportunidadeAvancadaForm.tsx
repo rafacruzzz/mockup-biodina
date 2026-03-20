@@ -869,19 +869,30 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </Button>
         </div>
 
-        {/* Análise Técnica (read-only, só aparece após solicitar) */}
+        {/* Análises Científicas (read-only, só aparece após solicitar) */}
         {solicitouAnaliseCientifica && (
           <div>
-            <Label htmlFor="analiseTecnicaLicitacao">Análise Técnica</Label>
+            <Label>Análises Científicas</Label>
             <p className="text-xs text-muted-foreground mb-1">Editável na aba AC</p>
-            <Textarea
-              id="analiseTecnicaLicitacao"
-              value={formData.analiseTecnica}
-              readOnly={true}
-              placeholder="Este campo reflete automaticamente o conteúdo da Análise Técnica-Científica"
-              rows={3}
-              className="bg-muted/50 cursor-not-allowed"
-            />
+            {historicoAnalisesCientificas.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic p-3 border rounded-md bg-muted/50">Nenhuma análise científica salva ainda.</p>
+            ) : (
+              <div className="space-y-2">
+                {historicoAnalisesCientificas.map((analise) => (
+                  <Card key={analise.id} className="bg-muted/50">
+                    <CardHeader className="py-2 px-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Análise {analise.numero}</span>
+                        <span className="text-xs text-muted-foreground">{analise.data}</span>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="py-2 px-3">
+                      <p className="text-sm whitespace-pre-wrap">{analise.texto}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
