@@ -241,10 +241,12 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     valorEntradaAG: oportunidade?.valorEntradaAG || 0,
     valorLimiteAG: oportunidade?.valorLimiteAG || 0,
     
-    // Campos da Análise Científica (AC)
-    analiseCientifica: oportunidade?.analiseCientifica || [],
-    conclusaoAnaliseCientifica: oportunidade?.conclusaoAnaliseCientifica || '',
   });
+
+  // Estado para histórico de análises científicas versionadas
+  const [historicoAnalisesCientificas, setHistoricoAnalisesCientificas] = useState<Array<{id: number; texto: string; data: string; numero: number}>>(
+    oportunidade?.historicoAnalisesCientificas || []
+  );
 
 
   const handleAtualizarTituloTabela = (tabelaId: number, novoTitulo: string) => {
