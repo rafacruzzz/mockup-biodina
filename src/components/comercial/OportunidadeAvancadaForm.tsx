@@ -841,18 +841,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </p>
         </div>
 
-        {/* 2. Análise de Estratégia */}
-        <div>
-          <Label htmlFor="analiseEstrategia">Análise de Estratégia</Label>
-          <Textarea
-            id="analiseEstrategia"
-            value={formData.analiseEstrategia}
-            onChange={(e) => setFormData({...formData, analiseEstrategia: e.target.value})}
-            placeholder="Análise estratégica para a licitação"
-            rows={4}
-            disabled={isReadOnlyMode()}
-          />
-        </div>
 
         {/* 3. Empresa Participante 1 + Valor Mínimo 1 */}
         <Card className="border-2 border-primary/20 bg-gradient-to-r from-blue-50 to-transparent">
