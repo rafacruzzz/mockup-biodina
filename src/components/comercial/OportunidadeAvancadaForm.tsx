@@ -143,6 +143,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   // Estado para novo licitante
   const [novoLicitante, setNovoLicitante] = useState({
     empresa: '',
+    objeto: '',
     marca: '',
     modelo: '',
     valorUnitario: 0,
