@@ -40,6 +40,7 @@ interface OportunidadeAvancadaFormProps {
 interface LicitanteItem {
   id: number;
   empresa: string;
+  objeto?: string;
   marca: string;
   modelo: string;
   valorUnitario: number;
