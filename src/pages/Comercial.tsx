@@ -880,7 +880,20 @@ const Comercial = () => {
       <div className="space-y-4">
         {subAbaContratacao === 'contratacoes'
           ? renderOportunidadesPorModalidade('contratacao_simples')
-          : <MeusPedidosView />
+          : (
+            <div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mb-4 gap-2 text-muted-foreground hover:text-foreground"
+                onClick={() => setSubAbaContratacao('contratacoes')}
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar para Contratações
+              </Button>
+              <MeusPedidosView />
+            </div>
+          )
         }
       </div>
     );
