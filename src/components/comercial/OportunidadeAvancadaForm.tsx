@@ -1268,6 +1268,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                         tabela.licitantes.map((licitante) => (
                           <TableRow key={licitante.id}>
                             <TableCell className="font-medium">{licitante.empresa}</TableCell>
+                            <TableCell>{licitante.objeto || '-'}</TableCell>
                             <TableCell>{licitante.marca}</TableCell>
                             <TableCell>{licitante.modelo}</TableCell>
                             <TableCell>{formatCurrency(licitante.valorUnitario)}</TableCell>
