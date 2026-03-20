@@ -1210,7 +1210,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                     
                     <div className="rounded-lg border border-border p-4 space-y-3">
                       <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                         <p className="text-sm font-medium text-foreground">Histórico de Visitas</p>
                       </div>
 
