@@ -811,38 +811,20 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           />
         </div>
 
-        <Button
-          variant={solicitouAnaliseCientifica ? "secondary" : "outline"}
-          onClick={() => {
-            setSolicitouAnaliseCientifica(true);
-            toast({ title: "Solicitação enviada", description: "Análise da Assessoria Científica solicitada com sucesso." });
-          }}
-          disabled={isReadOnlyMode() || solicitouAnaliseCientifica}
-          className="gap-2 w-fit"
-        >
-          <FlaskConical className="h-4 w-4" />
-          {solicitouAnaliseCientifica ? "✓ Análise Científica Solicitada" : "Solicitar Análise da Assessoria Científica"}
-        </Button>
-
-        {/* 1. Análise Técnica */}
-        <div>
-          <Label htmlFor="analiseTecnicaLicitacao">Análise Técnica</Label>
-          <Textarea
-            id="analiseTecnicaLicitacao"
-            value={formData.analiseTecnica}
-            readOnly={true}
-            placeholder="Este campo reflete automaticamente o conteúdo da Análise Técnica-Científica"
-            rows={3}
-            className="bg-gray-50 cursor-not-allowed"
-            disabled={isReadOnlyMode()}
-          />
-          <p className="text-sm text-gray-500 mt-1">
-            Campo somente leitura - Para editar, use o campo "Análise Técnica-Científica" na aba "Análise Técnica"
-          </p>
-        </div>
-
-        {/* Botões de Solicitação Jurídica */}
+        {/* Botões de Solicitação */}
         <div className="flex gap-3 flex-wrap">
+          <Button
+            variant={solicitouAnaliseCientifica ? "secondary" : "outline"}
+            onClick={() => {
+              setSolicitouAnaliseCientifica(true);
+              toast({ title: "Solicitação enviada", description: "Análise da Assessoria Científica solicitada com sucesso." });
+            }}
+            disabled={isReadOnlyMode() || solicitouAnaliseCientifica}
+            className="gap-2"
+          >
+            <FlaskConical className="h-4 w-4" />
+            {solicitouAnaliseCientifica ? "✓ Análise Científica Solicitada" : "Solicitar Análise da Assessoria Científica"}
+          </Button>
           <Button
             variant={solicitouEsclarecimento ? "secondary" : "outline"}
             onClick={() => {
@@ -868,6 +850,22 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             {solicitouImpugnacao ? "✓ Impugnação Solicitada" : "Solicitar Análise Jurídica - Impugnação do Edital"}
           </Button>
         </div>
+
+        {/* Análise Técnica (read-only, só aparece após solicitar) */}
+        {solicitouAnaliseCientifica && (
+          <div>
+            <Label htmlFor="analiseTecnicaLicitacao">Análise Técnica</Label>
+            <p className="text-xs text-muted-foreground mb-1">Editável na aba AC</p>
+            <Textarea
+              id="analiseTecnicaLicitacao"
+              value={formData.analiseTecnica}
+              readOnly={true}
+              placeholder="Este campo reflete automaticamente o conteúdo da Análise Técnica-Científica"
+              rows={3}
+              className="bg-muted/50 cursor-not-allowed"
+            />
+          </div>
+        )}
 
         {/* Pedido de Esclarecimento (read-only, só aparece após solicitar) */}
         {solicitouEsclarecimento && (
