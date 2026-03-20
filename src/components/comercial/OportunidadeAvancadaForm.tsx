@@ -849,6 +849,18 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             <Scale className="h-4 w-4" />
             {solicitouImpugnacao ? "✓ Impugnação Solicitada" : "Solicitar Análise Jurídica - Impugnação do Edital"}
           </Button>
+          <Button
+            variant={solicitouAnaliseGerencial ? "secondary" : "outline"}
+            onClick={() => {
+              setSolicitouAnaliseGerencial(true);
+              toast({ title: "Solicitação enviada", description: "Análise Gerencial solicitada com sucesso." });
+            }}
+            disabled={isReadOnlyMode() || solicitouAnaliseGerencial}
+            className="gap-2"
+          >
+            <Briefcase className="h-4 w-4" />
+            {solicitouAnaliseGerencial ? "✓ Análise Gerencial Solicitada" : "Solicitar Análise Gerencial"}
+          </Button>
         </div>
 
         {/* Análise Técnica (read-only, só aparece após solicitar) */}
