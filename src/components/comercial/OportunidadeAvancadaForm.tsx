@@ -1158,41 +1158,23 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </>
         )}
 
-        {/* Análise Científica (read-only, só aparece após solicitar) */}
-        {solicitouAnaliseCientifica && (formData.analiseCientifica || []).length > 0 && (
+        {/* Análise Científica - Histórico (read-only, só aparece após solicitar) */}
+        {solicitouAnaliseCientifica && historicoAnalisesCientificas.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Análise Científica (AC)</CardTitle>
               <p className="text-xs text-muted-foreground">Editável na aba AC</p>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {(formData.analiseCientifica || []).map((analise: any, index: number) => (
-                analise?.resposta && (
-                  <div key={index} className="p-3 border rounded-lg bg-muted/50 space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-medium">Questão {index + 1}: {analise.pergunta}</p>
-                      {analise.statusValidacao && (
-                        <Badge className={
-                          (analise.statusValidacao === 'Validado' ? 'bg-green-500' :
-                           analise.statusValidacao === 'Parcialmente Validado' ? 'bg-yellow-500' : 'bg-red-500') + ' text-white'
-                        }>
-                          {analise.statusValidacao}
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-sm text-muted-foreground">{analise.resposta}</p>
-                    {analise.observacoes && (
-                      <p className="text-xs text-muted-foreground italic">Obs: {analise.observacoes}</p>
-                    )}
+            <CardContent className="space-y-2">
+              {historicoAnalisesCientificas.map((analise) => (
+                <div key={analise.id} className="p-3 border rounded-lg bg-muted/50 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Análise {analise.numero}</span>
+                    <span className="text-xs text-muted-foreground">{analise.data}</span>
                   </div>
-                )
-              ))}
-              {formData.conclusaoAnaliseCientifica && (
-                <div className="p-3 border rounded-lg bg-muted/50">
-                  <p className="text-sm font-medium mb-1">Conclusão</p>
-                  <p className="text-sm text-muted-foreground">{formData.conclusaoAnaliseCientifica}</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{analise.texto}</p>
                 </div>
-              )}
+              ))}
             </CardContent>
           </Card>
         )}
