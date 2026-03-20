@@ -612,45 +612,77 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             </TabsList>
 
             <TabsContent value="dados-gerais" className="space-y-6">
-              {/* Vincular Licitação */}
+              {/* Origem da Contratação */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Link2 className="h-5 w-5" />
-                    Vincular Licitação Ganha
+                    Origem da Contratação
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="licitacao">Selecionar Licitação</Label>
-                      <Select value={licitacaoVinculada} onValueChange={handleVincularLicitacao}>
+                      <Label>Tipo de Contratação</Label>
+                      <Select value={tipoContratacao} onValueChange={(v: 'licitacao' | 'particular') => handleTipoContratacaoChange(v)}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione uma licitação ganha para vincular" />
+                          <SelectValue placeholder="Selecione o tipo de contratação" />
                         </SelectTrigger>
                         <SelectContent>
-                          {licitacoesGanhas.map((licitacao) => (
-                            <SelectItem key={licitacao.id} value={licitacao.id.toString()}>
-                              {licitacao.numeroPregao} - {licitacao.nomeInstituicao} ({formatCurrency(licitacao.estrategiaValorFinal)})
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="licitacao">Licitação</SelectItem>
+                          <SelectItem value="particular">Particular</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-                    {licitacaoVinculadaData && (
-                      <div className="space-y-4">
-                        <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                          <p className="text-sm text-green-800">
-                            <strong>Licitação Vinculada:</strong> {licitacaoVinculadaData.numeroPregao}
-                          </p>
-                          <p className="text-sm text-green-600">
-                            {licitacaoVinculadaData.objetoLicitacao}
-                          </p>
-                          <p className="text-xs text-green-600 mt-1">
-                            Os dados do cliente, documentos, histórico e pedidos foram importados automaticamente.
-                          </p>
-                        </div>
 
+                    {tipoContratacao === 'licitacao' && (
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="licitacao">Selecionar Licitação</Label>
+                          <Select value={licitacaoVinculada} onValueChange={handleVincularLicitacao}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione uma licitação ganha para vincular" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {licitacoesGanhas.map((licitacao) => (
+                                <SelectItem key={licitacao.id} value={licitacao.id.toString()}>
+                                  {licitacao.numeroPregao} - {licitacao.nomeInstituicao} ({formatCurrency(licitacao.estrategiaValorFinal)})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {licitacaoVinculadaData && (
+                          <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                            <p className="text-sm text-green-800">
+                              <strong>Licitação Vinculada:</strong> {licitacaoVinculadaData.numeroPregao}
+                            </p>
+                            <p className="text-sm text-green-600">
+                              {licitacaoVinculadaData.objetoLicitacao}
+                            </p>
+                            <p className="text-xs text-green-600 mt-1">
+                              Os dados do cliente, documentos, histórico e pedidos foram importados automaticamente.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {tipoContratacao === 'particular' && (
+                      <div>
+                        <Label>Selecionar Cliente</Label>
+                        <Select value={clienteParticular} onValueChange={handleSelecionarCliente}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Busque e selecione um cliente cadastrado" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {clientesCadastrados.map((cliente) => (
+                              <SelectItem key={cliente.id} value={cliente.id}>
+                                {cliente.nomeFantasia} — {cliente.cpfCnpj}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     )}
                   </div>
