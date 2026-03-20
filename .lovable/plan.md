@@ -1,20 +1,19 @@
 
 
-## Plano: Mover botões de Esclarecimento e Impugnação para após Análise Técnica
+## Plano: Transformar botão existente de Assessoria Científica no mesmo padrão dos botões jurídicos
 
-### Contexto
-Os botões "Solicitar Análise Jurídica - Pedido de Esclarecimento" e "Solicitar Análise Jurídica - Impugnação do Edital" já existem como estados (`solicitouEsclarecimento`, `solicitouImpugnacao`) e seus campos read-only já estão implementados (linhas 925-954). Precisamos apenas adicionar os botões visíveis e reposicionar os campos.
+### Problema
+O botão "Solicitar Análise da Assessoria Científica" já existe (linha 814), mas o campo "Análise Técnica" (linhas 828-842) está sempre visível. O comportamento deve ser igual aos botões jurídicos: o campo só aparece após clicar no botão.
 
 ### Alterações em `OportunidadeAvancadaForm.tsx`
 
-**1. Após o campo "Análise Técnica" (linha 842), inserir dois botões:**
-- "Solicitar Análise Jurídica - Pedido de Esclarecimento" — ao clicar, seta `solicitouEsclarecimento = true` e exibe toast
-- "Solicitar Análise Jurídica - Impugnação do Edital" — ao clicar, seta `solicitouImpugnacao = true` e exibe toast
+**1. Tornar o campo "Análise Técnica" condicional (linhas 827-842)**
+- Envolver o bloco do campo "Análise Técnica" com `{solicitouAnaliseCientifica && ( ... )}`, para que só apareça após o clique no botão.
 
-**2. Mover os blocos read-only de Esclarecimento (linhas 925-938) e Impugnação (linhas 941-954) para logo abaixo dos respectivos botões** (após linha 842, junto dos botões). Cada campo só aparece após o clique no botão correspondente.
-
-**3. Layout:** Botões lado a lado com `flex gap-3 flex-wrap`, seguidos dos campos condicionais.
+**2. Agrupar o botão junto dos botões jurídicos (linhas 844-870)**
+- Mover o botão "Solicitar Análise da Assessoria Científica" (linhas 814-825) para dentro do `div flex gap-3` dos botões jurídicos (linha 845), ficando os 3 botões lado a lado.
+- O campo condicional de Análise Técnica fica logo abaixo, antes dos campos de Esclarecimento e Impugnação.
 
 ### Resultado
-Após "Análise Técnica" aparecem os dois botões de solicitação jurídica. Ao clicar, surge o campo read-only que replica o conteúdo preenchido na aba AJ.
+Três botões de solicitação juntos. Ao clicar em cada um, aparece o respectivo campo read-only preenchido pela aba correspondente (AC ou AJ).
 
