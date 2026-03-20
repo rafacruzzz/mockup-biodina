@@ -40,6 +40,7 @@ interface OportunidadeAvancadaFormProps {
 interface LicitanteItem {
   id: number;
   empresa: string;
+  objeto?: string;
   marca: string;
   modelo: string;
   valorUnitario: number;
@@ -1244,7 +1245,8 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Empresa</TableHead>
+                        <TableHead>Licitante</TableHead>
+                        <TableHead>Objeto</TableHead>
                         <TableHead>Marca</TableHead>
                         <TableHead>Modelo</TableHead>
                         <TableHead>Valor Unitário</TableHead>
@@ -1259,7 +1261,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                     <TableBody>
                       {tabela.licitantes.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={isReadOnlyMode() ? 9 : 10} className="text-center text-muted-foreground py-8">
+                          <TableCell colSpan={isReadOnlyMode() ? 10 : 11} className="text-center text-muted-foreground py-8">
                             Nenhum licitante cadastrado. Clique em "Adicionar Licitante" para começar.
                           </TableCell>
                         </TableRow>
@@ -1267,6 +1269,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                         tabela.licitantes.map((licitante) => (
                           <TableRow key={licitante.id}>
                             <TableCell className="font-medium">{licitante.empresa}</TableCell>
+                            <TableCell>{licitante.objeto || '-'}</TableCell>
                             <TableCell>{licitante.marca}</TableCell>
                             <TableCell>{licitante.modelo}</TableCell>
                             <TableCell>{formatCurrency(licitante.valorUnitario)}</TableCell>
