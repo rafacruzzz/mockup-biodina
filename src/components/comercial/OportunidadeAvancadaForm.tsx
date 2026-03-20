@@ -211,8 +211,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     qualSite: oportunidade?.qualSite || '',
     permiteAdesao: oportunidade?.permiteAdesao || '',
     observacoesAdesao: oportunidade?.observacoesAdesao || '',
-    produto: oportunidade?.produto || '',
-    valorEstimado: oportunidade?.valorEstimado || 0,
+    produtos: oportunidade?.produtos?.length ? oportunidade.produtos : [{ id: crypto.randomUUID(), produto: '', valorEstimado: 0 }],
     quantidadeEquipamentos: oportunidade?.quantidadeEquipamentos || 0,
     quantidadeExames: oportunidade?.quantidadeExames || 0,
     haviaContratoAnterior: oportunidade?.haviaContratoAnterior || '',
@@ -660,36 +659,80 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="produto">Produto</Label>
-            <Select 
-              value={formData.produto} 
-              onValueChange={(value) => setFormData({...formData, produto: value})}
-              disabled={isReadOnlyMode()}
+        <div className="space-y-3">
+          <Label>Produtos</Label>
+          {formData.produtos.map((item, index) => (
+            <div key={item.id} className="flex items-end gap-3">
+              <div className="flex-1">
+                {index === 0 && <Label className="text-xs text-muted-foreground mb-1">Produto</Label>}
+                <Select 
+                  value={item.produto} 
+                  onValueChange={(value) => {
+                    const updated = [...formData.produtos];
+                    updated[index] = { ...updated[index], produto: value };
+                    setFormData({...formData, produtos: updated});
+                  }}
+                  disabled={isReadOnlyMode()}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione do cadastro" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="abl800">ABL800 Flex</SelectItem>
+                    <SelectItem value="gasometro">Gasômetro</SelectItem>
+                    <SelectItem value="sistema">Sistema WEBMED</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-48">
+                {index === 0 && <Label className="text-xs text-muted-foreground mb-1">Valor Estimado</Label>}
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={item.valorEstimado}
+                  onChange={(e) => {
+                    const updated = [...formData.produtos];
+                    updated[index] = { ...updated[index], valorEstimado: Number(e.target.value) };
+                    setFormData({...formData, produtos: updated});
+                  }}
+                  placeholder="0,00"
+                  disabled={isReadOnlyMode()}
+                />
+              </div>
+              {formData.produtos.length > 1 && !isReadOnlyMode() && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 shrink-0 text-destructive hover:text-destructive/80"
+                  onClick={() => {
+                    const updated = formData.produtos.filter((_, i) => i !== index);
+                    setFormData({...formData, produtos: updated});
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          ))}
+          {!isReadOnlyMode() && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setFormData({
+                  ...formData,
+                  produtos: [...formData.produtos, { id: crypto.randomUUID(), produto: '', valorEstimado: 0 }]
+                });
+              }}
+              className="mt-1"
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione do cadastro" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="abl800">ABL800 Flex</SelectItem>
-                <SelectItem value="gasometro">Gasômetro</SelectItem>
-                <SelectItem value="sistema">Sistema WEBMED</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="valorEstimado">Valor Estimado</Label>
-            <Input
-              id="valorEstimado"
-              type="number"
-              step="0.01"
-              value={formData.valorEstimado}
-              onChange={(e) => setFormData({...formData, valorEstimado: Number(e.target.value)})}
-              placeholder="0,00"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
+              <Plus className="h-4 w-4 mr-1" /> Adicionar Produto
+            </Button>
+          )}
+        </div>
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="quantidadeEquipamentos">Quantidade Equipamentos / Total Estimado</Label>
             <Input
