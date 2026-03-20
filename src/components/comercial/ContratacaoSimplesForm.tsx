@@ -57,6 +57,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [pedidos, setPedidos] = useState<PedidoCompleto[]>([]);
   const [chamados, setChamados] = useState<Chamado[]>(oportunidade?.chamados || []);
   const [isPedidoModalOpen, setIsPedidoModalOpen] = useState(false);
+  const [tipoContratacao, setTipoContratacao] = useState<'licitacao' | 'particular' | ''>('');
+  const [clienteParticular, setClienteParticular] = useState<string>('');
   const [licitacaoVinculada, setLicitacaoVinculada] = useState<string>('');
   const [documentosLicitacao, setDocumentosLicitacao] = useState<any[]>([]);
   const [historicoLicitacao, setHistoricoLicitacao] = useState<any[]>([]);
@@ -270,7 +272,47 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const somaAditivos = aditivos.reduce((sum, a) => sum + a.valor, 0);
   const valorAtualizado = valorOriginal + somaAditivos;
 
-  
+  // Mock de clientes cadastrados
+  const clientesCadastrados = [
+    { id: 'cli-001', cpfCnpj: '12.345.678/0001-90', nomeFantasia: 'Hospital São Lucas', razaoSocial: 'Hospital São Lucas Ltda', endereco: 'Rua das Flores, 123', uf: 'SP', email: 'contato@saolucas.com.br', telefone: '(11) 3456-7890', segmento: 'hospitalar' },
+    { id: 'cli-002', cpfCnpj: '98.765.432/0001-10', nomeFantasia: 'Clínica Vida Nova', razaoSocial: 'Clínica Vida Nova S/A', endereco: 'Av. Brasil, 456', uf: 'RJ', email: 'contato@vidanova.com.br', telefone: '(21) 2345-6789', segmento: 'clinica' },
+    { id: 'cli-003', cpfCnpj: '45.678.901/0001-23', nomeFantasia: 'Lab Diagnóstico Plus', razaoSocial: 'Diagnóstico Plus Análises Clínicas Ltda', endereco: 'Rua Central, 789', uf: 'MG', email: 'lab@diagnosticoplus.com.br', telefone: '(31) 3456-1234', segmento: 'laboratorial' },
+    { id: 'cli-004', cpfCnpj: '11.222.333/0001-44', nomeFantasia: 'Centro Médico Esperança', razaoSocial: 'Centro Médico Esperança Ltda', endereco: 'Av. Paulista, 1000', uf: 'SP', email: 'admin@esperanca.com.br', telefone: '(11) 4567-8901', segmento: 'hospitalar' },
+    { id: 'cli-005', cpfCnpj: '55.666.777/0001-88', nomeFantasia: 'Farmácia Popular Saúde', razaoSocial: 'Farmácia Popular Saúde ME', endereco: 'Rua do Comércio, 50', uf: 'BA', email: 'farmacia@popularsaude.com.br', telefone: '(71) 3210-5678', segmento: 'farmacia' },
+  ];
+
+  const handleSelecionarCliente = (clienteId: string) => {
+    setClienteParticular(clienteId);
+    const cliente = clientesCadastrados.find(c => c.id === clienteId);
+    if (cliente) {
+      setFormData(prev => ({
+        ...prev,
+        cpfCnpj: cliente.cpfCnpj,
+        nomeFantasia: cliente.nomeFantasia,
+        razaoSocial: cliente.razaoSocial,
+        endereco: `${cliente.endereco} - ${cliente.uf}`,
+        uf: cliente.uf,
+        email: cliente.email,
+        telefone: cliente.telefone,
+        segmentoProjeto: cliente.segmento,
+      }));
+    }
+  };
+
+  const handleTipoContratacaoChange = (tipo: 'licitacao' | 'particular') => {
+    setTipoContratacao(tipo);
+    // Limpar dados ao trocar tipo
+    setLicitacaoVinculada('');
+    setClienteParticular('');
+    setDocumentosLicitacao([]);
+    setHistoricoLicitacao([]);
+    setEmpresaContrato({ empresaParticipanteId: '', empresaParticipanteNome: '', empresaParticipanteCNPJ: '' });
+    setEmpresaContrato2({ empresaParticipanteId: '', empresaParticipanteNome: '', empresaParticipanteCNPJ: '' });
+    setFormData(prev => ({
+      ...prev,
+      cpfCnpj: '', nomeFantasia: '', razaoSocial: '', endereco: '', uf: '', email: '', telefone: '', segmentoProjeto: '',
+    }));
+  };
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({
@@ -570,45 +612,77 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             </TabsList>
 
             <TabsContent value="dados-gerais" className="space-y-6">
-              {/* Vincular Licitação */}
+              {/* Origem da Contratação */}
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Link2 className="h-5 w-5" />
-                    Vincular Licitação Ganha
+                    Origem da Contratação
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="licitacao">Selecionar Licitação</Label>
-                      <Select value={licitacaoVinculada} onValueChange={handleVincularLicitacao}>
+                      <Label>Tipo de Contratação</Label>
+                      <Select value={tipoContratacao} onValueChange={(v: 'licitacao' | 'particular') => handleTipoContratacaoChange(v)}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione uma licitação ganha para vincular" />
+                          <SelectValue placeholder="Selecione o tipo de contratação" />
                         </SelectTrigger>
                         <SelectContent>
-                          {licitacoesGanhas.map((licitacao) => (
-                            <SelectItem key={licitacao.id} value={licitacao.id.toString()}>
-                              {licitacao.numeroPregao} - {licitacao.nomeInstituicao} ({formatCurrency(licitacao.estrategiaValorFinal)})
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="licitacao">Licitação</SelectItem>
+                          <SelectItem value="particular">Particular</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
-                    {licitacaoVinculadaData && (
-                      <div className="space-y-4">
-                        <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                          <p className="text-sm text-green-800">
-                            <strong>Licitação Vinculada:</strong> {licitacaoVinculadaData.numeroPregao}
-                          </p>
-                          <p className="text-sm text-green-600">
-                            {licitacaoVinculadaData.objetoLicitacao}
-                          </p>
-                          <p className="text-xs text-green-600 mt-1">
-                            Os dados do cliente, documentos, histórico e pedidos foram importados automaticamente.
-                          </p>
-                        </div>
 
+                    {tipoContratacao === 'licitacao' && (
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="licitacao">Selecionar Licitação</Label>
+                          <Select value={licitacaoVinculada} onValueChange={handleVincularLicitacao}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione uma licitação ganha para vincular" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {licitacoesGanhas.map((licitacao) => (
+                                <SelectItem key={licitacao.id} value={licitacao.id.toString()}>
+                                  {licitacao.numeroPregao} - {licitacao.nomeInstituicao} ({formatCurrency(licitacao.estrategiaValorFinal)})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {licitacaoVinculadaData && (
+                          <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                            <p className="text-sm text-green-800">
+                              <strong>Licitação Vinculada:</strong> {licitacaoVinculadaData.numeroPregao}
+                            </p>
+                            <p className="text-sm text-green-600">
+                              {licitacaoVinculadaData.objetoLicitacao}
+                            </p>
+                            <p className="text-xs text-green-600 mt-1">
+                              Os dados do cliente, documentos, histórico e pedidos foram importados automaticamente.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {tipoContratacao === 'particular' && (
+                      <div>
+                        <Label>Selecionar Cliente</Label>
+                        <Select value={clienteParticular} onValueChange={handleSelecionarCliente}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Busque e selecione um cliente cadastrado" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {clientesCadastrados.map((cliente) => (
+                              <SelectItem key={cliente.id} value={cliente.id}>
+                                {cliente.nomeFantasia} — {cliente.cpfCnpj}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     )}
                   </div>
