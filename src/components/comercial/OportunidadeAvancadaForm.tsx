@@ -2027,12 +2027,22 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="licit-empresa">Empresa *</Label>
+              <Label htmlFor="licit-empresa">Licitante *</Label>
               <Input
                 id="licit-empresa"
                 value={novoLicitante.empresa}
                 onChange={(e) => setNovoLicitante({ ...novoLicitante, empresa: e.target.value })}
-                placeholder="Nome da empresa"
+                placeholder="Nome do licitante"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="licit-objeto">Objeto</Label>
+              <Input
+                id="licit-objeto"
+                value={novoLicitante.objeto}
+                onChange={(e) => setNovoLicitante({ ...novoLicitante, objeto: e.target.value })}
+                placeholder="Descrição do objeto"
               />
             </div>
             
