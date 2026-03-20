@@ -841,6 +841,65 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           </p>
         </div>
 
+        {/* Botões de Solicitação Jurídica */}
+        <div className="flex gap-3 flex-wrap">
+          <Button
+            variant={solicitouEsclarecimento ? "secondary" : "outline"}
+            onClick={() => {
+              setSolicitouEsclarecimento(true);
+              toast({ title: "Solicitação enviada", description: "Pedido de Esclarecimento enviado à Análise Jurídica." });
+            }}
+            disabled={isReadOnlyMode() || solicitouEsclarecimento}
+            className="gap-2"
+          >
+            <Scale className="h-4 w-4" />
+            {solicitouEsclarecimento ? "✓ Esclarecimento Solicitado" : "Solicitar Análise Jurídica - Pedido de Esclarecimento"}
+          </Button>
+          <Button
+            variant={solicitouImpugnacao ? "secondary" : "outline"}
+            onClick={() => {
+              setSolicitouImpugnacao(true);
+              toast({ title: "Solicitação enviada", description: "Impugnação do Edital enviada à Análise Jurídica." });
+            }}
+            disabled={isReadOnlyMode() || solicitouImpugnacao}
+            className="gap-2"
+          >
+            <Scale className="h-4 w-4" />
+            {solicitouImpugnacao ? "✓ Impugnação Solicitada" : "Solicitar Análise Jurídica - Impugnação do Edital"}
+          </Button>
+        </div>
+
+        {/* Pedido de Esclarecimento (read-only, só aparece após solicitar) */}
+        {solicitouEsclarecimento && (
+          <div>
+            <Label htmlFor="pedidoEsclarecimentoDG">Pedido de Esclarecimento</Label>
+            <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
+            <Textarea
+              id="pedidoEsclarecimentoDG"
+              value={formData.pedidoEsclarecimento}
+              readOnly
+              placeholder="Preenchido pela Análise Jurídica (aba AJ)"
+              rows={3}
+              className="bg-muted/50"
+            />
+          </div>
+        )}
+
+        {/* Impugnação do Edital (read-only, só aparece após solicitar) */}
+        {solicitouImpugnacao && (
+          <div>
+            <Label htmlFor="impugnacaoEditalDG">Impugnação do Edital</Label>
+            <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
+            <Textarea
+              id="impugnacaoEditalDG"
+              value={formData.impugnacaoEdital}
+              readOnly
+              placeholder="Preenchido pela Análise Jurídica (aba AJ)"
+              rows={3}
+              className="bg-muted/50"
+            />
+          </div>
+        )}
 
         {/* 3. Empresa Participante 1 + Valor Mínimo 1 */}
         <Card className="border-2 border-primary/20 bg-gradient-to-r from-blue-50 to-transparent">
@@ -921,38 +980,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             </div>
           </CardContent>
         </Card>
-
-        {/* Pedido de Esclarecimento (read-only, só aparece após solicitar) */}
-        {solicitouEsclarecimento && (
-          <div>
-            <Label htmlFor="pedidoEsclarecimentoDG">Pedido de Esclarecimento</Label>
-            <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
-            <Textarea
-              id="pedidoEsclarecimentoDG"
-              value={formData.pedidoEsclarecimento}
-              readOnly
-              placeholder="Preenchido pela Análise Jurídica (aba AJ)"
-              rows={3}
-              className="bg-muted/50"
-            />
-          </div>
-        )}
-
-        {/* Impugnação do Edital (read-only, só aparece após solicitar) */}
-        {solicitouImpugnacao && (
-          <div>
-            <Label htmlFor="impugnacaoEditalDG">Impugnação do Edital</Label>
-            <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
-            <Textarea
-              id="impugnacaoEditalDG"
-              value={formData.impugnacaoEdital}
-              readOnly
-              placeholder="Preenchido pela Análise Jurídica (aba AJ)"
-              rows={3}
-              className="bg-muted/50"
-            />
-          </div>
-        )}
 
         {/* 6. Seção de Recursos - condicional ao status "recursos" */}
         {formData.situacaoPregao === 'recursos' && (
