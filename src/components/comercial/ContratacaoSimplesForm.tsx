@@ -247,6 +247,16 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     valorNegocio: oportunidade?.valorNegocio || 0,
     previsaoConsumoMensal: oportunidade?.previsaoConsumoMensal || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || '',
+    dataInicioContrato: '',
+    dataFimContrato: '',
+    renovacaoAutomatica: false,
+    dataRenovacao: '',
+    quantidadeRenovacoes: 0,
+    historicoRenovacoes: [] as Array<{ data: string; registradoEm: string }>,
+    projetoEncerrado: false,
+    encerramentoPendente: false,
+    dataEncerramento: '',
+    encerramentoValidado: false,
     
     // Análise Técnica
     analiseTecnica: oportunidade?.analiseTecnica || '',
