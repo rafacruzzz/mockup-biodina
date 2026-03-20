@@ -1408,6 +1408,51 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     toast({ title: "Análise salva", description: `Análise ${novaAnalise.numero} registrada com sucesso.` });
   };
 
+  const renderAnaliseTecnica = () => (
+    <div className="space-y-6">
+      <div>
+        <Label htmlFor="analiseTecnicaCientifica">Análise Técnica-Científica</Label>
+        <Textarea
+          id="analiseTecnicaCientifica"
+          value={formData.analiseTecnica}
+          onChange={(e) => setFormData({...formData, analiseTecnica: e.target.value})}
+          placeholder="Digite sua análise técnica-científica aqui..."
+          rows={6}
+          disabled={isReadOnlyMode()}
+        />
+        <div className="flex justify-end mt-2">
+          <Button onClick={handleSalvarAnalise} disabled={isReadOnlyMode() || !formData.analiseTecnica.trim()} className="gap-2">
+            <Save className="h-4 w-4" />
+            Salvar Análise
+          </Button>
+        </div>
+      </div>
+
+      {/* Histórico de Análises */}
+      {historicoAnalisesCientificas.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Histórico de Análises ({historicoAnalisesCientificas.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {historicoAnalisesCientificas.map((analise) => (
+              <Collapsible key={analise.id}>
+                <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-md border hover:bg-accent text-left">
+                  <span className="font-medium text-sm">Análise {analise.numero}</span>
+                  <span className="text-xs text-muted-foreground">{analise.data}</span>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="p-3 border border-t-0 rounded-b-md bg-muted/30">
+                  <p className="text-sm whitespace-pre-wrap">{analise.texto}</p>
+                </CollapsibleContent>
+              </Collapsible>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Análise da Concorrência */}
       <div className="space-y-6">
         <div className="flex justify-between items-center">
