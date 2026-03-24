@@ -38,7 +38,7 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
   // Estados para Empenho
   const [numeroEmpenho, setNumeroEmpenho] = useState('');
   const [documentoEmpenho, setDocumentoEmpenho] = useState<File | null>(null);
-  const empenhoFileInputRef = useState<HTMLInputElement | null>(null);
+  const empenhoFileInputRef = useRef<HTMLInputElement>(null);
   
   // Estados para Itens de Uso e Consumo
   const [itensUsoConsumo, setItensUsoConsumo] = useState<ItemUsoConsumoPedido[]>([]);
