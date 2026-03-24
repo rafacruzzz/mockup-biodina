@@ -1,26 +1,25 @@
 
 
-## Plano: Reformular aba AG com fluxo de solicitação e resposta gerencial
+## Plano: Expandir tipos de chamado com todos os departamentos do sistema (exceto RH)
 
 ### Resumo
-Aplicar o mesmo padrão da aba AJ: substituir os campos estáticos (Parecer, Aprovação, Responsável, Data) por um fluxo de comunicação onde o colaborador escreve uma questão, envia para a Diretoria, e recebe a resposta em formato de histórico/thread.
+Adicionar todos os departamentos do sistema como opções no enum `TipoChamado` e no label correspondente, excluindo RH. Atualmente existem 5 tipos; serão adicionados os departamentos faltantes.
 
-### Alterações em `src/components/comercial/ContratacaoSimplesForm.tsx`
+### Departamentos atuais no enum
+- Assessoria Científica, Departamento Técnico, Interface (TI), Financeiro, Estoque
 
-**1. Novos estados (~junto dos outros estados):**
-- `solicitacoesGerenciais`: array de `{ id, questao, dataEnvio, resposta, dataResposta }`
-- `questaoGerencialAtual`: string para o campo de escrita
+### Departamentos a adicionar (baseado nos módulos do sistema, exceto RH)
+- Comercial, Compras (CPR), Contabilidade, Administrativo, Jurídico, Diretoria/Gerencial
 
-**2. Substituir conteúdo da aba AG (linhas 1604-1655):**
-- Card "Solicitação de Análise Gerencial":
-  - Textarea para o colaborador escrever a questão
-  - Botão "Enviar para Análise Gerencial" (ícone Send) — ao clicar, adiciona ao array, limpa o campo, exibe toast
-- Histórico de solicitações (mais recente primeiro):
-  - Cada item mostra: questão do colaborador (com data) e resposta da Diretoria (ou Badge "Aguardando Resposta")
-  - Layout idêntico ao da aba AJ
+### Alterações
 
-**3. Campos antigos** (`parecerGerencial`, `aprovacaoGerencial`, `responsavelGerencial`, `dataAnaliseGerencial`) mantidos no formData para compatibilidade, mas não renderizados.
+**1. `src/types/chamado.ts` — Expandir enum e labels:**
+- Adicionar ao `TipoChamado`: `COMERCIAL`, `COMPRAS`, `CONTABILIDADE`, `ADMINISTRATIVO`, `JURIDICO`, `DIRETORIA`
+- Adicionar os labels correspondentes em `TIPOS_CHAMADO_LABELS`
+
+**2. `src/components/comercial/ChamadosTab.tsx` — Nenhuma alteração necessária:**
+- O componente já renderiza dinamicamente todos os valores de `TIPOS_CHAMADO_LABELS`, então os novos tipos aparecerão automaticamente no Select.
 
 ### Resultado
-A aba AG funciona como canal de comunicação com a Diretoria, no mesmo padrão da aba AJ.
+O select de "Tipo de Chamado" listará todos os departamentos do sistema (exceto RH): Assessoria Científica, Departamento Técnico, TI, Financeiro, Estoque, Comercial, Compras, Contabilidade, Administrativo, Jurídico e Diretoria.
 
