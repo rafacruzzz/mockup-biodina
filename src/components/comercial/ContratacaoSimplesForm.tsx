@@ -104,6 +104,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const aditivoFileInputRef = useRef<HTMLInputElement>(null);
   const [osExpandida, setOsExpandida] = useState<string | null>(null);
   const [osDtExpandida, setOsDtExpandida] = useState<string | null>(null);
+  const [concorrentesBiodinaRep, setConcorrentesBiodinaRep] = useState<Array<{ id: string; nome: string; marca: string; modelo: string; quantidade: string; examesMes: string }>>([
+    { id: crypto.randomUUID(), nome: '', marca: '', modelo: '', quantidade: '', examesMes: '' },
+    { id: crypto.randomUUID(), nome: '', marca: '', modelo: '', quantidade: '', examesMes: '' },
+  ]);
 
   // Estados para aba Empenho
   const [empenhoProdutos, setEmpenhoProdutos] = useState<Array<{
