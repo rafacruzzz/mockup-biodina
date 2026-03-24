@@ -59,6 +59,16 @@ interface AditivoContrato {
 const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: ContratacaoSimplesFormProps) => {
   const [activeTab, setActiveTab] = useState('dados-gerais');
   const [pedidos, setPedidos] = useState<PedidoCompleto[]>([]);
+  const [pedidosServico, setPedidosServico] = useState<Array<{
+    id: string;
+    numeroPedido: string;
+    dataFaturamento: string;
+    periodoCompetencia: string;
+    nfs: string;
+    empenho: string;
+    processo: string;
+    valorNfs: number;
+  }>>([]);
   const [chamados, setChamados] = useState<Chamado[]>(oportunidade?.chamados || []);
   const [isPedidoModalOpen, setIsPedidoModalOpen] = useState(false);
   const [tipoContratacao, setTipoContratacao] = useState<'licitacao' | 'particular' | ''>('');
@@ -2240,92 +2250,154 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               })()}
             </TabsContent>
 
-            <TabsContent value="pedidos" className="space-y-4">
+             <TabsContent value="pedidos" className="space-y-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Gerenciamento de Pedidos</CardTitle>
-                  <Button 
-                    onClick={() => setIsPedidoModalOpen(true)}
-                    className="bg-biodina-gold hover:bg-biodina-gold/90"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Criar Novo Pedido
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button 
+                      onClick={() => setIsPedidoModalOpen(true)}
+                      className="bg-biodina-gold hover:bg-biodina-gold/90"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar Produto
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => toast.info('Funcionalidade de pedido de serviço em desenvolvimento')}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar Serviço
+                    </Button>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  {pedidos.length === 0 ? (
-                    <div className="text-center py-8">
-                      <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-600 mb-4">Nenhum pedido associado a esta oportunidade</p>
-                      <p className="text-sm text-gray-500">
-                        Clique em "Criar Novo Pedido" para começar a adicionar produtos
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Nº Pedido</TableHead>
-                            <TableHead>Data</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Produtos</TableHead>
-                            <TableHead>Valor Total</TableHead>
-                            <TableHead>Ações</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {pedidos.map((pedido) => (
-                            <TableRow key={pedido.id}>
-                              <TableCell className="font-mono text-sm">
-                                #{pedido.id.toString().slice(-6)}
-                              </TableCell>
-                              <TableCell>
-                                {new Date(pedido.dataVenda).toLocaleDateString('pt-BR')}
-                              </TableCell>
-                              <TableCell>
-                                <Badge className={`${getStatusColor(pedido.status)} text-white`}>
-                                  {pedido.status.toUpperCase()}
-                                </Badge>
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex flex-col">
-                                  <span className="font-medium">
-                                    {pedido.produtos.length} {pedido.produtos.length === 1 ? 'produto' : 'produtos'}
-                                  </span>
-                                  <span className="text-xs text-gray-500">
-                                    {pedido.produtos.slice(0, 2).map(p => p.codigo).join(', ')}
-                                    {pedido.produtos.length > 2 && ` +${pedido.produtos.length - 2}`}
-                                  </span>
-                                </div>
-                              </TableCell>
-                              <TableCell className="font-medium text-green-600">
-                                {formatCurrency(pedido.valorTotal)}
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex gap-1">
+                <CardContent className="space-y-6">
+                  {/* Tabela Pedido Produto */}
+                  <div>
+                    <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
+                      <Package className="h-4 w-4" />
+                      Pedido Produto
+                    </h3>
+                    {pedidos.length === 0 ? (
+                      <div className="text-center py-6 border rounded-lg border-dashed">
+                        <Package className="h-10 w-10 text-muted-foreground/40 mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">Nenhum pedido de produto cadastrado</p>
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto border rounded-lg">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Nº Pedido</TableHead>
+                              <TableHead>Data Faturamento</TableHead>
+                              <TableHead>Período Competência</TableHead>
+                              <TableHead>NFE</TableHead>
+                              <TableHead>Empenho</TableHead>
+                              <TableHead>Processo</TableHead>
+                              <TableHead>Valor da NFE</TableHead>
+                              <TableHead>Ações</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {pedidos.map((pedido) => (
+                              <TableRow key={pedido.id}>
+                                <TableCell className="font-mono text-sm">
+                                  #{pedido.id.toString().slice(-6)}
+                                </TableCell>
+                                <TableCell>
+                                  {pedido.dataVenda ? new Date(pedido.dataVenda).toLocaleDateString('pt-BR') : '-'}
+                                </TableCell>
+                                <TableCell>-</TableCell>
+                                <TableCell>
+                                  <Badge variant="outline" className="text-xs">
+                                    {pedido.status === 'faturado' ? 'Emitida' : 'Pendente'}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>-</TableCell>
+                                <TableCell>-</TableCell>
+                                <TableCell className="font-medium text-green-600">
+                                  {formatCurrency(pedido.valorTotal)}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex gap-1">
+                                    <Button variant="ghost" size="sm" title="Visualizar">
+                                      <Eye className="h-4 w-4" />
+                                    </Button>
+                                    {pedido.status === 'rascunho' && (
+                                      <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        onClick={() => handleEnviarExpedicao(pedido)}
+                                        title="Enviar para Expedição"
+                                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                      >
+                                        <Send className="h-4 w-4" />
+                                      </Button>
+                                    )}
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Tabela Pedido Serviço */}
+                  <div>
+                    <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
+                      <Wrench className="h-4 w-4" />
+                      Pedido Serviço
+                    </h3>
+                    {pedidosServico.length === 0 ? (
+                      <div className="text-center py-6 border rounded-lg border-dashed">
+                        <Wrench className="h-10 w-10 text-muted-foreground/40 mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">Nenhum pedido de serviço cadastrado</p>
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto border rounded-lg">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Nº Pedido</TableHead>
+                              <TableHead>Data Faturamento</TableHead>
+                              <TableHead>Período Competência</TableHead>
+                              <TableHead>NFS</TableHead>
+                              <TableHead>Empenho</TableHead>
+                              <TableHead>Processo</TableHead>
+                              <TableHead>Valor da NFS</TableHead>
+                              <TableHead>Ações</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {pedidosServico.map((servico) => (
+                              <TableRow key={servico.id}>
+                                <TableCell className="font-mono text-sm">{servico.numeroPedido}</TableCell>
+                                <TableCell>{servico.dataFaturamento || '-'}</TableCell>
+                                <TableCell>{servico.periodoCompetencia || '-'}</TableCell>
+                                <TableCell>
+                                  <Badge variant="outline" className="text-xs">
+                                    {servico.nfs || 'Pendente'}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>{servico.empenho || '-'}</TableCell>
+                                <TableCell>{servico.processo || '-'}</TableCell>
+                                <TableCell className="font-medium text-green-600">
+                                  {formatCurrency(servico.valorNfs)}
+                                </TableCell>
+                                <TableCell>
                                   <Button variant="ghost" size="sm" title="Visualizar">
                                     <Eye className="h-4 w-4" />
                                   </Button>
-                                  {pedido.status === 'rascunho' && (
-                                    <Button 
-                                      variant="ghost" 
-                                      size="sm" 
-                                      onClick={() => handleEnviarExpedicao(pedido)}
-                                      title="Enviar para Expedição"
-                                      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                    >
-                                      <Send className="h-4 w-4" />
-                                    </Button>
-                                  )}
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  )}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
