@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar as CalendarIcon, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone, Building2, RefreshCw, ChevronDown, ChevronUp, ExternalLink, Copy, XCircle } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar as CalendarIcon, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone, Building2, RefreshCw, ChevronDown, ChevronUp, ExternalLink, Copy, XCircle, Briefcase } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { mockChecklistVendas } from '@/data/faturamentoModules';
@@ -110,6 +110,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   ]);
   const [solicitacoesJuridicas, setSolicitacoesJuridicas] = useState<Array<{ id: string; questao: string; dataEnvio: string; resposta: string; dataResposta: string }>>([]);
   const [questaoJuridicaAtual, setQuestaoJuridicaAtual] = useState('');
+  const [solicitacoesGerenciais, setSolicitacoesGerenciais] = useState<Array<{ id: string; questao: string; dataEnvio: string; resposta: string; dataResposta: string }>>([]);
+  const [questaoGerencialAtual, setQuestaoGerencialAtual] = useState('');
 
   // Estados para aba Empenho
   const [empenhoProdutos, setEmpenhoProdutos] = useState<Array<{
@@ -1605,53 +1607,86 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             <TabsContent value="analise-gerencial" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Análise Gerencial (AG)</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Briefcase className="h-5 w-5" />
+                    Solicitação de Análise Gerencial
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
-                    <Label htmlFor="parecerGerencial">Parecer Gerencial</Label>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label htmlFor="questaoGerencial">Descreva sua questão para a Diretoria</Label>
                     <Textarea
-                      id="parecerGerencial"
-                      value={formData.parecerGerencial || ''}
-                      onChange={(e) => handleInputChange('parecerGerencial', e.target.value)}
-                      placeholder="Digite o parecer gerencial"
+                      id="questaoGerencial"
+                      value={questaoGerencialAtual}
+                      onChange={(e) => setQuestaoGerencialAtual(e.target.value)}
+                      placeholder="Escreva aqui sua questão ou assunto relacionado à diretoria..."
                       rows={4}
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="aprovacaoGerencial">Aprovação</Label>
-                    <Select value={formData.aprovacaoGerencial || ''} onValueChange={(value) => handleInputChange('aprovacaoGerencial', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pendente">Pendente</SelectItem>
-                        <SelectItem value="aprovado">Aprovado</SelectItem>
-                        <SelectItem value="reprovado">Reprovado</SelectItem>
-                        <SelectItem value="condicional">Condicional</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="responsavelGerencial">Responsável</Label>
-                    <Input
-                      id="responsavelGerencial"
-                      value={formData.responsavelGerencial || ''}
-                      onChange={(e) => handleInputChange('responsavelGerencial', e.target.value)}
-                      placeholder="Nome do responsável"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="dataAnaliseGerencial">Data</Label>
-                    <Input
-                      id="dataAnaliseGerencial"
-                      type="date"
-                      value={formData.dataAnaliseGerencial || ''}
-                      onChange={(e) => handleInputChange('dataAnaliseGerencial', e.target.value)}
-                    />
-                  </div>
+                  <Button
+                    onClick={() => {
+                      if (!questaoGerencialAtual.trim()) {
+                        toast.error('Digite uma questão antes de enviar.');
+                        return;
+                      }
+                      setSolicitacoesGerenciais(prev => [{
+                        id: crypto.randomUUID(),
+                        questao: questaoGerencialAtual.trim(),
+                        dataEnvio: new Date().toLocaleString('pt-BR'),
+                        resposta: '',
+                        dataResposta: ''
+                      }, ...prev]);
+                      setQuestaoGerencialAtual('');
+                      toast.success('Questão enviada para a Diretoria!');
+                    }}
+                    disabled={!questaoGerencialAtual.trim()}
+                    className="bg-biodina-gold hover:bg-biodina-gold/90"
+                  >
+                    <Send className="h-4 w-4 mr-2" />
+                    Enviar para Análise Gerencial
+                  </Button>
                 </CardContent>
               </Card>
+
+              {solicitacoesGerenciais.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Histórico de Solicitações Gerenciais</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {solicitacoesGerenciais.map((solicitacao, index) => (
+                      <div key={solicitacao.id} className="border rounded-lg p-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-foreground">
+                            Solicitação {solicitacoesGerenciais.length - index}
+                          </span>
+                          <span className="text-xs text-muted-foreground">{solicitacao.dataEnvio}</span>
+                        </div>
+                        <div className="bg-muted/50 rounded-md p-3">
+                          <p className="text-sm font-medium text-muted-foreground mb-1">Questão do Colaborador:</p>
+                          <p className="text-sm text-foreground">{solicitacao.questao}</p>
+                        </div>
+                        {solicitacao.resposta ? (
+                          <div className="bg-green-50 border border-green-200 rounded-md p-3">
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="text-sm font-medium text-green-700">Resposta da Diretoria:</p>
+                              <span className="text-xs text-green-600">{solicitacao.dataResposta}</span>
+                            </div>
+                            <p className="text-sm text-green-800">{solicitacao.resposta}</p>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50">
+                              <Clock className="h-3 w-3 mr-1" />
+                              Aguardando Resposta da Diretoria
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
 
             {/* Saldo do Cliente removido */}
