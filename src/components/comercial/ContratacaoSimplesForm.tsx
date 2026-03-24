@@ -1339,10 +1339,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                           valorEmpenho: 0,
                           pedidosVinculados: [],
                           valorFaturado: 0,
-                          expandido: false,
                           documentoEmpenho: null,
                           nomeDocumento: '',
-                          itens: [],
                         }]);
                       }}
                       className="bg-biodina-gold hover:bg-biodina-gold/90"
