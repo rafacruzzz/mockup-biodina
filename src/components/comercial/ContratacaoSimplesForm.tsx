@@ -1477,19 +1477,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                                     )}
                                   </div>
 
-                                  {/* Botões expandir/remover */}
+                                  {/* Botão remover */}
                                   <div className="flex gap-2 pt-5">
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => {
-                                        const updated = [...empenhos];
-                                        updated[index].expandido = !updated[index].expandido;
-                                        setEmpenhos(updated);
-                                      }}
-                                    >
-                                      {emp.expandido ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                                    </Button>
                                     <Button
                                       variant="outline"
                                       size="sm"
@@ -1501,119 +1490,41 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                                   </div>
                                 </div>
 
-                                {/* Seção expansível — itens do empenho */}
-                                {emp.expandido && (
-                                  <div className="border-t pt-4 space-y-3">
-                                    <div className="flex items-center justify-between">
-                                      <Label className="text-sm font-semibold">Itens do Empenho</Label>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                          const updated = [...empenhos];
-                                          updated[index].itens.push({
-                                            id: `it_${Date.now()}`,
-                                            tipo: 'produto',
-                                            descricao: '',
-                                            quantidade: 0,
-                                            valor: 0,
-                                          });
-                                          setEmpenhos(updated);
-                                        }}
-                                      >
-                                        <Plus className="h-3 w-3 mr-1" />
-                                        Adicionar Item
-                                      </Button>
-                                    </div>
-                                    {emp.itens.length === 0 ? (
-                                      <p className="text-sm text-muted-foreground text-center py-3">Nenhum item cadastrado</p>
-                                    ) : (
-                                      <Table>
-                                        <TableHeader>
-                                          <TableRow>
-                                            <TableHead>Tipo</TableHead>
-                                            <TableHead>Descrição</TableHead>
-                                            <TableHead>Qtd.</TableHead>
-                                            <TableHead>Valor (R$)</TableHead>
-                                            <TableHead className="w-10"></TableHead>
-                                          </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                          {emp.itens.map((item, itemIdx) => (
-                                            <TableRow key={item.id}>
-                                              <TableCell>
-                                                <Select
-                                                  value={item.tipo}
-                                                  onValueChange={(val: 'produto' | 'servico') => {
-                                                    const updated = [...empenhos];
-                                                    updated[index].itens[itemIdx].tipo = val;
-                                                    setEmpenhos(updated);
-                                                  }}
-                                                >
-                                                  <SelectTrigger className="w-28">
-                                                    <SelectValue />
-                                                  </SelectTrigger>
-                                                  <SelectContent>
-                                                    <SelectItem value="produto">Produto</SelectItem>
-                                                    <SelectItem value="servico">Serviço</SelectItem>
-                                                  </SelectContent>
-                                                </Select>
-                                              </TableCell>
-                                              <TableCell>
-                                                <Input
-                                                  value={item.descricao}
-                                                  onChange={(e) => {
-                                                    const updated = [...empenhos];
-                                                    updated[index].itens[itemIdx].descricao = e.target.value;
-                                                    setEmpenhos(updated);
-                                                  }}
-                                                  placeholder="Descrição do item"
-                                                />
-                                              </TableCell>
-                                              <TableCell>
-                                                <Input
-                                                  type="number"
-                                                  value={item.quantidade || ''}
-                                                  onChange={(e) => {
-                                                    const updated = [...empenhos];
-                                                    updated[index].itens[itemIdx].quantidade = parseInt(e.target.value) || 0;
-                                                    setEmpenhos(updated);
-                                                  }}
-                                                  className="w-20"
-                                                />
-                                              </TableCell>
-                                              <TableCell>
-                                                <Input
-                                                  type="number"
-                                                  value={item.valor || ''}
-                                                  onChange={(e) => {
-                                                    const updated = [...empenhos];
-                                                    updated[index].itens[itemIdx].valor = parseFloat(e.target.value) || 0;
-                                                    setEmpenhos(updated);
-                                                  }}
-                                                  className="w-28"
-                                                />
-                                              </TableCell>
-                                              <TableCell>
-                                                <Button
-                                                  variant="ghost"
-                                                  size="sm"
-                                                  onClick={() => {
-                                                    const updated = [...empenhos];
-                                                    updated[index].itens.splice(itemIdx, 1);
-                                                    setEmpenhos(updated);
-                                                  }}
-                                                >
-                                                  <X className="h-3 w-3" />
-                                                </Button>
-                                              </TableCell>
+                                {/* Seção expansível — itens do pedido vinculado (clicado) */}
+                                {emp.pedidosVinculados.map(ped => {
+                                  const key = `${emp.id}_${ped}`;
+                                  if (pedidoExpandido !== key) return null;
+                                  const itens = itensPorPedido[ped] || [];
+                                  return (
+                                    <div key={key} className="border-t pt-4 space-y-3">
+                                      <Label className="text-sm font-semibold">Itens do Pedido {ped}</Label>
+                                      {itens.length === 0 ? (
+                                        <p className="text-sm text-muted-foreground text-center py-3">Nenhum item registrado para este pedido</p>
+                                      ) : (
+                                        <Table>
+                                          <TableHeader>
+                                            <TableRow>
+                                              <TableHead>Código</TableHead>
+                                              <TableHead>Descrição</TableHead>
+                                              <TableHead>Qtd.</TableHead>
+                                              <TableHead>Valor (R$)</TableHead>
                                             </TableRow>
-                                          ))}
-                                        </TableBody>
-                                      </Table>
-                                    )}
-                                  </div>
-                                )}
+                                          </TableHeader>
+                                          <TableBody>
+                                            {itens.map((item, idx) => (
+                                              <TableRow key={idx}>
+                                                <TableCell className="font-medium">{item.codigo}</TableCell>
+                                                <TableCell>{item.descricao}</TableCell>
+                                                <TableCell>{item.quantidade}</TableCell>
+                                                <TableCell>{item.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
+                                              </TableRow>
+                                            ))}
+                                          </TableBody>
+                                        </Table>
+                                      )}
+                                    </div>
+                                  );
+                                })}
                               </CardContent>
                             </Card>
                           );
