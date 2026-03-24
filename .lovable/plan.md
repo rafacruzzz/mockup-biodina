@@ -1,24 +1,31 @@
 
 
-## Plano: Ajustar aba Empenho — itens só via pedido vinculado
+## Plano: Dividir aba Pedidos em duas tabelas (Produtos e Serviços)
 
 ### Resumo
-Os itens de um empenho só existem se houver pedido vinculado. Portanto: remover o botão de expandir (chevron) e a seção de "Itens do Empenho" com "Adicionar Item". Em vez disso, quando houver pedidos vinculados, o número do pedido será um botão clicável que, ao ser clicado, expande abaixo mostrando os itens/produtos daquele pedido. Sem pedido = sem itens para ver.
+Substituir a tabela única de pedidos por duas tabelas separadas: **Pedido Produto** e **Pedido Serviço**. Trocar o botão "Criar Novo Pedido" por dois botões: "Adicionar Produto" (abre o modal existente) e "Adicionar Serviço" (placeholder por enquanto). As colunas seguem a imagem de referência.
 
 ### Alterações em `src/components/comercial/ContratacaoSimplesForm.tsx`
 
-**1. Remover da seção de cada empenho (linhas 1476-1612):**
-- Remover o botão de expandir/chevron (linhas 1478-1488)
-- Remover toda a seção expansível "Itens do Empenho" com tabela e botão "Adicionar Item" (linhas 1500-1612)
-- Remover o campo `expandido` e `itens` do estado `empenhos` (não são mais geridos aqui)
+**1. Novo estado `pedidosServico` (~junto dos outros estados):**
+- Array similar ao `pedidos`, mas para serviços: `{ id, numeroPedido, dataFaturamento, periodoCompetencia, nfs, empenho, processo, valorNfs }`
+- Inicializado vazio
 
-**2. Tornar os números de pedido clicáveis (linhas 1399-1407):**
-- Na coluna "Nº Pedidos Vinculados", cada Badge de pedido vira um botão clicável
-- Novo estado `pedidoExpandido: string | null` (id do empenho + pedido expandido)
-- Ao clicar no número do pedido, expande uma seção abaixo do card do empenho mostrando os itens/produtos daquele pedido (dados mock read-only: código, descrição, quantidade, valor)
+**2. Substituir conteúdo da aba Pedidos (linhas 2243-2331):**
 
-**3. Manter o botão de remover empenho (X)** no lugar do chevron removido.
+- **Header**: Título "Gerenciamento de Pedidos" com dois botões:
+  - "Adicionar Produto" (abre `setPedidoModalOpen(true)`)
+  - "Adicionar Serviço" (placeholder — toast "Em desenvolvimento" por enquanto)
+
+- **Tabela 1 — "Pedido Produto"**:
+  - Colunas: Nº Pedido | Data Faturamento | Período Competência | NFE | Empenho | Processo | Valor da NFE
+  - Renderiza os `pedidos` existentes mapeando os campos disponíveis
+  - Ações: Visualizar, Enviar Expedição (mantém lógica atual)
+
+- **Tabela 2 — "Pedido Serviço"**:
+  - Colunas: Nº Pedido | Data Faturamento | Período Competência | NFS | Empenho | Processo | Valor da NFS
+  - Renderiza `pedidosServico` (inicialmente vazio, com estado vazio estilizado)
 
 ### Resultado
-A aba Empenho mostra a tabela por valor sem botão de expandir itens. Os itens só aparecem ao clicar no número de um pedido vinculado. Sem pedido = sem itens para visualizar.
+A aba Pedidos mostra duas tabelas distintas para produtos e serviços, com botões separados para adicionar cada tipo. A tabela de serviço fica preparada para quando o modal de serviço for criado.
 
