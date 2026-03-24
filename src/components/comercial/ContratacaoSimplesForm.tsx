@@ -1395,7 +1395,15 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                                     {emp.pedidosVinculados.length > 0 ? (
                                       <div className="flex flex-wrap gap-1 mt-1">
                                         {emp.pedidosVinculados.map(ped => (
-                                          <Badge key={ped} variant="secondary" className="text-xs">{ped}</Badge>
+                                          <Button
+                                            key={ped}
+                                            variant="outline"
+                                            size="sm"
+                                            className={`text-xs h-7 ${pedidoExpandido === `${emp.id}_${ped}` ? 'bg-primary text-primary-foreground' : ''}`}
+                                            onClick={() => setPedidoExpandido(prev => prev === `${emp.id}_${ped}` ? null : `${emp.id}_${ped}`)}
+                                          >
+                                            {ped}
+                                          </Button>
                                         ))}
                                       </div>
                                     ) : (
