@@ -4,7 +4,13 @@ export enum TipoChamado {
   DEPARTAMENTO_TECNICO = 'departamento_tecnico',
   INTERFACE_TI = 'interface_ti',
   FINANCEIRO = 'financeiro',
-  ESTOQUE = 'estoque'
+  ESTOQUE = 'estoque',
+  COMERCIAL = 'comercial',
+  COMPRAS = 'compras',
+  CONTABILIDADE = 'contabilidade',
+  ADMINISTRATIVO = 'administrativo',
+  JURIDICO = 'juridico',
+  DIRETORIA = 'diretoria'
 }
 
 export enum SubtipoChamadoFinanceiro {
@@ -37,7 +43,13 @@ export const TIPOS_CHAMADO_LABELS = {
   [TipoChamado.DEPARTAMENTO_TECNICO]: 'Departamento Técnico',
   [TipoChamado.INTERFACE_TI]: 'Interface (TI)',
   [TipoChamado.FINANCEIRO]: 'Financeiro',
-  [TipoChamado.ESTOQUE]: 'Estoque'
+  [TipoChamado.ESTOQUE]: 'Estoque',
+  [TipoChamado.COMERCIAL]: 'Comercial',
+  [TipoChamado.COMPRAS]: 'Compras (CPR)',
+  [TipoChamado.CONTABILIDADE]: 'Contabilidade',
+  [TipoChamado.ADMINISTRATIVO]: 'Administrativo',
+  [TipoChamado.JURIDICO]: 'Jurídico',
+  [TipoChamado.DIRETORIA]: 'Diretoria'
 };
 
 export const SUBTIPOS_FINANCEIRO_LABELS = {
