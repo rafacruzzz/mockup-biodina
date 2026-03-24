@@ -484,6 +484,28 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
                     )}
                   </CardContent>
                 </Card>
+                {/* Card: Documento do Empenho (replicado da aba Empenho) */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Documento do Empenho
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Este documento é vinculado automaticamente a partir da aba Empenho da contratação
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center gap-3 p-4 border border-dashed rounded-lg bg-muted/30">
+                      <FileText className="h-8 w-8 text-muted-foreground/50" />
+                      <div>
+                        <p className="text-sm text-muted-foreground">
+                          O documento do empenho vinculado aparecerá aqui automaticamente quando houver um empenho associado a este pedido.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               {/* Aba Produtos */}
