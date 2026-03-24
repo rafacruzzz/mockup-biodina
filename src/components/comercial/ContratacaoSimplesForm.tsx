@@ -113,23 +113,40 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [solicitacoesGerenciais, setSolicitacoesGerenciais] = useState<Array<{ id: string; questao: string; dataEnvio: string; resposta: string; dataResposta: string }>>([]);
   const [questaoGerencialAtual, setQuestaoGerencialAtual] = useState('');
 
-  // Estados para aba Empenho
-  const [empenhoProdutos, setEmpenhoProdutos] = useState<Array<{
+  // Estados para aba Empenho - visão consolidada por valor
+  const [empenhos, setEmpenhos] = useState<Array<{
     id: string;
     numeroEmpenho: string;
-    produto: string;
-    quantidade: number;
-    valor: number;
-    saldoEnviado: number;
-  }>>([]);
-  const [empenhoServicos, setEmpenhoServicos] = useState<Array<{
-    id: string;
-    numeroEmpenho: string;
-    servico: string;
-    quantidade: number;
-    valor: number;
-    saldoEnviado: number;
-  }>>([]);
+    valorEmpenho: number;
+    pedidosVinculados: string[];
+    valorFaturado: number;
+    expandido: boolean;
+    itens: Array<{ id: string; tipo: 'produto' | 'servico'; descricao: string; quantidade: number; valor: number }>;
+  }>>([
+    {
+      id: 'emp_mock_1',
+      numeroEmpenho: '2024NE000123',
+      valorEmpenho: 45000,
+      pedidosVinculados: ['PED-001'],
+      valorFaturado: 15000,
+      expandido: false,
+      itens: [
+        { id: 'it1', tipo: 'produto', descricao: 'Coletor de sangue a vácuo', quantidade: 500, valor: 25000 },
+        { id: 'it2', tipo: 'servico', descricao: 'Manutenção preventiva', quantidade: 2, valor: 20000 },
+      ],
+    },
+    {
+      id: 'emp_mock_2',
+      numeroEmpenho: '2024NE000456',
+      valorEmpenho: 30000,
+      pedidosVinculados: [],
+      valorFaturado: 0,
+      expandido: false,
+      itens: [
+        { id: 'it3', tipo: 'produto', descricao: 'Reagente para hemograma', quantidade: 200, valor: 30000 },
+      ],
+    },
+  ]);
   const [empresaUploadSelecionada, setEmpresaUploadSelecionada] = useState<string>('geral');
 
   // Estados para aditivos contratuais
