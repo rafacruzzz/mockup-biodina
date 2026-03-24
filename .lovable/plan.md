@@ -1,25 +1,24 @@
 
 
-## Plano: Expandir tipos de chamado com todos os departamentos do sistema (exceto RH)
+## Plano: Condicionar aba Empenho ao segmento "público" e adicionar cliente público para teste
 
 ### Resumo
-Adicionar todos os departamentos do sistema como opções no enum `TipoChamado` e no label correspondente, excluindo RH. Atualmente existem 5 tipos; serão adicionados os departamentos faltantes.
+A aba "Empenho" e seu TabsTrigger só serão renderizados se o `formData.segmentoProjeto` contiver a palavra "público" (case-insensitive). Além disso, será adicionado um cliente mock com segmento público para permitir testar a funcionalidade.
 
-### Departamentos atuais no enum
-- Assessoria Científica, Departamento Técnico, Interface (TI), Financeiro, Estoque
+### Alterações em `src/components/comercial/ContratacaoSimplesForm.tsx`
 
-### Departamentos a adicionar (baseado nos módulos do sistema, exceto RH)
-- Comercial, Compras (CPR), Contabilidade, Administrativo, Jurídico, Diretoria/Gerencial
+**1. Adicionar cliente com segmento público ao array `clientesCadastrados` (~linha 303):**
+- Exemplo: `{ id: 'cli-006', cpfCnpj: '99.888.777/0001-55', nomeFantasia: 'Hospital Municipal São José', razaoSocial: 'Prefeitura Municipal - Hospital São José', endereco: 'Av. Central, 500', uf: 'GO', email: 'hospital@saojose.gov.br', telefone: '(62) 3333-4444', segmento: 'PÚBLICO - HOSPITAL - MUNICIPAL' }`
 
-### Alterações
+**2. Criar variável derivada para controle de visibilidade:**
+- `const isSegmentoPublico = formData.segmentoProjeto?.toLowerCase().includes('público') || formData.segmentoProjeto?.toLowerCase().includes('publico');`
 
-**1. `src/types/chamado.ts` — Expandir enum e labels:**
-- Adicionar ao `TipoChamado`: `COMERCIAL`, `COMPRAS`, `CONTABILIDADE`, `ADMINISTRATIVO`, `JURIDICO`, `DIRETORIA`
-- Adicionar os labels correspondentes em `TIPOS_CHAMADO_LABELS`
+**3. Condicionar TabsTrigger "Empenho" (~linha 622):**
+- Envolver com `{isSegmentoPublico && (<TabsTrigger value="empenho">...</TabsTrigger>)}`
 
-**2. `src/components/comercial/ChamadosTab.tsx` — Nenhuma alteração necessária:**
-- O componente já renderiza dinamicamente todos os valores de `TIPOS_CHAMADO_LABELS`, então os novos tipos aparecerão automaticamente no Select.
+**4. Condicionar TabsContent "Empenho" (~linha 1274):**
+- Envolver com `{isSegmentoPublico && (<TabsContent value="empenho">...</TabsContent>)}`
 
 ### Resultado
-O select de "Tipo de Chamado" listará todos os departamentos do sistema (exceto RH): Assessoria Científica, Departamento Técnico, TI, Financeiro, Estoque, Comercial, Compras, Contabilidade, Administrativo, Jurídico e Diretoria.
+A aba Empenho só aparece quando o cliente selecionado tem segmento público. O cliente "Hospital Municipal São José" permite testar essa funcionalidade.
 
