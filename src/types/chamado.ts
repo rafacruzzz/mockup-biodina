@@ -4,7 +4,13 @@ export enum TipoChamado {
   DEPARTAMENTO_TECNICO = 'departamento_tecnico',
   INTERFACE_TI = 'interface_ti',
   FINANCEIRO = 'financeiro',
-  ESTOQUE = 'estoque'
+  ESTOQUE = 'estoque',
+  COMERCIAL = 'comercial',
+  COMPRAS = 'compras',
+  CONTABILIDADE = 'contabilidade',
+  ADMINISTRATIVO = 'administrativo',
+  JURIDICO = 'juridico',
+  DIRETORIA = 'diretoria'
 }
 
 export enum SubtipoChamadoFinanceiro {
