@@ -110,6 +110,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   ]);
   const [solicitacoesJuridicas, setSolicitacoesJuridicas] = useState<Array<{ id: string; questao: string; dataEnvio: string; resposta: string; dataResposta: string }>>([]);
   const [questaoJuridicaAtual, setQuestaoJuridicaAtual] = useState('');
+  const [solicitacoesGerenciais, setSolicitacoesGerenciais] = useState<Array<{ id: string; questao: string; dataEnvio: string; resposta: string; dataResposta: string }>>([]);
+  const [questaoGerencialAtual, setQuestaoGerencialAtual] = useState('');
 
   // Estados para aba Empenho
   const [empenhoProdutos, setEmpenhoProdutos] = useState<Array<{
