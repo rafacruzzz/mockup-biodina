@@ -108,6 +108,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     { id: crypto.randomUUID(), nome: '', marca: '', modelo: '', quantidade: '', examesMes: '' },
     { id: crypto.randomUUID(), nome: '', marca: '', modelo: '', quantidade: '', examesMes: '' },
   ]);
+  const [solicitacoesJuridicas, setSolicitacoesJuridicas] = useState<Array<{ id: string; questao: string; dataEnvio: string; resposta: string; dataResposta: string }>>([]);
+  const [questaoJuridicaAtual, setQuestaoJuridicaAtual] = useState('');
 
   // Estados para aba Empenho
   const [empenhoProdutos, setEmpenhoProdutos] = useState<Array<{
@@ -1522,53 +1524,81 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             <TabsContent value="analise-juridica" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Análise Jurídica (AJ)</CardTitle>
+                  <CardTitle>Solicitação de Análise Jurídica</CardTitle>
                 </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
-                    <Label htmlFor="parecerJuridico">Parecer Jurídico</Label>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label htmlFor="questaoJuridica">Descreva sua questão para o Jurídico</Label>
                     <Textarea
-                      id="parecerJuridico"
-                      value={formData.parecerJuridico || ''}
-                      onChange={(e) => handleInputChange('parecerJuridico', e.target.value)}
-                      placeholder="Digite o parecer jurídico"
+                      id="questaoJuridica"
+                      value={questaoJuridicaAtual}
+                      onChange={(e) => setQuestaoJuridicaAtual(e.target.value)}
+                      placeholder="Escreva aqui a questão que deseja enviar para análise jurídica..."
                       rows={4}
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="statusJuridico">Status</Label>
-                    <Select value={formData.statusJuridico || ''} onValueChange={(value) => handleInputChange('statusJuridico', value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pendente">Pendente</SelectItem>
-                        <SelectItem value="em_analise">Em Análise</SelectItem>
-                        <SelectItem value="aprovado">Aprovado</SelectItem>
-                        <SelectItem value="reprovado">Reprovado</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="responsavelJuridico">Responsável</Label>
-                    <Input
-                      id="responsavelJuridico"
-                      value={formData.responsavelJuridico || ''}
-                      onChange={(e) => handleInputChange('responsavelJuridico', e.target.value)}
-                      placeholder="Nome do responsável"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="dataAnaliseJuridica">Data da Análise</Label>
-                    <Input
-                      id="dataAnaliseJuridica"
-                      type="date"
-                      value={formData.dataAnaliseJuridica || ''}
-                      onChange={(e) => handleInputChange('dataAnaliseJuridica', e.target.value)}
-                    />
-                  </div>
+                  <Button
+                    onClick={() => {
+                      if (!questaoJuridicaAtual.trim()) {
+                        toast.error('Digite uma questão antes de enviar.');
+                        return;
+                      }
+                      setSolicitacoesJuridicas(prev => [{
+                        id: crypto.randomUUID(),
+                        questao: questaoJuridicaAtual.trim(),
+                        dataEnvio: new Date().toLocaleString('pt-BR'),
+                        resposta: '',
+                        dataResposta: ''
+                      }, ...prev]);
+                      setQuestaoJuridicaAtual('');
+                      toast.success('Questão enviada para Análise Jurídica!');
+                    }}
+                    disabled={!questaoJuridicaAtual.trim()}
+                    className="gap-2"
+                  >
+                    <Send className="h-4 w-4" />
+                    Enviar para Análise Jurídica
+                  </Button>
                 </CardContent>
               </Card>
+
+              {solicitacoesJuridicas.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Histórico de Solicitações</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {solicitacoesJuridicas.map((solicitacao, index) => (
+                      <div key={solicitacao.id} className="border rounded-lg p-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-semibold text-foreground">
+                            Solicitação {solicitacoesJuridicas.length - index}
+                          </span>
+                          <span className="text-xs text-muted-foreground">{solicitacao.dataEnvio}</span>
+                        </div>
+                        <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                          <p className="text-xs font-medium text-blue-700 mb-1">Questão do Colaborador</p>
+                          <p className="text-sm text-foreground whitespace-pre-wrap">{solicitacao.questao}</p>
+                        </div>
+                        {solicitacao.resposta ? (
+                          <div className="bg-green-50 border border-green-200 rounded-md p-3">
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="text-xs font-medium text-green-700">Resposta do Jurídico</p>
+                              <span className="text-xs text-muted-foreground">{solicitacao.dataResposta}</span>
+                            </div>
+                            <p className="text-sm text-foreground whitespace-pre-wrap">{solicitacao.resposta}</p>
+                          </div>
+                        ) : (
+                          <Badge variant="outline" className="text-yellow-700 border-yellow-300 bg-yellow-50">
+                            <Clock className="h-3 w-3 mr-1" />
+                            Aguardando Resposta do Jurídico
+                          </Badge>
+                        )}
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
             </TabsContent>
 
             {/* Aba Análise Gerencial */}
