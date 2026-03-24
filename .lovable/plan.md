@@ -1,27 +1,26 @@
 
 
-## Plano: Reformular aba AJ com fluxo de solicitação e resposta jurídica
+## Plano: Reformular aba AG com fluxo de solicitação e resposta gerencial
 
 ### Resumo
-Substituir o conteúdo atual da aba AJ (Parecer Jurídico, Status, Responsável, Data) por um fluxo de conversa: o colaborador escreve uma questão em campo livre, clica em "Enviar para Análise Jurídica", e a questão fica registrada. Quando o Jurídico responder, a resposta aparece logo abaixo da questão. Múltiplas solicitações podem ser feitas, gerando um histórico de perguntas e respostas.
+Aplicar o mesmo padrão da aba AJ: substituir os campos estáticos (Parecer, Aprovação, Responsável, Data) por um fluxo de comunicação onde o colaborador escreve uma questão, envia para a Diretoria, e recebe a resposta em formato de histórico/thread.
 
 ### Alterações em `src/components/comercial/ContratacaoSimplesForm.tsx`
 
-**1. Novo estado `solicitacoesJuridicas` (~junto dos outros estados):**
-- Array de objetos: `{ id: string, questao: string, dataEnvio: string, resposta: string, dataResposta: string }`
-- Novo estado `questaoJuridicaAtual: string` para o campo de escrita
+**1. Novos estados (~junto dos outros estados):**
+- `solicitacoesGerenciais`: array de `{ id, questao, dataEnvio, resposta, dataResposta }`
+- `questaoGerencialAtual`: string para o campo de escrita
 
-**2. Substituir conteúdo da aba AJ (linhas 1521-1572):**
-- Card "Solicitação de Análise Jurídica":
+**2. Substituir conteúdo da aba AG (linhas 1604-1655):**
+- Card "Solicitação de Análise Gerencial":
   - Textarea para o colaborador escrever a questão
-  - Botão "Enviar para Análise Jurídica" (ícone Send) — ao clicar, adiciona ao array `solicitacoesJuridicas`, limpa o campo, exibe toast
-- Abaixo, lista o histórico de solicitações (mais recente primeiro):
-  - Cada item mostra: questão do colaborador (com data), e abaixo a resposta do jurídico (se houver) ou Badge "Aguardando Resposta"
-  - Layout tipo thread/conversa com cards distintos para questão e resposta
+  - Botão "Enviar para Análise Gerencial" (ícone Send) — ao clicar, adiciona ao array, limpa o campo, exibe toast
+- Histórico de solicitações (mais recente primeiro):
+  - Cada item mostra: questão do colaborador (com data) e resposta da Diretoria (ou Badge "Aguardando Resposta")
+  - Layout idêntico ao da aba AJ
 
-**3. Remover campos antigos:**
-- `parecerJuridico`, `statusJuridico`, `responsavelJuridico`, `dataAnaliseJuridica` do formData (ou mantê-los para compatibilidade mas não renderizá-los na aba)
+**3. Campos antigos** (`parecerGerencial`, `aprovacaoGerencial`, `responsavelGerencial`, `dataAnaliseGerencial`) mantidos no formData para compatibilidade, mas não renderizados.
 
 ### Resultado
-A aba AJ funciona como um canal de comunicação: o colaborador envia questões jurídicas e recebe respostas do departamento jurídico, tudo registrado em histórico na mesma aba.
+A aba AG funciona como canal de comunicação com a Diretoria, no mesmo padrão da aba AJ.
 
