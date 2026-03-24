@@ -108,6 +108,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     { id: crypto.randomUUID(), nome: '', marca: '', modelo: '', quantidade: '', examesMes: '' },
     { id: crypto.randomUUID(), nome: '', marca: '', modelo: '', quantidade: '', examesMes: '' },
   ]);
+  const [solicitacoesJuridicas, setSolicitacoesJuridicas] = useState<Array<{ id: string; questao: string; dataEnvio: string; resposta: string; dataResposta: string }>>([]);
+  const [questaoJuridicaAtual, setQuestaoJuridicaAtual] = useState('');
 
   // Estados para aba Empenho
   const [empenhoProdutos, setEmpenhoProdutos] = useState<Array<{
