@@ -1,39 +1,31 @@
 
 
-## Plano: Reformular aba Empenho com visão consolidada por valor e alertas de vinculação
+## Plano: Campo de anexo do documento do empenho + criação do TabsContent Empenho + replicação no Pedido
 
-### Resumo
-Reestruturar a aba Empenho para ter uma visão consolidada "por valor" (conforme a imagem de referência), com colunas: Nº Empenho, Valor do Empenho, Nº Pedidos Vinculados, Valor Faturado e Saldo do Empenho. Adicionar alertas automáticos quando houver empenho sem pedido vinculado (e vice-versa), além de um painel de resumo mostrando totais empenhados, faturados e pendentes.
+### Problema identificado
+O `TabsContent value="empenho"` não existe no arquivo — apenas o `TabsTrigger` foi criado, mas o conteúdo da aba nunca foi renderizado. Precisamos criar todo o conteúdo da aba Empenho e incluir as novas funcionalidades solicitadas.
 
-### Alterações em `src/components/comercial/ContratacaoSimplesForm.tsx`
+### Alterações
 
-**1. Reestruturar o estado de empenhos (linhas 117-135):**
-- Substituir os dois arrays separados (`empenhoProdutos` e `empenhoServicos`) por um array unificado `empenhos`:
-  ```
-  { id, numeroEmpenho, valorEmpenho, pedidosVinculados: string[], valorFaturado, itens: Array<{tipo, descricao, quantidade, valor}> }
-  ```
+**1. `ContratacaoSimplesForm.tsx` — Adicionar campo `documentoEmpenho` ao estado:**
+- Expandir o tipo do array `empenhos` para incluir `documentoEmpenho: File | null` e `nomeDocumento: string`
 
-**2. Substituir o conteúdo da aba Empenho (linhas 1280-1528):**
+**2. `ContratacaoSimplesForm.tsx` — Criar `TabsContent value="empenho"` (antes da aba Pedidos, ~linha 1971):**
+Conteúdo completo da aba com:
+- **Painel de Alertas**: empenhos sem pedido vinculado (alerta amarelo)
+- **Tabela principal "Empenhos - Por Valor"**: Nº Empenho | Valor do Empenho | Nº Pedidos Vinculados | Valor Faturado | Saldo do Empenho (= Valor Empenho - Valor Faturado)
+- **Campo de upload do documento do empenho** abaixo do campo Nº Empenho (em cada linha/card de empenho), com input file para anexar PDF/DOC
+- **Seção expansível por empenho**: itens (produto/serviço) com quantidade e valor
+- **Botão "+ Adicionar Empenho"** e botão de remover
+- **Painel de resumo**: Total empenhado, Total faturado, Saldo total pendente
 
-- **Painel de Alertas** (topo): Card com alertas automáticos:
-  - Alerta amarelo/laranja quando há empenho sem pedido vinculado: "Empenho Nº XXXX sem pedido vinculado - Cobrar pedido do cliente"
-  - Alerta vermelho quando há pedido sem empenho: "Pedido sem empenho vinculado - Solicitar empenho à administração pública"
-  - Contador de alertas no TabsTrigger do Empenho (badge)
+**3. `PedidoModal.tsx` — Adicionar campo read-only "Documento do Empenho" na aba "Geral":**
+- Novo Card "Documento do Empenho" mostrando o arquivo anexado no empenho vinculado (read-only, com botão de download/visualização)
+- Como os dados são locais (mock), por ora será um campo placeholder indicando que o documento virá do empenho vinculado
 
-- **Tabela principal "CC Empenhos - Por Valor"**:
-  - Colunas: Nº Empenho | Valor do Empenho | Nº Pedidos Vinculados | Valor Faturado | Saldo do Empenho
-  - Saldo do Empenho = Valor do Empenho - Valor Faturado (calculado automaticamente)
-  - Na coluna "Nº Pedidos Vinculados": se não houver pedido, exibir Badge vermelha "Sem pedido - Cobrar cliente"
-  - Botão para adicionar novo empenho e botão para remover
-
-- **Painel de resumo** (rodapé):
-  - Total empenhado, Total faturado, Saldo total pendente
-  - Quantidade de empenhos sem pedido / Quantidade de pedidos sem empenho
-
-- **Seção de detalhamento** (expansível por empenho):
-  - Ao clicar em um empenho, expande para mostrar os itens (produtos/serviços) com quantidade e valor individual
-  - Mostra o saldo de quantidades dos itens daquele empenho
+### Detalhe técnico sobre o Saldo
+O **Saldo do Empenho** é calculado como: `valorEmpenho - valorFaturado` (conforme solicitado pelo usuário).
 
 ### Resultado
-A aba Empenho funciona como painel de controle: visão consolidada por valor com alertas proativos para cobrar empenhos e pedidos pendentes, garantindo que nenhum recurso liberado fique sem ser cobrado.
+A aba Empenho terá conteúdo funcional com tabela, alertas, upload de documento por empenho e painel de resumo. O documento anexado será replicado (read-only) na aba Geral do Novo Pedido.
 
