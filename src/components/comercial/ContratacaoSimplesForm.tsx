@@ -1525,7 +1525,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+            </TabsContent>}
 
             {/* Aba Análise Jurídica */}
             <TabsContent value="analise-juridica" className="space-y-4">
