@@ -138,14 +138,19 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       valorEmpenho: 30000,
       pedidosVinculados: [],
       valorFaturado: 0,
-      expandido: false,
       documentoEmpenho: null,
       nomeDocumento: '',
-      itens: [
-        { id: 'it3', tipo: 'produto', descricao: 'Reagente para hemograma', quantidade: 200, valor: 30000 },
-      ],
     },
   ]);
+  const [pedidoExpandido, setPedidoExpandido] = useState<string | null>(null);
+
+  // Mock de itens por pedido vinculado
+  const itensPorPedido: Record<string, Array<{ codigo: string; descricao: string; quantidade: number; valor: number }>> = {
+    'PED-001': [
+      { codigo: 'COL-001', descricao: 'Coletor de sangue a vácuo', quantidade: 500, valor: 25000 },
+      { codigo: 'SRV-001', descricao: 'Manutenção preventiva', quantidade: 2, valor: 20000 },
+    ],
+  };
   const [empresaUploadSelecionada, setEmpresaUploadSelecionada] = useState<string>('geral');
 
   // Estados para aditivos contratuais
