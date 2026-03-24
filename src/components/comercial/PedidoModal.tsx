@@ -371,6 +371,118 @@ const PedidoModal = ({ isOpen, onClose, onSave, oportunidade }: PedidoModalProps
 
               {/* Aba Geral */}
               <TabsContent value="geral" className="space-y-6">
+                {/* Alertas de Empenho */}
+                {!numeroEmpenho && (
+                  <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Empenho não vinculado</AlertTitle>
+                    <AlertDescription>
+                      Este pedido não possui empenho vinculado. Solicite o empenho à administração pública para garantir o recebimento.
+                    </AlertDescription>
+                  </Alert>
+                )}
+                {numeroEmpenho && !documentoEmpenho && (
+                  <Alert className="border-yellow-500/50 bg-yellow-50 dark:bg-yellow-950/20 text-yellow-800 dark:text-yellow-200 [&>svg]:text-yellow-600">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Documento do empenho pendente</AlertTitle>
+                    <AlertDescription>
+                      O número do empenho foi informado, mas o documento ainda não foi anexado. Anexe o documento do empenho.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {/* Card: Empenho Vinculado */}
+                <Card className={!numeroEmpenho ? 'border-destructive/50' : documentoEmpenho ? 'border-green-500/50' : 'border-yellow-500/50'}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Empenho Vinculado
+                      {!numeroEmpenho && <Badge variant="destructive" className="ml-2">Pendente</Badge>}
+                      {numeroEmpenho && documentoEmpenho && <Badge className="ml-2 bg-green-600">Completo</Badge>}
+                      {numeroEmpenho && !documentoEmpenho && <Badge className="ml-2 bg-yellow-600">Doc. Pendente</Badge>}
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Informe o empenho vinculado a este pedido e anexe o documento
+                    </p>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="numeroEmpenho">Nº do Empenho *</Label>
+                        <Input
+                          id="numeroEmpenho"
+                          value={numeroEmpenho}
+                          onChange={(e) => setNumeroEmpenho(e.target.value)}
+                          placeholder="Ex: 2024NE000123"
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>Documento do Empenho</Label>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        Este documento será replicado automaticamente na aba Empenho da contratação
+                      </p>
+                      {documentoEmpenho ? (
+                        <div className="flex items-center justify-between p-3 border rounded-lg bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                              <FileText className="h-5 w-5 text-green-600" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-sm">{documentoEmpenho.name}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {(documentoEmpenho.size / 1024).toFixed(1)} KB
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button variant="outline" size="sm" onClick={() => {
+                              const url = URL.createObjectURL(documentoEmpenho);
+                              window.open(url, '_blank');
+                            }}>
+                              <Eye className="h-4 w-4 mr-1" />
+                              Ver
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={() => setDocumentoEmpenho(null)} className="text-destructive hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div
+                          className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                          onClick={() => empenhoFileInputRef.current?.click()}
+                        >
+                          <Upload className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-sm text-muted-foreground">
+                            Clique para anexar o documento do empenho
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            PDF, DOC, DOCX, JPG, PNG (máx. 10MB)
+                          </p>
+                          <input
+                            ref={empenhoFileInputRef}
+                            type="file"
+                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                if (file.size > 10 * 1024 * 1024) {
+                                  alert('Arquivo muito grande. Máximo 10MB.');
+                                  return;
+                                }
+                                setDocumentoEmpenho(file);
+                              }
+                            }}
+                            className="hidden"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
                 <Card>
                   <CardHeader>
                     <CardTitle>Informações do Pedido</CardTitle>
