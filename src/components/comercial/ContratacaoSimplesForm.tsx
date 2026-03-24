@@ -1626,7 +1626,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                   <Button
                     onClick={() => {
                       if (!questaoGerencialAtual.trim()) {
-                        toast({ title: "Campo obrigatório", description: "Escreva uma questão antes de enviar.", variant: "destructive" });
+                        toast.error('Digite uma questão antes de enviar.');
                         return;
                       }
                       setSolicitacoesGerenciais(prev => [{
