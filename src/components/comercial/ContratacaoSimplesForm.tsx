@@ -1304,6 +1304,356 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             </TabsContent>
 
 
+            {/* Aba Empenho */}
+            {isSegmentoPublico && (
+              <TabsContent value="empenho" className="space-y-4">
+                {/* Painel de Alertas */}
+                {empenhos.filter(e => e.pedidosVinculados.length === 0).length > 0 && (
+                  <Card className="border-yellow-300 bg-yellow-50 dark:bg-yellow-950/20">
+                    <CardContent className="p-4 space-y-2">
+                      <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-400 font-semibold mb-2">
+                        <AlertTriangle className="h-5 w-5" />
+                        Alertas de Vinculação
+                      </div>
+                      {empenhos.filter(e => e.pedidosVinculados.length === 0).map(emp => (
+                        <div key={emp.id} className="flex items-center gap-2 text-sm text-yellow-700 dark:text-yellow-400">
+                          <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                          Empenho Nº {emp.numeroEmpenho} sem pedido vinculado — <strong>Cobrar pedido do cliente</strong>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {/* Tabela principal */}
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Wallet className="h-5 w-5" />
+                      CC Empenhos — Por Valor
+                    </CardTitle>
+                    <Button
+                      onClick={() => {
+                        const novoId = `emp_${Date.now()}`;
+                        setEmpenhos(prev => [...prev, {
+                          id: novoId,
+                          numeroEmpenho: '',
+                          valorEmpenho: 0,
+                          pedidosVinculados: [],
+                          valorFaturado: 0,
+                          expandido: false,
+                          documentoEmpenho: null,
+                          nomeDocumento: '',
+                          itens: [],
+                        }]);
+                      }}
+                      className="bg-biodina-gold hover:bg-biodina-gold/90"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar Empenho
+                    </Button>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {empenhos.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <DollarSign className="h-12 w-12 mx-auto mb-4 opacity-40" />
+                        <p>Nenhum empenho cadastrado</p>
+                        <p className="text-sm">Clique em "Adicionar Empenho" para começar</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {empenhos.map((emp, index) => {
+                          const saldo = emp.valorEmpenho - emp.valorFaturado;
+                          return (
+                            <Card key={emp.id} className="border">
+                              <CardContent className="p-4 space-y-4">
+                                {/* Linha principal com dados do empenho */}
+                                <div className="grid grid-cols-5 gap-4 items-end">
+                                  <div>
+                                    <Label className="text-xs font-medium">Nº Empenho</Label>
+                                    <Input
+                                      value={emp.numeroEmpenho}
+                                      onChange={(e) => {
+                                        const updated = [...empenhos];
+                                        updated[index].numeroEmpenho = e.target.value;
+                                        setEmpenhos(updated);
+                                      }}
+                                      placeholder="Ex: 2024NE000123"
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs font-medium">Valor do Empenho (R$)</Label>
+                                    <Input
+                                      type="number"
+                                      value={emp.valorEmpenho || ''}
+                                      onChange={(e) => {
+                                        const updated = [...empenhos];
+                                        updated[index].valorEmpenho = parseFloat(e.target.value) || 0;
+                                        setEmpenhos(updated);
+                                      }}
+                                      placeholder="0,00"
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs font-medium">Nº Pedidos Vinculados</Label>
+                                    {emp.pedidosVinculados.length > 0 ? (
+                                      <div className="flex flex-wrap gap-1 mt-1">
+                                        {emp.pedidosVinculados.map(ped => (
+                                          <Badge key={ped} variant="secondary" className="text-xs">{ped}</Badge>
+                                        ))}
+                                      </div>
+                                    ) : (
+                                      <Badge variant="destructive" className="text-xs mt-1">Sem pedido — Cobrar cliente</Badge>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs font-medium">Valor Faturado (R$)</Label>
+                                    <Input
+                                      type="number"
+                                      value={emp.valorFaturado || ''}
+                                      onChange={(e) => {
+                                        const updated = [...empenhos];
+                                        updated[index].valorFaturado = parseFloat(e.target.value) || 0;
+                                        setEmpenhos(updated);
+                                      }}
+                                      placeholder="0,00"
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs font-medium">Saldo do Empenho (R$)</Label>
+                                    <div className={`h-10 flex items-center px-3 rounded-md border text-sm font-semibold ${saldo > 0 ? 'text-green-700 bg-green-50 dark:text-green-400 dark:bg-green-950/30' : saldo < 0 ? 'text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-950/30' : 'text-muted-foreground bg-muted'}`}>
+                                      {saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Upload documento do empenho */}
+                                <div className="flex items-center gap-4">
+                                  <div className="flex-1">
+                                    <Label className="text-xs font-medium">Documento do Empenho</Label>
+                                    {emp.documentoEmpenho ? (
+                                      <div className="flex items-center gap-2 mt-1 p-2 border border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/20 rounded-md">
+                                        <FileText className="h-4 w-4 text-green-600" />
+                                        <span className="text-sm text-green-800 dark:text-green-300 flex-1 truncate">{emp.nomeDocumento}</span>
+                                        <Button variant="ghost" size="sm" onClick={() => {
+                                          const updated = [...empenhos];
+                                          updated[index].documentoEmpenho = null;
+                                          updated[index].nomeDocumento = '';
+                                          setEmpenhos(updated);
+                                        }}>
+                                          <X className="h-3 w-3" />
+                                        </Button>
+                                      </div>
+                                    ) : (
+                                      <div className="mt-1">
+                                        <label className="flex items-center gap-2 cursor-pointer px-3 py-2 border border-dashed border-muted-foreground/30 rounded-md hover:bg-muted/50 transition-colors">
+                                          <Upload className="h-4 w-4 text-muted-foreground" />
+                                          <span className="text-sm text-muted-foreground">Anexar documento (PDF, DOC)</span>
+                                          <input
+                                            type="file"
+                                            accept=".pdf,.doc,.docx"
+                                            className="hidden"
+                                            onChange={(e) => {
+                                              const file = e.target.files?.[0];
+                                              if (file) {
+                                                if (file.size > 10 * 1024 * 1024) {
+                                                  toast.error('Arquivo muito grande. Máximo 10MB.');
+                                                  return;
+                                                }
+                                                const updated = [...empenhos];
+                                                updated[index].documentoEmpenho = file;
+                                                updated[index].nomeDocumento = file.name;
+                                                setEmpenhos(updated);
+                                                toast.success('Documento do empenho anexado!');
+                                              }
+                                            }}
+                                          />
+                                        </label>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Botões expandir/remover */}
+                                  <div className="flex gap-2 pt-5">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => {
+                                        const updated = [...empenhos];
+                                        updated[index].expandido = !updated[index].expandido;
+                                        setEmpenhos(updated);
+                                      }}
+                                    >
+                                      {emp.expandido ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="text-destructive hover:text-destructive"
+                                      onClick={() => setEmpenhos(prev => prev.filter(e => e.id !== emp.id))}
+                                    >
+                                      <X className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+
+                                {/* Seção expansível — itens do empenho */}
+                                {emp.expandido && (
+                                  <div className="border-t pt-4 space-y-3">
+                                    <div className="flex items-center justify-between">
+                                      <Label className="text-sm font-semibold">Itens do Empenho</Label>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                          const updated = [...empenhos];
+                                          updated[index].itens.push({
+                                            id: `it_${Date.now()}`,
+                                            tipo: 'produto',
+                                            descricao: '',
+                                            quantidade: 0,
+                                            valor: 0,
+                                          });
+                                          setEmpenhos(updated);
+                                        }}
+                                      >
+                                        <Plus className="h-3 w-3 mr-1" />
+                                        Adicionar Item
+                                      </Button>
+                                    </div>
+                                    {emp.itens.length === 0 ? (
+                                      <p className="text-sm text-muted-foreground text-center py-3">Nenhum item cadastrado</p>
+                                    ) : (
+                                      <Table>
+                                        <TableHeader>
+                                          <TableRow>
+                                            <TableHead>Tipo</TableHead>
+                                            <TableHead>Descrição</TableHead>
+                                            <TableHead>Qtd.</TableHead>
+                                            <TableHead>Valor (R$)</TableHead>
+                                            <TableHead className="w-10"></TableHead>
+                                          </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                          {emp.itens.map((item, itemIdx) => (
+                                            <TableRow key={item.id}>
+                                              <TableCell>
+                                                <Select
+                                                  value={item.tipo}
+                                                  onValueChange={(val: 'produto' | 'servico') => {
+                                                    const updated = [...empenhos];
+                                                    updated[index].itens[itemIdx].tipo = val;
+                                                    setEmpenhos(updated);
+                                                  }}
+                                                >
+                                                  <SelectTrigger className="w-28">
+                                                    <SelectValue />
+                                                  </SelectTrigger>
+                                                  <SelectContent>
+                                                    <SelectItem value="produto">Produto</SelectItem>
+                                                    <SelectItem value="servico">Serviço</SelectItem>
+                                                  </SelectContent>
+                                                </Select>
+                                              </TableCell>
+                                              <TableCell>
+                                                <Input
+                                                  value={item.descricao}
+                                                  onChange={(e) => {
+                                                    const updated = [...empenhos];
+                                                    updated[index].itens[itemIdx].descricao = e.target.value;
+                                                    setEmpenhos(updated);
+                                                  }}
+                                                  placeholder="Descrição do item"
+                                                />
+                                              </TableCell>
+                                              <TableCell>
+                                                <Input
+                                                  type="number"
+                                                  value={item.quantidade || ''}
+                                                  onChange={(e) => {
+                                                    const updated = [...empenhos];
+                                                    updated[index].itens[itemIdx].quantidade = parseInt(e.target.value) || 0;
+                                                    setEmpenhos(updated);
+                                                  }}
+                                                  className="w-20"
+                                                />
+                                              </TableCell>
+                                              <TableCell>
+                                                <Input
+                                                  type="number"
+                                                  value={item.valor || ''}
+                                                  onChange={(e) => {
+                                                    const updated = [...empenhos];
+                                                    updated[index].itens[itemIdx].valor = parseFloat(e.target.value) || 0;
+                                                    setEmpenhos(updated);
+                                                  }}
+                                                  className="w-28"
+                                                />
+                                              </TableCell>
+                                              <TableCell>
+                                                <Button
+                                                  variant="ghost"
+                                                  size="sm"
+                                                  onClick={() => {
+                                                    const updated = [...empenhos];
+                                                    updated[index].itens.splice(itemIdx, 1);
+                                                    setEmpenhos(updated);
+                                                  }}
+                                                >
+                                                  <X className="h-3 w-3" />
+                                                </Button>
+                                              </TableCell>
+                                            </TableRow>
+                                          ))}
+                                        </TableBody>
+                                      </Table>
+                                    )}
+                                  </div>
+                                )}
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Painel de Resumo */}
+                    {empenhos.length > 0 && (
+                      <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+                        <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
+                          <CardContent className="p-4 text-center">
+                            <p className="text-xs text-muted-foreground">Total Empenhado</p>
+                            <p className="text-lg font-bold text-blue-700 dark:text-blue-400">
+                              {empenhos.reduce((sum, e) => sum + e.valorEmpenho, 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </p>
+                          </CardContent>
+                        </Card>
+                        <Card className="bg-green-50 dark:bg-green-950/20 border-green-200">
+                          <CardContent className="p-4 text-center">
+                            <p className="text-xs text-muted-foreground">Total Faturado</p>
+                            <p className="text-lg font-bold text-green-700 dark:text-green-400">
+                              {empenhos.reduce((sum, e) => sum + e.valorFaturado, 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </p>
+                          </CardContent>
+                        </Card>
+                        <Card className="bg-amber-50 dark:bg-amber-950/20 border-amber-200">
+                          <CardContent className="p-4 text-center">
+                            <p className="text-xs text-muted-foreground">Saldo Pendente</p>
+                            <p className="text-lg font-bold text-amber-700 dark:text-amber-400">
+                              {empenhos.reduce((sum, e) => sum + (e.valorEmpenho - e.valorFaturado), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {empenhos.filter(e => e.pedidosVinculados.length === 0).length} empenho(s) sem pedido
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            )}
+
 
             {/* Aba Análise Jurídica */}
             <TabsContent value="analise-juridica" className="space-y-4">
