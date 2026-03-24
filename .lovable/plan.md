@@ -1,31 +1,29 @@
 
 
-## Plano: Dividir aba Pedidos em duas tabelas (Produtos e Serviços)
+## Plano: Campo de Empenho no início do Pedido com alertas
 
 ### Resumo
-Substituir a tabela única de pedidos por duas tabelas separadas: **Pedido Produto** e **Pedido Serviço**. Trocar o botão "Criar Novo Pedido" por dois botões: "Adicionar Produto" (abre o modal existente) e "Adicionar Serviço" (placeholder por enquanto). As colunas seguem a imagem de referência.
+Mover e reformular o card "Documento do Empenho" para o **topo** da aba Geral do PedidoModal, antes de "Informações do Pedido". Adicionar campo para informar o número do empenho, campo para anexar o documento, e alerta visual persistente quando não houver empenho vinculado.
 
-### Alterações em `src/components/comercial/ContratacaoSimplesForm.tsx`
+### Alterações em `src/components/comercial/PedidoModal.tsx`
 
-**1. Novo estado `pedidosServico` (~junto dos outros estados):**
-- Array similar ao `pedidos`, mas para serviços: `{ id, numeroPedido, dataFaturamento, periodoCompetencia, nfs, empenho, processo, valorNfs }`
-- Inicializado vazio
+**1. Novos estados:**
+- `numeroEmpenho: string` — número do empenho vinculado
+- `documentoEmpenho: File | null` — arquivo anexado
+- `nomeDocumentoEmpenho: string` — nome do arquivo
 
-**2. Substituir conteúdo da aba Pedidos (linhas 2243-2331):**
+**2. Substituir o card atual de Empenho (linhas 487-508) por novo card no TOPO da aba Geral (antes de "Informações do Pedido", linha 368):**
 
-- **Header**: Título "Gerenciamento de Pedidos" com dois botões:
-  - "Adicionar Produto" (abre `setPedidoModalOpen(true)`)
-  - "Adicionar Serviço" (placeholder — toast "Em desenvolvimento" por enquanto)
+- **Alerta** (Alert destructive): Se não houver empenho vinculado (`!numeroEmpenho`), exibir alerta vermelho permanente: "Este pedido não possui empenho vinculado. Solicite o empenho à administração pública."
+- **Alerta secundário**: Se houver empenho mas sem documento anexado, alerta amarelo: "Documento do empenho não anexado."
+- **Card "Empenho Vinculado"**:
+  - Input para Nº do Empenho
+  - Campo de upload para anexar documento do empenho (PDF/DOC)
+  - Nota: "Este documento será replicado automaticamente na aba Empenho da contratação"
+  - Se já houver documento (vindo da aba Empenho), exibir read-only com botão de download
 
-- **Tabela 1 — "Pedido Produto"**:
-  - Colunas: Nº Pedido | Data Faturamento | Período Competência | NFE | Empenho | Processo | Valor da NFE
-  - Renderiza os `pedidos` existentes mapeando os campos disponíveis
-  - Ações: Visualizar, Enviar Expedição (mantém lógica atual)
-
-- **Tabela 2 — "Pedido Serviço"**:
-  - Colunas: Nº Pedido | Data Faturamento | Período Competência | NFS | Empenho | Processo | Valor da NFS
-  - Renderiza `pedidosServico` (inicialmente vazio, com estado vazio estilizado)
+**3. Remover o card antigo** (linhas 487-508) que ficava no final da aba Geral.
 
 ### Resultado
-A aba Pedidos mostra duas tabelas distintas para produtos e serviços, com botões separados para adicionar cada tipo. A tabela de serviço fica preparada para quando o modal de serviço for criado.
+Ao abrir um pedido, o primeiro elemento visível é o campo de empenho com alerta vermelho caso não esteja preenchido, garantindo que o colaborador sempre veja e cobre o empenho.
 
