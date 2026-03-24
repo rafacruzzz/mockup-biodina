@@ -643,6 +643,11 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                 <TabsTrigger value="empenho" className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
                   Empenho
+                  {empenhos.filter(e => e.pedidosVinculados.length === 0).length > 0 && (
+                    <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                      {empenhos.filter(e => e.pedidosVinculados.length === 0).length}
+                    </Badge>
+                  )}
                 </TabsTrigger>
               )}
               <TabsTrigger value="pedidos" className="flex items-center gap-2">
