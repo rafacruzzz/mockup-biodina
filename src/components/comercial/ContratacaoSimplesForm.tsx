@@ -2195,7 +2195,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                   </>
                 );
               })()}
-            </TabsContent>
+            </TabsContent>}
 
             <TabsContent value="pedidos" className="space-y-4">
               <Card>
