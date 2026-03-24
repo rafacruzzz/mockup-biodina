@@ -121,6 +121,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     pedidosVinculados: string[];
     valorFaturado: number;
     expandido: boolean;
+    documentoEmpenho: File | null;
+    nomeDocumento: string;
     itens: Array<{ id: string; tipo: 'produto' | 'servico'; descricao: string; quantidade: number; valor: number }>;
   }>>([
     {
@@ -130,6 +132,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       pedidosVinculados: ['PED-001'],
       valorFaturado: 15000,
       expandido: false,
+      documentoEmpenho: null,
+      nomeDocumento: '',
       itens: [
         { id: 'it1', tipo: 'produto', descricao: 'Coletor de sangue a vácuo', quantidade: 500, valor: 25000 },
         { id: 'it2', tipo: 'servico', descricao: 'Manutenção preventiva', quantidade: 2, valor: 20000 },
@@ -142,6 +146,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
       pedidosVinculados: [],
       valorFaturado: 0,
       expandido: false,
+      documentoEmpenho: null,
+      nomeDocumento: '',
       itens: [
         { id: 'it3', tipo: 'produto', descricao: 'Reagente para hemograma', quantidade: 200, valor: 30000 },
       ],
