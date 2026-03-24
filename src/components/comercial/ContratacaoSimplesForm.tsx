@@ -59,6 +59,16 @@ interface AditivoContrato {
 const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: ContratacaoSimplesFormProps) => {
   const [activeTab, setActiveTab] = useState('dados-gerais');
   const [pedidos, setPedidos] = useState<PedidoCompleto[]>([]);
+  const [pedidosServico, setPedidosServico] = useState<Array<{
+    id: string;
+    numeroPedido: string;
+    dataFaturamento: string;
+    periodoCompetencia: string;
+    nfs: string;
+    empenho: string;
+    processo: string;
+    valorNfs: number;
+  }>>([]);
   const [chamados, setChamados] = useState<Chamado[]>(oportunidade?.chamados || []);
   const [isPedidoModalOpen, setIsPedidoModalOpen] = useState(false);
   const [tipoContratacao, setTipoContratacao] = useState<'licitacao' | 'particular' | ''>('');
