@@ -1637,7 +1637,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                         dataResposta: ''
                       }, ...prev]);
                       setQuestaoGerencialAtual('');
-                      toast({ title: "Solicitação enviada", description: "Sua questão foi enviada para a Diretoria." });
+                      toast.success('Questão enviada para a Diretoria!');
                     }}
                     disabled={!questaoGerencialAtual.trim()}
                     className="bg-biodina-gold hover:bg-biodina-gold/90"
