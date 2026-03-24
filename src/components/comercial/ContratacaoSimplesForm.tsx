@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar as CalendarIcon, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone, Building2, RefreshCw, ChevronDown, ChevronUp, ExternalLink, Copy, XCircle, Briefcase } from 'lucide-react';
+import { X, Plus, FileText, MessageSquare, Upload, Package, Thermometer, ShoppingCart, Eye, Headphones, Link2, Download, Clock, Calendar as CalendarIcon, Network, Send, Wallet, TrendingDown, DollarSign, Wrench, Phone, Building2, RefreshCw, ChevronDown, ChevronUp, ExternalLink, Copy, XCircle, Briefcase, AlertTriangle } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
 import { mockChecklistVendas } from '@/data/faturamentoModules';
@@ -113,23 +113,40 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [solicitacoesGerenciais, setSolicitacoesGerenciais] = useState<Array<{ id: string; questao: string; dataEnvio: string; resposta: string; dataResposta: string }>>([]);
   const [questaoGerencialAtual, setQuestaoGerencialAtual] = useState('');
 
-  // Estados para aba Empenho
-  const [empenhoProdutos, setEmpenhoProdutos] = useState<Array<{
+  // Estados para aba Empenho - visão consolidada por valor
+  const [empenhos, setEmpenhos] = useState<Array<{
     id: string;
     numeroEmpenho: string;
-    produto: string;
-    quantidade: number;
-    valor: number;
-    saldoEnviado: number;
-  }>>([]);
-  const [empenhoServicos, setEmpenhoServicos] = useState<Array<{
-    id: string;
-    numeroEmpenho: string;
-    servico: string;
-    quantidade: number;
-    valor: number;
-    saldoEnviado: number;
-  }>>([]);
+    valorEmpenho: number;
+    pedidosVinculados: string[];
+    valorFaturado: number;
+    expandido: boolean;
+    itens: Array<{ id: string; tipo: 'produto' | 'servico'; descricao: string; quantidade: number; valor: number }>;
+  }>>([
+    {
+      id: 'emp_mock_1',
+      numeroEmpenho: '2024NE000123',
+      valorEmpenho: 45000,
+      pedidosVinculados: ['PED-001'],
+      valorFaturado: 15000,
+      expandido: false,
+      itens: [
+        { id: 'it1', tipo: 'produto', descricao: 'Coletor de sangue a vácuo', quantidade: 500, valor: 25000 },
+        { id: 'it2', tipo: 'servico', descricao: 'Manutenção preventiva', quantidade: 2, valor: 20000 },
+      ],
+    },
+    {
+      id: 'emp_mock_2',
+      numeroEmpenho: '2024NE000456',
+      valorEmpenho: 30000,
+      pedidosVinculados: [],
+      valorFaturado: 0,
+      expandido: false,
+      itens: [
+        { id: 'it3', tipo: 'produto', descricao: 'Reagente para hemograma', quantidade: 200, valor: 30000 },
+      ],
+    },
+  ]);
   const [empresaUploadSelecionada, setEmpresaUploadSelecionada] = useState<string>('geral');
 
   // Estados para aditivos contratuais
@@ -626,6 +643,11 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                 <TabsTrigger value="empenho" className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
                   Empenho
+                  {empenhos.filter(e => e.pedidosVinculados.length === 0).length > 0 && (
+                    <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                      {empenhos.filter(e => e.pedidosVinculados.length === 0).length}
+                    </Badge>
+                  )}
                 </TabsTrigger>
               )}
               <TabsTrigger value="pedidos" className="flex items-center gap-2">
@@ -1276,256 +1298,6 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             </TabsContent>
 
 
-            {/* Aba Empenho - só aparece para segmentos públicos */}
-            {isSegmentoPublico && <TabsContent value="empenho" className="space-y-6">
-              {/* Card Produtos */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Package className="h-5 w-5" />
-                    Produtos
-                  </CardTitle>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => setEmpenhoProdutos([...empenhoProdutos, {
-                      id: `ep_${Date.now()}`,
-                      numeroEmpenho: '',
-                      produto: '',
-                      quantidade: 0,
-                      valor: 0,
-                      saldoEnviado: 0,
-                    }])}
-                  >
-                    <Plus className="h-4 w-4 mr-1" /> Adicionar Produto
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  {empenhoProdutos.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-4">Nenhum produto adicionado.</p>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Nº Empenho</TableHead>
-                            <TableHead>Produto</TableHead>
-                            <TableHead>Quantidade</TableHead>
-                            <TableHead>Valor</TableHead>
-                            <TableHead>Saldo Enviado (Pedido)</TableHead>
-                            <TableHead>Saldo Devedor</TableHead>
-                            <TableHead className="w-16">Ações</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {empenhoProdutos.map((item, index) => (
-                            <TableRow key={item.id}>
-                              <TableCell>
-                                <Input
-                                  value={item.numeroEmpenho}
-                                  onChange={(e) => {
-                                    const updated = [...empenhoProdutos];
-                                    updated[index] = { ...updated[index], numeroEmpenho: e.target.value };
-                                    setEmpenhoProdutos(updated);
-                                  }}
-                                  placeholder="Nº do empenho"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Input
-                                  value={item.produto}
-                                  onChange={(e) => {
-                                    const updated = [...empenhoProdutos];
-                                    updated[index] = { ...updated[index], produto: e.target.value };
-                                    setEmpenhoProdutos(updated);
-                                  }}
-                                  placeholder="Nome do produto"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Input
-                                  type="number"
-                                  value={item.quantidade || ''}
-                                  onChange={(e) => {
-                                    const updated = [...empenhoProdutos];
-                                    updated[index] = { ...updated[index], quantidade: Number(e.target.value) };
-                                    setEmpenhoProdutos(updated);
-                                  }}
-                                  placeholder="0"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Input
-                                  type="number"
-                                  value={item.valor || ''}
-                                  onChange={(e) => {
-                                    const updated = [...empenhoProdutos];
-                                    updated[index] = { ...updated[index], valor: Number(e.target.value) };
-                                    setEmpenhoProdutos(updated);
-                                  }}
-                                  placeholder="0,00"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Input
-                                  type="number"
-                                  value={item.saldoEnviado || ''}
-                                  onChange={(e) => {
-                                    const updated = [...empenhoProdutos];
-                                    updated[index] = { ...updated[index], saldoEnviado: Number(e.target.value) };
-                                    setEmpenhoProdutos(updated);
-                                  }}
-                                  placeholder="0,00"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <span className="font-medium text-muted-foreground">
-                                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.valor - item.saldoEnviado)}
-                                </span>
-                              </TableCell>
-                              <TableCell>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0 hover:bg-destructive/10"
-                                  onClick={() => setEmpenhoProdutos(empenhoProdutos.filter(p => p.id !== item.id))}
-                                >
-                                  <X className="h-4 w-4 text-destructive" />
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Card Serviços */}
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Wrench className="h-5 w-5" />
-                    Serviços
-                  </CardTitle>
-                  <Button
-                    type="button"
-                    size="sm"
-                    onClick={() => setEmpenhoServicos([...empenhoServicos, {
-                      id: `es_${Date.now()}`,
-                      numeroEmpenho: '',
-                      servico: '',
-                      quantidade: 0,
-                      valor: 0,
-                      saldoEnviado: 0,
-                    }])}
-                  >
-                    <Plus className="h-4 w-4 mr-1" /> Adicionar Serviço
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  {empenhoServicos.length === 0 ? (
-                    <p className="text-muted-foreground text-center py-4">Nenhum serviço adicionado.</p>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Nº Empenho</TableHead>
-                            <TableHead>Serviço</TableHead>
-                            <TableHead>Quantidade</TableHead>
-                            <TableHead>Valor</TableHead>
-                            <TableHead>Saldo Enviado (Pedido)</TableHead>
-                            <TableHead>Saldo Devedor</TableHead>
-                            <TableHead className="w-16">Ações</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {empenhoServicos.map((item, index) => (
-                            <TableRow key={item.id}>
-                              <TableCell>
-                                <Input
-                                  value={item.numeroEmpenho}
-                                  onChange={(e) => {
-                                    const updated = [...empenhoServicos];
-                                    updated[index] = { ...updated[index], numeroEmpenho: e.target.value };
-                                    setEmpenhoServicos(updated);
-                                  }}
-                                  placeholder="Nº do empenho"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Input
-                                  value={item.servico}
-                                  onChange={(e) => {
-                                    const updated = [...empenhoServicos];
-                                    updated[index] = { ...updated[index], servico: e.target.value };
-                                    setEmpenhoServicos(updated);
-                                  }}
-                                  placeholder="Nome do serviço"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Input
-                                  type="number"
-                                  value={item.quantidade || ''}
-                                  onChange={(e) => {
-                                    const updated = [...empenhoServicos];
-                                    updated[index] = { ...updated[index], quantidade: Number(e.target.value) };
-                                    setEmpenhoServicos(updated);
-                                  }}
-                                  placeholder="0"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Input
-                                  type="number"
-                                  value={item.valor || ''}
-                                  onChange={(e) => {
-                                    const updated = [...empenhoServicos];
-                                    updated[index] = { ...updated[index], valor: Number(e.target.value) };
-                                    setEmpenhoServicos(updated);
-                                  }}
-                                  placeholder="0,00"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <Input
-                                  type="number"
-                                  value={item.saldoEnviado || ''}
-                                  onChange={(e) => {
-                                    const updated = [...empenhoServicos];
-                                    updated[index] = { ...updated[index], saldoEnviado: Number(e.target.value) };
-                                    setEmpenhoServicos(updated);
-                                  }}
-                                  placeholder="0,00"
-                                />
-                              </TableCell>
-                              <TableCell>
-                                <span className="font-medium text-muted-foreground">
-                                  {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.valor - item.saldoEnviado)}
-                                </span>
-                              </TableCell>
-                              <TableCell>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 w-8 p-0 hover:bg-destructive/10"
-                                  onClick={() => setEmpenhoServicos(empenhoServicos.filter(s => s.id !== item.id))}
-                                >
-                                  <X className="h-4 w-4 text-destructive" />
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>}
 
             {/* Aba Análise Jurídica */}
             <TabsContent value="analise-juridica" className="space-y-4">
