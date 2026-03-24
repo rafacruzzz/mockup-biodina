@@ -1276,8 +1276,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
             </TabsContent>
 
 
-            {/* Aba Empenho */}
-            <TabsContent value="empenho" className="space-y-6">
+            {/* Aba Empenho - só aparece para segmentos públicos */}
+            {isSegmentoPublico && <TabsContent value="empenho" className="space-y-6">
               {/* Card Produtos */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
