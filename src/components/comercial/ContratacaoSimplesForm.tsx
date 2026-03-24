@@ -622,10 +622,12 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                 <MessageSquare className="h-4 w-4" />
                 Histórico/Chat
               </TabsTrigger>
-              <TabsTrigger value="empenho" className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4" />
-                Empenho
-              </TabsTrigger>
+              {isSegmentoPublico && (
+                <TabsTrigger value="empenho" className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Empenho
+                </TabsTrigger>
+              )}
               <TabsTrigger value="pedidos" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
                 Pedidos
