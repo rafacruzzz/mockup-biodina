@@ -301,7 +301,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     { id: 'cli-003', cpfCnpj: '45.678.901/0001-23', nomeFantasia: 'Lab Diagnóstico Plus', razaoSocial: 'Diagnóstico Plus Análises Clínicas Ltda', endereco: 'Rua Central, 789', uf: 'MG', email: 'lab@diagnosticoplus.com.br', telefone: '(31) 3456-1234', segmento: 'laboratorial' },
     { id: 'cli-004', cpfCnpj: '11.222.333/0001-44', nomeFantasia: 'Centro Médico Esperança', razaoSocial: 'Centro Médico Esperança Ltda', endereco: 'Av. Paulista, 1000', uf: 'SP', email: 'admin@esperanca.com.br', telefone: '(11) 4567-8901', segmento: 'hospitalar' },
     { id: 'cli-005', cpfCnpj: '55.666.777/0001-88', nomeFantasia: 'Farmácia Popular Saúde', razaoSocial: 'Farmácia Popular Saúde ME', endereco: 'Rua do Comércio, 50', uf: 'BA', email: 'farmacia@popularsaude.com.br', telefone: '(71) 3210-5678', segmento: 'farmacia' },
+    { id: 'cli-006', cpfCnpj: '99.888.777/0001-55', nomeFantasia: 'Hospital Municipal São José', razaoSocial: 'Prefeitura Municipal - Hospital São José', endereco: 'Av. Central, 500', uf: 'GO', email: 'hospital@saojose.gov.br', telefone: '(62) 3333-4444', segmento: 'PÚBLICO - HOSPITAL - MUNICIPAL' },
   ];
+
+  const isSegmentoPublico = formData.segmentoProjeto?.toLowerCase().includes('público') || formData.segmentoProjeto?.toLowerCase().includes('publico');
 
   const handleSelecionarCliente = (clienteId: string) => {
     setClienteParticular(clienteId);
