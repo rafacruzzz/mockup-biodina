@@ -1171,35 +1171,57 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                   <div className="space-y-3">
                     <h4 className="text-sm font-semibold text-foreground">1 - Análise da Concorrência pelo Comercial Local</h4>
                     
-                    {[1, 2].map((num) => (
-                      <div key={num} className="rounded-lg border border-border p-4 space-y-3">
-                        <p className="text-sm font-medium text-foreground">Concorrente {num}</p>
+                    {concorrentesBiodinaRep.map((concorrente, index) => (
+                      <div key={concorrente.id} className="rounded-lg border border-border p-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-medium text-foreground">Concorrente {index + 1}</p>
+                          {concorrentesBiodinaRep.length > 1 && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setConcorrentesBiodinaRep(prev => prev.filter(c => c.id !== concorrente.id))}
+                              className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </div>
                         <div>
                           <Label className="text-xs text-muted-foreground">Nome do Concorrente</Label>
-                          <Input readOnly className="bg-muted/50 cursor-not-allowed" placeholder="—" />
+                          <Input readOnly className="bg-muted/50 cursor-not-allowed" placeholder="—" value={concorrente.nome} />
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <Label className="text-xs text-muted-foreground">Marca do Concorrente</Label>
-                            <Input readOnly className="bg-muted/50 cursor-not-allowed" placeholder="—" />
+                            <Input readOnly className="bg-muted/50 cursor-not-allowed" placeholder="—" value={concorrente.marca} />
                           </div>
                           <div>
                             <Label className="text-xs text-muted-foreground">Modelo do Concorrente</Label>
-                            <Input readOnly className="bg-muted/50 cursor-not-allowed" placeholder="—" />
+                            <Input readOnly className="bg-muted/50 cursor-not-allowed" placeholder="—" value={concorrente.modelo} />
                           </div>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                           <div>
                             <Label className="text-xs text-muted-foreground">Quantidade</Label>
-                            <Input readOnly type="number" className="bg-muted/50 cursor-not-allowed" placeholder="—" />
+                            <Input readOnly type="number" className="bg-muted/50 cursor-not-allowed" placeholder="—" value={concorrente.quantidade} />
                           </div>
                           <div>
                             <Label className="text-xs text-muted-foreground">Quantidade de exames/mês</Label>
-                            <Input readOnly type="number" className="bg-muted/50 cursor-not-allowed" placeholder="—" />
+                            <Input readOnly type="number" className="bg-muted/50 cursor-not-allowed" placeholder="—" value={concorrente.examesMes} />
                           </div>
                         </div>
                       </div>
                     ))}
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setConcorrentesBiodinaRep(prev => [...prev, { id: crypto.randomUUID(), nome: '', marca: '', modelo: '', quantidade: '', examesMes: '' }])}
+                      className="w-full border-dashed"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar Concorrente
+                    </Button>
 
                     <p className="text-xs text-muted-foreground italic">Resumo da análise completa disponível no BiodinaRep</p>
                   </div>
