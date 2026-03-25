@@ -149,7 +149,7 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
   };
 
 
-  // Composição do Valor Ofertado
+  const totalQuantidadeProdutos = unidadesHospitalares.reduce((sum, u) => sum + u.quantidade, 0);
   const [composicaoValor, setComposicaoValor] = useState([
     { id: '1', descricao: 'Testes (reagente)', valorUnitario: 0, valorTotal: 0 },
     { id: '2', descricao: 'Equipamento', valorUnitario: 0, valorTotal: 0 },
