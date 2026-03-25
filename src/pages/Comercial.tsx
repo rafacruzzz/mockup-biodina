@@ -65,6 +65,8 @@ const Comercial = () => {
   const [showLeadModal, setShowLeadModal] = useState(false);
   const [leadsSearchTerm, setLeadsSearchTerm] = useState('');
   // const [showAssinaturas, setShowAssinaturas] = useState(false); // COMENTADO - NÃO USAR NO MOMENTO
+  const [propostasDT, setPropostasDT] = useState<PropostaDT[]>([]);
+  const [propostaDTModalOpen, setPropostaDTModalOpen] = useState(false);
 
   // Mock data com empresaId para filtrar por empresa
   const [todasOportunidades, setTodasOportunidades] = useState<any[]>([
