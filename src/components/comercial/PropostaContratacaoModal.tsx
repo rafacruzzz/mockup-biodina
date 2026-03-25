@@ -129,8 +129,28 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
   const [registroAnvisa, setRegistroAnvisa] = useState('');
   const [procedencia, setProcedencia] = useState('');
 
+  // Quantidade de Produtos por Unidade Hospitalar
+  const [unidadesHospitalares, setUnidadesHospitalares] = useState<Array<{ id: string; unidade: string; quantidade: number }>>([
+    { id: '1', unidade: '', quantidade: 0 }
+  ]);
 
-  const handleBancoChange = (bancoNome: string) => {
+  const addUnidadeHospitalar = () => {
+    setUnidadesHospitalares(prev => [...prev, { id: Date.now().toString(), unidade: '', quantidade: 0 }]);
+  };
+
+  const removeUnidadeHospitalar = (id: string) => {
+    if (unidadesHospitalares.length > 1) {
+      setUnidadesHospitalares(prev => prev.filter(u => u.id !== id));
+    }
+  };
+
+  const updateUnidadeHospitalar = (id: string, field: 'unidade' | 'quantidade', value: string | number) => {
+    setUnidadesHospitalares(prev => prev.map(u => u.id === id ? { ...u, [field]: value } : u));
+  };
+
+  const totalQuantidadeProdutos = unidadesHospitalares.reduce((sum, u) => sum + u.quantidade, 0);
+
+
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
     if (banco) {
       setBancoSelecionado(bancoNome);
