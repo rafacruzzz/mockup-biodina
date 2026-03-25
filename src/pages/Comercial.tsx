@@ -67,6 +67,8 @@ const Comercial = () => {
   // const [showAssinaturas, setShowAssinaturas] = useState(false); // COMENTADO - NÃO USAR NO MOMENTO
   const [propostasDT, setPropostasDT] = useState<PropostaDT[]>([]);
   const [propostaDTModalOpen, setPropostaDTModalOpen] = useState(false);
+  const [propostasContratacao, setPropostasContratacao] = useState<PropostaContratacao[]>([]);
+  const [propostaContratacaoModalOpen, setPropostaContratacaoModalOpen] = useState(false);
 
   // Mock data com empresaId para filtrar por empresa
   const [todasOportunidades, setTodasOportunidades] = useState<any[]>([
