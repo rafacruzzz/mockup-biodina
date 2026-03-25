@@ -151,6 +151,7 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
   const totalQuantidadeProdutos = unidadesHospitalares.reduce((sum, u) => sum + u.quantidade, 0);
 
 
+  const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
     if (banco) {
       setBancoSelecionado(bancoNome);
