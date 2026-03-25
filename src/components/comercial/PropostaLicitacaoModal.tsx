@@ -131,6 +131,36 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
   // OBS
   const [obsTabela, setObsTabela] = useState('');
 
+  // Composição de Exames
+  interface ExameRow {
+    id: string;
+    tipo: 'exame' | 'parametro';
+    catser: string;
+    item: string;
+    descricao: string;
+    valorUnitario: number;
+  }
+  const [examesRows, setExamesRows] = useState<ExameRow[]>([]);
+
+  const addExame = () => {
+    setExamesRows([...examesRows, { id: Date.now().toString(), tipo: 'exame', catser: '', item: '', descricao: '', valorUnitario: 0 }]);
+  };
+
+  const addParametro = () => {
+    setExamesRows([...examesRows, { id: (Date.now() + 1).toString(), tipo: 'parametro', catser: '', item: '', descricao: '', valorUnitario: 0 }]);
+  };
+
+  const removeExameRow = (id: string) => {
+    setExamesRows(examesRows.filter(r => r.id !== id));
+  };
+
+  const updateExameRow = (id: string, field: keyof ExameRow, value: string | number) => {
+    setExamesRows(examesRows.map(r => r.id === id ? { ...r, [field]: value } : r));
+  };
+
+  const somatoriaExames = examesRows.reduce((sum, r) => sum + r.valorUnitario, 0);
+  const qtdExames = examesRows.filter(r => r.tipo === 'exame').length;
+
   const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
     if (banco) {
