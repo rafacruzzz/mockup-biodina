@@ -71,6 +71,8 @@ const Comercial = () => {
   const [propostaDTModalOpen, setPropostaDTModalOpen] = useState(false);
   const [propostasContratacao, setPropostasContratacao] = useState<PropostaContratacao[]>([]);
   const [propostaContratacaoModalOpen, setPropostaContratacaoModalOpen] = useState(false);
+  const [propostasLicitacao, setPropostasLicitacao] = useState<PropostaLicitacao[]>([]);
+  const [propostaLicitacaoModalOpen, setPropostaLicitacaoModalOpen] = useState(false);
 
   // Mock data com empresaId para filtrar por empresa
   const [todasOportunidades, setTodasOportunidades] = useState<any[]>([
