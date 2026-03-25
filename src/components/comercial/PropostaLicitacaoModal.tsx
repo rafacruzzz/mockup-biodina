@@ -131,6 +131,36 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
   // OBS
   const [obsTabela, setObsTabela] = useState('');
 
+  // Composição de Exames
+  interface ExameRow {
+    id: string;
+    tipo: 'exame' | 'parametro';
+    catser: string;
+    item: string;
+    descricao: string;
+    valorUnitario: number;
+  }
+  const [examesRows, setExamesRows] = useState<ExameRow[]>([]);
+
+  const addExame = () => {
+    setExamesRows([...examesRows, { id: Date.now().toString(), tipo: 'exame', catser: '', item: '', descricao: '', valorUnitario: 0 }]);
+  };
+
+  const addParametro = () => {
+    setExamesRows([...examesRows, { id: (Date.now() + 1).toString(), tipo: 'parametro', catser: '', item: '', descricao: '', valorUnitario: 0 }]);
+  };
+
+  const removeExameRow = (id: string) => {
+    setExamesRows(examesRows.filter(r => r.id !== id));
+  };
+
+  const updateExameRow = (id: string, field: keyof ExameRow, value: string | number) => {
+    setExamesRows(examesRows.map(r => r.id === id ? { ...r, [field]: value } : r));
+  };
+
+  const somatoriaExames = examesRows.reduce((sum, r) => sum + r.valorUnitario, 0);
+  const qtdExames = examesRows.filter(r => r.tipo === 'exame').length;
+
   const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
     if (banco) {
@@ -524,6 +554,75 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
               <div>
                 <Label>OBS:</Label>
                 <Textarea value={obsTabela} onChange={e => setObsTabela(e.target.value)} placeholder="Observações da proposta comercial..." rows={3} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Composição de Exames */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Informações Adicionais: Tabela 1 - Composição de Exames
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[120px]">CATSER</TableHead>
+                      <TableHead className="w-[80px]">Item</TableHead>
+                      <TableHead>Descrição e Composição do Exame</TableHead>
+                      <TableHead className="w-[150px]">Valor Unit.</TableHead>
+                      <TableHead className="w-[50px]"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {examesRows.map((row, idx) => (
+                      <TableRow key={row.id} className={row.tipo === 'exame' ? 'bg-muted/60 font-bold' : ''}>
+                        <TableCell>
+                          <Input value={row.catser} onChange={e => updateExameRow(row.id, 'catser', e.target.value)} placeholder={row.tipo === 'exame' ? 'CATSER' : ''} />
+                        </TableCell>
+                        <TableCell>
+                          <Input value={row.item} onChange={e => updateExameRow(row.id, 'item', e.target.value)} placeholder={row.tipo === 'exame' ? 'Exame' : String(idx + 1)} />
+                        </TableCell>
+                        <TableCell>
+                          <Input value={row.descricao} onChange={e => updateExameRow(row.id, 'descricao', e.target.value)} placeholder={row.tipo === 'exame' ? 'Nome do Exame' : 'Parâmetro / Descrição'} />
+                        </TableCell>
+                        <TableCell>
+                          <Input type="number" value={row.valorUnitario || ''} onChange={e => updateExameRow(row.id, 'valorUnitario', Number(e.target.value))} placeholder="R$ 0,00" />
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="icon" onClick={() => removeExameRow(row.id)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {/* Linha A */}
+                    <TableRow className="bg-muted/50 font-bold">
+                      <TableCell colSpan={3} className="text-right">A - Somatória dos valores unitários dos exames:</TableCell>
+                      <TableCell>{formatCurrency(somatoriaExames)}</TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                    {/* Linha B */}
+                    <TableRow className="bg-muted/50 font-bold">
+                      <TableCell colSpan={3} className="text-right">B - Quantidade de exames:</TableCell>
+                      <TableCell>{qtdExames}</TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </div>
+
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={addExame}>
+                  <Plus className="h-4 w-4 mr-1" /> Adicionar Exame
+                </Button>
+                <Button variant="outline" size="sm" onClick={addParametro}>
+                  <Plus className="h-4 w-4 mr-1" /> Adicionar Parâmetro
+                </Button>
               </div>
             </CardContent>
           </Card>
