@@ -129,21 +129,6 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
   const [registroAnvisa, setRegistroAnvisa] = useState('');
   const [procedencia, setProcedencia] = useState('');
 
-  // Declaração
-  const [declaracao, setDeclaracao] = useState('');
-
-  // Condições
-  const [prazoValidade, setPrazoValidade] = useState('');
-  const [pagamento, setPagamento] = useState('');
-  const [prazoEntrega, setPrazoEntrega] = useState('');
-  const [garantia, setGarantia] = useState('');
-  const [localEntrega, setLocalEntrega] = useState('');
-  const [freteImpostos, setFreteImpostos] = useState('');
-  const [observacoes, setObservacoes] = useState('');
-
-  // Local e Data
-  const [localAssinatura, setLocalAssinatura] = useState('');
-  const [dataAssinatura, setDataAssinatura] = useState('');
 
   const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
