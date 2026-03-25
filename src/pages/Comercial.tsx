@@ -7,6 +7,7 @@ import { AnaliseEditaisTab } from "@/components/comercial/assessoria/AnaliseEdit
 import { RepositorioProdutosTab } from "@/components/comercial/assessoria/RepositorioProdutosTab";
 import { StatusOS } from "@/types/assessoria-cientifica";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -44,10 +45,11 @@ const Comercial = () => {
   // Empresa ativa é a filial se logado em uma filial, senão é a principal
   const empresaAtivaId = filialAtual?.id || empresaAtual?.id || '';
   
-  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
+  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'assessoria' | 'departamento-tecnico' | 'propostas' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeTab, setActiveTab] = useState('indicadores');
   const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade" | "analise-editais" | "repositorio">("agenda");
   const [departamentoTecnicoTab, setDepartamentoTecnicoTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade" | "emprestimos">("agenda");
+  const [propostasTab, setPropostasTab] = useState<'licitacao' | 'contratacao' | 'dt'>('licitacao');
   const [osStatusFilter, setOsStatusFilter] = useState<StatusOS[] | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
@@ -679,6 +681,17 @@ const Comercial = () => {
             <FileText className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-biodina-blue mb-2">Departamento Técnico</h3>
             <p className="text-gray-600">Suporte técnico e manutenção</p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+          onClick={() => setActiveModule('propostas')}
+        >
+          <CardContent className="p-8 text-center">
+            <ClipboardList className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Propostas</h3>
+            <p className="text-gray-600">Gestão de propostas comerciais</p>
           </CardContent>
         </Card>
 
@@ -1363,6 +1376,91 @@ const Comercial = () => {
     </div>
   );
 
+  const renderPropostasModule = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-biodina-blue">Comercial / Propostas</h2>
+        </div>
+        <Button variant="outline" onClick={() => setActiveModule('main')}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Voltar
+        </Button>
+      </div>
+
+      <Tabs value={propostasTab} onValueChange={(v) => setPropostasTab(v as 'licitacao' | 'contratacao' | 'dt')}>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="licitacao">
+            <Gavel className="h-4 w-4 mr-2" />
+            Propostas - Licitação
+          </TabsTrigger>
+          <TabsTrigger value="contratacao">
+            <Building2 className="h-4 w-4 mr-2" />
+            Propostas - Contratação
+          </TabsTrigger>
+          <TabsTrigger value="dt">
+            <FileText className="h-4 w-4 mr-2" />
+            Propostas - DT
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="licitacao">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Gavel className="h-5 w-5" />
+                Propostas - Licitação
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <Gavel className="h-12 w-12 mb-4 opacity-50" />
+                <p className="text-lg font-medium">Módulo em desenvolvimento</p>
+                <p className="text-sm">Gestão de propostas para processos licitatórios</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="contratacao">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                Propostas - Contratação
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <Building2 className="h-12 w-12 mb-4 opacity-50" />
+                <p className="text-lg font-medium">Módulo em desenvolvimento</p>
+                <p className="text-sm">Gestão de propostas para contratações diretas</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="dt">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Propostas - DT
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <FileText className="h-12 w-12 mb-4 opacity-50" />
+                <p className="text-lg font-medium">Módulo em desenvolvimento</p>
+                <p className="text-sm">Gestão de propostas do Departamento Técnico</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+
   return (
     <SidebarLayout>
       
@@ -1378,6 +1476,7 @@ const Comercial = () => {
         {activeModule === 'vendas' && renderVendasModule()}
         {activeModule === 'assessoria' && renderAssessoriaModule()}
         {activeModule === 'departamento-tecnico' && renderDepartamentoTecnicoModule()}
+        {activeModule === 'propostas' && renderPropostasModule()}
         {/* activeModule === 'assinaturas' && renderAssinaturasModule() */} {/* COMENTADO - NÃO USAR NO MOMENTO */}
       </div>
 
