@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Building2, MapPin, FileText, Save, Loader2 } from "lucide-react";
+import { Building2, MapPin, FileText, Save, Loader2, Upload, X, Type } from "lucide-react";
 import { toast } from "sonner";
 import EmissaoTab from "@/components/cadastro/EmissaoTab";
 import { Empresa, Filial } from "@/types/super";
