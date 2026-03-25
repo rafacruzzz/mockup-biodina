@@ -7,6 +7,7 @@ import { AnaliseEditaisTab } from "@/components/comercial/assessoria/AnaliseEdit
 import { RepositorioProdutosTab } from "@/components/comercial/assessoria/RepositorioProdutosTab";
 import { StatusOS } from "@/types/assessoria-cientifica";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
