@@ -1375,6 +1375,91 @@ const Comercial = () => {
     </div>
   );
 
+  const renderPropostasModule = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-biodina-blue">Comercial / Propostas</h2>
+        </div>
+        <Button variant="outline" onClick={() => setActiveModule('main')}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Voltar
+        </Button>
+      </div>
+
+      <Tabs value={propostasTab} onValueChange={(v) => setPropostasTab(v as 'licitacao' | 'contratacao' | 'dt')}>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="licitacao">
+            <Gavel className="h-4 w-4 mr-2" />
+            Propostas - Licitação
+          </TabsTrigger>
+          <TabsTrigger value="contratacao">
+            <Building2 className="h-4 w-4 mr-2" />
+            Propostas - Contratação
+          </TabsTrigger>
+          <TabsTrigger value="dt">
+            <FileText className="h-4 w-4 mr-2" />
+            Propostas - DT
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="licitacao">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Gavel className="h-5 w-5" />
+                Propostas - Licitação
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <Gavel className="h-12 w-12 mb-4 opacity-50" />
+                <p className="text-lg font-medium">Módulo em desenvolvimento</p>
+                <p className="text-sm">Gestão de propostas para processos licitatórios</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="contratacao">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                Propostas - Contratação
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <Building2 className="h-12 w-12 mb-4 opacity-50" />
+                <p className="text-lg font-medium">Módulo em desenvolvimento</p>
+                <p className="text-sm">Gestão de propostas para contratações diretas</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="dt">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Propostas - DT
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <FileText className="h-12 w-12 mb-4 opacity-50" />
+                <p className="text-lg font-medium">Módulo em desenvolvimento</p>
+                <p className="text-sm">Gestão de propostas do Departamento Técnico</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+
   return (
     <SidebarLayout>
       
