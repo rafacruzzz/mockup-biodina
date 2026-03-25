@@ -1,35 +1,23 @@
 
 
-## Plano: Criar modal "Nova Proposta Licitação" com campos específicos e tabela comercial
+## Plano: Adicionar tabela "Composição de Exames" ao modal Proposta Licitação
 
 ### Resumo
-Criar componente `PropostaLicitacaoModal.tsx` seguindo o padrão dos modais DT e Contratação, mas com campos específicos de licitação (UASG, Edital, Pregão, Processo, Abertura com dia/horário). A tabela comercial segue a imagem: Item, Especificação/Descrição, Referência/Código, Unidade, Marca/Fabricante, Qtd, Valor Unitário sem ICMS, Valor Unitário com ICMS, Valor Total Sem ICMS, Valor Total Com ICMS, Valor Mensal, Valor Anual. Cliente puxa do cadastro com auto-preenchimento.
+Adicionar após a seção de Proposta Comercial (após OBS) uma nova seção "Informações Adicionais: Tabela 1 - Composição de Exames" conforme os prints. A tabela tem estrutura hierárquica: linhas de EXAME (cabeçalho de grupo) seguidas por linhas de PARÂMETROS (itens numerados). Colunas: CATSER | Item | Descrição e Composição do Exame | Valor Unit. No final: linha A (Somatória dos valores unitários) e linha B (Quantidade de exames).
 
-### Novo componente: `src/components/comercial/PropostaLicitacaoModal.tsx`
+### Alterações em `src/components/comercial/PropostaLicitacaoModal.tsx`
 
-**Seções:**
+**1. Novo estado para a tabela de exames:**
+- Array de objetos com estrutura: `{ id, tipo: 'exame' | 'parametro', catser, item, descricao, valorUnitario }`
+- Funções para adicionar exame (linha cabeçalho) e parâmetro (linha item), e remover linhas
+- Campos calculados: Somatória dos valores unitários (A) e Quantidade de exames (B = contagem de linhas tipo 'exame')
 
-1. **Dados do Cliente** (Select com auto-preenchimento):
-   - Cliente (Select do cadastro), Endereço (auto), CNPJ (auto), UASG (input), Edital de Pregão Eletrônico Nº (input), Pregão Eletrônico Nº (input), Processo Nº (input), Inscrição Estadual (auto), Inscrição Municipal (auto), Abertura (input), Dia (input date), Horário (input time + label "Horário de Brasília"), Proposta Nº (input)
-
-2. **Dados da Empresa** (preenchidos automaticamente — mesmo mock):
-   - Razão Social, Endereço, CNPJ, IE, IM, Telefone, E-mail
-   - Select Banco → auto-preenche Código, Agência, Conta Corrente + Código de Operação (input)
-
-3. **Representante Legal** (preenchido automaticamente — mesmo mock):
-   - Nome, RG, CPF, Naturalidade, Nacionalidade, Endereço, E-mail, Cargo/Função
-
-4. **Objeto da Proposta** (Textarea)
-
-5. **Proposta Comercial** (tabela conforme imagem):
-   - Colunas: Item | Especificação/Descrição | Referência/Código | Unidade | Marca/Fabricante | Qtd | Valor Unitário sem ICMS | Valor Unitário com ICMS | Valor Total Sem ICMS (calc) | Valor Total Com ICMS (calc) | Valor Mensal | Valor Anual
-   - Botão adicionar/remover itens
-   - Linha Valor Final + campo OBS
-   - Desconto opcional (toggle)
-
-### Alterações em `src/pages/Comercial.tsx`
-
-1. Novos estados: `propostasLicitacao` (array) e `propostaLicitacaoModalOpen` (boolean)
-2. Substituir placeholder da aba Licitação (linhas 1413-1428): botão "Nova Proposta Licitação" + tabela listando propostas
-3. Importar e renderizar `PropostaLicitacaoModal`
+**2. Nova seção após o card de Proposta Comercial (após linha 529, antes dos botões):**
+- Card "Informações Adicionais: Tabela 1 - Composição de Exames"
+- Tabela com colunas: CATSER | Item | Descrição e Composição do Exame | Valor Unit.
+- Linhas de EXAME em destaque (fundo cinza, fonte bold)
+- Linhas de PARÂMETROS numeradas sequencialmente
+- Botões: "Adicionar Exame" e "Adicionar Parâmetro"
+- Linha A: "Somatória dos valores unitários dos exames" (soma automática)
+- Linha B: "Quantidade de exames" (contagem automática)
 
