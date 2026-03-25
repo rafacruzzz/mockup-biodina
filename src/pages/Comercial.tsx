@@ -1390,6 +1390,7 @@ const Comercial = () => {
         {activeModule === 'vendas' && renderVendasModule()}
         {activeModule === 'assessoria' && renderAssessoriaModule()}
         {activeModule === 'departamento-tecnico' && renderDepartamentoTecnicoModule()}
+        {activeModule === 'propostas' && renderPropostasModule()}
         {/* activeModule === 'assinaturas' && renderAssinaturasModule() */} {/* COMENTADO - NÃO USAR NO MOMENTO */}
       </div>
 
