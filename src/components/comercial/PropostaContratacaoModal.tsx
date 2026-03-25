@@ -514,6 +514,69 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
             </CardContent>
           </Card>
 
+          {/* QUANTIDADE DE PRODUTOS */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Quantidade de Produtos
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Unidade Hospitalar</TableHead>
+                    <TableHead className="w-40">Quant. de Itens</TableHead>
+                    <TableHead className="w-12"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {unidadesHospitalares.map((uh) => (
+                    <TableRow key={uh.id}>
+                      <TableCell>
+                        <Input
+                          value={uh.unidade}
+                          onChange={e => updateUnidadeHospitalar(uh.id, 'unidade', e.target.value)}
+                          placeholder="Nome da unidade hospitalar"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={uh.quantidade || ''}
+                          onChange={e => updateUnidadeHospitalar(uh.id, 'quantidade', Number(e.target.value))}
+                          placeholder="0"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeUnidadeHospitalar(uh.id)}
+                          disabled={unidadesHospitalares.length <= 1}
+                          className="h-8 w-8"
+                        >
+                          <Trash2 className="h-3 w-3 text-destructive" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow className="bg-muted/50 font-semibold">
+                    <TableCell className="text-right font-bold">TOTAL</TableCell>
+                    <TableCell className="font-bold">{totalQuantidadeProdutos}</TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+              <Button variant="outline" size="sm" onClick={addUnidadeHospitalar} className="mt-2">
+                <Plus className="h-3 w-3 mr-1" />
+                Adicionar Unidade
+              </Button>
+            </CardContent>
+          </Card>
+
           {/* BOTÕES */}
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline" onClick={onClose}>Cancelar</Button>
