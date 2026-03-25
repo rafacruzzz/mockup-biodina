@@ -48,6 +48,8 @@ const PerfilEmpresaContent = () => {
         email: (currentEntity as any).email || "",
         telefone: (currentEntity as any).telefone || "",
         discriminaImpostos: (currentEntity as any).discriminaImpostos || false,
+        timbradoUrl: (currentEntity as any).timbradoUrl || "",
+        fonteDocumentos: (currentEntity as any).fonteDocumentos || "Arial",
         endereco: (currentEntity as any).endereco || {
           cep: "",
           logradouro: "",
@@ -60,6 +62,9 @@ const PerfilEmpresaContent = () => {
         certificadoDigital: (currentEntity as any).certificadoDigital,
         nfeConfig: (currentEntity as any).nfeConfig
       });
+      if ((currentEntity as any).timbradoUrl) {
+        setTimbradoPreview((currentEntity as any).timbradoUrl);
+      }
     }
   }, [currentEntity]);
 
