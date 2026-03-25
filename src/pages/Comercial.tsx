@@ -32,6 +32,7 @@ import {
   Gavel, Building2, Globe, HandCoins, FileSpreadsheet, Trash2, Users // FileSignature COMENTADO - NÃO USAR NO MOMENTO
 } from "lucide-react";
 import { modules } from "@/data/cadastroModules";
+import PropostaDTModal, { PropostaDT } from "@/components/comercial/PropostaDTModal";
 import EntidadeModal from "@/components/cadastro/EntidadeModal";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { 
@@ -64,6 +65,8 @@ const Comercial = () => {
   const [showLeadModal, setShowLeadModal] = useState(false);
   const [leadsSearchTerm, setLeadsSearchTerm] = useState('');
   // const [showAssinaturas, setShowAssinaturas] = useState(false); // COMENTADO - NÃO USAR NO MOMENTO
+  const [propostasDT, setPropostasDT] = useState<PropostaDT[]>([]);
+  const [propostaDTModalOpen, setPropostaDTModalOpen] = useState(false);
 
   // Mock data com empresaId para filtrar por empresa
   const [todasOportunidades, setTodasOportunidades] = useState<any[]>([
@@ -1442,20 +1445,59 @@ const Comercial = () => {
 
         <TabsContent value="dt">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
                 Propostas - DT
               </CardTitle>
+              <Button onClick={() => setPropostaDTModalOpen(true)}>
+                <Plus className="h-4 w-4 mr-1" /> Nova Proposta DT
+              </Button>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <FileText className="h-12 w-12 mb-4 opacity-50" />
-                <p className="text-lg font-medium">Módulo em desenvolvimento</p>
-                <p className="text-sm">Gestão de propostas do Departamento Técnico</p>
-              </div>
+              {propostasDT.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                  <FileText className="h-12 w-12 mb-4 opacity-50" />
+                  <p className="text-lg font-medium">Nenhuma proposta DT cadastrada</p>
+                  <p className="text-sm">Clique em "Nova Proposta DT" para criar</p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nº Proposta</TableHead>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Data</TableHead>
+                      <TableHead>Valor</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {propostasDT.map(p => (
+                      <TableRow key={p.id}>
+                        <TableCell className="font-medium">{p.numeroProposta}</TableCell>
+                        <TableCell>{p.cliente}</TableCell>
+                        <TableCell>{p.data}</TableCell>
+                        <TableCell>{p.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">{p.status}</Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </CardContent>
           </Card>
+
+          <PropostaDTModal
+            open={propostaDTModalOpen}
+            onClose={() => setPropostaDTModalOpen(false)}
+            onSave={(proposta) => {
+              setPropostasDT(prev => [...prev, proposta]);
+              setPropostaDTModalOpen(false);
+            }}
+          />
         </TabsContent>
       </Tabs>
     </div>
