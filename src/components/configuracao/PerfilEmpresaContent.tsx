@@ -73,6 +73,33 @@ const PerfilEmpresaContent = () => {
   };
 
   const handleEnderecoChange = (field: string, value: string) => {
+
+  const handleTimbradoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'].includes(file.type)) {
+        toast.error("Formato não suportado. Use PNG, JPG ou PDF.");
+        return;
+      }
+      setTimbradoFile(file);
+      if (file.type.startsWith('image/')) {
+        const url = URL.createObjectURL(file);
+        setTimbradoPreview(url);
+        handleInputChange("timbradoUrl", url);
+      } else {
+        setTimbradoPreview(null);
+        handleInputChange("timbradoUrl", file.name);
+      }
+      toast.success("Timbrado carregado com sucesso!");
+    }
+  };
+
+  const handleRemoveTimbrado = () => {
+    setTimbradoFile(null);
+    setTimbradoPreview(null);
+    handleInputChange("timbradoUrl", "");
+    if (timbradoInputRef.current) timbradoInputRef.current.value = "";
+  };
     setFormData(prev => ({
       ...prev,
       endereco: {
