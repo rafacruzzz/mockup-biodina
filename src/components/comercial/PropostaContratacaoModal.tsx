@@ -148,8 +148,20 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
     setUnidadesHospitalares(prev => prev.map(u => u.id === id ? { ...u, [field]: value } : u));
   };
 
-  const totalQuantidadeProdutos = unidadesHospitalares.reduce((sum, u) => sum + u.quantidade, 0);
 
+  const totalQuantidadeProdutos = unidadesHospitalares.reduce((sum, u) => sum + u.quantidade, 0);
+  const [composicaoValor, setComposicaoValor] = useState([
+    { id: '1', descricao: 'Testes (reagente)', valorUnitario: 0, valorTotal: 0 },
+    { id: '2', descricao: 'Equipamento', valorUnitario: 0, valorTotal: 0 },
+    { id: '3', descricao: 'Acessórios', valorUnitario: 0, valorTotal: 0 },
+    { id: '4', descricao: 'Manutenção preventiva e corretiva', valorUnitario: 0, valorTotal: 0 },
+    { id: '5', descricao: 'Suporte técnico', valorUnitario: 0, valorTotal: 0 },
+    { id: '6', descricao: 'Treinamento e Certificados', valorUnitario: 0, valorTotal: 0 },
+  ]);
+
+  const updateComposicaoValor = (id: string, field: 'valorUnitario' | 'valorTotal', value: number) => {
+    setComposicaoValor(prev => prev.map(c => c.id === id ? { ...c, [field]: value } : c));
+  };
 
   const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
@@ -595,6 +607,54 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
                 <Plus className="h-3 w-3 mr-1" />
                 Adicionar Unidade
               </Button>
+            </CardContent>
+          </Card>
+
+          {/* COMPOSIÇÃO DO VALOR OFERTADO */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Banknote className="h-4 w-4" />
+                Composição do Valor Ofertado
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Composição do valor ofertado</TableHead>
+                    <TableHead className="w-44">Valor unitário</TableHead>
+                    <TableHead className="w-44">Valor total</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {composicaoValor.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">{item.descricao}</TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          min={0}
+                          step={0.01}
+                          value={item.valorUnitario || ''}
+                          onChange={e => updateComposicaoValor(item.id, 'valorUnitario', Number(e.target.value))}
+                          placeholder="0,00"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          min={0}
+                          step={0.01}
+                          value={item.valorTotal || ''}
+                          onChange={e => updateComposicaoValor(item.id, 'valorTotal', Number(e.target.value))}
+                          placeholder="0,00"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
 
