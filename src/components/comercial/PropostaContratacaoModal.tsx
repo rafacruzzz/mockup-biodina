@@ -598,6 +598,54 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
             </CardContent>
           </Card>
 
+          {/* COMPOSIÇÃO DO VALOR OFERTADO */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Banknote className="h-4 w-4" />
+                Composição do Valor Ofertado
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Composição do valor ofertado</TableHead>
+                    <TableHead className="w-44">Valor unitário</TableHead>
+                    <TableHead className="w-44">Valor total</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {composicaoValor.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">{item.descricao}</TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          min={0}
+                          step={0.01}
+                          value={item.valorUnitario || ''}
+                          onChange={e => updateComposicaoValor(item.id, 'valorUnitario', Number(e.target.value))}
+                          placeholder="0,00"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          min={0}
+                          step={0.01}
+                          value={item.valorTotal || ''}
+                          onChange={e => updateComposicaoValor(item.id, 'valorTotal', Number(e.target.value))}
+                          placeholder="0,00"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+
           {/* BOTÕES */}
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline" onClick={onClose}>Cancelar</Button>
