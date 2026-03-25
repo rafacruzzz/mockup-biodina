@@ -64,6 +64,8 @@ export interface Empresa {
   email?: string;
   telefone?: string;
   discriminaImpostos?: boolean;
+  timbradoUrl?: string;
+  fonteDocumentos?: string;
   
   // Certificado Digital e Configuração NF-e
   certificadoDigital?: {
@@ -113,6 +115,8 @@ export interface Filial {
   email?: string;
   telefone?: string;
   discriminaImpostos?: boolean;
+  timbradoUrl?: string;
+  fonteDocumentos?: string;
   
   // Certificado Digital e Configuração NF-e
   certificadoDigital?: {
