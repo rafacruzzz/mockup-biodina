@@ -188,6 +188,12 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
     ));
   };
 
+  const getSubModulosHabilitadosCount = (moduloKey: string): number => {
+    const modulo = getModuloSelecionado(moduloKey);
+    if (!modulo) return 0;
+    return modulo.subModulos.filter(s => s.habilitado).length;
+  };
+
   const handleMarcarTodos = () => {
     const allModules: ModuloUsuario[] = modulosParaMostrar.map(m => ({
       key: m.key,
