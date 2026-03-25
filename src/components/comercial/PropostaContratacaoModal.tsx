@@ -129,21 +129,6 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
   const [registroAnvisa, setRegistroAnvisa] = useState('');
   const [procedencia, setProcedencia] = useState('');
 
-  // Declaração
-  const [declaracao, setDeclaracao] = useState('');
-
-  // Condições
-  const [prazoValidade, setPrazoValidade] = useState('');
-  const [pagamento, setPagamento] = useState('');
-  const [prazoEntrega, setPrazoEntrega] = useState('');
-  const [garantia, setGarantia] = useState('');
-  const [localEntrega, setLocalEntrega] = useState('');
-  const [freteImpostos, setFreteImpostos] = useState('');
-  const [observacoes, setObservacoes] = useState('');
-
-  // Local e Data
-  const [localAssinatura, setLocalAssinatura] = useState('');
-  const [dataAssinatura, setDataAssinatura] = useState('');
 
   const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
@@ -184,7 +169,7 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
       id: Date.now().toString(),
       numeroProposta: propostaNum,
       cliente,
-      data: dataAssinatura || new Date().toLocaleDateString('pt-BR'),
+      data: new Date().toLocaleDateString('pt-BR'),
       valorTotal: valorFinal,
       status: 'Em análise',
     });
@@ -525,78 +510,6 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
                   <Label className="text-xs">Procedência</Label>
                   <Input value={procedencia} onChange={e => setProcedencia(e.target.value)} placeholder="País/Origem" />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* DECLARAÇÃO */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Declaração</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-2">A empresa {dadosEmpresa.razaoSocial} declara que:</p>
-              <Textarea value={declaracao} onChange={e => setDeclaracao(e.target.value)} placeholder="Digite a declaração..." rows={3} />
-            </CardContent>
-          </Card>
-
-          {/* CONDIÇÕES COMERCIAIS */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Condições Comerciais</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="space-y-1">
-                <Label className="text-xs">Prazo de Validade da Proposta</Label>
-                <Input value={prazoValidade} onChange={e => setPrazoValidade(e.target.value)} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Pagamento</Label>
-                <Input value={pagamento} onChange={e => setPagamento(e.target.value)} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Prazo de Entrega e/ou Instalação</Label>
-                <Input value={prazoEntrega} onChange={e => setPrazoEntrega(e.target.value)} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Garantia</Label>
-                <Input value={garantia} onChange={e => setGarantia(e.target.value)} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Local de Entrega</Label>
-                <Input value={localEntrega} onChange={e => setLocalEntrega(e.target.value)} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Frete e Impostos</Label>
-                <Input value={freteImpostos} onChange={e => setFreteImpostos(e.target.value)} />
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">Observações</Label>
-                <Textarea value={observacoes} onChange={e => setObservacoes(e.target.value)} rows={3} />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* LOCAL, DATA, ASSINATURA */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Local, Data e Assinatura</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <Label className="text-xs">Local</Label>
-                  <Input value={localAssinatura} onChange={e => setLocalAssinatura(e.target.value)} placeholder="Cidade - UF" />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Data</Label>
-                  <Input type="date" value={dataAssinatura} onChange={e => setDataAssinatura(e.target.value)} />
-                </div>
-              </div>
-              <div className="mt-4 pt-4 border-t text-center">
-                <p className="text-sm font-semibold">{repNome}</p>
-                <p className="text-xs text-muted-foreground">{repCargo}</p>
-                <p className="text-xs text-muted-foreground">{dadosEmpresa.razaoSocial}</p>
               </div>
             </CardContent>
           </Card>
