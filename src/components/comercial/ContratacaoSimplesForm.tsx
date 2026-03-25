@@ -670,7 +670,11 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               </TabsTrigger>
               <TabsTrigger value="chamados" className="flex items-center gap-2">
                 <Headphones className="h-4 w-4" />
-                Chamados
+              Chamados
+              </TabsTrigger>
+              <TabsTrigger value="interfaceamento" className="flex items-center gap-2">
+                <Network className="h-4 w-4" />
+                Interfaceamento
               </TabsTrigger>
             </TabsList>
 
