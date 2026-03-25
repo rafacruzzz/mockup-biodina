@@ -231,30 +231,62 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
     onModuleChange(allModules);
   };
 
+  // Detectar estado atual dos módulos para destacar botões
+  const todosHabilitados = modulosParaMostrar.length > 0 && modulosParaMostrar.every(m => {
+    const mod = getModuloSelecionado(m.key);
+    return mod?.habilitado && mod.subModulos.every(s => s.habilitado);
+  });
+  const nenhumHabilitado = modules.length === 0 || modules.every(m => !m.habilitado);
+
+  const getNivelAtual = (): PermissionLevel | null => {
+    if (!todosHabilitados) return null;
+    const allSubs = modules.flatMap(m => m.subModulos.filter(s => s.habilitado));
+    if (allSubs.length === 0) return null;
+    const levels = allSubs.map(s => getPermissionLevel(s.permissions));
+    const allSame = levels.every(l => l === levels[0]);
+    return allSame ? levels[0] : null;
+  };
+  const nivelAtual = getNivelAtual();
+
   return (
     <div className="space-y-2">
       {/* Barra de ações em massa */}
       <div className="flex flex-wrap items-center gap-2 p-3 border rounded-lg bg-muted/50">
-        <Button type="button" size="sm" variant="outline" onClick={handleMarcarTodos}>
+        <Button type="button" size="sm" 
+          variant={todosHabilitados ? "default" : "outline"} 
+          onClick={handleMarcarTodos}
+        >
           <CheckSquare className="h-3.5 w-3.5 mr-1" />
           Marcar Todos
         </Button>
-        <Button type="button" size="sm" variant="outline" onClick={handleDesmarcarTodos}>
+        <Button type="button" size="sm" 
+          variant={nenhumHabilitado ? "default" : "outline"} 
+          onClick={handleDesmarcarTodos}
+        >
           <XSquare className="h-3.5 w-3.5 mr-1" />
           Desmarcar Todos
         </Button>
         
         <Separator orientation="vertical" className="h-6 mx-1" />
         
-        <Button type="button" size="sm" variant="outline" onClick={() => handleAplicarNivelTodos('view')}>
+        <Button type="button" size="sm" 
+          variant={nivelAtual === 'view' ? "default" : "outline"} 
+          onClick={() => handleAplicarNivelTodos('view')}
+        >
           <Eye className="h-3.5 w-3.5 mr-1" />
           Todos Ver
         </Button>
-        <Button type="button" size="sm" variant="outline" onClick={() => handleAplicarNivelTodos('edit')}>
+        <Button type="button" size="sm" 
+          variant={nivelAtual === 'edit' ? "default" : "outline"} 
+          onClick={() => handleAplicarNivelTodos('edit')}
+        >
           <Edit className="h-3.5 w-3.5 mr-1" />
           Todos Ver/Editar
         </Button>
-        <Button type="button" size="sm" variant="outline" onClick={() => handleAplicarNivelTodos('delete')}>
+        <Button type="button" size="sm" 
+          variant={nivelAtual === 'delete' ? "default" : "outline"} 
+          onClick={() => handleAplicarNivelTodos('delete')}
+        >
           <Trash className="h-3.5 w-3.5 mr-1" />
           Todos Excluir
         </Button>
