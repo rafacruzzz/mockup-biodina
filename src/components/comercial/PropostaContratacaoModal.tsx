@@ -169,7 +169,7 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
       id: Date.now().toString(),
       numeroProposta: propostaNum,
       cliente,
-      data: dataAssinatura || new Date().toLocaleDateString('pt-BR'),
+      data: new Date().toLocaleDateString('pt-BR'),
       valorTotal: valorFinal,
       status: 'Em análise',
     });
