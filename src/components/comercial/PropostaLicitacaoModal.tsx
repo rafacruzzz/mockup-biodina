@@ -829,6 +829,106 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
             </CardContent>
           </Card>
 
+          {/* Declaração de Código Alfandegário */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Declaração de Código Alfandegário</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label>Modelo do produto</Label>
+                  <Input value={modeloProdutoAlf} onChange={e => setModeloProdutoAlf(e.target.value)} placeholder="Modelo do produto" />
+                </div>
+                <div>
+                  <Label>Marca/Fabricante</Label>
+                  <Input value={marcaFabricanteAlf} onChange={e => setMarcaFabricanteAlf(e.target.value)} placeholder="Marca/Fabricante" />
+                </div>
+                <div>
+                  <Label>Procedência</Label>
+                  <Input value={procedenciaAlf} onChange={e => setProcedenciaAlf(e.target.value)} placeholder="Procedência" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Registro do produto</Label>
+                  <Input value={registroProdutoAlf} onChange={e => setRegistroProdutoAlf(e.target.value)} placeholder="Registro do produto" />
+                </div>
+                <div>
+                  <Label>Código Alfandegário</Label>
+                  <Input value={codigoAlfandegario} onChange={e => setCodigoAlfandegario(e.target.value)} placeholder="Código Alfandegário" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Declaração */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Declaração</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Label>A empresa {dadosEmpresa.razaoSocial} declara que:</Label>
+              <Textarea value={declaracao} onChange={e => setDeclaracao(e.target.value)} placeholder="Digite a declaração..." className="mt-2" rows={4} />
+            </CardContent>
+          </Card>
+
+          {/* Condições Comerciais */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Condições Comerciais</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label>Prazo de validade da proposta</Label>
+                <Input value={prazoValidade} onChange={e => setPrazoValidade(e.target.value)} placeholder="Ex: 60 dias" />
+              </div>
+              <div>
+                <Label>Pagamento</Label>
+                <Textarea value={pagamento} onChange={e => setPagamento(e.target.value)} placeholder="Condições de pagamento..." rows={3} />
+              </div>
+              <div>
+                <Label>Prazo de entrega e/ou instalação</Label>
+                <Input value={prazoEntrega} onChange={e => setPrazoEntrega(e.target.value)} placeholder="Ex: 30 dias úteis" />
+              </div>
+              <div>
+                <Label>Garantia</Label>
+                <Textarea value={garantia} onChange={e => setGarantia(e.target.value)} placeholder="Condições de garantia..." rows={3} />
+              </div>
+              <div>
+                <Label>Local de entrega</Label>
+                <Input value={localEntrega} onChange={e => setLocalEntrega(e.target.value)} placeholder="Local de entrega" />
+              </div>
+              <div>
+                <Label>Frete e Impostos</Label>
+                <Textarea value={freteImpostos} onChange={e => setFreteImpostos(e.target.value)} placeholder="Informações sobre frete e impostos..." rows={3} />
+              </div>
+              <div>
+                <Label>Observações</Label>
+                <Textarea value={observacoes} onChange={e => setObservacoes(e.target.value)} placeholder="Observações gerais..." rows={3} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Local, Data e Assinatura */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Local, Data e Assinatura</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Local</Label>
+                  <Input value={localAssinatura} onChange={e => setLocalAssinatura(e.target.value)} placeholder="Cidade - UF" />
+                </div>
+                <div>
+                  <Label>Data</Label>
+                  <Input type="date" value={dataAssinatura} onChange={e => setDataAssinatura(e.target.value)} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Botões */}
           <div className="flex justify-end gap-2 pt-4">
             <Button variant="outline" onClick={onClose}>Cancelar</Button>
