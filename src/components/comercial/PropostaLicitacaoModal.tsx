@@ -161,6 +161,44 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
   const somatoriaExames = examesRows.reduce((sum, r) => sum + r.valorUnitario, 0);
   const qtdExames = examesRows.filter(r => r.tipo === 'exame').length;
 
+  // Especificação do Produto
+  const [apresentacao, setApresentacao] = useState('');
+  const [modelo, setModelo] = useState('');
+  const [marcaFabricante, setMarcaFabricante] = useState('');
+  const [registroAnvisa, setRegistroAnvisa] = useState('');
+  const [procedencia, setProcedencia] = useState('');
+
+  // Quantidade de Produtos
+  const [unidadesHospitalares, setUnidadesHospitalares] = useState([{ id: '1', unidade: '', quantidade: 0 }]);
+
+  const addUnidadeHospitalar = () => {
+    setUnidadesHospitalares([...unidadesHospitalares, { id: Date.now().toString(), unidade: '', quantidade: 0 }]);
+  };
+
+  const removeUnidadeHospitalar = (id: string) => {
+    if (unidadesHospitalares.length > 1) setUnidadesHospitalares(unidadesHospitalares.filter(u => u.id !== id));
+  };
+
+  const updateUnidadeHospitalar = (id: string, field: string, value: string | number) => {
+    setUnidadesHospitalares(unidadesHospitalares.map(u => u.id === id ? { ...u, [field]: value } : u));
+  };
+
+  const totalQuantidadeProdutos = unidadesHospitalares.reduce((sum, u) => sum + u.quantidade, 0);
+
+  // Composição do Valor Ofertado
+  const [composicaoValor, setComposicaoValor] = useState([
+    { id: '1', descricao: 'Testes (reagente)', valorUnitario: 0, valorTotal: 0 },
+    { id: '2', descricao: 'Equipamento', valorUnitario: 0, valorTotal: 0 },
+    { id: '3', descricao: 'Acessórios', valorUnitario: 0, valorTotal: 0 },
+    { id: '4', descricao: 'Manutenção preventiva e corretiva', valorUnitario: 0, valorTotal: 0 },
+    { id: '5', descricao: 'Suporte técnico', valorUnitario: 0, valorTotal: 0 },
+    { id: '6', descricao: 'Treinamento e Certificados', valorUnitario: 0, valorTotal: 0 },
+  ]);
+
+  const updateComposicaoValor = (id: string, field: string, value: number) => {
+    setComposicaoValor(composicaoValor.map(c => c.id === id ? { ...c, [field]: value } : c));
+  };
+
   const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
     if (banco) {
