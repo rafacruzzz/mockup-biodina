@@ -17,6 +17,16 @@ const PerfilEmpresaContent = () => {
   const { empresaAtual, filialAtual, atualizarEmpresa, atualizarFilial } = useEmpresa();
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("informacoes");
+  const [timbradoFile, setTimbradoFile] = useState<File | null>(null);
+  const [timbradoPreview, setTimbradoPreview] = useState<string | null>(null);
+  const timbradoInputRef = useRef<HTMLInputElement>(null);
+
+  const fontOptions = [
+    "Arial", "Arial Black", "Calibri", "Cambria", "Comic Sans MS",
+    "Courier New", "Georgia", "Helvetica", "Impact", "Lucida Console",
+    "Palatino Linotype", "Segoe UI", "Tahoma", "Times New Roman",
+    "Trebuchet MS", "Verdana"
+  ];
 
   // Determinar se estamos editando empresa ou filial
   const isEditingFilial = !!filialAtual;
