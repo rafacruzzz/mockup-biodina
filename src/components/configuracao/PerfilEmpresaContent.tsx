@@ -324,6 +324,91 @@ const PerfilEmpresaContent = () => {
                 />
                 <Label htmlFor="discriminaImpostos">Discriminar impostos na nota fiscal</Label>
               </div>
+
+              {/* Timbrado da Empresa */}
+              <div className="space-y-3 pt-4 border-t">
+                <Label className="text-base font-semibold flex items-center gap-2">
+                  <Upload className="h-4 w-4" />
+                  Timbrado da Empresa
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Faça upload da imagem do timbrado que será usado na impressão dos documentos.
+                </p>
+                <input
+                  ref={timbradoInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/jpg,application/pdf"
+                  className="hidden"
+                  onChange={handleTimbradoUpload}
+                />
+                {timbradoPreview ? (
+                  <div className="relative border rounded-lg p-2 inline-block">
+                    <img src={timbradoPreview} alt="Timbrado" className="max-h-40 object-contain" />
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="absolute -top-2 -right-2 h-6 w-6"
+                      onClick={handleRemoveTimbrado}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ) : formData.timbradoUrl ? (
+                  <div className="flex items-center gap-2 border rounded-lg p-3">
+                    <FileText className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-sm">{formData.timbradoUrl}</span>
+                    <Button
+                      variant="destructive"
+                      size="icon"
+                      className="h-6 w-6 ml-auto"
+                      onClick={handleRemoveTimbrado}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={() => timbradoInputRef.current?.click()}
+                    className="w-full h-24 border-dashed flex flex-col gap-2"
+                  >
+                    <Upload className="h-6 w-6 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground">Clique para enviar o timbrado (PNG, JPG ou PDF)</span>
+                  </Button>
+                )}
+              </div>
+
+              {/* Fonte para Documentos */}
+              <div className="space-y-3 pt-4 border-t">
+                <Label className="text-base font-semibold flex items-center gap-2">
+                  <Type className="h-4 w-4" />
+                  Fonte para Documentos
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Selecione a fonte padrão para impressão dos documentos desta empresa.
+                </p>
+                <Select
+                  value={formData.fonteDocumentos || "Arial"}
+                  onValueChange={(value) => handleInputChange("fonteDocumentos", value)}
+                >
+                  <SelectTrigger className="w-full md:w-64">
+                    <SelectValue placeholder="Selecione a fonte" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {fontOptions.map((font) => (
+                      <SelectItem key={font} value={font}>
+                        <span style={{ fontFamily: font }}>{font}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="border rounded-lg p-4 bg-muted/30">
+                  <p className="text-xs text-muted-foreground mb-1">Preview:</p>
+                  <p style={{ fontFamily: formData.fonteDocumentos || "Arial" }} className="text-sm">
+                    A rápida raposa marrom pula sobre o cão preguiçoso. 0123456789
+                  </p>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
