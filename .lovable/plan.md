@@ -1,22 +1,32 @@
 
 
-## Plano: Adicionar campos finais ao modal Proposta Licitação
+## Plano: Adicionar upload de timbrado e seleção de fonte no Perfil da Empresa
 
 ### Resumo
-Após a tabela "Composição do Valor Ofertado", adicionar as seções finais: Declaração de Código Alfandegário (4 campos + Registro/Código agrupados), Declaração da empresa, campos de condições comerciais e Local/Data/Assinatura. Mesmo padrão usado no `PropostaContratacaoModal`.
+Na aba "Informações" do Perfil da Empresa, adicionar dois novos campos: upload de imagem do timbrado da empresa e seleção da fonte padrão para impressão de documentos. Cada empresa terá sua própria configuração.
 
-### Alterações em `src/components/comercial/PropostaLicitacaoModal.tsx`
+### Alterações em `src/components/configuracao/PerfilEmpresaContent.tsx`
 
-**1. Novos estados:**
-- `modeloProdutoAlf`, `marcaFabricanteAlf`, `procedenciaAlf`, `registroProdutoAlf`, `codigoAlfandegario` (strings — seção alfandegária)
-- `declaracao`, `prazoValidade`, `pagamento`, `prazoEntrega`, `garantia`, `localEntrega`, `freteImpostos`, `observacoes`, `localAssinatura`, `dataAssinatura` (strings)
+**1. Novos estados no formData (useEffect ~linha 31):**
+- `timbradoUrl` (string) — preview da imagem do timbrado
+- `timbradoFile` (File | null) — estado separado fora do formData
+- `fonteDocumentos` (string) — fonte selecionada para impressão
 
-**2. Inserir após o card "Composição do Valor Ofertado" (linha 811), antes dos botões (linha 813):**
+**2. Nova seção no final do Card "Dados da Empresa" (após o Switch de discriminaImpostos, ~linha 284):**
 
-- **Card "Declaração de Código Alfandegário"**: inputs para Modelo do produto, Marca/Fabricante, Procedência, e linha com Registro do produto + Código Alfandegário lado a lado
-- **Card "Declaração"**: label "A empresa XXXXX declara que:" + Textarea
-- **Cards de condições comerciais**: Prazo de validade (Input), Pagamento (Textarea), Prazo de entrega e/ou instalação (Input), Garantia (Textarea), Local de entrega (Input), Frete e Impostos (Textarea), Observações (Textarea)
-- **Card "Local, Data e Assinatura"**: inputs para Local e Data
+- **Timbrado da Empresa:**
+  - Área de upload com preview da imagem (drag & drop ou botão)
+  - Aceita PNG, JPG, PDF
+  - Exibe preview da imagem carregada com botão remover
+  - Usa `useRef` + input file hidden (mesmo padrão do `LinkFileUpload`)
 
-**3. Incluir novos campos no `handleSave`**
+- **Fonte para Documentos:**
+  - Select com opções de fontes comuns do Word: Arial, Arial Black, Calibri, Cambria, Comic Sans MS, Courier New, Georgia, Helvetica, Impact, Lucida Console, Palatino Linotype, Segoe UI, Tahoma, Times New Roman, Trebuchet MS, Verdana
+  - Preview do texto com a fonte selecionada
+
+**3. Atualizar tipos em `src/types/super.ts`:**
+- Adicionar `timbradoUrl?: string` e `fonteDocumentos?: string` na interface `Empresa` e `Filial`
+
+### Resultado
+Cada empresa/filial poderá configurar seu timbrado (upload de imagem) e fonte padrão para impressão de documentos, tudo salvo junto com os demais dados do perfil.
 
