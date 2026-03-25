@@ -571,10 +571,10 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[120px]">CATSER</TableHead>
-                      <TableHead className="w-[80px]">Item</TableHead>
-                      <TableHead>Descrição e Composição do Exame</TableHead>
-                      <TableHead className="w-[150px]">Valor Unit.</TableHead>
+                      <TableHead className="w-[150px]">Catser</TableHead>
+                      <TableHead className="w-[120px]">Item</TableHead>
+                      <TableHead className="w-[300px]">Descrição e composição do exame</TableHead>
+                      <TableHead className="w-[150px]">Valor unit.</TableHead>
                       <TableHead className="w-[50px]"></TableHead>
                     </TableRow>
                   </TableHeader>
