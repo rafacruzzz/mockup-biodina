@@ -683,6 +683,17 @@ const Comercial = () => {
           </CardContent>
         </Card>
 
+        <Card 
+          className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
+          onClick={() => setActiveModule('propostas')}
+        >
+          <CardContent className="p-8 text-center">
+            <ClipboardList className="h-16 w-16 text-biodina-blue mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-biodina-blue mb-2">Propostas</h3>
+            <p className="text-gray-600">Gestão de propostas comerciais</p>
+          </CardContent>
+        </Card>
+
         {/* COMENTADO - NÃO USAR NO MOMENTO
         <Card 
           className="shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
