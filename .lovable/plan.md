@@ -1,17 +1,19 @@
 
 
-## Plano: Adicionar tabela "Composição do Valor Ofertado" na Proposta Contratação
+## Plano: Adicionar campos finais ao modal Proposta Contratação
 
 ### Resumo
-Adicionar uma nova tabela após a seção "Quantidade de Produtos" com linhas pré-definidas conforme a imagem: Testes (reagente), Equipamento, Acessórios, Manutenção preventiva e corretiva, Suporte técnico, Treinamento e Certificados. Colunas: Composição do valor ofertado | Valor unitário | Valor total.
+Adicionar após a tabela "Composição do Valor Ofertado" os campos de texto livre que completam o formulário: Declaração, Prazo de validade, Pagamento, Prazo de entrega, Garantia, Local de entrega, Frete e Impostos, Observações e Local/Data/Assinatura. Mesmo padrão já existente no `PropostaDTModal`.
 
 ### Alterações em `src/components/comercial/PropostaContratacaoModal.tsx`
 
-**1. Novo estado:**
-- `composicaoValor: Array<{ id: string, descricao: string, valorUnitario: number, valorTotal: number }>` — inicializado com as 6 linhas pré-definidas
+**1. Novos estados:**
+- `declaracao`, `prazoValidade`, `pagamento`, `prazoEntrega`, `garantia`, `localEntrega`, `freteImpostos`, `observacoes`, `localAssinatura`, `dataAssinatura` — todos `string`, inicializados vazios
 
-**2. Nova seção após o card "Quantidade de Produtos" (antes dos botões de ação):**
-- Card "Composição do Valor Ofertado"
-- Tabela com colunas: Composição do valor ofertado (texto read-only) | Valor unitário (input number) | Valor total (input number)
-- As 6 linhas fixas: Testes (reagente), Equipamento, Acessórios, Manutenção preventiva e corretiva, Suporte técnico, Treinamento e Certificados
+**2. Novas seções após "Composição do Valor Ofertado" (antes dos botões):**
+- Card "Declaração": label "A empresa XXXXX declara que:" + Textarea
+- Campos em cards individuais ou agrupados: Prazo de validade da proposta (Input), Pagamento (Textarea), Prazo de entrega e/ou instalação (Input), Garantia (Textarea), Local de entrega (Input), Frete e Impostos (Textarea), Observações (Textarea)
+- Card "Local, Data e Assinatura": inputs para Local e Data
+
+**3. Incluir novos campos no `handleSave`** para persistir no objeto da proposta salva.
 
