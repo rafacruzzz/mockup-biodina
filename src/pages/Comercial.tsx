@@ -34,6 +34,7 @@ import {
 import { modules } from "@/data/cadastroModules";
 import PropostaDTModal, { PropostaDT } from "@/components/comercial/PropostaDTModal";
 import PropostaContratacaoModal, { PropostaContratacao } from "@/components/comercial/PropostaContratacaoModal";
+import PropostaLicitacaoModal, { PropostaLicitacao } from "@/components/comercial/PropostaLicitacaoModal";
 import EntidadeModal from "@/components/cadastro/EntidadeModal";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { 
@@ -70,6 +71,8 @@ const Comercial = () => {
   const [propostaDTModalOpen, setPropostaDTModalOpen] = useState(false);
   const [propostasContratacao, setPropostasContratacao] = useState<PropostaContratacao[]>([]);
   const [propostaContratacaoModalOpen, setPropostaContratacaoModalOpen] = useState(false);
+  const [propostasLicitacao, setPropostasLicitacao] = useState<PropostaLicitacao[]>([]);
+  const [propostaLicitacaoModalOpen, setPropostaLicitacaoModalOpen] = useState(false);
 
   // Mock data com empresaId para filtrar por empresa
   const [todasOportunidades, setTodasOportunidades] = useState<any[]>([
@@ -1412,20 +1415,59 @@ const Comercial = () => {
 
         <TabsContent value="licitacao">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Gavel className="h-5 w-5" />
                 Propostas - Licitação
               </CardTitle>
+              <Button onClick={() => setPropostaLicitacaoModalOpen(true)}>
+                <Plus className="h-4 w-4 mr-1" /> Nova Proposta Licitação
+              </Button>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <Gavel className="h-12 w-12 mb-4 opacity-50" />
-                <p className="text-lg font-medium">Módulo em desenvolvimento</p>
-                <p className="text-sm">Gestão de propostas para processos licitatórios</p>
-              </div>
+              {propostasLicitacao.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                  <Gavel className="h-12 w-12 mb-4 opacity-50" />
+                  <p className="text-lg font-medium">Nenhuma proposta de licitação cadastrada</p>
+                  <p className="text-sm">Clique em "Nova Proposta Licitação" para criar</p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nº Proposta</TableHead>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Data</TableHead>
+                      <TableHead>Valor</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {propostasLicitacao.map(p => (
+                      <TableRow key={p.id}>
+                        <TableCell className="font-medium">{p.numeroProposta}</TableCell>
+                        <TableCell>{p.cliente}</TableCell>
+                        <TableCell>{p.data}</TableCell>
+                        <TableCell>{p.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">{p.status}</Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </CardContent>
           </Card>
+
+          <PropostaLicitacaoModal
+            open={propostaLicitacaoModalOpen}
+            onClose={() => setPropostaLicitacaoModalOpen(false)}
+            onSave={(proposta) => {
+              setPropostasLicitacao(prev => [...prev, proposta]);
+              setPropostaLicitacaoModalOpen(false);
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="contratacao">
