@@ -195,6 +195,25 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
     { id: '6', descricao: 'Treinamento e Certificados', valorUnitario: 0, valorTotal: 0 },
   ]);
 
+  // Declaração de Código Alfandegário
+  const [modeloProdutoAlf, setModeloProdutoAlf] = useState('');
+  const [marcaFabricanteAlf, setMarcaFabricanteAlf] = useState('');
+  const [procedenciaAlf, setProcedenciaAlf] = useState('');
+  const [registroProdutoAlf, setRegistroProdutoAlf] = useState('');
+  const [codigoAlfandegario, setCodigoAlfandegario] = useState('');
+
+  // Campos finais
+  const [declaracao, setDeclaracao] = useState('');
+  const [prazoValidade, setPrazoValidade] = useState('');
+  const [pagamento, setPagamento] = useState('');
+  const [prazoEntrega, setPrazoEntrega] = useState('');
+  const [garantia, setGarantia] = useState('');
+  const [localEntrega, setLocalEntrega] = useState('');
+  const [freteImpostos, setFreteImpostos] = useState('');
+  const [observacoes, setObservacoes] = useState('');
+  const [localAssinatura, setLocalAssinatura] = useState('');
+  const [dataAssinatura, setDataAssinatura] = useState('');
+
   const updateComposicaoValor = (id: string, field: string, value: number) => {
     setComposicaoValor(composicaoValor.map(c => c.id === id ? { ...c, [field]: value } : c));
   };
