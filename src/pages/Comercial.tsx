@@ -34,6 +34,7 @@ import {
 import { modules } from "@/data/cadastroModules";
 import PropostaDTModal, { PropostaDT } from "@/components/comercial/PropostaDTModal";
 import PropostaContratacaoModal, { PropostaContratacao } from "@/components/comercial/PropostaContratacaoModal";
+import PropostaLicitacaoModal, { PropostaLicitacao } from "@/components/comercial/PropostaLicitacaoModal";
 import EntidadeModal from "@/components/cadastro/EntidadeModal";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { 
