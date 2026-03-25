@@ -205,23 +205,34 @@ const PropostaDTModal = ({ open, onClose, onSave }: PropostaDTModalProps) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-xs">Cliente</Label>
-                  <Input value={cliente} onChange={e => setCliente(e.target.value)} placeholder="Nome do cliente" />
+                  <Select value={clienteSelecionado} onValueChange={handleClienteChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o cliente" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {clientesCadastrados.map(cli => (
+                        <SelectItem key={cli.id} value={cli.id}>
+                          {cli.nomeFantasia} - {cli.cpfCnpj}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Endereço</Label>
-                  <Input value={enderecoCliente} onChange={e => setEnderecoCliente(e.target.value)} placeholder="Endereço completo" />
+                  <Input value={enderecoCliente} readOnly className={clienteSelecionado ? 'bg-muted' : ''} onChange={e => !clienteSelecionado && setEnderecoCliente(e.target.value)} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">CNPJ</Label>
-                  <Input value={cnpjCliente} onChange={e => setCnpjCliente(e.target.value)} placeholder="00.000.000/0000-00" />
+                  <Input value={cnpjCliente} readOnly className={clienteSelecionado ? 'bg-muted' : ''} onChange={e => !clienteSelecionado && setCnpjCliente(e.target.value)} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Inscrição Estadual</Label>
-                  <Input value={ieCliente} onChange={e => setIeCliente(e.target.value)} />
+                  <Input value={ieCliente} readOnly className={clienteSelecionado ? 'bg-muted' : ''} onChange={e => !clienteSelecionado && setIeCliente(e.target.value)} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Inscrição Municipal</Label>
-                  <Input value={imCliente} onChange={e => setImCliente(e.target.value)} />
+                  <Input value={imCliente} readOnly className={clienteSelecionado ? 'bg-muted' : ''} onChange={e => !clienteSelecionado && setImCliente(e.target.value)} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">A/C</Label>
