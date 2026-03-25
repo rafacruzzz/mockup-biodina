@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Eye, Edit, Trash } from "lucide-react";
+import { ChevronDown, ChevronRight, Eye, Edit, Trash, CheckSquare, XSquare } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
@@ -192,8 +194,72 @@ const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: Modul
     return modulo.subModulos.filter(s => s.habilitado).length;
   };
 
+  const handleMarcarTodos = () => {
+    const allModules: ModuloUsuario[] = modulosParaMostrar.map(m => ({
+      key: m.key,
+      name: m.name,
+      icon: m.icon,
+      habilitado: true,
+      subModulos: m.subModulos.map(s => ({
+        key: s.key,
+        name: s.name,
+        habilitado: true,
+        permissions: { view: true, create: false, edit: false, delete: false }
+      }))
+    }));
+    onModuleChange(allModules);
+  };
+
+  const handleDesmarcarTodos = () => {
+    onModuleChange([]);
+  };
+
+  const handleAplicarNivelTodos = (level: PermissionLevel) => {
+    const perms = permissionLevelToPermission(level);
+    const allModules: ModuloUsuario[] = modulosParaMostrar.map(m => ({
+      key: m.key,
+      name: m.name,
+      icon: m.icon,
+      habilitado: true,
+      subModulos: m.subModulos.map(s => ({
+        key: s.key,
+        name: s.name,
+        habilitado: true,
+        permissions: perms
+      }))
+    }));
+    onModuleChange(allModules);
+  };
+
   return (
     <div className="space-y-2">
+      {/* Barra de ações em massa */}
+      <div className="flex flex-wrap items-center gap-2 p-3 border rounded-lg bg-muted/50">
+        <Button type="button" size="sm" variant="outline" onClick={handleMarcarTodos}>
+          <CheckSquare className="h-3.5 w-3.5 mr-1" />
+          Marcar Todos
+        </Button>
+        <Button type="button" size="sm" variant="outline" onClick={handleDesmarcarTodos}>
+          <XSquare className="h-3.5 w-3.5 mr-1" />
+          Desmarcar Todos
+        </Button>
+        
+        <Separator orientation="vertical" className="h-6 mx-1" />
+        
+        <Button type="button" size="sm" variant="outline" onClick={() => handleAplicarNivelTodos('view')}>
+          <Eye className="h-3.5 w-3.5 mr-1" />
+          Todos Ver
+        </Button>
+        <Button type="button" size="sm" variant="outline" onClick={() => handleAplicarNivelTodos('edit')}>
+          <Edit className="h-3.5 w-3.5 mr-1" />
+          Todos Ver/Editar
+        </Button>
+        <Button type="button" size="sm" variant="outline" onClick={() => handleAplicarNivelTodos('delete')}>
+          <Trash className="h-3.5 w-3.5 mr-1" />
+          Todos Excluir
+        </Button>
+      </div>
+
       {modulosParaMostrar.map((moduloDef) => {
         const isExpanded = expandedModules.includes(moduloDef.key);
         const isEnabled = isModuloHabilitado(moduloDef.key);
