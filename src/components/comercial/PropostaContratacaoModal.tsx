@@ -129,6 +129,27 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
   const [registroAnvisa, setRegistroAnvisa] = useState('');
   const [procedencia, setProcedencia] = useState('');
 
+  // Quantidade de Produtos por Unidade Hospitalar
+  const [unidadesHospitalares, setUnidadesHospitalares] = useState<Array<{ id: string; unidade: string; quantidade: number }>>([
+    { id: '1', unidade: '', quantidade: 0 }
+  ]);
+
+  const addUnidadeHospitalar = () => {
+    setUnidadesHospitalares(prev => [...prev, { id: Date.now().toString(), unidade: '', quantidade: 0 }]);
+  };
+
+  const removeUnidadeHospitalar = (id: string) => {
+    if (unidadesHospitalares.length > 1) {
+      setUnidadesHospitalares(prev => prev.filter(u => u.id !== id));
+    }
+  };
+
+  const updateUnidadeHospitalar = (id: string, field: 'unidade' | 'quantidade', value: string | number) => {
+    setUnidadesHospitalares(prev => prev.map(u => u.id === id ? { ...u, [field]: value } : u));
+  };
+
+  const totalQuantidadeProdutos = unidadesHospitalares.reduce((sum, u) => sum + u.quantidade, 0);
+
 
   const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
@@ -511,6 +532,69 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
                   <Input value={procedencia} onChange={e => setProcedencia(e.target.value)} placeholder="País/Origem" />
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* QUANTIDADE DE PRODUTOS */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Quantidade de Produtos
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Unidade Hospitalar</TableHead>
+                    <TableHead className="w-40">Quant. de Itens</TableHead>
+                    <TableHead className="w-12"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {unidadesHospitalares.map((uh) => (
+                    <TableRow key={uh.id}>
+                      <TableCell>
+                        <Input
+                          value={uh.unidade}
+                          onChange={e => updateUnidadeHospitalar(uh.id, 'unidade', e.target.value)}
+                          placeholder="Nome da unidade hospitalar"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={uh.quantidade || ''}
+                          onChange={e => updateUnidadeHospitalar(uh.id, 'quantidade', Number(e.target.value))}
+                          placeholder="0"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeUnidadeHospitalar(uh.id)}
+                          disabled={unidadesHospitalares.length <= 1}
+                          className="h-8 w-8"
+                        >
+                          <Trash2 className="h-3 w-3 text-destructive" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow className="bg-muted/50 font-semibold">
+                    <TableCell className="text-right font-bold">TOTAL</TableCell>
+                    <TableCell className="font-bold">{totalQuantidadeProdutos}</TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+              <Button variant="outline" size="sm" onClick={addUnidadeHospitalar} className="mt-2">
+                <Plus className="h-3 w-3 mr-1" />
+                Adicionar Unidade
+              </Button>
             </CardContent>
           </Card>
 
