@@ -2426,7 +2426,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               <InterfaceamentoTab
                 oportunidade={oportunidade}
                 formData={formData}
-                onInputChange={onInputChange}
+                onInputChange={handleInputChange}
               />
             </TabsContent>
           </Tabs>
