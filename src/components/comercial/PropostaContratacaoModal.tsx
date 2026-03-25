@@ -670,6 +670,85 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
             </CardContent>
           </Card>
 
+          {/* DECLARAÇÃO */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Declaração</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Label>A empresa {dadosEmpresa.razaoSocial} declara que:</Label>
+              <Textarea value={declaracao} onChange={e => setDeclaracao(e.target.value)} placeholder="Digite a declaração..." className="mt-1" />
+            </CardContent>
+          </Card>
+
+          {/* CONDIÇÕES COMERCIAIS */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Condições Comerciais</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label>Prazo de validade da proposta</Label>
+                <Input value={prazoValidade} onChange={e => setPrazoValidade(e.target.value)} placeholder="Ex: 30 dias" />
+              </div>
+              <div>
+                <Label>Pagamento</Label>
+                <Textarea value={pagamento} onChange={e => setPagamento(e.target.value)} placeholder="Condições de pagamento..." />
+              </div>
+              <div>
+                <Label>Prazo de entrega e/ou instalação</Label>
+                <Input value={prazoEntrega} onChange={e => setPrazoEntrega(e.target.value)} placeholder="Ex: 15 dias úteis" />
+              </div>
+              <div>
+                <Label>Garantia</Label>
+                <Textarea value={garantia} onChange={e => setGarantia(e.target.value)} placeholder="Termos de garantia..." />
+              </div>
+              <div>
+                <Label>Local de entrega</Label>
+                <Input value={localEntrega} onChange={e => setLocalEntrega(e.target.value)} placeholder="Endereço de entrega" />
+              </div>
+              <div>
+                <Label>Frete e Impostos</Label>
+                <Textarea value={freteImpostos} onChange={e => setFreteImpostos(e.target.value)} placeholder="Informações sobre frete e impostos..." />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* OBSERVAÇÕES */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Observações</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Textarea value={observacoes} onChange={e => setObservacoes(e.target.value)} placeholder="Observações gerais..." />
+            </CardContent>
+          </Card>
+
+          {/* LOCAL, DATA E ASSINATURA */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Local, Data e Assinatura</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Local</Label>
+                  <Input value={localAssinatura} onChange={e => setLocalAssinatura(e.target.value)} placeholder="Cidade - UF" />
+                </div>
+                <div>
+                  <Label>Data</Label>
+                  <Input type="date" value={dataAssinatura} onChange={e => setDataAssinatura(e.target.value)} />
+                </div>
+              </div>
+              <div className="mt-6 pt-6 border-t text-center">
+                <div className="w-64 mx-auto border-b border-foreground mb-1"></div>
+                <p className="text-sm text-muted-foreground">{dadosRepresentante.nome}</p>
+                <p className="text-xs text-muted-foreground">{dadosRepresentante.cargo}</p>
+                <p className="text-xs text-muted-foreground">{dadosEmpresa.razaoSocial}</p>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* BOTÕES */}
           <div className="flex justify-end gap-2 pt-2">
             <Button variant="outline" onClick={onClose}>Cancelar</Button>
