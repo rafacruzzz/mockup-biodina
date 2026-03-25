@@ -44,7 +44,7 @@ const Comercial = () => {
   // Empresa ativa é a filial se logado em uma filial, senão é a principal
   const empresaAtivaId = filialAtual?.id || empresaAtual?.id || '';
   
-  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'assessoria' | 'departamento-tecnico' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
+  const [activeModule, setActiveModule] = useState<'main' | 'vendas' | 'assessoria' | 'departamento-tecnico' | 'propostas' /* | 'assinaturas' */>('main'); // ASSINATURAS COMENTADO - NÃO USAR NO MOMENTO
   const [activeTab, setActiveTab] = useState('indicadores');
   const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade" | "analise-editais" | "repositorio">("agenda");
   const [departamentoTecnicoTab, setDepartamentoTecnicoTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade" | "emprestimos">("agenda");
