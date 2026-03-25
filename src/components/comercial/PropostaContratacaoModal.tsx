@@ -148,8 +148,20 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
     setUnidadesHospitalares(prev => prev.map(u => u.id === id ? { ...u, [field]: value } : u));
   };
 
-  const totalQuantidadeProdutos = unidadesHospitalares.reduce((sum, u) => sum + u.quantidade, 0);
 
+  // Composição do Valor Ofertado
+  const [composicaoValor, setComposicaoValor] = useState([
+    { id: '1', descricao: 'Testes (reagente)', valorUnitario: 0, valorTotal: 0 },
+    { id: '2', descricao: 'Equipamento', valorUnitario: 0, valorTotal: 0 },
+    { id: '3', descricao: 'Acessórios', valorUnitario: 0, valorTotal: 0 },
+    { id: '4', descricao: 'Manutenção preventiva e corretiva', valorUnitario: 0, valorTotal: 0 },
+    { id: '5', descricao: 'Suporte técnico', valorUnitario: 0, valorTotal: 0 },
+    { id: '6', descricao: 'Treinamento e Certificados', valorUnitario: 0, valorTotal: 0 },
+  ]);
+
+  const updateComposicaoValor = (id: string, field: 'valorUnitario' | 'valorTotal', value: number) => {
+    setComposicaoValor(prev => prev.map(c => c.id === id ? { ...c, [field]: value } : c));
+  };
 
   const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
