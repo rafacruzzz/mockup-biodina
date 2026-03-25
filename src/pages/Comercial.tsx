@@ -32,6 +32,7 @@ import {
   Gavel, Building2, Globe, HandCoins, FileSpreadsheet, Trash2, Users // FileSignature COMENTADO - NÃO USAR NO MOMENTO
 } from "lucide-react";
 import { modules } from "@/data/cadastroModules";
+import PropostaDTModal, { PropostaDT } from "@/components/comercial/PropostaDTModal";
 import EntidadeModal from "@/components/cadastro/EntidadeModal";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { 
