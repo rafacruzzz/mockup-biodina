@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Trash2, Building2, User, FileText, Banknote, Gavel } from 'lucide-react';
+import { Plus, Trash2, Building2, User, FileText, Banknote, Gavel, Package } from 'lucide-react';
 import { bancosCadastrados } from '@/data/bancosCadastrados';
 import { toast } from 'sonner';
 
@@ -160,6 +160,44 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
 
   const somatoriaExames = examesRows.reduce((sum, r) => sum + r.valorUnitario, 0);
   const qtdExames = examesRows.filter(r => r.tipo === 'exame').length;
+
+  // Especificação do Produto
+  const [apresentacao, setApresentacao] = useState('');
+  const [modelo, setModelo] = useState('');
+  const [marcaFabricante, setMarcaFabricante] = useState('');
+  const [registroAnvisa, setRegistroAnvisa] = useState('');
+  const [procedencia, setProcedencia] = useState('');
+
+  // Quantidade de Produtos
+  const [unidadesHospitalares, setUnidadesHospitalares] = useState([{ id: '1', unidade: '', quantidade: 0 }]);
+
+  const addUnidadeHospitalar = () => {
+    setUnidadesHospitalares([...unidadesHospitalares, { id: Date.now().toString(), unidade: '', quantidade: 0 }]);
+  };
+
+  const removeUnidadeHospitalar = (id: string) => {
+    if (unidadesHospitalares.length > 1) setUnidadesHospitalares(unidadesHospitalares.filter(u => u.id !== id));
+  };
+
+  const updateUnidadeHospitalar = (id: string, field: string, value: string | number) => {
+    setUnidadesHospitalares(unidadesHospitalares.map(u => u.id === id ? { ...u, [field]: value } : u));
+  };
+
+  const totalQuantidadeProdutos = unidadesHospitalares.reduce((sum, u) => sum + u.quantidade, 0);
+
+  // Composição do Valor Ofertado
+  const [composicaoValor, setComposicaoValor] = useState([
+    { id: '1', descricao: 'Testes (reagente)', valorUnitario: 0, valorTotal: 0 },
+    { id: '2', descricao: 'Equipamento', valorUnitario: 0, valorTotal: 0 },
+    { id: '3', descricao: 'Acessórios', valorUnitario: 0, valorTotal: 0 },
+    { id: '4', descricao: 'Manutenção preventiva e corretiva', valorUnitario: 0, valorTotal: 0 },
+    { id: '5', descricao: 'Suporte técnico', valorUnitario: 0, valorTotal: 0 },
+    { id: '6', descricao: 'Treinamento e Certificados', valorUnitario: 0, valorTotal: 0 },
+  ]);
+
+  const updateComposicaoValor = (id: string, field: string, value: number) => {
+    setComposicaoValor(composicaoValor.map(c => c.id === id ? { ...c, [field]: value } : c));
+  };
 
   const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
@@ -624,6 +662,151 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
                   <Plus className="h-4 w-4 mr-1" /> Adicionar Parâmetro
                 </Button>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* ESPECIFICAÇÃO / DETALHES DO PRODUTO */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Especificação / Detalhes do Produto
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">Apresentação</Label>
+                  <Input value={apresentacao} onChange={e => setApresentacao(e.target.value)} placeholder="Apresentação do produto" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Modelo</Label>
+                  <Input value={modelo} onChange={e => setModelo(e.target.value)} placeholder="Modelo" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Marca/Fabricante</Label>
+                  <Input value={marcaFabricante} onChange={e => setMarcaFabricante(e.target.value)} placeholder="Marca/Fabricante" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Registro na Anvisa</Label>
+                  <Input value={registroAnvisa} onChange={e => setRegistroAnvisa(e.target.value)} placeholder="Nº do registro" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Procedência</Label>
+                  <Input value={procedencia} onChange={e => setProcedencia(e.target.value)} placeholder="País/Origem" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* QUANTIDADE DE PRODUTOS */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Package className="h-4 w-4" />
+                Quantidade de Produtos
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Unidade Hospitalar</TableHead>
+                    <TableHead className="w-40">Quant. de Itens</TableHead>
+                    <TableHead className="w-12"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {unidadesHospitalares.map((uh) => (
+                    <TableRow key={uh.id}>
+                      <TableCell>
+                        <Input
+                          value={uh.unidade}
+                          onChange={e => updateUnidadeHospitalar(uh.id, 'unidade', e.target.value)}
+                          placeholder="Nome da unidade hospitalar"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={uh.quantidade || ''}
+                          onChange={e => updateUnidadeHospitalar(uh.id, 'quantidade', Number(e.target.value))}
+                          placeholder="0"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeUnidadeHospitalar(uh.id)}
+                          disabled={unidadesHospitalares.length <= 1}
+                          className="h-8 w-8"
+                        >
+                          <Trash2 className="h-3 w-3 text-destructive" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow className="bg-muted/50 font-semibold">
+                    <TableCell className="text-right font-bold">TOTAL</TableCell>
+                    <TableCell className="font-bold">{totalQuantidadeProdutos}</TableCell>
+                    <TableCell></TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+              <Button variant="outline" size="sm" onClick={addUnidadeHospitalar} className="mt-2">
+                <Plus className="h-3 w-3 mr-1" />
+                Adicionar Unidade
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* COMPOSIÇÃO DO VALOR OFERTADO */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <Banknote className="h-4 w-4" />
+                Composição do Valor Ofertado
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Composição do valor ofertado</TableHead>
+                    <TableHead className="w-44">Valor unitário</TableHead>
+                    <TableHead className="w-44">Valor total</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {composicaoValor.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="font-medium">{item.descricao}</TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          min={0}
+                          step={0.01}
+                          value={item.valorUnitario || ''}
+                          onChange={e => updateComposicaoValor(item.id, 'valorUnitario', Number(e.target.value))}
+                          placeholder="0,00"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          type="number"
+                          min={0}
+                          step={0.01}
+                          value={item.valorTotal || ''}
+                          onChange={e => updateComposicaoValor(item.id, 'valorTotal', Number(e.target.value))}
+                          placeholder="0,00"
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
 
