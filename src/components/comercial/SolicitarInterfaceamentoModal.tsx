@@ -234,24 +234,6 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
                   <p className="mt-1">{oportunidade?.responsavel}</p>
                 </div>
                 <div>
-                  <Label htmlFor="valorOportunidade" className="font-medium text-muted-foreground">
-                    Valor:
-                  </Label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-sm">R$</span>
-                    <Input
-                      id="valorOportunidade"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={formData.valor}
-                      onChange={(e) => handleInputChange('valor', parseFloat(e.target.value) || 0)}
-                      className="w-full"
-                      placeholder="0,00"
-                    />
-                  </div>
-                </div>
-                <div>
                   <span className="font-medium text-muted-foreground">Status:</span>
                   <Badge variant="secondary" className="mt-1">
                     {oportunidade?.status}
