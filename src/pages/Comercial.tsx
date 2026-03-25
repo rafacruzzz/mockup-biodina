@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { modules } from "@/data/cadastroModules";
 import PropostaDTModal, { PropostaDT } from "@/components/comercial/PropostaDTModal";
+import PropostaContratacaoModal, { PropostaContratacao } from "@/components/comercial/PropostaContratacaoModal";
 import EntidadeModal from "@/components/cadastro/EntidadeModal";
 import { useEmpresa } from "@/contexts/EmpresaContext";
 import { 
@@ -67,6 +68,8 @@ const Comercial = () => {
   // const [showAssinaturas, setShowAssinaturas] = useState(false); // COMENTADO - NÃO USAR NO MOMENTO
   const [propostasDT, setPropostasDT] = useState<PropostaDT[]>([]);
   const [propostaDTModalOpen, setPropostaDTModalOpen] = useState(false);
+  const [propostasContratacao, setPropostasContratacao] = useState<PropostaContratacao[]>([]);
+  const [propostaContratacaoModalOpen, setPropostaContratacaoModalOpen] = useState(false);
 
   // Mock data com empresaId para filtrar por empresa
   const [todasOportunidades, setTodasOportunidades] = useState<any[]>([
@@ -1427,20 +1430,59 @@ const Comercial = () => {
 
         <TabsContent value="contratacao">
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="h-5 w-5" />
                 Propostas - Contratação
               </CardTitle>
+              <Button onClick={() => setPropostaContratacaoModalOpen(true)}>
+                <Plus className="h-4 w-4 mr-1" /> Nova Proposta Contratação
+              </Button>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                <Building2 className="h-12 w-12 mb-4 opacity-50" />
-                <p className="text-lg font-medium">Módulo em desenvolvimento</p>
-                <p className="text-sm">Gestão de propostas para contratações diretas</p>
-              </div>
+              {propostasContratacao.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                  <Building2 className="h-12 w-12 mb-4 opacity-50" />
+                  <p className="text-lg font-medium">Nenhuma proposta de contratação cadastrada</p>
+                  <p className="text-sm">Clique em "Nova Proposta Contratação" para criar</p>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nº Proposta</TableHead>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>Data</TableHead>
+                      <TableHead>Valor</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {propostasContratacao.map(p => (
+                      <TableRow key={p.id}>
+                        <TableCell className="font-medium">{p.numeroProposta}</TableCell>
+                        <TableCell>{p.cliente}</TableCell>
+                        <TableCell>{p.data}</TableCell>
+                        <TableCell>{p.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">{p.status}</Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </CardContent>
           </Card>
+
+          <PropostaContratacaoModal
+            open={propostaContratacaoModalOpen}
+            onClose={() => setPropostaContratacaoModalOpen(false)}
+            onSave={(proposta) => {
+              setPropostasContratacao(prev => [...prev, proposta]);
+              setPropostaContratacaoModalOpen(false);
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="dt">
