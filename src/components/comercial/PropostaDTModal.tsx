@@ -68,7 +68,20 @@ const dadosRepresentante = {
 
 const PropostaDTModal = ({ open, onClose, onSave }: PropostaDTModalProps) => {
   // Dados do Cliente
+  const [clienteSelecionado, setClienteSelecionado] = useState('');
   const [cliente, setCliente] = useState('');
+
+  const handleClienteChange = (clienteId: string) => {
+    const cli = clientesCadastrados.find(c => c.id === clienteId);
+    if (cli) {
+      setClienteSelecionado(clienteId);
+      setCliente(cli.nomeFantasia);
+      setEnderecoCliente(cli.endereco);
+      setCnpjCliente(cli.cpfCnpj);
+      setIeCliente(cli.inscricaoEstadual);
+      setImCliente(cli.inscricaoMunicipal);
+    }
+  };
   const [enderecoCliente, setEnderecoCliente] = useState('');
   const [cnpjCliente, setCnpjCliente] = useState('');
   const [ieCliente, setIeCliente] = useState('');
