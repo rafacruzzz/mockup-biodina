@@ -163,6 +163,18 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
     setComposicaoValor(prev => prev.map(c => c.id === id ? { ...c, [field]: value } : c));
   };
 
+  // Campos finais
+  const [declaracao, setDeclaracao] = useState('');
+  const [prazoValidade, setPrazoValidade] = useState('');
+  const [pagamento, setPagamento] = useState('');
+  const [prazoEntrega, setPrazoEntrega] = useState('');
+  const [garantia, setGarantia] = useState('');
+  const [localEntrega, setLocalEntrega] = useState('');
+  const [freteImpostos, setFreteImpostos] = useState('');
+  const [observacoes, setObservacoes] = useState('');
+  const [localAssinatura, setLocalAssinatura] = useState('');
+  const [dataAssinatura, setDataAssinatura] = useState('');
+
   const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
     if (banco) {
