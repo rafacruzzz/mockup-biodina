@@ -1,32 +1,29 @@
 
 
-## Plano: Adicionar upload de timbrado e seleção de fonte no Perfil da Empresa
+## Plano: Adicionar botões de ação em massa na árvore de permissões
 
 ### Resumo
-Na aba "Informações" do Perfil da Empresa, adicionar dois novos campos: upload de imagem do timbrado da empresa e seleção da fonte padrão para impressão de documentos. Cada empresa terá sua própria configuração.
+Adicionar uma barra de ações rápidas no topo do `ModuleAccessTree` (dentro de cada empresa) com botões para: **Marcar Todos** os módulos, **Desmarcar Todos**, e aplicar um nível de permissão em massa (**Todos Ver**, **Todos Ver/Editar**, **Todos Excluir**). Isso evita que o usuário precise clicar módulo por módulo.
 
-### Alterações em `src/components/configuracao/PerfilEmpresaContent.tsx`
+### Alterações
 
-**1. Novos estados no formData (useEffect ~linha 31):**
-- `timbradoUrl` (string) — preview da imagem do timbrado
-- `timbradoFile` (File | null) — estado separado fora do formData
-- `fonteDocumentos` (string) — fonte selecionada para impressão
+**Arquivo: `src/components/cadastro/ModuleAccessTree.tsx`**
 
-**2. Nova seção no final do Card "Dados da Empresa" (após o Switch de discriminaImpostos, ~linha 284):**
+1. **Adicionar barra de ações rápidas** no topo do componente (antes da lista de módulos, linha 196):
+   - Botão "Marcar Todos" — habilita todos os módulos e submódulos com permissão "Ver"
+   - Botão "Desmarcar Todos" — desabilita todos os módulos e submódulos
+   - Separador visual
+   - Botão "Todos Ver" — marca todos e aplica nível "Ver" em todos os submódulos
+   - Botão "Todos Ver/Editar" — marca todos e aplica nível "Ver/Editar"
+   - Botão "Todos Excluir" — marca todos e aplica nível "Excluir"
 
-- **Timbrado da Empresa:**
-  - Área de upload com preview da imagem (drag & drop ou botão)
-  - Aceita PNG, JPG, PDF
-  - Exibe preview da imagem carregada com botão remover
-  - Usa `useRef` + input file hidden (mesmo padrão do `LinkFileUpload`)
+2. **Funções auxiliares:**
+   - `handleMarcarTodos()` — itera sobre `modulosParaMostrar`, cria todos os `ModuloUsuario` habilitados com submódulos habilitados e permissão "Ver"
+   - `handleDesmarcarTodos()` — limpa o array de modules (ou desabilita todos)
+   - `handleAplicarNivelTodos(level: PermissionLevel)` — marca todos e aplica o nível de permissão escolhido em todos os submódulos
 
-- **Fonte para Documentos:**
-  - Select com opções de fontes comuns do Word: Arial, Arial Black, Calibri, Cambria, Comic Sans MS, Courier New, Georgia, Helvetica, Impact, Lucida Console, Palatino Linotype, Segoe UI, Tahoma, Times New Roman, Trebuchet MS, Verdana
-  - Preview do texto com a fonte selecionada
-
-**3. Atualizar tipos em `src/types/super.ts`:**
-- Adicionar `timbradoUrl?: string` e `fonteDocumentos?: string` na interface `Empresa` e `Filial`
+3. **Layout:** barra com flex-wrap, botões pequenos (`size="sm"`, `variant="outline"`), com ícones Eye/Edit/Trash para os níveis de permissão.
 
 ### Resultado
-Cada empresa/filial poderá configurar seu timbrado (upload de imagem) e fonte padrão para impressão de documentos, tudo salvo junto com os demais dados do perfil.
+Cada empresa/filial terá no topo da árvore de módulos os botões de ação em massa, permitindo configurar permissões para todos os módulos em um único clique.
 
