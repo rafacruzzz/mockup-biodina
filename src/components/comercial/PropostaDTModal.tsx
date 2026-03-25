@@ -12,6 +12,15 @@ import { Plus, Trash2, Building2, User, FileText, Banknote } from 'lucide-react'
 import { bancosCadastrados } from '@/data/bancosCadastrados';
 import { toast } from 'sonner';
 
+const clientesCadastrados = [
+  { id: 'cli-001', cpfCnpj: '12.345.678/0001-90', nomeFantasia: 'Hospital São Lucas', razaoSocial: 'Hospital São Lucas S/A', endereco: 'Rua das Flores, 100, Centro, São Paulo - SP', uf: 'SP', email: 'contato@saolucas.com.br', telefone: '(11) 2222-3333', segmento: 'PRIVADO - HOSPITAL', inscricaoEstadual: '110.042.490.114', inscricaoMunicipal: '12345678' },
+  { id: 'cli-002', cpfCnpj: '98.765.432/0001-10', nomeFantasia: 'Clínica Vida Nova', razaoSocial: 'Clínica Vida Nova Ltda', endereco: 'Av. Brasil, 500, Jardim América, Campinas - SP', uf: 'SP', email: 'adm@vidanova.com.br', telefone: '(19) 3333-4444', segmento: 'PRIVADO - CLÍNICA', inscricaoEstadual: '210.042.490.115', inscricaoMunicipal: '87654321' },
+  { id: 'cli-003', cpfCnpj: '11.222.333/0001-44', nomeFantasia: 'UPA Municipal Goiânia', razaoSocial: 'Secretaria Municipal de Saúde de Goiânia', endereco: 'Av. Goiás, 1500, Setor Central, Goiânia - GO', uf: 'GO', email: 'upa@goiania.go.gov.br', telefone: '(62) 3333-5555', segmento: 'PÚBLICO - UPA - MUNICIPAL', inscricaoEstadual: 'ISENTO', inscricaoMunicipal: '33445566' },
+  { id: 'cli-004', cpfCnpj: '44.555.666/0001-77', nomeFantasia: 'Hospital Regional de Brasília', razaoSocial: 'Secretaria de Saúde do DF', endereco: 'SMHS Quadra 101, Brasília - DF', uf: 'DF', email: 'compras@saude.df.gov.br', telefone: '(61) 3333-6666', segmento: 'PÚBLICO - HOSPITAL - ESTADUAL', inscricaoEstadual: 'ISENTO', inscricaoMunicipal: '55667788' },
+  { id: 'cli-005', cpfCnpj: '77.888.999/0001-11', nomeFantasia: 'Laboratório Exame', razaoSocial: 'Laboratório Exame Análises Clínicas Ltda', endereco: 'Rua Augusta, 200, Consolação, São Paulo - SP', uf: 'SP', email: 'lab@exame.com.br', telefone: '(11) 4444-5555', segmento: 'PRIVADO - LABORATÓRIO', inscricaoEstadual: '310.042.490.116', inscricaoMunicipal: '99887766' },
+  { id: 'cli-006', cpfCnpj: '99.888.777/0001-55', nomeFantasia: 'Hospital Municipal São José', razaoSocial: 'Prefeitura Municipal - Hospital São José', endereco: 'Av. Central, 500, Centro, Anápolis - GO', uf: 'GO', email: 'hospital@saojose.gov.br', telefone: '(62) 3333-4444', segmento: 'PÚBLICO - HOSPITAL - MUNICIPAL', inscricaoEstadual: 'ISENTO', inscricaoMunicipal: '11223344' },
+];
+
 interface PropostaDTItem {
   id: string;
   descricao: string;
@@ -59,7 +68,20 @@ const dadosRepresentante = {
 
 const PropostaDTModal = ({ open, onClose, onSave }: PropostaDTModalProps) => {
   // Dados do Cliente
+  const [clienteSelecionado, setClienteSelecionado] = useState('');
   const [cliente, setCliente] = useState('');
+
+  const handleClienteChange = (clienteId: string) => {
+    const cli = clientesCadastrados.find(c => c.id === clienteId);
+    if (cli) {
+      setClienteSelecionado(clienteId);
+      setCliente(cli.nomeFantasia);
+      setEnderecoCliente(cli.endereco);
+      setCnpjCliente(cli.cpfCnpj);
+      setIeCliente(cli.inscricaoEstadual);
+      setImCliente(cli.inscricaoMunicipal);
+    }
+  };
   const [enderecoCliente, setEnderecoCliente] = useState('');
   const [cnpjCliente, setCnpjCliente] = useState('');
   const [ieCliente, setIeCliente] = useState('');
@@ -183,23 +205,34 @@ const PropostaDTModal = ({ open, onClose, onSave }: PropostaDTModalProps) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-xs">Cliente</Label>
-                  <Input value={cliente} onChange={e => setCliente(e.target.value)} placeholder="Nome do cliente" />
+                  <Select value={clienteSelecionado} onValueChange={handleClienteChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o cliente" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {clientesCadastrados.map(cli => (
+                        <SelectItem key={cli.id} value={cli.id}>
+                          {cli.nomeFantasia} - {cli.cpfCnpj}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Endereço</Label>
-                  <Input value={enderecoCliente} onChange={e => setEnderecoCliente(e.target.value)} placeholder="Endereço completo" />
+                  <Input value={enderecoCliente} readOnly className={clienteSelecionado ? 'bg-muted' : ''} onChange={e => !clienteSelecionado && setEnderecoCliente(e.target.value)} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">CNPJ</Label>
-                  <Input value={cnpjCliente} onChange={e => setCnpjCliente(e.target.value)} placeholder="00.000.000/0000-00" />
+                  <Input value={cnpjCliente} readOnly className={clienteSelecionado ? 'bg-muted' : ''} onChange={e => !clienteSelecionado && setCnpjCliente(e.target.value)} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Inscrição Estadual</Label>
-                  <Input value={ieCliente} onChange={e => setIeCliente(e.target.value)} />
+                  <Input value={ieCliente} readOnly className={clienteSelecionado ? 'bg-muted' : ''} onChange={e => !clienteSelecionado && setIeCliente(e.target.value)} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Inscrição Municipal</Label>
-                  <Input value={imCliente} onChange={e => setImCliente(e.target.value)} />
+                  <Input value={imCliente} readOnly className={clienteSelecionado ? 'bg-muted' : ''} onChange={e => !clienteSelecionado && setImCliente(e.target.value)} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">A/C</Label>
