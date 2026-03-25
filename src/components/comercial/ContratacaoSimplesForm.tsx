@@ -2422,7 +2422,13 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               />
             </TabsContent>
 
-            {/* Interfaceamento removido */}
+            <TabsContent value="interfaceamento">
+              <InterfaceamentoTab
+                oportunidade={oportunidade}
+                formData={formData}
+                onInputChange={onInputChange}
+              />
+            </TabsContent>
           </Tabs>
 
           <div className="flex justify-end gap-2 mt-6 pt-4 border-t">
