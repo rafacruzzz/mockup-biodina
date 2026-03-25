@@ -73,6 +73,14 @@ const PerfilEmpresaContent = () => {
   };
 
   const handleEnderecoChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      endereco: {
+        ...(prev.endereco || {}),
+        [field]: value
+      }
+    } as any));
+  };
 
   const handleTimbradoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,14 +107,6 @@ const PerfilEmpresaContent = () => {
     setTimbradoPreview(null);
     handleInputChange("timbradoUrl", "");
     if (timbradoInputRef.current) timbradoInputRef.current.value = "";
-  };
-    setFormData(prev => ({
-      ...prev,
-      endereco: {
-        ...(prev.endereco || {}),
-        [field]: value
-      }
-    } as any));
   };
 
   // Busca CEP
