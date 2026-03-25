@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Trash2, Building2, User, FileText, Banknote, Gavel } from 'lucide-react';
+import { Plus, Trash2, Building2, User, FileText, Banknote, Gavel, Package } from 'lucide-react';
 import { bancosCadastrados } from '@/data/bancosCadastrados';
 import { toast } from 'sonner';
 
