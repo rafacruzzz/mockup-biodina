@@ -291,11 +291,11 @@ const PropostaContratacaoModal = ({ open, onClose, onSave, totalPropostas = 0 }:
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Cotação Nº</Label>
-                  <Input value={cotacaoNum} onChange={e => setCotacaoNum(e.target.value)} />
+                  <Input value={cotacaoNum} readOnly className="bg-muted" />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Proposta Nº</Label>
-                  <Input value={propostaNum} onChange={e => setPropostaNum(e.target.value)} />
+                  <Input value={propostaNum} readOnly className="bg-muted" />
                 </div>
               </div>
             </CardContent>

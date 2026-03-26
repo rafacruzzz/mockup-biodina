@@ -1524,6 +1524,7 @@ const Comercial = () => {
               setPropostasContratacao(prev => [...prev, proposta]);
               setPropostaContratacaoModalOpen(false);
             }}
+            totalPropostas={propostasContratacao.length}
           />
         </TabsContent>
 
