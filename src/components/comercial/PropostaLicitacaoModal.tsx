@@ -425,8 +425,8 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
                     </Select>
                   </div>
                   <div>
-                    <Label>Código do Banco</Label>
-                    <Input value={codigoBanco} readOnly className="bg-muted" />
+                    <Label>Chave Pix</Label>
+                    <Input value={chavePix} onChange={e => setChavePix(e.target.value)} placeholder="CPF, e-mail, telefone ou aleatória" />
                   </div>
                   <div>
                     <Label>Agência</Label>
