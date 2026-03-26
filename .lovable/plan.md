@@ -1,31 +1,27 @@
 
 
-## Plano: Corrigir botões cortados e modal se mexendo ao abrir Select
+## Plano: Auto-preencher dados do cliente ao selecionar e gerar números automáticos de Cotação/Proposta
 
-### Problemas identificados
+### Problema atual
+- Os campos de Dados do Cliente já são preenchidos ao selecionar o cliente (linhas 84-94), mas `cotacaoNum` e `propostaNum` ficam vazios e são manuais.
+- O campo A/C (Aos Cuidados de) deve permanecer editável manualmente.
 
-1. **Botões cortados**: O container do modal usa `max-h-[90vh]` com `overflow-hidden`, e a área de conteúdo usa `max-h-[calc(90vh-140px)]`. Os 140px não são suficientes para o header (p-6 + border) + footer (p-6 + border + botões), cortando os botões.
+### Alterações em `src/components/comercial/PropostaContratacaoModal.tsx`
 
-2. **Modal se mexendo ao abrir Select**: O `SelectContent` do Radix UI pode causar reposicionamento do modal quando abre/fecha, pois altera o layout interno.
+**1. Gerar números automáticos ao abrir o modal:**
+- Ao montar o componente (ou quando `open` muda para `true`), gerar automaticamente:
+  - `cotacaoNum`: formato `COT-YYYY-XXX` (ex: `COT-2026-001`) usando timestamp ou contador incremental baseado no tamanho do array de propostas existentes
+  - `propostaNum`: formato `PROP-YYYY-XXX` (ex: `PROP-2026-001`) similar
+- Usar `useEffect` observando `open` para gerar os números quando o modal abre
+- Gerar IDs únicos com `Date.now()` para simular auto-incremento
 
-### Alterações em `src/components/cadastro/EntidadeModal.tsx`
+**2. Tornar campos Cotação Nº e Proposta Nº somente leitura:**
+- Adicionar `readOnly` e estilo visual de campo desabilitado (`bg-muted`) nos inputs de `cotacaoNum` e `propostaNum`
 
-**1. Corrigir layout do modal (linhas 235-244):**
-- Trocar a estrutura para usar `flex flex-col` no container principal com `max-h-[90vh]`
-- Header: `flex-shrink-0`
-- Conteúdo: `flex-1 overflow-y-auto min-h-0` (sem max-h fixo calculado)
-- Footer: `flex-shrink-0`
+**3. Passar contagem de propostas existentes para o modal:**
+- Adicionar prop `totalPropostas: number` ao modal para calcular o próximo número sequencial
+- No `Comercial.tsx`, passar `propostasContratacao.length` como prop
 
-**2. Evitar que o modal se mova ao abrir Selects:**
-- Adicionar `position="popper"` e `sideOffset={4}` nos `SelectContent` da aba Dados Gerais (onde o problema ocorre)
-- Alternativa mais simples: adicionar `className="overflow-hidden"` no container e garantir que o scroll container não recalcule altura
-
-### Estrutura corrigida:
-```
-div.fixed (overlay)
-  div.flex.flex-col.max-h-[90vh] (modal)
-    div.flex-shrink-0 (header)
-    div.flex-1.overflow-y-auto.min-h-0 (content com scroll)
-    div.flex-shrink-0 (footer com botões)
-```
+### Resultado
+Ao abrir o modal, Cotação Nº e Proposta Nº já vêm preenchidos automaticamente (sequenciais). Ao selecionar o cliente, todos os campos são preenchidos exceto A/C. Os números simulam um ID de banco de dados.
 
