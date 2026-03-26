@@ -233,15 +233,15 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-background rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b">
+      <div className="bg-background rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="flex-shrink-0 flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-bold">Cadastro de {getTipoLabel(tipoEntidade)}</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
         </div>
 
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+        <div className="flex-1 overflow-y-auto min-h-0 p-6">
           {/* Indicador de Rascunho */}
           {!draftRestored && (
             <DraftIndicator
@@ -1224,7 +1224,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
           </Tabs>
         </div>
 
-        <div className="flex justify-between gap-4 p-6 border-t">
+        <div className="flex-shrink-0 flex justify-between gap-4 p-6 border-t">
           <DraftSaveButton onSaveDraft={handleSaveDraft} />
           <div className="flex gap-2">
             <Button variant="outline" onClick={onClose}>
