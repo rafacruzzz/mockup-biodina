@@ -1,28 +1,22 @@
 
 
-## Plano: Adicionar assinatura eletrônica do Representante Legal nos modais de Proposta
+## Plano: Auto-preencher cliente e gerar números automáticos no modal Proposta DT
 
 ### Problema
-Atualmente a seção "Local, Data e Assinatura" mostra apenas texto estático com nome/cargo. A assinatura precisa ser eletrônica (canvas para desenhar) e feita pelo Representante Legal que está elaborando a proposta.
+O modal Proposta DT não gera automaticamente os números de Cotação e Proposta ao abrir, diferente do modal Contratação que já faz isso.
 
-### Alterações nos 3 arquivos: `PropostaContratacaoModal.tsx`, `PropostaDTModal.tsx`, `PropostaLicitacaoModal.tsx`
+### Alterações
 
-**1. Novo estado para armazenar a assinatura:**
-- `assinaturaRepresentante` (string base64, inicialmente vazio)
-- `assinado` (boolean)
+**1. `src/components/comercial/PropostaDTModal.tsx`:**
+- Adicionar prop `totalPropostas?: number` na interface `PropostaDTModalProps`
+- Adicionar `useEffect` que gera `COT-YYYY-XXX` e `PROP-YYYY-XXX` ao abrir o modal (mesmo padrão do Contratação)
+- Tornar inputs de cotacaoNum e propostaNum readOnly com `bg-muted`
+- Importar `useEffect` do React
 
-**2. Substituir a área estática de assinatura por:**
-- Campo "Nome do Representante Legal" (input, pré-preenchido com `repNome`)
-- Campo "Cargo" (input, pré-preenchido com `repCargo`)
-- Nome da empresa (texto, vem do `dadosEmpresa.razaoSocial`)
-- Canvas para assinatura eletrônica (desenho à mão) com botões "Limpar" e "Confirmar Assinatura"
-- Após confirmar, exibir a imagem da assinatura salva com indicação visual de "Assinado"
+**2. `src/pages/Comercial.tsx`:**
+- Passar `totalPropostas={propostasDT.length}` como prop ao `PropostaDTModal`
 
-**3. Lógica do canvas:**
-- Reutilizar a mesma lógica de canvas já existente no `AssinaturaPad` / `AssinaturaDigital` (mousedown/move/up, touchstart/move/end)
-- Ao clicar "Confirmar", salvar o `toDataURL()` no estado
-- Mostrar preview da assinatura confirmada
-
-### Resultado
-A seção de assinatura terá um canvas onde o Representante Legal desenha sua assinatura eletronicamente, com nome, cargo e empresa exibidos abaixo, igual ao print de referência mas com a adição do pad eletrônico.
+### Detalhes
+- O `handleClienteChange` já auto-preenche os campos do cliente (endereço, CNPJ, IE, IM) exceto A/C — isso já funciona
+- Apenas os números automáticos e os inputs readOnly precisam ser adicionados
 
