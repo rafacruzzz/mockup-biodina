@@ -1,22 +1,23 @@
 
 
-## Plano: Auto-preencher cliente e gerar números automáticos no modal Proposta DT
+## Plano: Adicionar "Chave Pix" e remover "Código do Banco" nos Dados Bancários da Proposta Licitação
 
-### Problema
-O modal Proposta DT não gera automaticamente os números de Cotação e Proposta ao abrir, diferente do modal Contratação que já faz isso.
+### Alterações em `src/components/comercial/PropostaLicitacaoModal.tsx`
 
-### Alterações
+**1. Estado:**
+- Remover `codigoBanco` e `setCodigoBanco`
+- Adicionar `chavePix` e `setChavePix` (string, editável)
 
-**1. `src/components/comercial/PropostaDTModal.tsx`:**
-- Adicionar prop `totalPropostas?: number` na interface `PropostaDTModalProps`
-- Adicionar `useEffect` que gera `COT-YYYY-XXX` e `PROP-YYYY-XXX` ao abrir o modal (mesmo padrão do Contratação)
-- Tornar inputs de cotacaoNum e propostaNum readOnly com `bg-muted`
-- Importar `useEffect` do React
+**2. Função `handleBancoChange` (linha ~232):**
+- Remover `setCodigoBanco(banco.codigo)`
 
-**2. `src/pages/Comercial.tsx`:**
-- Passar `totalPropostas={propostasDT.length}` como prop ao `PropostaDTModal`
+**3. Layout dos Dados Bancários (linhas 426-430):**
+- Remover o campo "Código do Banco"
+- Adicionar campo "Chave Pix" (Input editável, placeholder "CPF, e-mail, telefone ou aleatória") antes da Agência
 
-### Detalhes
-- O `handleClienteChange` já auto-preenche os campos do cliente (endereço, CNPJ, IE, IM) exceto A/C — isso já funciona
-- Apenas os números automáticos e os inputs readOnly precisam ser adicionados
+**4. `handleSave`:**
+- Substituir `codigoBanco` por `chavePix` nos dados salvos
+
+### Resultado
+O bloco de dados bancários terá: Nome do Banco (select), Chave Pix (input editável), Agência (readOnly), Conta Corrente (readOnly), Código de Operação (editável).
 
