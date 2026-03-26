@@ -1582,6 +1582,7 @@ const Comercial = () => {
               setPropostasDT(prev => [...prev, proposta]);
               setPropostaDTModalOpen(false);
             }}
+            totalPropostas={propostasDT.length}
           />
         </TabsContent>
       </Tabs>

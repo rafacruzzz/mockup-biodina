@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useEmpresa } from '@/contexts/EmpresaContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -45,6 +45,7 @@ interface PropostaDTModalProps {
   open: boolean;
   onClose: () => void;
   onSave: (proposta: PropostaDT) => void;
+  totalPropostas?: number;
 }
 
 
@@ -59,7 +60,7 @@ const dadosRepresentante = {
   cargo: 'DIRETOR COMERCIAL',
 };
 
-const PropostaDTModal = ({ open, onClose, onSave }: PropostaDTModalProps) => {
+const PropostaDTModal = ({ open, onClose, onSave, totalPropostas = 0 }: PropostaDTModalProps) => {
   const { empresaAtual, filialAtual } = useEmpresa();
   const entidadeAtual = filialAtual || empresaAtual;
   
@@ -95,6 +96,15 @@ const PropostaDTModal = ({ open, onClose, onSave }: PropostaDTModalProps) => {
   const [acCliente, setAcCliente] = useState('');
   const [cotacaoNum, setCotacaoNum] = useState('');
   const [propostaNum, setPropostaNum] = useState('');
+
+  useEffect(() => {
+    if (open && !cotacaoNum) {
+      const ano = new Date().getFullYear();
+      const sequencial = (totalPropostas + 1).toString().padStart(3, '0');
+      setCotacaoNum(`COT-${ano}-${sequencial}`);
+      setPropostaNum(`PROP-${ano}-${sequencial}`);
+    }
+  }, [open, totalPropostas]);
 
   // Banco
   const [bancoSelecionado, setBancoSelecionado] = useState('');
@@ -247,11 +257,11 @@ const PropostaDTModal = ({ open, onClose, onSave }: PropostaDTModalProps) => {
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Cotação Nº</Label>
-                  <Input value={cotacaoNum} onChange={e => setCotacaoNum(e.target.value)} />
+                  <Input value={cotacaoNum} readOnly className="bg-muted" />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Proposta Nº</Label>
-                  <Input value={propostaNum} onChange={e => setPropostaNum(e.target.value)} />
+                  <Input value={propostaNum} readOnly className="bg-muted" />
                 </div>
               </div>
             </CardContent>
