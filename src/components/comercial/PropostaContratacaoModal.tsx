@@ -361,8 +361,8 @@ const PropostaContratacaoModal = ({ open, onClose, onSave, totalPropostas = 0 }:
                     </Select>
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs">Código do Banco</Label>
-                    <Input value={codigoBanco} readOnly className="bg-muted" />
+                    <Label className="text-xs">Chave Pix</Label>
+                    <Input value={chavePix} onChange={e => setChavePix(e.target.value)} />
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs">Agência</Label>
