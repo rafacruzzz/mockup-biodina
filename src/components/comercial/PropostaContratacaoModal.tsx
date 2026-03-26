@@ -70,7 +70,7 @@ const dadosRepresentante = {
   cargo: 'DIRETOR COMERCIAL',
 };
 
-const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacaoModalProps) => {
+const PropostaContratacaoModal = ({ open, onClose, onSave, totalPropostas = 0 }: PropostaContratacaoModalProps) => {
   // Dados do Cliente
   const [clienteSelecionado, setClienteSelecionado] = useState('');
   const [cliente, setCliente] = useState('');
@@ -81,6 +81,16 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
   const [acCliente, setAcCliente] = useState('');
   const [cotacaoNum, setCotacaoNum] = useState('');
   const [propostaNum, setPropostaNum] = useState('');
+
+  // Gerar números automáticos ao abrir o modal
+  useEffect(() => {
+    if (open) {
+      const year = new Date().getFullYear();
+      const nextNum = (totalPropostas + 1).toString().padStart(3, '0');
+      setCotacaoNum(`COT-${year}-${nextNum}`);
+      setPropostaNum(`PROP-${year}-${nextNum}`);
+    }
+  }, [open, totalPropostas]);
 
   const handleClienteChange = (clienteId: string) => {
     const cli = clientesCadastrados.find(c => c.id === clienteId);
