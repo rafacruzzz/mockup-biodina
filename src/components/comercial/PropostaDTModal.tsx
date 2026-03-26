@@ -45,6 +45,7 @@ interface PropostaDTModalProps {
   open: boolean;
   onClose: () => void;
   onSave: (proposta: PropostaDT) => void;
+  totalPropostas?: number;
 }
 
 
