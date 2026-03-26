@@ -109,7 +109,7 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
   const [bancoSelecionado, setBancoSelecionado] = useState('');
   const [agencia, setAgencia] = useState('');
   const [conta, setConta] = useState('');
-  const [codigoBanco, setCodigoBanco] = useState('');
+  const [chavePix, setChavePix] = useState('');
   const [codigoOperacao, setCodigoOperacao] = useState('');
 
   // Representante Legal
@@ -229,7 +229,7 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
     if (banco) {
       setBancoSelecionado(bancoNome);
-      setCodigoBanco(banco.codigo);
+      // chavePix permanece editável manualmente
       setAgencia(banco.agencia);
       setConta(banco.conta);
     }
@@ -425,8 +425,8 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
                     </Select>
                   </div>
                   <div>
-                    <Label>Código do Banco</Label>
-                    <Input value={codigoBanco} readOnly className="bg-muted" />
+                    <Label>Chave Pix</Label>
+                    <Input value={chavePix} onChange={e => setChavePix(e.target.value)} placeholder="CPF, e-mail, telefone ou aleatória" />
                   </div>
                   <div>
                     <Label>Agência</Label>
