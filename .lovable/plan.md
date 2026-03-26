@@ -1,29 +1,31 @@
 
 
-## Plano: Adicionar botões de ação em massa na árvore de permissões
+## Plano: Corrigir botões cortados e modal se mexendo ao abrir Select
 
-### Resumo
-Adicionar uma barra de ações rápidas no topo do `ModuleAccessTree` (dentro de cada empresa) com botões para: **Marcar Todos** os módulos, **Desmarcar Todos**, e aplicar um nível de permissão em massa (**Todos Ver**, **Todos Ver/Editar**, **Todos Excluir**). Isso evita que o usuário precise clicar módulo por módulo.
+### Problemas identificados
 
-### Alterações
+1. **Botões cortados**: O container do modal usa `max-h-[90vh]` com `overflow-hidden`, e a área de conteúdo usa `max-h-[calc(90vh-140px)]`. Os 140px não são suficientes para o header (p-6 + border) + footer (p-6 + border + botões), cortando os botões.
 
-**Arquivo: `src/components/cadastro/ModuleAccessTree.tsx`**
+2. **Modal se mexendo ao abrir Select**: O `SelectContent` do Radix UI pode causar reposicionamento do modal quando abre/fecha, pois altera o layout interno.
 
-1. **Adicionar barra de ações rápidas** no topo do componente (antes da lista de módulos, linha 196):
-   - Botão "Marcar Todos" — habilita todos os módulos e submódulos com permissão "Ver"
-   - Botão "Desmarcar Todos" — desabilita todos os módulos e submódulos
-   - Separador visual
-   - Botão "Todos Ver" — marca todos e aplica nível "Ver" em todos os submódulos
-   - Botão "Todos Ver/Editar" — marca todos e aplica nível "Ver/Editar"
-   - Botão "Todos Excluir" — marca todos e aplica nível "Excluir"
+### Alterações em `src/components/cadastro/EntidadeModal.tsx`
 
-2. **Funções auxiliares:**
-   - `handleMarcarTodos()` — itera sobre `modulosParaMostrar`, cria todos os `ModuloUsuario` habilitados com submódulos habilitados e permissão "Ver"
-   - `handleDesmarcarTodos()` — limpa o array de modules (ou desabilita todos)
-   - `handleAplicarNivelTodos(level: PermissionLevel)` — marca todos e aplica o nível de permissão escolhido em todos os submódulos
+**1. Corrigir layout do modal (linhas 235-244):**
+- Trocar a estrutura para usar `flex flex-col` no container principal com `max-h-[90vh]`
+- Header: `flex-shrink-0`
+- Conteúdo: `flex-1 overflow-y-auto min-h-0` (sem max-h fixo calculado)
+- Footer: `flex-shrink-0`
 
-3. **Layout:** barra com flex-wrap, botões pequenos (`size="sm"`, `variant="outline"`), com ícones Eye/Edit/Trash para os níveis de permissão.
+**2. Evitar que o modal se mova ao abrir Selects:**
+- Adicionar `position="popper"` e `sideOffset={4}` nos `SelectContent` da aba Dados Gerais (onde o problema ocorre)
+- Alternativa mais simples: adicionar `className="overflow-hidden"` no container e garantir que o scroll container não recalcule altura
 
-### Resultado
-Cada empresa/filial terá no topo da árvore de módulos os botões de ação em massa, permitindo configurar permissões para todos os módulos em um único clique.
+### Estrutura corrigida:
+```
+div.fixed (overlay)
+  div.flex.flex-col.max-h-[90vh] (modal)
+    div.flex-shrink-0 (header)
+    div.flex-1.overflow-y-auto.min-h-0 (content com scroll)
+    div.flex-shrink-0 (footer com botões)
+```
 
