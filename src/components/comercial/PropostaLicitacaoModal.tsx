@@ -109,7 +109,7 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
   const [bancoSelecionado, setBancoSelecionado] = useState('');
   const [agencia, setAgencia] = useState('');
   const [conta, setConta] = useState('');
-  const [codigoBanco, setCodigoBanco] = useState('');
+  const [chavePix, setChavePix] = useState('');
   const [codigoOperacao, setCodigoOperacao] = useState('');
 
   // Representante Legal
