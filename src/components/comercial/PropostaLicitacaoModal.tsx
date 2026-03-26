@@ -50,15 +50,6 @@ interface PropostaLicitacaoModalProps {
   onSave: (proposta: PropostaLicitacao) => void;
 }
 
-const dadosEmpresa = {
-  razaoSocial: 'BIODINA EQUIPAMENTOS MÉDICOS LTDA',
-  endereco: 'RUA EXEMPLO, 123, CENTRO, SÃO PAULO - SP, CEP 01001-000',
-  cnpj: '12.345.678/0001-90',
-  inscricaoEstadual: '123.456.789.000',
-  inscricaoMunicipal: '987654',
-  telefone: '(11) 3333-4444',
-  email: 'contato@biodina.com.br',
-};
 
 const dadosRepresentante = {
   nome: 'JOÃO DA SILVA',
