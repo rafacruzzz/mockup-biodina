@@ -53,6 +53,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     cnpj_cpf: "",
     cin_rg: "",
     tipo_cliente: "",
+    tipo_lead: "" as "" | "publico" | "particular",
     nome_fantasia: "",
     
     // Contatos expandidos
