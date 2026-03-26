@@ -261,7 +261,7 @@ const PropostaDTModal = ({ open, onClose, onSave, totalPropostas = 0 }: Proposta
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Proposta Nº</Label>
-                  <Input value={propostaNum} onChange={e => setPropostaNum(e.target.value)} />
+                  <Input value={propostaNum} readOnly className="bg-muted" />
                 </div>
               </div>
             </CardContent>
