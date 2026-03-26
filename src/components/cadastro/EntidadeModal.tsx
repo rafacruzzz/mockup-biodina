@@ -53,6 +53,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     cnpj_cpf: "",
     cin_rg: "",
     tipo_cliente: "",
+    tipo_lead: "" as "" | "publico" | "particular",
     nome_fantasia: "",
     
     // Contatos expandidos
@@ -270,6 +271,21 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
             {/* ABA: DADOS GERAIS */}
             <TabsContent value="dados-gerais" className="space-y-4 mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {tipoEntidade === "leads" && (
+                  <div>
+                    <Label htmlFor="tipo_lead">Tipo de Lead</Label>
+                    <Select value={formData.tipo_lead} onValueChange={(value) => handleInputChange("tipo_lead", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="publico">Público</SelectItem>
+                        <SelectItem value="particular">Particular</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
                 <div>
                   <Label htmlFor="tipo_cliente">Tipo de Cliente</Label>
                   <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>
