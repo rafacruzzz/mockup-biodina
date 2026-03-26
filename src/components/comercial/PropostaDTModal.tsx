@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useEmpresa } from '@/contexts/EmpresaContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,15 +46,6 @@ interface PropostaDTModalProps {
   onSave: (proposta: PropostaDT) => void;
 }
 
-const dadosEmpresa = {
-  razaoSocial: 'BIODINA EQUIPAMENTOS MÉDICOS LTDA',
-  endereco: 'RUA EXEMPLO, 123, CENTRO, SÃO PAULO - SP, CEP 01001-000',
-  cnpj: '12.345.678/0001-90',
-  inscricaoEstadual: '123.456.789.000',
-  inscricaoMunicipal: '987654',
-  telefone: '(11) 3333-4444',
-  email: 'contato@biodina.com.br',
-};
 
 const dadosRepresentante = {
   nome: 'JOÃO DA SILVA',
@@ -67,6 +59,19 @@ const dadosRepresentante = {
 };
 
 const PropostaDTModal = ({ open, onClose, onSave }: PropostaDTModalProps) => {
+  const { empresaAtual, filialAtual } = useEmpresa();
+  const entidadeAtual = filialAtual || empresaAtual;
+  
+  const dadosEmpresa = {
+    razaoSocial: entidadeAtual?.razaoSocial || '',
+    endereco: entidadeAtual?.endereco ? `${entidadeAtual.endereco.logradouro}, ${entidadeAtual.endereco.numero}${entidadeAtual.endereco.complemento ? ', ' + entidadeAtual.endereco.complemento : ''}, ${entidadeAtual.endereco.bairro}, ${entidadeAtual.endereco.cidade} - ${entidadeAtual.endereco.uf}, CEP ${entidadeAtual.endereco.cep}` : '',
+    cnpj: entidadeAtual?.cnpj || '',
+    inscricaoEstadual: entidadeAtual?.inscricaoEstadual || '',
+    inscricaoMunicipal: entidadeAtual?.inscricaoMunicipal || '',
+    telefone: entidadeAtual?.telefone || '',
+    email: entidadeAtual?.email || '',
+  };
+
   // Dados do Cliente
   const [clienteSelecionado, setClienteSelecionado] = useState('');
   const [cliente, setCliente] = useState('');
