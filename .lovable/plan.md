@@ -1,38 +1,28 @@
 
 
-## Plano: Usar dados da empresa logada nos modais de Proposta
+## Plano: Adicionar assinatura eletrônica do Representante Legal nos modais de Proposta
 
 ### Problema
-Os 3 modais de proposta (Contratação, DT, Licitação) têm `dadosEmpresa` hardcoded com "BIODINA EQUIPAMENTOS MÉDICOS LTDA". O nome e demais dados devem vir da empresa na qual o usuário está logado, usando o `EmpresaContext`.
+Atualmente a seção "Local, Data e Assinatura" mostra apenas texto estático com nome/cargo. A assinatura precisa ser eletrônica (canvas para desenhar) e feita pelo Representante Legal que está elaborando a proposta.
 
-### Alterações
+### Alterações nos 3 arquivos: `PropostaContratacaoModal.tsx`, `PropostaDTModal.tsx`, `PropostaLicitacaoModal.tsx`
 
-**Arquivos afetados:** `PropostaContratacaoModal.tsx`, `PropostaDTModal.tsx`, `PropostaLicitacaoModal.tsx`
+**1. Novo estado para armazenar a assinatura:**
+- `assinaturaRepresentante` (string base64, inicialmente vazio)
+- `assinado` (boolean)
 
-Em cada arquivo:
+**2. Substituir a área estática de assinatura por:**
+- Campo "Nome do Representante Legal" (input, pré-preenchido com `repNome`)
+- Campo "Cargo" (input, pré-preenchido com `repCargo`)
+- Nome da empresa (texto, vem do `dadosEmpresa.razaoSocial`)
+- Canvas para assinatura eletrônica (desenho à mão) com botões "Limpar" e "Confirmar Assinatura"
+- Após confirmar, exibir a imagem da assinatura salva com indicação visual de "Assinado"
 
-1. **Importar o contexto:** `import { useEmpresa } from '@/contexts/EmpresaContext';`
-
-2. **Remover o objeto `dadosEmpresa` hardcoded** (linhas ~52-60 em cada arquivo)
-
-3. **Dentro do componente**, usar o hook para obter dados dinâmicos:
-   ```tsx
-   const { empresaAtual, filialAtual } = useEmpresa();
-   const entidadeAtual = filialAtual || empresaAtual;
-   
-   const dadosEmpresa = {
-     razaoSocial: entidadeAtual?.razaoSocial || '',
-     endereco: entidadeAtual?.endereco ? `${entidadeAtual.endereco.logradouro}, ${entidadeAtual.endereco.numero}, ${entidadeAtual.endereco.bairro}, ${entidadeAtual.endereco.cidade} - ${entidadeAtual.endereco.uf}, CEP ${entidadeAtual.endereco.cep}` : '',
-     cnpj: entidadeAtual?.cnpj || '',
-     inscricaoEstadual: entidadeAtual?.inscricaoEstadual || '',
-     inscricaoMunicipal: entidadeAtual?.inscricaoMunicipal || '',
-     telefone: entidadeAtual?.telefone || '',
-     email: entidadeAtual?.email || '',
-   };
-   ```
-
-4. **Filiais com dados diferentes:** Ao usar `filialAtual || empresaAtual`, se o usuário estiver operando em uma filial, os dados bancários e da empresa serão os da filial. Caso contrário, serão os da matriz.
+**3. Lógica do canvas:**
+- Reutilizar a mesma lógica de canvas já existente no `AssinaturaPad` / `AssinaturaDigital` (mousedown/move/up, touchstart/move/end)
+- Ao clicar "Confirmar", salvar o `toDataURL()` no estado
+- Mostrar preview da assinatura confirmada
 
 ### Resultado
-A declaração, os campos de dados da empresa e a assinatura mostrarão o nome real da empresa/filial logada em vez do valor fixo.
+A seção de assinatura terá um canvas onde o Representante Legal desenha sua assinatura eletronicamente, com nome, cargo e empresa exibidos abaixo, igual ao print de referência mas com a adição do pad eletrônico.
 
