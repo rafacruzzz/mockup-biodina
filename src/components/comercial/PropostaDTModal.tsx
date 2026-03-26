@@ -60,7 +60,7 @@ const dadosRepresentante = {
   cargo: 'DIRETOR COMERCIAL',
 };
 
-const PropostaDTModal = ({ open, onClose, onSave }: PropostaDTModalProps) => {
+const PropostaDTModal = ({ open, onClose, onSave, totalPropostas = 0 }: PropostaDTModalProps) => {
   const { empresaAtual, filialAtual } = useEmpresa();
   const entidadeAtual = filialAtual || empresaAtual;
   
