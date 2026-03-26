@@ -229,7 +229,7 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
     if (banco) {
       setBancoSelecionado(bancoNome);
-      setCodigoBanco(banco.codigo);
+      // chavePix permanece editável manualmente
       setAgencia(banco.agencia);
       setConta(banco.conta);
     }
