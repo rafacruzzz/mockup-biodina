@@ -190,7 +190,6 @@ const PropostaContratacaoModal = ({ open, onClose, onSave, totalPropostas = 0 }:
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
     if (banco) {
       setBancoSelecionado(bancoNome);
-      setCodigoBanco(banco.codigo);
       setAgencia(banco.agencia);
       setConta(banco.conta);
     }
