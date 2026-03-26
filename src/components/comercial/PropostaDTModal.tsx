@@ -59,6 +59,19 @@ const dadosRepresentante = {
 };
 
 const PropostaDTModal = ({ open, onClose, onSave }: PropostaDTModalProps) => {
+  const { empresaAtual, filialAtual } = useEmpresa();
+  const entidadeAtual = filialAtual || empresaAtual;
+  
+  const dadosEmpresa = {
+    razaoSocial: entidadeAtual?.razaoSocial || '',
+    endereco: entidadeAtual?.endereco ? `${entidadeAtual.endereco.logradouro}, ${entidadeAtual.endereco.numero}${entidadeAtual.endereco.complemento ? ', ' + entidadeAtual.endereco.complemento : ''}, ${entidadeAtual.endereco.bairro}, ${entidadeAtual.endereco.cidade} - ${entidadeAtual.endereco.uf}, CEP ${entidadeAtual.endereco.cep}` : '',
+    cnpj: entidadeAtual?.cnpj || '',
+    inscricaoEstadual: entidadeAtual?.inscricaoEstadual || '',
+    inscricaoMunicipal: entidadeAtual?.inscricaoMunicipal || '',
+    telefone: entidadeAtual?.telefone || '',
+    email: entidadeAtual?.email || '',
+  };
+
   // Dados do Cliente
   const [clienteSelecionado, setClienteSelecionado] = useState('');
   const [cliente, setCliente] = useState('');
