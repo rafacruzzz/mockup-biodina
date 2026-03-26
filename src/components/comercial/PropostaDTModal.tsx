@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Plus, Trash2, Building2, User, FileText, Banknote } from 'lucide-react';
+import { AssinaturaRepresentante } from './AssinaturaRepresentante';
 import { bancosCadastrados } from '@/data/bancosCadastrados';
 import { toast } from 'sonner';
 
