@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,6 +46,7 @@ interface PropostaContratacaoModalProps {
   open: boolean;
   onClose: () => void;
   onSave: (proposta: PropostaContratacao) => void;
+  totalPropostas?: number;
 }
 
 const dadosEmpresa = {
@@ -69,7 +70,7 @@ const dadosRepresentante = {
   cargo: 'DIRETOR COMERCIAL',
 };
 
-const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacaoModalProps) => {
+const PropostaContratacaoModal = ({ open, onClose, onSave, totalPropostas = 0 }: PropostaContratacaoModalProps) => {
   // Dados do Cliente
   const [clienteSelecionado, setClienteSelecionado] = useState('');
   const [cliente, setCliente] = useState('');
@@ -80,6 +81,16 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
   const [acCliente, setAcCliente] = useState('');
   const [cotacaoNum, setCotacaoNum] = useState('');
   const [propostaNum, setPropostaNum] = useState('');
+
+  // Gerar números automáticos ao abrir o modal
+  useEffect(() => {
+    if (open) {
+      const year = new Date().getFullYear();
+      const nextNum = (totalPropostas + 1).toString().padStart(3, '0');
+      setCotacaoNum(`COT-${year}-${nextNum}`);
+      setPropostaNum(`PROP-${year}-${nextNum}`);
+    }
+  }, [open, totalPropostas]);
 
   const handleClienteChange = (clienteId: string) => {
     const cli = clientesCadastrados.find(c => c.id === clienteId);
@@ -280,11 +291,11 @@ const PropostaContratacaoModal = ({ open, onClose, onSave }: PropostaContratacao
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Cotação Nº</Label>
-                  <Input value={cotacaoNum} onChange={e => setCotacaoNum(e.target.value)} />
+                  <Input value={cotacaoNum} readOnly className="bg-muted" />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">Proposta Nº</Label>
-                  <Input value={propostaNum} onChange={e => setPropostaNum(e.target.value)} />
+                  <Input value={propostaNum} readOnly className="bg-muted" />
                 </div>
               </div>
             </CardContent>
