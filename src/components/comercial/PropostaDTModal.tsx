@@ -564,21 +564,19 @@ const PropostaDTModal = ({ open, onClose, onSave }: PropostaDTModalProps) => {
               <CardTitle className="text-base">Local, Data e Assinatura</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <Label className="text-xs">Local</Label>
-                  <Input value={localAssinatura} onChange={e => setLocalAssinatura(e.target.value)} placeholder="Cidade - UF" />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Data</Label>
-                  <Input type="date" value={dataAssinatura} onChange={e => setDataAssinatura(e.target.value)} />
-                </div>
-              </div>
-              <div className="mt-4 pt-4 border-t text-center">
-                <p className="text-sm font-semibold">{repNome}</p>
-                <p className="text-xs text-muted-foreground">{repCargo}</p>
-                <p className="text-xs text-muted-foreground">{dadosEmpresa.razaoSocial}</p>
-              </div>
+              <AssinaturaRepresentante
+                repNome={repNome}
+                repCargo={repCargo}
+                razaoSocial={dadosEmpresa.razaoSocial}
+                localAssinatura={localAssinatura}
+                dataAssinatura={dataAssinatura}
+                onLocalChange={setLocalAssinatura}
+                onDataChange={setDataAssinatura}
+                onRepNomeChange={setRepNome}
+                onRepCargoChange={setRepCargo}
+                onAssinaturaChange={setAssinaturaRepresentante}
+                assinaturaBase64={assinaturaRepresentante}
+              />
             </CardContent>
           </Card>
 

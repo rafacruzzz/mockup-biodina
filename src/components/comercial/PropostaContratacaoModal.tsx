@@ -759,22 +759,19 @@ const PropostaContratacaoModal = ({ open, onClose, onSave, totalPropostas = 0 }:
               <CardTitle className="text-base">Local, Data e Assinatura</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Local</Label>
-                  <Input value={localAssinatura} onChange={e => setLocalAssinatura(e.target.value)} placeholder="Cidade - UF" />
-                </div>
-                <div>
-                  <Label>Data</Label>
-                  <Input type="date" value={dataAssinatura} onChange={e => setDataAssinatura(e.target.value)} />
-                </div>
-              </div>
-              <div className="mt-6 pt-6 border-t text-center">
-                <div className="w-64 mx-auto border-b border-foreground mb-1"></div>
-                <p className="text-sm text-muted-foreground">{dadosRepresentante.nome}</p>
-                <p className="text-xs text-muted-foreground">{dadosRepresentante.cargo}</p>
-                <p className="text-xs text-muted-foreground">{dadosEmpresa.razaoSocial}</p>
-              </div>
+              <AssinaturaRepresentante
+                repNome={repNome}
+                repCargo={repCargo}
+                razaoSocial={dadosEmpresa.razaoSocial}
+                localAssinatura={localAssinatura}
+                dataAssinatura={dataAssinatura}
+                onLocalChange={setLocalAssinatura}
+                onDataChange={setDataAssinatura}
+                onRepNomeChange={setRepNome}
+                onRepCargoChange={setRepCargo}
+                onAssinaturaChange={setAssinaturaRepresentante}
+                assinaturaBase64={assinaturaRepresentante}
+              />
             </CardContent>
           </Card>
 

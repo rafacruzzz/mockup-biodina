@@ -923,16 +923,19 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
               <CardTitle className="text-lg">Local, Data e Assinatura</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label>Local</Label>
-                  <Input value={localAssinatura} onChange={e => setLocalAssinatura(e.target.value)} placeholder="Cidade - UF" />
-                </div>
-                <div>
-                  <Label>Data</Label>
-                  <Input type="date" value={dataAssinatura} onChange={e => setDataAssinatura(e.target.value)} />
-                </div>
-              </div>
+              <AssinaturaRepresentante
+                repNome={repNome}
+                repCargo={repCargo}
+                razaoSocial={dadosEmpresa.razaoSocial}
+                localAssinatura={localAssinatura}
+                dataAssinatura={dataAssinatura}
+                onLocalChange={setLocalAssinatura}
+                onDataChange={setDataAssinatura}
+                onRepNomeChange={setRepNome}
+                onRepCargoChange={setRepCargo}
+                onAssinaturaChange={setAssinaturaRepresentante}
+                assinaturaBase64={assinaturaRepresentante}
+              />
             </CardContent>
           </Card>
 
