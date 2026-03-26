@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Plus, Trash2, Building2, User, FileText, Banknote, Package } from 'lucide-react';
+import { AssinaturaRepresentante } from './AssinaturaRepresentante';
 import { bancosCadastrados } from '@/data/bancosCadastrados';
 import { toast } from 'sonner';
 
@@ -192,6 +193,7 @@ const PropostaContratacaoModal = ({ open, onClose, onSave, totalPropostas = 0 }:
   const [observacoes, setObservacoes] = useState('');
   const [localAssinatura, setLocalAssinatura] = useState('');
   const [dataAssinatura, setDataAssinatura] = useState('');
+  const [assinaturaRepresentante, setAssinaturaRepresentante] = useState('');
 
   const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
@@ -757,22 +759,19 @@ const PropostaContratacaoModal = ({ open, onClose, onSave, totalPropostas = 0 }:
               <CardTitle className="text-base">Local, Data e Assinatura</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Local</Label>
-                  <Input value={localAssinatura} onChange={e => setLocalAssinatura(e.target.value)} placeholder="Cidade - UF" />
-                </div>
-                <div>
-                  <Label>Data</Label>
-                  <Input type="date" value={dataAssinatura} onChange={e => setDataAssinatura(e.target.value)} />
-                </div>
-              </div>
-              <div className="mt-6 pt-6 border-t text-center">
-                <div className="w-64 mx-auto border-b border-foreground mb-1"></div>
-                <p className="text-sm text-muted-foreground">{dadosRepresentante.nome}</p>
-                <p className="text-xs text-muted-foreground">{dadosRepresentante.cargo}</p>
-                <p className="text-xs text-muted-foreground">{dadosEmpresa.razaoSocial}</p>
-              </div>
+              <AssinaturaRepresentante
+                repNome={repNome}
+                repCargo={repCargo}
+                razaoSocial={dadosEmpresa.razaoSocial}
+                localAssinatura={localAssinatura}
+                dataAssinatura={dataAssinatura}
+                onLocalChange={setLocalAssinatura}
+                onDataChange={setDataAssinatura}
+                onRepNomeChange={setRepNome}
+                onRepCargoChange={setRepCargo}
+                onAssinaturaChange={setAssinaturaRepresentante}
+                assinaturaBase64={assinaturaRepresentante}
+              />
             </CardContent>
           </Card>
 
