@@ -198,14 +198,18 @@ const PropostaContratacaoModal = ({ open, onClose, onSave, totalPropostas = 0 }:
   };
 
   const addItem = () => {
+    const newId = Date.now().toString();
     setItens([...itens, {
-      id: Date.now().toString(),
-      descricao: '', referencia: '', unidade: '', marca: '', quantidade: 1, valorUnitario: 0, valorMensal: 0, valorAnual: 0
+      id: newId, descricao: '', referencia: '', unidade: '', marca: '', quantidade: 1, valorUnitario: 0, valorMensal: 0, valorAnual: 0
     }]);
+    setEspecificacoes(prev => [...prev, { itemId: newId, apresentacao: '', modelo: '', marcaFabricante: '', registroAnvisa: '', procedencia: '' }]);
   };
 
   const removeItem = (id: string) => {
-    if (itens.length > 1) setItens(itens.filter(i => i.id !== id));
+    if (itens.length > 1) {
+      setItens(itens.filter(i => i.id !== id));
+      setEspecificacoes(prev => prev.filter(e => e.itemId !== id));
+    }
   };
 
   const updateItem = (id: string, field: keyof PropostaContratacaoItem, value: string | number) => {
