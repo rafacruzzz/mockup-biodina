@@ -133,12 +133,14 @@ const PropostaContratacaoModal = ({ open, onClose, onSave, totalPropostas = 0 }:
   const [mostrarDesconto, setMostrarDesconto] = useState(false);
   const [desconto, setDesconto] = useState(0);
 
-  // Especificação do produto
-  const [apresentacao, setApresentacao] = useState('');
-  const [modelo, setModelo] = useState('');
-  const [marcaFabricante, setMarcaFabricante] = useState('');
-  const [registroAnvisa, setRegistroAnvisa] = useState('');
-  const [procedencia, setProcedencia] = useState('');
+  // Especificação do produto - uma por item da proposta comercial
+  const [especificacoes, setEspecificacoes] = useState<Array<{ itemId: string; apresentacao: string; modelo: string; marcaFabricante: string; registroAnvisa: string; procedencia: string }>>([
+    { itemId: '1', apresentacao: '', modelo: '', marcaFabricante: '', registroAnvisa: '', procedencia: '' }
+  ]);
+
+  const updateEspecificacao = (itemId: string, field: string, value: string) => {
+    setEspecificacoes(prev => prev.map(e => e.itemId === itemId ? { ...e, [field]: value } : e));
+  };
 
   // Quantidade de Produtos por Unidade Hospitalar
   const [unidadesHospitalares, setUnidadesHospitalares] = useState<Array<{ id: string; unidade: string; quantidade: number }>>([
