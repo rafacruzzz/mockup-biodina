@@ -46,6 +46,7 @@ interface PropostaContratacaoModalProps {
   open: boolean;
   onClose: () => void;
   onSave: (proposta: PropostaContratacao) => void;
+  totalPropostas?: number;
 }
 
 const dadosEmpresa = {
