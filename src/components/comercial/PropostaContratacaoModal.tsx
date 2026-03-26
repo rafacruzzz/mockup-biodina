@@ -193,6 +193,7 @@ const PropostaContratacaoModal = ({ open, onClose, onSave, totalPropostas = 0 }:
   const [observacoes, setObservacoes] = useState('');
   const [localAssinatura, setLocalAssinatura] = useState('');
   const [dataAssinatura, setDataAssinatura] = useState('');
+  const [assinaturaRepresentante, setAssinaturaRepresentante] = useState('');
 
   const handleBancoChange = (bancoNome: string) => {
     const banco = bancosCadastrados.find(b => `${b.codigo} - ${b.nome}` === bancoNome);
