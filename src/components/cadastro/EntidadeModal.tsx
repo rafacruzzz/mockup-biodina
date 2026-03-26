@@ -1224,7 +1224,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
           </Tabs>
         </div>
 
-        <div className="flex justify-between gap-4 p-6 border-t">
+        <div className="flex-shrink-0 flex justify-between gap-4 p-6 border-t">
           <DraftSaveButton onSaveDraft={handleSaveDraft} />
           <div className="flex gap-2">
             <Button variant="outline" onClick={onClose}>
