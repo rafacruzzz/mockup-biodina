@@ -97,6 +97,15 @@ const PropostaDTModal = ({ open, onClose, onSave, totalPropostas = 0 }: Proposta
   const [cotacaoNum, setCotacaoNum] = useState('');
   const [propostaNum, setPropostaNum] = useState('');
 
+  useEffect(() => {
+    if (open && !cotacaoNum) {
+      const ano = new Date().getFullYear();
+      const sequencial = (totalPropostas + 1).toString().padStart(3, '0');
+      setCotacaoNum(`COT-${ano}-${sequencial}`);
+      setPropostaNum(`PROP-${ano}-${sequencial}`);
+    }
+  }, [open, totalPropostas]);
+
   // Banco
   const [bancoSelecionado, setBancoSelecionado] = useState('');
   const [agencia, setAgencia] = useState('');
