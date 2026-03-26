@@ -219,6 +219,7 @@ const PropostaLicitacaoModal = ({ open, onClose, onSave }: PropostaLicitacaoModa
   const [observacoes, setObservacoes] = useState('');
   const [localAssinatura, setLocalAssinatura] = useState('');
   const [dataAssinatura, setDataAssinatura] = useState('');
+  const [assinaturaRepresentante, setAssinaturaRepresentante] = useState('');
 
   const updateComposicaoValor = (id: string, field: string, value: number) => {
     setComposicaoValor(composicaoValor.map(c => c.id === id ? { ...c, [field]: value } : c));
