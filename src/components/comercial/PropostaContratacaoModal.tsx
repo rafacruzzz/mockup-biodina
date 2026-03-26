@@ -541,39 +541,45 @@ const PropostaContratacaoModal = ({ open, onClose, onSave, totalPropostas = 0 }:
             </CardContent>
           </Card>
 
-          {/* ESPECIFICAÇÃO / DETALHES DO PRODUTO */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                Especificação / Detalhes do Produto
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <Label className="text-xs">Apresentação</Label>
-                  <Input value={apresentacao} onChange={e => setApresentacao(e.target.value)} placeholder="Apresentação do produto" />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Modelo</Label>
-                  <Input value={modelo} onChange={e => setModelo(e.target.value)} placeholder="Modelo" />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Marca/Fabricante</Label>
-                  <Input value={marcaFabricante} onChange={e => setMarcaFabricante(e.target.value)} placeholder="Marca/Fabricante" />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Registro na Anvisa</Label>
-                  <Input value={registroAnvisa} onChange={e => setRegistroAnvisa(e.target.value)} placeholder="Nº do registro" />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">Procedência</Label>
-                  <Input value={procedencia} onChange={e => setProcedencia(e.target.value)} placeholder="País/Origem" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* ESPECIFICAÇÃO / DETALHES DO PRODUTO - Um bloco por item */}
+          {itens.map((item, index) => {
+            const spec = especificacoes.find(e => e.itemId === item.id) || { itemId: item.id, apresentacao: '', modelo: '', marcaFabricante: '', registroAnvisa: '', procedencia: '' };
+            return (
+              <Card key={`spec-${item.id}`}>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Package className="h-4 w-4" />
+                    Especificação / Detalhes do Produto — Item {index + 1}
+                    {item.descricao && <span className="text-sm font-normal text-muted-foreground">({item.descricao})</span>}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-xs">Apresentação</Label>
+                      <Input value={spec.apresentacao} onChange={e => updateEspecificacao(item.id, 'apresentacao', e.target.value)} placeholder="Apresentação do produto" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Modelo</Label>
+                      <Input value={spec.modelo} onChange={e => updateEspecificacao(item.id, 'modelo', e.target.value)} placeholder="Modelo" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Marca/Fabricante</Label>
+                      <Input value={spec.marcaFabricante} onChange={e => updateEspecificacao(item.id, 'marcaFabricante', e.target.value)} placeholder="Marca/Fabricante" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Registro na Anvisa</Label>
+                      <Input value={spec.registroAnvisa} onChange={e => updateEspecificacao(item.id, 'registroAnvisa', e.target.value)} placeholder="Nº do registro" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Procedência</Label>
+                      <Input value={spec.procedencia} onChange={e => updateEspecificacao(item.id, 'procedencia', e.target.value)} placeholder="País/Origem" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
 
           {/* QUANTIDADE DE PRODUTOS */}
           <Card>
