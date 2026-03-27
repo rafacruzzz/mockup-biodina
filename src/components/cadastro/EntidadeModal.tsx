@@ -24,6 +24,7 @@ interface EntidadeModalProps {
 
 const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) => {
   const { lookupCep, loading: cepLoading } = useCepLookup();
+  const { segmentos } = useSegmentoLeadManager();
   const [uploadedDocs, setUploadedDocs] = useState<Array<{ name: string; size: number; type: string }>>([]);
   const [certificadosVinculados, setCertificadosVinculados] = useState<string[]>([]);
   const [certificadoSelecionado, setCertificadoSelecionado] = useState<string>("");
