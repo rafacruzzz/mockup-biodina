@@ -1412,7 +1412,6 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
             <DraftSaveButton onSaveDraft={handleSaveDraft} />
             {isLead && editData && onConvertToClient && (
               <Button
-              <Button
                 variant="outline"
                 onClick={() => setShowConvertConfirm(true)}
                 className="border-green-500 text-green-700 hover:bg-green-50"
