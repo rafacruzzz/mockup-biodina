@@ -891,7 +891,86 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: Ent
                   </div>
                 </div>
               </div>
-            </TabsContent>
+
+              {isLead && (
+                <>
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-lg border-b pb-2">Endereço de Faturamento do Mantenedor</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="mant_fat_cep">CEP</Label>
+                        <Input id="mant_fat_cep" value={formData.mant_fat_cep} onChange={(e) => handleInputChange("mant_fat_cep", e.target.value)} onBlur={(e) => handleCepLookup(e.target.value, 'mant_faturamento')} placeholder="00000-000" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_endereco">Endereço</Label>
+                        <Input id="mant_fat_endereco" value={formData.mant_fat_endereco} onChange={(e) => handleInputChange("mant_fat_endereco", e.target.value)} placeholder="Rua, Avenida" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_numero">N°</Label>
+                        <Input id="mant_fat_numero" value={formData.mant_fat_numero} onChange={(e) => handleInputChange("mant_fat_numero", e.target.value)} placeholder="Número" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_complemento">Complemento</Label>
+                        <Input id="mant_fat_complemento" value={formData.mant_fat_complemento} onChange={(e) => handleInputChange("mant_fat_complemento", e.target.value)} placeholder="Sala, Apto, etc" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_cidade">Cidade</Label>
+                        <Input id="mant_fat_cidade" value={formData.mant_fat_cidade} onChange={(e) => handleInputChange("mant_fat_cidade", e.target.value)} placeholder="Cidade" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_estado">Estado</Label>
+                        <Input id="mant_fat_estado" value={formData.mant_fat_estado} onChange={(e) => handleInputChange("mant_fat_estado", e.target.value)} placeholder="Estado" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_uf">UF</Label>
+                        <Input id="mant_fat_uf" value={formData.mant_fat_uf} onChange={(e) => handleInputChange("mant_fat_uf", e.target.value)} placeholder="UF" maxLength={2} />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_pais">País</Label>
+                        <Input id="mant_fat_pais" value={formData.mant_fat_pais} onChange={(e) => handleInputChange("mant_fat_pais", e.target.value)} placeholder="País" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-lg border-b pb-2">Endereço de Entrega do Mantenedor</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="mant_ent_cep">CEP</Label>
+                        <Input id="mant_ent_cep" value={formData.mant_ent_cep} onChange={(e) => handleInputChange("mant_ent_cep", e.target.value)} onBlur={(e) => handleCepLookup(e.target.value, 'mant_entrega')} placeholder="00000-000" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_endereco">Endereço</Label>
+                        <Input id="mant_ent_endereco" value={formData.mant_ent_endereco} onChange={(e) => handleInputChange("mant_ent_endereco", e.target.value)} placeholder="Rua, Avenida" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_numero">N°</Label>
+                        <Input id="mant_ent_numero" value={formData.mant_ent_numero} onChange={(e) => handleInputChange("mant_ent_numero", e.target.value)} placeholder="Número" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_complemento">Complemento</Label>
+                        <Input id="mant_ent_complemento" value={formData.mant_ent_complemento} onChange={(e) => handleInputChange("mant_ent_complemento", e.target.value)} placeholder="Sala, Apto, etc" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_cidade">Cidade</Label>
+                        <Input id="mant_ent_cidade" value={formData.mant_ent_cidade} onChange={(e) => handleInputChange("mant_ent_cidade", e.target.value)} placeholder="Cidade" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_estado">Estado</Label>
+                        <Input id="mant_ent_estado" value={formData.mant_ent_estado} onChange={(e) => handleInputChange("mant_ent_estado", e.target.value)} placeholder="Estado" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_uf">UF</Label>
+                        <Input id="mant_ent_uf" value={formData.mant_ent_uf} onChange={(e) => handleInputChange("mant_ent_uf", e.target.value)} placeholder="UF" maxLength={2} />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_pais">País</Label>
+                        <Input id="mant_ent_pais" value={formData.mant_ent_pais} onChange={(e) => handleInputChange("mant_ent_pais", e.target.value)} placeholder="País" />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
 
 
             {/* ABA: DADOS FISCAIS */}
