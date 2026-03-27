@@ -172,6 +172,9 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     restrito: false,
     analise_credito_bloqueado: false,
     
+    // Comissão (Representante Comercial)
+    percentual_comissao_padrao: 0,
+    
     // Outros
     servico_produto_oferecido: "",
     observacoes: "",
