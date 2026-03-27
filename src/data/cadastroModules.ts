@@ -362,6 +362,10 @@ export const modules: ModulesConfig = {
       kits: {
         name: "Kits",
         data: []
+      },
+      marcas: {
+        name: "Marcas",
+        data: []
       }
     }
   },
