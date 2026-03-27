@@ -127,11 +127,16 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     chave_pix: "",
     nome_beneficiario: "",
     
-    // Contato Comercial
+    // Contato Comercial do Lead
     contato_nome: "",
     contato_cargo: "",
     contato_telefone: "",
     contato_email: "",
+    // Contato Comercial do Mantenedor
+    contato_nome_mantenedor: "",
+    contato_cargo_mantenedor: "",
+    contato_telefone_mantenedor: "",
+    contato_email_mantenedor: "",
     
     // Status e Controle
     situacao_cadastral: "ativo",
