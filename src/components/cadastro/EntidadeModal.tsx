@@ -1183,6 +1183,33 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               </Button>
             </TabsContent>
 
+            {/* ABA: COMISSÃO (apenas para representantes) */}
+            {isRepresentante && (
+              <TabsContent value="comissao" className="space-y-4 mt-4">
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg">Comissão do Representante</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="percentual_comissao_padrao">Percentual de Comissão Padrão (%)</Label>
+                      <Input
+                        id="percentual_comissao_padrao"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="100"
+                        value={formData.percentual_comissao_padrao}
+                        onChange={(e) => handleInputChange("percentual_comissao_padrao", parseFloat(e.target.value) || 0)}
+                        placeholder="0,00"
+                      />
+                    </div>
+                  </div>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
+                    <p>ℹ️ Este percentual é o valor padrão e pode variar em cada venda.</p>
+                  </div>
+                </div>
+              </TabsContent>
+            )}
+
             {/* ABA: CRÉDITO E RESTRIÇÕES */}
             <TabsContent value="credito" className="space-y-4 mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
