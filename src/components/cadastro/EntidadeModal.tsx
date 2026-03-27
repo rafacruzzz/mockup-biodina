@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { X, Save, Upload, Trash2, FileText, Plus, Link2 } from "lucide-react";
 import { useCepLookup } from "@/hooks/useCepLookup";
 import { useDraft } from "@/hooks/useDraft";
+import { useSegmentoLeadManager } from "@/hooks/useSegmentoLeadManager";
 import { mockCertificados } from "@/data/boasPraticas";
 import { getStatusLabel, getStatusColor, getAlertaVencimento } from "@/types/boasPraticas";
 import { EmpresasVisiveis, EmpresaVisivel } from "./EmpresasVisiveis";
