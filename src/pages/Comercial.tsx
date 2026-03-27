@@ -900,8 +900,12 @@ const Comercial = () => {
         {showLeadModal && (
           <EntidadeModal
             isOpen={showLeadModal}
-            onClose={() => setShowLeadModal(false)}
+            onClose={() => {
+              setShowLeadModal(false);
+              setEditingLeadData(null);
+            }}
             tipoEntidade="leads"
+            editData={editingLeadData}
           />
         )}
       </div>

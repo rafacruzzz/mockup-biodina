@@ -304,8 +304,12 @@ const Cadastro = () => {
       
       <EntidadeModal 
         isOpen={isEntidadeModalOpen} 
-        onClose={() => setIsEntidadeModalOpen(false)}
+        onClose={() => {
+          setIsEntidadeModalOpen(false);
+          setEditingEntidadeData(null);
+        }}
         tipoEntidade={currentEntidadeType}
+        editData={editingEntidadeData}
       />
       
       <UserModal 
