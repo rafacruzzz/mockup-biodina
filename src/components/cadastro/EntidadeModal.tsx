@@ -779,6 +779,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 </div>
               </div>
 
+              </>
+              )}
               <div className="space-y-3 border-t pt-4">
                 <h3 className="font-semibold text-sm">Serviço/Produto Oferecido</h3>
                 <Textarea
