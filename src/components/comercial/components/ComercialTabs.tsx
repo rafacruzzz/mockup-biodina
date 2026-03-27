@@ -198,7 +198,7 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
               />
             </div>
             <div>
-              <Label htmlFor="website">Website</Label>
+              <Label htmlFor="website">Website do Lead</Label>
               <Input
                 id="website"
                 value={formData.website}
