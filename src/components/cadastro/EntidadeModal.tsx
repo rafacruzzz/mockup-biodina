@@ -628,44 +628,45 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
               </div>
 
               <div className="space-y-3 border-t pt-4">
-                <h3 className="font-semibold text-sm">Contato Comercial</h3>
+                <h3 className="font-semibold text-sm">Contato Comercial do Lead</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="contato_nome">Nome</Label>
-                    <Input
-                      id="contato_nome"
-                      value={formData.contato_nome}
-                      onChange={(e) => handleInputChange("contato_nome", e.target.value)}
-                      placeholder="Nome do contato"
-                    />
+                    <Input id="contato_nome" value={formData.contato_nome} onChange={(e) => handleInputChange("contato_nome", e.target.value)} placeholder="Nome do contato" />
                   </div>
                   <div>
                     <Label htmlFor="contato_cargo">Cargo</Label>
-                    <Input
-                      id="contato_cargo"
-                      value={formData.contato_cargo}
-                      onChange={(e) => handleInputChange("contato_cargo", e.target.value)}
-                      placeholder="Cargo"
-                    />
+                    <Input id="contato_cargo" value={formData.contato_cargo} onChange={(e) => handleInputChange("contato_cargo", e.target.value)} placeholder="Cargo" />
                   </div>
                   <div>
                     <Label htmlFor="contato_telefone">Telefone</Label>
-                    <Input
-                      id="contato_telefone"
-                      value={formData.contato_telefone}
-                      onChange={(e) => handleInputChange("contato_telefone", e.target.value)}
-                      placeholder="(00) 00000-0000"
-                    />
+                    <Input id="contato_telefone" value={formData.contato_telefone} onChange={(e) => handleInputChange("contato_telefone", e.target.value)} placeholder="(00) 00000-0000" />
                   </div>
                   <div>
                     <Label htmlFor="contato_email">E-mail</Label>
-                    <Input
-                      id="contato_email"
-                      type="email"
-                      value={formData.contato_email}
-                      onChange={(e) => handleInputChange("contato_email", e.target.value)}
-                      placeholder="email@exemplo.com"
-                    />
+                    <Input id="contato_email" type="email" value={formData.contato_email} onChange={(e) => handleInputChange("contato_email", e.target.value)} placeholder="email@exemplo.com" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3 border-t pt-4">
+                <h3 className="font-semibold text-sm">Contato Comercial do Mantenedor</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="contato_nome_mantenedor">Nome</Label>
+                    <Input id="contato_nome_mantenedor" value={formData.contato_nome_mantenedor} onChange={(e) => handleInputChange("contato_nome_mantenedor", e.target.value)} placeholder="Nome do contato" />
+                  </div>
+                  <div>
+                    <Label htmlFor="contato_cargo_mantenedor">Cargo</Label>
+                    <Input id="contato_cargo_mantenedor" value={formData.contato_cargo_mantenedor} onChange={(e) => handleInputChange("contato_cargo_mantenedor", e.target.value)} placeholder="Cargo" />
+                  </div>
+                  <div>
+                    <Label htmlFor="contato_telefone_mantenedor">Telefone</Label>
+                    <Input id="contato_telefone_mantenedor" value={formData.contato_telefone_mantenedor} onChange={(e) => handleInputChange("contato_telefone_mantenedor", e.target.value)} placeholder="(00) 00000-0000" />
+                  </div>
+                  <div>
+                    <Label htmlFor="contato_email_mantenedor">E-mail</Label>
+                    <Input id="contato_email_mantenedor" type="email" value={formData.contato_email_mantenedor} onChange={(e) => handleInputChange("contato_email_mantenedor", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                 </div>
               </div>
