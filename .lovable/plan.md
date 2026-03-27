@@ -1,41 +1,34 @@
 
 
-## Plano: Endereços Lead/Mantenedor, Dados Bancários múltiplos e botão Converter Lead em Cliente
+## Plano: Habilitar edição de Lead no Cadastro e no Comercial
 
-### 1. Aba Endereços — Separar por Lead e Mantenedor
+### Problema
+1. O `DataTable` dispara evento `editItem` ao clicar no botão editar, mas `handleEditItem` no `Cadastro.tsx` só trata `usuarios/colaboradores` — ignora `pessoas` (leads, clientes, etc.)
+2. O `EntidadeModal` não aceita prop de dados existentes (`editData`) para pré-preencher os campos
+3. No `Comercial.tsx`, o lead modal também não suporta edição
+4. O botão "Converter em Cliente" deve aparecer apenas na edição, não ao criar novo lead
 
-Atualmente existem 2 blocos: "Endereço de Faturamento" e "Endereço de Entrega". Quando `tipoEntidade === "leads"`, duplicar para 4 blocos:
+### Alterações
 
-- **Endereço de Faturamento do Lead** (campos atuais `fat_*`)
-- **Endereço de Entrega do Lead** (campos atuais `ent_*`)
-- **Endereço de Faturamento do Mantenedor** (novos campos `mant_fat_*`)
-- **Endereço de Entrega do Mantenedor** (novos campos `mant_ent_*`)
+**1. `src/components/cadastro/EntidadeModal.tsx`**
+- Adicionar prop `editData?: any` na interface
+- No `useEffect`, se `editData` existir, pré-preencher `formData` com os dados do registro, incluindo `contasBancarias` se houver
+- O botão "Converter em Cliente" só aparece quando `editData` está presente (modo edição)
+- Alterar título do modal: "Editar [Lead/Cliente/...]" quando `editData` existe, "Novo [Lead/Cliente/...]" quando não
 
-Adicionar 16 novos campos ao `formData`: `mant_fat_endereco`, `mant_fat_numero`, `mant_fat_complemento`, `mant_fat_cidade`, `mant_fat_estado`, `mant_fat_cep`, `mant_fat_uf`, `mant_fat_pais`, e os mesmos com prefixo `mant_ent_*`. Cada bloco de CEP terá lookup via `handleCepLookup` com novos tipos.
+**2. `src/pages/Cadastro.tsx`**
+- Adicionar estado `editingEntidadeData` (null ou objeto com dados do item)
+- No `handleEditItem`, adicionar caso para `activeModule === 'pessoas'`: setar `editingEntidadeData` com o item, setar `currentEntidadeType` com o `activeSubModule`, e abrir o modal
+- Passar `editData={editingEntidadeData}` ao `EntidadeModal`
+- No `onClose`, limpar `editingEntidadeData`
 
-Para entidades que não são leads, a aba permanece como está (2 blocos).
+**3. `src/pages/Comercial.tsx`**
+- Na tabela de leads, ao clicar no botão editar de uma linha, setar estado `editingLeadData` com os dados do lead e abrir o modal
+- Passar `editData={editingLeadData}` ao `EntidadeModal`
+- No `onClose`, limpar `editingLeadData`
 
-### 2. Aba Dados Bancários — Suporte a múltiplos bancos
-
-Substituir os campos fixos por um array `contas_bancarias` no estado, com botão "Adicionar Banco". Cada conta terá: banco, codigo_banco, agencia, conta, chave_pix, nome_beneficiario. Interface:
-
-- Lista de cards, cada um com os 6 campos + botão Remover
-- Botão "+ Adicionar Banco" no final
-- Mínimo 1 conta exibida por padrão
-
-Remover os campos avulsos `banco`, `codigo_banco`, `agencia`, `conta`, `chave_pix`, `nome_beneficiario` do formData e usar `useState<ContaBancaria[]>` separado.
-
-### 3. Botão "Transformar Lead em Cliente"
-
-Adicionar no footer do modal (ao lado dos botões existentes), visível apenas quando `tipoEntidade === "leads"`:
-
-- Botão com ícone e texto "Converter em Cliente"
-- Ao clicar, exibe confirmação (toast ou dialog simples)
-- Chama `onClose()` e dispara callback para mover o registro do submódulo "leads" para "clientes" no `modulesConfig`
-
-Adicionar nova prop opcional `onConvertToClient?: (formData) => void` na interface do modal.
-
-### Arquivos alterados
-
-- `src/components/cadastro/EntidadeModal.tsx` — todas as 3 alterações acima
+### Resultado
+- Clicar no ícone de editar em qualquer lead (Cadastro ou Comercial) abre o `EntidadeModal` com os dados pré-preenchidos
+- O botão "Converter em Cliente" aparece apenas no modo edição
+- Criar novo lead continua funcionando normalmente (modal vazio)
 
