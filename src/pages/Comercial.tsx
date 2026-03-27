@@ -877,7 +877,15 @@ const Comercial = () => {
                         <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
                           <Eye className="h-4 w-4 text-muted-foreground" />
                         </Button>
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-8 w-8 p-0"
+                          onClick={() => {
+                            setEditingLeadData(lead);
+                            setShowLeadModal(true);
+                          }}
+                        >
                           <Edit className="h-4 w-4 text-muted-foreground" />
                         </Button>
                       </div>
