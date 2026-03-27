@@ -14,6 +14,7 @@ import ContaBancariaModal from "@/components/cadastro/ContaBancariaModal";
 import GenericModal from "@/components/cadastro/GenericModal";
 import ProdutoUsoConsumoModal from "@/components/cadastro/ProdutoUsoConsumoModal";
 import KitModal from "@/components/cadastro/KitModal";
+import MarcaModal from "@/components/cadastro/MarcaModal";
 import GestaoFiliais from "@/components/cadastro/GestaoFiliais";
 import { modules } from "@/data/cadastroModules";
 import { useEmpresa } from "@/contexts/EmpresaContext";
