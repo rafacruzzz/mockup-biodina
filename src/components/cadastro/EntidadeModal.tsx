@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { X, Save, Upload, Trash2, FileText, Plus, Link2 } from "lucide-react";
 import { useCepLookup } from "@/hooks/useCepLookup";
 import { useDraft } from "@/hooks/useDraft";
+import { useSegmentoLeadManager } from "@/hooks/useSegmentoLeadManager";
 import { mockCertificados } from "@/data/boasPraticas";
 import { getStatusLabel, getStatusColor, getAlertaVencimento } from "@/types/boasPraticas";
 import { EmpresasVisiveis, EmpresaVisivel } from "./EmpresasVisiveis";
@@ -23,6 +24,7 @@ interface EntidadeModalProps {
 
 const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) => {
   const { lookupCep, loading: cepLoading } = useCepLookup();
+  const { segmentos } = useSegmentoLeadManager();
   const [uploadedDocs, setUploadedDocs] = useState<Array<{ name: string; size: number; type: string }>>([]);
   const [certificadosVinculados, setCertificadosVinculados] = useState<string[]>([]);
   const [certificadoSelecionado, setCertificadoSelecionado] = useState<string>("");
@@ -54,6 +56,9 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     cin_rg: "",
     tipo_cliente: "",
     tipo_lead: "" as "" | "publico" | "particular",
+    fonte_lead: "",
+    segmento_lead: "",
+    metodo_contato: "",
     nome_fantasia: "",
     
     // Contatos expandidos
@@ -271,19 +276,71 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
             {/* ABA: DADOS GERAIS */}
             <TabsContent value="dados-gerais" className="space-y-4 mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {tipoEntidade === "leads" && (
-                  <div>
-                    <Label htmlFor="tipo_lead">Tipo de Lead</Label>
-                    <Select value={formData.tipo_lead} onValueChange={(value) => handleInputChange("tipo_lead", value)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="publico">Público</SelectItem>
-                        <SelectItem value="particular">Particular</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              {tipoEntidade === "leads" && (
+                  <>
+                    <div>
+                      <Label htmlFor="fonte_lead">Fonte do Lead</Label>
+                      <Select value={formData.fonte_lead} onValueChange={(value) => handleInputChange("fonte_lead", value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione a fonte" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="site">Site</SelectItem>
+                          <SelectItem value="indicacao">Indicação</SelectItem>
+                          <SelectItem value="cold_call">Cold Call</SelectItem>
+                          <SelectItem value="licitacao">Licitação</SelectItem>
+                          <SelectItem value="referencia">Referência</SelectItem>
+                          <SelectItem value="evento">Evento</SelectItem>
+                          <SelectItem value="telefone">Telefone</SelectItem>
+                          <SelectItem value="email">E-mail</SelectItem>
+                          <SelectItem value="presencial">Presencial</SelectItem>
+                          <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                          <SelectItem value="video_chamada">Vídeo Chamada</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="segmento_lead">Segmento do Lead</Label>
+                      <Select value={formData.segmento_lead} onValueChange={(value) => handleInputChange("segmento_lead", value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o segmento" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {segmentos.map(s => (
+                            <SelectItem key={s.id} value={s.value}>{s.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="metodo_contato">Método de Contato</Label>
+                      <Select value={formData.metodo_contato} onValueChange={(value) => handleInputChange("metodo_contato", value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o método" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="telefone">Telefone</SelectItem>
+                          <SelectItem value="email">E-mail</SelectItem>
+                          <SelectItem value="presencial">Presencial</SelectItem>
+                          <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                          <SelectItem value="video_chamada">Vídeo Chamada</SelectItem>
+                          <SelectItem value="outros">Outros</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="tipo_lead">Tipo de Lead</Label>
+                      <Select value={formData.tipo_lead} onValueChange={(value) => handleInputChange("tipo_lead", value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="publico">Público</SelectItem>
+                          <SelectItem value="particular">Particular</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
                 )}
 
                 <div>
