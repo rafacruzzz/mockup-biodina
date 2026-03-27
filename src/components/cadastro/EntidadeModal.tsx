@@ -733,7 +733,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: Ent
             {/* ABA: ENDEREÇOS */}
             <TabsContent value="enderecos" className="space-y-6 mt-4">
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">Endereço de Faturamento</h3>
+                <h3 className="font-semibold text-lg border-b pb-2">{isLead ? 'Endereço de Faturamento do Lead' : 'Endereço de Faturamento'}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="fat_cep">CEP</Label>
