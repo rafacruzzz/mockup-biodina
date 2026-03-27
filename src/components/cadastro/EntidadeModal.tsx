@@ -201,6 +201,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   const [contasBancarias, setContasBancarias] = useState<ContaBancaria[]>([
     { banco: '', agencia: '', conta: '', chave_pix: '', nome_beneficiario: '' }
   ]);
+  const [showConvertConfirm, setShowConvertConfirm] = useState(false);
 
   const handleContaBancariaChange = (index: number, field: keyof ContaBancaria, value: string) => {
     setContasBancarias(prev => prev.map((conta, i) => 
