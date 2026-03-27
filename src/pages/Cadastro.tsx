@@ -99,7 +99,11 @@ const Cadastro = () => {
   };
 
   const handleEditItem = (item: any, moduleName: string) => {
-    if (activeModule === 'usuarios' && (activeSubModule === 'colaboradores' || activeSubModule === 'usuarios')) {
+    if (activeModule === 'pessoas') {
+      setEditingEntidadeData(item);
+      setCurrentEntidadeType(activeSubModule);
+      setIsEntidadeModalOpen(true);
+    } else if (activeModule === 'usuarios' && (activeSubModule === 'colaboradores' || activeSubModule === 'usuarios')) {
       setIsEditMode(true);
       setEditingColaboradorId(String(item.id));
       
