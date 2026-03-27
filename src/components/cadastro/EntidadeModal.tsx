@@ -979,7 +979,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   {renderAddressBlock("Endereço do Fabricante Legal", "mant_fat", "mant_faturamento")}
                   {renderAddressBlock("Endereço da Coleta da Mercadoria", "coleta", "coleta")}
                 </>
-              ) : isFornecedorUsoConsumo ? (
+              ) : (isFornecedorUsoConsumo || isFornecedorServicos) ? (
                 <>
                   {renderAddressBlock("Endereço", "fat", "faturamento")}
                 </>
