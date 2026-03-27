@@ -67,10 +67,11 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   const isFornecedor = tipoEntidade.startsWith('fornecedores_');
   const isFornecedorRevenda = tipoEntidade === 'fornecedores_revenda';
   const isFornecedorUsoConsumo = tipoEntidade === 'fornecedores_uso_consumo';
+  const isFornecedorServicos = tipoEntidade === 'fornecedores_servicos';
   const isLead = tipoEntidade === 'leads';
   const isCliente = tipoEntidade === 'clientes';
   const isRepresentante = tipoEntidade === 'representantes';
-  const entityLabel = isRepresentante ? "Representante Comercial" : isFornecedorRevenda ? "Unidade Fabril" : isFornecedorUsoConsumo ? "Fornecedor – Uso e Consumo" : (isLead ? "Lead" : "Cliente");
+  const entityLabel = isRepresentante ? "Representante Comercial" : isFornecedorRevenda ? "Unidade Fabril" : isFornecedorUsoConsumo ? "Fornecedor – Uso e Consumo" : isFornecedorServicos ? "Fornecedor – Serviços" : (isLead ? "Lead" : "Cliente");
 
   // Hook de rascunho
   const { 
@@ -473,7 +474,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   // Calculate tab count for grid
   const getTabGridCols = () => {
     if (isFornecedorRevenda) return 'flex flex-wrap gap-1';
-    if (isFornecedorUsoConsumo) return 'grid grid-cols-7 w-full';
+    if (isFornecedorUsoConsumo || isFornecedorServicos) return 'grid grid-cols-7 w-full';
     if (isFornecedor) return 'grid grid-cols-9 w-full';
     if (isRepresentante) return 'grid grid-cols-9 w-full';
     return 'grid grid-cols-8 w-full';
@@ -509,7 +510,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               <TabsTrigger value="enderecos">Endereços</TabsTrigger>
               <TabsTrigger value="fiscais">Dados Fiscais</TabsTrigger>
               <TabsTrigger value="bancarios">Dados Bancários</TabsTrigger>
-              {!isFornecedorRevenda && !isFornecedorUsoConsumo && (
+              {!isFornecedorRevenda && !isFornecedorUsoConsumo && !isFornecedorServicos && (
                 <TabsTrigger value="credito">Crédito/Restrições</TabsTrigger>
               )}
               {isRepresentante && (
@@ -519,7 +520,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               {isFornecedorRevenda && (
                 <TabsTrigger value="linhas">Linhas</TabsTrigger>
               )}
-              {isFornecedor && !isFornecedorUsoConsumo && (
+              {isFornecedor && !isFornecedorUsoConsumo && !isFornecedorServicos && (
                 <TabsTrigger value="boas-praticas">Boas Práticas</TabsTrigger>
               )}
               {isFornecedorRevenda && (
@@ -615,7 +616,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   </div>
                 )}
 
-                {!isRepresentante && !isFornecedorRevenda && !isFornecedorUsoConsumo && (
+                {!isRepresentante && !isFornecedorRevenda && !isFornecedorUsoConsumo && !isFornecedorServicos && (
                   <div>
                     <Label htmlFor="tipo_cliente">Tipo de {entityLabel}</Label>
                     <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>
@@ -632,13 +633,13 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
 
                 <div>
                   <Label htmlFor="nome_cliente">
-                    {isFornecedorRevenda ? "Nome da Unidade Fabril" : isFornecedorUsoConsumo ? "Nome do Fornecedor – Uso e Consumo" : `Nome do ${entityLabel}`}
+                    {isFornecedorRevenda ? "Nome da Unidade Fabril" : isFornecedorUsoConsumo ? "Nome do Fornecedor – Uso e Consumo" : isFornecedorServicos ? "Nome do Fornecedor – Serviços" : `Nome do ${entityLabel}`}
                   </Label>
                   <Input
                     id="nome_cliente"
                     value={formData.nome_cliente}
                     onChange={(e) => handleInputChange("nome_cliente", e.target.value)}
-                    placeholder={isFornecedorRevenda ? "Nome da unidade fabril" : isFornecedorUsoConsumo ? "Nome do fornecedor" : "Nome do cliente"}
+                    placeholder={isFornecedorRevenda ? "Nome da unidade fabril" : (isFornecedorUsoConsumo || isFornecedorServicos) ? "Nome do fornecedor" : "Nome do cliente"}
                   />
                 </div>
 
@@ -706,7 +707,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   />
                 </div>
 
-                {!isRepresentante && !isFornecedorUsoConsumo && (
+                {!isRepresentante && !isFornecedorUsoConsumo && !isFornecedorServicos && (
                   <>
                     <div>
                       <Label htmlFor="nome_mantenedor">
@@ -978,7 +979,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   {renderAddressBlock("Endereço do Fabricante Legal", "mant_fat", "mant_faturamento")}
                   {renderAddressBlock("Endereço da Coleta da Mercadoria", "coleta", "coleta")}
                 </>
-              ) : isFornecedorUsoConsumo ? (
+              ) : (isFornecedorUsoConsumo || isFornecedorServicos) ? (
                 <>
                   {renderAddressBlock("Endereço", "fat", "faturamento")}
                 </>
