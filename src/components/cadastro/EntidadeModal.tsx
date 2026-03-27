@@ -300,7 +300,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-background rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden">
         <div className="flex-shrink-0 flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-bold">Cadastro de {getTipoLabel(tipoEntidade)}</h2>
+          <h2 className="text-xl font-bold">{editData ? 'Editar' : 'Cadastro de'} {getTipoLabel(tipoEntidade)}</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
