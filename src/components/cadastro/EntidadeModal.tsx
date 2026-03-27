@@ -573,7 +573,6 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                   </div>
                 </div>
               </div>
-              </div>
 
               <div className="space-y-3 border-t pt-4">
                 <h3 className="font-semibold text-sm">Web e Redes Sociais do Lead</h3>
