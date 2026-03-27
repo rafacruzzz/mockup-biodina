@@ -512,8 +512,11 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               <TabsTrigger value="enderecos">Endereços</TabsTrigger>
               <TabsTrigger value="fiscais">Dados Fiscais</TabsTrigger>
               <TabsTrigger value="bancarios">Dados Bancários</TabsTrigger>
-              {!isFornecedorRevenda && !isFornecedorUsoConsumo && !isFornecedorServicos && (
+              {!isFornecedorRevenda && !isFornecedorUsoConsumo && !isFornecedorServicos && !isTransportadora && (
                 <TabsTrigger value="credito">Crédito/Restrições</TabsTrigger>
+              )}
+              {isTransportadora && (
+                <TabsTrigger value="area-atendida">Área atendida/Tabela de preços</TabsTrigger>
               )}
               {isRepresentante && (
                 <TabsTrigger value="comissao">Comissão</TabsTrigger>
