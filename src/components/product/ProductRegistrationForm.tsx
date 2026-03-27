@@ -184,6 +184,7 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
             <TabsList className="flex flex-wrap w-full gap-1 p-1 mb-6 h-auto">
               <TabsTrigger value="dados-gerais" className="text-xs flex-1 min-w-fit px-2 py-1.5">Dados Gerais</TabsTrigger>
               <TabsTrigger value="regulamentacao-anvisa" className="text-xs flex-1 min-w-fit px-2 py-1.5">Regulamentação ANVISA</TabsTrigger>
+              <TabsTrigger value="ficha-tecnica" className="text-xs flex-1 min-w-fit px-2 py-1.5">Ficha Técnica</TabsTrigger>
               <TabsTrigger value="apresentacoes" className="text-xs flex-1 min-w-fit px-2 py-1.5">Apresentações</TabsTrigger>
               <TabsTrigger value="codigos-fiscais" className="text-xs flex-1 min-w-fit px-2 py-1.5">Códigos Fiscais</TabsTrigger>
               <TabsTrigger value="preco-estoque" className="text-xs flex-1 min-w-fit px-2 py-1.5">Preço e Estoque</TabsTrigger>
