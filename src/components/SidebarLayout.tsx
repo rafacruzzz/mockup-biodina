@@ -76,9 +76,12 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
     return [...orderedModuleItems, solicitacoes!, configuracao!, personalizar!];
   };
 
+  const isSuperUser = user?.email === 'super@super.com.br';
+
   const menuItems = getMenuItems().filter(item => {
-    if (['solicitacoes', 'configuracao', 'personalizar-navegacao'].includes(item.id)) return true;
-    if (item.id === 'super') return user?.email === 'super@super.com.br';
+    if (item.id === 'super') return isSuperUser;
+    if (['solicitacoes', 'personalizar-navegacao'].includes(item.id)) return isSuperUser;
+    if (item.id === 'configuracao') return true;
     return modulosDisponiveis.includes(item.id as any);
   });
 

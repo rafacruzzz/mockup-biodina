@@ -3,8 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { UserProvider } from "@/contexts/UserContext";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { UserProvider, useUser } from "@/contexts/UserContext";
 import { EmpresaProvider } from "@/contexts/EmpresaContext";
 import { LicitacoesGanhasProvider } from "@/contexts/LicitacoesGanhasContext";
 import Index from "./pages/Index";
@@ -43,6 +43,16 @@ const queryClient = new QueryClient({
   },
 });
 
+const SuperOnlyRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
+  const { user } = useUser();
+
+  if (user?.email !== "super@super.com.br") {
+    return <Navigate to="/bi-geral" replace />;
+  }
+
+  return children;
+};
+
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -68,11 +78,11 @@ const App: React.FC = () => {
           <Route path="/rh" element={<RH />} />
           <Route path="/ti" element={<TI />} />
           <Route path="/rh/rescisao/:colaboradorId" element={<ProcessoRescisao />} />
-                <Route path="/solicitacoes" element={<Solicitacoes />} />
-                <Route path="/super" element={<Super />} />
+                <Route path="/solicitacoes" element={<SuperOnlyRoute><Solicitacoes /></SuperOnlyRoute>} />
+                <Route path="/super" element={<SuperOnlyRoute><Super /></SuperOnlyRoute>} />
                 <Route path="/editar-perfil" element={<EditarPerfil />} />
                 <Route path="/meu-plano" element={<MeuPlano />} />
-                <Route path="/personalizar-navegacao" element={<PersonalizarNavegacao />} />
+                <Route path="/personalizar-navegacao" element={<SuperOnlyRoute><PersonalizarNavegacao /></SuperOnlyRoute>} />
                 <Route path="/configuracao" element={<Configuracao />} />
                 {/* Rota pública para candidatura */}
                 <Route path="/candidatura/:linkId" element={<CandidaturaPublica />} />
