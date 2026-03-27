@@ -70,12 +70,27 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
     reservado: 0,
     estoqueDisponivel: 0,
 
-    // Dimensões e Peso
-    pesoLiquido: 0,
-    pesoBruto: 0,
-    altura: 0,
-    largura: 0,
-    profundidade: 0,
+    // Ficha Técnica
+    fichaTecnica: {
+      parametrosChave: "",
+      compatibilidades: "",
+      requisitosInfraestrutura: "",
+      condicoesAmbientais: "",
+      conformidadesNormas: "",
+    },
+
+    // Dimensões e Peso - Com embalagem
+    pesoLiquidoComEmb: 0,
+    pesoBrutoComEmb: 0,
+    alturaComEmb: 0,
+    larguraComEmb: 0,
+    profundidadeComEmb: 0,
+    // Dimensões e Peso - Sem embalagem
+    pesoLiquidoSemEmb: 0,
+    pesoBrutoSemEmb: 0,
+    alturaSemEmb: 0,
+    larguraSemEmb: 0,
+    profundidadeSemEmb: 0,
 
     // Documentação e Links
     documentacaoLinks: {
