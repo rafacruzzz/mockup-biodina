@@ -484,7 +484,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                     />
                   </div>
                   <div>
-                    <Label htmlFor="telefone3">Telefone 3</Label>
+                    <Label htmlFor="telefone3">Telefone 1 do Mantenedor</Label>
                     <Input
                       id="telefone3"
                       value={formData.telefone3}
