@@ -1076,62 +1076,44 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: Ent
 
             {/* ABA: DADOS BANCÁRIOS */}
             <TabsContent value="bancarios" className="space-y-4 mt-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="banco">Banco</Label>
-                  <Input
-                    id="banco"
-                    value={formData.banco}
-                    onChange={(e) => handleInputChange("banco", e.target.value)}
-                    placeholder="Nome do banco"
-                  />
+              {contasBancarias.map((conta, index) => (
+                <div key={index} className="border rounded-lg p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-sm">Banco {index + 1}</h3>
+                    {contasBancarias.length > 1 && (
+                      <Button variant="ghost" size="sm" onClick={() => removeContaBancaria(index)}>
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Banco</Label>
+                      <Input value={conta.banco} onChange={(e) => handleContaBancariaChange(index, "banco", e.target.value)} placeholder="Nome do banco" />
+                    </div>
+                    <div>
+                      <Label>Chave PIX</Label>
+                      <Input value={conta.chave_pix} onChange={(e) => handleContaBancariaChange(index, "chave_pix", e.target.value)} placeholder="CPF, CNPJ, e-mail ou telefone" />
+                    </div>
+                    <div>
+                      <Label>Agência</Label>
+                      <Input value={conta.agencia} onChange={(e) => handleContaBancariaChange(index, "agencia", e.target.value)} placeholder="0000" />
+                    </div>
+                    <div>
+                      <Label>Conta Corrente</Label>
+                      <Input value={conta.conta} onChange={(e) => handleContaBancariaChange(index, "conta", e.target.value)} placeholder="00000-0" />
+                    </div>
+                    <div className="md:col-span-2">
+                      <Label>Nome do Beneficiário</Label>
+                      <Input value={conta.nome_beneficiario} onChange={(e) => handleContaBancariaChange(index, "nome_beneficiario", e.target.value)} placeholder="Nome completo" />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="codigo_banco">Código do Banco</Label>
-                  <Input
-                    id="codigo_banco"
-                    value={formData.codigo_banco}
-                    onChange={(e) => handleInputChange("codigo_banco", e.target.value)}
-                    placeholder="000"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="agencia">Agência</Label>
-                  <Input
-                    id="agencia"
-                    value={formData.agencia}
-                    onChange={(e) => handleInputChange("agencia", e.target.value)}
-                    placeholder="0000"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="conta">Conta Corrente</Label>
-                  <Input
-                    id="conta"
-                    value={formData.conta}
-                    onChange={(e) => handleInputChange("conta", e.target.value)}
-                    placeholder="00000-0"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="chave_pix">Chave PIX</Label>
-                  <Input
-                    id="chave_pix"
-                    value={formData.chave_pix}
-                    onChange={(e) => handleInputChange("chave_pix", e.target.value)}
-                    placeholder="CPF, CNPJ, e-mail ou telefone"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="nome_beneficiario">Nome do Beneficiário</Label>
-                  <Input
-                    id="nome_beneficiario"
-                    value={formData.nome_beneficiario}
-                    onChange={(e) => handleInputChange("nome_beneficiario", e.target.value)}
-                    placeholder="Nome completo"
-                  />
-                </div>
-              </div>
+              ))}
+              <Button variant="outline" onClick={addContaBancaria} className="w-full">
+                <Plus className="h-4 w-4 mr-2" />
+                Adicionar Banco
+              </Button>
             </TabsContent>
 
             {/* ABA: CRÉDITO E RESTRIÇÕES */}
