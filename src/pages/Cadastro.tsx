@@ -35,6 +35,7 @@ const Cadastro = () => {
 
   // Estado para tipo de entidade
   const [currentEntidadeType, setCurrentEntidadeType] = useState<string>('');
+  const [editingEntidadeData, setEditingEntidadeData] = useState<any>(null);
 
   // Estados para modo edição
   const [isEditMode, setIsEditMode] = useState(false);
