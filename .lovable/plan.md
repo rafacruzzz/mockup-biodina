@@ -1,76 +1,42 @@
 
 
-## Plano: Ficha Técnica, UDI nos Códigos Fiscais e Dimensões com/sem embalagem
+## Plano: Acrescentar campos e tabela de Operadores no Cadastro de Contas Bancárias
 
-### 1. Nova aba "Ficha Técnica" no cadastro de Produto
+### Alterações em `src/components/cadastro/ContaBancariaModal.tsx`
 
-**`src/types/product.ts`** — Adicionar campos:
-```tsx
-// Aba Ficha Técnica
-fichaTecnica: {
-  parametrosChave: string;
-  compatibilidades: string;
-  requisitosInfraestrutura: string;
-  condicoesAmbientais: string;
-  conformidadesNormas: string;
-};
-```
+**1. Novos campos no `formData` (linha 17):**
+- `codigo_banco: ""` — antes de "Instituição"
+- `codigo_operacao: ""` — ao lado de "Conta Corrente"
+- `chave_pix: ""`
+- `nome_gerente: ""`
+- `telefone_gerente: ""`
+- `email_gerente: ""`
+- `endereco_gerente: ""`
+- `data_abertura: ""`
+- `data_encerramento: ""`
+- `operadores: []` — array de `{ operador, perfil, tipo, codigo }`
 
-**Novo arquivo `src/components/product/FichaTecnicaTab.tsx`:**
-- Card com 5 campos Textarea, cada um com ícone e label:
-  - Parâmetros/Chaves (ícone Settings)
-  - Compatibilidades (ícone Box)
-  - Requisitos de Infraestrutura (ícone Building2)
-  - Condições Ambientais (ícone Thermometer)
-  - Conformidades/Normas (ícone Shield)
-- Layout idêntico ao da `FichaTecnicaTab` do Repositório de Produtos (imagem de referência), com placeholders explicativos
+**2. Seção "Informações Básicas" — reorganizar grid:**
+- Adicionar campo "Código do Banco" (Input) **antes** de "Instituição"
+- Adicionar campo "Código de Operação" (Input) **ao lado** de "Conta Corrente"
+- Adicionar campo "Chave Pix" (Input)
 
-**`src/components/product/ProductRegistrationForm.tsx`:**
-- Importar `FichaTecnicaTab`
-- Adicionar `TabsTrigger value="ficha-tecnica"` após "Regulamentação ANVISA"
-- Adicionar `TabsContent` correspondente
-- Inicializar `fichaTecnica` no `formData`
+**3. Nova seção "Dados do Gerente":**
+- Nome do Gerente (Input)
+- Telefone (Input com máscara)
+- E-mail (Input)
+- Endereço do Gerente (Input, col-span-2)
 
-### 2. Aba Códigos Fiscais — Substituir "Código EAN (GTIN)" por "UDI"
+**4. Nova seção "Datas":**
+- Data de Abertura da Conta (Input type="date")
+- Data de Encerramento da Conta (Input type="date")
 
-**`src/components/product/CodigosFiscaisTab.tsx`:**
-- Linha 41: `"Código EAN (GTIN) - Cx Primária"` → `"UDI - Cx Primária"`
-- Linha 52: `"Código EAN (GTIN) - Cx Secundária"` → `"UDI - Cx Secundária"`
-- Linha 63: `"Código EAN (GTIN) - Cx Embarque"` → `"UDI - Cx Embarque"`
+**5. Nova seção "Operadores" — tabela com CRUD:**
+- Tabela com colunas: Operador, Perfil, Tipo, Código, Ações (conforme imagem)
+- Botão "Adicionar Operador" que insere linha editável
+- Cada linha terá botão de remover nas Ações
+- Estado `operadores` como array no formData
 
-### 3. Aba Dimensões e Peso — Separar em "Com embalagem" e "Sem embalagem"
-
-**`src/types/product.ts`:**
-- Substituir os 5 campos atuais por:
-```tsx
-// Dimensões e Peso - Com embalagem
-pesoLiquidoComEmb: number;
-pesoBrutoComEmb: number;
-alturaComEmb: number;
-larguraComEmb: number;
-profundidadeComEmb: number;
-// Dimensões e Peso - Sem embalagem
-pesoLiquidoSemEmb: number;
-pesoBrutoSemEmb: number;
-alturaSemEmb: number;
-larguraSemEmb: number;
-profundidadeSemEmb: number;
-```
-
-**`src/components/product/DimensoesPesoTab.tsx`:**
-- Dois blocos Card (ou seções dentro de um Card):
-  - "Dimensões e Peso — Com Embalagem" com 5 campos + volume/peso cubado calculados
-  - "Dimensões e Peso — Sem Embalagem" com os mesmos 5 campos + cálculos
-- Atualizar `ProductRegistrationForm.tsx` para inicializar os novos campos com 0
-
-### 4. Alimentar Repositório de Produtos
-
-Os dados da aba "Ficha Técnica" do cadastro de produto já existem no tipo `Produto` (`parametrosChave`, `compatibilidades`, etc.) usado pela `FichaTecnicaTab` do Repositório. Quando houver backend, esses campos serão a mesma fonte de dados. Sem alteração de código necessária agora — a estrutura já é compatível.
-
-### Arquivos alterados
-- `src/types/product.ts`
-- `src/components/product/FichaTecnicaTab.tsx` (novo)
-- `src/components/product/ProductRegistrationForm.tsx`
-- `src/components/product/CodigosFiscaisTab.tsx`
-- `src/components/product/DimensoesPesoTab.tsx`
+### Resultado
+O modal de Conta Bancária terá todos os campos solicitados organizados em seções lógicas, incluindo a tabela de Operadores com possibilidade de adicionar/remover registros.
 
