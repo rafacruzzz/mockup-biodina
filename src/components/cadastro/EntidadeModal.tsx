@@ -476,6 +476,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   const getTabGridCols = () => {
     if (isFornecedorRevenda) return 'flex flex-wrap gap-1';
     if (isFornecedorUsoConsumo || isFornecedorServicos) return 'grid grid-cols-7 w-full';
+    if (isTransportadora) return 'grid grid-cols-8 w-full';
     if (isFornecedor) return 'grid grid-cols-9 w-full';
     if (isRepresentante) return 'grid grid-cols-9 w-full';
     return 'grid grid-cols-8 w-full';
