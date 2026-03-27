@@ -369,6 +369,11 @@ const Cadastro = () => {
         isOpen={isKitModalOpen}
         onClose={() => setIsKitModalOpen(false)}
       />
+
+      <MarcaModal
+        isOpen={isMarcaModalOpen}
+        onClose={() => setIsMarcaModalOpen(false)}
+      />
     </SidebarLayout>
   );
 };
