@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { X, Save } from "lucide-react";
 import { ProductRegistrationData, ProductRegistrationFormProps } from "@/types/product";
+import FichaTecnicaTab from "./FichaTecnicaTab";
 import DadosGeraisTab from "./DadosGeraisTab";
 import RegulamentacaoAnvisaTab from "./RegulamentacaoAnvisaTab";
 import ApresentacoesTab from "./ApresentacoesTab";
@@ -69,12 +70,27 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
     reservado: 0,
     estoqueDisponivel: 0,
 
-    // Dimensões e Peso
-    pesoLiquido: 0,
-    pesoBruto: 0,
-    altura: 0,
-    largura: 0,
-    profundidade: 0,
+    // Ficha Técnica
+    fichaTecnica: {
+      parametrosChave: "",
+      compatibilidades: "",
+      requisitosInfraestrutura: "",
+      condicoesAmbientais: "",
+      conformidadesNormas: "",
+    },
+
+    // Dimensões e Peso - Com embalagem
+    pesoLiquidoComEmb: 0,
+    pesoBrutoComEmb: 0,
+    alturaComEmb: 0,
+    larguraComEmb: 0,
+    profundidadeComEmb: 0,
+    // Dimensões e Peso - Sem embalagem
+    pesoLiquidoSemEmb: 0,
+    pesoBrutoSemEmb: 0,
+    alturaSemEmb: 0,
+    larguraSemEmb: 0,
+    profundidadeSemEmb: 0,
 
     // Documentação e Links
     documentacaoLinks: {
@@ -168,6 +184,7 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
             <TabsList className="flex flex-wrap w-full gap-1 p-1 mb-6 h-auto">
               <TabsTrigger value="dados-gerais" className="text-xs flex-1 min-w-fit px-2 py-1.5">Dados Gerais</TabsTrigger>
               <TabsTrigger value="regulamentacao-anvisa" className="text-xs flex-1 min-w-fit px-2 py-1.5">Regulamentação ANVISA</TabsTrigger>
+              <TabsTrigger value="ficha-tecnica" className="text-xs flex-1 min-w-fit px-2 py-1.5">Ficha Técnica</TabsTrigger>
               <TabsTrigger value="apresentacoes" className="text-xs flex-1 min-w-fit px-2 py-1.5">Apresentações</TabsTrigger>
               <TabsTrigger value="codigos-fiscais" className="text-xs flex-1 min-w-fit px-2 py-1.5">Códigos Fiscais</TabsTrigger>
               <TabsTrigger value="preco-estoque" className="text-xs flex-1 min-w-fit px-2 py-1.5">Preço e Estoque</TabsTrigger>
@@ -183,6 +200,10 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
 
             <TabsContent value="regulamentacao-anvisa">
               <RegulamentacaoAnvisaTab formData={formData} onInputChange={handleInputChange} />
+            </TabsContent>
+
+            <TabsContent value="ficha-tecnica">
+              <FichaTecnicaTab formData={formData} onInputChange={handleInputChange} />
             </TabsContent>
 
             <TabsContent value="apresentacoes">

@@ -38,7 +38,7 @@ const CodigosFiscaisTab = ({ formData, onInputChange }: ProductTabProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="codigoEANPrimaria" className="text-sm font-semibold">Código EAN (GTIN) - Cx Primária</Label>
+            <Label htmlFor="codigoEANPrimaria" className="text-sm font-semibold">UDI - Cx Primária</Label>
             <Input
               id="codigoEANPrimaria"
               value={formData.codigoEANPrimaria}
@@ -49,7 +49,7 @@ const CodigosFiscaisTab = ({ formData, onInputChange }: ProductTabProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="codigoEANSecundaria" className="text-sm font-semibold">Código EAN (GTIN) - Cx Secundária</Label>
+            <Label htmlFor="codigoEANSecundaria" className="text-sm font-semibold">UDI - Cx Secundária</Label>
             <Input
               id="codigoEANSecundaria"
               value={formData.codigoEANSecundaria}
@@ -60,7 +60,7 @@ const CodigosFiscaisTab = ({ formData, onInputChange }: ProductTabProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="codigoEANEmbarque" className="text-sm font-semibold">Código EAN (GTIN) - Cx Embarque</Label>
+            <Label htmlFor="codigoEANEmbarque" className="text-sm font-semibold">UDI - Cx Embarque</Label>
             <Input
               id="codigoEANEmbarque"
               value={formData.codigoEANEmbarque}
