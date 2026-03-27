@@ -1380,7 +1380,24 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: Ent
         </div>
 
         <div className="flex-shrink-0 flex justify-between gap-4 p-6 border-t">
-          <DraftSaveButton onSaveDraft={handleSaveDraft} />
+          <div className="flex gap-2">
+            <DraftSaveButton onSaveDraft={handleSaveDraft} />
+            {isLead && onConvertToClient && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (window.confirm('Deseja converter este Lead em Cliente? O cadastro será movido para a lista de Clientes.')) {
+                    onConvertToClient({ ...formData, contasBancarias });
+                    onClose();
+                  }
+                }}
+                className="border-green-500 text-green-700 hover:bg-green-50"
+              >
+                <UserCheck className="h-4 w-4 mr-2" />
+                Converter em Cliente
+              </Button>
+            )}
+          </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={onClose}>
               Cancelar
