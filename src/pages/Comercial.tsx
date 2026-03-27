@@ -908,7 +908,6 @@ const Comercial = () => {
             tipoEntidade="leads"
             editData={editingLeadData}
             onConvertToClient={(data) => {
-              const { toast } = await import("@/hooks/use-toast");
               toast({ title: "Lead convertido em cliente com sucesso!" });
               setShowLeadModal(false);
               setEditingLeadData(null);
