@@ -1459,7 +1459,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <Button
                   className="bg-green-600 hover:bg-green-700 text-white"
                   onClick={() => {
-                    onConvertToClient?.({ ...formData, contasBancarias });
+                    onConvertToClient?.({ ...formData, contasBancarias, segmento_lead: formData.segmento_lead });
                     setShowConvertConfirm(false);
                     onClose();
                   }}
