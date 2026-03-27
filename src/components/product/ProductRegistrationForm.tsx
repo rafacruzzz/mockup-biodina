@@ -202,6 +202,10 @@ const ProductRegistrationForm = ({ isOpen, product, onClose, onSave }: ProductRe
               <RegulamentacaoAnvisaTab formData={formData} onInputChange={handleInputChange} />
             </TabsContent>
 
+            <TabsContent value="ficha-tecnica">
+              <FichaTecnicaTab formData={formData} onInputChange={handleInputChange} />
+            </TabsContent>
+
             <TabsContent value="apresentacoes">
               <ApresentacoesTab formData={formData} onInputChange={handleInputChange} />
             </TabsContent>
