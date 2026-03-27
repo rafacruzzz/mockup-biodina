@@ -60,7 +60,7 @@ const CodigosFiscaisTab = ({ formData, onInputChange }: ProductTabProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="codigoEANEmbarque" className="text-sm font-semibold">Código EAN (GTIN) - Cx Embarque</Label>
+            <Label htmlFor="codigoEANEmbarque" className="text-sm font-semibold">UDI - Cx Embarque</Label>
             <Input
               id="codigoEANEmbarque"
               value={formData.codigoEANEmbarque}

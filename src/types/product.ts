@@ -59,12 +59,27 @@ export interface ProductRegistrationData {
   reservado: number;
   estoqueDisponivel: number; // calculado
 
-  // Aba 6 - Dimensões e Peso
-  pesoLiquido: number;
-  pesoBruto: number;
-  altura: number;
-  largura: number;
-  profundidade: number;
+  // Aba Ficha Técnica
+  fichaTecnica: {
+    parametrosChave: string;
+    compatibilidades: string;
+    requisitosInfraestrutura: string;
+    condicoesAmbientais: string;
+    conformidadesNormas: string;
+  };
+
+  // Aba 6 - Dimensões e Peso - Com embalagem
+  pesoLiquidoComEmb: number;
+  pesoBrutoComEmb: number;
+  alturaComEmb: number;
+  larguraComEmb: number;
+  profundidadeComEmb: number;
+  // Dimensões e Peso - Sem embalagem
+  pesoLiquidoSemEmb: number;
+  pesoBrutoSemEmb: number;
+  alturaSemEmb: number;
+  larguraSemEmb: number;
+  profundidadeSemEmb: number;
 
   // Aba 7 - Documentação e Links (nova)
   documentacaoLinks: {
