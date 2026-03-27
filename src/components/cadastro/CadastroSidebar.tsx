@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { modules } from "@/data/cadastroModules";
+import { useUser } from "@/contexts/UserContext";
 
 interface CadastroSidebarProps {
   activeModule: string;
@@ -19,6 +20,10 @@ const CadastroSidebar = ({
   onModuleSelect,
   onClose
 }: CadastroSidebarProps) => {
+  const { user } = useUser();
+  const isSuperUser = user?.email === "super@super.com.br";
+  const visibleModules = Object.entries(modules).filter(([key]) => isSuperUser || key !== "categorias");
+
   const handleCollapseModule = (moduleKey: string, e: React.MouseEvent) => {
     e.stopPropagation();
     onModuleToggle(moduleKey);
@@ -45,7 +50,7 @@ const CadastroSidebar = ({
       </div>
       
       <div className="p-4 space-y-2">
-        {Object.entries(modules).map(([key, module]) => (
+        {visibleModules.map(([key, module]) => (
           <div key={key} className="space-y-1">
             <button
               onClick={() => onModuleToggle(key)}
