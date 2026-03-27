@@ -971,7 +971,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: Ent
                   </div>
                 </>
               )}
-
+            </TabsContent>
 
             {/* ABA: DADOS FISCAIS */}
             <TabsContent value="fiscais" className="space-y-4 mt-4">
