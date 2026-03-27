@@ -1412,13 +1412,9 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
             <DraftSaveButton onSaveDraft={handleSaveDraft} />
             {isLead && editData && onConvertToClient && (
               <Button
+              <Button
                 variant="outline"
-                onClick={() => {
-                  if (window.confirm('Deseja converter este Lead em Cliente? O cadastro será movido para a lista de Clientes.')) {
-                    onConvertToClient({ ...formData, contasBancarias });
-                    onClose();
-                  }
-                }}
+                onClick={() => setShowConvertConfirm(true)}
                 className="border-green-500 text-green-700 hover:bg-green-50"
               >
                 <UserCheck className="h-4 w-4 mr-2" />
@@ -1426,6 +1422,36 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               </Button>
             )}
           </div>
+
+          {/* Modal de confirmação de conversão */}
+          <Dialog open={showConvertConfirm} onOpenChange={setShowConvertConfirm}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                  Confirmar Conversão
+                </DialogTitle>
+              </DialogHeader>
+              <p className="text-sm text-muted-foreground py-4">
+                Deseja converter este Lead em Cliente? O cadastro será movido para a lista de Clientes.
+              </p>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowConvertConfirm(false)}>
+                  Cancelar
+                </Button>
+                <Button
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                  onClick={() => {
+                    onConvertToClient?.({ ...formData, contasBancarias });
+                    setShowConvertConfirm(false);
+                    onClose();
+                  }}
+                >
+                  Confirmar
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <div className="flex gap-2">
             <Button variant="outline" onClick={onClose}>
               Cancelar
