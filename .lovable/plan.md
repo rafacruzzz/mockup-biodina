@@ -1,42 +1,92 @@
 
 
-## Plano: Personalizar cadastro de Representante Comercial
+## Plano: Personalizar cadastro de Fornecedor — Mercadoria para Revenda
 
 ### Contexto
-O `tipoEntidade === 'representantes'` já é reconhecido pelo modal (`getTipoLabel` retorna "Representante Comercial"). Porém, o formulário atual mostra todos os campos genéricos (Tipo de Cliente, Nome do Mantenedor, etc.) sem customização específica para representantes.
+O tipo `fornecedores_revenda` já é detectado por `isFornecedor = tipoEntidade.startsWith('fornecedores_')`. Precisamos criar `const isFornecedorRevenda = tipoEntidade === 'fornecedores_revenda'` para customizações específicas.
 
 ### Alterações em `src/components/cadastro/EntidadeModal.tsx`
 
-**1. Variável de controle:**
+---
+
+**1. Variável de controle (junto às existentes, ~linha 41):**
 ```tsx
-const isRepresentante = tipoEntidade === 'representantes';
+const isFornecedorRevenda = tipoEntidade === 'fornecedores_revenda';
 ```
 
-**2. Aba Dados Gerais — ocultar/renomear campos para representantes:**
-- Ocultar campo "Tipo de Cliente/Lead" quando `isRepresentante` (`{!isRepresentante && <div>...</div>}`)
-- Alterar label "Nome do Cliente/Lead" para "Nome do Representante Comercial" quando `isRepresentante`
-  - Ajustar a lógica: `isRepresentante ? "Representante Comercial" : entityLabel`
-- Ocultar campos "Nome do Mantenedor" e "CNPJ do Mantenedor" quando `isRepresentante`
+---
 
-**3. Aba Endereços — simplificar para representantes:**
-- Quando `isRepresentante`, mostrar apenas 1 bloco de endereço com header "Endereço" (sem "Faturamento/Entrega")
-- Usar os campos `fat_*` como o endereço único
-- Ocultar o bloco de Entrega e os blocos do Mantenedor
+**2. Aba Dados Gerais — campos condicionais para `isFornecedorRevenda`:**
+- Ocultar "Tipo de Cliente/Lead" quando `isFornecedorRevenda` (adicionar à condição existente `!isRepresentante`)
+- Renomear "Nome do Cliente" → "Nome da Unidade Fabril" quando `isFornecedorRevenda`
+- Renomear "Nome do Mantenedor" → "Nome do Fabricante Legal/Marca" quando `isFornecedorRevenda`
+- Renomear "CNPJ do Mantenedor" → mantém (ou podemos renomear se necessário)
+- Acrescentar campo "TIN (Tax Id Number)" após CNPJ, visível quando `isFornecedorRevenda`
+- Adicionar `tin_tax_id: ""` no `formData` inicial
 
-**4. Aba Dados Bancários — já suporta múltiplos bancos:**
-- Nenhuma alteração necessária (o sistema de `contasBancarias[]` com botão "Adicionar Banco" já existe)
+---
 
-**5. Nova aba "Comissão" após "Crédito/Restrições":**
-- Adicionar `TabsTrigger` condicional: `{isRepresentante && <TabsTrigger value="comissao">Comissão</TabsTrigger>}`
-- Ajustar `grid-cols` na TabsList para acomodar a aba extra quando representante
-- Conteúdo da aba:
-  - Input "Percentual de Comissão Padrão (%)" (number, step 0.01)
-  - Texto informativo: "Este percentual é o valor padrão e pode variar em cada venda."
-  - Novo campo no `formData`: `percentual_comissao_padrao: 0`
+**3. Aba Endereços — 4 blocos específicos para `isFornecedorRevenda`:**
+Quando `isFornecedorRevenda`, substituir toda a lógica de endereços por 4 blocos:
+- "Endereço de Faturamento" (campos `fat_*` existentes)
+- "Endereço da Unidade Fabril" (novos campos `fabril_*`)
+- "Endereço do Fabricante Legal" (reusa campos `mant_fat_*`)
+- "Endereço da Coleta da Mercadoria" (novos campos `coleta_*`)
 
-### Resultado
-- Representante Comercial terá formulário simplificado: sem Tipo de Cliente, sem Mantenedor, com nome "do Representante Comercial"
-- Endereço único sem subdivisão Faturamento/Entrega
-- Dados Bancários múltiplos (já funciona)
-- Nova aba "Comissão" com percentual padrão editável
+Novos campos no `formData`: `fabril_cep`, `fabril_endereco`, `fabril_numero`, `fabril_complemento`, `fabril_cidade`, `fabril_estado`, `fabril_uf`, `fabril_pais` e `coleta_cep`, `coleta_endereco`, `coleta_numero`, `coleta_complemento`, `coleta_cidade`, `coleta_estado`, `coleta_uf`, `coleta_pais`
+
+Adicionar suporte a CEP lookup para os novos prefixos `fabril` e `coleta`.
+
+---
+
+**4. Aba Dados Bancários — campos internacionais para `isFornecedorRevenda`:**
+Expandir a interface `ContaBancaria` e o estado para incluir campos internacionais condicionais:
+- Adicionar ao tipo: `bank`, `branch`, `account_number`, `iban`, `swift_code`, `beneficiary`, `moeda`, `pais_origem`, `cidade_banco`
+- Quando `isFornecedorRevenda`, renderizar esses campos adicionais dentro de cada bloco de banco (inputs de livre escrita)
+- Os campos nacionais existentes (Chave PIX, Agência, Conta) continuam aparecendo para outros tipos
+
+---
+
+**5. Ocultar aba "Crédito/Restrições" para `isFornecedorRevenda`:**
+- Na `TabsList`: `{!isFornecedorRevenda && <TabsTrigger value="credito">...`
+- O `TabsContent` de crédito já renderiza independentemente, mas pode ser envolvido com a mesma condição
+
+---
+
+**6. Nova aba "Linhas" (após Documentos, apenas `isFornecedorRevenda`):**
+- `TabsTrigger` condicional
+- Conteúdo: lista dinâmica de linhas (array `linhas: string[]` no estado)
+- Botão "+ Adicionar Linha", cada linha é um input de texto com botão de remover
+- Estado vazio: "Nenhuma linha cadastrada. Clique em 'Adicionar Linha' para começar." (conforme print)
+- Botões "Cancelar" e "Salvar Marca" no layout (conforme print)
+
+---
+
+**7. Nova aba "ISO" (após Boas Práticas, apenas `isFornecedorRevenda`):**
+- `TabsTrigger` condicional
+- Estado: `isosVinculadas: Array<{ id, fabrica, vencimento, status, observacao, arquivoISO, arquivoTraducao }>`
+- Layout em tabela com colunas: Fábrica | Vencimento das ISOs | Status | Observação | Anexar ISO | Anexar tradução juramentada
+- Botão "+ Adicionar ISO"
+- Status calculado automaticamente: "Válida", "Vencendo em 5 meses", "Vencida"
+- Alerta visual (banner amarelo/vermelho) quando faltam 5 meses para vencimento, com mensagem para pedir renovação
+- Alerta desaparece (para de avisar semanalmente) quando o arquivo ISO é anexado
+
+---
+
+**8. Ajuste na aba "Boas Práticas" — alertas de vencimento:**
+- O sistema já tem `getAlertaVencimento`. Ajustar para incluir regra de 1 ano (aviso por 1 semana) e 6 meses (aviso por 1 semana) de antecedência
+- Adicionar banner informativo na aba explicando que o certificado e validade vêm do Regulatório
+
+---
+
+**9. Ajustar `TabsList` grid:**
+- Para `isFornecedorRevenda`, calcular o número correto de abas visíveis (Dados Gerais, Endereços, Fiscais, Bancários, Documentos, Linhas, Boas Práticas, ISO, Empresas, Observações = 10 abas)
+- Usar `grid-cols-10` ou `flex flex-wrap` para acomodar
+
+---
+
+### Resumo das abas para Fornecedor Revenda
+Dados Gerais | Endereços | Dados Fiscais | Dados Bancários | Documentos | Linhas | Boas Práticas | ISO | Empresas | Observações
+
+(Sem "Crédito/Restrições")
 
