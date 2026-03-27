@@ -359,6 +359,11 @@ const Cadastro = () => {
         isOpen={isProdutoUsoConsumoModalOpen}
         onClose={() => setIsProdutoUsoConsumoModalOpen(false)}
       />
+
+      <KitModal
+        isOpen={isKitModalOpen}
+        onClose={() => setIsKitModalOpen(false)}
+      />
     </SidebarLayout>
   );
 };
