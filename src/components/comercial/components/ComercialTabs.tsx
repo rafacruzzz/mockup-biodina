@@ -44,7 +44,7 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
         {/* Informações Básicas do Cliente */}
         <Card>
           <CardHeader>
-            <CardTitle>Informações Básicas do Cliente</CardTitle>
+            <CardTitle>Informações Básicas do Lead</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
@@ -107,7 +107,7 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
               />
             </div>
             <div>
-              <Label htmlFor="nome">Nome / Nome Fantasia *</Label>
+              <Label htmlFor="nome">Nome do Lead / Nome Fantasia *</Label>
               <Input
                 id="nome"
                 value={formData.nome}
@@ -179,7 +179,7 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
               <Label htmlFor="ativo">Ativo</Label>
             </div>
             <div>
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email">E-mail do Lead</Label>
               <Input
                 id="email"
                 type="email"
@@ -189,7 +189,7 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
               />
             </div>
             <div>
-              <Label htmlFor="telefone">Telefone</Label>
+              <Label htmlFor="telefone">Telefone do Lead</Label>
               <Input
                 id="telefone"
                 value={formData.telefone}
@@ -198,7 +198,7 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
               />
             </div>
             <div>
-              <Label htmlFor="website">Website</Label>
+              <Label htmlFor="website">Website do Lead</Label>
               <Input
                 id="website"
                 value={formData.website}
