@@ -55,6 +55,9 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     cin_rg: "",
     tipo_cliente: "",
     tipo_lead: "" as "" | "publico" | "particular",
+    fonte_lead: "",
+    segmento_lead: "",
+    metodo_contato: "",
     nome_fantasia: "",
     
     // Contatos expandidos
