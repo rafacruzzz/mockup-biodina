@@ -379,6 +379,11 @@ const Cadastro = () => {
         isOpen={isMarcaModalOpen}
         onClose={() => setIsMarcaModalOpen(false)}
       />
+
+      <EmpresaDetentoraModal
+        isOpen={isEmpresaDetentoraModalOpen}
+        onClose={() => setIsEmpresaDetentoraModalOpen(false)}
+      />
     </SidebarLayout>
   );
 };
