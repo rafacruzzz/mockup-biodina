@@ -20,6 +20,7 @@ interface EntidadeModalProps {
   isOpen: boolean;
   onClose: () => void;
   tipoEntidade: string;
+  onConvertToClient?: (formData: any) => void;
 }
 
 const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) => {
