@@ -21,7 +21,7 @@ const Index = () => {
       color: "bg-green-500"
     },
     {
-      title: "CPR (Compras para Revenda)",
+      title: "CPR",
       description: "Gerencie pedidos, compras fiscais e importações",
       icon: Package,
       href: "/compras",

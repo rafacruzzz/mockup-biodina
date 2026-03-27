@@ -37,7 +37,7 @@ export const setores: Setor[] = [
   },
   {
     id: 'compras',
-    nome: 'CPR (Compras para Revenda)',
+    nome: 'CPR',
     icone: 'ShoppingCart',
     cor: 'bg-orange-500',
     descricao: 'Solicitações de compras para revenda e cadastro de fornecedores',
