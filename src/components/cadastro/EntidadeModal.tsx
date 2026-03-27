@@ -957,6 +957,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 </div>
               </div>
 
+              </>
+              )}
               {(isLead || isCliente) && (
                 <>
                   <div className="space-y-4">
