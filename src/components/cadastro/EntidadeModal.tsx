@@ -455,18 +455,20 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   </div>
                 )}
 
-                <div>
-                  <Label htmlFor="tipo_cliente">Tipo de {entityLabel}</Label>
-                  <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="fisica">Pessoa Física</SelectItem>
-                      <SelectItem value="juridica">Pessoa Jurídica</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {!isRepresentante && (
+                  <div>
+                    <Label htmlFor="tipo_cliente">Tipo de {entityLabel}</Label>
+                    <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="fisica">Pessoa Física</SelectItem>
+                        <SelectItem value="juridica">Pessoa Jurídica</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 <div>
                   <Label htmlFor="nome_cliente">Nome do {entityLabel}</Label>
