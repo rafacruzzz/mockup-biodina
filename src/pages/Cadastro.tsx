@@ -36,6 +36,7 @@ const Cadastro = () => {
   const [isGenericModalOpen, setIsGenericModalOpen] = useState(false);
   const [isProdutoUsoConsumoModalOpen, setIsProdutoUsoConsumoModalOpen] = useState(false);
   const [isKitModalOpen, setIsKitModalOpen] = useState(false);
+  const [isMarcaModalOpen, setIsMarcaModalOpen] = useState(false);
 
   // Estado para tipo de entidade
   const [currentEntidadeType, setCurrentEntidadeType] = useState<string>('');
