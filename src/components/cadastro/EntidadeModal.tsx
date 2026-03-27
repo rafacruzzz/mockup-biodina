@@ -217,7 +217,31 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     }
   };
 
-  const handleCepLookup = async (cep: string, tipo: 'faturamento' | 'entrega' | 'mant_faturamento' | 'mant_entrega') => {
+  // Pré-preencher dados quando em modo edição
+  useEffect(() => {
+    if (editData && isOpen) {
+      const newFormData = { ...formData };
+      Object.keys(newFormData).forEach(key => {
+        if (editData[key] !== undefined) {
+          (newFormData as any)[key] = editData[key];
+        }
+      });
+      // Map common field names
+      if (editData.nome) newFormData.nome_cliente = editData.nome;
+      if (editData.cnpj) newFormData.cnpj_cpf = editData.cnpj;
+      if (editData.telefone) newFormData.telefone1 = editData.telefone;
+      if (editData.email) newFormData.email1 = editData.email;
+      if (editData.cidade) newFormData.fat_cidade = editData.cidade;
+      if (editData.uf) newFormData.fat_uf = editData.uf;
+      setFormData(newFormData);
+      
+      if (editData.contas_bancarias && Array.isArray(editData.contas_bancarias)) {
+        setContasBancarias(editData.contas_bancarias);
+      }
+    }
+  }, [editData, isOpen]);
+
+
     const cleanCep = cep.replace(/\D/g, '');
     if (cleanCep.length === 8) {
       const result = await lookupCep(cleanCep);
