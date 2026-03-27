@@ -569,6 +569,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 )}
               </div>
 
+              {!isRepresentante && (
+              <>
               <div className="space-y-3 border-t pt-4">
                 <h3 className="font-semibold text-sm">Telefones</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
