@@ -1,42 +1,41 @@
 
 
-## Plano: Acrescentar campos e tabela de Operadores no Cadastro de Contas Bancárias
+## Plano: Submódulo "Kits" no módulo de Produtos
 
-### Alterações em `src/components/cadastro/ContaBancariaModal.tsx`
+### Contexto
+Adicionar um submódulo "Kits" abaixo de "Uso e Consumo" no módulo Produtos. Inclui uma tabela listando kits cadastrados, botão "Novo Kit", e um modal/formulário de cadastro de kit com slots de componentes dinâmicos.
 
-**1. Novos campos no `formData` (linha 17):**
-- `codigo_banco: ""` — antes de "Instituição"
-- `codigo_operacao: ""` — ao lado de "Conta Corrente"
-- `chave_pix: ""`
-- `nome_gerente: ""`
-- `telefone_gerente: ""`
-- `email_gerente: ""`
-- `endereco_gerente: ""`
-- `data_abertura: ""`
-- `data_encerramento: ""`
-- `operadores: []` — array de `{ operador, perfil, tipo, codigo }`
+### Alterações
 
-**2. Seção "Informações Básicas" — reorganizar grid:**
-- Adicionar campo "Código do Banco" (Input) **antes** de "Instituição"
-- Adicionar campo "Código de Operação" (Input) **ao lado** de "Conta Corrente"
-- Adicionar campo "Chave Pix" (Input)
+**1. `src/data/cadastroModules.ts` — Adicionar submódulo `kits` após `uso_consumo`:**
+- Novo submódulo `kits` com `name: "Kits"` e `data: []` (array vazio inicial)
 
-**3. Nova seção "Dados do Gerente":**
-- Nome do Gerente (Input)
-- Telefone (Input com máscara)
-- E-mail (Input)
-- Endereço do Gerente (Input, col-span-2)
+**2. Novo componente `src/components/cadastro/KitModal.tsx`:**
+- Modal fullscreen (estilo consistente com outros modais do sistema)
+- **Seção "Informações do Kit"**: Nome do Kit*, SKU do Kit*, Descrição (textarea), Preço Base R$ (MoneyInput, calculado pelos componentes)
+- **Seção "Slots de Componentes"**: 
+  - Botão "+ Adicionar Slot" no topo
+  - Cada slot é um card numerado e reordenável com:
+    - Nome do Slot* (Input), Qtd. Mínima (number), Qtd. Máxima (number)
+    - Lista "Produtos disponíveis neste slot" com botão "+ Cadastrar produtos" que abre seletor de produtos existentes
+    - Botão de remover slot (ícone lixeira) e expandir/colapsar
+  - Produtos selecionados exibidos como chips removíveis dentro do slot
+- **Rodapé com resumo**: "X slot(s) configurado(s)" e "Y produto(s) vinculado(s) no total"
+- Botão "Criar Kit" / "Salvar Kit" (no modo edição)
+- Estado: `{ nome, sku, descricao, precoBase, slots: [{ nome, qtdMinima, qtdMaxima, produtos: [] }] }`
 
-**4. Nova seção "Datas":**
-- Data de Abertura da Conta (Input type="date")
-- Data de Encerramento da Conta (Input type="date")
+**3. `src/pages/Cadastro.tsx`:**
+- Importar `KitModal`
+- Novo estado `isKitModalOpen`
+- Em `handleNewRecord`: quando `activeModule === 'produtos' && activeSubModule === 'kits'` → abrir KitModal
+- Em `getButtonText`: retornar "Novo Kit" para esse submódulo
+- Renderizar `<KitModal>` no JSX
 
-**5. Nova seção "Operadores" — tabela com CRUD:**
-- Tabela com colunas: Operador, Perfil, Tipo, Código, Ações (conforme imagem)
-- Botão "Adicionar Operador" que insere linha editável
-- Cada linha terá botão de remover nas Ações
-- Estado `operadores` como array no formData
+**4. Seletor de produtos dentro do slot:**
+- Componente inline ou sub-modal simples que lista produtos cadastrados (do `cadastroModules.produtos.subModules.produtos.data`)
+- Checkbox para selecionar múltiplos produtos
+- Produtos selecionados aparecem como lista/chips no slot
 
 ### Resultado
-O modal de Conta Bancária terá todos os campos solicitados organizados em seções lógicas, incluindo a tabela de Operadores com possibilidade de adicionar/remover registros.
+O módulo Produtos terá 3 submódulos: Mercadoria para Revenda, Uso e Consumo, e Kits. O cadastro de Kit permite criar slots com múltiplos produtos cada, com resumo visual no rodapé.
 
