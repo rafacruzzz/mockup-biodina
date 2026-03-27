@@ -576,52 +576,53 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
               </div>
 
               <div className="space-y-3 border-t pt-4">
-                <h3 className="font-semibold text-sm">Web e Redes Sociais</h3>
+                <h3 className="font-semibold text-sm">Web e Redes Sociais do Lead</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="website">Website</Label>
-                    <Input
-                      id="website"
-                      value={formData.website}
-                      onChange={(e) => handleInputChange("website", e.target.value)}
-                      placeholder="https://www.exemplo.com"
-                    />
+                    <Input id="website" value={formData.website} onChange={(e) => handleInputChange("website", e.target.value)} placeholder="https://www.exemplo.com" />
                   </div>
                   <div>
                     <Label htmlFor="instagram">Instagram</Label>
-                    <Input
-                      id="instagram"
-                      value={formData.instagram}
-                      onChange={(e) => handleInputChange("instagram", e.target.value)}
-                      placeholder="@usuario"
-                    />
+                    <Input id="instagram" value={formData.instagram} onChange={(e) => handleInputChange("instagram", e.target.value)} placeholder="@usuario" />
                   </div>
                   <div>
                     <Label htmlFor="facebook">Facebook</Label>
-                    <Input
-                      id="facebook"
-                      value={formData.facebook}
-                      onChange={(e) => handleInputChange("facebook", e.target.value)}
-                      placeholder="/usuario"
-                    />
+                    <Input id="facebook" value={formData.facebook} onChange={(e) => handleInputChange("facebook", e.target.value)} placeholder="/usuario" />
                   </div>
                   <div>
                     <Label htmlFor="linkedin">LinkedIn</Label>
-                    <Input
-                      id="linkedin"
-                      value={formData.linkedin}
-                      onChange={(e) => handleInputChange("linkedin", e.target.value)}
-                      placeholder="/company/empresa"
-                    />
+                    <Input id="linkedin" value={formData.linkedin} onChange={(e) => handleInputChange("linkedin", e.target.value)} placeholder="/company/empresa" />
                   </div>
                   <div>
                     <Label htmlFor="x_twitter">X (Twitter)</Label>
-                    <Input
-                      id="x_twitter"
-                      value={formData.x_twitter}
-                      onChange={(e) => handleInputChange("x_twitter", e.target.value)}
-                      placeholder="@usuario"
-                    />
+                    <Input id="x_twitter" value={formData.x_twitter} onChange={(e) => handleInputChange("x_twitter", e.target.value)} placeholder="@usuario" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3 border-t pt-4">
+                <h3 className="font-semibold text-sm">Web e Redes Sociais do Mantenedor</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="website_mantenedor">Website</Label>
+                    <Input id="website_mantenedor" value={formData.website_mantenedor} onChange={(e) => handleInputChange("website_mantenedor", e.target.value)} placeholder="https://www.exemplo.com" />
+                  </div>
+                  <div>
+                    <Label htmlFor="instagram_mantenedor">Instagram</Label>
+                    <Input id="instagram_mantenedor" value={formData.instagram_mantenedor} onChange={(e) => handleInputChange("instagram_mantenedor", e.target.value)} placeholder="@usuario" />
+                  </div>
+                  <div>
+                    <Label htmlFor="facebook_mantenedor">Facebook</Label>
+                    <Input id="facebook_mantenedor" value={formData.facebook_mantenedor} onChange={(e) => handleInputChange("facebook_mantenedor", e.target.value)} placeholder="/usuario" />
+                  </div>
+                  <div>
+                    <Label htmlFor="linkedin_mantenedor">LinkedIn</Label>
+                    <Input id="linkedin_mantenedor" value={formData.linkedin_mantenedor} onChange={(e) => handleInputChange("linkedin_mantenedor", e.target.value)} placeholder="/company/empresa" />
+                  </div>
+                  <div>
+                    <Label htmlFor="x_twitter_mantenedor">X (Twitter)</Label>
+                    <Input id="x_twitter_mantenedor" value={formData.x_twitter_mantenedor} onChange={(e) => handleInputChange("x_twitter_mantenedor", e.target.value)} placeholder="@usuario" />
                   </div>
                 </div>
               </div>
