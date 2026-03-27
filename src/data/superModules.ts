@@ -110,7 +110,7 @@ export const empresasMock: Empresa[] = [
     modulosHabilitados: [
       'cadastro', 'comercial', 'compras', 'estoque',
       'financeiro', 'contabilidade', 'faturamento', 'rh', 'ti',
-      'administrativo', 'solicitacoes', 'bi'
+      'administrativo', 'bi'
     ],
     usuarioMaster: {
       id: 'user-master',
