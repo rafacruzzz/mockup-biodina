@@ -1,34 +1,22 @@
 
 
-## Plano: Habilitar edição de Lead no Cadastro e no Comercial
+## Plano: Passar prop `onConvertToClient` ao EntidadeModal no Cadastro e Comercial
 
 ### Problema
-1. O `DataTable` dispara evento `editItem` ao clicar no botão editar, mas `handleEditItem` no `Cadastro.tsx` só trata `usuarios/colaboradores` — ignora `pessoas` (leads, clientes, etc.)
-2. O `EntidadeModal` não aceita prop de dados existentes (`editData`) para pré-preencher os campos
-3. No `Comercial.tsx`, o lead modal também não suporta edição
-4. O botão "Converter em Cliente" deve aparecer apenas na edição, não ao criar novo lead
+O botão "Converter em Cliente" exige 3 condições: `isLead && editData && onConvertToClient`. As duas páginas (Cadastro.tsx e Comercial.tsx) passam `editData` mas **nunca passam** `onConvertToClient`, então o botão nunca aparece.
 
 ### Alterações
 
-**1. `src/components/cadastro/EntidadeModal.tsx`**
-- Adicionar prop `editData?: any` na interface
-- No `useEffect`, se `editData` existir, pré-preencher `formData` com os dados do registro, incluindo `contasBancarias` se houver
-- O botão "Converter em Cliente" só aparece quando `editData` está presente (modo edição)
-- Alterar título do modal: "Editar [Lead/Cliente/...]" quando `editData` existe, "Novo [Lead/Cliente/...]" quando não
+**1. `src/pages/Cadastro.tsx` (linha ~306-314)**
+- Adicionar handler `handleConvertLeadToClient` que:
+  - Move o item da lista de leads para a lista de clientes (toast de sucesso)
+  - Fecha o modal e limpa `editingEntidadeData`
+- Passar `onConvertToClient={handleConvertLeadToClient}` ao `EntidadeModal`
 
-**2. `src/pages/Cadastro.tsx`**
-- Adicionar estado `editingEntidadeData` (null ou objeto com dados do item)
-- No `handleEditItem`, adicionar caso para `activeModule === 'pessoas'`: setar `editingEntidadeData` com o item, setar `currentEntidadeType` com o `activeSubModule`, e abrir o modal
-- Passar `editData={editingEntidadeData}` ao `EntidadeModal`
-- No `onClose`, limpar `editingEntidadeData`
-
-**3. `src/pages/Comercial.tsx`**
-- Na tabela de leads, ao clicar no botão editar de uma linha, setar estado `editingLeadData` com os dados do lead e abrir o modal
-- Passar `editData={editingLeadData}` ao `EntidadeModal`
-- No `onClose`, limpar `editingLeadData`
+**2. `src/pages/Comercial.tsx` (linha ~900-909)**
+- Adicionar handler `handleConvertLeadToClient` com mesma lógica
+- Passar `onConvertToClient={handleConvertLeadToClient}` ao `EntidadeModal`
 
 ### Resultado
-- Clicar no ícone de editar em qualquer lead (Cadastro ou Comercial) abre o `EntidadeModal` com os dados pré-preenchidos
-- O botão "Converter em Cliente" aparece apenas no modo edição
-- Criar novo lead continua funcionando normalmente (modal vazio)
+O botão "Converter em Cliente" aparecerá no footer do modal ao editar um Lead, tanto no Cadastro quanto no Comercial.
 
