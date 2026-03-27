@@ -632,13 +632,13 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
 
                 <div>
                   <Label htmlFor="nome_cliente">
-                    {isFornecedorRevenda ? "Nome da Unidade Fabril" : `Nome do ${entityLabel}`}
+                    {isFornecedorRevenda ? "Nome da Unidade Fabril" : isFornecedorUsoConsumo ? "Nome do Fornecedor – Uso e Consumo" : `Nome do ${entityLabel}`}
                   </Label>
                   <Input
                     id="nome_cliente"
                     value={formData.nome_cliente}
                     onChange={(e) => handleInputChange("nome_cliente", e.target.value)}
-                    placeholder={isFornecedorRevenda ? "Nome da unidade fabril" : "Nome do cliente"}
+                    placeholder={isFornecedorRevenda ? "Nome da unidade fabril" : isFornecedorUsoConsumo ? "Nome do fornecedor" : "Nome do cliente"}
                   />
                 </div>
 
