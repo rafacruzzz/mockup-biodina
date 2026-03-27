@@ -312,6 +312,11 @@ const Cadastro = () => {
         }}
         tipoEntidade={currentEntidadeType}
         editData={editingEntidadeData}
+        onConvertToClient={(data) => {
+          toast({ title: "Lead convertido em cliente com sucesso!" });
+          setIsEntidadeModalOpen(false);
+          setEditingEntidadeData(null);
+        }}
       />
       
       <UserModal 
