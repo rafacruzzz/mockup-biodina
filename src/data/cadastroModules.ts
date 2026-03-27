@@ -358,6 +358,10 @@ export const modules: ModulesConfig = {
             unidade: "frasco"
           }
         ]
+      },
+      kits: {
+        name: "Kits",
+        data: []
       }
     }
   },
