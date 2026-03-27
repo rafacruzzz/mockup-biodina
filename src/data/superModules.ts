@@ -263,7 +263,7 @@ export const perfisAcessoMock: PerfilAcesso[] = [
     modulosHabilitados: [
       'cadastro', 'comercial', 'compras', 'estoque',
       'financeiro', 'contabilidade', 'faturamento', 'rh',
-      'ti', 'administrativo', 'solicitacoes', 'bi'
+      'ti', 'administrativo', 'bi'
     ],
     dataCriacao: '2024-01-01'
   },
