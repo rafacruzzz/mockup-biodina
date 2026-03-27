@@ -242,7 +242,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   }, [editData, isOpen]);
 
 
-    const handleCepLookup = async (cep: string, tipo: 'faturamento' | 'entrega' | 'mant_faturamento' | 'mant_entrega') => {
+  const handleCepLookup = async (cep: string, tipo: 'faturamento' | 'entrega' | 'mant_faturamento' | 'mant_entrega') => {
+    const cleanCep = cep.replace(/\D/g, '');
     if (cleanCep.length === 8) {
       const result = await lookupCep(cleanCep);
       if (result) {
