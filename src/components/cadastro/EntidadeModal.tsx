@@ -626,7 +626,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <h3 className="font-semibold text-sm">WhatsApp</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="telefone_whatsapp">Telefone WhatsApp do Lead</Label>
+                    <Label htmlFor="telefone_whatsapp">Telefone WhatsApp do {entityLabel}</Label>
                     <Input
                       id="telefone_whatsapp"
                       value={formData.telefone_whatsapp}
