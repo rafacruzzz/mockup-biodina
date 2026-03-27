@@ -11,6 +11,7 @@ import { FileText, MessageSquare, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatInterno from '../ChatInterno';
 import MercadoriasTable from './MercadoriasTable';
+import { useSegmentoLeadManager } from '@/hooks/useSegmentoLeadManager';
 
 interface ComercialTabsProps {
   activeTab: string;
