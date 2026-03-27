@@ -37,6 +37,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
 
   const isFornecedor = tipoEntidade.startsWith('fornecedores_');
   const isLead = tipoEntidade === 'leads';
+  const isCliente = tipoEntidade === 'clientes';
+  const entityLabel = isLead ? "Lead" : "Cliente";
 
   // Hook de rascunho
   const { 
