@@ -1,37 +1,76 @@
 
 
-## Plano: Personalizar cadastro de Transportadora
+## Plano: Ficha Técnica, UDI nos Códigos Fiscais e Dimensões com/sem embalagem
 
-### Alterações em `src/components/cadastro/EntidadeModal.tsx`
+### 1. Nova aba "Ficha Técnica" no cadastro de Produto
 
-**1. Nova variável de controle (~linha 73):**
+**`src/types/product.ts`** — Adicionar campos:
 ```tsx
-const isTransportadora = tipoEntidade === 'transportadoras';
+// Aba Ficha Técnica
+fichaTecnica: {
+  parametrosChave: string;
+  compatibilidades: string;
+  requisitosInfraestrutura: string;
+  condicoesAmbientais: string;
+  conformidadesNormas: string;
+};
 ```
 
-**2. Atualizar `entityLabel` (linha 74):**
-- Adicionar: `isTransportadora ? "Transportadora" : ...`
+**Novo arquivo `src/components/product/FichaTecnicaTab.tsx`:**
+- Card com 5 campos Textarea, cada um com ícone e label:
+  - Parâmetros/Chaves (ícone Settings)
+  - Compatibilidades (ícone Box)
+  - Requisitos de Infraestrutura (ícone Building2)
+  - Condições Ambientais (ícone Thermometer)
+  - Conformidades/Normas (ícone Shield)
+- Layout idêntico ao da `FichaTecnicaTab` do Repositório de Produtos (imagem de referência), com placeholders explicativos
 
-**3. Aba Dados Gerais:**
-- Ocultar "Tipo de Cliente": adicionar `!isTransportadora` à condição existente
-- Renomear "Nome do Cliente" → "Nome da Transportadora" quando `isTransportadora`
-- Ocultar "Nome do Mantenedor" e "CNPJ do Mantenedor": adicionar `!isTransportadora` à condição
+**`src/components/product/ProductRegistrationForm.tsx`:**
+- Importar `FichaTecnicaTab`
+- Adicionar `TabsTrigger value="ficha-tecnica"` após "Regulamentação ANVISA"
+- Adicionar `TabsContent` correspondente
+- Inicializar `fichaTecnica` no `formData`
 
-**4. Aba Endereços:**
-- Quando `isTransportadora`, renderizar apenas 1 bloco: `renderAddressBlock("Endereço", "fat", "faturamento")` — mesmo padrão do Representante Comercial e Fornecedor Uso e Consumo/Serviços
+### 2. Aba Códigos Fiscais — Substituir "Código EAN (GTIN)" por "UDI"
 
-**5. Aba Dados Bancários:**
-- Já suporta múltiplos bancos. Sem alteração necessária.
+**`src/components/product/CodigosFiscaisTab.tsx`:**
+- Linha 41: `"Código EAN (GTIN) - Cx Primária"` → `"UDI - Cx Primária"`
+- Linha 52: `"Código EAN (GTIN) - Cx Secundária"` → `"UDI - Cx Secundária"`
+- Linha 63: `"Código EAN (GTIN) - Cx Embarque"` → `"UDI - Cx Embarque"`
 
-**6. Substituir aba "Crédito/Restrições" por "Área atendida/Tabela de preços":**
-- Na `TabsList` (linha 513): adicionar `!isTransportadora` à condição para ocultar "Crédito/Restrições"
-- Adicionar nova `TabsTrigger` condicional: `{isTransportadora && <TabsTrigger value="area-atendida">Área atendida/Tabela de preços</TabsTrigger>}`
-- Adicionar novo `TabsContent value="area-atendida"` com:
-  - Campo "Área atendida" (Label + Textarea para livre escrita)
+### 3. Aba Dimensões e Peso — Separar em "Com embalagem" e "Sem embalagem"
 
-**7. Ajustar `getTabGridCols`:**
-- Adicionar condição para `isTransportadora` retornando grid adequado (Dados Gerais, Endereços, Fiscais, Bancários, Área atendida, Documentos, Empresas, Observações = 8 abas → `grid-cols-8`)
+**`src/types/product.ts`:**
+- Substituir os 5 campos atuais por:
+```tsx
+// Dimensões e Peso - Com embalagem
+pesoLiquidoComEmb: number;
+pesoBrutoComEmb: number;
+alturaComEmb: number;
+larguraComEmb: number;
+profundidadeComEmb: number;
+// Dimensões e Peso - Sem embalagem
+pesoLiquidoSemEmb: number;
+pesoBrutoSemEmb: number;
+alturaSemEmb: number;
+larguraSemEmb: number;
+profundidadeSemEmb: number;
+```
 
-### Resultado
-Transportadora terá formulário simplificado: sem Tipo de Cliente, sem Mantenedor, nome "da Transportadora", endereço único, dados bancários múltiplos, aba "Área atendida/Tabela de preços" no lugar de "Crédito/Restrições".
+**`src/components/product/DimensoesPesoTab.tsx`:**
+- Dois blocos Card (ou seções dentro de um Card):
+  - "Dimensões e Peso — Com Embalagem" com 5 campos + volume/peso cubado calculados
+  - "Dimensões e Peso — Sem Embalagem" com os mesmos 5 campos + cálculos
+- Atualizar `ProductRegistrationForm.tsx` para inicializar os novos campos com 0
+
+### 4. Alimentar Repositório de Produtos
+
+Os dados da aba "Ficha Técnica" do cadastro de produto já existem no tipo `Produto` (`parametrosChave`, `compatibilidades`, etc.) usado pela `FichaTecnicaTab` do Repositório. Quando houver backend, esses campos serão a mesma fonte de dados. Sem alteração de código necessária agora — a estrutura já é compatível.
+
+### Arquivos alterados
+- `src/types/product.ts`
+- `src/components/product/FichaTecnicaTab.tsx` (novo)
+- `src/components/product/ProductRegistrationForm.tsx`
+- `src/components/product/CodigosFiscaisTab.tsx`
+- `src/components/product/DimensoesPesoTab.tsx`
 
