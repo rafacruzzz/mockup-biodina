@@ -83,6 +83,8 @@ const Cadastro = () => {
       setIsProdutoUsoConsumoModalOpen(true);
     } else if (activeModule === 'produtos' && activeSubModule === 'kits') {
       setIsKitModalOpen(true);
+    } else if (activeModule === 'produtos' && activeSubModule === 'marcas') {
+      setIsMarcaModalOpen(true);
     } else if (activeModule === 'pessoas') {
       setCurrentEntidadeType(activeSubModule);
       setEditingEntidadeData(null);
