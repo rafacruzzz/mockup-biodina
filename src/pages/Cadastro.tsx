@@ -78,6 +78,7 @@ const Cadastro = () => {
       setIsProdutoUsoConsumoModalOpen(true);
     } else if (activeModule === 'pessoas') {
       setCurrentEntidadeType(activeSubModule);
+      setEditingEntidadeData(null);
       setIsEntidadeModalOpen(true);
     } else if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') {
       // Open ColaboradorModal for new user creation
