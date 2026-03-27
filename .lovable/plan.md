@@ -1,14 +1,37 @@
 
 
-## Plano: Renomear módulo CPR — remover "(Compras para Revenda)"
+## Plano: Categorias de Receitas, Formas de Pagamento e desativar módulo Categorias
 
-Trocar todas as ocorrências de `"CPR (Compras para Revenda)"` por apenas `"CPR"` nos seguintes arquivos:
+### 1. Novos submódulos em Cadastros Financeiros
 
-1. **`src/components/SidebarLayout.tsx`** (linha 46): sidebar name
-2. **`src/data/sistemaModulosCompletos.ts`** (linha 77): definição do módulo
-3. **`src/data/superModules.ts`** (linha 20): config de módulos
-4. **`src/data/solicitacoes.ts`** (linha 40): solicitações
-5. **`src/pages/Index.tsx`** (linha 24): card na home
-6. **`src/components/compras/ComprasDashboard.tsx`** (linha 71): título do dashboard → `"Dashboard CPR"`
-7. **`src/components/compras/ComprasSidebar.tsx`** (linha 36): título da sidebar → `"CPR"`
+**`src/data/cadastroModules.ts`** — Adicionar após `categorias_despesas`:
+- `categorias_receitas` com mesma estrutura (nome, codigo, tipo, status) e dados de exemplo
+- `formas_pagamento` com campos (nome, codigo, descricao, status) e dados de exemplo (PIX, Boleto, Cartão de Crédito, Transferência Bancária, etc.)
+
+### 2. Botões de criação em `src/pages/Cadastro.tsx`
+
+**`getButtonText()`** — Adicionar:
+- `categorias_receitas` → "Nova Categoria de Receita"
+- `formas_pagamento` → "Nova Forma de Pagamento"
+
+### 3. Desativar módulo "Categorias" para não-SUPER
+
+**`src/components/SidebarLayout.tsx`** (linha 83):
+- Adicionar `'categorias'` ao filtro: `['solicitacoes', 'personalizar-navegacao', 'categorias']`
+
+**`src/components/LoginForm.tsx`** (linha 25):
+- Adicionar `'categorias'` à lista: `['solicitacoes', 'personalizar-navegacao', 'categorias']`
+
+**`src/components/cadastro/ModuleAccessTree.tsx`** (linha 28):
+- Adicionar `'categorias'` à constante: `['solicitacoes', 'personalizar-navegacao', 'categorias']`
+
+**`src/data/superModules.ts`** — Remover `'categorias'` dos `modulosHabilitados` de todas as empresas (se existir)
+
+### 4. Definição do sistema
+
+**`src/data/sistemaModulosCompletos.ts`** — Adicionar `categorias_receitas` e `formas_pagamento` como submódulos de `cadastros_financeiros` (key `financeiro` ou `cadastro`), mantendo `categorias` na definição global para o SUPER poder reativar
+
+### Resultado
+- Cadastros Financeiros ganha 2 novos submódulos: Categorias de Receitas e Formas de Pagamento
+- Módulo "Categorias" fica invisível para todos exceto SUPER, igual a Solicitações e Personalizar Navegação
 
