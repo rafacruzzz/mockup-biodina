@@ -532,11 +532,20 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                 <h3 className="font-semibold text-sm">WhatsApp</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="telefone_whatsapp">Telefone WhatsApp</Label>
+                    <Label htmlFor="telefone_whatsapp">Telefone WhatsApp do Lead</Label>
                     <Input
                       id="telefone_whatsapp"
                       value={formData.telefone_whatsapp}
                       onChange={(e) => handleInputChange("telefone_whatsapp", e.target.value)}
+                      placeholder="(00) 00000-0000"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="telefone_whatsapp_mantenedor">Telefone WhatsApp do Mantenedor</Label>
+                    <Input
+                      id="telefone_whatsapp_mantenedor"
+                      value={formData.telefone_whatsapp_mantenedor}
+                      onChange={(e) => handleInputChange("telefone_whatsapp_mantenedor", e.target.value)}
                       placeholder="(00) 00000-0000"
                     />
                   </div>
