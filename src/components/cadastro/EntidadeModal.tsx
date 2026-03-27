@@ -23,7 +23,7 @@ interface EntidadeModalProps {
   onConvertToClient?: (formData: any) => void;
 }
 
-const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) => {
+const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: EntidadeModalProps) => {
   const { lookupCep, loading: cepLoading } = useCepLookup();
   const { segmentos } = useSegmentoLeadManager();
   const [uploadedDocs, setUploadedDocs] = useState<Array<{ name: string; size: number; type: string }>>([]);
