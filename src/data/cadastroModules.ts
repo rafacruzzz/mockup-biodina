@@ -366,6 +366,10 @@ export const modules: ModulesConfig = {
       marcas: {
         name: "Marcas",
         data: []
+      },
+      empresas_detentoras: {
+        name: "Empresas Detentoras",
+        data: []
       }
     }
   },
