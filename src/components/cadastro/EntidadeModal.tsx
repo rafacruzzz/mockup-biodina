@@ -229,6 +229,9 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     // Comissão (Representante Comercial)
     percentual_comissao_padrao: 0,
     
+    // Transportadora
+    area_atendida: "",
+    
     // Outros
     servico_produto_oferecido: "",
     observacoes: "",
