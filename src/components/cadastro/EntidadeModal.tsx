@@ -355,7 +355,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                 )}
 
                 <div>
-                  <Label htmlFor="tipo_cliente">Tipo de Cliente</Label>
+                  <Label htmlFor="tipo_cliente">Tipo de Lead</Label>
                   <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione..." />
