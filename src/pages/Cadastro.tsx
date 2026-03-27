@@ -13,6 +13,7 @@ import ServiceModal from "@/components/cadastro/ServiceModal";
 import ContaBancariaModal from "@/components/cadastro/ContaBancariaModal";
 import GenericModal from "@/components/cadastro/GenericModal";
 import ProdutoUsoConsumoModal from "@/components/cadastro/ProdutoUsoConsumoModal";
+import KitModal from "@/components/cadastro/KitModal";
 import GestaoFiliais from "@/components/cadastro/GestaoFiliais";
 import { modules } from "@/data/cadastroModules";
 import { useEmpresa } from "@/contexts/EmpresaContext";
@@ -33,6 +34,7 @@ const Cadastro = () => {
   const [isContaBancariaModalOpen, setIsContaBancariaModalOpen] = useState(false);
   const [isGenericModalOpen, setIsGenericModalOpen] = useState(false);
   const [isProdutoUsoConsumoModalOpen, setIsProdutoUsoConsumoModalOpen] = useState(false);
+  const [isKitModalOpen, setIsKitModalOpen] = useState(false);
 
   // Estado para tipo de entidade
   const [currentEntidadeType, setCurrentEntidadeType] = useState<string>('');
@@ -77,6 +79,8 @@ const Cadastro = () => {
       setIsProductModalOpen(true);
     } else if (activeModule === 'produtos' && activeSubModule === 'uso_consumo') {
       setIsProdutoUsoConsumoModalOpen(true);
+    } else if (activeModule === 'produtos' && activeSubModule === 'kits') {
+      setIsKitModalOpen(true);
     } else if (activeModule === 'pessoas') {
       setCurrentEntidadeType(activeSubModule);
       setEditingEntidadeData(null);
@@ -215,6 +219,7 @@ const Cadastro = () => {
   const getButtonText = () => {
     if (activeModule === 'produtos' && activeSubModule === 'produtos') return "Nova Mercadoria para Revenda";
     if (activeModule === 'produtos' && activeSubModule === 'uso_consumo') return "Novo Produto de Uso e Consumo";
+    if (activeModule === 'produtos' && activeSubModule === 'kits') return "Novo Kit";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'cartoes') return "Novo Cartão";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'categorias_despesas') return "Nova Categoria";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'prazos') return "Novo Prazo";
@@ -353,6 +358,11 @@ const Cadastro = () => {
       <ProdutoUsoConsumoModal
         isOpen={isProdutoUsoConsumoModalOpen}
         onClose={() => setIsProdutoUsoConsumoModalOpen(false)}
+      />
+
+      <KitModal
+        isOpen={isKitModalOpen}
+        onClose={() => setIsKitModalOpen(false)}
       />
     </SidebarLayout>
   );
