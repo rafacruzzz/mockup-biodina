@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { modulosCompletosSistema, ModuloDefinicao } from "@/data/sistemaModulosCompletos";
 import { ModuloUsuario, SubModuloUsuario, Permission } from "@/types/permissions";
+import { useUser } from "@/contexts/UserContext";
 
 interface ModuleAccessTreeProps {
   modules: ModuloUsuario[];
@@ -24,13 +25,21 @@ const defaultPermissions: Permission = {
 
 type PermissionLevel = 'view' | 'edit' | 'delete';
 
+const MODULOS_EXCLUSIVOS_SUPER = ['solicitacoes', 'personalizar-navegacao'];
+
 const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: ModuleAccessTreeProps) => {
   const [expandedModules, setExpandedModules] = useState<string[]>([]);
+  const { user } = useUser();
+  const isSuperUser = user?.email === 'super@super.com.br';
 
   // Filtrar módulos disponíveis
-  const modulosParaMostrar = modulosDisponiveis 
+  const modulosBase = modulosDisponiveis 
     ? modulosCompletosSistema.filter(m => modulosDisponiveis.includes(m.key))
     : modulosCompletosSistema;
+
+  const modulosParaMostrar = isSuperUser
+    ? modulosBase
+    : modulosBase.filter(m => !MODULOS_EXCLUSIVOS_SUPER.includes(m.key));
 
   const toggleModule = (moduleKey: string) => {
     setExpandedModules(prev => 

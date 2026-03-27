@@ -20,20 +20,24 @@ const LoginForm = () => {
   const { setCurrentUser } = useAuthDemo();
   const { updateUser } = useUser();
 
-  // Gera moduleAccess completo com todas as permissões
+  // Gera moduleAccess completo com todas as permissões, exceto módulos exclusivos do SUPER
   const gerarAcessoCompleto = (): ModuloUsuario[] => {
-    return modulosCompletosSistema.map(modulo => ({
-      key: modulo.key,
-      name: modulo.name,
-      icon: modulo.icon,
-      habilitado: true,
-      subModulos: modulo.subModulos.map(sub => ({
-        key: sub.key,
-        name: sub.name,
+    const modulosExclusivosSuper = ['solicitacoes', 'personalizar-navegacao'];
+
+    return modulosCompletosSistema
+      .filter(modulo => !modulosExclusivosSuper.includes(modulo.key))
+      .map(modulo => ({
+        key: modulo.key,
+        name: modulo.name,
+        icon: modulo.icon,
         habilitado: true,
-        permissions: { view: true, create: true, edit: true, delete: true }
-      }))
-    }));
+        subModulos: modulo.subModulos.map(sub => ({
+          key: sub.key,
+          name: sub.name,
+          habilitado: true,
+          permissions: { view: true, create: true, edit: true, delete: true }
+        }))
+      }));
   };
 
   // Credenciais de demonstração
