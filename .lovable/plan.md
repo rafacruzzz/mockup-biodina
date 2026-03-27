@@ -1,22 +1,25 @@
 
 
-## Plano: Passar prop `onConvertToClient` ao EntidadeModal no Cadastro e Comercial
+## Plano: Substituir `window.confirm` por modal customizado na conversão de Lead
 
 ### Problema
-O botão "Converter em Cliente" exige 3 condições: `isLead && editData && onConvertToClient`. As duas páginas (Cadastro.tsx e Comercial.tsx) passam `editData` mas **nunca passam** `onConvertToClient`, então o botão nunca aparece.
+O botão "Converter em Cliente" usa `window.confirm()` nativo do navegador, que é visualmente inconsistente com o sistema.
 
-### Alterações
+### Alterações em `src/components/cadastro/EntidadeModal.tsx`
 
-**1. `src/pages/Cadastro.tsx` (linha ~306-314)**
-- Adicionar handler `handleConvertLeadToClient` que:
-  - Move o item da lista de leads para a lista de clientes (toast de sucesso)
-  - Fecha o modal e limpa `editingEntidadeData`
-- Passar `onConvertToClient={handleConvertLeadToClient}` ao `EntidadeModal`
+**1. Adicionar estado para controlar o modal de confirmação:**
+- `const [showConvertConfirm, setShowConvertConfirm] = useState(false)`
 
-**2. `src/pages/Comercial.tsx` (linha ~900-909)**
-- Adicionar handler `handleConvertLeadToClient` com mesma lógica
-- Passar `onConvertToClient={handleConvertLeadToClient}` ao `EntidadeModal`
+**2. Alterar o onClick do botão "Converter em Cliente":**
+- Em vez de `window.confirm(...)`, chamar `setShowConvertConfirm(true)`
+
+**3. Adicionar um Dialog de confirmação customizado dentro do componente:**
+- Usar `Dialog/DialogContent/DialogHeader/DialogTitle/DialogFooter` do shadcn
+- Ícone `AlertTriangle` amarelo + título "Confirmar Conversão"
+- Mensagem: "Deseja converter este Lead em Cliente? O cadastro será movido para a lista de Clientes."
+- Botão "Cancelar" (outline) e "Confirmar" (verde)
+- No confirmar: chamar `onConvertToClient({ ...formData, contasBancarias })`, fechar modal de confirmação e fechar o EntidadeModal
 
 ### Resultado
-O botão "Converter em Cliente" aparecerá no footer do modal ao editar um Lead, tanto no Cadastro quanto no Comercial.
+A confirmação aparecerá como um modal elegante dentro do sistema, consistente com os outros modais de confirmação do projeto.
 
