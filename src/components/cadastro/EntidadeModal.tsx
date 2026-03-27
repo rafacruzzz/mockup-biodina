@@ -466,7 +466,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                 <h3 className="font-semibold text-sm">Telefones</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="telefone1">Telefone 1</Label>
+                    <Label htmlFor="telefone1">Telefone 1 do Lead</Label>
                     <Input
                       id="telefone1"
                       value={formData.telefone1}
