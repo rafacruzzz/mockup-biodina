@@ -76,11 +76,17 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     email4: "",
     website: "",
     
-    // Redes Sociais
+    // Redes Sociais do Lead
     instagram: "",
     facebook: "",
     linkedin: "",
     x_twitter: "",
+    // Redes Sociais do Mantenedor
+    website_mantenedor: "",
+    instagram_mantenedor: "",
+    facebook_mantenedor: "",
+    linkedin_mantenedor: "",
+    x_twitter_mantenedor: "",
     
     // Dados Fiscais
     inscricao_estadual: "",
