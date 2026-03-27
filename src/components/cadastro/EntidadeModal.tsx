@@ -509,7 +509,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               <TabsTrigger value="enderecos">Endereços</TabsTrigger>
               <TabsTrigger value="fiscais">Dados Fiscais</TabsTrigger>
               <TabsTrigger value="bancarios">Dados Bancários</TabsTrigger>
-              {!isFornecedorRevenda && (
+              {!isFornecedorRevenda && !isFornecedorUsoConsumo && (
                 <TabsTrigger value="credito">Crédito/Restrições</TabsTrigger>
               )}
               {isRepresentante && (
