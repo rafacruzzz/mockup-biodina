@@ -706,7 +706,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   />
                 </div>
 
-                {!isRepresentante && (
+                {!isRepresentante && !isFornecedorUsoConsumo && (
                   <>
                     <div>
                       <Label htmlFor="nome_mantenedor">
