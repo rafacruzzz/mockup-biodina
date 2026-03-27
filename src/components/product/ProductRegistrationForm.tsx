@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { X, Save } from "lucide-react";
 import { ProductRegistrationData, ProductRegistrationFormProps } from "@/types/product";
+import FichaTecnicaTab from "./FichaTecnicaTab";
 import DadosGeraisTab from "./DadosGeraisTab";
 import RegulamentacaoAnvisaTab from "./RegulamentacaoAnvisaTab";
 import ApresentacoesTab from "./ApresentacoesTab";
