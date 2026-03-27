@@ -119,13 +119,25 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     ent_uf: "",
     ent_pais: "Brasil",
     
-    // Dados Bancários
-    banco: "",
-    codigo_banco: "",
-    agencia: "",
-    conta: "",
-    chave_pix: "",
-    nome_beneficiario: "",
+    // Endereço Faturamento Mantenedor
+    mant_fat_endereco: "",
+    mant_fat_numero: "",
+    mant_fat_complemento: "",
+    mant_fat_cidade: "",
+    mant_fat_estado: "",
+    mant_fat_cep: "",
+    mant_fat_uf: "",
+    mant_fat_pais: "Brasil",
+    
+    // Endereço Entrega Mantenedor
+    mant_ent_endereco: "",
+    mant_ent_numero: "",
+    mant_ent_complemento: "",
+    mant_ent_cidade: "",
+    mant_ent_estado: "",
+    mant_ent_cep: "",
+    mant_ent_uf: "",
+    mant_ent_pais: "Brasil",
     
     // Contato Comercial do Lead
     contato_nome: "",
