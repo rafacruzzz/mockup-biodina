@@ -1228,8 +1228,24 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               </TabsContent>
             )}
 
-            {/* ABA: CRÉDITO E RESTRIÇÕES (oculta para fornecedor revenda) */}
-            {!isFornecedorRevenda && (
+            {/* ABA: ÁREA ATENDIDA (Transportadora) */}
+            {isTransportadora && (
+            <TabsContent value="area-atendida" className="space-y-4 mt-4">
+              <div>
+                <Label htmlFor="area_atendida">Área atendida</Label>
+                <Textarea
+                  id="area_atendida"
+                  value={formData.area_atendida}
+                  onChange={(e) => handleInputChange("area_atendida", e.target.value)}
+                  rows={6}
+                  placeholder="Descreva a área atendida pela transportadora e tabelas de preços..."
+                />
+              </div>
+            </TabsContent>
+            )}
+
+            {/* ABA: CRÉDITO E RESTRIÇÕES (oculta para fornecedor revenda e transportadora) */}
+            {!isFornecedorRevenda && !isTransportadora && (
             <TabsContent value="credito" className="space-y-4 mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
