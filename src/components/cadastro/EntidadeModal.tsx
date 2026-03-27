@@ -813,7 +813,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: Ent
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">Endereço de Entrega</h3>
+                <h3 className="font-semibold text-lg border-b pb-2">{isLead ? 'Endereço de Entrega do Lead' : 'Endereço de Entrega'}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="ent_cep">CEP</Label>
