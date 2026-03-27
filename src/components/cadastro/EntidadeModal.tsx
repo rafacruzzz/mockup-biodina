@@ -71,7 +71,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   const isLead = tipoEntidade === 'leads';
   const isCliente = tipoEntidade === 'clientes';
   const isRepresentante = tipoEntidade === 'representantes';
-  const entityLabel = isRepresentante ? "Representante Comercial" : isFornecedorRevenda ? "Unidade Fabril" : isFornecedorUsoConsumo ? "Fornecedor – Uso e Consumo" : isFornecedorServicos ? "Fornecedor – Serviços" : (isLead ? "Lead" : "Cliente");
+  const isTransportadora = tipoEntidade === 'transportadoras';
+  const entityLabel = isTransportadora ? "Transportadora" : isRepresentante ? "Representante Comercial" : isFornecedorRevenda ? "Unidade Fabril" : isFornecedorUsoConsumo ? "Fornecedor – Uso e Consumo" : isFornecedorServicos ? "Fornecedor – Serviços" : (isLead ? "Lead" : "Cliente");
 
   // Hook de rascunho
   const { 
