@@ -25,7 +25,7 @@ const defaultPermissions: Permission = {
 
 type PermissionLevel = 'view' | 'edit' | 'delete';
 
-const MODULOS_EXCLUSIVOS_SUPER = ['solicitacoes', 'personalizar-navegacao'];
+const MODULOS_EXCLUSIVOS_SUPER = ['solicitacoes', 'personalizar-navegacao', 'categorias'];
 
 const ModuleAccessTree = ({ modules, onModuleChange, modulosDisponiveis }: ModuleAccessTreeProps) => {
   const [expandedModules, setExpandedModules] = useState<string[]>([]);

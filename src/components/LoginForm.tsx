@@ -22,7 +22,7 @@ const LoginForm = () => {
 
   // Gera moduleAccess completo com todas as permissões, exceto módulos exclusivos do SUPER
   const gerarAcessoCompleto = (): ModuloUsuario[] => {
-    const modulosExclusivosSuper = ['solicitacoes', 'personalizar-navegacao'];
+    const modulosExclusivosSuper = ['solicitacoes', 'personalizar-navegacao', 'categorias'];
 
     return modulosCompletosSistema
       .filter(modulo => !modulosExclusivosSuper.includes(modulo.key))
