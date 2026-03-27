@@ -25,6 +25,35 @@ interface EntidadeModalProps {
   editData?: any;
 }
 
+interface ContaBancaria {
+  banco: string;
+  agencia: string;
+  conta: string;
+  chave_pix: string;
+  nome_beneficiario: string;
+  // International fields (for fornecedor revenda)
+  bank?: string;
+  branch?: string;
+  account_number?: string;
+  iban?: string;
+  swift_code?: string;
+  beneficiary?: string;
+  moeda?: string;
+  pais_origem?: string;
+  cidade_banco?: string;
+}
+
+interface ISOEntry {
+  id: string;
+  fabrica: string;
+  vencimento: string;
+  observacao: string;
+  arquivoISO: File | null;
+  nomeArquivoISO: string;
+  arquivoTraducao: File | null;
+  nomeArquivoTraducao: string;
+}
+
 const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editData }: EntidadeModalProps) => {
   const { lookupCep, loading: cepLoading } = useCepLookup();
   const { segmentos } = useSegmentoLeadManager();
@@ -36,10 +65,11 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   const [draftRestored, setDraftRestored] = useState(false);
 
   const isFornecedor = tipoEntidade.startsWith('fornecedores_');
+  const isFornecedorRevenda = tipoEntidade === 'fornecedores_revenda';
   const isLead = tipoEntidade === 'leads';
   const isCliente = tipoEntidade === 'clientes';
   const isRepresentante = tipoEntidade === 'representantes';
-  const entityLabel = isRepresentante ? "Representante Comercial" : (isLead ? "Lead" : "Cliente");
+  const entityLabel = isRepresentante ? "Representante Comercial" : isFornecedorRevenda ? "Unidade Fabril" : (isLead ? "Lead" : "Cliente");
 
   // Hook de rascunho
   const { 
@@ -67,6 +97,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     segmento_lead: "",
     metodo_contato: "",
     nome_fantasia: "",
+    tin_tax_id: "",
     
     // Contatos expandidos
     telefone1: "",
@@ -145,6 +176,26 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     mant_ent_cep: "",
     mant_ent_uf: "",
     mant_ent_pais: "Brasil",
+
+    // Endereço Unidade Fabril (fornecedor revenda)
+    fabril_cep: "",
+    fabril_endereco: "",
+    fabril_numero: "",
+    fabril_complemento: "",
+    fabril_cidade: "",
+    fabril_estado: "",
+    fabril_uf: "",
+    fabril_pais: "",
+
+    // Endereço Coleta da Mercadoria (fornecedor revenda)
+    coleta_cep: "",
+    coleta_endereco: "",
+    coleta_numero: "",
+    coleta_complemento: "",
+    coleta_cidade: "",
+    coleta_estado: "",
+    coleta_uf: "",
+    coleta_pais: "",
     
     // Contato Comercial do Lead
     contato_nome: "",
@@ -196,18 +247,16 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  interface ContaBancaria {
-    banco: string;
-    agencia: string;
-    conta: string;
-    chave_pix: string;
-    nome_beneficiario: string;
-  }
-
   const [contasBancarias, setContasBancarias] = useState<ContaBancaria[]>([
     { banco: '', agencia: '', conta: '', chave_pix: '', nome_beneficiario: '' }
   ]);
   const [showConvertConfirm, setShowConvertConfirm] = useState(false);
+
+  // Linhas (fornecedor revenda)
+  const [linhas, setLinhas] = useState<string[]>([]);
+
+  // ISOs (fornecedor revenda)
+  const [isosVinculadas, setIsosVinculadas] = useState<ISOEntry[]>([]);
 
   const handleContaBancariaChange = (index: number, field: keyof ContaBancaria, value: string) => {
     setContasBancarias(prev => prev.map((conta, i) => 
@@ -223,6 +272,43 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     if (contasBancarias.length > 1) {
       setContasBancarias(prev => prev.filter((_, i) => i !== index));
     }
+  };
+
+  // Linhas handlers
+  const addLinha = () => setLinhas(prev => [...prev, '']);
+  const removeLinha = (index: number) => setLinhas(prev => prev.filter((_, i) => i !== index));
+  const updateLinha = (index: number, value: string) => {
+    setLinhas(prev => prev.map((l, i) => i === index ? value : l));
+  };
+
+  // ISO handlers
+  const addISO = () => {
+    setIsosVinculadas(prev => [...prev, {
+      id: crypto.randomUUID(),
+      fabrica: '',
+      vencimento: '',
+      observacao: '',
+      arquivoISO: null,
+      nomeArquivoISO: '',
+      arquivoTraducao: null,
+      nomeArquivoTraducao: ''
+    }]);
+  };
+
+  const removeISO = (index: number) => {
+    setIsosVinculadas(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const updateISO = (index: number, field: keyof ISOEntry, value: any) => {
+    setIsosVinculadas(prev => prev.map((iso, i) => i === index ? { ...iso, [field]: value } : iso));
+  };
+
+  const getISOStatus = (vencimento: string, hasFile: boolean): { label: string; className: string } => {
+    if (!vencimento) return { label: '-', className: '' };
+    const dias = Math.ceil((new Date(vencimento).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    if (dias < 0) return { label: 'Vencida', className: 'bg-red-100 text-red-700' };
+    if (dias <= 150 && !hasFile) return { label: `Vencendo (${dias} dias)`, className: 'bg-yellow-100 text-yellow-700' };
+    return { label: 'Válida', className: 'bg-green-100 text-green-700' };
   };
 
   // Pré-preencher dados quando em modo edição
@@ -246,11 +332,17 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
       if (editData.contas_bancarias && Array.isArray(editData.contas_bancarias)) {
         setContasBancarias(editData.contas_bancarias);
       }
+      if (editData.linhas && Array.isArray(editData.linhas)) {
+        setLinhas(editData.linhas);
+      }
+      if (editData.isos && Array.isArray(editData.isos)) {
+        setIsosVinculadas(editData.isos);
+      }
     }
   }, [editData, isOpen]);
 
 
-  const handleCepLookup = async (cep: string, tipo: 'faturamento' | 'entrega' | 'mant_faturamento' | 'mant_entrega') => {
+  const handleCepLookup = async (cep: string, tipo: string) => {
     const cleanCep = cep.replace(/\D/g, '');
     if (cleanCep.length === 8) {
       const result = await lookupCep(cleanCep);
@@ -259,16 +351,20 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
           'faturamento': 'fat',
           'entrega': 'ent',
           'mant_faturamento': 'mant_fat',
-          'mant_entrega': 'mant_ent'
+          'mant_entrega': 'mant_ent',
+          'fabril': 'fabril',
+          'coleta': 'coleta'
         };
         const prefix = prefixMap[tipo];
-        setFormData(prev => ({
-          ...prev,
-          [`${prefix}_endereco`]: result.logradouro,
-          [`${prefix}_cidade`]: result.localidade,
-          [`${prefix}_estado`]: result.localidade,
-          [`${prefix}_uf`]: result.uf
-        }));
+        if (prefix) {
+          setFormData(prev => ({
+            ...prev,
+            [`${prefix}_endereco`]: result.logradouro,
+            [`${prefix}_cidade`]: result.localidade,
+            [`${prefix}_estado`]: result.localidade,
+            [`${prefix}_uf`]: result.uf
+          }));
+        }
       }
     }
   };
@@ -292,7 +388,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   const handleSave = () => {
     console.log("Salvando entidade:", formData);
     console.log("Documentos anexados:", uploadedDocs);
-    clearDraftOnSave(); // Limpa o rascunho ao salvar definitivamente
+    clearDraftOnSave();
     onClose();
   };
 
@@ -327,6 +423,60 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     return labels[tipo] || 'Entidade';
   };
 
+  // Helper to render an address block
+  const renderAddressBlock = (title: string, prefix: string, cepLookupType: string) => (
+    <div className="space-y-4">
+      <h3 className="font-semibold text-lg border-b pb-2">{title}</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <Label>CEP</Label>
+          <Input
+            value={(formData as any)[`${prefix}_cep`] || ''}
+            onChange={(e) => handleInputChange(`${prefix}_cep`, e.target.value)}
+            onBlur={(e) => handleCepLookup(e.target.value, cepLookupType)}
+            placeholder="00000-000"
+          />
+        </div>
+        <div>
+          <Label>Endereço</Label>
+          <Input value={(formData as any)[`${prefix}_endereco`] || ''} onChange={(e) => handleInputChange(`${prefix}_endereco`, e.target.value)} placeholder="Rua, Avenida" />
+        </div>
+        <div>
+          <Label>N°</Label>
+          <Input value={(formData as any)[`${prefix}_numero`] || ''} onChange={(e) => handleInputChange(`${prefix}_numero`, e.target.value)} placeholder="Número" />
+        </div>
+        <div>
+          <Label>Complemento</Label>
+          <Input value={(formData as any)[`${prefix}_complemento`] || ''} onChange={(e) => handleInputChange(`${prefix}_complemento`, e.target.value)} placeholder="Sala, Apto, etc" />
+        </div>
+        <div>
+          <Label>Cidade</Label>
+          <Input value={(formData as any)[`${prefix}_cidade`] || ''} onChange={(e) => handleInputChange(`${prefix}_cidade`, e.target.value)} placeholder="Cidade" />
+        </div>
+        <div>
+          <Label>Estado</Label>
+          <Input value={(formData as any)[`${prefix}_estado`] || ''} onChange={(e) => handleInputChange(`${prefix}_estado`, e.target.value)} placeholder="Estado" />
+        </div>
+        <div>
+          <Label>UF</Label>
+          <Input value={(formData as any)[`${prefix}_uf`] || ''} onChange={(e) => handleInputChange(`${prefix}_uf`, e.target.value)} placeholder="UF" maxLength={2} />
+        </div>
+        <div>
+          <Label>País</Label>
+          <Input value={(formData as any)[`${prefix}_pais`] || ''} onChange={(e) => handleInputChange(`${prefix}_pais`, e.target.value)} placeholder="País" />
+        </div>
+      </div>
+    </div>
+  );
+
+  // Calculate tab count for grid
+  const getTabGridCols = () => {
+    if (isFornecedorRevenda) return 'flex flex-wrap gap-1';
+    if (isFornecedor) return 'grid grid-cols-9 w-full';
+    if (isRepresentante) return 'grid grid-cols-9 w-full';
+    return 'grid grid-cols-8 w-full';
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -352,18 +502,26 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
           )}
           
           <Tabs defaultValue="dados-gerais" className="w-full">
-            <TabsList className={`grid w-full ${isFornecedor ? 'grid-cols-9' : isRepresentante ? 'grid-cols-9' : 'grid-cols-8'}`}>
+            <TabsList className={getTabGridCols()}>
               <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
               <TabsTrigger value="enderecos">Endereços</TabsTrigger>
               <TabsTrigger value="fiscais">Dados Fiscais</TabsTrigger>
               <TabsTrigger value="bancarios">Dados Bancários</TabsTrigger>
-              <TabsTrigger value="credito">Crédito/Restrições</TabsTrigger>
+              {!isFornecedorRevenda && (
+                <TabsTrigger value="credito">Crédito/Restrições</TabsTrigger>
+              )}
               {isRepresentante && (
                 <TabsTrigger value="comissao">Comissão</TabsTrigger>
               )}
               <TabsTrigger value="documentos">Documentos</TabsTrigger>
+              {isFornecedorRevenda && (
+                <TabsTrigger value="linhas">Linhas</TabsTrigger>
+              )}
               {isFornecedor && (
                 <TabsTrigger value="boas-praticas">Boas Práticas</TabsTrigger>
+              )}
+              {isFornecedorRevenda && (
+                <TabsTrigger value="iso">ISO</TabsTrigger>
               )}
               <TabsTrigger value="empresas">Empresas</TabsTrigger>
               <TabsTrigger value="observacoes">Observações</TabsTrigger>
@@ -455,7 +613,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   </div>
                 )}
 
-                {!isRepresentante && (
+                {!isRepresentante && !isFornecedorRevenda && (
                   <div>
                     <Label htmlFor="tipo_cliente">Tipo de {entityLabel}</Label>
                     <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>
@@ -471,12 +629,14 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 )}
 
                 <div>
-                  <Label htmlFor="nome_cliente">Nome do {entityLabel}</Label>
+                  <Label htmlFor="nome_cliente">
+                    {isFornecedorRevenda ? "Nome da Unidade Fabril" : `Nome do ${entityLabel}`}
+                  </Label>
                   <Input
                     id="nome_cliente"
                     value={formData.nome_cliente}
                     onChange={(e) => handleInputChange("nome_cliente", e.target.value)}
-                    placeholder="Nome do cliente"
+                    placeholder={isFornecedorRevenda ? "Nome da unidade fabril" : "Nome do cliente"}
                   />
                 </div>
 
@@ -547,12 +707,14 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 {!isRepresentante && (
                   <>
                     <div>
-                      <Label htmlFor="nome_mantenedor">Nome do Mantenedor</Label>
+                      <Label htmlFor="nome_mantenedor">
+                        {isFornecedorRevenda ? "Nome do Fabricante Legal/Marca" : "Nome do Mantenedor"}
+                      </Label>
                       <Input
                         id="nome_mantenedor"
                         value={formData.nome_mantenedor}
                         onChange={(e) => handleInputChange("nome_mantenedor", e.target.value)}
-                        placeholder="Nome do mantenedor"
+                        placeholder={isFornecedorRevenda ? "Nome do fabricante legal/marca" : "Nome do mantenedor"}
                       />
                     </div>
 
@@ -566,6 +728,18 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                       />
                     </div>
                   </>
+                )}
+
+                {isFornecedorRevenda && (
+                  <div>
+                    <Label htmlFor="tin_tax_id">TIN (Tax Id Number)</Label>
+                    <Input
+                      id="tin_tax_id"
+                      value={formData.tin_tax_id}
+                      onChange={(e) => handleInputChange("tin_tax_id", e.target.value)}
+                      placeholder="Tax Identification Number"
+                    />
+                  </div>
                 )}
               </div>
 
@@ -795,247 +969,33 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
 
             {/* ABA: ENDEREÇOS */}
             <TabsContent value="enderecos" className="space-y-6 mt-4">
-              <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">{isRepresentante ? 'Endereço' : `Endereço de Faturamento do ${entityLabel}`}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="fat_cep">CEP</Label>
-                    <Input
-                      id="fat_cep"
-                      value={formData.fat_cep}
-                      onChange={(e) => handleInputChange("fat_cep", e.target.value)}
-                      onBlur={(e) => handleCepLookup(e.target.value, 'faturamento')}
-                      placeholder="00000-000"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="fat_endereco">Endereço</Label>
-                    <Input
-                      id="fat_endereco"
-                      value={formData.fat_endereco}
-                      onChange={(e) => handleInputChange("fat_endereco", e.target.value)}
-                      placeholder="Rua, Avenida"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="fat_numero">N°</Label>
-                    <Input
-                      id="fat_numero"
-                      value={formData.fat_numero}
-                      onChange={(e) => handleInputChange("fat_numero", e.target.value)}
-                      placeholder="Número"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="fat_complemento">Complemento</Label>
-                    <Input
-                      id="fat_complemento"
-                      value={formData.fat_complemento}
-                      onChange={(e) => handleInputChange("fat_complemento", e.target.value)}
-                      placeholder="Sala, Apto, etc"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="fat_cidade">Cidade</Label>
-                    <Input
-                      id="fat_cidade"
-                      value={formData.fat_cidade}
-                      onChange={(e) => handleInputChange("fat_cidade", e.target.value)}
-                      placeholder="Cidade"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="fat_estado">Estado</Label>
-                    <Input
-                      id="fat_estado"
-                      value={formData.fat_estado}
-                      onChange={(e) => handleInputChange("fat_estado", e.target.value)}
-                      placeholder="Estado"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="fat_uf">UF</Label>
-                    <Input
-                      id="fat_uf"
-                      value={formData.fat_uf}
-                      onChange={(e) => handleInputChange("fat_uf", e.target.value)}
-                      placeholder="UF"
-                      maxLength={2}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="fat_pais">País</Label>
-                    <Input
-                      id="fat_pais"
-                      value={formData.fat_pais}
-                      onChange={(e) => handleInputChange("fat_pais", e.target.value)}
-                      placeholder="País"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {!isRepresentante && (
-              <>
-              <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">{`Endereço de Entrega do ${entityLabel}`}</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="ent_cep">CEP</Label>
-                    <Input
-                      id="ent_cep"
-                      value={formData.ent_cep}
-                      onChange={(e) => handleInputChange("ent_cep", e.target.value)}
-                      onBlur={(e) => handleCepLookup(e.target.value, 'entrega')}
-                      placeholder="00000-000"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="ent_endereco">Endereço</Label>
-                    <Input
-                      id="ent_endereco"
-                      value={formData.ent_endereco}
-                      onChange={(e) => handleInputChange("ent_endereco", e.target.value)}
-                      placeholder="Rua, Avenida"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="ent_numero">N°</Label>
-                    <Input
-                      id="ent_numero"
-                      value={formData.ent_numero}
-                      onChange={(e) => handleInputChange("ent_numero", e.target.value)}
-                      placeholder="Número"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="ent_complemento">Complemento</Label>
-                    <Input
-                      id="ent_complemento"
-                      value={formData.ent_complemento}
-                      onChange={(e) => handleInputChange("ent_complemento", e.target.value)}
-                      placeholder="Sala, Apto, etc"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="ent_cidade">Cidade</Label>
-                    <Input
-                      id="ent_cidade"
-                      value={formData.ent_cidade}
-                      onChange={(e) => handleInputChange("ent_cidade", e.target.value)}
-                      placeholder="Cidade"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="ent_estado">Estado</Label>
-                    <Input
-                      id="ent_estado"
-                      value={formData.ent_estado}
-                      onChange={(e) => handleInputChange("ent_estado", e.target.value)}
-                      placeholder="Estado"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="ent_uf">UF</Label>
-                    <Input
-                      id="ent_uf"
-                      value={formData.ent_uf}
-                      onChange={(e) => handleInputChange("ent_uf", e.target.value)}
-                      placeholder="UF"
-                      maxLength={2}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="ent_pais">País</Label>
-                    <Input
-                      id="ent_pais"
-                      value={formData.ent_pais}
-                      onChange={(e) => handleInputChange("ent_pais", e.target.value)}
-                      placeholder="País"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              </>
-              )}
-              {(isLead || isCliente) && (
+              {isFornecedorRevenda ? (
                 <>
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-lg border-b pb-2">Endereço de Faturamento do Mantenedor</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="mant_fat_cep">CEP</Label>
-                        <Input id="mant_fat_cep" value={formData.mant_fat_cep} onChange={(e) => handleInputChange("mant_fat_cep", e.target.value)} onBlur={(e) => handleCepLookup(e.target.value, 'mant_faturamento')} placeholder="00000-000" />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_fat_endereco">Endereço</Label>
-                        <Input id="mant_fat_endereco" value={formData.mant_fat_endereco} onChange={(e) => handleInputChange("mant_fat_endereco", e.target.value)} placeholder="Rua, Avenida" />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_fat_numero">N°</Label>
-                        <Input id="mant_fat_numero" value={formData.mant_fat_numero} onChange={(e) => handleInputChange("mant_fat_numero", e.target.value)} placeholder="Número" />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_fat_complemento">Complemento</Label>
-                        <Input id="mant_fat_complemento" value={formData.mant_fat_complemento} onChange={(e) => handleInputChange("mant_fat_complemento", e.target.value)} placeholder="Sala, Apto, etc" />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_fat_cidade">Cidade</Label>
-                        <Input id="mant_fat_cidade" value={formData.mant_fat_cidade} onChange={(e) => handleInputChange("mant_fat_cidade", e.target.value)} placeholder="Cidade" />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_fat_estado">Estado</Label>
-                        <Input id="mant_fat_estado" value={formData.mant_fat_estado} onChange={(e) => handleInputChange("mant_fat_estado", e.target.value)} placeholder="Estado" />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_fat_uf">UF</Label>
-                        <Input id="mant_fat_uf" value={formData.mant_fat_uf} onChange={(e) => handleInputChange("mant_fat_uf", e.target.value)} placeholder="UF" maxLength={2} />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_fat_pais">País</Label>
-                        <Input id="mant_fat_pais" value={formData.mant_fat_pais} onChange={(e) => handleInputChange("mant_fat_pais", e.target.value)} placeholder="País" />
-                      </div>
-                    </div>
-                  </div>
+                  {renderAddressBlock("Endereço de Faturamento", "fat", "faturamento")}
+                  {renderAddressBlock("Endereço da Unidade Fabril", "fabril", "fabril")}
+                  {renderAddressBlock("Endereço do Fabricante Legal", "mant_fat", "mant_faturamento")}
+                  {renderAddressBlock("Endereço da Coleta da Mercadoria", "coleta", "coleta")}
+                </>
+              ) : (
+                <>
+                  {renderAddressBlock(
+                    isRepresentante ? 'Endereço' : `Endereço de Faturamento do ${entityLabel}`,
+                    "fat",
+                    "faturamento"
+                  )}
 
-                  <div className="space-y-4">
-                    <h3 className="font-semibold text-lg border-b pb-2">Endereço de Entrega do Mantenedor</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="mant_ent_cep">CEP</Label>
-                        <Input id="mant_ent_cep" value={formData.mant_ent_cep} onChange={(e) => handleInputChange("mant_ent_cep", e.target.value)} onBlur={(e) => handleCepLookup(e.target.value, 'mant_entrega')} placeholder="00000-000" />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_ent_endereco">Endereço</Label>
-                        <Input id="mant_ent_endereco" value={formData.mant_ent_endereco} onChange={(e) => handleInputChange("mant_ent_endereco", e.target.value)} placeholder="Rua, Avenida" />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_ent_numero">N°</Label>
-                        <Input id="mant_ent_numero" value={formData.mant_ent_numero} onChange={(e) => handleInputChange("mant_ent_numero", e.target.value)} placeholder="Número" />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_ent_complemento">Complemento</Label>
-                        <Input id="mant_ent_complemento" value={formData.mant_ent_complemento} onChange={(e) => handleInputChange("mant_ent_complemento", e.target.value)} placeholder="Sala, Apto, etc" />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_ent_cidade">Cidade</Label>
-                        <Input id="mant_ent_cidade" value={formData.mant_ent_cidade} onChange={(e) => handleInputChange("mant_ent_cidade", e.target.value)} placeholder="Cidade" />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_ent_estado">Estado</Label>
-                        <Input id="mant_ent_estado" value={formData.mant_ent_estado} onChange={(e) => handleInputChange("mant_ent_estado", e.target.value)} placeholder="Estado" />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_ent_uf">UF</Label>
-                        <Input id="mant_ent_uf" value={formData.mant_ent_uf} onChange={(e) => handleInputChange("mant_ent_uf", e.target.value)} placeholder="UF" maxLength={2} />
-                      </div>
-                      <div>
-                        <Label htmlFor="mant_ent_pais">País</Label>
-                        <Input id="mant_ent_pais" value={formData.mant_ent_pais} onChange={(e) => handleInputChange("mant_ent_pais", e.target.value)} placeholder="País" />
-                      </div>
-                    </div>
-                  </div>
+                  {!isRepresentante && (
+                    <>
+                      {renderAddressBlock(`Endereço de Entrega do ${entityLabel}`, "ent", "entrega")}
+                    </>
+                  )}
+
+                  {(isLead || isCliente) && (
+                    <>
+                      {renderAddressBlock("Endereço de Faturamento do Mantenedor", "mant_fat", "mant_faturamento")}
+                      {renderAddressBlock("Endereço de Entrega do Mantenedor", "mant_ent", "mant_entrega")}
+                    </>
+                  )}
                 </>
               )}
             </TabsContent>
@@ -1154,26 +1114,69 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                     )}
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label>Banco</Label>
-                      <Input value={conta.banco} onChange={(e) => handleContaBancariaChange(index, "banco", e.target.value)} placeholder="Nome do banco" />
-                    </div>
-                    <div>
-                      <Label>Chave PIX</Label>
-                      <Input value={conta.chave_pix} onChange={(e) => handleContaBancariaChange(index, "chave_pix", e.target.value)} placeholder="CPF, CNPJ, e-mail ou telefone" />
-                    </div>
-                    <div>
-                      <Label>Agência</Label>
-                      <Input value={conta.agencia} onChange={(e) => handleContaBancariaChange(index, "agencia", e.target.value)} placeholder="0000" />
-                    </div>
-                    <div>
-                      <Label>Conta Corrente</Label>
-                      <Input value={conta.conta} onChange={(e) => handleContaBancariaChange(index, "conta", e.target.value)} placeholder="00000-0" />
-                    </div>
-                    <div className="md:col-span-2">
-                      <Label>Nome do Beneficiário</Label>
-                      <Input value={conta.nome_beneficiario} onChange={(e) => handleContaBancariaChange(index, "nome_beneficiario", e.target.value)} placeholder="Nome completo" />
-                    </div>
+                    {isFornecedorRevenda ? (
+                      <>
+                        <div>
+                          <Label>Bank</Label>
+                          <Input value={conta.bank || ''} onChange={(e) => handleContaBancariaChange(index, "bank", e.target.value)} placeholder="Bank name" />
+                        </div>
+                        <div>
+                          <Label>Branch</Label>
+                          <Input value={conta.branch || ''} onChange={(e) => handleContaBancariaChange(index, "branch", e.target.value)} placeholder="Branch" />
+                        </div>
+                        <div>
+                          <Label>Account Number</Label>
+                          <Input value={conta.account_number || ''} onChange={(e) => handleContaBancariaChange(index, "account_number", e.target.value)} placeholder="Account number" />
+                        </div>
+                        <div>
+                          <Label>IBAN</Label>
+                          <Input value={conta.iban || ''} onChange={(e) => handleContaBancariaChange(index, "iban", e.target.value)} placeholder="IBAN" />
+                        </div>
+                        <div>
+                          <Label>SWIFT</Label>
+                          <Input value={conta.swift_code || ''} onChange={(e) => handleContaBancariaChange(index, "swift_code", e.target.value)} placeholder="SWIFT code" />
+                        </div>
+                        <div>
+                          <Label>Beneficiary</Label>
+                          <Input value={conta.beneficiary || ''} onChange={(e) => handleContaBancariaChange(index, "beneficiary", e.target.value)} placeholder="Beneficiary name" />
+                        </div>
+                        <div>
+                          <Label>Moeda</Label>
+                          <Input value={conta.moeda || ''} onChange={(e) => handleContaBancariaChange(index, "moeda", e.target.value)} placeholder="USD, EUR, BRL..." />
+                        </div>
+                        <div>
+                          <Label>País origem</Label>
+                          <Input value={conta.pais_origem || ''} onChange={(e) => handleContaBancariaChange(index, "pais_origem", e.target.value)} placeholder="País de origem" />
+                        </div>
+                        <div>
+                          <Label>Cidade do banco</Label>
+                          <Input value={conta.cidade_banco || ''} onChange={(e) => handleContaBancariaChange(index, "cidade_banco", e.target.value)} placeholder="Cidade" />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div>
+                          <Label>Banco</Label>
+                          <Input value={conta.banco} onChange={(e) => handleContaBancariaChange(index, "banco", e.target.value)} placeholder="Nome do banco" />
+                        </div>
+                        <div>
+                          <Label>Chave PIX</Label>
+                          <Input value={conta.chave_pix} onChange={(e) => handleContaBancariaChange(index, "chave_pix", e.target.value)} placeholder="CPF, CNPJ, e-mail ou telefone" />
+                        </div>
+                        <div>
+                          <Label>Agência</Label>
+                          <Input value={conta.agencia} onChange={(e) => handleContaBancariaChange(index, "agencia", e.target.value)} placeholder="0000" />
+                        </div>
+                        <div>
+                          <Label>Conta Corrente</Label>
+                          <Input value={conta.conta} onChange={(e) => handleContaBancariaChange(index, "conta", e.target.value)} placeholder="00000-0" />
+                        </div>
+                        <div className="md:col-span-2">
+                          <Label>Nome do Beneficiário</Label>
+                          <Input value={conta.nome_beneficiario} onChange={(e) => handleContaBancariaChange(index, "nome_beneficiario", e.target.value)} placeholder="Nome completo" />
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
@@ -1210,7 +1213,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               </TabsContent>
             )}
 
-            {/* ABA: CRÉDITO E RESTRIÇÕES */}
+            {/* ABA: CRÉDITO E RESTRIÇÕES (oculta para fornecedor revenda) */}
+            {!isFornecedorRevenda && (
             <TabsContent value="credito" className="space-y-4 mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -1284,6 +1288,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 </div>
               </div>
             </TabsContent>
+            )}
 
             {/* ABA: DOCUMENTOS */}
             <TabsContent value="documentos" className="space-y-4 mt-4">
@@ -1334,12 +1339,53 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               )}
             </TabsContent>
 
+            {/* ABA: LINHAS (apenas para fornecedor revenda) */}
+            {isFornecedorRevenda && (
+              <TabsContent value="linhas" className="space-y-4 mt-4">
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg">Linhas de Produtos</h3>
+                  
+                  {linhas.length > 0 ? (
+                    <div className="space-y-3">
+                      {linhas.map((linha, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <Input
+                            value={linha}
+                            onChange={(e) => updateLinha(index, e.target.value)}
+                            placeholder={`Linha ${index + 1}`}
+                            className="flex-1"
+                          />
+                          <Button variant="ghost" size="sm" onClick={() => removeLinha(index)}>
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="border border-dashed rounded-lg p-8 text-center text-muted-foreground">
+                      <p>Nenhuma linha cadastrada.</p>
+                      <p className="text-xs mt-1">Clique em "Adicionar Linha" para começar.</p>
+                    </div>
+                  )}
+
+                  <Button variant="outline" onClick={addLinha} className="w-full">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Adicionar Linha
+                  </Button>
+                </div>
+              </TabsContent>
+            )}
+
             {/* ABA: BOAS PRÁTICAS (apenas para fornecedores) */}
             {isFornecedor && (
               <TabsContent value="boas-praticas" className="space-y-4 mt-4">
                 <div className="space-y-4">
                   <h3 className="font-semibold text-lg">Certificados de Boas Práticas</h3>
                   
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
+                    <p>ℹ️ O certificado e a validade são replicados do módulo Regulatório. Cadastre os certificados no Regulatório para que apareçam aqui.</p>
+                  </div>
+
                   {/* Vincular certificado */}
                   <div className="flex gap-2 items-end">
                     <div className="flex-1">
@@ -1375,6 +1421,28 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                       Vincular
                     </Button>
                   </div>
+
+                  {/* Alertas de vencimento */}
+                  {certificadosVinculados.map(certId => {
+                    const cert = mockCertificados.find(c => c.id === certId);
+                    if (!cert?.validade) return null;
+                    const dias = Math.ceil((new Date(cert.validade).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                    if (dias <= 365 && dias > 180) {
+                      return (
+                        <div key={`alerta-${certId}`} className="bg-yellow-50 border border-yellow-300 rounded-lg p-3 text-sm text-yellow-800">
+                          ⚠️ O certificado "{cert.nomeArquivoPrincipal}" vence em {dias} dias. Providencie a renovação.
+                        </div>
+                      );
+                    }
+                    if (dias <= 180) {
+                      return (
+                        <div key={`alerta-${certId}`} className="bg-red-50 border border-red-300 rounded-lg p-3 text-sm text-red-800">
+                          🚨 URGENTE: O certificado "{cert.nomeArquivoPrincipal}" vence em {dias} dias!
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
 
                   {/* Tabela de certificados vinculados */}
                   {certificadosVinculados.length > 0 ? (
@@ -1439,10 +1507,134 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                       <p className="text-xs mt-1">Selecione um certificado acima para vincular a este fornecedor</p>
                     </div>
                   )}
+                </div>
+              </TabsContent>
+            )}
 
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
-                    <p>ℹ️ Os certificados vinculados aparecerão automaticamente no módulo Regulatório / Boas Práticas</p>
-                  </div>
+            {/* ABA: ISO (apenas para fornecedor revenda) */}
+            {isFornecedorRevenda && (
+              <TabsContent value="iso" className="space-y-4 mt-4">
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg">Certificados ISO</h3>
+
+                  {/* Alertas de vencimento ISO */}
+                  {isosVinculadas.map((iso, idx) => {
+                    if (!iso.vencimento) return null;
+                    const status = getISOStatus(iso.vencimento, !!iso.nomeArquivoISO);
+                    if (status.label.startsWith('Vencendo') || status.label === 'Vencida') {
+                      return (
+                        <div key={`iso-alerta-${idx}`} className={`border rounded-lg p-3 text-sm ${status.label === 'Vencida' ? 'bg-red-50 border-red-300 text-red-800' : 'bg-yellow-50 border-yellow-300 text-yellow-800'}`}>
+                          {status.label === 'Vencida'
+                            ? `🚨 A ISO da fábrica "${iso.fabrica || `#${idx + 1}`}" está vencida! Solicite a renovação.`
+                            : `⚠️ A ISO da fábrica "${iso.fabrica || `#${idx + 1}`}" está ${status.label}. É necessário pedir a renovação e anexar o novo arquivo.`
+                          }
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
+
+                  {isosVinculadas.length > 0 ? (
+                    <div className="border rounded-lg overflow-hidden">
+                      <table className="w-full text-sm">
+                        <thead className="bg-muted">
+                          <tr>
+                            <th className="text-left p-3 font-medium">Fábrica</th>
+                            <th className="text-left p-3 font-medium">Vencimento das ISOs</th>
+                            <th className="text-left p-3 font-medium">Status</th>
+                            <th className="text-left p-3 font-medium">Observação</th>
+                            <th className="text-left p-3 font-medium">Anexar ISO</th>
+                            <th className="text-left p-3 font-medium">Anexar Tradução</th>
+                            <th className="text-center p-3 font-medium">Ações</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {isosVinculadas.map((iso, index) => {
+                            const status = getISOStatus(iso.vencimento, !!iso.nomeArquivoISO);
+                            return (
+                              <tr key={iso.id} className="border-t">
+                                <td className="p-3">
+                                  <Input value={iso.fabrica} onChange={(e) => updateISO(index, 'fabrica', e.target.value)} placeholder="Nome da fábrica" className="min-w-[150px]" />
+                                </td>
+                                <td className="p-3">
+                                  <Input type="date" value={iso.vencimento} onChange={(e) => updateISO(index, 'vencimento', e.target.value)} className="min-w-[140px]" />
+                                </td>
+                                <td className="p-3">
+                                  {status.label !== '-' && (
+                                    <span className={`text-xs px-2 py-1 rounded whitespace-nowrap ${status.className}`}>
+                                      {status.label}
+                                    </span>
+                                  )}
+                                </td>
+                                <td className="p-3">
+                                  <Input value={iso.observacao} onChange={(e) => updateISO(index, 'observacao', e.target.value)} placeholder="Observação" className="min-w-[150px]" />
+                                </td>
+                                <td className="p-3">
+                                  <div className="flex items-center gap-1">
+                                    <input
+                                      type="file"
+                                      id={`iso-file-${index}`}
+                                      className="hidden"
+                                      accept=".pdf,.jpg,.jpeg,.png"
+                                      onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                          updateISO(index, 'arquivoISO', file);
+                                          updateISO(index, 'nomeArquivoISO', file.name);
+                                        }
+                                      }}
+                                    />
+                                    <label htmlFor={`iso-file-${index}`} className="cursor-pointer">
+                                      <Button variant="outline" size="sm" asChild>
+                                        <span><Upload className="h-3 w-3 mr-1" />{iso.nomeArquivoISO || 'Anexar'}</span>
+                                      </Button>
+                                    </label>
+                                  </div>
+                                </td>
+                                <td className="p-3">
+                                  <div className="flex items-center gap-1">
+                                    <input
+                                      type="file"
+                                      id={`iso-trad-${index}`}
+                                      className="hidden"
+                                      accept=".pdf,.jpg,.jpeg,.png"
+                                      onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                          updateISO(index, 'arquivoTraducao', file);
+                                          updateISO(index, 'nomeArquivoTraducao', file.name);
+                                        }
+                                      }}
+                                    />
+                                    <label htmlFor={`iso-trad-${index}`} className="cursor-pointer">
+                                      <Button variant="outline" size="sm" asChild>
+                                        <span><Upload className="h-3 w-3 mr-1" />{iso.nomeArquivoTraducao || 'Anexar'}</span>
+                                      </Button>
+                                    </label>
+                                  </div>
+                                </td>
+                                <td className="p-3 text-center">
+                                  <Button variant="ghost" size="sm" onClick={() => removeISO(index)}>
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                  </Button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="border border-dashed rounded-lg p-8 text-center text-muted-foreground">
+                      <p>Nenhuma ISO cadastrada.</p>
+                      <p className="text-xs mt-1">Clique em "Adicionar ISO" para começar.</p>
+                    </div>
+                  )}
+
+                  <Button variant="outline" onClick={addISO} className="w-full">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Adicionar ISO
+                  </Button>
                 </div>
               </TabsContent>
             )}
