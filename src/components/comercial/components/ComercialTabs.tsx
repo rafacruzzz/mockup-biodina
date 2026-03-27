@@ -22,6 +22,7 @@ interface ComercialTabsProps {
 }
 
 const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportunidade }: ComercialTabsProps) => {
+  const { segmentos } = useSegmentoLeadManager();
   return (
     <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
       <TabsList className="grid w-full grid-cols-3">
