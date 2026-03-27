@@ -35,6 +35,7 @@ const Cadastro = () => {
 
   // Estado para tipo de entidade
   const [currentEntidadeType, setCurrentEntidadeType] = useState<string>('');
+  const [editingEntidadeData, setEditingEntidadeData] = useState<any>(null);
 
   // Estados para modo edição
   const [isEditMode, setIsEditMode] = useState(false);
@@ -77,6 +78,7 @@ const Cadastro = () => {
       setIsProdutoUsoConsumoModalOpen(true);
     } else if (activeModule === 'pessoas') {
       setCurrentEntidadeType(activeSubModule);
+      setEditingEntidadeData(null);
       setIsEntidadeModalOpen(true);
     } else if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') {
       // Open ColaboradorModal for new user creation
@@ -98,7 +100,11 @@ const Cadastro = () => {
   };
 
   const handleEditItem = (item: any, moduleName: string) => {
-    if (activeModule === 'usuarios' && (activeSubModule === 'colaboradores' || activeSubModule === 'usuarios')) {
+    if (activeModule === 'pessoas') {
+      setEditingEntidadeData(item);
+      setCurrentEntidadeType(activeSubModule);
+      setIsEntidadeModalOpen(true);
+    } else if (activeModule === 'usuarios' && (activeSubModule === 'colaboradores' || activeSubModule === 'usuarios')) {
       setIsEditMode(true);
       setEditingColaboradorId(String(item.id));
       
@@ -299,8 +305,12 @@ const Cadastro = () => {
       
       <EntidadeModal 
         isOpen={isEntidadeModalOpen} 
-        onClose={() => setIsEntidadeModalOpen(false)}
+        onClose={() => {
+          setIsEntidadeModalOpen(false);
+          setEditingEntidadeData(null);
+        }}
         tipoEntidade={currentEntidadeType}
+        editData={editingEntidadeData}
       />
       
       <UserModal 

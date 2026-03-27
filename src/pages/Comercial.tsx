@@ -65,6 +65,7 @@ const Comercial = () => {
   const [showImportacaoDiretaForm, setShowImportacaoDiretaForm] = useState(false);
   const [subAbaContratacao, setSubAbaContratacao] = useState<'contratacoes' | 'pedidos'>('contratacoes');
   const [showLeadModal, setShowLeadModal] = useState(false);
+  const [editingLeadData, setEditingLeadData] = useState<any>(null);
   const [leadsSearchTerm, setLeadsSearchTerm] = useState('');
   // const [showAssinaturas, setShowAssinaturas] = useState(false); // COMENTADO - NÃO USAR NO MOMENTO
   const [propostasDT, setPropostasDT] = useState<PropostaDT[]>([]);
@@ -876,7 +877,15 @@ const Comercial = () => {
                         <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
                           <Eye className="h-4 w-4 text-muted-foreground" />
                         </Button>
-                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-8 w-8 p-0"
+                          onClick={() => {
+                            setEditingLeadData(lead);
+                            setShowLeadModal(true);
+                          }}
+                        >
                           <Edit className="h-4 w-4 text-muted-foreground" />
                         </Button>
                       </div>
@@ -891,8 +900,12 @@ const Comercial = () => {
         {showLeadModal && (
           <EntidadeModal
             isOpen={showLeadModal}
-            onClose={() => setShowLeadModal(false)}
+            onClose={() => {
+              setShowLeadModal(false);
+              setEditingLeadData(null);
+            }}
             tipoEntidade="leads"
+            editData={editingLeadData}
           />
         )}
       </div>

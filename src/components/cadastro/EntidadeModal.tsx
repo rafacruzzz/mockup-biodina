@@ -21,9 +21,10 @@ interface EntidadeModalProps {
   onClose: () => void;
   tipoEntidade: string;
   onConvertToClient?: (formData: any) => void;
+  editData?: any;
 }
 
-const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: EntidadeModalProps) => {
+const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editData }: EntidadeModalProps) => {
   const { lookupCep, loading: cepLoading } = useCepLookup();
   const { segmentos } = useSegmentoLeadManager();
   const [uploadedDocs, setUploadedDocs] = useState<Array<{ name: string; size: number; type: string }>>([]);
@@ -216,6 +217,31 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: Ent
     }
   };
 
+  // Pré-preencher dados quando em modo edição
+  useEffect(() => {
+    if (editData && isOpen) {
+      const newFormData = { ...formData };
+      Object.keys(newFormData).forEach(key => {
+        if (editData[key] !== undefined) {
+          (newFormData as any)[key] = editData[key];
+        }
+      });
+      // Map common field names
+      if (editData.nome) newFormData.nome_cliente = editData.nome;
+      if (editData.cnpj) newFormData.cnpj_cpf = editData.cnpj;
+      if (editData.telefone) newFormData.telefone1 = editData.telefone;
+      if (editData.email) newFormData.email1 = editData.email;
+      if (editData.cidade) newFormData.fat_cidade = editData.cidade;
+      if (editData.uf) newFormData.fat_uf = editData.uf;
+      setFormData(newFormData);
+      
+      if (editData.contas_bancarias && Array.isArray(editData.contas_bancarias)) {
+        setContasBancarias(editData.contas_bancarias);
+      }
+    }
+  }, [editData, isOpen]);
+
+
   const handleCepLookup = async (cep: string, tipo: 'faturamento' | 'entrega' | 'mant_faturamento' | 'mant_entrega') => {
     const cleanCep = cep.replace(/\D/g, '');
     if (cleanCep.length === 8) {
@@ -299,7 +325,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: Ent
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-background rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden">
         <div className="flex-shrink-0 flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-bold">Cadastro de {getTipoLabel(tipoEntidade)}</h2>
+          <h2 className="text-xl font-bold">{editData ? 'Editar' : 'Cadastro de'} {getTipoLabel(tipoEntidade)}</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
@@ -1382,7 +1408,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: Ent
         <div className="flex-shrink-0 flex justify-between gap-4 p-6 border-t">
           <div className="flex gap-2">
             <DraftSaveButton onSaveDraft={handleSaveDraft} />
-            {isLead && onConvertToClient && (
+            {isLead && editData && onConvertToClient && (
               <Button
                 variant="outline"
                 onClick={() => {
