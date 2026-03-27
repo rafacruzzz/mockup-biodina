@@ -639,7 +639,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                     id="nome_cliente"
                     value={formData.nome_cliente}
                     onChange={(e) => handleInputChange("nome_cliente", e.target.value)}
-                    placeholder={isFornecedorRevenda ? "Nome da unidade fabril" : isFornecedorUsoConsumo ? "Nome do fornecedor" : "Nome do cliente"}
+                    placeholder={isFornecedorRevenda ? "Nome da unidade fabril" : (isFornecedorUsoConsumo || isFornecedorServicos) ? "Nome do fornecedor" : "Nome do cliente"}
                   />
                 </div>
 
