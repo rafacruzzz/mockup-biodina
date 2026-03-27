@@ -224,6 +224,7 @@ const Cadastro = () => {
     if (activeModule === 'produtos' && activeSubModule === 'produtos') return "Nova Mercadoria para Revenda";
     if (activeModule === 'produtos' && activeSubModule === 'uso_consumo') return "Novo Produto de Uso e Consumo";
     if (activeModule === 'produtos' && activeSubModule === 'kits') return "Novo Kit";
+    if (activeModule === 'produtos' && activeSubModule === 'marcas') return "Nova Marca";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'cartoes') return "Novo Cartão";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'categorias_despesas') return "Nova Categoria";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'prazos') return "Novo Prazo";
