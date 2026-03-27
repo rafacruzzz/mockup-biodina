@@ -43,6 +43,16 @@ const queryClient = new QueryClient({
   },
 });
 
+const SuperOnlyRoute: React.FC<{ children: React.ReactElement }> = ({ children }) => {
+  const { user } = useUser();
+
+  if (user?.email !== "super@super.com.br") {
+    return <Navigate to="/bi-geral" replace />;
+  }
+
+  return children;
+};
+
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
