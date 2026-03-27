@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { X, Save, Upload, Trash2, FileText, Plus, Link2 } from "lucide-react";
+import { X, Save, Upload, Trash2, FileText, Plus, Link2, UserCheck } from "lucide-react";
 import { useCepLookup } from "@/hooks/useCepLookup";
 import { useDraft } from "@/hooks/useDraft";
 import { useSegmentoLeadManager } from "@/hooks/useSegmentoLeadManager";
@@ -20,9 +20,10 @@ interface EntidadeModalProps {
   isOpen: boolean;
   onClose: () => void;
   tipoEntidade: string;
+  onConvertToClient?: (formData: any) => void;
 }
 
-const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) => {
+const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: EntidadeModalProps) => {
   const { lookupCep, loading: cepLoading } = useCepLookup();
   const { segmentos } = useSegmentoLeadManager();
   const [uploadedDocs, setUploadedDocs] = useState<Array<{ name: string; size: number; type: string }>>([]);
@@ -33,6 +34,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
   const [draftRestored, setDraftRestored] = useState(false);
 
   const isFornecedor = tipoEntidade.startsWith('fornecedores_');
+  const isLead = tipoEntidade === 'leads';
 
   // Hook de rascunho
   const { 
@@ -119,13 +121,25 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     ent_uf: "",
     ent_pais: "Brasil",
     
-    // Dados Bancários
-    banco: "",
-    codigo_banco: "",
-    agencia: "",
-    conta: "",
-    chave_pix: "",
-    nome_beneficiario: "",
+    // Endereço Faturamento Mantenedor
+    mant_fat_endereco: "",
+    mant_fat_numero: "",
+    mant_fat_complemento: "",
+    mant_fat_cidade: "",
+    mant_fat_estado: "",
+    mant_fat_cep: "",
+    mant_fat_uf: "",
+    mant_fat_pais: "Brasil",
+    
+    // Endereço Entrega Mantenedor
+    mant_ent_endereco: "",
+    mant_ent_numero: "",
+    mant_ent_complemento: "",
+    mant_ent_cidade: "",
+    mant_ent_estado: "",
+    mant_ent_cep: "",
+    mant_ent_uf: "",
+    mant_ent_pais: "Brasil",
     
     // Contato Comercial do Lead
     contato_nome: "",
@@ -174,12 +188,46 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleCepLookup = async (cep: string, tipo: 'faturamento' | 'entrega') => {
+  interface ContaBancaria {
+    banco: string;
+    agencia: string;
+    conta: string;
+    chave_pix: string;
+    nome_beneficiario: string;
+  }
+
+  const [contasBancarias, setContasBancarias] = useState<ContaBancaria[]>([
+    { banco: '', agencia: '', conta: '', chave_pix: '', nome_beneficiario: '' }
+  ]);
+
+  const handleContaBancariaChange = (index: number, field: keyof ContaBancaria, value: string) => {
+    setContasBancarias(prev => prev.map((conta, i) => 
+      i === index ? { ...conta, [field]: value } : conta
+    ));
+  };
+
+  const addContaBancaria = () => {
+    setContasBancarias(prev => [...prev, { banco: '', agencia: '', conta: '', chave_pix: '', nome_beneficiario: '' }]);
+  };
+
+  const removeContaBancaria = (index: number) => {
+    if (contasBancarias.length > 1) {
+      setContasBancarias(prev => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  const handleCepLookup = async (cep: string, tipo: 'faturamento' | 'entrega' | 'mant_faturamento' | 'mant_entrega') => {
     const cleanCep = cep.replace(/\D/g, '');
     if (cleanCep.length === 8) {
       const result = await lookupCep(cleanCep);
       if (result) {
-        const prefix = tipo === 'faturamento' ? 'fat' : 'ent';
+        const prefixMap: Record<string, string> = {
+          'faturamento': 'fat',
+          'entrega': 'ent',
+          'mant_faturamento': 'mant_fat',
+          'mant_entrega': 'mant_ent'
+        };
+        const prefix = prefixMap[tipo];
         setFormData(prev => ({
           ...prev,
           [`${prefix}_endereco`]: result.logradouro,
@@ -685,7 +733,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
             {/* ABA: ENDEREÇOS */}
             <TabsContent value="enderecos" className="space-y-6 mt-4">
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">Endereço de Faturamento</h3>
+                <h3 className="font-semibold text-lg border-b pb-2">{isLead ? 'Endereço de Faturamento do Lead' : 'Endereço de Faturamento'}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="fat_cep">CEP</Label>
@@ -765,7 +813,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">Endereço de Entrega</h3>
+                <h3 className="font-semibold text-lg border-b pb-2">{isLead ? 'Endereço de Entrega do Lead' : 'Endereço de Entrega'}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="ent_cep">CEP</Label>
@@ -843,8 +891,87 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                   </div>
                 </div>
               </div>
-            </TabsContent>
 
+              {isLead && (
+                <>
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-lg border-b pb-2">Endereço de Faturamento do Mantenedor</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="mant_fat_cep">CEP</Label>
+                        <Input id="mant_fat_cep" value={formData.mant_fat_cep} onChange={(e) => handleInputChange("mant_fat_cep", e.target.value)} onBlur={(e) => handleCepLookup(e.target.value, 'mant_faturamento')} placeholder="00000-000" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_endereco">Endereço</Label>
+                        <Input id="mant_fat_endereco" value={formData.mant_fat_endereco} onChange={(e) => handleInputChange("mant_fat_endereco", e.target.value)} placeholder="Rua, Avenida" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_numero">N°</Label>
+                        <Input id="mant_fat_numero" value={formData.mant_fat_numero} onChange={(e) => handleInputChange("mant_fat_numero", e.target.value)} placeholder="Número" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_complemento">Complemento</Label>
+                        <Input id="mant_fat_complemento" value={formData.mant_fat_complemento} onChange={(e) => handleInputChange("mant_fat_complemento", e.target.value)} placeholder="Sala, Apto, etc" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_cidade">Cidade</Label>
+                        <Input id="mant_fat_cidade" value={formData.mant_fat_cidade} onChange={(e) => handleInputChange("mant_fat_cidade", e.target.value)} placeholder="Cidade" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_estado">Estado</Label>
+                        <Input id="mant_fat_estado" value={formData.mant_fat_estado} onChange={(e) => handleInputChange("mant_fat_estado", e.target.value)} placeholder="Estado" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_uf">UF</Label>
+                        <Input id="mant_fat_uf" value={formData.mant_fat_uf} onChange={(e) => handleInputChange("mant_fat_uf", e.target.value)} placeholder="UF" maxLength={2} />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_fat_pais">País</Label>
+                        <Input id="mant_fat_pais" value={formData.mant_fat_pais} onChange={(e) => handleInputChange("mant_fat_pais", e.target.value)} placeholder="País" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-lg border-b pb-2">Endereço de Entrega do Mantenedor</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="mant_ent_cep">CEP</Label>
+                        <Input id="mant_ent_cep" value={formData.mant_ent_cep} onChange={(e) => handleInputChange("mant_ent_cep", e.target.value)} onBlur={(e) => handleCepLookup(e.target.value, 'mant_entrega')} placeholder="00000-000" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_endereco">Endereço</Label>
+                        <Input id="mant_ent_endereco" value={formData.mant_ent_endereco} onChange={(e) => handleInputChange("mant_ent_endereco", e.target.value)} placeholder="Rua, Avenida" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_numero">N°</Label>
+                        <Input id="mant_ent_numero" value={formData.mant_ent_numero} onChange={(e) => handleInputChange("mant_ent_numero", e.target.value)} placeholder="Número" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_complemento">Complemento</Label>
+                        <Input id="mant_ent_complemento" value={formData.mant_ent_complemento} onChange={(e) => handleInputChange("mant_ent_complemento", e.target.value)} placeholder="Sala, Apto, etc" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_cidade">Cidade</Label>
+                        <Input id="mant_ent_cidade" value={formData.mant_ent_cidade} onChange={(e) => handleInputChange("mant_ent_cidade", e.target.value)} placeholder="Cidade" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_estado">Estado</Label>
+                        <Input id="mant_ent_estado" value={formData.mant_ent_estado} onChange={(e) => handleInputChange("mant_ent_estado", e.target.value)} placeholder="Estado" />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_uf">UF</Label>
+                        <Input id="mant_ent_uf" value={formData.mant_ent_uf} onChange={(e) => handleInputChange("mant_ent_uf", e.target.value)} placeholder="UF" maxLength={2} />
+                      </div>
+                      <div>
+                        <Label htmlFor="mant_ent_pais">País</Label>
+                        <Input id="mant_ent_pais" value={formData.mant_ent_pais} onChange={(e) => handleInputChange("mant_ent_pais", e.target.value)} placeholder="País" />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </TabsContent>
 
             {/* ABA: DADOS FISCAIS */}
             <TabsContent value="fiscais" className="space-y-4 mt-4">
@@ -949,62 +1076,44 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
 
             {/* ABA: DADOS BANCÁRIOS */}
             <TabsContent value="bancarios" className="space-y-4 mt-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="banco">Banco</Label>
-                  <Input
-                    id="banco"
-                    value={formData.banco}
-                    onChange={(e) => handleInputChange("banco", e.target.value)}
-                    placeholder="Nome do banco"
-                  />
+              {contasBancarias.map((conta, index) => (
+                <div key={index} className="border rounded-lg p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-sm">Banco {index + 1}</h3>
+                    {contasBancarias.length > 1 && (
+                      <Button variant="ghost" size="sm" onClick={() => removeContaBancaria(index)}>
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Banco</Label>
+                      <Input value={conta.banco} onChange={(e) => handleContaBancariaChange(index, "banco", e.target.value)} placeholder="Nome do banco" />
+                    </div>
+                    <div>
+                      <Label>Chave PIX</Label>
+                      <Input value={conta.chave_pix} onChange={(e) => handleContaBancariaChange(index, "chave_pix", e.target.value)} placeholder="CPF, CNPJ, e-mail ou telefone" />
+                    </div>
+                    <div>
+                      <Label>Agência</Label>
+                      <Input value={conta.agencia} onChange={(e) => handleContaBancariaChange(index, "agencia", e.target.value)} placeholder="0000" />
+                    </div>
+                    <div>
+                      <Label>Conta Corrente</Label>
+                      <Input value={conta.conta} onChange={(e) => handleContaBancariaChange(index, "conta", e.target.value)} placeholder="00000-0" />
+                    </div>
+                    <div className="md:col-span-2">
+                      <Label>Nome do Beneficiário</Label>
+                      <Input value={conta.nome_beneficiario} onChange={(e) => handleContaBancariaChange(index, "nome_beneficiario", e.target.value)} placeholder="Nome completo" />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <Label htmlFor="codigo_banco">Código do Banco</Label>
-                  <Input
-                    id="codigo_banco"
-                    value={formData.codigo_banco}
-                    onChange={(e) => handleInputChange("codigo_banco", e.target.value)}
-                    placeholder="000"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="agencia">Agência</Label>
-                  <Input
-                    id="agencia"
-                    value={formData.agencia}
-                    onChange={(e) => handleInputChange("agencia", e.target.value)}
-                    placeholder="0000"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="conta">Conta Corrente</Label>
-                  <Input
-                    id="conta"
-                    value={formData.conta}
-                    onChange={(e) => handleInputChange("conta", e.target.value)}
-                    placeholder="00000-0"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="chave_pix">Chave PIX</Label>
-                  <Input
-                    id="chave_pix"
-                    value={formData.chave_pix}
-                    onChange={(e) => handleInputChange("chave_pix", e.target.value)}
-                    placeholder="CPF, CNPJ, e-mail ou telefone"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="nome_beneficiario">Nome do Beneficiário</Label>
-                  <Input
-                    id="nome_beneficiario"
-                    value={formData.nome_beneficiario}
-                    onChange={(e) => handleInputChange("nome_beneficiario", e.target.value)}
-                    placeholder="Nome completo"
-                  />
-                </div>
-              </div>
+              ))}
+              <Button variant="outline" onClick={addContaBancaria} className="w-full">
+                <Plus className="h-4 w-4 mr-2" />
+                Adicionar Banco
+              </Button>
             </TabsContent>
 
             {/* ABA: CRÉDITO E RESTRIÇÕES */}
@@ -1271,7 +1380,24 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
         </div>
 
         <div className="flex-shrink-0 flex justify-between gap-4 p-6 border-t">
-          <DraftSaveButton onSaveDraft={handleSaveDraft} />
+          <div className="flex gap-2">
+            <DraftSaveButton onSaveDraft={handleSaveDraft} />
+            {isLead && onConvertToClient && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (window.confirm('Deseja converter este Lead em Cliente? O cadastro será movido para a lista de Clientes.')) {
+                    onConvertToClient({ ...formData, contasBancarias });
+                    onClose();
+                  }
+                }}
+                className="border-green-500 text-green-700 hover:bg-green-50"
+              >
+                <UserCheck className="h-4 w-4 mr-2" />
+                Converter em Cliente
+              </Button>
+            )}
+          </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={onClose}>
               Cancelar
