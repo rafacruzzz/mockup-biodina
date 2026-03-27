@@ -179,7 +179,7 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
               <Label htmlFor="ativo">Ativo</Label>
             </div>
             <div>
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email">E-mail do Lead</Label>
               <Input
                 id="email"
                 type="email"
