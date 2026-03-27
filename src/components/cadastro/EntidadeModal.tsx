@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { X, Save, Upload, Trash2, FileText, Plus, Link2, UserCheck } from "lucide-react";
+import { X, Save, Upload, Trash2, FileText, Plus, Link2, UserCheck, AlertTriangle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useCepLookup } from "@/hooks/useCepLookup";
 import { useDraft } from "@/hooks/useDraft";
 import { useSegmentoLeadManager } from "@/hooks/useSegmentoLeadManager";
