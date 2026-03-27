@@ -74,7 +74,7 @@ export const modulosCompletosSistema: ModuloDefinicao[] = [
   },
   {
     key: 'compras',
-    name: 'CPR (Compras para Revenda)',
+    name: 'CPR',
     icon: '📦',
     subModulos: [
       { key: 'pedidos', name: 'Mercadoria para Revenda' },
