@@ -44,7 +44,7 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
         {/* Informações Básicas do Cliente */}
         <Card>
           <CardHeader>
-            <CardTitle>Informações Básicas do Cliente</CardTitle>
+            <CardTitle>Informações Básicas do Lead</CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
