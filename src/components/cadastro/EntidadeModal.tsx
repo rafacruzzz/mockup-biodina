@@ -462,7 +462,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 </div>
 
                 <div>
-                  <Label htmlFor="nome_cliente">Nome do Lead</Label>
+                  <Label htmlFor="nome_cliente">Nome do {entityLabel}</Label>
                   <Input
                     id="nome_cliente"
                     value={formData.nome_cliente}
