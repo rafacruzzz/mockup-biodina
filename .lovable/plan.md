@@ -1,38 +1,37 @@
 
 
-## Plano: Personalizar cadastro de Fornecedor — Uso e Consumo
+## Plano: Personalizar cadastro de Transportadora
 
 ### Alterações em `src/components/cadastro/EntidadeModal.tsx`
 
-**1. Nova variável de controle (~linha 68):**
+**1. Nova variável de controle (~linha 73):**
 ```tsx
-const isFornecedorUsoConsumo = tipoEntidade === 'fornecedores_uso_consumo';
+const isTransportadora = tipoEntidade === 'transportadoras';
 ```
 
-**2. Aba Dados Gerais:**
-- Ocultar "Tipo de Cliente": adicionar `!isFornecedorUsoConsumo` à condição existente (linha 616)
-- Renomear "Nome do Cliente" → "Nome do Fornecedor – Uso e Consumo" quando `isFornecedorUsoConsumo`
-- Ocultar "Nome do Mantenedor" e "CNPJ do Mantenedor": adicionar `!isFornecedorUsoConsumo` à condição (linha 707)
-- Ocultar TIN (já condicionado a `isFornecedorRevenda`, sem alteração)
+**2. Atualizar `entityLabel` (linha 74):**
+- Adicionar: `isTransportadora ? "Transportadora" : ...`
 
-**3. Aba Endereços:**
-- Quando `isFornecedorUsoConsumo`, renderizar apenas 1 bloco: `renderAddressBlock("Endereço", "fat", "faturamento")` — mesmo padrão do Representante Comercial
+**3. Aba Dados Gerais:**
+- Ocultar "Tipo de Cliente": adicionar `!isTransportadora` à condição existente
+- Renomear "Nome do Cliente" → "Nome da Transportadora" quando `isTransportadora`
+- Ocultar "Nome do Mantenedor" e "CNPJ do Mantenedor": adicionar `!isTransportadora` à condição
 
-**4. Aba Dados Bancários:**
-- Já suporta múltiplos bancos (sistema `contasBancarias[]`). Sem alteração necessária.
+**4. Aba Endereços:**
+- Quando `isTransportadora`, renderizar apenas 1 bloco: `renderAddressBlock("Endereço", "fat", "faturamento")` — mesmo padrão do Representante Comercial e Fornecedor Uso e Consumo/Serviços
 
-**5. Ocultar aba "Crédito/Restrições":**
-- Alterar condição de `!isFornecedorRevenda` para `!isFornecedorRevenda && !isFornecedorUsoConsumo` (linha 510)
+**5. Aba Dados Bancários:**
+- Já suporta múltiplos bancos. Sem alteração necessária.
 
-**6. Ocultar aba "Boas Práticas":**
-- Alterar condição de `isFornecedor` para `isFornecedor && !isFornecedorUsoConsumo` (linha 520)
+**6. Substituir aba "Crédito/Restrições" por "Área atendida/Tabela de preços":**
+- Na `TabsList` (linha 513): adicionar `!isTransportadora` à condição para ocultar "Crédito/Restrições"
+- Adicionar nova `TabsTrigger` condicional: `{isTransportadora && <TabsTrigger value="area-atendida">Área atendida/Tabela de preços</TabsTrigger>}`
+- Adicionar novo `TabsContent value="area-atendida"` com:
+  - Campo "Área atendida" (Label + Textarea para livre escrita)
 
-**7. Ajustar entityLabel:**
-- Atualizar a linha 72 para incluir: `isFornecedorUsoConsumo ? "Fornecedor – Uso e Consumo" : ...`
-
-**8. Ajustar grid de tabs:**
-- Adicionar condição para `isFornecedorUsoConsumo` retornando grid adequado (menos abas: Dados Gerais, Endereços, Fiscais, Bancários, Documentos, Empresas, Observações = 7 abas)
+**7. Ajustar `getTabGridCols`:**
+- Adicionar condição para `isTransportadora` retornando grid adequado (Dados Gerais, Endereços, Fiscais, Bancários, Área atendida, Documentos, Empresas, Observações = 8 abas → `grid-cols-8`)
 
 ### Resultado
-Fornecedor Uso e Consumo terá formulário simplificado: sem Tipo de Cliente, sem Mantenedor, nome "do Fornecedor – Uso e Consumo", endereço único, sem Crédito/Restrições, sem Boas Práticas, com dados bancários múltiplos.
+Transportadora terá formulário simplificado: sem Tipo de Cliente, sem Mantenedor, nome "da Transportadora", endereço único, dados bancários múltiplos, aba "Área atendida/Tabela de preços" no lugar de "Crédito/Restrições".
 
