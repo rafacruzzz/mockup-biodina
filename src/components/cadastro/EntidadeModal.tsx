@@ -556,46 +556,23 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                 <h3 className="font-semibold text-sm">E-mails</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="email1">E-mail 1</Label>
-                    <Input
-                      id="email1"
-                      type="email"
-                      value={formData.email1}
-                      onChange={(e) => handleInputChange("email1", e.target.value)}
-                      placeholder="email@exemplo.com"
-                    />
+                    <Label htmlFor="email1">E-mail 1 do Lead</Label>
+                    <Input id="email1" type="email" value={formData.email1} onChange={(e) => handleInputChange("email1", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                   <div>
-                    <Label htmlFor="email2">E-mail 2</Label>
-                    <Input
-                      id="email2"
-                      type="email"
-                      value={formData.email2}
-                      onChange={(e) => handleInputChange("email2", e.target.value)}
-                      placeholder="email@exemplo.com"
-                    />
+                    <Label htmlFor="email2">E-mail 2 do Lead</Label>
+                    <Input id="email2" type="email" value={formData.email2} onChange={(e) => handleInputChange("email2", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                   <div>
-                    <Label htmlFor="email3">E-mail 3</Label>
-                    <Input
-                      id="email3"
-                      type="email"
-                      value={formData.email3}
-                      onChange={(e) => handleInputChange("email3", e.target.value)}
-                      placeholder="email@exemplo.com"
-                    />
+                    <Label htmlFor="email3">E-mail 1 do Mantenedor</Label>
+                    <Input id="email3" type="email" value={formData.email3} onChange={(e) => handleInputChange("email3", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                   <div>
-                    <Label htmlFor="email4">E-mail 4</Label>
-                    <Input
-                      id="email4"
-                      type="email"
-                      value={formData.email4}
-                      onChange={(e) => handleInputChange("email4", e.target.value)}
-                      placeholder="email@exemplo.com"
-                    />
+                    <Label htmlFor="email4">E-mail 2 do Mantenedor</Label>
+                    <Input id="email4" type="email" value={formData.email4} onChange={(e) => handleInputChange("email4", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                 </div>
+              </div>
               </div>
 
               <div className="space-y-3 border-t pt-4">
