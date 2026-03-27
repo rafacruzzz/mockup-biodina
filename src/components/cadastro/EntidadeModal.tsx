@@ -544,25 +544,29 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="nome_mantenedor">Nome do Mantenedor</Label>
-                  <Input
-                    id="nome_mantenedor"
-                    value={formData.nome_mantenedor}
-                    onChange={(e) => handleInputChange("nome_mantenedor", e.target.value)}
-                    placeholder="Nome do mantenedor"
-                  />
-                </div>
+                {!isRepresentante && (
+                  <>
+                    <div>
+                      <Label htmlFor="nome_mantenedor">Nome do Mantenedor</Label>
+                      <Input
+                        id="nome_mantenedor"
+                        value={formData.nome_mantenedor}
+                        onChange={(e) => handleInputChange("nome_mantenedor", e.target.value)}
+                        placeholder="Nome do mantenedor"
+                      />
+                    </div>
 
-                <div>
-                  <Label htmlFor="cnpj_mantenedor">CNPJ do Mantenedor</Label>
-                  <Input
-                    id="cnpj_mantenedor"
-                    value={formData.cnpj_mantenedor}
-                    onChange={(e) => handleInputChange("cnpj_mantenedor", e.target.value)}
-                    placeholder="00.000.000/0000-00"
-                  />
-                </div>
+                    <div>
+                      <Label htmlFor="cnpj_mantenedor">CNPJ do Mantenedor</Label>
+                      <Input
+                        id="cnpj_mantenedor"
+                        value={formData.cnpj_mantenedor}
+                        onChange={(e) => handleInputChange("cnpj_mantenedor", e.target.value)}
+                        placeholder="00.000.000/0000-00"
+                      />
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className="space-y-3 border-t pt-4">
