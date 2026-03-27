@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 import DashboardAssessoria from "@/components/comercial/assessoria/DashboardAssessoria";
 import { OrdensServicoTab } from "@/components/comercial/assessoria/OrdensServicoTab";
 import { ChamadosAssessoriaTab } from "@/components/comercial/assessoria/ChamadosAssessoriaTab";
@@ -906,6 +907,11 @@ const Comercial = () => {
             }}
             tipoEntidade="leads"
             editData={editingLeadData}
+            onConvertToClient={(data) => {
+              toast({ title: "Lead convertido em cliente com sucesso!" });
+              setShowLeadModal(false);
+              setEditingLeadData(null);
+            }}
           />
         )}
       </div>

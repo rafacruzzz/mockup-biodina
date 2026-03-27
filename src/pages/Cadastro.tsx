@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 import SidebarLayout from "@/components/SidebarLayout";
 import CadastroSidebar from "@/components/cadastro/CadastroSidebar";
 import ContentHeader from "@/components/cadastro/ContentHeader";
@@ -311,6 +312,11 @@ const Cadastro = () => {
         }}
         tipoEntidade={currentEntidadeType}
         editData={editingEntidadeData}
+        onConvertToClient={(data) => {
+          toast({ title: "Lead convertido em cliente com sucesso!" });
+          setIsEntidadeModalOpen(false);
+          setEditingEntidadeData(null);
+        }}
       />
       
       <UserModal 
