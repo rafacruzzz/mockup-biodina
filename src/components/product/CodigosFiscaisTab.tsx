@@ -38,7 +38,7 @@ const CodigosFiscaisTab = ({ formData, onInputChange }: ProductTabProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="codigoEANPrimaria" className="text-sm font-semibold">Código EAN (GTIN) - Cx Primária</Label>
+            <Label htmlFor="codigoEANPrimaria" className="text-sm font-semibold">UDI - Cx Primária</Label>
             <Input
               id="codigoEANPrimaria"
               value={formData.codigoEANPrimaria}
