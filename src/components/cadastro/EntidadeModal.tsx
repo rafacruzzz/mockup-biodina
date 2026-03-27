@@ -432,8 +432,24 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   </>
                 )}
 
+                {isCliente && editData && editData.segmento_lead && (
+                  <div>
+                    <Label htmlFor="segmento_cliente">Segmento do Cliente (originado do Lead)</Label>
+                    <Select value={editData.segmento_lead} disabled>
+                      <SelectTrigger className="bg-muted">
+                        <SelectValue placeholder="Segmento do Lead" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {segmentos.map((segmento) => (
+                          <SelectItem key={segmento.id} value={segmento.value}>{segmento.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
                 <div>
-                  <Label htmlFor="tipo_cliente">Tipo de Lead</Label>
+                  <Label htmlFor="tipo_cliente">Tipo de {entityLabel}</Label>
                   <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione..." />
