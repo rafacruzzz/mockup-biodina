@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { X, Save, Upload, Trash2, FileText, Plus, Link2, UserCheck } from "lucide-react";
+import { X, Save, Upload, Trash2, FileText, Plus, Link2, UserCheck, AlertTriangle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useCepLookup } from "@/hooks/useCepLookup";
 import { useDraft } from "@/hooks/useDraft";
 import { useSegmentoLeadManager } from "@/hooks/useSegmentoLeadManager";
@@ -200,6 +201,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   const [contasBancarias, setContasBancarias] = useState<ContaBancaria[]>([
     { banco: '', agencia: '', conta: '', chave_pix: '', nome_beneficiario: '' }
   ]);
+  const [showConvertConfirm, setShowConvertConfirm] = useState(false);
 
   const handleContaBancariaChange = (index: number, field: keyof ContaBancaria, value: string) => {
     setContasBancarias(prev => prev.map((conta, i) => 
@@ -1411,12 +1413,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
             {isLead && editData && onConvertToClient && (
               <Button
                 variant="outline"
-                onClick={() => {
-                  if (window.confirm('Deseja converter este Lead em Cliente? O cadastro será movido para a lista de Clientes.')) {
-                    onConvertToClient({ ...formData, contasBancarias });
-                    onClose();
-                  }
-                }}
+                onClick={() => setShowConvertConfirm(true)}
                 className="border-green-500 text-green-700 hover:bg-green-50"
               >
                 <UserCheck className="h-4 w-4 mr-2" />
@@ -1424,6 +1421,36 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               </Button>
             )}
           </div>
+
+          {/* Modal de confirmação de conversão */}
+          <Dialog open={showConvertConfirm} onOpenChange={setShowConvertConfirm}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                  Confirmar Conversão
+                </DialogTitle>
+              </DialogHeader>
+              <p className="text-sm text-muted-foreground py-4">
+                Deseja converter este Lead em Cliente? O cadastro será movido para a lista de Clientes.
+              </p>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowConvertConfirm(false)}>
+                  Cancelar
+                </Button>
+                <Button
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                  onClick={() => {
+                    onConvertToClient?.({ ...formData, contasBancarias });
+                    setShowConvertConfirm(false);
+                    onClose();
+                  }}
+                >
+                  Confirmar
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <div className="flex gap-2">
             <Button variant="outline" onClick={onClose}>
               Cancelar
