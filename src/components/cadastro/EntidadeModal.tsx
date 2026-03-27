@@ -569,7 +569,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                     />
                   </div>
                   <div>
-                    <Label htmlFor="telefone2">Telefone 2 do Lead</Label>
+                    <Label htmlFor="telefone2">Telefone 2 do {entityLabel}</Label>
                     <Input
                       id="telefone2"
                       value={formData.telefone2}
