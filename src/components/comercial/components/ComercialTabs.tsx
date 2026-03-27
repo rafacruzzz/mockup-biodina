@@ -48,6 +48,56 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
+              <Label htmlFor="fonteLead">Fonte do Lead</Label>
+              <Select value={formData.fonteLead} onValueChange={(value) => onInputChange('fonteLead', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione a fonte" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="site">Site</SelectItem>
+                  <SelectItem value="indicacao">Indicação</SelectItem>
+                  <SelectItem value="cold_call">Cold Call</SelectItem>
+                  <SelectItem value="licitacao">Licitação</SelectItem>
+                  <SelectItem value="referencia">Referência</SelectItem>
+                  <SelectItem value="evento">Evento</SelectItem>
+                  <SelectItem value="telefone">Telefone</SelectItem>
+                  <SelectItem value="email">E-mail</SelectItem>
+                  <SelectItem value="presencial">Presencial</SelectItem>
+                  <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                  <SelectItem value="video_chamada">Vídeo Chamada</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="segmentoLead">Segmento do Lead</Label>
+              <Select value={formData.segmentoLead} onValueChange={(value) => onInputChange('segmentoLead', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o segmento" />
+                </SelectTrigger>
+                <SelectContent>
+                  {segmentos.map(s => (
+                    <SelectItem key={s.id} value={s.value}>{s.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="metodoContato">Método de Contato</Label>
+              <Select value={formData.metodoContato} onValueChange={(value) => onInputChange('metodoContato', value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o método" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="telefone">Telefone</SelectItem>
+                  <SelectItem value="email">E-mail</SelectItem>
+                  <SelectItem value="presencial">Presencial</SelectItem>
+                  <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                  <SelectItem value="video_chamada">Vídeo Chamada</SelectItem>
+                  <SelectItem value="outros">Outros</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
               <Label htmlFor="cpfCnpj">CPF/CNPJ *</Label>
               <Input
                 id="cpfCnpj"
