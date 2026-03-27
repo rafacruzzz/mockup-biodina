@@ -615,7 +615,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   </div>
                 )}
 
-                {!isRepresentante && !isFornecedorRevenda && (
+                {!isRepresentante && !isFornecedorRevenda && !isFornecedorUsoConsumo && (
                   <div>
                     <Label htmlFor="tipo_cliente">Tipo de {entityLabel}</Label>
                     <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>
