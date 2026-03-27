@@ -654,7 +654,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                     <Input id="email1" type="email" value={formData.email1} onChange={(e) => handleInputChange("email1", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                   <div>
-                    <Label htmlFor="email2">E-mail 2 do Lead</Label>
+                    <Label htmlFor="email2">E-mail 2 do {entityLabel}</Label>
                     <Input id="email2" type="email" value={formData.email2} onChange={(e) => handleInputChange("email2", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                   <div>
