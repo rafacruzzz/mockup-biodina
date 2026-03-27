@@ -78,11 +78,11 @@ const App: React.FC = () => {
           <Route path="/rh" element={<RH />} />
           <Route path="/ti" element={<TI />} />
           <Route path="/rh/rescisao/:colaboradorId" element={<ProcessoRescisao />} />
-                <Route path="/solicitacoes" element={<Solicitacoes />} />
-                <Route path="/super" element={<Super />} />
+                <Route path="/solicitacoes" element={<SuperOnlyRoute><Solicitacoes /></SuperOnlyRoute>} />
+                <Route path="/super" element={<SuperOnlyRoute><Super /></SuperOnlyRoute>} />
                 <Route path="/editar-perfil" element={<EditarPerfil />} />
                 <Route path="/meu-plano" element={<MeuPlano />} />
-                <Route path="/personalizar-navegacao" element={<PersonalizarNavegacao />} />
+                <Route path="/personalizar-navegacao" element={<SuperOnlyRoute><PersonalizarNavegacao /></SuperOnlyRoute>} />
                 <Route path="/configuracao" element={<Configuracao />} />
                 {/* Rota pública para candidatura */}
                 <Route path="/candidatura/:linkId" element={<CandidaturaPublica />} />
