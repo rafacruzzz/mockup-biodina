@@ -37,6 +37,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
 
   const isFornecedor = tipoEntidade.startsWith('fornecedores_');
   const isLead = tipoEntidade === 'leads';
+  const isCliente = tipoEntidade === 'clientes';
+  const entityLabel = isLead ? "Lead" : "Cliente";
 
   // Hook de rascunho
   const { 
@@ -430,8 +432,24 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   </>
                 )}
 
+                {isCliente && editData && editData.segmento_lead && (
+                  <div>
+                    <Label htmlFor="segmento_cliente">Segmento do Cliente (originado do Lead)</Label>
+                    <Select value={editData.segmento_lead} disabled>
+                      <SelectTrigger className="bg-muted">
+                        <SelectValue placeholder="Segmento do Lead" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {segmentos.map((segmento) => (
+                          <SelectItem key={segmento.id} value={segmento.value}>{segmento.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
                 <div>
-                  <Label htmlFor="tipo_cliente">Tipo de Lead</Label>
+                  <Label htmlFor="tipo_cliente">Tipo de {entityLabel}</Label>
                   <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione..." />
@@ -444,7 +462,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 </div>
 
                 <div>
-                  <Label htmlFor="nome_cliente">Nome do Lead</Label>
+                  <Label htmlFor="nome_cliente">Nome do {entityLabel}</Label>
                   <Input
                     id="nome_cliente"
                     value={formData.nome_cliente}
@@ -542,7 +560,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <h3 className="font-semibold text-sm">Telefones</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="telefone1">Telefone 1 do Lead</Label>
+                    <Label htmlFor="telefone1">Telefone 1 do {entityLabel}</Label>
                     <Input
                       id="telefone1"
                       value={formData.telefone1}
@@ -551,7 +569,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                     />
                   </div>
                   <div>
-                    <Label htmlFor="telefone2">Telefone 2 do Lead</Label>
+                    <Label htmlFor="telefone2">Telefone 2 do {entityLabel}</Label>
                     <Input
                       id="telefone2"
                       value={formData.telefone2}
@@ -584,7 +602,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <h3 className="font-semibold text-sm">Telefones Fixos</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="telefone_fixo1">Telefone Fixo 1 do Lead</Label>
+                    <Label htmlFor="telefone_fixo1">Telefone Fixo 1 do {entityLabel}</Label>
                     <Input
                       id="telefone_fixo1"
                       value={formData.telefone_fixo1}
@@ -608,7 +626,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <h3 className="font-semibold text-sm">WhatsApp</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="telefone_whatsapp">Telefone WhatsApp do Lead</Label>
+                    <Label htmlFor="telefone_whatsapp">Telefone WhatsApp do {entityLabel}</Label>
                     <Input
                       id="telefone_whatsapp"
                       value={formData.telefone_whatsapp}
@@ -632,11 +650,11 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <h3 className="font-semibold text-sm">E-mails</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="email1">E-mail 1 do Lead</Label>
+                    <Label htmlFor="email1">E-mail 1 do {entityLabel}</Label>
                     <Input id="email1" type="email" value={formData.email1} onChange={(e) => handleInputChange("email1", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                   <div>
-                    <Label htmlFor="email2">E-mail 2 do Lead</Label>
+                    <Label htmlFor="email2">E-mail 2 do {entityLabel}</Label>
                     <Input id="email2" type="email" value={formData.email2} onChange={(e) => handleInputChange("email2", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                   <div>
@@ -651,7 +669,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               </div>
 
               <div className="space-y-3 border-t pt-4">
-                <h3 className="font-semibold text-sm">Web e Redes Sociais do Lead</h3>
+                <h3 className="font-semibold text-sm">Web e Redes Sociais do {entityLabel}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="website">Website</Label>
@@ -703,7 +721,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               </div>
 
               <div className="space-y-3 border-t pt-4">
-                <h3 className="font-semibold text-sm">Contato Comercial do Lead</h3>
+                <h3 className="font-semibold text-sm">Contato Comercial do {entityLabel}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="contato_nome">Nome</Label>
@@ -1441,7 +1459,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <Button
                   className="bg-green-600 hover:bg-green-700 text-white"
                   onClick={() => {
-                    onConvertToClient?.({ ...formData, contasBancarias });
+                    onConvertToClient?.({ ...formData, contasBancarias, segmento_lead: formData.segmento_lead });
                     setShowConvertConfirm(false);
                     onClose();
                   }}
