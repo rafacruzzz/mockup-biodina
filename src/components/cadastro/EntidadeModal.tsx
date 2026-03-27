@@ -21,9 +21,10 @@ interface EntidadeModalProps {
   onClose: () => void;
   tipoEntidade: string;
   onConvertToClient?: (formData: any) => void;
+  editData?: any;
 }
 
-const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient }: EntidadeModalProps) => {
+const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editData }: EntidadeModalProps) => {
   const { lookupCep, loading: cepLoading } = useCepLookup();
   const { segmentos } = useSegmentoLeadManager();
   const [uploadedDocs, setUploadedDocs] = useState<Array<{ name: string; size: number; type: string }>>([]);
