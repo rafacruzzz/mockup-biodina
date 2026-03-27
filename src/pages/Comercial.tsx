@@ -65,6 +65,7 @@ const Comercial = () => {
   const [showImportacaoDiretaForm, setShowImportacaoDiretaForm] = useState(false);
   const [subAbaContratacao, setSubAbaContratacao] = useState<'contratacoes' | 'pedidos'>('contratacoes');
   const [showLeadModal, setShowLeadModal] = useState(false);
+  const [editingLeadData, setEditingLeadData] = useState<any>(null);
   const [leadsSearchTerm, setLeadsSearchTerm] = useState('');
   // const [showAssinaturas, setShowAssinaturas] = useState(false); // COMENTADO - NÃO USAR NO MOMENTO
   const [propostasDT, setPropostasDT] = useState<PropostaDT[]>([]);
