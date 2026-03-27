@@ -110,7 +110,7 @@ export const empresasMock: Empresa[] = [
     modulosHabilitados: [
       'cadastro', 'comercial', 'compras', 'estoque',
       'financeiro', 'contabilidade', 'faturamento', 'rh', 'ti',
-      'administrativo', 'solicitacoes', 'bi'
+      'administrativo', 'bi'
     ],
     usuarioMaster: {
       id: 'user-master',
@@ -150,7 +150,7 @@ export const empresasMock: Empresa[] = [
     modulosHabilitados: [
       'cadastro', 'comercial', 'compras', 'estoque',
       'financeiro', 'contabilidade', 'faturamento', 'rh', 'ti',
-      'administrativo', 'solicitacoes', 'bi'
+      'administrativo', 'bi'
     ],
     usuarioMaster: {
       id: 'user-biodina',
@@ -190,7 +190,7 @@ export const empresasMock: Empresa[] = [
       dataRegistro: '2023-01-10'
     },
     modulosHabilitados: [
-      'cadastro', 'comercial', 'compras', 'estoque', 'solicitacoes'
+      'cadastro', 'comercial', 'compras', 'estoque'
     ],
     usuarioMaster: {
       id: 'user-abc',
@@ -263,7 +263,7 @@ export const perfisAcessoMock: PerfilAcesso[] = [
     modulosHabilitados: [
       'cadastro', 'comercial', 'compras', 'estoque',
       'financeiro', 'contabilidade', 'faturamento', 'rh',
-      'ti', 'administrativo', 'solicitacoes', 'bi'
+      'ti', 'administrativo', 'bi'
     ],
     dataCriacao: '2024-01-01'
   },
