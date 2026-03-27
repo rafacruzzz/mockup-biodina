@@ -190,7 +190,7 @@ export const empresasMock: Empresa[] = [
       dataRegistro: '2023-01-10'
     },
     modulosHabilitados: [
-      'cadastro', 'comercial', 'compras', 'estoque', 'solicitacoes'
+      'cadastro', 'comercial', 'compras', 'estoque'
     ],
     usuarioMaster: {
       id: 'user-abc',
