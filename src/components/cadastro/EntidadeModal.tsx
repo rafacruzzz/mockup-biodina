@@ -1383,7 +1383,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
         <div className="flex-shrink-0 flex justify-between gap-4 p-6 border-t">
           <div className="flex gap-2">
             <DraftSaveButton onSaveDraft={handleSaveDraft} />
-            {isLead && onConvertToClient && (
+            {isLead && editData && onConvertToClient && (
               <Button
                 variant="outline"
                 onClick={() => {
