@@ -186,12 +186,46 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleCepLookup = async (cep: string, tipo: 'faturamento' | 'entrega') => {
+  interface ContaBancaria {
+    banco: string;
+    agencia: string;
+    conta: string;
+    chave_pix: string;
+    nome_beneficiario: string;
+  }
+
+  const [contasBancarias, setContasBancarias] = useState<ContaBancaria[]>([
+    { banco: '', agencia: '', conta: '', chave_pix: '', nome_beneficiario: '' }
+  ]);
+
+  const handleContaBancariaChange = (index: number, field: keyof ContaBancaria, value: string) => {
+    setContasBancarias(prev => prev.map((conta, i) => 
+      i === index ? { ...conta, [field]: value } : conta
+    ));
+  };
+
+  const addContaBancaria = () => {
+    setContasBancarias(prev => [...prev, { banco: '', agencia: '', conta: '', chave_pix: '', nome_beneficiario: '' }]);
+  };
+
+  const removeContaBancaria = (index: number) => {
+    if (contasBancarias.length > 1) {
+      setContasBancarias(prev => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  const handleCepLookup = async (cep: string, tipo: 'faturamento' | 'entrega' | 'mant_faturamento' | 'mant_entrega') => {
     const cleanCep = cep.replace(/\D/g, '');
     if (cleanCep.length === 8) {
       const result = await lookupCep(cleanCep);
       if (result) {
-        const prefix = tipo === 'faturamento' ? 'fat' : 'ent';
+        const prefixMap: Record<string, string> = {
+          'faturamento': 'fat',
+          'entrega': 'ent',
+          'mant_faturamento': 'mant_fat',
+          'mant_entrega': 'mant_ent'
+        };
+        const prefix = prefixMap[tipo];
         setFormData(prev => ({
           ...prev,
           [`${prefix}_endereco`]: result.logradouro,
