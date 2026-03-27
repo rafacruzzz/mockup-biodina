@@ -80,7 +80,7 @@ const SidebarLayout = ({ children, navOverrides }: SidebarLayoutProps) => {
 
   const menuItems = getMenuItems().filter(item => {
     if (item.id === 'super') return isSuperUser;
-    if (['solicitacoes', 'personalizar-navegacao'].includes(item.id)) return isSuperUser;
+    if (['solicitacoes', 'personalizar-navegacao', 'categorias'].includes(item.id)) return isSuperUser;
     if (item.id === 'configuracao') return true;
     return modulosDisponiveis.includes(item.id as any);
   });

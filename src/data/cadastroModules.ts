@@ -456,6 +456,29 @@ export const modules: ModulesConfig = {
           { id: 6, nome: "Energia Elétrica", codigo: "ENE-ELE", tipo: "Utilidade", status: "Ativa" }
         ]
       },
+      categorias_receitas: {
+        name: "Categorias de Receitas",
+        data: [
+          { id: 1, nome: "Venda de Produtos", codigo: "VND-PRD", tipo: "Operacional", status: "Ativa" },
+          { id: 2, nome: "Prestação de Serviços", codigo: "PRT-SRV", tipo: "Operacional", status: "Ativa" },
+          { id: 3, nome: "Receita Financeira", codigo: "RCT-FIN", tipo: "Financeira", status: "Ativa" },
+          { id: 4, nome: "Aluguel de Equipamentos", codigo: "ALG-EQP", tipo: "Operacional", status: "Ativa" },
+          { id: 5, nome: "Comissões Recebidas", codigo: "COM-RCB", tipo: "Comercial", status: "Ativa" },
+          { id: 6, nome: "Royalties", codigo: "ROY-LTY", tipo: "Financeira", status: "Inativa" }
+        ]
+      },
+      formas_pagamento: {
+        name: "Formas de Pagamento",
+        data: [
+          { id: 1, nome: "PIX", codigo: "PIX", descricao: "Pagamento instantâneo via PIX", status: "Ativo" },
+          { id: 2, nome: "Boleto Bancário", codigo: "BOL", descricao: "Boleto bancário registrado", status: "Ativo" },
+          { id: 3, nome: "Cartão de Crédito", codigo: "CC", descricao: "Pagamento via cartão de crédito", status: "Ativo" },
+          { id: 4, nome: "Cartão de Débito", codigo: "CD", descricao: "Pagamento via cartão de débito", status: "Ativo" },
+          { id: 5, nome: "Transferência Bancária", codigo: "TED", descricao: "Transferência eletrônica (TED/DOC)", status: "Ativo" },
+          { id: 6, nome: "Dinheiro", codigo: "DIN", descricao: "Pagamento em espécie", status: "Ativo" },
+          { id: 7, nome: "Cheque", codigo: "CHQ", descricao: "Pagamento via cheque", status: "Inativo" }
+        ]
+      },
       prazos: {
         name: "Prazos de Pagamento",
         data: [
