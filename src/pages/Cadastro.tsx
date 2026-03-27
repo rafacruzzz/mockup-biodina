@@ -15,6 +15,7 @@ import GenericModal from "@/components/cadastro/GenericModal";
 import ProdutoUsoConsumoModal from "@/components/cadastro/ProdutoUsoConsumoModal";
 import KitModal from "@/components/cadastro/KitModal";
 import MarcaModal from "@/components/cadastro/MarcaModal";
+import EmpresaDetentoraModal from "@/components/cadastro/EmpresaDetentoraModal";
 import GestaoFiliais from "@/components/cadastro/GestaoFiliais";
 import { modules } from "@/data/cadastroModules";
 import { useEmpresa } from "@/contexts/EmpresaContext";
@@ -37,6 +38,7 @@ const Cadastro = () => {
   const [isProdutoUsoConsumoModalOpen, setIsProdutoUsoConsumoModalOpen] = useState(false);
   const [isKitModalOpen, setIsKitModalOpen] = useState(false);
   const [isMarcaModalOpen, setIsMarcaModalOpen] = useState(false);
+  const [isEmpresaDetentoraModalOpen, setIsEmpresaDetentoraModalOpen] = useState(false);
 
   // Estado para tipo de entidade
   const [currentEntidadeType, setCurrentEntidadeType] = useState<string>('');
@@ -85,6 +87,8 @@ const Cadastro = () => {
       setIsKitModalOpen(true);
     } else if (activeModule === 'produtos' && activeSubModule === 'marcas') {
       setIsMarcaModalOpen(true);
+    } else if (activeModule === 'produtos' && activeSubModule === 'empresas_detentoras') {
+      setIsEmpresaDetentoraModalOpen(true);
     } else if (activeModule === 'pessoas') {
       setCurrentEntidadeType(activeSubModule);
       setEditingEntidadeData(null);
@@ -225,6 +229,7 @@ const Cadastro = () => {
     if (activeModule === 'produtos' && activeSubModule === 'uso_consumo') return "Novo Produto de Uso e Consumo";
     if (activeModule === 'produtos' && activeSubModule === 'kits') return "Novo Kit";
     if (activeModule === 'produtos' && activeSubModule === 'marcas') return "Nova Marca";
+    if (activeModule === 'produtos' && activeSubModule === 'empresas_detentoras') return "Nova Empresa Detentora";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'cartoes') return "Novo Cartão";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'categorias_despesas') return "Nova Categoria";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'prazos') return "Novo Prazo";
@@ -373,6 +378,11 @@ const Cadastro = () => {
       <MarcaModal
         isOpen={isMarcaModalOpen}
         onClose={() => setIsMarcaModalOpen(false)}
+      />
+
+      <EmpresaDetentoraModal
+        isOpen={isEmpresaDetentoraModalOpen}
+        onClose={() => setIsEmpresaDetentoraModalOpen(false)}
       />
     </SidebarLayout>
   );
