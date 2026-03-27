@@ -170,27 +170,6 @@ const ComercialTabs = ({ activeTab, onTabChange, formData, onInputChange, oportu
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label htmlFor="fonteLead">Fonte do Lead</Label>
-              <Select value={formData.fonteLead} onValueChange={(value) => onInputChange('fonteLead', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione a fonte" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="site">Site</SelectItem>
-                  <SelectItem value="indicacao">Indicação</SelectItem>
-                  <SelectItem value="cold_call">Cold Call</SelectItem>
-                  <SelectItem value="licitacao">Licitação</SelectItem>
-                  <SelectItem value="referencia">Referência</SelectItem>
-                  <SelectItem value="evento">Evento</SelectItem>
-                  <SelectItem value="telefone">Telefone</SelectItem>
-                  <SelectItem value="email">E-mail</SelectItem>
-                  <SelectItem value="presencial">Presencial</SelectItem>
-                  <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                  <SelectItem value="video_chamada">Vídeo Chamada</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
             <div className="flex items-center space-x-2">
               <Checkbox 
                 id="ativo" 
