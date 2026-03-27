@@ -38,7 +38,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   const isFornecedor = tipoEntidade.startsWith('fornecedores_');
   const isLead = tipoEntidade === 'leads';
   const isCliente = tipoEntidade === 'clientes';
-  const entityLabel = isLead ? "Lead" : "Cliente";
+  const isRepresentante = tipoEntidade === 'representantes';
+  const entityLabel = isRepresentante ? "Representante Comercial" : (isLead ? "Lead" : "Cliente");
 
   // Hook de rascunho
   const { 
@@ -170,6 +171,9 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     limite_credito: 0,
     restrito: false,
     analise_credito_bloqueado: false,
+    
+    // Comissão (Representante Comercial)
+    percentual_comissao_padrao: 0,
     
     // Outros
     servico_produto_oferecido: "",
@@ -348,12 +352,15 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
           )}
           
           <Tabs defaultValue="dados-gerais" className="w-full">
-            <TabsList className={`grid w-full ${isFornecedor ? 'grid-cols-9' : 'grid-cols-8'}`}>
+            <TabsList className={`grid w-full ${isFornecedor ? 'grid-cols-9' : isRepresentante ? 'grid-cols-9' : 'grid-cols-8'}`}>
               <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
               <TabsTrigger value="enderecos">Endereços</TabsTrigger>
               <TabsTrigger value="fiscais">Dados Fiscais</TabsTrigger>
               <TabsTrigger value="bancarios">Dados Bancários</TabsTrigger>
               <TabsTrigger value="credito">Crédito/Restrições</TabsTrigger>
+              {isRepresentante && (
+                <TabsTrigger value="comissao">Comissão</TabsTrigger>
+              )}
               <TabsTrigger value="documentos">Documentos</TabsTrigger>
               {isFornecedor && (
                 <TabsTrigger value="boas-praticas">Boas Práticas</TabsTrigger>
@@ -448,18 +455,20 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   </div>
                 )}
 
-                <div>
-                  <Label htmlFor="tipo_cliente">Tipo de {entityLabel}</Label>
-                  <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="fisica">Pessoa Física</SelectItem>
-                      <SelectItem value="juridica">Pessoa Jurídica</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {!isRepresentante && (
+                  <div>
+                    <Label htmlFor="tipo_cliente">Tipo de {entityLabel}</Label>
+                    <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="fisica">Pessoa Física</SelectItem>
+                        <SelectItem value="juridica">Pessoa Jurídica</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 <div>
                   <Label htmlFor="nome_cliente">Nome do {entityLabel}</Label>
@@ -535,27 +544,33 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="nome_mantenedor">Nome do Mantenedor</Label>
-                  <Input
-                    id="nome_mantenedor"
-                    value={formData.nome_mantenedor}
-                    onChange={(e) => handleInputChange("nome_mantenedor", e.target.value)}
-                    placeholder="Nome do mantenedor"
-                  />
-                </div>
+                {!isRepresentante && (
+                  <>
+                    <div>
+                      <Label htmlFor="nome_mantenedor">Nome do Mantenedor</Label>
+                      <Input
+                        id="nome_mantenedor"
+                        value={formData.nome_mantenedor}
+                        onChange={(e) => handleInputChange("nome_mantenedor", e.target.value)}
+                        placeholder="Nome do mantenedor"
+                      />
+                    </div>
 
-                <div>
-                  <Label htmlFor="cnpj_mantenedor">CNPJ do Mantenedor</Label>
-                  <Input
-                    id="cnpj_mantenedor"
-                    value={formData.cnpj_mantenedor}
-                    onChange={(e) => handleInputChange("cnpj_mantenedor", e.target.value)}
-                    placeholder="00.000.000/0000-00"
-                  />
-                </div>
+                    <div>
+                      <Label htmlFor="cnpj_mantenedor">CNPJ do Mantenedor</Label>
+                      <Input
+                        id="cnpj_mantenedor"
+                        value={formData.cnpj_mantenedor}
+                        onChange={(e) => handleInputChange("cnpj_mantenedor", e.target.value)}
+                        placeholder="00.000.000/0000-00"
+                      />
+                    </div>
+                  </>
+                )}
               </div>
 
+              {!isRepresentante && (
+              <>
               <div className="space-y-3 border-t pt-4">
                 <h3 className="font-semibold text-sm">Telefones</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -764,6 +779,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 </div>
               </div>
 
+              </>
+              )}
               <div className="space-y-3 border-t pt-4">
                 <h3 className="font-semibold text-sm">Serviço/Produto Oferecido</h3>
                 <Textarea
@@ -779,7 +796,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
             {/* ABA: ENDEREÇOS */}
             <TabsContent value="enderecos" className="space-y-6 mt-4">
               <div className="space-y-4">
-                <h3 className="font-semibold text-lg border-b pb-2">{`Endereço de Faturamento do ${entityLabel}`}</h3>
+                <h3 className="font-semibold text-lg border-b pb-2">{isRepresentante ? 'Endereço' : `Endereço de Faturamento do ${entityLabel}`}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="fat_cep">CEP</Label>
@@ -858,6 +875,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 </div>
               </div>
 
+              {!isRepresentante && (
+              <>
               <div className="space-y-4">
                 <h3 className="font-semibold text-lg border-b pb-2">{`Endereço de Entrega do ${entityLabel}`}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -938,6 +957,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 </div>
               </div>
 
+              </>
+              )}
               {(isLead || isCliente) && (
                 <>
                   <div className="space-y-4">
@@ -1161,6 +1182,33 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 Adicionar Banco
               </Button>
             </TabsContent>
+
+            {/* ABA: COMISSÃO (apenas para representantes) */}
+            {isRepresentante && (
+              <TabsContent value="comissao" className="space-y-4 mt-4">
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg">Comissão do Representante</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="percentual_comissao_padrao">Percentual de Comissão Padrão (%)</Label>
+                      <Input
+                        id="percentual_comissao_padrao"
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max="100"
+                        value={formData.percentual_comissao_padrao}
+                        onChange={(e) => handleInputChange("percentual_comissao_padrao", parseFloat(e.target.value) || 0)}
+                        placeholder="0,00"
+                      />
+                    </div>
+                  </div>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-700">
+                    <p>ℹ️ Este percentual é o valor padrão e pode variar em cada venda.</p>
+                  </div>
+                </div>
+              </TabsContent>
+            )}
 
             {/* ABA: CRÉDITO E RESTRIÇÕES */}
             <TabsContent value="credito" className="space-y-4 mt-4">
