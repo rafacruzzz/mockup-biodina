@@ -33,6 +33,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
   const [draftRestored, setDraftRestored] = useState(false);
 
   const isFornecedor = tipoEntidade.startsWith('fornecedores_');
+  const isLead = tipoEntidade === 'leads';
 
   // Hook de rascunho
   const { 
