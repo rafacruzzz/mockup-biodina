@@ -938,7 +938,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 </div>
               </div>
 
-              {isLead && (
+              {(isLead || isCliente) && (
                 <>
                   <div className="space-y-4">
                     <h3 className="font-semibold text-lg border-b pb-2">Endereço de Faturamento do Mantenedor</h3>
