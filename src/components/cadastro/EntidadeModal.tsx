@@ -506,9 +506,9 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
 
               <div className="space-y-3 border-t pt-4">
                 <h3 className="font-semibold text-sm">Telefones Fixos</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="telefone_fixo1">Telefone Fixo 1</Label>
+                    <Label htmlFor="telefone_fixo1">Telefone Fixo 1 do Lead</Label>
                     <Input
                       id="telefone_fixo1"
                       value={formData.telefone_fixo1}
@@ -517,20 +517,11 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade }: EntidadeModalProps) =>
                     />
                   </div>
                   <div>
-                    <Label htmlFor="telefone_fixo2">Telefone Fixo 2</Label>
+                    <Label htmlFor="telefone_fixo2">Telefone Fixo 2 do Mantenedor</Label>
                     <Input
                       id="telefone_fixo2"
                       value={formData.telefone_fixo2}
                       onChange={(e) => handleInputChange("telefone_fixo2", e.target.value)}
-                      placeholder="(00) 0000-0000"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="telefone_fixo3">Telefone Fixo 3</Label>
-                    <Input
-                      id="telefone_fixo3"
-                      value={formData.telefone_fixo3}
-                      onChange={(e) => handleInputChange("telefone_fixo3", e.target.value)}
                       placeholder="(00) 0000-0000"
                     />
                   </div>
