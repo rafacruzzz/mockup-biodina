@@ -352,12 +352,15 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
           )}
           
           <Tabs defaultValue="dados-gerais" className="w-full">
-            <TabsList className={`grid w-full ${isFornecedor ? 'grid-cols-9' : 'grid-cols-8'}`}>
+            <TabsList className={`grid w-full ${isFornecedor ? 'grid-cols-9' : isRepresentante ? 'grid-cols-9' : 'grid-cols-8'}`}>
               <TabsTrigger value="dados-gerais">Dados Gerais</TabsTrigger>
               <TabsTrigger value="enderecos">Endereços</TabsTrigger>
               <TabsTrigger value="fiscais">Dados Fiscais</TabsTrigger>
               <TabsTrigger value="bancarios">Dados Bancários</TabsTrigger>
               <TabsTrigger value="credito">Crédito/Restrições</TabsTrigger>
+              {isRepresentante && (
+                <TabsTrigger value="comissao">Comissão</TabsTrigger>
+              )}
               <TabsTrigger value="documentos">Documentos</TabsTrigger>
               {isFornecedor && (
                 <TabsTrigger value="boas-praticas">Boas Práticas</TabsTrigger>
