@@ -71,7 +71,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   const isLead = tipoEntidade === 'leads';
   const isCliente = tipoEntidade === 'clientes';
   const isRepresentante = tipoEntidade === 'representantes';
-  const entityLabel = isRepresentante ? "Representante Comercial" : isFornecedorRevenda ? "Unidade Fabril" : isFornecedorUsoConsumo ? "Fornecedor – Uso e Consumo" : isFornecedorServicos ? "Fornecedor – Serviços" : (isLead ? "Lead" : "Cliente");
+  const isTransportadora = tipoEntidade === 'transportadoras';
+  const entityLabel = isTransportadora ? "Transportadora" : isRepresentante ? "Representante Comercial" : isFornecedorRevenda ? "Unidade Fabril" : isFornecedorUsoConsumo ? "Fornecedor – Uso e Consumo" : isFornecedorServicos ? "Fornecedor – Serviços" : (isLead ? "Lead" : "Cliente");
 
   // Hook de rascunho
   const { 
@@ -227,6 +228,9 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     
     // Comissão (Representante Comercial)
     percentual_comissao_padrao: 0,
+    
+    // Transportadora
+    area_atendida: "",
     
     // Outros
     servico_produto_oferecido: "",
@@ -475,6 +479,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   const getTabGridCols = () => {
     if (isFornecedorRevenda) return 'flex flex-wrap gap-1';
     if (isFornecedorUsoConsumo || isFornecedorServicos) return 'grid grid-cols-7 w-full';
+    if (isTransportadora) return 'grid grid-cols-8 w-full';
     if (isFornecedor) return 'grid grid-cols-9 w-full';
     if (isRepresentante) return 'grid grid-cols-9 w-full';
     return 'grid grid-cols-8 w-full';
@@ -510,8 +515,11 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               <TabsTrigger value="enderecos">Endereços</TabsTrigger>
               <TabsTrigger value="fiscais">Dados Fiscais</TabsTrigger>
               <TabsTrigger value="bancarios">Dados Bancários</TabsTrigger>
-              {!isFornecedorRevenda && !isFornecedorUsoConsumo && !isFornecedorServicos && (
+              {!isFornecedorRevenda && !isFornecedorUsoConsumo && !isFornecedorServicos && !isTransportadora && (
                 <TabsTrigger value="credito">Crédito/Restrições</TabsTrigger>
+              )}
+              {isTransportadora && (
+                <TabsTrigger value="area-atendida">Área atendida/Tabela de preços</TabsTrigger>
               )}
               {isRepresentante && (
                 <TabsTrigger value="comissao">Comissão</TabsTrigger>
@@ -616,7 +624,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   </div>
                 )}
 
-                {!isRepresentante && !isFornecedorRevenda && !isFornecedorUsoConsumo && !isFornecedorServicos && (
+                {!isRepresentante && !isTransportadora && !isFornecedorRevenda && !isFornecedorUsoConsumo && !isFornecedorServicos && (
                   <div>
                     <Label htmlFor="tipo_cliente">Tipo de {entityLabel}</Label>
                     <Select value={formData.tipo_cliente} onValueChange={(value) => handleInputChange("tipo_cliente", value)}>
@@ -633,7 +641,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
 
                 <div>
                   <Label htmlFor="nome_cliente">
-                    {isFornecedorRevenda ? "Nome da Unidade Fabril" : isFornecedorUsoConsumo ? "Nome do Fornecedor – Uso e Consumo" : isFornecedorServicos ? "Nome do Fornecedor – Serviços" : `Nome do ${entityLabel}`}
+                    {isTransportadora ? "Nome da Transportadora" : isFornecedorRevenda ? "Nome da Unidade Fabril" : isFornecedorUsoConsumo ? "Nome do Fornecedor – Uso e Consumo" : isFornecedorServicos ? "Nome do Fornecedor – Serviços" : `Nome do ${entityLabel}`}
                   </Label>
                   <Input
                     id="nome_cliente"
@@ -707,7 +715,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   />
                 </div>
 
-                {!isRepresentante && !isFornecedorUsoConsumo && !isFornecedorServicos && (
+                {!isRepresentante && !isTransportadora && !isFornecedorUsoConsumo && !isFornecedorServicos && (
                   <>
                     <div>
                       <Label htmlFor="nome_mantenedor">
@@ -979,7 +987,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   {renderAddressBlock("Endereço do Fabricante Legal", "mant_fat", "mant_faturamento")}
                   {renderAddressBlock("Endereço da Coleta da Mercadoria", "coleta", "coleta")}
                 </>
-              ) : (isFornecedorUsoConsumo || isFornecedorServicos) ? (
+              ) : (isFornecedorUsoConsumo || isFornecedorServicos || isTransportadora) ? (
                 <>
                   {renderAddressBlock("Endereço", "fat", "faturamento")}
                 </>
@@ -1220,8 +1228,24 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               </TabsContent>
             )}
 
-            {/* ABA: CRÉDITO E RESTRIÇÕES (oculta para fornecedor revenda) */}
-            {!isFornecedorRevenda && (
+            {/* ABA: ÁREA ATENDIDA (Transportadora) */}
+            {isTransportadora && (
+            <TabsContent value="area-atendida" className="space-y-4 mt-4">
+              <div>
+                <Label htmlFor="area_atendida">Área atendida</Label>
+                <Textarea
+                  id="area_atendida"
+                  value={formData.area_atendida}
+                  onChange={(e) => handleInputChange("area_atendida", e.target.value)}
+                  rows={6}
+                  placeholder="Descreva a área atendida pela transportadora e tabelas de preços..."
+                />
+              </div>
+            </TabsContent>
+            )}
+
+            {/* ABA: CRÉDITO E RESTRIÇÕES (oculta para fornecedor revenda e transportadora) */}
+            {!isFornecedorRevenda && !isTransportadora && (
             <TabsContent value="credito" className="space-y-4 mt-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
