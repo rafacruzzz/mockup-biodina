@@ -91,6 +91,8 @@ const Cadastro = () => {
       setIsMarcaModalOpen(true);
     } else if (activeModule === 'produtos' && activeSubModule === 'empresas_detentoras') {
       setIsEmpresaDetentoraModalOpen(true);
+    } else if (activeModule === 'pessoas' && activeSubModule === 'marcas_concorrentes') {
+      setIsMarcaConcorrenteModalOpen(true);
     } else if (activeModule === 'pessoas') {
       setCurrentEntidadeType(activeSubModule);
       setEditingEntidadeData(null);
