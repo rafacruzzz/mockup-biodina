@@ -264,6 +264,33 @@ export const modules: ModulesConfig = {
             email: "logistica@logmed.com.br"
           }
         ]
+      },
+      marcas_concorrentes: {
+        name: "Marcas Concorrentes",
+        data: [
+          {
+            id: 1,
+            nome: "BioAnalytics X200",
+            empresa_fabricante: "BioAnalytics Corp.",
+            pais_origem: "EUA",
+            status: "Ativa",
+            categoria: "Gasometria",
+            segmento: "Hospitalar",
+            posicionamento: "Premium",
+            pendente: false
+          },
+          {
+            id: 2,
+            nome: "MedTech Pro 500",
+            empresa_fabricante: "MedTech Solutions",
+            pais_origem: "Alemanha",
+            status: "Ativa",
+            categoria: "Imunoensaio",
+            segmento: "Laboratorial",
+            posicionamento: "Intermediário",
+            pendente: true
+          }
+        ]
       }
     }
   },

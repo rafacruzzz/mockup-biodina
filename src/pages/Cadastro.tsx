@@ -12,6 +12,7 @@ import ColaboradorModal from "@/components/rh/ColaboradorModal";
 import ServiceModal from "@/components/cadastro/ServiceModal";
 import ContaBancariaModal from "@/components/cadastro/ContaBancariaModal";
 import GenericModal from "@/components/cadastro/GenericModal";
+import MarcaConcorrenteModal from "@/components/cadastro/MarcaConcorrenteModal";
 import ProdutoUsoConsumoModal from "@/components/cadastro/ProdutoUsoConsumoModal";
 import KitModal from "@/components/cadastro/KitModal";
 import MarcaModal from "@/components/cadastro/MarcaModal";
