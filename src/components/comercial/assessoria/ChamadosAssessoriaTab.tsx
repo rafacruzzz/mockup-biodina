@@ -170,9 +170,15 @@ export function ChamadosAssessoriaTab({ departamento }: ChamadosAssessoriaTabPro
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="h-5 w-5" />Chamados Ativos por Assessor
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5" />Chamados
+            </CardTitle>
+            <Button size="sm" onClick={() => setIsNovoChamadoOpen(true)}>
+              <Plus className="h-4 w-4 mr-1" />
+              Novo Chamado
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="relative">
