@@ -240,6 +240,7 @@ const Cadastro = () => {
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'formas_pagamento') return "Nova Forma de Pagamento";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'prazos') return "Novo Prazo";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'contas_bancarias') return "Nova Conta Bancária";
+    if (activeModule === 'pessoas' && activeSubModule === 'marcas_concorrentes') return "Nova Marca Concorrente";
     if (activeModule === 'pessoas') return "Novo";
     if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') return "Novo Usuário";
     if (activeModule === 'usuarios' && activeSubModule === 'usuarios') return "Novo Usuário";
