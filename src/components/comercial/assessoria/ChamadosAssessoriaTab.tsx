@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, AlertCircle, Eye, LogOut, UserCircle } from "lucide-react";
+import { Search, AlertCircle, Eye, LogOut, UserCircle, Plus } from "lucide-react";
 import { chamadosAssessoriaMock, isStatusAtivo } from "@/data/assessoria-cientifica";
 import { 
   ChamadoAssessoria, 
@@ -15,6 +15,7 @@ import {
   URGENCIA_CHAMADO_LABELS
 } from "@/types/assessoria-cientifica";
 import { DetalhesChamadoSheet } from "./DetalhesChamadoSheet";
+import { NovoChamadoAssessoriaModal } from "./NovoChamadoAssessoriaModal";
 import { useAuthDemo } from "@/hooks/useAuthDemo";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
