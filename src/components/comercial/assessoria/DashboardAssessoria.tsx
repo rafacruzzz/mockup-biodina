@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, Calendar, LogOut, Plus } from "lucide-react";
-import { OrdemServico, FiltrosAgenda, StatusOS, DepartamentoOS } from "@/types/assessoria-cientifica";
-import { ordensServicoMock, getTipoOSIcon, getTipoOSLabel, getStatusColor, alertasMock, assessoresTecnicos } from "@/data/assessoria-cientifica";
+import { OrdemServico, FiltrosAgenda, StatusOS, DepartamentoOS, Alerta } from "@/types/assessoria-cientifica";
+import { ordensServicoMock, getTipoOSIcon, getTipoOSLabel, getStatusColor, alertasMock, assessoresTecnicos, chamadosAssessoriaMock } from "@/data/assessoria-cientifica";
+import { isStatusAtivo } from "@/types/assessoria-cientifica";
 import { FiltrosAgendaOS } from "./FiltrosAgendaOS";
 import { DetalhesOSSheet } from "./DetalhesOSSheet";
 import { FormularioOS } from "./FormularioOS";
