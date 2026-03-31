@@ -7,6 +7,8 @@ import { FiltrosAgenda, StatusOS, DepartamentoOS } from "@/types/assessoria-cien
 import { assessoresTecnicos, ordensServicoMock } from "@/data/assessoria-cientifica";
 import { Filter, ChevronRight } from "lucide-react";
 
+const departamentoOptions: DepartamentoOS[] = ['Assessoria Científica', 'Departamento Técnico'];
+
 interface FiltrosAgendaOSProps {
   filtros: FiltrosAgenda;
   onFiltrosChange: (filtros: FiltrosAgenda) => void;
@@ -71,6 +73,13 @@ export const FiltrosAgendaOS = ({ filtros, onFiltrosChange, labelAssessor = "Ass
     onFiltrosChange({ ...filtros, equipamentos: newEquipamentos });
   };
 
+  const toggleDepartamento = (dep: DepartamentoOS) => {
+    const newDeps = filtros.departamentos.includes(dep)
+      ? filtros.departamentos.filter(d => d !== dep)
+      : [...filtros.departamentos, dep];
+    onFiltrosChange({ ...filtros, departamentos: newDeps });
+  };
+
   const toggleStatus = (status: StatusOS) => {
     const newStatus = filtros.status.includes(status)
       ? filtros.status.filter(s => s !== status)
@@ -85,7 +94,29 @@ export const FiltrosAgendaOS = ({ filtros, onFiltrosChange, labelAssessor = "Ass
         <h3 className="font-semibold text-sm">Filtros da Agenda</h3>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Filtro Departamento */}
+        <div className="space-y-2">
+          <Label className="text-xs font-semibold">Departamento</Label>
+          <div className="space-y-2">
+            {departamentoOptions.map((dep) => (
+              <div key={dep} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`dep-${dep}`}
+                  checked={filtros.departamentos.includes(dep)}
+                  onCheckedChange={() => toggleDepartamento(dep)}
+                />
+                <label
+                  htmlFor={`dep-${dep}`}
+                  className="text-xs font-medium leading-none cursor-pointer"
+                >
+                  {dep}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Filtro Assessor/Técnico */}
         <div className="space-y-2">
           <Label className="text-xs font-semibold">{labelAssessor}</Label>

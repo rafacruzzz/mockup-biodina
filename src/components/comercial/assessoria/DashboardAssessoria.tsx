@@ -28,7 +28,7 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient�
   const [isNewOS, setIsNewOS] = useState(false);
   const [assessorFilter, setAssessorFilter] = useState<string>("todos");
   const [filtros, setFiltros] = useState<FiltrosAgenda>({
-    departamentos: [departamento], // Fixo no departamento específico
+    departamentos: ['Assessoria Científica', 'Departamento Técnico'],
     assessores: [],
     clientes: [],
     equipamentos: [],
