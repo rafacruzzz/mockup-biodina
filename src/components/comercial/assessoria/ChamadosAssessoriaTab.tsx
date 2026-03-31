@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, AlertCircle, Eye, LogOut, UserCircle } from "lucide-react";
+import { Search, AlertCircle, Eye, LogOut, UserCircle, Plus } from "lucide-react";
 import { chamadosAssessoriaMock, isStatusAtivo } from "@/data/assessoria-cientifica";
 import { 
   ChamadoAssessoria, 
@@ -15,6 +15,7 @@ import {
   URGENCIA_CHAMADO_LABELS
 } from "@/types/assessoria-cientifica";
 import { DetalhesChamadoSheet } from "./DetalhesChamadoSheet";
+import { NovoChamadoAssessoriaModal } from "./NovoChamadoAssessoriaModal";
 import { useAuthDemo } from "@/hooks/useAuthDemo";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -36,6 +37,7 @@ export function ChamadosAssessoriaTab({ departamento }: ChamadosAssessoriaTabPro
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [demoUserId, setDemoUserId] = useState<string>('resp-001');
   const [viewMode, setViewMode] = useState<'assessor' | 'gestor'>('assessor');
+  const [isNovoChamadoOpen, setIsNovoChamadoOpen] = useState(false);
   
   const { getCurrentUser, isGestor } = useAuthDemo();
   const currentUser = getCurrentUser();
@@ -168,9 +170,15 @@ export function ChamadosAssessoriaTab({ departamento }: ChamadosAssessoriaTabPro
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <AlertCircle className="h-5 w-5" />Chamados Ativos por Assessor
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5" />Chamados
+            </CardTitle>
+            <Button size="sm" onClick={() => setIsNovoChamadoOpen(true)}>
+              <Plus className="h-4 w-4 mr-1" />
+              Novo Chamado
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="relative">
@@ -216,6 +224,13 @@ export function ChamadosAssessoriaTab({ departamento }: ChamadosAssessoriaTabPro
       </Card>
 
       {selectedChamado && <DetalhesChamadoSheet chamado={selectedChamado} isOpen={isSheetOpen} onClose={() => setIsSheetOpen(false)} />}
+      
+      <NovoChamadoAssessoriaModal 
+        isOpen={isNovoChamadoOpen} 
+        onClose={() => setIsNovoChamadoOpen(false)}
+        assessorNome={selectedAssessor?.nome}
+        assessorId={demoUserId}
+      />
     </div>
   );
 }

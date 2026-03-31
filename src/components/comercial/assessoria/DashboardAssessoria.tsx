@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, Calendar, LogOut, Plus } from "lucide-react";
-import { OrdemServico, FiltrosAgenda, StatusOS, DepartamentoOS } from "@/types/assessoria-cientifica";
-import { ordensServicoMock, getTipoOSIcon, getTipoOSLabel, getStatusColor, alertasMock, assessoresTecnicos } from "@/data/assessoria-cientifica";
+import { OrdemServico, FiltrosAgenda, StatusOS, DepartamentoOS, Alerta } from "@/types/assessoria-cientifica";
+import { ordensServicoMock, getTipoOSIcon, getTipoOSLabel, getStatusColor, alertasMock, assessoresTecnicos, chamadosAssessoriaMock } from "@/data/assessoria-cientifica";
+import { isStatusAtivo } from "@/types/assessoria-cientifica";
 import { FiltrosAgendaOS } from "./FiltrosAgendaOS";
 import { DetalhesOSSheet } from "./DetalhesOSSheet";
 import { FormularioOS } from "./FormularioOS";
@@ -240,11 +241,28 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
         </div>
       )}
 
-      {/* Painel de Alertas */}
-      <PainelAlertas 
-        alertas={alertasMock}
-        onAlertaClick={handleAlertaClick}
-      />
+      {/* Painel de Alertas - incluindo chamados ativos */}
+      {(() => {
+        const chamadoAlertas: Alerta[] = chamadosAssessoriaMock
+          .filter(ch => isStatusAtivo(ch.status))
+          .map(ch => ({
+            id: `alerta-chamado-${ch.id}`,
+            tipo: ch.urgencia === 'URGENTE' ? 'urgente' as const : 'prazo' as const,
+            titulo: `Chamado ${ch.numeroChamado} - ${ch.clienteNome}`,
+            descricao: `${ch.motivoDescricao.substring(0, 100)}${ch.motivoDescricao.length > 100 ? '...' : ''}`,
+            prioridade: ch.urgencia === 'URGENTE' || ch.urgencia === 'ALTA' ? 'alta' as const : ch.urgencia === 'MEDIA' ? 'media' as const : 'baixa' as const,
+            osId: ch.id,
+            clienteId: ch.clienteId,
+            dataCriacao: ch.dataAbertura,
+          }));
+        const todosAlertas = [...alertasMock, ...chamadoAlertas];
+        return (
+          <PainelAlertas 
+            alertas={todosAlertas}
+            onAlertaClick={handleAlertaClick}
+          />
+        );
+      })()}
 
       <Card className="shadow-lg">
         <CardHeader>
