@@ -7,6 +7,8 @@ import { FiltrosAgenda, StatusOS, DepartamentoOS } from "@/types/assessoria-cien
 import { assessoresTecnicos, ordensServicoMock } from "@/data/assessoria-cientifica";
 import { Filter, ChevronRight } from "lucide-react";
 
+const departamentoOptions: DepartamentoOS[] = ['Assessoria Científica', 'Departamento Técnico'];
+
 interface FiltrosAgendaOSProps {
   filtros: FiltrosAgenda;
   onFiltrosChange: (filtros: FiltrosAgenda) => void;
