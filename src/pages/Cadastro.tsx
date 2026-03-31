@@ -12,6 +12,7 @@ import ColaboradorModal from "@/components/rh/ColaboradorModal";
 import ServiceModal from "@/components/cadastro/ServiceModal";
 import ContaBancariaModal from "@/components/cadastro/ContaBancariaModal";
 import GenericModal from "@/components/cadastro/GenericModal";
+import MarcaConcorrenteModal from "@/components/cadastro/MarcaConcorrenteModal";
 import ProdutoUsoConsumoModal from "@/components/cadastro/ProdutoUsoConsumoModal";
 import KitModal from "@/components/cadastro/KitModal";
 import MarcaModal from "@/components/cadastro/MarcaModal";
@@ -39,6 +40,7 @@ const Cadastro = () => {
   const [isKitModalOpen, setIsKitModalOpen] = useState(false);
   const [isMarcaModalOpen, setIsMarcaModalOpen] = useState(false);
   const [isEmpresaDetentoraModalOpen, setIsEmpresaDetentoraModalOpen] = useState(false);
+  const [isMarcaConcorrenteModalOpen, setIsMarcaConcorrenteModalOpen] = useState(false);
 
   // Estado para tipo de entidade
   const [currentEntidadeType, setCurrentEntidadeType] = useState<string>('');
@@ -89,6 +91,8 @@ const Cadastro = () => {
       setIsMarcaModalOpen(true);
     } else if (activeModule === 'produtos' && activeSubModule === 'empresas_detentoras') {
       setIsEmpresaDetentoraModalOpen(true);
+    } else if (activeModule === 'pessoas' && activeSubModule === 'marcas_concorrentes') {
+      setIsMarcaConcorrenteModalOpen(true);
     } else if (activeModule === 'pessoas') {
       setCurrentEntidadeType(activeSubModule);
       setEditingEntidadeData(null);
@@ -236,6 +240,7 @@ const Cadastro = () => {
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'formas_pagamento') return "Nova Forma de Pagamento";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'prazos') return "Novo Prazo";
     if (activeModule === 'cadastros_financeiros' && activeSubModule === 'contas_bancarias') return "Nova Conta Bancária";
+    if (activeModule === 'pessoas' && activeSubModule === 'marcas_concorrentes') return "Nova Marca Concorrente";
     if (activeModule === 'pessoas') return "Novo";
     if (activeModule === 'usuarios' && activeSubModule === 'colaboradores') return "Novo Usuário";
     if (activeModule === 'usuarios' && activeSubModule === 'usuarios') return "Novo Usuário";
@@ -385,6 +390,11 @@ const Cadastro = () => {
       <EmpresaDetentoraModal
         isOpen={isEmpresaDetentoraModalOpen}
         onClose={() => setIsEmpresaDetentoraModalOpen(false)}
+      />
+
+      <MarcaConcorrenteModal
+        isOpen={isMarcaConcorrenteModalOpen}
+        onClose={() => setIsMarcaConcorrenteModalOpen(false)}
       />
     </SidebarLayout>
   );
