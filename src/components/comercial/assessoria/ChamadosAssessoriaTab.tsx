@@ -224,6 +224,13 @@ export function ChamadosAssessoriaTab({ departamento }: ChamadosAssessoriaTabPro
       </Card>
 
       {selectedChamado && <DetalhesChamadoSheet chamado={selectedChamado} isOpen={isSheetOpen} onClose={() => setIsSheetOpen(false)} />}
+      
+      <NovoChamadoAssessoriaModal 
+        isOpen={isNovoChamadoOpen} 
+        onClose={() => setIsNovoChamadoOpen(false)}
+        assessorNome={selectedAssessor?.nome}
+        assessorId={demoUserId}
+      />
     </div>
   );
 }
