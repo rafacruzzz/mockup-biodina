@@ -241,11 +241,28 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient√
         </div>
       )}
 
-      {/* Painel de Alertas */}
-      <PainelAlertas 
-        alertas={alertasMock}
-        onAlertaClick={handleAlertaClick}
-      />
+      {/* Painel de Alertas - incluindo chamados ativos */}
+      {(() => {
+        const chamadoAlertas: Alerta[] = chamadosAssessoriaMock
+          .filter(ch => isStatusAtivo(ch.status))
+          .map(ch => ({
+            id: `alerta-chamado-${ch.id}`,
+            tipo: ch.urgencia === 'URGENTE' ? 'urgente' as const : 'prazo' as const,
+            titulo: `Chamado ${ch.numeroChamado} - ${ch.clienteNome}`,
+            descricao: `${ch.motivoDescricao.substring(0, 100)}${ch.motivoDescricao.length > 100 ? '...' : ''}`,
+            prioridade: ch.urgencia === 'URGENTE' || ch.urgencia === 'ALTA' ? 'alta' as const : ch.urgencia === 'MEDIA' ? 'media' as const : 'baixa' as const,
+            osId: ch.id,
+            clienteId: ch.clienteId,
+            dataCriacao: ch.dataAbertura,
+          }));
+        const todosAlertas = [...alertasMock, ...chamadoAlertas];
+        return (
+          <PainelAlertas 
+            alertas={todosAlertas}
+            onAlertaClick={handleAlertaClick}
+          />
+        );
+      })()}
 
       <Card className="shadow-lg">
         <CardHeader>
