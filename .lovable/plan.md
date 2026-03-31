@@ -1,26 +1,23 @@
 
 
-## Plano: Converter modal de Marcas Concorrentes para usar abas (Tabs)
+## Plano: Voltar filtro de Departamento na agenda de OS da Assessoria Científica
 
 ### Problema
-O modal de Marcas Concorrentes usa seções colapsáveis (Collapsible), enquanto todo o resto do sistema usa abas (Tabs). Precisa seguir o mesmo padrão.
+O componente `FiltrosAgendaOS` recebe `departamento` como prop fixa mas não exibe um filtro de departamento na UI. A lógica de filtragem no `DashboardAssessoria` já suporta `filtros.departamentos` (linha 112), só falta a interface.
 
-### Alteração em `src/components/cadastro/MarcaConcorrenteModal.tsx`
+### Alterações
 
-Reescrever o modal para usar `Tabs/TabsList/TabsTrigger/TabsContent` no lugar de `Collapsible`, seguindo o padrão do `EntidadeModal.tsx`.
+**1. `src/components/comercial/assessoria/FiltrosAgendaOS.tsx`:**
+- Adicionar nova seção "Departamento" nos filtros (antes de Assessor/Técnico)
+- Dois checkboxes: "Assessoria Científica" e "Departamento Técnico"
+- Toggle altera `filtros.departamentos` via `onFiltrosChange`
+- Remover dependência do prop `departamento` para fixar filtro — agora o usuário escolhe
+- Ajustar grid para `lg:grid-cols-4` (4 colunas: Departamento, Assessor, Cliente, Status)
+- Manter o prop `departamento` opcional para filtrar a lista de clientes/equipamentos
 
-**8 abas:**
-1. **Identificação** — Nome, Fabricante, País, Site, Status
-2. **Classificação** — Categorias (multi-select + Outra), Segmentos (multi-select + Outro)
-3. **Posicionamento** — Produto concorrente, Faixa de preço, Posicionamento, Condições comerciais
-4. **Informações Técnicas** — Descrição, Características, Diferenciais, Pontos fracos, Compatibilidade, Registro ANVISA
-5. **Mercado** — Clientes, Regiões, Participação, Histórico substituição
-6. **Análise Competitiva** — Forças, Fraquezas, Ameaça, Concorrência, Observações estratégicas
-7. **Contato** — Representante, Distribuidor
-8. **Controle** — Documentos, Responsável, Datas
+**2. `src/components/comercial/assessoria/DashboardAssessoria.tsx`:**
+- Inicializar `filtros.departamentos` com ambos os departamentos selecionados por padrão: `['Assessoria Científica', 'Departamento Técnico']`
 
-**Estrutura:** Layout flex com header fixo, TabsList horizontal com `grid-cols-8`, conteúdo com scroll independente (`flex-1 overflow-y-auto`), e rodapé fixo com botões Cancelar/Salvar — idêntico ao padrão do `EntidadeModal`.
-
-### Arquivos alterados
-- `src/components/cadastro/MarcaConcorrenteModal.tsx`
+### Resultado
+O filtro de departamento volta a aparecer na agenda, permitindo visualizar OSs da Assessoria Científica, do Departamento Técnico, ou ambos.
 
