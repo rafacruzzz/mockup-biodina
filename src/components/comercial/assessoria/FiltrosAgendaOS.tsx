@@ -94,7 +94,29 @@ export const FiltrosAgendaOS = ({ filtros, onFiltrosChange, labelAssessor = "Ass
         <h3 className="font-semibold text-sm">Filtros da Agenda</h3>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Filtro Departamento */}
+        <div className="space-y-2">
+          <Label className="text-xs font-semibold">Departamento</Label>
+          <div className="space-y-2">
+            {departamentoOptions.map((dep) => (
+              <div key={dep} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`dep-${dep}`}
+                  checked={filtros.departamentos.includes(dep)}
+                  onCheckedChange={() => toggleDepartamento(dep)}
+                />
+                <label
+                  htmlFor={`dep-${dep}`}
+                  className="text-xs font-medium leading-none cursor-pointer"
+                >
+                  {dep}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Filtro Assessor/Técnico */}
         <div className="space-y-2">
           <Label className="text-xs font-semibold">{labelAssessor}</Label>
