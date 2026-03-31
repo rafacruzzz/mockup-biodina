@@ -37,6 +37,7 @@ export function ChamadosAssessoriaTab({ departamento }: ChamadosAssessoriaTabPro
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [demoUserId, setDemoUserId] = useState<string>('resp-001');
   const [viewMode, setViewMode] = useState<'assessor' | 'gestor'>('assessor');
+  const [isNovoChamadoOpen, setIsNovoChamadoOpen] = useState(false);
   
   const { getCurrentUser, isGestor } = useAuthDemo();
   const currentUser = getCurrentUser();
