@@ -73,6 +73,13 @@ export const FiltrosAgendaOS = ({ filtros, onFiltrosChange, labelAssessor = "Ass
     onFiltrosChange({ ...filtros, equipamentos: newEquipamentos });
   };
 
+  const toggleDepartamento = (dep: DepartamentoOS) => {
+    const newDeps = filtros.departamentos.includes(dep)
+      ? filtros.departamentos.filter(d => d !== dep)
+      : [...filtros.departamentos, dep];
+    onFiltrosChange({ ...filtros, departamentos: newDeps });
+  };
+
   const toggleStatus = (status: StatusOS) => {
     const newStatus = filtros.status.includes(status)
       ? filtros.status.filter(s => s !== status)
