@@ -1,85 +1,26 @@
 
 
-## Plano: Cadastro de Marcas Concorrentes no módulo Pessoas
+## Plano: Converter modal de Marcas Concorrentes para usar abas (Tabs)
 
-### Contexto
-Criar um submódulo "Marcas Concorrentes" dentro de "Pessoas" no Cadastro. A assessoria preenche o cadastro completo, mas a licitação pode adicionar dados básicos (nome da marca) e um alerta é enviado à assessoria para completar. O alerta persiste até tudo ser preenchido.
+### Problema
+O modal de Marcas Concorrentes usa seções colapsáveis (Collapsible), enquanto todo o resto do sistema usa abas (Tabs). Precisa seguir o mesmo padrão.
 
-### Alterações
+### Alteração em `src/components/cadastro/MarcaConcorrenteModal.tsx`
 
-**1. `src/data/cadastroModules.ts`** — Adicionar submódulo `marcas_concorrentes` dentro de `pessoas.subModules` (após `transportadoras`):
-- `name: "Marcas Concorrentes"`
-- Dados de exemplo com campos básicos (nome, empresa fabricante, status, etc.)
+Reescrever o modal para usar `Tabs/TabsList/TabsTrigger/TabsContent` no lugar de `Collapsible`, seguindo o padrão do `EntidadeModal.tsx`.
 
-**2. Novo componente `src/components/cadastro/MarcaConcorrenteModal.tsx`:**
+**8 abas:**
+1. **Identificação** — Nome, Fabricante, País, Site, Status
+2. **Classificação** — Categorias (multi-select + Outra), Segmentos (multi-select + Outro)
+3. **Posicionamento** — Produto concorrente, Faixa de preço, Posicionamento, Condições comerciais
+4. **Informações Técnicas** — Descrição, Características, Diferenciais, Pontos fracos, Compatibilidade, Registro ANVISA
+5. **Mercado** — Clientes, Regiões, Participação, Histórico substituição
+6. **Análise Competitiva** — Forças, Fraquezas, Ameaça, Concorrência, Observações estratégicas
+7. **Contato** — Representante, Distribuidor
+8. **Controle** — Documentos, Responsável, Datas
 
-Modal completo com as seguintes seções organizadas em abas ou seções colapsáveis:
-
-**Seção 1 — Identificação:**
-- Nome da marca (obrigatório)
-- Empresa fabricante
-- País de origem
-- Site oficial
-- Status da marca (Select: Ativa, Descontinuada, Em Teste)
-
-**Seção 2 — Classificação:**
-- Categoria do produto (multi-select com checkboxes: Gasometria, Imunoensaio, Consumíveis, Reagentes, Equipamentos, Outra → campo de texto livre ao selecionar "Outra")
-- Segmento de mercado (multi-select com checkboxes: Hospitalar, Laboratorial, Público, Privado, Outro → campo de texto livre ao selecionar "Outro")
-
-**Seção 3 — Posicionamento Comercial:**
-- Produto da Biodina com o qual concorre
-- Faixa de preço
-- Posicionamento (Select: Premium, Intermediário, Baixo Custo)
-- Condições comerciais relevantes (Textarea)
-
-**Seção 4 — Informações Técnicas:**
-- Descrição do produto (Textarea)
-- Principais características técnicas (Textarea)
-- Diferenciais (Textarea)
-- Pontos fracos percebidos (Textarea)
-- Compatibilidade com quais equipamentos (Textarea)
-- Registro ANVISA
-
-**Seção 5 — Mercado:**
-- Principais clientes ou hospitais que utilizam (Textarea)
-- Regiões de atuação (Textarea)
-- Participação estimada de mercado
-- Histórico de substituição em contratos (Textarea)
-
-**Seção 6 — Análise Competitiva:**
-- Forças (Textarea)
-- Fraquezas (Textarea)
-- Nível de ameaça competitiva (Select: Baixo, Médio, Alto)
-- Nível de concorrência (Select: Baixo, Médio, Alto)
-- Observações estratégicas (Textarea)
-
-**Seção 7 — Contato e Distribuição:**
-- Representante ou contato comercial
-- Distribuidor no Brasil
-
-**Seção 8 — Documentos e Controle:**
-- Documentos anexos (área de upload / lista de arquivos)
-- Responsável pelo cadastro (preenchido automaticamente com usuário logado)
-- Data de inclusão (automática)
-- Data da última atualização (automática)
-
-**Campo `preenchimentoCompleto`** — boolean calculado: `true` quando todos os campos obrigatórios estão preenchidos. Enquanto `false`, gera alerta visual para a assessoria.
-
-**3. `src/pages/Cadastro.tsx`:**
-- Novo estado `isMarcaConcorrenteModalOpen`
-- Em `handleNewRecord`: condição `activeModule === 'pessoas' && activeSubModule === 'marcas_concorrentes'` abre o modal específico (antes do bloco genérico de `pessoas`)
-- Em `getButtonText`: retornar `"Nova Marca Concorrente"` para esse submódulo
-- Renderizar `<MarcaConcorrenteModal>` no JSX
-
-**4. Sistema de alertas para assessoria:**
-- No modal, campo `pendente` (boolean) indica cadastro incompleto
-- Na listagem (DataTable), marcas com `pendente: true` terão badge visual "Pendente" em vermelho
-- Componente de notificação existente pode ser estendido para mostrar alertas de marcas concorrentes pendentes
-
-### Arquivos criados
-- `src/components/cadastro/MarcaConcorrenteModal.tsx`
+**Estrutura:** Layout flex com header fixo, TabsList horizontal com `grid-cols-8`, conteúdo com scroll independente (`flex-1 overflow-y-auto`), e rodapé fixo com botões Cancelar/Salvar — idêntico ao padrão do `EntidadeModal`.
 
 ### Arquivos alterados
-- `src/data/cadastroModules.ts`
-- `src/pages/Cadastro.tsx`
+- `src/components/cadastro/MarcaConcorrenteModal.tsx`
 
