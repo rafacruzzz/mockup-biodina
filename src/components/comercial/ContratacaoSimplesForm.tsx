@@ -68,7 +68,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     empenho: string;
     processo: string;
     valorNfs: number;
-  }>>([]);
+  }>>([
+    { id: 'srv-001', numeroPedido: 'PED-SRV-2025-001', dataFaturamento: '13/03/2025', periodoCompetencia: 'Março/2025', nfs: 'NFS-00123', empenho: 'EMP-2025-001', processo: 'PROC-2025-001', valorNfs: 4500 },
+    { id: 'srv-002', numeroPedido: 'PED-SRV-2026-002', dataFaturamento: '13/02/2026', periodoCompetencia: 'Fevereiro/2026', nfs: 'NFS-00456', empenho: 'EMP-2026-002', processo: 'PROC-2026-002', valorNfs: 7800 },
+  ]);
   const [chamados, setChamados] = useState<Chamado[]>(oportunidade?.chamados || []);
   const [isPedidoModalOpen, setIsPedidoModalOpen] = useState(false);
   const [tipoContratacao, setTipoContratacao] = useState<'publico' | 'privado' | 'filantropico' | ''>('');
