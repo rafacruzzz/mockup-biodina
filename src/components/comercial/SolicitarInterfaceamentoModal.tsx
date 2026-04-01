@@ -216,44 +216,6 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Informações da Oportunidade */}
-          <Card className="bg-muted/50">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Building className="h-5 w-5" />
-                Informações da Oportunidade
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div>
-                  <span className="font-medium text-muted-foreground">Cliente:</span>
-                  <p className="mt-1">{oportunidade?.cliente}</p>
-                </div>
-                <div>
-                  <span className="font-medium text-muted-foreground">Oportunidade:</span>
-                  <p className="mt-1">{oportunidade?.codigo}</p>
-                </div>
-                <div>
-                  <span className="font-medium text-muted-foreground">Responsável:</span>
-                  <p className="mt-1">{oportunidade?.responsavel}</p>
-                </div>
-                <div>
-                  <span className="font-medium text-muted-foreground">Status:</span>
-                  <Badge variant="secondary" className="mt-1">
-                    {oportunidade?.status}
-                  </Badge>
-                </div>
-                <div>
-                  <span className="font-medium text-muted-foreground">Segmento:</span>
-                  <p className="mt-1">{oportunidade?.segmento}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Separator />
-
           {/* Formulário de Solicitação */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
