@@ -122,6 +122,61 @@ export function AnaliseEditaisTab() {
         <PainelAlertas alertas={alertasPainel} />
       )}
 
+      {/* Alertas para Análise */}
+      {licitacoesComSolicitacaoAC.filter(lic => lic.status !== "finalizada").length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <FileText className="h-5 w-5 text-blue-600" />
+                Alertas para Análise
+              </CardTitle>
+              <Badge variant="secondary">
+                {licitacoesComSolicitacaoAC.filter(lic => lic.status !== "finalizada").length}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {licitacoesComSolicitacaoAC
+                .filter(lic => lic.status !== "finalizada")
+                .map((lic) => (
+                  <div
+                    key={`analise-${lic.id}`}
+                    className="flex items-center justify-between p-3 bg-muted/50 rounded-lg border hover:border-primary hover:shadow-md transition-all duration-200 cursor-pointer group"
+                    onClick={() => setSelectedLicitacao(lic)}
+                  >
+                    <div className="flex items-start gap-3 flex-1">
+                      <div className="mt-1 text-blue-600">
+                        <AlertTriangle className="h-4 w-4" />
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-sm">
+                            {lic.numeroPregao} — {lic.nomeInstituicao}
+                          </p>
+                          <Badge className={getStatusColor(lic.status)}>
+                            {getStatusLabel(lic.status)}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground truncate max-w-[600px]">
+                          {lic.objetoLicitacao}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Solicitado em: {lic.dataSolicitacaoAC ? formatDate(lic.dataSolicitacaoAC) : "N/A"}
+                        </p>
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="sm" className="group-hover:bg-accent">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Filtros e Busca */}
       <Card>
         <CardHeader>
