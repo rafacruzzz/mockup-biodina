@@ -157,6 +157,37 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   ]);
   const [pedidoExpandido, setPedidoExpandido] = useState<string | null>(null);
 
+  // Estados para aba Ordem de Fornecimento (Privado)
+  const [ordensFornecimento, setOrdensFornecimento] = useState<Array<{
+    id: string;
+    numeroOF: string;
+    valorOF: number;
+    pedidosVinculados: string[];
+    valorFaturado: number;
+    documentoOF: File | null;
+    nomeDocumento: string;
+  }>>([
+    {
+      id: 'of_mock_1',
+      numeroOF: '2024OF000789',
+      valorOF: 52000,
+      pedidosVinculados: ['PED-001'],
+      valorFaturado: 20000,
+      documentoOF: null,
+      nomeDocumento: '',
+    },
+    {
+      id: 'of_mock_2',
+      numeroOF: '2024OF000999',
+      valorOF: 18000,
+      pedidosVinculados: [],
+      valorFaturado: 0,
+      documentoOF: null,
+      nomeDocumento: '',
+    },
+  ]);
+  const [pedidoOFExpandido, setPedidoOFExpandido] = useState<string | null>(null);
+
   // Mock de itens por pedido vinculado
   const itensPorPedido: Record<string, Array<{ codigo: string; descricao: string; quantidade: number; valor: number }>> = {
     'PED-001': [
