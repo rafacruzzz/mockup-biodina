@@ -411,7 +411,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
                     <SelectItem value="importacao">Importação Direta</SelectItem>
-                    <SelectItem value="contratacao">Contratação Simples</SelectItem>
+                    <SelectItem value="contratacao">Contratação</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
