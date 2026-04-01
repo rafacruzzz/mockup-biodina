@@ -18,6 +18,26 @@ export function AnaliseEditaisTab() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [selectedLicitacao, setSelectedLicitacao] = useState<Licitacao | null>(null);
+  const [analiseTexto, setAnaliseTexto] = useState("");
+
+  useEffect(() => {
+    if (selectedLicitacao) {
+      setAnaliseTexto(selectedLicitacao.analiseTecnica || "");
+    }
+  }, [selectedLicitacao]);
+
+  const handleSalvarAnalise = () => {
+    if (!selectedLicitacao) return;
+    const idx = licitacoes.findIndex((l) => l.id === selectedLicitacao.id);
+    if (idx !== -1) {
+      licitacoes[idx].analiseTecnica = analiseTexto;
+    }
+    toast({
+      title: "Análise salva",
+      description: `Análise Técnica-Científica do pregão ${selectedLicitacao.numeroPregao} salva com sucesso.`,
+    });
+    setSelectedLicitacao(null);
+  };
 
   // Filtrar licitações que solicitaram análise da Assessoria Científica
   const licitacoesComSolicitacaoAC = licitacoes.filter(
