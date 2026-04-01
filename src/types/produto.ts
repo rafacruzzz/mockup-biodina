@@ -51,11 +51,31 @@ export interface Produto {
   conformidadesNormas?: string;
   peso?: string; // Deprecated - use campos específicos
   dimensoes?: string; // Deprecated - use campos específicos
-  pesoLiquido?: number;
-  pesoBruto?: number;
-  altura?: number;
-  largura?: number;
-  profundidade?: number;
+  pesoLiquido?: number; // Deprecated - use campos Com/Sem Embalagem
+  pesoBruto?: number; // Deprecated
+  altura?: number; // Deprecated
+  largura?: number; // Deprecated
+  profundidade?: number; // Deprecated
+  
+  // Dimensões Com Embalagem
+  pesoLiquidoComEmb?: number;
+  pesoBrutoComEmb?: number;
+  alturaComEmb?: number;
+  larguraComEmb?: number;
+  profundidadeComEmb?: number;
+  
+  // Dimensões Sem Embalagem
+  pesoLiquidoSemEmb?: number;
+  pesoBrutoSemEmb?: number;
+  alturaSemEmb?: number;
+  larguraSemEmb?: number;
+  profundidadeSemEmb?: number;
+  
+  // Apresentação expandida
+  apresentacaoPrimaria?: string;
+  apresentacaoSecundaria?: string;
+  apresentacaoEmbarque?: string;
+  referenciasComercializadas?: string[];
   
   // Regulatório
   registroAnvisa?: string;
