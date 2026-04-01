@@ -66,6 +66,10 @@ export interface Licitacao {
   
   // Rastreabilidade de aditivos
   aditivos?: AditivoContratual[];
+  
+  // Solicitação de Análise Científica
+  solicitouAnaliseCientifica?: boolean;
+  dataSolicitacaoAC?: string;
 }
 
 export interface Licitante {

@@ -24,6 +24,7 @@ import CustomAlertModal from "./components/CustomAlertModal";
 import EmpresaParticipanteSelect from "./EmpresaParticipanteSelect";
 import AprovacaoEmpresaModal from "./AprovacaoEmpresaModal";
 import { concorrentes as mockConcorrentes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
+import { licitacoes } from "@/data/licitacaoData";
 import { AprovacaoEmpresa } from "@/types/licitacao";
 import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getAtendeEditalBadge } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -823,6 +824,14 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             variant={solicitouAnaliseCientifica ? "secondary" : "outline"}
             onClick={() => {
               setSolicitouAnaliseCientifica(true);
+              // Persistir no mock data para que a Assessoria Científica veja
+              if (oportunidade?.id) {
+                const lic = licitacoes.find(l => l.id === oportunidade.id);
+                if (lic) {
+                  lic.solicitouAnaliseCientifica = true;
+                  lic.dataSolicitacaoAC = new Date().toISOString().split('T')[0];
+                }
+              }
               toast({ title: "Solicitação enviada", description: "Análise da Assessoria Científica solicitada com sucesso." });
             }}
             disabled={isReadOnlyMode() || solicitouAnaliseCientifica}

@@ -29,7 +29,9 @@ export const licitacoes: Licitacao[] = [
     inclusao: "2025-01-10",
     ultimaAlteracao: "2025-01-12",
     incluidoPor: "João Silva",
-    alteradoPor: "Maria Santos"
+    alteradoPor: "Maria Santos",
+    solicitouAnaliseCientifica: true,
+    dataSolicitacaoAC: "2025-01-12"
   },
   {
     id: 2,
@@ -57,7 +59,9 @@ export const licitacoes: Licitacao[] = [
     inclusao: "2025-01-28",
     ultimaAlteracao: "2025-02-05",
     incluidoPor: "Carlos Oliveira",
-    alteradoPor: "Carlos Oliveira"
+    alteradoPor: "Carlos Oliveira",
+    solicitouAnaliseCientifica: true,
+    dataSolicitacaoAC: "2025-02-01"
   },
   {
     id: 3,
@@ -85,7 +89,9 @@ export const licitacoes: Licitacao[] = [
     inclusao: "2025-01-18",
     ultimaAlteracao: "2025-01-25",
     incluidoPor: "Ana Costa",
-    alteradoPor: "Sistema Automático"
+    alteradoPor: "Sistema Automático",
+    solicitouAnaliseCientifica: true,
+    dataSolicitacaoAC: "2025-01-20"
   },
   {
     id: 4,
