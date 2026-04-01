@@ -339,6 +339,31 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   ];
 
   const isSegmentoPublico = formData.segmentoProjeto?.toLowerCase().includes('público') || formData.segmentoProjeto?.toLowerCase().includes('publico');
+  const isSegmentoPrivado = tipoContratacao === 'privado';
+  const isSegmentoFilantropico = tipoContratacao === 'filantropico';
+  const labelDocVinculo = isSegmentoPrivado ? 'Ordem de Fornecimento' : 'Empenho';
+  const labelDocVinculoAbrev = isSegmentoPrivado ? 'OF' : 'Empenho';
+
+  // Função para abrir documento do empenho/OF ao clicar no número
+  const handleAbrirDocumentoEmpenho = (numero: string) => {
+    const emp = empenhos.find(e => e.numeroEmpenho === numero);
+    if (emp?.documentoEmpenho) {
+      const url = URL.createObjectURL(emp.documentoEmpenho);
+      window.open(url, '_blank');
+    } else {
+      toast.warning(`Documento não anexado — anexe na aba ${labelDocVinculo}`);
+    }
+  };
+
+  const handleAbrirDocumentoOF = (numero: string) => {
+    const of = ordensFornecimento.find(o => o.numeroOF === numero);
+    if (of?.documentoOF) {
+      const url = URL.createObjectURL(of.documentoOF);
+      window.open(url, '_blank');
+    } else {
+      toast.warning('Documento não anexado — anexe na aba Ordem de Fornecimento');
+    }
+  };
 
   const handleSelecionarCliente = (clienteId: string) => {
     setClienteSelecionado(clienteId);
