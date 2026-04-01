@@ -26,6 +26,9 @@ import { TemplateTrainamentoABL800 } from "./templates/TemplateTrainamentoABL800
 import { TemplateTrainamentoABL90 } from "./templates/TemplateTrainamentoABL90";
 import { TemplateTrainamentoABL9 } from "./templates/TemplateTrainamentoABL9";
 import { TemplateTrainamentoAQT90 } from "./templates/TemplateTrainamentoAQT90";
+import { TemplateTrainamentoOsmoTECH } from "./templates/TemplateTrainamentoOsmoTECH";
+import { TemplateTrainamentoExcelsior } from "./templates/TemplateTrainamentoExcelsior";
+import { AssinaturaPad } from "@/components/ui/assinatura-pad";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
