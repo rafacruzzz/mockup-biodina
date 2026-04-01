@@ -703,7 +703,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                       </Select>
                     </div>
 
-                    {tipoContratacao === 'licitacao' && (
+                    {(tipoContratacao === 'publico' || tipoContratacao === 'filantropico') && (
                       <div className="space-y-4">
                         <div>
                           <Label htmlFor="licitacao">Selecionar Licitação</Label>
