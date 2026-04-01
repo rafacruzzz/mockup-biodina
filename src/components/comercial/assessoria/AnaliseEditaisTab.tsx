@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, FileText, AlertTriangle, Clock, ExternalLink, Eye, TrendingUp } from "lucide-react";
+import { Search, FileText, AlertTriangle, Clock, Eye, TrendingUp, Save } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { licitacoes } from "@/data/licitacaoData";
 import { Licitacao } from "@/types/licitacao";
 import { PainelAlertas } from "./PainelAlertas";
@@ -15,6 +18,26 @@ export function AnaliseEditaisTab() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [selectedLicitacao, setSelectedLicitacao] = useState<Licitacao | null>(null);
+  const [analiseTexto, setAnaliseTexto] = useState("");
+
+  useEffect(() => {
+    if (selectedLicitacao) {
+      setAnaliseTexto(selectedLicitacao.analiseTecnica || "");
+    }
+  }, [selectedLicitacao]);
+
+  const handleSalvarAnalise = () => {
+    if (!selectedLicitacao) return;
+    const idx = licitacoes.findIndex((l) => l.id === selectedLicitacao.id);
+    if (idx !== -1) {
+      licitacoes[idx].analiseTecnica = analiseTexto;
+    }
+    toast({
+      title: "Análise salva",
+      description: `Análise Técnica-Científica do pregão ${selectedLicitacao.numeroPregao} salva com sucesso.`,
+    });
+    setSelectedLicitacao(null);
+  };
 
   // Filtrar licitações que solicitaram análise da Assessoria Científica
   const licitacoesComSolicitacaoAC = licitacoes.filter(
@@ -267,7 +290,7 @@ export function AnaliseEditaisTab() {
                               variant="ghost"
                               onClick={() => window.open(lic.linkEdital, "_blank")}
                             >
-                              <ExternalLink className="h-4 w-4" />
+                              <FileText className="h-4 w-4" />
                             </Button>
                           )}
                           <Button
@@ -399,17 +422,22 @@ export function AnaliseEditaisTab() {
                 </div>
               )}
 
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Análise Técnica-Científica</Label>
+                <Textarea
+                  rows={6}
+                  value={analiseTexto}
+                  onChange={(e) => setAnaliseTexto(e.target.value)}
+                  placeholder="Digite aqui a análise técnica-científica do edital..."
+                />
+              </div>
+
               <div className="flex justify-end gap-3 pt-4">
-                {selectedLicitacao.linkEdital && (
-                  <Button
-                    variant="outline"
-                    onClick={() => window.open(selectedLicitacao.linkEdital, "_blank")}
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Ver Edital
-                  </Button>
-                )}
-                <Button onClick={() => setSelectedLicitacao(null)}>Fechar</Button>
+                <Button variant="outline" onClick={() => setSelectedLicitacao(null)}>Fechar</Button>
+                <Button onClick={handleSalvarAnalise}>
+                  <Save className="h-4 w-4 mr-2" />
+                  Salvar Análise
+                </Button>
               </div>
             </CardContent>
           </Card>
