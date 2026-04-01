@@ -355,11 +355,11 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     }
   };
 
-  const handleTipoContratacaoChange = (tipo: 'licitacao' | 'particular') => {
+  const handleTipoContratacaoChange = (tipo: 'publico' | 'privado' | 'filantropico') => {
     setTipoContratacao(tipo);
     // Limpar dados ao trocar tipo
     setLicitacaoVinculada('');
-    setClienteParticular('');
+    setClienteSelecionado('');
     setDocumentosLicitacao([]);
     setHistoricoLicitacao([]);
     setEmpresaContrato({ empresaParticipanteId: '', empresaParticipanteNome: '', empresaParticipanteCNPJ: '' });
