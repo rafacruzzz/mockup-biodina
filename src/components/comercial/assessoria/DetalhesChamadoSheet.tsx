@@ -318,34 +318,39 @@ export function DetalhesChamadoSheet({ chamado, isOpen, onClose }: DetalhesChama
             </div>
           </div>
 
-          {chamado.evidencias && chamado.evidencias.length > 0 && (
-            <>
-              <Separator />
-              <div className="space-y-3">
-                <h4 className="font-semibold flex items-center gap-2">
-                  <ImageIcon className="h-4 w-4" />
-                  Evidências ({chamado.evidencias.length})
-                </h4>
-                <div className="grid grid-cols-2 gap-3">
-                  {chamado.evidencias.map((evidencia) => (
-                    <div key={evidencia.id} className="border rounded-md p-3 space-y-2">
-                      <div className="flex items-center gap-2">
-                        {evidencia.tipo === 'foto' && <ImageIcon className="h-4 w-4" />}
-                        {evidencia.tipo === 'documento' && <FileText className="h-4 w-4" />}
-                        <span className="text-sm font-medium">{evidencia.nomeArquivo}</span>
-                      </div>
-                      {evidencia.descricao && (
-                        <p className="text-xs text-muted-foreground">{evidencia.descricao}</p>
-                      )}
-                      <p className="text-xs text-muted-foreground">
-                        Enviado por {evidencia.uploadPorNome}
-                      </p>
+          <Separator />
+          <div className="space-y-3">
+            <h4 className="font-semibold flex items-center gap-2">
+              <ImageIcon className="h-4 w-4" />
+              Evidências {chamado.evidencias && chamado.evidencias.length > 0 && `(${chamado.evidencias.length})`}
+            </h4>
+            {chamado.evidencias && chamado.evidencias.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3">
+                {chamado.evidencias.map((evidencia) => (
+                  <div key={evidencia.id} className="border rounded-md p-3 space-y-2">
+                    <div className="flex items-center gap-2">
+                      {evidencia.tipo === 'foto' && <ImageIcon className="h-4 w-4" />}
+                      {evidencia.tipo === 'video' && <ImageIcon className="h-4 w-4" />}
+                      {evidencia.tipo === 'log' && <FileText className="h-4 w-4" />}
+                      {evidencia.tipo === 'documento' && <FileText className="h-4 w-4" />}
+                      <span className="text-sm font-medium">{evidencia.nomeArquivo}</span>
                     </div>
-                  ))}
-                </div>
+                    {evidencia.descricao && (
+                      <p className="text-xs text-muted-foreground">{evidencia.descricao}</p>
+                    )}
+                    <p className="text-xs text-muted-foreground">
+                      Enviado por {evidencia.uploadPorNome}
+                    </p>
+                  </div>
+                ))}
               </div>
-            </>
-          )}
+            ) : (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground italic bg-muted/30 p-4 rounded-md">
+                <ImageIcon className="h-4 w-4" />
+                <span>Nenhuma evidência anexada</span>
+              </div>
+            )}
+          </div>
 
           {(chamado.assinaturaCliente || chamado.assinaturaAssessor) && (
             <>
