@@ -406,7 +406,7 @@ export function BiCoberturaTab({ onVoltar }: BiCoberturaTabProps) {
               {docsBloqueados.map((doc) => (
                 <div key={doc.id} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
-                    <Lock className="h-4 w-4 text-amber-500" />
+                    <Lock className="h-4 w-4 text-destructive" />
                     <div>
                       <div className="font-medium text-sm">{doc.titulo}</div>
                       <div className="text-xs text-muted-foreground">Versão atual: {doc.versao}</div>
