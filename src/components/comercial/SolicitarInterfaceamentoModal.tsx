@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Network, Upload, X, FileText, Calendar, Building, DollarSign, CreditCard, User, Repeat } from "lucide-react";
+import { Network, Upload, X, FileText, Calendar, DollarSign, CreditCard, User, Repeat } from "lucide-react";
+import { MoneyInput } from "@/components/ui/money-input";
 import { useToast } from "@/hooks/use-toast";
 
 interface SolicitarInterfaceamentoModalProps {
@@ -38,7 +39,9 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
     conta: '',
     chavePix: '',
     boletoAnexo: null as File | null,
-    responsavelAutorizacao: ''
+    responsavelAutorizacao: '',
+    valorInstalacao: '',
+    valorMensalidade: ''
   });
 
   useEffect(() => {
@@ -122,6 +125,24 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
       return;
     }
 
+    if (!formData.valorInstalacao) {
+      toast({
+        variant: "destructive",
+        title: "Erro de Validação",
+        description: "O valor da instalação é obrigatório."
+      });
+      return;
+    }
+
+    if (!formData.valorMensalidade) {
+      toast({
+        variant: "destructive",
+        title: "Erro de Validação",
+        description: "O valor da mensalidade é obrigatório."
+      });
+      return;
+    }
+
     const solicitacaoData = {
       ...formData,
       clienteNome: oportunidade?.cliente || '',
@@ -165,7 +186,9 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
       conta: '',
       chavePix: '',
       boletoAnexo: null,
-      responsavelAutorizacao: ''
+      responsavelAutorizacao: '',
+      valorInstalacao: '',
+      valorMensalidade: ''
     });
 
     toast({
@@ -192,7 +215,9 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
       conta: '',
       chavePix: '',
       boletoAnexo: null,
-      responsavelAutorizacao: ''
+      responsavelAutorizacao: '',
+      valorInstalacao: '',
+      valorMensalidade: ''
     });
     onClose();
   };
@@ -211,44 +236,6 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Informações da Oportunidade */}
-          <Card className="bg-muted/50">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Building className="h-5 w-5" />
-                Informações da Oportunidade
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div>
-                  <span className="font-medium text-muted-foreground">Cliente:</span>
-                  <p className="mt-1">{oportunidade?.cliente}</p>
-                </div>
-                <div>
-                  <span className="font-medium text-muted-foreground">Oportunidade:</span>
-                  <p className="mt-1">{oportunidade?.codigo}</p>
-                </div>
-                <div>
-                  <span className="font-medium text-muted-foreground">Responsável:</span>
-                  <p className="mt-1">{oportunidade?.responsavel}</p>
-                </div>
-                <div>
-                  <span className="font-medium text-muted-foreground">Status:</span>
-                  <Badge variant="secondary" className="mt-1">
-                    {oportunidade?.status}
-                  </Badge>
-                </div>
-                <div>
-                  <span className="font-medium text-muted-foreground">Segmento:</span>
-                  <p className="mt-1">{oportunidade?.segmento}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Separator />
-
           {/* Formulário de Solicitação */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
@@ -291,6 +278,34 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
                   value={formData.prazoDesejado}
                   onChange={(e) => handleInputChange('prazoDesejado', e.target.value)}
                   min={new Date().toISOString().split('T')[0]}
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="valorInstalacao" className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Valor da Instalação *
+                  <Badge variant="outline" className="text-xs">Obrigatório</Badge>
+                </Label>
+                <MoneyInput
+                  id="valorInstalacao"
+                  value={formData.valorInstalacao}
+                  onChange={(value) => handleInputChange('valorInstalacao', value)}
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="valorMensalidade" className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Valor da Mensalidade *
+                  <Badge variant="outline" className="text-xs">Obrigatório</Badge>
+                </Label>
+                <MoneyInput
+                  id="valorMensalidade"
+                  value={formData.valorMensalidade}
+                  onChange={(value) => handleInputChange('valorMensalidade', value)}
                   className="mt-1"
                 />
               </div>
