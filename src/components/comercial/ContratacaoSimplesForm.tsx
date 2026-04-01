@@ -68,7 +68,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     empenho: string;
     processo: string;
     valorNfs: number;
-  }>>([]);
+  }>>([
+    { id: 'srv-001', numeroPedido: 'PED-SRV-2025-001', dataFaturamento: '13/03/2025', periodoCompetencia: 'Março/2025', nfs: 'NFS-00123', empenho: 'EMP-2025-001', processo: 'PROC-2025-001', valorNfs: 4500 },
+    { id: 'srv-002', numeroPedido: 'PED-SRV-2026-002', dataFaturamento: '13/02/2026', periodoCompetencia: 'Fevereiro/2026', nfs: 'NFS-00456', empenho: 'EMP-2026-002', processo: 'PROC-2026-002', valorNfs: 7800 },
+  ]);
   const [chamados, setChamados] = useState<Chamado[]>(oportunidade?.chamados || []);
   const [isPedidoModalOpen, setIsPedidoModalOpen] = useState(false);
   const [tipoContratacao, setTipoContratacao] = useState<'publico' | 'privado' | 'filantropico' | ''>('');
@@ -2255,154 +2258,128 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               })()}
             </TabsContent>
 
-             <TabsContent value="pedidos" className="space-y-4">
+             <TabsContent value="pedidos" className="space-y-6">
+              {/* Seção Produtos */}
               <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle>Gerenciamento de Pedidos</CardTitle>
-                  <div className="flex gap-2">
-                    <Button 
-                      onClick={() => setIsPedidoModalOpen(true)}
-                      className="bg-biodina-gold hover:bg-biodina-gold/90"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Adicionar Produto
-                    </Button>
-                    <Button 
-                      variant="outline"
-                      onClick={() => toast.info('Funcionalidade de pedido de serviço em desenvolvimento')}
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Adicionar Serviço
-                    </Button>
+                <CardHeader className="flex flex-row items-center justify-between pb-4">
+                  <div className="flex items-center gap-2">
+                    <Package className="h-5 w-5 text-biodina-gold" />
+                    <CardTitle className="text-lg">Produtos</CardTitle>
                   </div>
+                  <Button 
+                    onClick={() => setIsPedidoModalOpen(true)}
+                    className="bg-biodina-gold hover:bg-biodina-gold/90"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Adicionar Produto
+                  </Button>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Tabela Pedido Produto */}
-                  <div>
-                    <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
-                      <Package className="h-4 w-4" />
-                      Pedido Produto
-                    </h3>
-                    {pedidos.length === 0 ? (
-                      <div className="text-center py-6 border rounded-lg border-dashed">
-                        <Package className="h-10 w-10 text-muted-foreground/40 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">Nenhum pedido de produto cadastrado</p>
-                      </div>
-                    ) : (
-                      <div className="overflow-x-auto border rounded-lg">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Nº Pedido</TableHead>
-                              <TableHead>Data Faturamento</TableHead>
-                              <TableHead>Período Competência</TableHead>
-                              <TableHead>NFE</TableHead>
-                              <TableHead>Empenho</TableHead>
-                              <TableHead>Processo</TableHead>
-                              <TableHead>Valor da NFE</TableHead>
-                              <TableHead>Ações</TableHead>
+                <CardContent>
+                  {pedidos.length === 0 ? (
+                    <div className="text-center py-6 border rounded-lg border-dashed">
+                      <Package className="h-10 w-10 text-muted-foreground/40 mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">Nenhum pedido de produto cadastrado</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto border rounded-lg">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Nº Pedido</TableHead>
+                            <TableHead>Data Faturamento</TableHead>
+                            <TableHead>Período Competência</TableHead>
+                            <TableHead>NFE</TableHead>
+                            <TableHead>Empenho</TableHead>
+                            <TableHead>Processo</TableHead>
+                            <TableHead>Valor da NFE</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {pedidos.map((pedido) => (
+                            <TableRow key={pedido.id}>
+                              <TableCell className="font-mono text-sm">
+                                #{pedido.id.toString().slice(-6)}
+                              </TableCell>
+                              <TableCell>
+                                {pedido.dataVenda ? new Date(pedido.dataVenda).toLocaleDateString('pt-BR') : '-'}
+                              </TableCell>
+                              <TableCell>-</TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className="text-xs">
+                                  {pedido.status === 'faturado' ? 'Emitida' : 'Pendente'}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>-</TableCell>
+                              <TableCell>-</TableCell>
+                              <TableCell className="font-medium text-green-600">
+                                {formatCurrency(pedido.valorTotal)}
+                              </TableCell>
                             </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {pedidos.map((pedido) => (
-                              <TableRow key={pedido.id}>
-                                <TableCell className="font-mono text-sm">
-                                  #{pedido.id.toString().slice(-6)}
-                                </TableCell>
-                                <TableCell>
-                                  {pedido.dataVenda ? new Date(pedido.dataVenda).toLocaleDateString('pt-BR') : '-'}
-                                </TableCell>
-                                <TableCell>-</TableCell>
-                                <TableCell>
-                                  <Badge variant="outline" className="text-xs">
-                                    {pedido.status === 'faturado' ? 'Emitida' : 'Pendente'}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell>-</TableCell>
-                                <TableCell>-</TableCell>
-                                <TableCell className="font-medium text-green-600">
-                                  {formatCurrency(pedido.valorTotal)}
-                                </TableCell>
-                                <TableCell>
-                                  <div className="flex gap-1">
-                                    <Button variant="ghost" size="sm" title="Visualizar">
-                                      <Eye className="h-4 w-4" />
-                                    </Button>
-                                    {pedido.status === 'rascunho' && (
-                                      <Button 
-                                        variant="ghost" 
-                                        size="sm" 
-                                        onClick={() => handleEnviarExpedicao(pedido)}
-                                        title="Enviar para Expedição"
-                                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                      >
-                                        <Send className="h-4 w-4" />
-                                      </Button>
-                                    )}
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </div>
-                    )}
-                  </div>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
-                  {/* Tabela Pedido Serviço */}
-                  <div>
-                    <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
-                      <Wrench className="h-4 w-4" />
-                      Pedido Serviço
-                    </h3>
-                    {pedidosServico.length === 0 ? (
-                      <div className="text-center py-6 border rounded-lg border-dashed">
-                        <Wrench className="h-10 w-10 text-muted-foreground/40 mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">Nenhum pedido de serviço cadastrado</p>
-                      </div>
-                    ) : (
-                      <div className="overflow-x-auto border rounded-lg">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Nº Pedido</TableHead>
-                              <TableHead>Data Faturamento</TableHead>
-                              <TableHead>Período Competência</TableHead>
-                              <TableHead>NFS</TableHead>
-                              <TableHead>Empenho</TableHead>
-                              <TableHead>Processo</TableHead>
-                              <TableHead>Valor da NFS</TableHead>
-                              <TableHead>Ações</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {pedidosServico.map((servico) => (
-                              <TableRow key={servico.id}>
-                                <TableCell className="font-mono text-sm">{servico.numeroPedido}</TableCell>
-                                <TableCell>{servico.dataFaturamento || '-'}</TableCell>
-                                <TableCell>{servico.periodoCompetencia || '-'}</TableCell>
-                                <TableCell>
-                                  <Badge variant="outline" className="text-xs">
-                                    {servico.nfs || 'Pendente'}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell>{servico.empenho || '-'}</TableCell>
-                                <TableCell>{servico.processo || '-'}</TableCell>
-                                <TableCell className="font-medium text-green-600">
-                                  {formatCurrency(servico.valorNfs)}
-                                </TableCell>
-                                <TableCell>
-                                  <Button variant="ghost" size="sm" title="Visualizar">
-                                    <Eye className="h-4 w-4" />
-                                  </Button>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </div>
-                    )}
+              {/* Seção Serviços */}
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-4">
+                  <div className="flex items-center gap-2">
+                    <Wrench className="h-5 w-5 text-biodina-gold" />
+                    <CardTitle className="text-lg">Serviços</CardTitle>
                   </div>
+                  <Button 
+                    className="bg-biodina-gold hover:bg-biodina-gold/90"
+                    onClick={() => toast.info('Funcionalidade de pedido de serviço em desenvolvimento')}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Adicionar Serviço
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  {pedidosServico.length === 0 ? (
+                    <div className="text-center py-6 border rounded-lg border-dashed">
+                      <Wrench className="h-10 w-10 text-muted-foreground/40 mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">Nenhum pedido de serviço cadastrado</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto border rounded-lg">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Nº Pedido</TableHead>
+                            <TableHead>Data Faturamento</TableHead>
+                            <TableHead>Período Competência</TableHead>
+                            <TableHead>NFS</TableHead>
+                            <TableHead>Empenho</TableHead>
+                            <TableHead>Processo</TableHead>
+                            <TableHead>Valor da NFS</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {pedidosServico.map((servico) => (
+                            <TableRow key={servico.id}>
+                              <TableCell className="font-mono text-sm">{servico.numeroPedido}</TableCell>
+                              <TableCell>{servico.dataFaturamento || '-'}</TableCell>
+                              <TableCell>{servico.periodoCompetencia || '-'}</TableCell>
+                              <TableCell>
+                                <Badge variant="outline" className="text-xs">
+                                  {servico.nfs || 'Pendente'}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>{servico.empenho || '-'}</TableCell>
+                              <TableCell>{servico.processo || '-'}</TableCell>
+                              <TableCell className="font-medium text-green-600">
+                                {formatCurrency(servico.valorNfs)}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
