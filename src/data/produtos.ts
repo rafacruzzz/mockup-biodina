@@ -152,9 +152,77 @@ export const contarProdutosPorLinha = (linhaId: string): number => {
   return produtosMock.filter(p => p.linhaId === linhaId).length;
 };
 
+// Mock de documentos com versionamento e rastreabilidade
+export const documentosMockCompletos: DocumentoProduto[] = [
+  {
+    id: 'doc-1', produtoId: 'prod-1', tipo: 'catalogo', titulo: 'Catálogo DxH 520 v3.2',
+    versao: '3.2', idioma: 'pt-BR', dataUpload: new Date('2024-11-10'), uploadPor: 'Ana Silva', arquivo: 'catalogo_dxh520_v3.2.pdf',
+    bloqueadoSobrescrita: false,
+    dataProximaRevalidacao: new Date('2025-05-10'),
+    historicoVersoes: [
+      { versao: '3.2', dataAprovacao: new Date('2024-11-10'), aprovadoPor: 'Carlos Mendes', arquivo: 'catalogo_dxh520_v3.2.pdf' },
+      { versao: '3.1', dataAprovacao: new Date('2024-08-15'), aprovadoPor: 'Carlos Mendes', arquivo: 'catalogo_dxh520_v3.1.pdf' },
+      { versao: '3.0', dataAprovacao: new Date('2024-03-01'), aprovadoPor: 'Maria Santos', arquivo: 'catalogo_dxh520_v3.0.pdf' },
+    ],
+    changelog: [
+      { id: 'cl-1', artefatoId: 'doc-1', tipoArtefato: 'catalogo', versaoAnterior: '3.1', versaoNova: '3.2', oqueMudou: 'Atualização de especificações de reagentes', porqueMudou: 'Novo lote de reagentes com composição ajustada', aprovadoPor: 'Carlos Mendes', aprovadoEm: new Date('2024-11-10'), alteradoPor: 'Ana Silva', alteradoEm: new Date('2024-11-08') },
+      { id: 'cl-2', artefatoId: 'doc-1', tipoArtefato: 'catalogo', versaoAnterior: '3.0', versaoNova: '3.1', oqueMudou: 'Correção de imagens do equipamento', porqueMudou: 'Fotos desatualizadas do modelo anterior', aprovadoPor: 'Carlos Mendes', aprovadoEm: new Date('2024-08-15'), alteradoPor: 'Ana Silva', alteradoEm: new Date('2024-08-12') },
+    ]
+  },
+  {
+    id: 'doc-2', produtoId: 'prod-1', tipo: 'manual', titulo: 'IFU/POP DxH 520',
+    versao: '2.1', idioma: 'pt-BR', dataUpload: new Date('2024-10-20'), uploadPor: 'Pedro Lima', arquivo: 'ifu_dxh520_v2.1.pdf',
+    bloqueadoSobrescrita: true,
+    dataProximaRevalidacao: new Date('2025-04-20'),
+    historicoVersoes: [
+      { versao: '2.1', dataAprovacao: new Date('2024-10-20'), aprovadoPor: 'Maria Santos', arquivo: 'ifu_dxh520_v2.1.pdf' },
+      { versao: '2.0', dataAprovacao: new Date('2024-04-10'), aprovadoPor: 'Maria Santos', arquivo: 'ifu_dxh520_v2.0.pdf' },
+    ],
+    changelog: [
+      { id: 'cl-3', artefatoId: 'doc-2', tipoArtefato: 'ifu_pop', versaoAnterior: '2.0', versaoNova: '2.1', oqueMudou: 'Atualização de procedimento de calibração', porqueMudou: 'Nova norma ISO 15189:2022', aprovadoPor: 'Maria Santos', aprovadoEm: new Date('2024-10-20'), alteradoPor: 'Pedro Lima', alteradoEm: new Date('2024-10-18') },
+    ]
+  },
+  {
+    id: 'doc-3', produtoId: 'prod-1', tipo: 'ficha_tecnica', titulo: 'Ficha Técnica DxH 520',
+    versao: '1.5', idioma: 'pt-BR', dataUpload: new Date('2024-09-15'), uploadPor: 'Ana Silva', arquivo: 'ficha_dxh520_v1.5.pdf',
+    bloqueadoSobrescrita: false,
+    dataProximaRevalidacao: new Date('2025-03-15'),
+    historicoVersoes: [
+      { versao: '1.5', dataAprovacao: new Date('2024-09-15'), aprovadoPor: 'Carlos Mendes', arquivo: 'ficha_dxh520_v1.5.pdf' },
+    ],
+    changelog: [
+      { id: 'cl-4', artefatoId: 'doc-3', tipoArtefato: 'ficha_tecnica', versaoAnterior: '1.4', versaoNova: '1.5', oqueMudou: 'Inclusão de novos parâmetros de medição', porqueMudou: 'Atualização de firmware do equipamento', aprovadoPor: 'Carlos Mendes', aprovadoEm: new Date('2024-09-15'), alteradoPor: 'Ana Silva', alteradoEm: new Date('2024-09-12') },
+    ]
+  },
+  {
+    id: 'doc-4', produtoId: 'prod-1', tipo: 'comparativo', titulo: 'Comparativo DxH 520 vs Concorrentes',
+    versao: '1.0', idioma: 'pt-BR', dataUpload: new Date('2024-11-01'), uploadPor: 'Lucas Ferreira', arquivo: 'comparativo_dxh520.pdf',
+    bloqueadoSobrescrita: false,
+    changelog: []
+  },
+  {
+    id: 'doc-5', produtoId: 'prod-1', tipo: 'justificativa', titulo: 'Justificativa Técnica DxH 520',
+    versao: '1.0', idioma: 'pt-BR', dataUpload: new Date('2024-10-05'), uploadPor: 'Lucas Ferreira', arquivo: 'justificativa_dxh520.pdf',
+    bloqueadoSobrescrita: false,
+    changelog: []
+  },
+  {
+    id: 'doc-6', produtoId: 'prod-1', tipo: 'termo_referencia', titulo: 'TR DxH 520',
+    versao: '2.0', idioma: 'pt-BR', dataUpload: new Date('2024-11-20'), uploadPor: 'Ana Silva', arquivo: 'tr_dxh520_v2.pdf',
+    bloqueadoSobrescrita: true,
+    dataProximaRevalidacao: new Date('2025-04-01'),
+    historicoVersoes: [
+      { versao: '2.0', dataAprovacao: new Date('2024-11-20'), aprovadoPor: 'Maria Santos', arquivo: 'tr_dxh520_v2.pdf' },
+      { versao: '1.0', dataAprovacao: new Date('2024-05-01'), aprovadoPor: 'Maria Santos', arquivo: 'tr_dxh520_v1.pdf' },
+    ],
+    changelog: [
+      { id: 'cl-5', artefatoId: 'doc-6', tipoArtefato: 'termo_referencia', versaoAnterior: '1.0', versaoNova: '2.0', oqueMudou: 'Revisão completa do termo', porqueMudou: 'Adequação à nova legislação de licitações', aprovadoPor: 'Maria Santos', aprovadoEm: new Date('2024-11-20'), alteradoPor: 'Ana Silva', alteradoEm: new Date('2024-11-18') },
+    ]
+  },
+];
+
 export const getDocumentosPorProduto = (produtoId: string): DocumentoProduto[] => {
-  // Mock - retorna array vazio por enquanto
-  return [];
+  return documentosMockCompletos.filter(d => d.produtoId === produtoId);
 };
 
 export const getComparativosPorProduto = (produtoId: string): ComparativoProduto[] => {
