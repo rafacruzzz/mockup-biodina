@@ -92,8 +92,8 @@ export function AnaliseEditaisTab() {
     return prioridade === "alta" ? "destructive" : "default";
   };
 
-  // Filtrar licitações
-  const licitacoesFiltradas = licitacoesEmAndamento.filter((lic) => {
+  // Filtrar licitações com solicitação AC
+  const licitacoesFiltradas = licitacoesComSolicitacaoAC.filter((lic) => {
     const matchSearch =
       searchTerm === "" ||
       lic.numeroPregao.toLowerCase().includes(searchTerm.toLowerCase()) ||
