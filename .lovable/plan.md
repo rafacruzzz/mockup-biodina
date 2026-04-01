@@ -1,30 +1,37 @@
 
 
-## Plano: Campo de Análise Científica no detalhe do Alerta para Análise (espelhado na Licitação)
+## Plano: Melhorias na aba Apresentação e tipo Produto do Repositório Técnico
 
-### O que muda
+### Resumo
+Três blocos de alterações no Repositório Técnico de Produtos:
+1. Dividir "Dimensões e Peso" em duas seções (Com Embalagem / Sem Embalagem)
+2. Expandir "Apresentação Comercial" para mostrar os mesmos campos do cadastro (Primária, Secundária, Embarque, Referências)
+3. Atualizar o tipo `Produto` para suportar os novos campos
 
-No modal de detalhes que abre ao clicar no olho (👁) nos "Alertas para Análise" da aba Análise de Editais:
+### Alterações
 
-1. **Remover** o botão "Ver Edital" do rodapé
-2. **Adicionar** um campo `Textarea` com label "Análise Técnica-Científica" + botão "Salvar Análise"
-3. Ao salvar, o texto é gravado no campo `analiseTecnica` da licitação correspondente no array `licitacoes` (mock mutável)
-4. Assim, ao abrir a mesma licitação em Comercial > Licitação > aba "Análise Técnica", o campo já aparece preenchido com o que o assessor escreveu
+**1. Tipo `Produto` — `src/types/produto.ts`**
+- Adicionar campos de dimensões com/sem embalagem ao tipo `Produto`:
+  - `pesoLiquidoComEmb`, `pesoBrutoComEmb`, `alturaComEmb`, `larguraComEmb`, `profundidadeComEmb`
+  - `pesoLiquidoSemEmb`, `pesoBrutoSemEmb`, `alturaSemEmb`, `larguraSemEmb`, `profundidadeSemEmb`
+- Adicionar campos de apresentação: `apresentacaoPrimaria`, `apresentacaoSecundaria`, `apresentacaoEmbarque`, `referenciasComercializadas` (string[])
+- Manter os campos antigos (`pesoLiquido`, `pesoBruto`, `altura`, `largura`, `profundidade`) como deprecated
 
-### Alteração em `src/components/comercial/assessoria/AnaliseEditaisTab.tsx`
+**2. Dados mock — `src/data/produtos.ts`**
+- Preencher os novos campos de dimensões com/sem embalagem nos produtos existentes (DxH 520, etc.)
+- Preencher `apresentacaoPrimaria`, `apresentacaoSecundaria`, `apresentacaoEmbarque`, `referenciasComercializadas`
 
-**No modal de detalhes (linha ~292-417):**
-- Adicionar estado local `analiseTexto` inicializado com `selectedLicitacao.analiseTecnica || ""`
-- Remover o botão "Ver Edital" (linhas 403-411)
-- No lugar, inserir antes do rodapé:
-  - Label "Análise Técnica-Científica"
-  - `Textarea` com `rows={6}` ligado a `analiseTexto`
-  - Botão "Salvar Análise" que:
-    - Encontra a licitação no array `licitacoes` importado e atualiza `analiseTecnica`
-    - Exibe toast de confirmação
-    - Fecha o modal
-- Manter botão "Fechar"
+**3. Aba Apresentação — `src/components/comercial/assessoria/repositorio/detalhe/ApresentacaoTab.tsx`**
+- Expandir o card "Apresentação Comercial" para mostrar:
+  - Grid com Apresentação Primária, Secundária e de Embarque (3 colunas)
+  - Seção de Referências Comercializadas (badges)
+  - Manter `apresentacaoComercial` como texto descritivo (se existir)
+- Dividir "Dimensões e Peso" em dois cards:
+  - **"Dimensões e Peso — Com Embalagem"**: campos `*ComEmb` + cálculos automatizados
+  - **"Dimensões e Peso — Sem Embalagem"**: campos `*SemEmb` + cálculos automatizados
 
-### Arquivo alterado
-- `src/components/comercial/assessoria/AnaliseEditaisTab.tsx`
+### Arquivos alterados
+- `src/types/produto.ts`
+- `src/data/produtos.ts`
+- `src/components/comercial/assessoria/repositorio/detalhe/ApresentacaoTab.tsx`
 
