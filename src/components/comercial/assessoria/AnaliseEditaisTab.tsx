@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, FileText, AlertTriangle, Clock, ExternalLink, Eye, TrendingUp } from "lucide-react";
+import { Search, FileText, AlertTriangle, Clock, Eye, TrendingUp, Save } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { licitacoes } from "@/data/licitacaoData";
 import { Licitacao } from "@/types/licitacao";
 import { PainelAlertas } from "./PainelAlertas";
