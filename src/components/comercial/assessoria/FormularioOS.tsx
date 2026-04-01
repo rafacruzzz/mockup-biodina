@@ -313,28 +313,35 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     toast.success("Certificado gerado com sucesso!");
   };
 
-  const renderTemplateTrainamento = () => {
-    const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe"
-    );
+  const templatesDisponiveis = [
+    { id: "dxh520", nome: "DxH 520", badge: "Hematologia" },
+    { id: "abl800", nome: "ABL800 FLEX", badge: "Gasometria" },
+    { id: "abl90", nome: "ABL90 FLEX", badge: "Gasometria Avançada" },
+    { id: "abl9", nome: "ABL9", badge: "Gasometria Premium" },
+    { id: "aqt90", nome: "AQT 90 FLEX", badge: "Química Clínica" },
+    { id: "osmotech", nome: "OsmoTECH", badge: "Osmometria" },
+    { id: "excelsior", nome: "Excelsior Thermo Fisher Epredia", badge: "Histologia" },
+  ];
 
-    if (!ehTreinamento || !formData.equipamento) return null;
-
-    const equipamentoNome = formData.equipamento.toUpperCase();
-
-    if (equipamentoNome.includes("DXH 520") || equipamentoNome.includes("DXH520")) {
-      return <TemplateTrainamentoDxH520 />;
-    } else if (equipamentoNome.includes("ABL800")) {
-      return <TemplateTrainamentoABL800 />;
-    } else if (equipamentoNome.includes("ABL90")) {
-      return <TemplateTrainamentoABL90 />;
-    } else if (equipamentoNome.includes("ABL9") && !equipamentoNome.includes("ABL90")) {
-      return <TemplateTrainamentoABL9 />;
-    } else if (equipamentoNome.includes("AQT90") || equipamentoNome.includes("AQT 90")) {
-      return <TemplateTrainamentoAQT90 />;
+  const renderSelectedTemplate = () => {
+    const props = {
+      dataRegistro: templateData.dataRegistro,
+      nomeInstrutor: templateData.nomeInstrutor,
+      observacoes: templateData.observacoes,
+      onChangeData: (v: string) => setTemplateData(p => ({ ...p, dataRegistro: v })),
+      onChangeInstrutor: (v: string) => setTemplateData(p => ({ ...p, nomeInstrutor: v })),
+      onChangeObservacoes: (v: string) => setTemplateData(p => ({ ...p, observacoes: v })),
+    };
+    switch (selectedTemplate) {
+      case "dxh520": return <TemplateTrainamentoDxH520 {...props} />;
+      case "abl800": return <TemplateTrainamentoABL800 {...props} />;
+      case "abl90": return <TemplateTrainamentoABL90 {...props} />;
+      case "abl9": return <TemplateTrainamentoABL9 {...props} />;
+      case "aqt90": return <TemplateTrainamentoAQT90 {...props} />;
+      case "osmotech": return <TemplateTrainamentoOsmoTECH {...props} />;
+      case "excelsior": return <TemplateTrainamentoExcelsior {...props} />;
+      default: return null;
     }
-
-    return null;
   };
 
   return (
