@@ -24,6 +24,7 @@ import CustomAlertModal from "./components/CustomAlertModal";
 import EmpresaParticipanteSelect from "./EmpresaParticipanteSelect";
 import AprovacaoEmpresaModal from "./AprovacaoEmpresaModal";
 import { concorrentes as mockConcorrentes, pedidos as mockPedidos } from "@/data/licitacaoMockData";
+import { licitacoes } from "@/data/licitacaoData";
 import { AprovacaoEmpresa } from "@/types/licitacao";
 import { formatCurrency, getTermometroColor, getTermometroStage, getRankingColor, getAtendeEditalBadge } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
