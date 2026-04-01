@@ -736,10 +736,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                       </div>
                     )}
 
-                    {tipoContratacao === 'particular' && (
+                    {tipoContratacao === 'privado' && (
                       <div>
                         <Label>Selecionar Cliente</Label>
-                        <Select value={clienteParticular} onValueChange={handleSelecionarCliente}>
+                        <Select value={clienteSelecionado} onValueChange={handleSelecionarCliente}>
                           <SelectTrigger>
                             <SelectValue placeholder="Busque e selecione um cliente cadastrado" />
                           </SelectTrigger>
