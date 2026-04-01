@@ -290,7 +290,7 @@ export function AnaliseEditaisTab() {
                               variant="ghost"
                               onClick={() => window.open(lic.linkEdital, "_blank")}
                             >
-                              <ExternalLink className="h-4 w-4" />
+                              <FileText className="h-4 w-4" />
                             </Button>
                           )}
                           <Button
