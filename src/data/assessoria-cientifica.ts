@@ -846,6 +846,11 @@ export const chamadosAssessoriaMock: ChamadoAssessoria[] = [
         uploadPorNome: "Eng. Roberto Lima"
       }
     ],
+    dataEncerramento: new Date(2025, 9, 22, 17, 0),
+    assinaturaCliente: "Dr. Paulo Andrade",
+    assinaturaAssessor: "Dra. Maria Santos",
+    dataAssinaturaCliente: new Date(2025, 9, 22, 16, 30),
+    dataAssinaturaAssessor: new Date(2025, 9, 22, 16, 45),
     criadoEm: new Date(2025, 9, 20, 14, 0),
     atualizadoEm: new Date(2025, 9, 22, 16, 0)
   },
