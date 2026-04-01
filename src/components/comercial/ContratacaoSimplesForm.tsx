@@ -2617,7 +2617,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                             <TableHead>Data Faturamento</TableHead>
                             <TableHead>Período Competência</TableHead>
                             <TableHead>NFE</TableHead>
-                            <TableHead>Empenho</TableHead>
+                            <TableHead>{isSegmentoPrivado ? 'Ordem de Fornecimento' : 'Empenho'}</TableHead>
                             <TableHead>Processo</TableHead>
                             <TableHead>Valor da NFE</TableHead>
                           </TableRow>
