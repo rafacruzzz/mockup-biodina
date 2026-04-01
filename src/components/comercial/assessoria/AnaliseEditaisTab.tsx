@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Search, FileText, AlertTriangle, Clock, ExternalLink, Eye, TrendingUp } from "lucide-react";
 import { licitacoes } from "@/data/licitacaoData";
 import { Licitacao } from "@/types/licitacao";
