@@ -352,38 +352,48 @@ export function DetalhesChamadoSheet({ chamado, isOpen, onClose }: DetalhesChama
             )}
           </div>
 
-          {(chamado.assinaturaCliente || chamado.assinaturaAssessor) && (
-            <>
-              <Separator />
-              <div className="space-y-3">
-                <h4 className="font-semibold">Assinaturas Digitais</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  {chamado.assinaturaCliente && (
-                    <div className="border rounded-md p-3">
-                      <p className="text-sm font-medium mb-1">Cliente</p>
-                      <p className="text-xs text-muted-foreground">{chamado.assinaturaCliente}</p>
-                      {chamado.dataAssinaturaCliente && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {format(chamado.dataAssinaturaCliente, "dd/MM/yyyy", { locale: ptBR })}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                  {chamado.assinaturaAssessor && (
-                    <div className="border rounded-md p-3">
-                      <p className="text-sm font-medium mb-1">Assessor</p>
-                      <p className="text-xs text-muted-foreground">{chamado.assinaturaAssessor}</p>
-                      {chamado.dataAssinaturaAssessor && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {format(chamado.dataAssinaturaAssessor, "dd/MM/yyyy", { locale: ptBR })}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
+          <Separator />
+          <div className="space-y-3">
+            <h4 className="font-semibold">Assinaturas Digitais</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="border rounded-md p-3">
+                <p className="text-sm font-medium mb-1">Assinatura do Cliente</p>
+                {chamado.assinaturaCliente ? (
+                  <>
+                    <p className="text-xs text-muted-foreground">{chamado.assinaturaCliente}</p>
+                    {chamado.dataAssinaturaCliente && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {format(chamado.dataAssinaturaCliente, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground italic mt-1">
+                    <Clock className="h-3 w-3" />
+                    <span>Pendente</span>
+                  </div>
+                )}
               </div>
-            </>
-          )}
+              <div className="border rounded-md p-3">
+                <p className="text-sm font-medium mb-1">Assinatura do Assessor</p>
+                {chamado.assinaturaAssessor ? (
+                  <>
+                    <p className="text-xs text-muted-foreground">{chamado.assinaturaAssessor}</p>
+                    {chamado.dataAssinaturaAssessor && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {format(chamado.dataAssinaturaAssessor, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground italic mt-1">
+                    <Clock className="h-3 w-3" />
+                    <span>Pendente</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
