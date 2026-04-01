@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight, Calendar, LogOut, Plus } from "lucide-react";
 import { OrdemServico, FiltrosAgenda, StatusOS, DepartamentoOS, Alerta } from "@/types/assessoria-cientifica";
 import { ordensServicoMock, getTipoOSIcon, getTipoOSLabel, getStatusColor, alertasMock, assessoresTecnicos, chamadosAssessoriaMock } from "@/data/assessoria-cientifica";
-import { licitacoes } from "@/data/licitacaoData";
+
 import { isStatusAtivo } from "@/types/assessoria-cientifica";
 import { FiltrosAgendaOS } from "./FiltrosAgendaOS";
 import { DetalhesOSSheet } from "./DetalhesOSSheet";
