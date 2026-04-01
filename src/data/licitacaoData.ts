@@ -29,7 +29,9 @@ export const licitacoes: Licitacao[] = [
     inclusao: "2025-01-10",
     ultimaAlteracao: "2025-01-12",
     incluidoPor: "João Silva",
-    alteradoPor: "Maria Santos"
+    alteradoPor: "Maria Santos",
+    solicitouAnaliseCientifica: true,
+    dataSolicitacaoAC: "2025-01-12"
   },
   {
     id: 2,
