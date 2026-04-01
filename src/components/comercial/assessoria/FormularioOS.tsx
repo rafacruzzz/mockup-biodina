@@ -154,6 +154,10 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [tiposSelecionados, setTiposSelecionados] = useState<TipoOS[]>(os?.tipo || []);
   const [participante, setParticipante] = useState("");
   const [listaParticipantes, setListaParticipantes] = useState<string[]>(os?.participantes || []);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [templateData, setTemplateData] = useState({ dataRegistro: "", nomeInstrutor: "", observacoes: "" });
+  const [assinaturaInstrutor, setAssinaturaInstrutor] = useState<string | null>(null);
+  const [assinaturasParticipantes, setAssinaturasParticipantes] = useState<Record<number, string>>({});
 
   const tiposOS: { value: TipoOS; label: string }[] = [
     { value: "suporte_operacional", label: "Suporte Operacional" },
