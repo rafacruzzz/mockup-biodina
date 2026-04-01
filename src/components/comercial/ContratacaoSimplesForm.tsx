@@ -71,8 +71,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   }>>([]);
   const [chamados, setChamados] = useState<Chamado[]>(oportunidade?.chamados || []);
   const [isPedidoModalOpen, setIsPedidoModalOpen] = useState(false);
-  const [tipoContratacao, setTipoContratacao] = useState<'licitacao' | 'particular' | ''>('');
-  const [clienteParticular, setClienteParticular] = useState<string>('');
+  const [tipoContratacao, setTipoContratacao] = useState<'publico' | 'privado' | 'filantropico' | ''>('');
+  const [clienteSelecionado, setClienteSelecionado] = useState<string>('');
   const [licitacaoVinculada, setLicitacaoVinculada] = useState<string>('');
   const [documentosLicitacao, setDocumentosLicitacao] = useState<any[]>([]);
   const [historicoLicitacao, setHistoricoLicitacao] = useState<any[]>([]);
@@ -338,7 +338,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const isSegmentoPublico = formData.segmentoProjeto?.toLowerCase().includes('público') || formData.segmentoProjeto?.toLowerCase().includes('publico');
 
   const handleSelecionarCliente = (clienteId: string) => {
-    setClienteParticular(clienteId);
+    setClienteSelecionado(clienteId);
     const cliente = clientesCadastrados.find(c => c.id === clienteId);
     if (cliente) {
       setFormData(prev => ({
@@ -355,11 +355,11 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     }
   };
 
-  const handleTipoContratacaoChange = (tipo: 'licitacao' | 'particular') => {
+  const handleTipoContratacaoChange = (tipo: 'publico' | 'privado' | 'filantropico') => {
     setTipoContratacao(tipo);
     // Limpar dados ao trocar tipo
     setLicitacaoVinculada('');
-    setClienteParticular('');
+    setClienteSelecionado('');
     setDocumentosLicitacao([]);
     setHistoricoLicitacao([]);
     setEmpresaContrato({ empresaParticipanteId: '', empresaParticipanteNome: '', empresaParticipanteCNPJ: '' });
@@ -691,18 +691,19 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                   <div className="space-y-4">
                     <div>
                       <Label>Tipo de Contratação</Label>
-                      <Select value={tipoContratacao} onValueChange={(v: 'licitacao' | 'particular') => handleTipoContratacaoChange(v)}>
+                      <Select value={tipoContratacao} onValueChange={(v: 'publico' | 'privado' | 'filantropico') => handleTipoContratacaoChange(v)}>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecione o tipo de contratação" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="licitacao">Licitação</SelectItem>
-                          <SelectItem value="particular">Particular</SelectItem>
+                          <SelectItem value="publico">Público</SelectItem>
+                          <SelectItem value="privado">Privado</SelectItem>
+                          <SelectItem value="filantropico">Filantrópico</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
-                    {tipoContratacao === 'licitacao' && (
+                    {(tipoContratacao === 'publico' || tipoContratacao === 'filantropico') && (
                       <div className="space-y-4">
                         <div>
                           <Label htmlFor="licitacao">Selecionar Licitação</Label>
@@ -735,10 +736,10 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                       </div>
                     )}
 
-                    {tipoContratacao === 'particular' && (
+                    {tipoContratacao === 'privado' && (
                       <div>
                         <Label>Selecionar Cliente</Label>
-                        <Select value={clienteParticular} onValueChange={handleSelecionarCliente}>
+                        <Select value={clienteSelecionado} onValueChange={handleSelecionarCliente}>
                           <SelectTrigger>
                             <SelectValue placeholder="Busque e selecione um cliente cadastrado" />
                           </SelectTrigger>
