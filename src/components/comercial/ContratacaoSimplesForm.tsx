@@ -1388,7 +1388,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
 
 
             {/* Aba Empenho */}
-            {isSegmentoPublico && (
+            {(isSegmentoPublico || isSegmentoFilantropico) && (
               <TabsContent value="empenho" className="space-y-4">
                 {/* Painel de Alertas */}
                 {empenhos.filter(e => e.pedidosVinculados.length === 0).length > 0 && (
