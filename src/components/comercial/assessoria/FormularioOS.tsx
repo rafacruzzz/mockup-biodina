@@ -227,7 +227,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   });
 
   const getTipoProjetoLabel = (tipo: string) => {
-    return tipo === "importacao" ? "Importação Direta" : "Contratação Simples";
+    return tipo === "importacao" ? "Importação Direta" : "Contratação";
   };
 
   const handleSave = () => {
