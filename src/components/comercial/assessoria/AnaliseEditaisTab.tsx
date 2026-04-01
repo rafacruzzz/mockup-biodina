@@ -22,8 +22,8 @@ export function AnaliseEditaisTab() {
     (lic) => lic.solicitouAnaliseCientifica === true
   );
 
-  // Gerar alertas apenas para licitações com solicitação AC pendente (não finalizadas)
-  const alertas = licitacoesComSolicitacaoAC
+  // Gerar alertas para o PainelAlertas
+  const alertasPainel: Alerta[] = licitacoesComSolicitacaoAC
     .filter((lic) => lic.status !== "finalizada")
     .map((lic) => {
       const dataSolicitacao = lic.dataSolicitacaoAC
@@ -31,9 +31,11 @@ export function AnaliseEditaisTab() {
         : "N/A";
 
       return {
-        licitacao: lic,
-        tipo: "analise" as const,
-        mensagem: `Análise de Edital solicitada pela Licitação em ${dataSolicitacao}`,
+        id: `alerta-edital-${lic.id}`,
+        tipo: "prazo" as const,
+        titulo: `Análise de Edital - ${lic.numeroPregao} - ${lic.nomeInstituicao}`,
+        descricao: `Análise de Edital solicitada pela Licitação em ${dataSolicitacao} • ${lic.objetoLicitacao}`,
+        dataCriacao: new Date(lic.dataSolicitacaoAC || lic.createdAt),
         prioridade: "alta" as const,
       };
     });
