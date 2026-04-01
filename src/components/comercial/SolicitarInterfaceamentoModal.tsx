@@ -263,6 +263,34 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
               </div>
 
               <div>
+                <Label htmlFor="valorInstalacao" className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Valor da Instalação *
+                  <Badge variant="outline" className="text-xs">Obrigatório</Badge>
+                </Label>
+                <MoneyInput
+                  id="valorInstalacao"
+                  value={formData.valorInstalacao}
+                  onChange={(value) => handleInputChange('valorInstalacao', value)}
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="valorMensalidade" className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Valor da Mensalidade *
+                  <Badge variant="outline" className="text-xs">Obrigatório</Badge>
+                </Label>
+                <MoneyInput
+                  id="valorMensalidade"
+                  value={formData.valorMensalidade}
+                  onChange={(value) => handleInputChange('valorMensalidade', value)}
+                  className="mt-1"
+                />
+              </div>
+
+              <div>
                 <Label htmlFor="observacoes">Observações Adicionais</Label>
                 <Textarea
                   id="observacoes"
