@@ -2637,7 +2637,12 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                                   {pedido.status === 'faturado' ? 'Emitida' : 'Pendente'}
                                 </Badge>
                               </TableCell>
-                              <TableCell>-</TableCell>
+                              <TableCell>
+                                <Badge variant="destructive" className="flex items-center gap-1 w-fit">
+                                  <AlertTriangle className="h-3 w-3" />
+                                  {isSegmentoPrivado ? 'Sem OF' : 'Sem Empenho'}
+                                </Badge>
+                              </TableCell>
                               <TableCell>-</TableCell>
                               <TableCell className="font-medium text-green-600">
                                 {formatCurrency(pedido.valorTotal)}
