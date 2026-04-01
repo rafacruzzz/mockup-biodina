@@ -824,6 +824,14 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             variant={solicitouAnaliseCientifica ? "secondary" : "outline"}
             onClick={() => {
               setSolicitouAnaliseCientifica(true);
+              // Persistir no mock data para que a Assessoria Científica veja
+              if (oportunidade?.id) {
+                const lic = licitacoes.find(l => l.id === oportunidade.id);
+                if (lic) {
+                  lic.solicitouAnaliseCientifica = true;
+                  lic.dataSolicitacaoAC = new Date().toISOString().split('T')[0];
+                }
+              }
               toast({ title: "Solicitação enviada", description: "Análise da Assessoria Científica solicitada com sucesso." });
             }}
             disabled={isReadOnlyMode() || solicitouAnaliseCientifica}
