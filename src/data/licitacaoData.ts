@@ -89,7 +89,9 @@ export const licitacoes: Licitacao[] = [
     inclusao: "2025-01-18",
     ultimaAlteracao: "2025-01-25",
     incluidoPor: "Ana Costa",
-    alteradoPor: "Sistema Automático"
+    alteradoPor: "Sistema Automático",
+    solicitouAnaliseCientifica: true,
+    dataSolicitacaoAC: "2025-01-20"
   },
   {
     id: 4,
