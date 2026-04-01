@@ -71,8 +71,8 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   }>>([]);
   const [chamados, setChamados] = useState<Chamado[]>(oportunidade?.chamados || []);
   const [isPedidoModalOpen, setIsPedidoModalOpen] = useState(false);
-  const [tipoContratacao, setTipoContratacao] = useState<'licitacao' | 'particular' | ''>('');
-  const [clienteParticular, setClienteParticular] = useState<string>('');
+  const [tipoContratacao, setTipoContratacao] = useState<'publico' | 'privado' | 'filantropico' | ''>('');
+  const [clienteSelecionado, setClienteSelecionado] = useState<string>('');
   const [licitacaoVinculada, setLicitacaoVinculada] = useState<string>('');
   const [documentosLicitacao, setDocumentosLicitacao] = useState<any[]>([]);
   const [historicoLicitacao, setHistoricoLicitacao] = useState<any[]>([]);
