@@ -1,24 +1,47 @@
 
 
-## Plano: Ajustar aba Pedidos — layout separado e dados mock de serviço
+## Plano: Alertas de Empenho/OF nos Pedidos + Aba "Ordem de Fornecimento" para Privados
+
+### Contexto
+Três demandas:
+1. Na aba **Pedidos**, se um pedido não tem empenho vinculado, exibir alerta visual (badge/ícone vermelho) na coluna "Empenho" — o alerta só desaparece quando o empenho for anexado/vinculado
+2. Ao clicar no número do empenho na tabela de pedidos, abrir/baixar o documento do empenho (que foi anexado na aba Empenho)
+3. Para clientes **Privados**, reproduzir a mesma lógica da aba "Empenho" e da coluna de empenho nos Pedidos, mas com nomenclatura "Ordem de Fornecimento" (OF)
 
 ### Alterações em `src/components/comercial/ContratacaoSimplesForm.tsx`
 
-**1. Reestruturar layout da aba Pedidos (linhas 2258-2408):**
-- Remover os dois botões do CardHeader — cada botão vai para sua respectiva seção
-- Seção **Produtos**: título "Produtos" com ícone Package + botão "Adicionar Produto" (cor `bg-biodina-gold`) ao lado direito do título, seguido da tabela de produtos
-- Seção **Serviços**: título "Serviços" com ícone Wrench + botão "Adicionar Serviço" (mesma cor `bg-biodina-gold`) ao lado direito do título, seguido da tabela de serviços
-- Separar visualmente as duas seções com espaçamento adequado
+**1. Variável de segmento Privado (junto da `isSegmentoPublico`, linha ~341):**
+- Adicionar `isSegmentoPrivado` baseado em `tipoContratacao === 'privado'` ou segmento do lead
+- Adicionar `isSegmentoFilantropico` para garantir que Filantrópico use "Empenho" (igual ao Público)
 
-**2. Mudar cor do botão "Adicionar Serviço":**
-- De `variant="outline"` para `className="bg-biodina-gold hover:bg-biodina-gold/90"` (igual ao de Produto)
+**2. Estado para Ordens de Fornecimento (junto dos `empenhos`, linhas ~129-156):**
+- Criar `ordensFornecimento` com mesma estrutura do `empenhos`, mas campos renomeados: `numeroOF`, `valorOF`, `documentoOF`, etc.
+- Mock com 1-2 registros para demonstração
 
-**3. Adicionar dados mock de serviço (linhas 62-71):**
-- Inicializar `pedidosServico` com 2 registros mock para demonstração:
-  - `{ id: 'srv-001', numeroPedido: 'Nº PEDIDO', dataFaturamento: '13/03/2025', periodoCompetencia: 'MÊS COMPETENCIA', nfs: 'NFS', empenho: 'Nº EMPENHO', processo: 'Nº PROCESSO', valorNfs: 0 }`
-  - `{ id: 'srv-002', numeroPedido: 'Nº PEDIDO', dataFaturamento: '13/02/2026', periodoCompetencia: 'MÊS COMPETENCIA', nfs: 'NFS', empenho: 'Nº EMPENHO', processo: 'Nº PROCESSO', valorNfs: 0 }`
+**3. Aba condicional na TabsList (linha ~659-669):**
+- Manter aba "Empenho" para `isSegmentoPublico || isSegmentoFilantropico`
+- Adicionar aba "Ordem de Fornecimento" para segmento Privado, mesma estrutura visual
 
-**4. Remover coluna "Ações" das tabelas** para ficar mais limpo como no print de referência
+**4. TabsContent da aba "Ordem de Fornecimento" (após o bloco da aba Empenho, ~linha 1550):**
+- Duplicar o conteúdo da aba Empenho com nomenclatura adaptada:
+  - "Empenho" → "Ordem de Fornecimento" / "OF"
+  - "Nº Empenho" → "Nº OF"
+  - "Valor do Empenho" → "Valor da OF"
+  - "Documento do Empenho" → "Documento da OF"
+  - "Cobrar pedido" → "Cobrar ordem de fornecimento"
+  - Botão "Adicionar Empenho" → "Adicionar OF"
+
+**5. Alertas na coluna "Empenho" / "OF" da aba Pedidos (linhas ~2292-2312 e ~2356-2372):**
+- Na tabela de **Produtos**: coluna "Empenho" mostra:
+  - Se tem empenho vinculado: número clicável (link/botão) que abre o documento anexado na aba Empenho
+  - Se não tem: badge vermelho `AlertTriangle` + "Sem empenho" (para Público/Filantrópico) ou "Sem OF" (para Privado)
+- Na tabela de **Serviços**: mesma lógica na coluna "Empenho"
+- Para clientes Privados: renomear header da coluna de "Empenho" para "Ordem de Fornecimento"
+
+**6. Função para abrir documento do empenho/OF ao clicar no número:**
+- Buscar no array `empenhos` ou `ordensFornecimento` o registro cujo número corresponde
+- Se tem `documentoEmpenho`/`documentoOF` (File), criar URL via `URL.createObjectURL` e abrir em nova aba
+- Se não tem documento anexado: toast informando "Documento não anexado — anexe na aba Empenho/OF"
 
 ### Arquivo alterado
 - `src/components/comercial/ContratacaoSimplesForm.tsx`
