@@ -125,6 +125,24 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
       return;
     }
 
+    if (!formData.valorInstalacao) {
+      toast({
+        variant: "destructive",
+        title: "Erro de Validação",
+        description: "O valor da instalação é obrigatório."
+      });
+      return;
+    }
+
+    if (!formData.valorMensalidade) {
+      toast({
+        variant: "destructive",
+        title: "Erro de Validação",
+        description: "O valor da mensalidade é obrigatório."
+      });
+      return;
+    }
+
     const solicitacaoData = {
       ...formData,
       clienteNome: oportunidade?.cliente || '',
