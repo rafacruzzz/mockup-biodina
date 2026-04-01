@@ -2702,7 +2702,21 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                                   {servico.nfs || 'Pendente'}
                                 </Badge>
                               </TableCell>
-                              <TableCell>{servico.empenho || '-'}</TableCell>
+                              <TableCell>
+                                {servico.empenho ? (
+                                  <button
+                                    className="text-blue-600 hover:underline cursor-pointer font-medium text-sm"
+                                    onClick={() => isSegmentoPrivado ? handleAbrirDocumentoOF(servico.empenho) : handleAbrirDocumentoEmpenho(servico.empenho)}
+                                  >
+                                    {servico.empenho}
+                                  </button>
+                                ) : (
+                                  <Badge variant="destructive" className="flex items-center gap-1 w-fit">
+                                    <AlertTriangle className="h-3 w-3" />
+                                    {isSegmentoPrivado ? 'Sem OF' : 'Sem Empenho'}
+                                  </Badge>
+                                )}
+                              </TableCell>
                               <TableCell>{servico.processo || '-'}</TableCell>
                               <TableCell className="font-medium text-green-600">
                                 {formatCurrency(servico.valorNfs)}
