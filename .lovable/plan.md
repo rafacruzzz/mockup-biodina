@@ -1,37 +1,35 @@
 
 
-## Plano: Melhorias na aba Apresentação e tipo Produto do Repositório Técnico
+## Plano: Atualizações por Marca/Linha no BI + Versionamento e Rastreabilidade
 
-### Resumo
-Três blocos de alterações no Repositório Técnico de Produtos:
-1. Dividir "Dimensões e Peso" em duas seções (Com Embalagem / Sem Embalagem)
-2. Expandir "Apresentação Comercial" para mostrar os mesmos campos do cadastro (Primária, Secundária, Embarque, Referências)
-3. Atualizar o tipo `Produto` para suportar os novos campos
+### 1. Adicionar seção "Atualizações por Marca/Linha" — `src/components/comercial/assessoria/repositorio/BiCoberturaTab.tsx`
 
-### Alterações
+Inserir um novo Card entre "Atualizações por Período" e "Uso em OS/Licitações" com:
+- Tabela mostrando cada Marca e suas Linhas, com contadores de: documentos totais, atualizações no período, cobertura (%)
+- Dados cruzados a partir de `marcasMock`, `linhasMock`, `produtosMock` e `documentosMock`
+- Expansível por marca para ver as linhas individuais
 
-**1. Tipo `Produto` — `src/types/produto.ts`**
-- Adicionar campos de dimensões com/sem embalagem ao tipo `Produto`:
-  - `pesoLiquidoComEmb`, `pesoBrutoComEmb`, `alturaComEmb`, `larguraComEmb`, `profundidadeComEmb`
-  - `pesoLiquidoSemEmb`, `pesoBrutoSemEmb`, `alturaSemEmb`, `larguraSemEmb`, `profundidadeSemEmb`
-- Adicionar campos de apresentação: `apresentacaoPrimaria`, `apresentacaoSecundaria`, `apresentacaoEmbarque`, `referenciasComercializadas` (string[])
-- Manter os campos antigos (`pesoLiquido`, `pesoBruto`, `altura`, `largura`, `profundidade`) como deprecated
+### 2. Adicionar seção "Versionamento e Rastreabilidade" — `src/components/comercial/assessoria/repositorio/BiCoberturaTab.tsx`
 
-**2. Dados mock — `src/data/produtos.ts`**
-- Preencher os novos campos de dimensões com/sem embalagem nos produtos existentes (DxH 520, etc.)
-- Preencher `apresentacaoPrimaria`, `apresentacaoSecundaria`, `apresentacaoEmbarque`, `referenciasComercializadas`
+Novo Card no final da página com:
+- **Resumo de versionamento**: total de artefatos com versões, total de changelogs registrados
+- **Últimas alterações** (changelog recente): tabela com artefato, versão anterior -> nova, o que mudou, por que mudou, quem aprovou, data
+- **Documentos com trava normativa (IFU/POP)**: lista de documentos com `bloqueadoSobrescrita: true`, mostrando badge "Somente Nova Versão"
+- **Próximas revalidações**: documentos com `dataProximaRevalidacao` próxima (< 30 dias)
 
-**3. Aba Apresentação — `src/components/comercial/assessoria/repositorio/detalhe/ApresentacaoTab.tsx`**
-- Expandir o card "Apresentação Comercial" para mostrar:
-  - Grid com Apresentação Primária, Secundária e de Embarque (3 colunas)
-  - Seção de Referências Comercializadas (badges)
-  - Manter `apresentacaoComercial` como texto descritivo (se existir)
-- Dividir "Dimensões e Peso" em dois cards:
-  - **"Dimensões e Peso — Com Embalagem"**: campos `*ComEmb` + cálculos automatizados
-  - **"Dimensões e Peso — Sem Embalagem"**: campos `*SemEmb` + cálculos automatizados
+### 3. Funções auxiliares — `src/utils/biRepositorio.ts`
+
+- `getAtualizacoesPorMarcaLinha(marcas, linhas, produtos, documentos)`: retorna array com marca, linha, totais e cobertura
+- `getChangelogRecente(documentos, limit)`: retorna changelogs ordenados por data
+- `getDocumentosBloqueados(documentos)`: retorna docs com `bloqueadoSobrescrita: true`
+- `getProximasRevalidacoes(documentos, diasLimite)`: retorna docs com revalidação próxima
+
+### 4. Mock data — `src/data/produtos.ts`
+
+- Adicionar mais `DocumentoProduto` mock com `historicoVersoes`, `changelog`, `bloqueadoSobrescrita` e `dataProximaRevalidacao` preenchidos para alimentar as novas seções do BI
 
 ### Arquivos alterados
-- `src/types/produto.ts`
+- `src/utils/biRepositorio.ts`
+- `src/components/comercial/assessoria/repositorio/BiCoberturaTab.tsx`
 - `src/data/produtos.ts`
-- `src/components/comercial/assessoria/repositorio/detalhe/ApresentacaoTab.tsx`
 
