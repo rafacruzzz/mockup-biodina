@@ -1,35 +1,27 @@
 
 
-## Plano: Atualizações por Marca/Linha no BI + Versionamento e Rastreabilidade
+## Plano: Alterar "Tipo de Contratação" para 3 opções (Filantrópico, Privado, Público)
 
-### 1. Adicionar seção "Atualizações por Marca/Linha" — `src/components/comercial/assessoria/repositorio/BiCoberturaTab.tsx`
+### Alteração em `src/components/comercial/ContratacaoSimplesForm.tsx`
 
-Inserir um novo Card entre "Atualizações por Período" e "Uso em OS/Licitações" com:
-- Tabela mostrando cada Marca e suas Linhas, com contadores de: documentos totais, atualizações no período, cobertura (%)
-- Dados cruzados a partir de `marcasMock`, `linhasMock`, `produtosMock` e `documentosMock`
-- Expansível por marca para ver as linhas individuais
+**Estado e tipos (linha 74):**
+- Mudar tipo de `'licitacao' | 'particular' | ''` para `'publico' | 'privado' | 'filantropico' | ''`
+- Renomear `clienteParticular` → `clienteSelecionado` (usado para Privado)
 
-### 2. Adicionar seção "Versionamento e Rastreabilidade" — `src/components/comercial/assessoria/repositorio/BiCoberturaTab.tsx`
+**Função handleTipoContratacaoChange (linha 358):**
+- Atualizar tipo do parâmetro para `'publico' | 'privado' | 'filantropico'`
 
-Novo Card no final da página com:
-- **Resumo de versionamento**: total de artefatos com versões, total de changelogs registrados
-- **Últimas alterações** (changelog recente): tabela com artefato, versão anterior -> nova, o que mudou, por que mudou, quem aprovou, data
-- **Documentos com trava normativa (IFU/POP)**: lista de documentos com `bloqueadoSobrescrita: true`, mostrando badge "Somente Nova Versão"
-- **Próximas revalidações**: documentos com `dataProximaRevalidacao` próxima (< 30 dias)
+**Select do Tipo de Contratação (linhas 694-702):**
+- Trocar as duas opções por três:
+  - `<SelectItem value="publico">Público</SelectItem>`
+  - `<SelectItem value="privado">Privado</SelectItem>`
+  - `<SelectItem value="filantropico">Filantrópico</SelectItem>`
 
-### 3. Funções auxiliares — `src/utils/biRepositorio.ts`
+**Lógica condicional (linhas 705-754):**
+- `tipoContratacao === 'licitacao'` → `tipoContratacao === 'publico' || tipoContratacao === 'filantropico'` (ambos mostram seletor de licitação ganha)
+- `tipoContratacao === 'particular'` → `tipoContratacao === 'privado'` (mostra seletor de cliente cadastrado)
+- Buscar todas as ocorrências de `'particular'` e `'licitacao'` no arquivo e atualizar consistentemente
 
-- `getAtualizacoesPorMarcaLinha(marcas, linhas, produtos, documentos)`: retorna array com marca, linha, totais e cobertura
-- `getChangelogRecente(documentos, limit)`: retorna changelogs ordenados por data
-- `getDocumentosBloqueados(documentos)`: retorna docs com `bloqueadoSobrescrita: true`
-- `getProximasRevalidacoes(documentos, diasLimite)`: retorna docs com revalidação próxima
-
-### 4. Mock data — `src/data/produtos.ts`
-
-- Adicionar mais `DocumentoProduto` mock com `historicoVersoes`, `changelog`, `bloqueadoSobrescrita` e `dataProximaRevalidacao` preenchidos para alimentar as novas seções do BI
-
-### Arquivos alterados
-- `src/utils/biRepositorio.ts`
-- `src/components/comercial/assessoria/repositorio/BiCoberturaTab.tsx`
-- `src/data/produtos.ts`
+### Arquivo alterado
+- `src/components/comercial/ContratacaoSimplesForm.tsx`
 
