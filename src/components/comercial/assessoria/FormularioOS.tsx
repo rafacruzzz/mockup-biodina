@@ -709,60 +709,155 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
         </div>
       </div>
 
-      {/* Template de Treinamento */}
-      {renderTemplateTrainamento()}
-
-      {/* Participantes */}
+      {/* Registro de Treinamento */}
       {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe") && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Participantes do Treinamento</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                value={participante}
-                onChange={(e) => setParticipante(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleAdicionarParticipante()}
-                placeholder="Nome do participante..."
-              />
-              <Button onClick={handleAdicionarParticipante}>
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar
-              </Button>
-            </div>
-
-            {listaParticipantes.length > 0 && (
-              <div className="space-y-2">
-                {listaParticipantes.map((p, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-muted rounded-lg"
-                  >
-                    <span>{p}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoverParticipante(index)}
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>Registro de Treinamento</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="mb-3 block">Selecione o registro de treinamento:</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {templatesDisponiveis.map((t) => (
+                    <div
+                      key={t.id}
+                      className={`border rounded-lg p-3 cursor-pointer transition-all hover:border-primary ${
+                        selectedTemplate === t.id ? "border-primary bg-primary/5 ring-2 ring-primary/20" : "border-border"
+                      }`}
+                      onClick={() => setSelectedTemplate(selectedTemplate === t.id ? null : t.id)}
                     >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                      <p className="font-medium text-sm">{t.nome}</p>
+                      <Badge variant="outline" className="mt-1 text-xs">{t.badge}</Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {selectedTemplate && (
+                <div className="mt-4">
+                  {renderSelectedTemplate()}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Participantes */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Participantes do Treinamento</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  value={participante}
+                  onChange={(e) => setParticipante(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleAdicionarParticipante()}
+                  placeholder="Nome do participante..."
+                />
+                <Button onClick={handleAdicionarParticipante}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar
+                </Button>
+              </div>
+
+              {listaParticipantes.length > 0 && (
+                <div className="space-y-2">
+                  {listaParticipantes.map((p, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                    >
+                      <span>{p}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoverParticipante(index)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <Button
+                variant="outline"
+                onClick={handleEmitirCertificado}
+                disabled={listaParticipantes.length === 0}
+                className="w-full"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Emitir Certificado de Treinamento
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Assinatura do Instrutor */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Assinatura do Instrutor</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {assinaturaInstrutor ? (
+                <div className="space-y-2">
+                  <div className="border rounded-lg p-2 bg-white">
+                    <img src={assinaturaInstrutor} alt="Assinatura do instrutor" className="max-h-24 mx-auto" />
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setAssinaturaInstrutor(null)}>
+                    Refazer Assinatura
+                  </Button>
+                </div>
+              ) : (
+                <AssinaturaPad
+                  onSave={(sig) => {
+                    setAssinaturaInstrutor(sig);
+                    toast.success("Assinatura do instrutor registrada!");
+                  }}
+                />
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Assinaturas dos Participantes */}
+          {listaParticipantes.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Assinaturas dos Participantes</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {listaParticipantes.map((p, index) => (
+                  <div key={index} className="space-y-2">
+                    <Label className="font-semibold">{p}</Label>
+                    {assinaturasParticipantes[index] ? (
+                      <div className="space-y-2">
+                        <div className="border rounded-lg p-2 bg-white">
+                          <img src={assinaturasParticipantes[index]} alt={`Assinatura de ${p}`} className="max-h-24 mx-auto" />
+                        </div>
+                        <Button variant="outline" size="sm" onClick={() => {
+                          const updated = { ...assinaturasParticipantes };
+                          delete updated[index];
+                          setAssinaturasParticipantes(updated);
+                        }}>
+                          Refazer Assinatura
+                        </Button>
+                      </div>
+                    ) : (
+                      <AssinaturaPad
+                        onSave={(sig) => {
+                          setAssinaturasParticipantes(prev => ({ ...prev, [index]: sig }));
+                          toast.success(`Assinatura de ${p} registrada!`);
+                        }}
+                      />
+                    )}
+                    {index < listaParticipantes.length - 1 && <Separator className="mt-4" />}
                   </div>
                 ))}
-              </div>
-            )}
-
-            <Button
-              variant="outline"
-              onClick={handleEmitirCertificado}
-              disabled={listaParticipantes.length === 0}
-              className="w-full"
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              Emitir Certificado de Treinamento
-            </Button>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          )}
+        </>
       )}
 
       {/* Anexos Categorizados */}
