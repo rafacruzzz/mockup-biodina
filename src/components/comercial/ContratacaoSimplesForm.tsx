@@ -369,7 +369,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     { id: 'cli-006', cpfCnpj: '99.888.777/0001-55', nomeFantasia: 'Hospital Municipal São José', razaoSocial: 'Prefeitura Municipal - Hospital São José', endereco: 'Av. Central, 500', uf: 'GO', email: 'hospital@saojose.gov.br', telefone: '(62) 3333-4444', segmento: 'PÚBLICO - HOSPITAL - MUNICIPAL' },
   ];
 
-  const isSegmentoPublico = formData.segmentoProjeto?.toLowerCase().includes('público') || formData.segmentoProjeto?.toLowerCase().includes('publico');
+  const isSegmentoPublico = tipoContratacao === 'publico' || formData.segmentoProjeto?.toLowerCase().includes('público') || formData.segmentoProjeto?.toLowerCase().includes('publico');
   const isSegmentoPrivado = tipoContratacao === 'privado';
   const isSegmentoFilantropico = tipoContratacao === 'filantropico';
   const labelDocVinculo = isSegmentoPrivado ? 'Ordem de Fornecimento' : 'Empenho';
