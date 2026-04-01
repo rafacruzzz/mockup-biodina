@@ -195,7 +195,9 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
       conta: '',
       chavePix: '',
       boletoAnexo: null,
-      responsavelAutorizacao: ''
+      responsavelAutorizacao: '',
+      valorInstalacao: '',
+      valorMensalidade: ''
     });
     onClose();
   };
