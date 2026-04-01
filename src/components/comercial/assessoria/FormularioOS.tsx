@@ -231,6 +231,11 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   };
 
   const handleSave = () => {
+    if (!selectedProjeto) {
+      toast.error("Vinculação de Projeto é obrigatória");
+      return;
+    }
+
     if (!formData.cliente) {
       toast.error("Cliente é obrigatório");
       return;
