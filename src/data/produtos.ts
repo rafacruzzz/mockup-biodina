@@ -97,7 +97,24 @@ export const produtosMock: Produto[] = [
     pesoBruto: 52.0,
     altura: 65,
     largura: 55,
-    profundidade: 48
+    profundidade: 48,
+    // Dimensões Com Embalagem
+    pesoLiquidoComEmb: 45.5,
+    pesoBrutoComEmb: 52.0,
+    alturaComEmb: 75,
+    larguraComEmb: 65,
+    profundidadeComEmb: 58,
+    // Dimensões Sem Embalagem
+    pesoLiquidoSemEmb: 38.0,
+    pesoBrutoSemEmb: 38.0,
+    alturaSemEmb: 65,
+    larguraSemEmb: 55,
+    profundidadeSemEmb: 48,
+    // Apresentação
+    apresentacaoPrimaria: "Caixa individual com espuma de proteção e acessórios básicos",
+    apresentacaoSecundaria: "Caixa de papelão reforçado com divisórias internas",
+    apresentacaoEmbarque: "Palete com 2 unidades, filme stretch e cintas de segurança",
+    referenciasComercializadas: ["DXH520-BR", "DXH520-KIT", "DXH520-REAGENTES"]
   }
 ];
 
