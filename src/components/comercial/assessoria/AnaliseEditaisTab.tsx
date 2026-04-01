@@ -9,6 +9,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Search, FileText, AlertTriangle, Clock, ExternalLink, Eye, TrendingUp } from "lucide-react";
 import { licitacoes } from "@/data/licitacaoData";
 import { Licitacao } from "@/types/licitacao";
+import { PainelAlertas } from "./PainelAlertas";
+import { Alerta } from "@/types/assessoria-cientifica";
 
 export function AnaliseEditaisTab() {
   const [searchTerm, setSearchTerm] = useState("");
