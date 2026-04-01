@@ -1,8 +1,27 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
-export const TemplateTrainamentoABL9 = () => {
+interface TemplateTrainamentoProps {
+  dataRegistro?: string;
+  nomeInstrutor?: string;
+  observacoes?: string;
+  onChangeData?: (value: string) => void;
+  onChangeInstrutor?: (value: string) => void;
+  onChangeObservacoes?: (value: string) => void;
+}
+
+export const TemplateTrainamentoABL9 = ({
+  dataRegistro = "",
+  nomeInstrutor = "",
+  observacoes = "",
+  onChangeData,
+  onChangeInstrutor,
+  onChangeObservacoes,
+}: TemplateTrainamentoProps) => {
   const topicos = [
     "Apresentação do sistema ABL9",
     "Princípios de medição de gasometria",
@@ -27,6 +46,17 @@ export const TemplateTrainamentoABL9 = () => {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Data do Treinamento</Label>
+            <Input type="date" value={dataRegistro} onChange={(e) => onChangeData?.(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label>Nome do Instrutor</Label>
+            <Input value={nomeInstrutor} onChange={(e) => onChangeInstrutor?.(e.target.value)} placeholder="Nome completo do instrutor" />
+          </div>
+        </div>
+
         <div>
           <h4 className="font-semibold mb-2">Informações do Equipamento</h4>
           <p className="text-sm text-muted-foreground">
@@ -52,6 +82,11 @@ export const TemplateTrainamentoABL9 = () => {
           <p className="text-sm text-muted-foreground mt-1">
             2.5 horas (Treinamento de nova equipe - conteúdo resumido)
           </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Observações</Label>
+          <Textarea value={observacoes} onChange={(e) => onChangeObservacoes?.(e.target.value)} placeholder="Observações sobre o treinamento..." rows={3} />
         </div>
 
         <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 p-4 rounded-lg">
