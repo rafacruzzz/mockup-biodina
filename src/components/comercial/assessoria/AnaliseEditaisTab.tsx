@@ -422,17 +422,22 @@ export function AnaliseEditaisTab() {
                 </div>
               )}
 
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Análise Técnica-Científica</Label>
+                <Textarea
+                  rows={6}
+                  value={analiseTexto}
+                  onChange={(e) => setAnaliseTexto(e.target.value)}
+                  placeholder="Digite aqui a análise técnica-científica do edital..."
+                />
+              </div>
+
               <div className="flex justify-end gap-3 pt-4">
-                {selectedLicitacao.linkEdital && (
-                  <Button
-                    variant="outline"
-                    onClick={() => window.open(selectedLicitacao.linkEdital, "_blank")}
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Ver Edital
-                  </Button>
-                )}
-                <Button onClick={() => setSelectedLicitacao(null)}>Fechar</Button>
+                <Button variant="outline" onClick={() => setSelectedLicitacao(null)}>Fechar</Button>
+                <Button onClick={handleSalvarAnalise}>
+                  <Save className="h-4 w-4 mr-2" />
+                  Salvar Análise
+                </Button>
               </div>
             </CardContent>
           </Card>
