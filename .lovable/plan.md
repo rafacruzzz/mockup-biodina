@@ -1,27 +1,20 @@
 
 
-## Plano: Alterar "Tipo de Contratação" para 3 opções (Filantrópico, Privado, Público)
+## Plano: Remover "Informações da Oportunidade" e adicionar campos de Valor
 
-### Alteração em `src/components/comercial/ContratacaoSimplesForm.tsx`
+### Alterações em `src/components/comercial/SolicitarInterfaceamentoModal.tsx`
 
-**Estado e tipos (linha 74):**
-- Mudar tipo de `'licitacao' | 'particular' | ''` para `'publico' | 'privado' | 'filantropico' | ''`
-- Renomear `clienteParticular` → `clienteSelecionado` (usado para Privado)
+**1. Remover o card "Informações da Oportunidade" (linhas 214-250):**
+- Remover o Card inteiro com Cliente, Oportunidade, Responsável, Status, Segmento
+- Remover o `<Separator />` logo abaixo (linha 250)
 
-**Função handleTipoContratacaoChange (linha 358):**
-- Atualizar tipo do parâmetro para `'publico' | 'privado' | 'filantropico'`
-
-**Select do Tipo de Contratação (linhas 694-702):**
-- Trocar as duas opções por três:
-  - `<SelectItem value="publico">Público</SelectItem>`
-  - `<SelectItem value="privado">Privado</SelectItem>`
-  - `<SelectItem value="filantropico">Filantrópico</SelectItem>`
-
-**Lógica condicional (linhas 705-754):**
-- `tipoContratacao === 'licitacao'` → `tipoContratacao === 'publico' || tipoContratacao === 'filantropico'` (ambos mostram seletor de licitação ganha)
-- `tipoContratacao === 'particular'` → `tipoContratacao === 'privado'` (mostra seletor de cliente cadastrado)
-- Buscar todas as ocorrências de `'particular'` e `'licitacao'` no arquivo e atualizar consistentemente
+**2. Adicionar campos "Valor da Instalação" e "Valor da Mensalidade":**
+- Adicionar ao `formData`: `valorInstalacao: ''` e `valorMensalidade: ''`
+- Inserir dois campos `MoneyInput` (já existe no projeto) na coluna esquerda do formulário, antes ou depois do "Prazo Desejado"
+- Labels: "Valor da Instalação *" e "Valor da Mensalidade *"
+- Atualizar os resets do form (`handleSave` e `handleClose`) para incluir os novos campos
+- Adicionar validação obrigatória para ambos
 
 ### Arquivo alterado
-- `src/components/comercial/ContratacaoSimplesForm.tsx`
+- `src/components/comercial/SolicitarInterfaceamentoModal.tsx`
 
