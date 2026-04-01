@@ -80,20 +80,6 @@ export function AnaliseEditaisTab() {
     }
   };
 
-  const getAlertIcon = (tipo: string) => {
-    switch (tipo) {
-      case "prazo":
-        return <Clock className="h-4 w-4" />;
-      case "risco":
-        return <AlertTriangle className="h-4 w-4" />;
-      default:
-        return <FileText className="h-4 w-4" />;
-    }
-  };
-
-  const getAlertVariant = (prioridade: string): "default" | "destructive" => {
-    return prioridade === "alta" ? "destructive" : "default";
-  };
 
   // Filtrar licitações com solicitação AC
   const licitacoesFiltradas = licitacoesComSolicitacaoAC.filter((lic) => {
