@@ -132,39 +132,9 @@ export function AnaliseEditaisTab() {
         </p>
       </div>
 
-      {/* Alertas */}
-      {alertas.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-orange-600" />
-            Alertas para Análise ({alertas.length})
-          </h3>
-          <div className="grid gap-3">
-            {alertas.map((alerta, index) => (
-              <Alert key={index} variant={getAlertVariant(alerta.prioridade)}>
-                <div className="flex items-start gap-3">
-                  {getAlertIcon(alerta.tipo)}
-                  <div className="flex-1">
-                    <AlertTitle className="mb-1">
-                      {alerta.licitacao.numeroPregao} - {alerta.licitacao.nomeInstituicao}
-                    </AlertTitle>
-                    <AlertDescription>
-                      {alerta.mensagem} • {alerta.licitacao.objetoLicitacao}
-                    </AlertDescription>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setSelectedLicitacao(alerta.licitacao)}
-                  >
-                    <Eye className="h-4 w-4 mr-1" />
-                    Ver Detalhes
-                  </Button>
-                </div>
-              </Alert>
-            ))}
-          </div>
-        </div>
+      {/* Alertas do Sistema */}
+      {alertasPainel.length > 0 && (
+        <PainelAlertas alertas={alertasPainel} />
       )}
 
       {/* Filtros e Busca */}
