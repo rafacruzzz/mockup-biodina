@@ -39,7 +39,9 @@ const SolicitarInterfaceamentoModal = ({ isOpen, onClose, onSave, oportunidade }
     conta: '',
     chavePix: '',
     boletoAnexo: null as File | null,
-    responsavelAutorizacao: ''
+    responsavelAutorizacao: '',
+    valorInstalacao: '',
+    valorMensalidade: ''
   });
 
   useEffect(() => {
