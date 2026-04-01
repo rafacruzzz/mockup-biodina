@@ -266,7 +266,7 @@ const DashboardAssessoria = ({ onNavigateToOS, departamento = "Assessoria Cient�
             titulo: `Análise de Edital - ${lic.numeroPregao} - ${lic.nomeInstituicao}`,
             descricao: `Análise de Edital solicitada pela Licitação em ${lic.dataSolicitacaoAC ? new Date(lic.dataSolicitacaoAC).toLocaleDateString('pt-BR') : 'N/A'}. Objeto: ${lic.objetoLicitacao.substring(0, 80)}...`,
             prioridade: 'alta' as const,
-            dataCriacao: lic.dataSolicitacaoAC || lic.createdAt,
+            dataCriacao: new Date(lic.dataSolicitacaoAC || lic.createdAt),
           }));
 
         const todosAlertas = [...alertasMock, ...chamadoAlertas, ...analiseEditalAlertas];
