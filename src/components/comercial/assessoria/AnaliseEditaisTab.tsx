@@ -15,56 +15,24 @@ export function AnaliseEditaisTab() {
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [selectedLicitacao, setSelectedLicitacao] = useState<Licitacao | null>(null);
 
-  // Filtrar licitações em andamento (não finalizadas)
-  const licitacoesEmAndamento = licitacoes.filter(
-    (lic) => lic.status !== "finalizada"
+  // Filtrar licitações que solicitaram análise da Assessoria Científica
+  const licitacoesComSolicitacaoAC = licitacoes.filter(
+    (lic) => lic.solicitouAnaliseCientifica === true
   );
 
-  // Gerar alertas para análises
-  const alertas = licitacoesEmAndamento
-    .filter((lic) => {
-      const dataAbertura = new Date(lic.dataAbertura);
-      const hoje = new Date();
-      const diasAteAbertura = Math.ceil(
-        (dataAbertura.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-      // Alertas para licitações próximas ou que precisam atenção
-      return (
-        diasAteAbertura <= 7 ||
-        lic.status === "triagem" ||
-        lic.estrategiaRisco === "alto"
-      );
-    })
+  // Gerar alertas apenas para licitações com solicitação AC pendente (não finalizadas)
+  const alertas = licitacoesComSolicitacaoAC
+    .filter((lic) => lic.status !== "finalizada")
     .map((lic) => {
-      const dataAbertura = new Date(lic.dataAbertura);
-      const hoje = new Date();
-      const diasAteAbertura = Math.ceil(
-        (dataAbertura.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-      let tipo: "prazo" | "analise" | "risco" = "analise";
-      let mensagem = "";
-
-      if (diasAteAbertura <= 7 && diasAteAbertura > 0) {
-        tipo = "prazo";
-        mensagem = `Abertura em ${diasAteAbertura} dia${diasAteAbertura !== 1 ? "s" : ""}`;
-      } else if (diasAteAbertura <= 0) {
-        tipo = "prazo";
-        mensagem = "Aberta hoje ou vencida";
-      } else if (lic.status === "triagem") {
-        tipo = "analise";
-        mensagem = "Aguardando análise técnica";
-      } else if (lic.estrategiaRisco === "alto") {
-        tipo = "risco";
-        mensagem = "Licitação de alto risco";
-      }
+      const dataSolicitacao = lic.dataSolicitacaoAC
+        ? new Date(lic.dataSolicitacaoAC).toLocaleDateString("pt-BR")
+        : "N/A";
 
       return {
         licitacao: lic,
-        tipo,
-        mensagem,
-        prioridade: tipo === "prazo" ? "alta" : tipo === "risco" ? "media" : "baixa",
+        tipo: "analise" as const,
+        mensagem: `Análise de Edital solicitada pela Licitação em ${dataSolicitacao}`,
+        prioridade: "alta" as const,
       };
     });
 
