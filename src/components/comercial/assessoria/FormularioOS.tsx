@@ -398,7 +398,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       {/* Vinculação de Projeto */}
       <Card>
         <CardHeader>
-          <CardTitle>Vinculação de Projeto (Opcional)</CardTitle>
+          <CardTitle>Vinculação de Projeto *</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
