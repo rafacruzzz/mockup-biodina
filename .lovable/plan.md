@@ -1,40 +1,50 @@
 
+Objetivo: deixar tudo que é alerta dessa demanda dentro da aba "Análise de Editais", em vez de ficar dividido/confuso entre Agenda e Análise.
 
-## Plano: Integrar pedidos de Análise de Edital da Licitação na Assessoria Científica
+O que encontrei no código:
+- A aba `Análise de Editais` já mostra um `PainelAlertas`, mas ele recebe só `alertasPainel` gerados em `AnaliseEditaisTab.tsx`.
+- A aba `Agenda` (`DashboardAssessoria.tsx`) ainda monta outro bloco de alertas próprio com:
+  - `alertasMock`
+  - alertas de chamados
+  - alertas de análise de edital vindos da licitação
+- Por isso a sensação é de que os alertas estão espalhados e não “tudo dentro” da aba Análise de Editais.
 
-### Contexto
-Quando a Licitação clica "Solicitar Análise da Assessoria Científica" no formulário de oportunidade, esse pedido precisa "cair" na Assessoria Científica em duas telas:
-1. **Alertas do Sistema** (aba Agenda) — como alerta de análise de edital pendente
-2. **Aba Análise de Editais** — na seção "Alertas para Análise"
+Plano de ajuste
 
-Atualmente, o botão no `OportunidadeAvancadaForm` apenas muda um estado local (`solicitouAnaliseCientifica`) sem persistir. A `AnaliseEditaisTab` lê diretamente de `licitacaoData.ts` filtrando por data/status genérico, sem saber quais licitações pediram análise AC.
+1. Centralizar os alertas de Análise de Edital
+- Criar uma única lógica/fonte para os alertas relacionados à Análise de Edital.
+- Essa lógica deve considerar as licitações com `solicitouAnaliseCientifica === true` e status diferente de `finalizada`.
 
-### Alterações
+2. Deixar a aba `Análise de Editais` como a tela principal dos alertas dessa funcionalidade
+- Em `src/components/comercial/assessoria/AnaliseEditaisTab.tsx`, manter no topo:
+  - `PainelAlertas` com título “Alertas do Sistema”
+  - a listagem/tabela logo abaixo
+- Ajustar o conteúdo do painel para contemplar tudo que o usuário espera ver nessa aba:
+  - os alertas de pedido vindos da licitação
+  - a visão de “alertas para análise” incorporada no mesmo painel, sem bloco separado duplicado
 
-**1. Novo campo nas licitações — `src/data/licitacaoData.ts`:**
-- Adicionar `solicitouAnaliseCientifica: true` e `dataSolicitacaoAC: "2025-01-12"` nas licitações mock (IDs 1, 2, 3) para simular pedidos enviados
+3. Remover duplicidade da Agenda para essa funcionalidade
+- Em `src/components/comercial/assessoria/DashboardAssessoria.tsx`, retirar os alertas de Análise de Edital do conjunto da Agenda.
+- A Agenda continua com os alertas próprios dela (OS/chamados), mas não será mais o lugar principal dos pedidos de análise de edital.
+- Assim, “Análise de Editais” vira o único lugar dessa demanda.
 
-**2. Tipo atualizado — `src/types/licitacao.ts`:**
-- Adicionar campos opcionais `solicitouAnaliseCientifica?: boolean` e `dataSolicitacaoAC?: string` na interface `Licitacao`
+4. Manter o componente visual padrão
+- Reutilizar `PainelAlertas.tsx` sem criar outro layout.
+- Se necessário, apenas ajustar as descrições dos alertas para deixar claro que são solicitações vindas da Licitação.
 
-**3. `AnaliseEditaisTab.tsx` — Filtrar somente licitações com solicitação AC:**
-- Trocar o filtro genérico de alertas para mostrar apenas licitações com `solicitouAnaliseCientifica === true`
-- Mensagem do alerta: "Análise de Edital solicitada pela Licitação em DD/MM/AAAA"
-- Manter a tabela abaixo filtrando somente licitações que solicitaram AC
+5. Validar consistência de comportamento
+- Garantir que:
+  - ao solicitar análise na Licitação, o item apareça no topo da aba `Análise de Editais`
+  - a mesma solicitação apareça também na tabela dessa aba
+  - não fique duplicada indevidamente entre blocos diferentes da própria aba
 
-**4. `DashboardAssessoria.tsx` — Adicionar alertas de análise de edital:**
-- Importar `licitacoes` de `licitacaoData`
-- Gerar alertas para licitações com `solicitouAnaliseCientifica === true` e status diferente de `finalizada`
-- Tipo de alerta: `prazo`, título: "Análise de Edital - [Nº Pregão] - [Instituição]", prioridade alta
-- Concatenar com os alertas existentes no `PainelAlertas`
-
-**5. `OportunidadeAvancadaForm.tsx` — Persistir a solicitação (mock):**
-- Ao clicar "Solicitar Análise da Assessoria Científica", além do estado local, marcar a licitação nos dados mock (importar e mutar o array `licitacoes`) para que os componentes da Assessoria Científica consigam ler
-
-### Arquivos alterados
-- `src/types/licitacao.ts`
-- `src/data/licitacaoData.ts`
+Arquivos envolvidos
 - `src/components/comercial/assessoria/AnaliseEditaisTab.tsx`
 - `src/components/comercial/assessoria/DashboardAssessoria.tsx`
-- `src/components/comercial/OportunidadeAvancadaForm.tsx`
 
+Resultado esperado
+- Dentro da aba `Análise de Editais`, fica tudo junto:
+  - `Alertas do Sistema`
+  - os pedidos/alertas para análise
+  - a tabela com as licitações correspondentes
+- Sem espalhar essa mesma funcionalidade na aba Agenda.
