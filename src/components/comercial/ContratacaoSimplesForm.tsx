@@ -712,13 +712,24 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                 <MessageSquare className="h-4 w-4" />
                 Histórico/Chat
               </TabsTrigger>
-              {isSegmentoPublico && (
+              {(isSegmentoPublico || isSegmentoFilantropico) && (
                 <TabsTrigger value="empenho" className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
                   Empenho
                   {empenhos.filter(e => e.pedidosVinculados.length === 0).length > 0 && (
                     <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
                       {empenhos.filter(e => e.pedidosVinculados.length === 0).length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+              )}
+              {isSegmentoPrivado && (
+                <TabsTrigger value="ordem-fornecimento" className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Ordem de Fornecimento
+                  {ordensFornecimento.filter(o => o.pedidosVinculados.length === 0).length > 0 && (
+                    <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                      {ordensFornecimento.filter(o => o.pedidosVinculados.length === 0).length}
                     </Badge>
                   )}
                 </TabsTrigger>
