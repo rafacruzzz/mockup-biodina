@@ -26,6 +26,9 @@ import { TemplateTrainamentoABL800 } from "./templates/TemplateTrainamentoABL800
 import { TemplateTrainamentoABL90 } from "./templates/TemplateTrainamentoABL90";
 import { TemplateTrainamentoABL9 } from "./templates/TemplateTrainamentoABL9";
 import { TemplateTrainamentoAQT90 } from "./templates/TemplateTrainamentoAQT90";
+import { TemplateTrainamentoOsmoTECH } from "./templates/TemplateTrainamentoOsmoTECH";
+import { TemplateTrainamentoExcelsior } from "./templates/TemplateTrainamentoExcelsior";
+import { AssinaturaPad } from "@/components/ui/assinatura-pad";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -151,6 +154,10 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [tiposSelecionados, setTiposSelecionados] = useState<TipoOS[]>(os?.tipo || []);
   const [participante, setParticipante] = useState("");
   const [listaParticipantes, setListaParticipantes] = useState<string[]>(os?.participantes || []);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+  const [templateData, setTemplateData] = useState({ dataRegistro: "", nomeInstrutor: "", observacoes: "" });
+  const [assinaturaInstrutor, setAssinaturaInstrutor] = useState<string | null>(null);
+  const [assinaturasParticipantes, setAssinaturasParticipantes] = useState<Record<number, string>>({});
 
   const tiposOS: { value: TipoOS; label: string }[] = [
     { value: "suporte_operacional", label: "Suporte Operacional" },
@@ -224,10 +231,15 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   });
 
   const getTipoProjetoLabel = (tipo: string) => {
-    return tipo === "importacao" ? "Importação Direta" : "Contratação Simples";
+    return tipo === "importacao" ? "Importação Direta" : "Contratação";
   };
 
   const handleSave = () => {
+    if (!selectedProjeto) {
+      toast.error("Vinculação de Projeto é obrigatória");
+      return;
+    }
+
     if (!formData.cliente) {
       toast.error("Cliente é obrigatório");
       return;
@@ -301,28 +313,35 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     toast.success("Certificado gerado com sucesso!");
   };
 
-  const renderTemplateTrainamento = () => {
-    const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe"
-    );
+  const templatesDisponiveis = [
+    { id: "dxh520", nome: "DxH 520", badge: "Hematologia" },
+    { id: "abl800", nome: "ABL800 FLEX", badge: "Gasometria" },
+    { id: "abl90", nome: "ABL90 FLEX", badge: "Gasometria Avançada" },
+    { id: "abl9", nome: "ABL9", badge: "Gasometria Premium" },
+    { id: "aqt90", nome: "AQT 90 FLEX", badge: "Química Clínica" },
+    { id: "osmotech", nome: "OsmoTECH", badge: "Osmometria" },
+    { id: "excelsior", nome: "Excelsior Thermo Fisher Epredia", badge: "Histologia" },
+  ];
 
-    if (!ehTreinamento || !formData.equipamento) return null;
-
-    const equipamentoNome = formData.equipamento.toUpperCase();
-
-    if (equipamentoNome.includes("DXH 520") || equipamentoNome.includes("DXH520")) {
-      return <TemplateTrainamentoDxH520 />;
-    } else if (equipamentoNome.includes("ABL800")) {
-      return <TemplateTrainamentoABL800 />;
-    } else if (equipamentoNome.includes("ABL90")) {
-      return <TemplateTrainamentoABL90 />;
-    } else if (equipamentoNome.includes("ABL9") && !equipamentoNome.includes("ABL90")) {
-      return <TemplateTrainamentoABL9 />;
-    } else if (equipamentoNome.includes("AQT90") || equipamentoNome.includes("AQT 90")) {
-      return <TemplateTrainamentoAQT90 />;
+  const renderSelectedTemplate = () => {
+    const props = {
+      dataRegistro: templateData.dataRegistro,
+      nomeInstrutor: templateData.nomeInstrutor,
+      observacoes: templateData.observacoes,
+      onChangeData: (v: string) => setTemplateData(p => ({ ...p, dataRegistro: v })),
+      onChangeInstrutor: (v: string) => setTemplateData(p => ({ ...p, nomeInstrutor: v })),
+      onChangeObservacoes: (v: string) => setTemplateData(p => ({ ...p, observacoes: v })),
+    };
+    switch (selectedTemplate) {
+      case "dxh520": return <TemplateTrainamentoDxH520 {...props} />;
+      case "abl800": return <TemplateTrainamentoABL800 {...props} />;
+      case "abl90": return <TemplateTrainamentoABL90 {...props} />;
+      case "abl9": return <TemplateTrainamentoABL9 {...props} />;
+      case "aqt90": return <TemplateTrainamentoAQT90 {...props} />;
+      case "osmotech": return <TemplateTrainamentoOsmoTECH {...props} />;
+      case "excelsior": return <TemplateTrainamentoExcelsior {...props} />;
+      default: return null;
     }
-
-    return null;
   };
 
   return (
@@ -390,7 +409,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       {/* Vinculação de Projeto */}
       <Card>
         <CardHeader>
-          <CardTitle>Vinculação de Projeto (Opcional)</CardTitle>
+          <CardTitle>Vinculação de Projeto *</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -403,7 +422,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                   </SelectTrigger>
                   <SelectContent className="bg-background z-50">
                     <SelectItem value="importacao">Importação Direta</SelectItem>
-                    <SelectItem value="contratacao">Contratação Simples</SelectItem>
+                    <SelectItem value="contratacao">Contratação</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -690,60 +709,155 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
         </div>
       </div>
 
-      {/* Template de Treinamento */}
-      {renderTemplateTrainamento()}
-
-      {/* Participantes */}
+      {/* Registro de Treinamento */}
       {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe") && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Participantes do Treinamento</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                value={participante}
-                onChange={(e) => setParticipante(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleAdicionarParticipante()}
-                placeholder="Nome do participante..."
-              />
-              <Button onClick={handleAdicionarParticipante}>
-                <Plus className="h-4 w-4 mr-2" />
-                Adicionar
-              </Button>
-            </div>
-
-            {listaParticipantes.length > 0 && (
-              <div className="space-y-2">
-                {listaParticipantes.map((p, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-muted rounded-lg"
-                  >
-                    <span>{p}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoverParticipante(index)}
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>Registro de Treinamento</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="mb-3 block">Selecione o registro de treinamento:</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {templatesDisponiveis.map((t) => (
+                    <div
+                      key={t.id}
+                      className={`border rounded-lg p-3 cursor-pointer transition-all hover:border-primary ${
+                        selectedTemplate === t.id ? "border-primary bg-primary/5 ring-2 ring-primary/20" : "border-border"
+                      }`}
+                      onClick={() => setSelectedTemplate(selectedTemplate === t.id ? null : t.id)}
                     >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                      <p className="font-medium text-sm">{t.nome}</p>
+                      <Badge variant="outline" className="mt-1 text-xs">{t.badge}</Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {selectedTemplate && (
+                <div className="mt-4">
+                  {renderSelectedTemplate()}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Participantes */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Participantes do Treinamento</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <Input
+                  value={participante}
+                  onChange={(e) => setParticipante(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && handleAdicionarParticipante()}
+                  placeholder="Nome do participante..."
+                />
+                <Button onClick={handleAdicionarParticipante}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar
+                </Button>
+              </div>
+
+              {listaParticipantes.length > 0 && (
+                <div className="space-y-2">
+                  {listaParticipantes.map((p, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                    >
+                      <span>{p}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoverParticipante(index)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <Button
+                variant="outline"
+                onClick={handleEmitirCertificado}
+                disabled={listaParticipantes.length === 0}
+                className="w-full"
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Emitir Certificado de Treinamento
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Assinatura do Instrutor */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Assinatura do Instrutor</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {assinaturaInstrutor ? (
+                <div className="space-y-2">
+                  <div className="border rounded-lg p-2 bg-white">
+                    <img src={assinaturaInstrutor} alt="Assinatura do instrutor" className="max-h-24 mx-auto" />
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setAssinaturaInstrutor(null)}>
+                    Refazer Assinatura
+                  </Button>
+                </div>
+              ) : (
+                <AssinaturaPad
+                  onSave={(sig) => {
+                    setAssinaturaInstrutor(sig);
+                    toast.success("Assinatura do instrutor registrada!");
+                  }}
+                />
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Assinaturas dos Participantes */}
+          {listaParticipantes.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Assinaturas dos Participantes</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {listaParticipantes.map((p, index) => (
+                  <div key={index} className="space-y-2">
+                    <Label className="font-semibold">{p}</Label>
+                    {assinaturasParticipantes[index] ? (
+                      <div className="space-y-2">
+                        <div className="border rounded-lg p-2 bg-white">
+                          <img src={assinaturasParticipantes[index]} alt={`Assinatura de ${p}`} className="max-h-24 mx-auto" />
+                        </div>
+                        <Button variant="outline" size="sm" onClick={() => {
+                          const updated = { ...assinaturasParticipantes };
+                          delete updated[index];
+                          setAssinaturasParticipantes(updated);
+                        }}>
+                          Refazer Assinatura
+                        </Button>
+                      </div>
+                    ) : (
+                      <AssinaturaPad
+                        onSave={(sig) => {
+                          setAssinaturasParticipantes(prev => ({ ...prev, [index]: sig }));
+                          toast.success(`Assinatura de ${p} registrada!`);
+                        }}
+                      />
+                    )}
+                    {index < listaParticipantes.length - 1 && <Separator className="mt-4" />}
                   </div>
                 ))}
-              </div>
-            )}
-
-            <Button
-              variant="outline"
-              onClick={handleEmitirCertificado}
-              disabled={listaParticipantes.length === 0}
-              className="w-full"
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              Emitir Certificado de Treinamento
-            </Button>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          )}
+        </>
       )}
 
       {/* Anexos Categorizados */}

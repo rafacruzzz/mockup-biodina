@@ -1,8 +1,27 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
-export const TemplateTrainamentoABL90 = () => {
+interface TemplateTrainamentoProps {
+  dataRegistro?: string;
+  nomeInstrutor?: string;
+  observacoes?: string;
+  onChangeData?: (value: string) => void;
+  onChangeInstrutor?: (value: string) => void;
+  onChangeObservacoes?: (value: string) => void;
+}
+
+export const TemplateTrainamentoABL90 = ({
+  dataRegistro = "",
+  nomeInstrutor = "",
+  observacoes = "",
+  onChangeData,
+  onChangeInstrutor,
+  onChangeObservacoes,
+}: TemplateTrainamentoProps) => {
   const topicos = [
     "Introdução ao sistema ABL90 FLEX", "Técnicas de coleta de sangue arterial e venoso",
     "Interface touchscreen e navegação no menu", "Calibração automática e verificação",
@@ -20,6 +39,17 @@ export const TemplateTrainamentoABL90 = () => {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Data do Treinamento</Label>
+            <Input type="date" value={dataRegistro} onChange={(e) => onChangeData?.(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label>Nome do Instrutor</Label>
+            <Input value={nomeInstrutor} onChange={(e) => onChangeInstrutor?.(e.target.value)} placeholder="Nome completo do instrutor" />
+          </div>
+        </div>
+
         <div><h4 className="font-semibold mb-2">Informações do Equipamento</h4><p className="text-sm text-muted-foreground">Sistema avançado de gasometria com interface touchscreen e conectividade aprimorada.</p></div>
         <div>
           <h4 className="font-semibold mb-3">Conteúdo Programático do Treinamento</h4>
@@ -33,6 +63,12 @@ export const TemplateTrainamentoABL90 = () => {
           </div>
         </div>
         <div className="bg-muted/50 p-4 rounded-lg"><h4 className="font-semibold mb-2">Carga Horária Recomendada</h4><p className="text-sm">6 horas (Treinamento inicial completo)</p><p className="text-sm text-muted-foreground mt-1">3 horas (Treinamento de nova equipe - conteúdo resumido)</p></div>
+
+        <div className="space-y-2">
+          <Label>Observações</Label>
+          <Textarea value={observacoes} onChange={(e) => onChangeObservacoes?.(e.target.value)} placeholder="Observações sobre o treinamento..." rows={3} />
+        </div>
+
         <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 p-4 rounded-lg">
           <h4 className="font-semibold text-amber-900 dark:text-amber-100 mb-2">Observações Importantes</h4>
           <ul className="text-sm space-y-1 text-amber-800 dark:text-amber-200">
