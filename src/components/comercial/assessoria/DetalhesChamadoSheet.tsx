@@ -211,35 +211,60 @@ export function DetalhesChamadoSheet({ chamado, isOpen, onClose }: DetalhesChama
 
           <Separator />
 
-          {(chamado.estrategiaResolucao || chamado.resultadoFinal) && (
-            <>
-              <div className="space-y-3">
-                <h4 className="font-semibold flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4" />
-                  Estratégia e Resultado
-                </h4>
-                <div className="space-y-3 text-sm">
-                  {chamado.estrategiaResolucao && (
-                    <div>
-                      <p className="text-muted-foreground mb-1">Estratégia de Resolução</p>
-                      <p className="text-sm leading-relaxed bg-blue-50 p-3 rounded-md border border-blue-200">
-                        {chamado.estrategiaResolucao}
-                      </p>
-                    </div>
-                  )}
-                  {chamado.resultadoFinal && (
-                    <div>
-                      <p className="text-muted-foreground mb-1">Resultado Final</p>
-                      <p className="text-sm leading-relaxed bg-green-50 p-3 rounded-md border border-green-200">
-                        {chamado.resultadoFinal}
-                      </p>
-                    </div>
-                  )}
+          <div className="space-y-3">
+            <h4 className="font-semibold flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4" />
+              Estratégia e Resultado
+            </h4>
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="text-muted-foreground mb-1">Estratégia de Resolução</p>
+                {chamado.estrategiaResolucao ? (
+                  <p className="text-sm leading-relaxed bg-blue-50 p-3 rounded-md border border-blue-200">
+                    {chamado.estrategiaResolucao}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground italic bg-muted/30 p-3 rounded-md">Pendente</p>
+                )}
+              </div>
+              <div>
+                <p className="text-muted-foreground mb-1">Resultado Final</p>
+                {chamado.resultadoFinal ? (
+                  <p className="text-sm leading-relaxed bg-green-50 p-3 rounded-md border border-green-200">
+                    {chamado.resultadoFinal}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground italic bg-muted/30 p-3 rounded-md">Pendente</p>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-muted-foreground">Data de Resolução</p>
+                    <p className="font-medium">
+                      {chamado.dataResolucao 
+                        ? format(chamado.dataResolucao, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+                        : <span className="text-muted-foreground italic font-normal">Pendente</span>}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <div>
+                    <p className="text-muted-foreground">Data de Encerramento</p>
+                    <p className="font-medium">
+                      {chamado.dataEncerramento 
+                        ? format(chamado.dataEncerramento, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+                        : <span className="text-muted-foreground italic font-normal">Pendente</span>}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <Separator />
-            </>
-          )}
+            </div>
+          </div>
+
+          <Separator />
 
           <div className="space-y-3">
             <h4 className="font-semibold flex items-center gap-2">
