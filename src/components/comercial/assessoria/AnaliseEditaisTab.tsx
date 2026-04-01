@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Search, FileText, AlertTriangle, Clock, ExternalLink, Eye, TrendingUp } from "lucide-react";
 import { licitacoes } from "@/data/licitacaoData";
 import { Licitacao } from "@/types/licitacao";
+import { PainelAlertas } from "./PainelAlertas";
+import { Alerta } from "@/types/assessoria-cientifica";
 
 export function AnaliseEditaisTab() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,8 +21,8 @@ export function AnaliseEditaisTab() {
     (lic) => lic.solicitouAnaliseCientifica === true
   );
 
-  // Gerar alertas apenas para licitações com solicitação AC pendente (não finalizadas)
-  const alertas = licitacoesComSolicitacaoAC
+  // Gerar alertas para o PainelAlertas
+  const alertasPainel: Alerta[] = licitacoesComSolicitacaoAC
     .filter((lic) => lic.status !== "finalizada")
     .map((lic) => {
       const dataSolicitacao = lic.dataSolicitacaoAC
@@ -29,9 +30,11 @@ export function AnaliseEditaisTab() {
         : "N/A";
 
       return {
-        licitacao: lic,
-        tipo: "analise" as const,
-        mensagem: `Análise de Edital solicitada pela Licitação em ${dataSolicitacao}`,
+        id: `alerta-edital-${lic.id}`,
+        tipo: "prazo" as const,
+        titulo: `Análise de Edital - ${lic.numeroPregao} - ${lic.nomeInstituicao}`,
+        descricao: `Análise de Edital solicitada pela Licitação em ${dataSolicitacao} • ${lic.objetoLicitacao}`,
+        dataCriacao: new Date(lic.dataSolicitacaoAC || lic.createdAt),
         prioridade: "alta" as const,
       };
     });
@@ -77,20 +80,6 @@ export function AnaliseEditaisTab() {
     }
   };
 
-  const getAlertIcon = (tipo: string) => {
-    switch (tipo) {
-      case "prazo":
-        return <Clock className="h-4 w-4" />;
-      case "risco":
-        return <AlertTriangle className="h-4 w-4" />;
-      default:
-        return <FileText className="h-4 w-4" />;
-    }
-  };
-
-  const getAlertVariant = (prioridade: string): "default" | "destructive" => {
-    return prioridade === "alta" ? "destructive" : "default";
-  };
 
   // Filtrar licitações com solicitação AC
   const licitacoesFiltradas = licitacoesComSolicitacaoAC.filter((lic) => {
@@ -128,39 +117,9 @@ export function AnaliseEditaisTab() {
         </p>
       </div>
 
-      {/* Alertas */}
-      {alertas.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-orange-600" />
-            Alertas para Análise ({alertas.length})
-          </h3>
-          <div className="grid gap-3">
-            {alertas.map((alerta, index) => (
-              <Alert key={index} variant={getAlertVariant(alerta.prioridade)}>
-                <div className="flex items-start gap-3">
-                  {getAlertIcon(alerta.tipo)}
-                  <div className="flex-1">
-                    <AlertTitle className="mb-1">
-                      {alerta.licitacao.numeroPregao} - {alerta.licitacao.nomeInstituicao}
-                    </AlertTitle>
-                    <AlertDescription>
-                      {alerta.mensagem} • {alerta.licitacao.objetoLicitacao}
-                    </AlertDescription>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setSelectedLicitacao(alerta.licitacao)}
-                  >
-                    <Eye className="h-4 w-4 mr-1" />
-                    Ver Detalhes
-                  </Button>
-                </div>
-              </Alert>
-            ))}
-          </div>
-        </div>
+      {/* Alertas do Sistema */}
+      {alertasPainel.length > 0 && (
+        <PainelAlertas alertas={alertasPainel} />
       )}
 
       {/* Filtros e Busca */}
