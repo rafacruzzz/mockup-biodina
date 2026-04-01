@@ -70,7 +70,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     valorNfs: number;
   }>>([
     { id: 'srv-001', numeroPedido: 'PED-SRV-2025-001', dataFaturamento: '13/03/2025', periodoCompetencia: 'Março/2025', nfs: 'NFS-00123', empenho: 'EMP-2025-001', processo: 'PROC-2025-001', valorNfs: 4500 },
-    { id: 'srv-002', numeroPedido: 'PED-SRV-2026-002', dataFaturamento: '13/02/2026', periodoCompetencia: 'Fevereiro/2026', nfs: 'NFS-00456', empenho: 'EMP-2026-002', processo: 'PROC-2026-002', valorNfs: 7800 },
+    { id: 'srv-002', numeroPedido: 'PED-SRV-2026-002', dataFaturamento: '13/02/2026', periodoCompetencia: 'Fevereiro/2026', nfs: 'NFS-00456', empenho: '', processo: 'PROC-2026-002', valorNfs: 7800 },
   ]);
   const [chamados, setChamados] = useState<Chamado[]>(oportunidade?.chamados || []);
   const [isPedidoModalOpen, setIsPedidoModalOpen] = useState(false);
@@ -156,6 +156,37 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
     },
   ]);
   const [pedidoExpandido, setPedidoExpandido] = useState<string | null>(null);
+
+  // Estados para aba Ordem de Fornecimento (Privado)
+  const [ordensFornecimento, setOrdensFornecimento] = useState<Array<{
+    id: string;
+    numeroOF: string;
+    valorOF: number;
+    pedidosVinculados: string[];
+    valorFaturado: number;
+    documentoOF: File | null;
+    nomeDocumento: string;
+  }>>([
+    {
+      id: 'of_mock_1',
+      numeroOF: '2024OF000789',
+      valorOF: 52000,
+      pedidosVinculados: ['PED-001'],
+      valorFaturado: 20000,
+      documentoOF: null,
+      nomeDocumento: '',
+    },
+    {
+      id: 'of_mock_2',
+      numeroOF: '2024OF000999',
+      valorOF: 18000,
+      pedidosVinculados: [],
+      valorFaturado: 0,
+      documentoOF: null,
+      nomeDocumento: '',
+    },
+  ]);
+  const [pedidoOFExpandido, setPedidoOFExpandido] = useState<string | null>(null);
 
   // Mock de itens por pedido vinculado
   const itensPorPedido: Record<string, Array<{ codigo: string; descricao: string; quantidade: number; valor: number }>> = {
@@ -339,6 +370,31 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   ];
 
   const isSegmentoPublico = formData.segmentoProjeto?.toLowerCase().includes('público') || formData.segmentoProjeto?.toLowerCase().includes('publico');
+  const isSegmentoPrivado = tipoContratacao === 'privado';
+  const isSegmentoFilantropico = tipoContratacao === 'filantropico';
+  const labelDocVinculo = isSegmentoPrivado ? 'Ordem de Fornecimento' : 'Empenho';
+  const labelDocVinculoAbrev = isSegmentoPrivado ? 'OF' : 'Empenho';
+
+  // Função para abrir documento do empenho/OF ao clicar no número
+  const handleAbrirDocumentoEmpenho = (numero: string) => {
+    const emp = empenhos.find(e => e.numeroEmpenho === numero);
+    if (emp?.documentoEmpenho) {
+      const url = URL.createObjectURL(emp.documentoEmpenho);
+      window.open(url, '_blank');
+    } else {
+      toast.warning(`Documento não anexado — anexe na aba ${labelDocVinculo}`);
+    }
+  };
+
+  const handleAbrirDocumentoOF = (numero: string) => {
+    const of = ordensFornecimento.find(o => o.numeroOF === numero);
+    if (of?.documentoOF) {
+      const url = URL.createObjectURL(of.documentoOF);
+      window.open(url, '_blank');
+    } else {
+      toast.warning('Documento não anexado — anexe na aba Ordem de Fornecimento');
+    }
+  };
 
   const handleSelecionarCliente = (clienteId: string) => {
     setClienteSelecionado(clienteId);
@@ -656,13 +712,24 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                 <MessageSquare className="h-4 w-4" />
                 Histórico/Chat
               </TabsTrigger>
-              {isSegmentoPublico && (
+              {(isSegmentoPublico || isSegmentoFilantropico) && (
                 <TabsTrigger value="empenho" className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
                   Empenho
                   {empenhos.filter(e => e.pedidosVinculados.length === 0).length > 0 && (
                     <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
                       {empenhos.filter(e => e.pedidosVinculados.length === 0).length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+              )}
+              {isSegmentoPrivado && (
+                <TabsTrigger value="ordem-fornecimento" className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Ordem de Fornecimento
+                  {ordensFornecimento.filter(o => o.pedidosVinculados.length === 0).length > 0 && (
+                    <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                      {ordensFornecimento.filter(o => o.pedidosVinculados.length === 0).length}
                     </Badge>
                   )}
                 </TabsTrigger>
@@ -1321,7 +1388,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
 
 
             {/* Aba Empenho */}
-            {isSegmentoPublico && (
+            {(isSegmentoPublico || isSegmentoFilantropico) && (
               <TabsContent value="empenho" className="space-y-4">
                 {/* Painel de Alertas */}
                 {empenhos.filter(e => e.pedidosVinculados.length === 0).length > 0 && (
@@ -1587,8 +1654,269 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               </TabsContent>
             )}
 
+            {/* Aba Ordem de Fornecimento (Privado) */}
+            {isSegmentoPrivado && (
+              <TabsContent value="ordem-fornecimento" className="space-y-4">
+                {/* Painel de Alertas */}
+                {ordensFornecimento.filter(o => o.pedidosVinculados.length === 0).length > 0 && (
+                  <Card className="border-yellow-300 bg-yellow-50 dark:bg-yellow-950/20">
+                    <CardContent className="p-4 space-y-2">
+                      <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-400 font-semibold mb-2">
+                        <AlertTriangle className="h-5 w-5" />
+                        Alertas de Vinculação
+                      </div>
+                      {ordensFornecimento.filter(o => o.pedidosVinculados.length === 0).map(of => (
+                        <div key={of.id} className="flex items-center gap-2 text-sm text-yellow-700 dark:text-yellow-400">
+                          <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                          OF Nº {of.numeroOF} sem pedido vinculado — <strong>Cobrar ordem de fornecimento</strong>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                )}
 
-            {/* Aba Análise Jurídica */}
+                {/* Tabela principal */}
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Wallet className="h-5 w-5" />
+                      CC Ordens de Fornecimento — Por Valor
+                    </CardTitle>
+                    <Button
+                      onClick={() => {
+                        const novoId = `of_${Date.now()}`;
+                        setOrdensFornecimento(prev => [...prev, {
+                          id: novoId,
+                          numeroOF: '',
+                          valorOF: 0,
+                          pedidosVinculados: [],
+                          valorFaturado: 0,
+                          documentoOF: null,
+                          nomeDocumento: '',
+                        }]);
+                      }}
+                      className="bg-biodina-gold hover:bg-biodina-gold/90"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Adicionar OF
+                    </Button>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {ordensFornecimento.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <DollarSign className="h-12 w-12 mx-auto mb-4 opacity-40" />
+                        <p>Nenhuma ordem de fornecimento cadastrada</p>
+                        <p className="text-sm">Clique em "Adicionar OF" para começar</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {ordensFornecimento.map((of, index) => {
+                          const saldo = of.valorOF - of.valorFaturado;
+                          return (
+                            <Card key={of.id} className="border">
+                              <CardContent className="p-4 space-y-4">
+                                <div className="grid grid-cols-5 gap-4 items-end">
+                                  <div>
+                                    <Label className="text-xs font-medium">Nº OF</Label>
+                                    <Input
+                                      value={of.numeroOF}
+                                      onChange={(e) => {
+                                        const updated = [...ordensFornecimento];
+                                        updated[index].numeroOF = e.target.value;
+                                        setOrdensFornecimento(updated);
+                                      }}
+                                      placeholder="Ex: 2024OF000789"
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs font-medium">Valor da OF (R$)</Label>
+                                    <Input
+                                      type="number"
+                                      value={of.valorOF || ''}
+                                      onChange={(e) => {
+                                        const updated = [...ordensFornecimento];
+                                        updated[index].valorOF = parseFloat(e.target.value) || 0;
+                                        setOrdensFornecimento(updated);
+                                      }}
+                                      placeholder="0,00"
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs font-medium">Nº Pedidos Vinculados</Label>
+                                    {of.pedidosVinculados.length > 0 ? (
+                                      <div className="flex flex-wrap gap-1 mt-1">
+                                        {of.pedidosVinculados.map(ped => (
+                                          <Button
+                                            key={ped}
+                                            variant="outline"
+                                            size="sm"
+                                            className={`text-xs h-7 ${pedidoOFExpandido === `${of.id}_${ped}` ? 'bg-primary text-primary-foreground' : ''}`}
+                                            onClick={() => setPedidoOFExpandido(prev => prev === `${of.id}_${ped}` ? null : `${of.id}_${ped}`)}
+                                          >
+                                            {ped}
+                                          </Button>
+                                        ))}
+                                      </div>
+                                    ) : (
+                                      <Badge variant="destructive" className="text-xs mt-1">Sem pedido — Cobrar cliente</Badge>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs font-medium">Valor Faturado (R$)</Label>
+                                    <Input
+                                      type="number"
+                                      value={of.valorFaturado || ''}
+                                      onChange={(e) => {
+                                        const updated = [...ordensFornecimento];
+                                        updated[index].valorFaturado = parseFloat(e.target.value) || 0;
+                                        setOrdensFornecimento(updated);
+                                      }}
+                                      placeholder="0,00"
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs font-medium">Saldo da OF (R$)</Label>
+                                    <div className={`h-10 flex items-center px-3 rounded-md border text-sm font-semibold ${saldo > 0 ? 'text-green-700 bg-green-50 dark:text-green-400 dark:bg-green-950/30' : saldo < 0 ? 'text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-950/30' : 'text-muted-foreground bg-muted'}`}>
+                                      {saldo.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Upload documento da OF */}
+                                <div className="flex items-center gap-4">
+                                  <div className="flex-1">
+                                    <Label className="text-xs font-medium">Documento da OF</Label>
+                                    {of.documentoOF ? (
+                                      <div className="flex items-center gap-2 mt-1 p-2 border border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950/20 rounded-md">
+                                        <FileText className="h-4 w-4 text-green-600" />
+                                        <span className="text-sm text-green-800 dark:text-green-300 flex-1 truncate">{of.nomeDocumento}</span>
+                                        <Button variant="ghost" size="sm" onClick={() => {
+                                          const updated = [...ordensFornecimento];
+                                          updated[index].documentoOF = null;
+                                          updated[index].nomeDocumento = '';
+                                          setOrdensFornecimento(updated);
+                                        }}>
+                                          <X className="h-3 w-3" />
+                                        </Button>
+                                      </div>
+                                    ) : (
+                                      <div className="mt-1">
+                                        <label className="flex items-center gap-2 cursor-pointer px-3 py-2 border border-dashed border-muted-foreground/30 rounded-md hover:bg-muted/50 transition-colors">
+                                          <Upload className="h-4 w-4 text-muted-foreground" />
+                                          <span className="text-sm text-muted-foreground">Anexar documento (PDF, DOC)</span>
+                                          <input
+                                            type="file"
+                                            accept=".pdf,.doc,.docx"
+                                            className="hidden"
+                                            onChange={(e) => {
+                                              const file = e.target.files?.[0];
+                                              if (file) {
+                                                if (file.size > 10 * 1024 * 1024) {
+                                                  toast.error('Arquivo muito grande. Máximo 10MB.');
+                                                  return;
+                                                }
+                                                const updated = [...ordensFornecimento];
+                                                updated[index].documentoOF = file;
+                                                updated[index].nomeDocumento = file.name;
+                                                setOrdensFornecimento(updated);
+                                                toast.success('Documento da OF anexado!');
+                                              }
+                                            }}
+                                          />
+                                        </label>
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="flex gap-2 pt-5">
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      className="text-destructive hover:text-destructive"
+                                      onClick={() => setOrdensFornecimento(prev => prev.filter(o => o.id !== of.id))}
+                                    >
+                                      <X className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+
+                                {/* Seção expansível — itens do pedido vinculado */}
+                                {of.pedidosVinculados.map(ped => {
+                                  const key = `${of.id}_${ped}`;
+                                  if (pedidoOFExpandido !== key) return null;
+                                  const itens = itensPorPedido[ped] || [];
+                                  return (
+                                    <div key={key} className="border-t pt-4 space-y-3">
+                                      <Label className="text-sm font-semibold">Itens do Pedido {ped}</Label>
+                                      {itens.length === 0 ? (
+                                        <p className="text-sm text-muted-foreground text-center py-3">Nenhum item registrado para este pedido</p>
+                                      ) : (
+                                        <Table>
+                                          <TableHeader>
+                                            <TableRow>
+                                              <TableHead>Código</TableHead>
+                                              <TableHead>Descrição</TableHead>
+                                              <TableHead>Qtd.</TableHead>
+                                              <TableHead>Valor (R$)</TableHead>
+                                            </TableRow>
+                                          </TableHeader>
+                                          <TableBody>
+                                            {itens.map((item, idx) => (
+                                              <TableRow key={idx}>
+                                                <TableCell className="font-medium">{item.codigo}</TableCell>
+                                                <TableCell>{item.descricao}</TableCell>
+                                                <TableCell>{item.quantidade}</TableCell>
+                                                <TableCell>{item.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
+                                              </TableRow>
+                                            ))}
+                                          </TableBody>
+                                        </Table>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Painel de Resumo */}
+                    {ordensFornecimento.length > 0 && (
+                      <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+                        <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
+                          <CardContent className="p-4 text-center">
+                            <p className="text-xs text-muted-foreground">Total em OF</p>
+                            <p className="text-lg font-bold text-blue-700 dark:text-blue-400">
+                              {ordensFornecimento.reduce((sum, o) => sum + o.valorOF, 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </p>
+                          </CardContent>
+                        </Card>
+                        <Card className="bg-green-50 dark:bg-green-950/20 border-green-200">
+                          <CardContent className="p-4 text-center">
+                            <p className="text-xs text-muted-foreground">Total Faturado</p>
+                            <p className="text-lg font-bold text-green-700 dark:text-green-400">
+                              {ordensFornecimento.reduce((sum, o) => sum + o.valorFaturado, 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </p>
+                          </CardContent>
+                        </Card>
+                        <Card className="bg-amber-50 dark:bg-amber-950/20 border-amber-200">
+                          <CardContent className="p-4 text-center">
+                            <p className="text-xs text-muted-foreground">Saldo Pendente</p>
+                            <p className="text-lg font-bold text-amber-700 dark:text-amber-400">
+                              {ordensFornecimento.reduce((sum, o) => sum + (o.valorOF - o.valorFaturado), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {ordensFornecimento.filter(o => o.pedidosVinculados.length === 0).length} OF(s) sem pedido
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            )}
             <TabsContent value="analise-juridica" className="space-y-4">
               <Card>
                 <CardHeader>
@@ -2289,7 +2617,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                             <TableHead>Data Faturamento</TableHead>
                             <TableHead>Período Competência</TableHead>
                             <TableHead>NFE</TableHead>
-                            <TableHead>Empenho</TableHead>
+                            <TableHead>{isSegmentoPrivado ? 'Ordem de Fornecimento' : 'Empenho'}</TableHead>
                             <TableHead>Processo</TableHead>
                             <TableHead>Valor da NFE</TableHead>
                           </TableRow>
@@ -2309,7 +2637,12 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                                   {pedido.status === 'faturado' ? 'Emitida' : 'Pendente'}
                                 </Badge>
                               </TableCell>
-                              <TableCell>-</TableCell>
+                              <TableCell>
+                                <Badge variant="destructive" className="flex items-center gap-1 w-fit">
+                                  <AlertTriangle className="h-3 w-3" />
+                                  {isSegmentoPrivado ? 'Sem OF' : 'Sem Empenho'}
+                                </Badge>
+                              </TableCell>
                               <TableCell>-</TableCell>
                               <TableCell className="font-medium text-green-600">
                                 {formatCurrency(pedido.valorTotal)}
@@ -2353,7 +2686,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                             <TableHead>Data Faturamento</TableHead>
                             <TableHead>Período Competência</TableHead>
                             <TableHead>NFS</TableHead>
-                            <TableHead>Empenho</TableHead>
+                            <TableHead>{isSegmentoPrivado ? 'Ordem de Fornecimento' : 'Empenho'}</TableHead>
                             <TableHead>Processo</TableHead>
                             <TableHead>Valor da NFS</TableHead>
                           </TableRow>
@@ -2369,7 +2702,21 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                                   {servico.nfs || 'Pendente'}
                                 </Badge>
                               </TableCell>
-                              <TableCell>{servico.empenho || '-'}</TableCell>
+                              <TableCell>
+                                {servico.empenho ? (
+                                  <button
+                                    className="text-blue-600 hover:underline cursor-pointer font-medium text-sm"
+                                    onClick={() => isSegmentoPrivado ? handleAbrirDocumentoOF(servico.empenho) : handleAbrirDocumentoEmpenho(servico.empenho)}
+                                  >
+                                    {servico.empenho}
+                                  </button>
+                                ) : (
+                                  <Badge variant="destructive" className="flex items-center gap-1 w-fit">
+                                    <AlertTriangle className="h-3 w-3" />
+                                    {isSegmentoPrivado ? 'Sem OF' : 'Sem Empenho'}
+                                  </Badge>
+                                )}
+                              </TableCell>
                               <TableCell>{servico.processo || '-'}</TableCell>
                               <TableCell className="font-medium text-green-600">
                                 {formatCurrency(servico.valorNfs)}
