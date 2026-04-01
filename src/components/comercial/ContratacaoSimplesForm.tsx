@@ -338,7 +338,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const isSegmentoPublico = formData.segmentoProjeto?.toLowerCase().includes('público') || formData.segmentoProjeto?.toLowerCase().includes('publico');
 
   const handleSelecionarCliente = (clienteId: string) => {
-    setClienteParticular(clienteId);
+    setClienteSelecionado(clienteId);
     const cliente = clientesCadastrados.find(c => c.id === clienteId);
     if (cliente) {
       setFormData(prev => ({
