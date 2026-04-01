@@ -412,7 +412,7 @@ export function BiCoberturaTab({ onVoltar }: BiCoberturaTabProps) {
                       <div className="text-xs text-muted-foreground">Versão atual: {doc.versao}</div>
                     </div>
                   </div>
-                  <Badge variant="outline" className="border-amber-500 text-amber-600">
+                  <Badge variant="outline" className="border-destructive text-destructive">
                     Somente Nova Versão
                   </Badge>
                 </div>
