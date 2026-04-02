@@ -144,14 +144,14 @@ export const TreinamentosSection = ({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {treinamentosRealizados.length === 0 ? (
+                    {realizadosFiltrados.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                          Nenhum treinamento realizado registrado
+                          {searchTerm ? "Nenhum treinamento encontrado" : "Nenhum treinamento realizado registrado"}
                         </TableCell>
                       </TableRow>
                     ) : (
-                      treinamentosRealizados.map((treinamento) => (
+                      realizadosFiltrados.map((treinamento) => (
                         <TableRow key={treinamento.id}>
                           <TableCell>{treinamento.data}</TableCell>
                           <TableCell className="font-medium">{treinamento.conteudo}</TableCell>
@@ -225,14 +225,14 @@ export const TreinamentosSection = ({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {treinamentosFuturos.length === 0 ? (
+                    {futurosFiltrados.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                          Nenhum treinamento agendado
+                          {searchTerm ? "Nenhum treinamento encontrado" : "Nenhum treinamento agendado"}
                         </TableCell>
                       </TableRow>
                     ) : (
-                      treinamentosFuturos.map((treinamento) => (
+                      futurosFiltrados.map((treinamento) => (
                         <TableRow key={treinamento.id}>
                           <TableCell>{treinamento.data}</TableCell>
                           <TableCell className="font-medium">{treinamento.conteudo}</TableCell>
