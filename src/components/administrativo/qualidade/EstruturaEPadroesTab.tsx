@@ -56,6 +56,16 @@ const estruturaInicial = {
       subPastas: [],
       expandido: false
     }
+  ] as PastaRT[],
+  especificacoes: [
+    {
+      id: "pasta-espec-1",
+      nome: "Especificações de Equipamentos",
+      subtitulo: "Especificações técnicas detalhadas",
+      arquivos: [],
+      subPastas: [],
+      expandido: false
+    }
   ] as PastaRT[]
 };
 
