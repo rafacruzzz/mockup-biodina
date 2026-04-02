@@ -160,6 +160,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [assinaturasParticipantes, setAssinaturasParticipantes] = useState<Record<number, string>>({});
   const [checklistMeterOmega, setChecklistMeterOmega] = useState<Record<string, boolean>>({});
   const [checklistSetMedikal, setChecklistSetMedikal] = useState<Record<string, boolean>>({});
+  const [checklistABL9, setChecklistABL9] = useState<Record<string, boolean>>({});
 
   const tiposOS: { value: TipoOS; label: string }[] = [
     { value: "suporte_operacional", label: "Suporte Operacional" },
@@ -168,6 +169,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     { value: "treinamento_nova_equipe", label: "Treinamento de Nova Equipe" },
     { value: "treinamento_usuario_meteromega", label: "Treinamento de Usuário: Modelo MeterOmega" },
     { value: "treinamento_usuario_setmedikal", label: "Treinamento de Usuário: Modelo SET Medikal" },
+    { value: "treinamento_usuario_abl9", label: "Treinamento de Usuário: Modelo ABL9 - Radiometer" },
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
@@ -255,7 +257,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     }
 
     const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal"
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9"
     );
 
     if (ehTreinamento && listaParticipantes.length === 0) {
@@ -714,7 +716,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       </div>
 
       {/* Registro de Treinamento */}
-      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal") && (
+      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9") && (
         <>
           {/* Checklist MeterOmega */}
           {tiposSelecionados.includes("treinamento_usuario_meteromega") && (
@@ -769,6 +771,144 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                         }
                       />
                       <Label htmlFor={`mo-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Checklist ABL9 - Radiometer */}
+          {tiposSelecionados.includes("treinamento_usuario_abl9") && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Apresentação Geral</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "entrada_amostras", label: "Entrada de amostras" },
+                    { key: "codigo_barras", label: "Código de barras" },
+                    { key: "impressora", label: "Impressora" },
+                    { key: "cassete_eletrodos", label: "Cassete de eletrodos e pack de soluções" },
+                    { key: "registro_dados_usb", label: "Recursos para registro de dados externo e entradas USB" },
+                    { key: "ligar_desligar", label: "Ligar e desligar o analisador" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`abl9-${item.key}`}
+                        checked={!!checklistABL9[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistABL9((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`abl9-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Tela</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "layout_tela", label: "Apresentação do layout" },
+                    { key: "interpretacao_mensagens", label: "Interpretação de mensagens" },
+                    { key: "registro_dados", label: "Uso do registro de dados" },
+                    { key: "tutorial", label: "Uso do tutorial" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`abl9-${item.key}`}
+                        checked={!!checklistABL9[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistABL9((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`abl9-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Trocas</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "troca_cassete", label: "Cassete de eletrodos e pack de soluções" },
+                    { key: "troca_papel", label: "Papel" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`abl9-${item.key}`}
+                        checked={!!checklistABL9[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistABL9((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`abl9-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Controle de Qualidade</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "utilizacao_cq", label: "Utilização do controle de qualidade" },
+                    { key: "cadastro_lote_ampolas", label: "Cadastro de lote de ampolas" },
+                    { key: "cq_externo", label: "Uso de controle de qualidade externo" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`abl9-${item.key}`}
+                        checked={!!checklistABL9[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistABL9((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`abl9-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Processamento de Amostra</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "inserir_amostra", label: "Inserir amostra" },
+                    { key: "preenchimento_cadastro", label: "Preenchimento do cadastro" },
+                    { key: "resultado_interpretacao", label: "Resultado e interpretação de mensagens" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`abl9-${item.key}`}
+                        checked={!!checklistABL9[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistABL9((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`abl9-${item.key}`} className="text-sm font-normal cursor-pointer">
                         {item.label}
                       </Label>
                     </div>
