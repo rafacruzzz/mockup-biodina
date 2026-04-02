@@ -85,18 +85,61 @@ export interface DocumentacaoRT {
 // Gestão de Não Conformidades RT
 export type OrigemNCRT = string;
 export type TipoNCRT = string;
+export type TipoNCEnumRT = 'Legal/Regulatória' | 'Processo/Operacional' | 'Produto' | 'Gestão' | 'Fornecedor' | 'Segurança/Meio Ambiente';
 export type ImpactoNCRT = 'Crítico' | 'Moderado' | 'Leve';
 export type StatusNCRT = 'Aberta' | 'Em Análise' | 'Aguardando Ação' | 'Resolvida' | 'Fechada';
 export type StatusCAPART = 'Pendente' | 'Em Andamento' | 'Concluída' | 'Verificada';
+
+export interface ProdutoLiberacaoNCRT {
+  id: string;
+  codigo: string;
+  referencia: string;
+  nome: string;
+  modelo: string;
+  fabricante: string;
+  marca: string;
+  linhaProduto: string;
+  apresentacao: ('primaria' | 'secundaria' | 'terciaria')[];
+  numeroSerieLote: string;
+  status: string;
+  liberadoRT: boolean;
+  dataLiberacao?: string;
+}
+
+export interface EquipamentoCAPADTRT {
+  equipamentoId: string;
+  numeroSerie: string;
+  modelo: string;
+  marca: string;
+  dataAcaoPreventiva: string;
+  dataAcaoCorretiva: string;
+  descricaoCorretiva: string;
+  prazoFinal: string;
+  solucionado: 'Sim' | 'Não' | '';
+  responsavel: string;
+}
+
+export interface CAPADTRT {
+  clienteNome: string;
+  tipoCliente: string;
+  razaoSocial: string;
+  nomeFantasia: string;
+  cnpjCpf: string;
+  cinRg: string;
+  nomeMantenedor: string;
+  cnpjMantenedor: string;
+  equipamentos: EquipamentoCAPADTRT[];
+}
 
 export interface AcaoCAPART {
   id: string;
   acaoPreventiva: string;
   acaoCorretiva: string;
   gerenciamentoTarefas?: string;
-  prazoFinal: string;
+  prazoFinal: Date;
   status: StatusCAPART;
   responsavel: string;
+  capaDT?: CAPADTRT;
 }
 
 export interface NaoConformidadeRT {
@@ -104,16 +147,42 @@ export interface NaoConformidadeRT {
   data: string;
   origem: OrigemNCRT;
   tipo: TipoNCRT;
+  tipos?: TipoNCEnumRT[];
   impacto: ImpactoNCRT;
   descricao: string;
   acaoImediata: string;
-  ncSolucionada?: string;
+  acaoImediataValidada?: boolean;
+  acaoImediataValidadaPor?: string;
+  acaoImediataValidadaEm?: string;
+  acoesComplementares?: string;
+  responsavelComplementar?: string;
+  evidenciasTexto?: string;
+  evidenciasArquivos?: File[];
+  observacoesArquivos?: File[];
   acaoFinal?: string;
+  acaoFinalValidada?: boolean;
+  acaoFinalValidadaPor?: string;
+  acaoFinalValidadaEm?: string;
+  ncSolucionada?: string;
+  dataEncerramento?: string;
   dataAcao?: string;
   responsavel: string;
+  responsaveis?: string[];
   prazoExecucao: string;
   status: StatusNCRT;
   observacoes?: string;
+  dataCriacao: Date;
+  dataAtualizacao?: Date;
+  // Campos condicionais Produto
+  produtoCodigo?: string;
+  produtoMarca?: string;
+  produtoModelo?: string;
+  produtoNomeFabricante?: string;
+  // Campos condicionais Fornecedor
+  fornecedorNomeFabricanteLegal?: string;
+  fornecedorUnidadeFabril?: string;
+  // Tabela de liberação
+  produtosLiberacao?: ProdutoLiberacaoNCRT[];
   capa: AcaoCAPART;
 }
 
