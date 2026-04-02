@@ -110,6 +110,14 @@ export const AnaliseIndicadoresTab = () => {
                 ))}
               </CardContent>
             </Card>
+            <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-2">
+              <div className="flex items-start gap-2">
+                <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+                <p className="text-xs text-amber-700">
+                  <strong>Origem dos dados:</strong> TNC — nº de Não Conformidades (Qualidade). Acuracidade do Laudo/Certificado — verificação de AFE da própria empresa. Adesão às BP — verificação de BP dos fornecedores e da própria empresa.
+                </p>
+              </div>
+            </div>
 
             {/* Qualidade da Entrega (Logística) */}
             <Card className="border-2 border-emerald-200 bg-emerald-50/30">
@@ -145,6 +153,14 @@ export const AnaliseIndicadoresTab = () => {
                 ))}
               </CardContent>
             </Card>
+            <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-2">
+              <div className="flex items-start gap-2">
+                <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+                <p className="text-xs text-amber-700">
+                  <strong>Origem dos dados:</strong> Dados vindos do módulo Estoque.
+                </p>
+              </div>
+            </div>
 
             {/* Qualidade do Suporte (Pós-venda) */}
             <Card className="border-2 border-violet-200 bg-violet-50/30">
@@ -192,6 +208,14 @@ export const AnaliseIndicadoresTab = () => {
                 ))}
               </CardContent>
             </Card>
+            <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-2">
+              <div className="flex items-start gap-2">
+                <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+                <p className="text-xs text-amber-700">
+                  <strong>Origem dos dados:</strong> Dados vindos dos módulos DT, Qualidade e Comercial.
+                </p>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
