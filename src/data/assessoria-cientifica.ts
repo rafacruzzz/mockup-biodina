@@ -598,7 +598,8 @@ export const getTipoOSLabel = (tipo: TipoOS): string => {
     treinamento_usuario_abl9: "Treinamento de Usuário: Modelo ABL9 - Radiometer",
     treinamento_usuario_abl90: "Treinamento de Usuário: Modelo ABL90 FLEX PLUS - Radiometer",
     treinamento_usuario_abl800: "Treinamento de Usuário: Modelo ABL800 - Radiometer",
-    treinamento_usuario_aqt90: "Treinamento de Usuário: Modelo AQT90 FLEX - Radiometer"
+    treinamento_usuario_aqt90: "Treinamento de Usuário: Modelo AQT90 FLEX - Radiometer",
+    treinamento_usuario_dxh520: "Treinamento de Usuário: DxH 520 – Beckman Coulter"
   };
   return labels[tipo];
 };
@@ -615,7 +616,8 @@ export const getTipoOSIcon = (tipo: TipoOS): string => {
     treinamento_usuario_abl9: "🔬",
     treinamento_usuario_abl90: "🔬",
     treinamento_usuario_abl800: "🔬",
-    treinamento_usuario_aqt90: "🔬"
+    treinamento_usuario_aqt90: "🔬",
+    treinamento_usuario_dxh520: "🔬"
   };
   return icons[tipo];
 };
