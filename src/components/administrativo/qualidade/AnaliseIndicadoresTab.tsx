@@ -16,7 +16,7 @@ import {
   Legend, 
   ResponsiveContainer 
 } from 'recharts';
-import { TrendingDown, Repeat, CheckCircle2, Users, AlertTriangle, CheckCircle, TrendingUp, Package, Truck, Headphones, Activity } from 'lucide-react';
+import { TrendingDown, Repeat, CheckCircle2, Users, AlertTriangle, CheckCircle, TrendingUp, Package, Truck, Headphones, Activity, Info } from 'lucide-react';
 import { 
   dadosNCMensal, 
   dadosRetrabalho, 
@@ -110,6 +110,14 @@ export const AnaliseIndicadoresTab = () => {
                 ))}
               </CardContent>
             </Card>
+            <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-2">
+              <div className="flex items-start gap-2">
+                <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+                <p className="text-xs text-amber-700">
+                  <strong>Origem dos dados:</strong> TNC — nº de Não Conformidades (Qualidade). Acuracidade do Laudo/Certificado — verificação de AFE da própria empresa. Adesão às BP — verificação de BP dos fornecedores e da própria empresa.
+                </p>
+              </div>
+            </div>
 
             {/* Qualidade da Entrega (Logística) */}
             <Card className="border-2 border-emerald-200 bg-emerald-50/30">
@@ -145,6 +153,14 @@ export const AnaliseIndicadoresTab = () => {
                 ))}
               </CardContent>
             </Card>
+            <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-2">
+              <div className="flex items-start gap-2">
+                <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+                <p className="text-xs text-amber-700">
+                  <strong>Origem dos dados:</strong> Dados vindos do módulo Estoque.
+                </p>
+              </div>
+            </div>
 
             {/* Qualidade do Suporte (Pós-venda) */}
             <Card className="border-2 border-violet-200 bg-violet-50/30">
@@ -192,6 +208,14 @@ export const AnaliseIndicadoresTab = () => {
                 ))}
               </CardContent>
             </Card>
+            <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-2">
+              <div className="flex items-start gap-2">
+                <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+                <p className="text-xs text-amber-700">
+                  <strong>Origem dos dados:</strong> Dados vindos dos módulos DT, Qualidade e Comercial.
+                </p>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -230,6 +254,14 @@ export const AnaliseIndicadoresTab = () => {
             </div>
           </CardContent>
         </Card>
+        <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-2">
+          <div className="flex items-start gap-2">
+            <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+            <p className="text-xs text-amber-700">
+              <strong>Origem dos dados:</strong> Dados vindos do nº de Não Conformidades abertas (Qualidade).
+            </p>
+          </div>
+        </div>
 
         {/* KPI: Taxas de Retrabalho */}
         <Card>
@@ -271,6 +303,14 @@ export const AnaliseIndicadoresTab = () => {
             </div>
           </CardContent>
         </Card>
+        <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-2">
+          <div className="flex items-start gap-2">
+            <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+            <p className="text-xs text-amber-700">
+              <strong>Origem dos dados:</strong> Reenvio de material — módulo Estoque. Retreinamento de Equipes — módulo RH (todos os treinamentos, exceto Boas Práticas anuais e treinamento inicial para o cargo, são demandados pelo RH ao RT).
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Row 2: CAPA e Fornecedores */}
@@ -305,6 +345,14 @@ export const AnaliseIndicadoresTab = () => {
             </div>
           </CardContent>
         </Card>
+        <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-2">
+          <div className="flex items-start gap-2">
+            <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+            <p className="text-xs text-amber-700">
+              <strong>Origem dos dados:</strong> Dados vindos das NCs e CAPAs registrados na Qualidade e previstos também no DT.
+            </p>
+          </div>
+        </div>
 
         {/* KPI: Índices de Qualidade dos Fornecedores */}
         <Card>
@@ -330,6 +378,14 @@ export const AnaliseIndicadoresTab = () => {
             </ResponsiveContainer>
           </CardContent>
         </Card>
+        <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-2">
+          <div className="flex items-start gap-2">
+            <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+            <p className="text-xs text-amber-700">
+              <strong>Origem dos dados:</strong> Dados vindos do Registro de Qualificação de Fornecedores (módulo RT).
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Tabela Detalhada de Fornecedores */}
@@ -379,6 +435,14 @@ export const AnaliseIndicadoresTab = () => {
           </Table>
         </CardContent>
       </Card>
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-2">
+        <div className="flex items-start gap-2">
+          <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+          <p className="text-xs text-amber-700">
+            <strong>Origem dos dados:</strong> Dados vindos do Registro de Qualificação de Fornecedores (módulo RT). "Materiais Não Conformes" refere-se aos documentos que os fornecedores não possuem.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
