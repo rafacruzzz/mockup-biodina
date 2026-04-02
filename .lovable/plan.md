@@ -1,59 +1,41 @@
 
 
-## Plano: Replicar funcionalidades da NC do módulo Qualidade para o módulo RT
+## Plano: Ajustes no Monitoramento e Auditoria do módulo RT
 
-### Resumo
-Reescrever completamente o `GestaoNCTab` do módulo RT para ter a mesma estrutura e funcionalidades do `GestaoNCTab` do módulo Qualidade, adaptando imports e dados para usar os tipos/mocks do RT.
+### 1. Alertas Criticos - Adicionar notas de origem dos dados
 
-### Alterações
+**Em `src/components/administrativo/rt/AlertasCriticosSection.tsx`:**
+- Adicionar nota informativa (amber box com icone Info): "Origem dos dados: Não Conformidades (RT e Qualidade), CAPA (Qualidade) e Coleta de Dados e Inspeção (Qualidade)"
 
-#### 1. Atualizar tipos em `src/types/rt.ts`
+### 2. Dashboard de KPIs - Ajustar descrições e lógica
 
-Expandir `NaoConformidadeRT` para incluir todos os campos que existem em `NaoConformidade` (qualidade):
-- `tipos: TipoNCEnumRT[]` (multi-select) — mesmos valores: Legal/Regulatória, Processo/Operacional, Produto, Gestão, Fornecedor, Segurança/Meio Ambiente
-- `responsaveis: string[]` (multi-select setores)
-- `acaoImediataValidada`, `acaoImediataValidadaPor`, `acaoImediataValidadaEm`
-- `acoesComplementares`, `responsavelComplementar`
-- `evidenciasTexto`, `evidenciasArquivos`
-- `acaoFinalValidada`, `acaoFinalValidadaPor`, `acaoFinalValidadaEm`
-- `dataEncerramento`
-- Campos condicionais Produto: `produtoCodigo`, `produtoMarca`, `produtoModelo`, `produtoNomeFabricante`
-- Campos condicionais Fornecedor: `fornecedorNomeFabricanteLegal`, `fornecedorUnidadeFabril`
-- `produtosLiberacao: ProdutoLiberacaoNC[]` (reutilizar tipo de qualidade)
-- Adicionar tipo `TipoNCEnumRT`
+**Em `src/components/administrativo/rt/DashboardKPIsSection.tsx`:**
+- No card "Índice de Performance": alterar texto explicativo para "Índice calculado com base na proporção de manutenções preventivas vs. corretivas (quanto mais preventivas e menos corretivas, melhor)"
+- Adicionar nota: "Os índices de performance estão relacionados aos CAPAs"
 
-#### 2. Atualizar mocks em `src/data/rtModules.ts`
+### 3. KPIs Indicadores de Performance - Adicionar notas de origem
 
-- Adicionar `setoresEmpresaRT` (mesma lista de setores)
-- Atualizar `naoConformidadesRTMockadas` para incluir os novos campos (`tipos`, `responsaveis`, etc.)
-- Exportar `fabricantesComUnidades` e `produtosMockNC` (ou reutilizar os de qualidadeData)
+**Em `src/components/administrativo/rt/DashboardKPIsSection.tsx`:**
+- **Qualidade do Produto:**
+  - TNC: nota "Origem: N° de Não Conformidades"
+  - Acuracidade do Laudo/Certificado: nota "Origem: verificação se a empresa possui AFE"
+  - Adesão às Boas Práticas: nota "Origem: verificação se fornecedores e empresa possuem BP"
+- **Qualidade da Entrega:** nota geral "Origem: módulo Estoque"
+- **Qualidade do Suporte:** nota geral "Origem: módulos DT, Qualidade e Comercial"
 
-#### 3. Reescrever `src/components/administrativo/rt/GestaoNCTab.tsx`
+### 4. Trilha de Auditoria - Adicionar filtro de Período e remover "Liberação de Produtos"
 
-Replicar toda a estrutura do modal do Qualidade:
-- **Tabela**: colunas Tipo(s) com badges multi-select, Responsável(eis) com badges
-- **Modal com todos os campos na mesma ordem**:
-  - a) Data + Origem (escrita livre)
-  - b) Tipo — multi-select checkboxes (6 opções)
-  - c) Campos condicionais Produto (autocomplete) e Fornecedor (selects cascata)
-  - d) Impacto + Prazo de Execução (nota "somente RT e/ou Qualidade")
-  - e) Responsável — multi-select setores (checkboxes)
-  - f) Descrição da NC
-  - g) Ação Imediata
-  - h) Botão "Validar Ação Imediata (RT/Qualidade)"
-  - i) Ações Complementares + Responsável
-  - j) Evidências (textarea + anexo)
-  - k) Observações (textarea + anexo)
-  - l) Ação Final
-  - m) Botão "Validar Ação Final (RT/Qualidade)"
-  - n) NC Solucionada + Data de Encerramento
-  - o) Tabela de Liberação de Produtos (condicional)
-  - p) Seção CAPA com subseção DT (condicional)
+**Em `src/components/administrativo/rt/TrilhaAuditoriaSection.tsx`:**
+- Adicionar um novo `Select` de "Período" ao lado do filtro de módulos, com opções: "Todos", "6 meses", "9 meses", "12 meses"
+- Adicionar estado `filtroPeriodo` e lógica de filtragem por data (comparar `dataHora` com a data atual menos o período selecionado)
+- No select de módulos, filtrar para excluir "Liberação de Produtos" da lista `modulosUnicos`
 
-Usar `format` de `date-fns`, `toast` de `sonner`, `Checkbox`, `ShieldCheck`, `Paperclip` — mesmos imports do Qualidade.
+**Em `src/data/rtModules.ts`:**
+- No registro `audit-003`, alterar `modulo` de "Liberação de Produtos" para outro módulo válido (ex: "Gestão de NC")
 
 ### Arquivos alterados
-- `src/types/rt.ts`
+- `src/components/administrativo/rt/AlertasCriticosSection.tsx`
+- `src/components/administrativo/rt/DashboardKPIsSection.tsx`
+- `src/components/administrativo/rt/TrilhaAuditoriaSection.tsx`
 - `src/data/rtModules.ts`
-- `src/components/administrativo/rt/GestaoNCTab.tsx`
 
