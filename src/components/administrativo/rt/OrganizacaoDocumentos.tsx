@@ -49,6 +49,26 @@ export const OrganizacaoDocumentos = ({
   const [pastaEditando, setPastaEditando] = useState<string | null>(null);
   const [criarComoSubpasta, setCriarComoSubpasta] = useState(true);
 
+  // Filtering logic for search
+  const filterPastas = (pastas: PastaRT[], term: string): PastaRT[] => {
+    if (!term) return pastas;
+    const lower = term.toLowerCase();
+    return pastas
+      .map(pasta => {
+        const match = pasta.nome.toLowerCase().includes(lower) ||
+          (pasta.subtitulo?.toLowerCase().includes(lower)) ||
+          (pasta.codigo?.toLowerCase().includes(lower));
+        const filteredSubs = pasta.subPastas ? filterPastas(pasta.subPastas, term) : [];
+        if (match || filteredSubs.length > 0) {
+          return { ...pasta, subPastas: match ? pasta.subPastas : filteredSubs, expandido: true };
+        }
+        return null;
+      })
+      .filter(Boolean) as PastaRT[];
+  };
+
+  const pastasVisiveis = searchTerm ? filterPastas(estruturaPastas, searchTerm) : estruturaPastas;
+
   const toggleExpandirPasta = (pastaId: string) => {
     const atualizarPastas = (pastas: PastaRT[]): PastaRT[] => {
       return pastas.map(pasta => {
