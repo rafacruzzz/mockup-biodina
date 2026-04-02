@@ -166,6 +166,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [checklistAQT90, setChecklistAQT90] = useState<Record<string, boolean>>({});
   const [checklistDxH520, setChecklistDxH520] = useState<Record<string, boolean>>({});
   const [checklistExcelsiorAS, setChecklistExcelsiorAS] = useState<Record<string, boolean>>({});
+  const [checklistOsmoTech, setChecklistOsmoTech] = useState<Record<string, boolean>>({});
 
   const tiposOS: { value: TipoOS; label: string }[] = [
     { value: "suporte_operacional", label: "Suporte Operacional" },
@@ -180,6 +181,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     { value: "treinamento_usuario_aqt90", label: "Treinamento de Usuário: Modelo AQT90 FLEX - Radiometer" },
     { value: "treinamento_usuario_dxh520", label: "Treinamento de Usuário: DxH 520 – Beckman Coulter" },
     { value: "treinamento_usuario_excelsior_as", label: "Treinamento de Usuário: Excelsior AS" },
+    { value: "treinamento_usuario_osmotech", label: "Treinamento de Usuário: Osmômetro modelo OsmoTech" },
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
@@ -267,7 +269,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     }
 
     const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800" || t === "treinamento_usuario_aqt90" || t === "treinamento_usuario_dxh520" || t === "treinamento_usuario_excelsior_as"
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800" || t === "treinamento_usuario_aqt90" || t === "treinamento_usuario_dxh520" || t === "treinamento_usuario_excelsior_as" || t === "treinamento_usuario_osmotech"
     );
 
     if (ehTreinamento && listaParticipantes.length === 0) {
@@ -1691,6 +1693,42 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                 </CardContent>
               </Card>
             </div>
+          )}
+
+          {/* Checklist OsmoTech */}
+          {tiposSelecionados.includes("treinamento_usuario_osmotech") && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Conteúdo Programático do Treinamento</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {[
+                  { key: "caracteristicas_funcoes", label: "Características e funções externas do equipamento" },
+                  { key: "insumos_basicos", label: "Insumos básicos para o perfeito funcionamento do equipamento (padrões de calibração, kit ponteira e controle diário)" },
+                  { key: "interface_configuracao", label: "Características da interface/configuração" },
+                  { key: "calibracao_3pontos", label: "Calibração do equipamento com 03 pontos" },
+                  { key: "calibracao_pipeta", label: "Calibração e utilização da pipeta de 20 microlitros" },
+                  { key: "cadastro_usuarios", label: "Cadastro de usuários" },
+                  { key: "filtro_resultados", label: "Filtro de resultados" },
+                  { key: "estatisticas_resultados", label: "Estatísticas dos resultados" },
+                  { key: "exportacao_rede", label: "Exportação dos resultados via rede" },
+                  { key: "testes_amostras", label: "Testes com amostras" },
+                ].map((item) => (
+                  <div key={item.key} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`osmotech-${item.key}`}
+                      checked={!!checklistOsmoTech[item.key]}
+                      onCheckedChange={(checked) =>
+                        setChecklistOsmoTech((prev) => ({ ...prev, [item.key]: !!checked }))
+                      }
+                    />
+                    <Label htmlFor={`osmotech-${item.key}`} className="text-sm font-normal cursor-pointer">
+                      {item.label}
+                    </Label>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
           )}
 
           {/* Checklist Excelsior AS */}
