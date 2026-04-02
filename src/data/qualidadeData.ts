@@ -25,21 +25,9 @@ export const auditoriasMockadas: AuditoriaQualidade[] = [
     auditorResponsavel: 'Dr. Carlos Silva',
     resultadoGeral: 'Aprovado',
     pontosCriticos: [
-      {
-        id: '1',
-        descricao: 'Calibração de balanças',
-        status: 'Reaprovado'
-      },
-      {
-        id: '2',
-        descricao: 'Controle de temperatura da câmara fria',
-        status: 'Aprovado'
-      },
-      {
-        id: '3',
-        descricao: 'Documentação de processos',
-        status: 'Aprovado'
-      }
+      { id: '1', descricao: 'Calibração de balanças', status: 'Reaprovado' },
+      { id: '2', descricao: 'Controle de temperatura da câmara fria', status: 'Aprovado' },
+      { id: '3', descricao: 'Documentação de processos', status: 'Aprovado' }
     ],
     observacoes: 'Auditoria anual conforme ISO 9001'
   },
@@ -49,16 +37,8 @@ export const auditoriasMockadas: AuditoriaQualidade[] = [
     auditorResponsavel: 'Dra. Ana Paula Costa',
     resultadoGeral: 'Aprovado',
     pontosCriticos: [
-      {
-        id: '4',
-        descricao: 'Controle de estoque',
-        status: 'Aprovado'
-      },
-      {
-        id: '5',
-        descricao: 'Treinamento de equipe',
-        status: 'Aprovado'
-      }
+      { id: '4', descricao: 'Controle de estoque', status: 'Aprovado' },
+      { id: '5', descricao: 'Treinamento de equipe', status: 'Aprovado' }
     ]
   }
 ];
@@ -67,56 +47,17 @@ export const pesquisaSatisfacaoMockada: PesquisaSatisfacao = {
   percentualSatisfacao: 88,
   percentualLimite: 15,
   alertas: [
-    {
-      id: '1',
-      categoria: 'Tempo de Resposta',
-      percentual: 12,
-      descricao: '12% dos clientes insatisfeitos com o tempo de resposta'
-    },
-    {
-      id: '2',
-      categoria: 'Qualidade do Produto',
-      percentual: 8,
-      descricao: '8% de questionamentos sobre qualidade do produto'
-    },
-    {
-      id: '3',
-      categoria: 'Atendimento',
-      percentual: 5,
-      descricao: '5% de insatisfação com o atendimento'
-    }
+    { id: '1', categoria: 'Tempo de Resposta', percentual: 12, descricao: '12% dos clientes insatisfeitos com o tempo de resposta' },
+    { id: '2', categoria: 'Qualidade do Produto', percentual: 8, descricao: '8% de questionamentos sobre qualidade do produto' },
+    { id: '3', categoria: 'Atendimento', percentual: 5, descricao: '5% de insatisfação com o atendimento' }
   ],
   ultimaAtualizacao: new Date('2024-11-01')
 };
 
 export const rastreabilidadeMockada: RegistroRastreabilidade[] = [
-  {
-    id: '1',
-    lote: 'LOTE-20241115',
-    ordemServico: 'OS-4521',
-    tipoOS: 'Saída',
-    material: 'Matéria-Prima X',
-    dataHora: new Date('2024-11-15T14:30:00'),
-    responsavel: 'João Silva'
-  },
-  {
-    id: '2',
-    lote: 'LOTE-20241114',
-    ordemServico: 'OS-4520',
-    tipoOS: 'Entrada',
-    material: 'Reagente Y',
-    dataHora: new Date('2024-11-14T09:15:00'),
-    responsavel: 'Maria Santos'
-  },
-  {
-    id: '3',
-    lote: 'LOTE-20241113',
-    ordemServico: 'OS-4519',
-    tipoOS: 'Saída',
-    material: 'Produto Final Z',
-    dataHora: new Date('2024-11-13T16:45:00'),
-    responsavel: 'Pedro Costa'
-  }
+  { id: '1', lote: 'LOTE-20241115', ordemServico: 'OS-4521', tipoOS: 'Saída', material: 'Matéria-Prima X', dataHora: new Date('2024-11-15T14:30:00'), responsavel: 'João Silva' },
+  { id: '2', lote: 'LOTE-20241114', ordemServico: 'OS-4520', tipoOS: 'Entrada', material: 'Reagente Y', dataHora: new Date('2024-11-14T09:15:00'), responsavel: 'Maria Santos' },
+  { id: '3', lote: 'LOTE-20241113', ordemServico: 'OS-4519', tipoOS: 'Saída', material: 'Produto Final Z', dataHora: new Date('2024-11-13T16:45:00'), responsavel: 'Pedro Costa' }
 ];
 
 export const responsaveisNC = [
@@ -127,19 +68,93 @@ export const responsaveisNC = [
   'Carlos Eduardo'
 ];
 
+export const setoresEmpresa = [
+  'RT',
+  'Qualidade',
+  'DT',
+  'Comercial',
+  'RH',
+  'Importação',
+  'Estoque',
+  'Assessoria Científica',
+  'Assessoria Técnica',
+  'Compliance',
+  'Jurídico',
+  'TI',
+  'Financeiro'
+];
+
+export const fabricantesComUnidades = [
+  {
+    nome: 'MedTech Brasil',
+    unidades: ['Unidade São Paulo', 'Unidade Campinas', 'Unidade Manaus']
+  },
+  {
+    nome: 'BioEquip International',
+    unidades: ['Planta Principal - EUA', 'Planta México', 'Planta China']
+  },
+  {
+    nome: 'SurgiCare Ltda',
+    unidades: ['Fábrica Curitiba', 'Fábrica Belo Horizonte']
+  },
+  {
+    nome: 'LabTech Solutions',
+    unidades: ['Sede Alemanha', 'Filial Índia']
+  }
+];
+
+export const produtosMockNC = [
+  { codigo: 'PROD-001', marca: 'MedTech', modelo: 'MT-500', nomeFabricante: 'MedTech Brasil', referencia: 'REF-001', linhaProduto: 'Diagnóstico' },
+  { codigo: 'PROD-002', marca: 'BioEquip', modelo: 'BE-200', nomeFabricante: 'BioEquip International', referencia: 'REF-002', linhaProduto: 'Cirúrgico' },
+  { codigo: 'PROD-003', marca: 'SurgiCare', modelo: 'SC-100', nomeFabricante: 'SurgiCare Ltda', referencia: 'REF-003', linhaProduto: 'Implantes' },
+  { codigo: 'PROD-004', marca: 'LabTech', modelo: 'LT-300', nomeFabricante: 'LabTech Solutions', referencia: 'REF-004', linhaProduto: 'Laboratorial' },
+];
+
+export const equipamentosMockDT = [
+  { equipamentoId: 'eq-1', numeroSerie: 'SN-2024-0001', modelo: 'MT-500', marca: 'MedTech' },
+  { equipamentoId: 'eq-2', numeroSerie: 'SN-2024-0002', modelo: 'BE-200', marca: 'BioEquip' },
+  { equipamentoId: 'eq-3', numeroSerie: 'SN-2024-0003', modelo: 'SC-100', marca: 'SurgiCare' },
+];
+
 export const naoConformidadesMockadas: NaoConformidade[] = [
   {
     id: '1',
     numeroNC: 'NC-2024-001',
     origem: 'Auditoria',
     tipo: 'Material Não Conforme',
+    tipos: ['Produto'],
     impacto: 'Crítico',
     responsavel: 'João Silva',
+    responsaveis: ['RT', 'Qualidade', 'Estoque'],
     prazo: new Date('2024-11-20'),
     status: 'Em Análise',
     descricao: 'Material fora das especificações detectado no recebimento',
     acaoImediata: 'Bloqueio imediato do lote LOTE-20241115',
+    acaoImediataValidada: true,
+    acaoImediataValidadaPor: 'RT',
+    acaoImediataValidadaEm: '15/11/2024',
+    produtoCodigo: 'PROD-001',
+    produtoMarca: 'MedTech',
+    produtoModelo: 'MT-500',
+    produtoNomeFabricante: 'MedTech Brasil',
     dataCriacao: new Date('2024-11-15'),
+    produtosLiberacao: [
+      {
+        id: 'lib-1',
+        codigo: 'LIB-001',
+        referencia: 'REF-001',
+        nome: 'Equipamento MT-500',
+        modelo: 'MT-500',
+        fabricante: 'MedTech Brasil',
+        marca: 'MedTech',
+        linhaProduto: 'Diagnóstico',
+        apresentacao: ['primaria', 'secundaria'],
+        numeroSerieLote: 'LOTE-20241115',
+        status: 'Em análise',
+        liberadoRT: false,
+        dataLiberacao: undefined
+      }
+    ],
     capa: {
       id: 'capa-1',
       acaoPreventiva: 'Revisão do POP de Inspeção de Recebimento',
@@ -155,8 +170,10 @@ export const naoConformidadesMockadas: NaoConformidade[] = [
     numeroNC: 'NC-2024-002',
     origem: 'Pesquisa',
     tipo: 'Atendimento',
+    tipos: ['Processo/Operacional'],
     impacto: 'Moderado',
     responsavel: 'Maria Santos',
+    responsaveis: ['Comercial', 'Qualidade'],
     prazo: new Date('2024-11-25'),
     status: 'Aguardando CAPA',
     descricao: 'Reclamação de cliente sobre tempo de resposta',
@@ -177,8 +194,10 @@ export const naoConformidadesMockadas: NaoConformidade[] = [
     numeroNC: 'NC-2024-003',
     origem: 'Outro',
     tipo: 'Treinamento Falho',
+    tipos: ['Gestão'],
     impacto: 'Moderado',
     responsavel: 'Pedro Costa',
+    responsaveis: ['RH', 'RT'],
     prazo: new Date('2024-11-30'),
     status: 'Aberta',
     descricao: 'Colaborador executou procedimento sem seguir POP atualizado',
@@ -190,12 +209,16 @@ export const naoConformidadesMockadas: NaoConformidade[] = [
     numeroNC: 'NC-2024-004',
     origem: 'Auditoria',
     tipo: 'Material Não Conforme',
+    tipos: ['Fornecedor'],
     impacto: 'Leve',
     responsavel: 'Ana Lima',
+    responsaveis: ['Importação', 'Comercial'],
     prazo: new Date('2024-12-05'),
     status: 'Aberta',
     descricao: 'Identificação de lote com etiqueta ilegível',
     acaoImediata: 'Reidentificação imediata do lote',
+    fornecedorNomeFabricanteLegal: 'BioEquip International',
+    fornecedorUnidadeFabril: 'Planta Principal - EUA',
     dataCriacao: new Date('2024-11-14')
   },
   {
@@ -203,8 +226,10 @@ export const naoConformidadesMockadas: NaoConformidade[] = [
     numeroNC: 'NC-2024-005',
     origem: 'Pesquisa',
     tipo: 'Atendimento',
+    tipos: ['Legal/Regulatória'],
     impacto: 'Leve',
     responsavel: 'Carlos Eduardo',
+    responsaveis: ['RT', 'Compliance'],
     prazo: new Date('2024-12-10'),
     status: 'Aberta',
     descricao: 'Cliente relatou documentação incompleta na entrega',
@@ -235,71 +260,15 @@ export const dadosEficienciaCAPA: DadosEficienciaCAPA[] = [
 ];
 
 export const indicesQualidadeFornecedores: IndiceQualidadeFornecedor[] = [
-  {
-    id: '1',
-    nome: 'Fornecedor A',
-    indiceQualidade: 98,
-    materiaisNaoConformes: 2,
-    totalMateriais: 100
-  },
-  {
-    id: '2',
-    nome: 'Fornecedor B',
-    indiceQualidade: 92,
-    materiaisNaoConformes: 8,
-    totalMateriais: 100
-  },
-  {
-    id: '3',
-    nome: 'Fornecedor C',
-    indiceQualidade: 85,
-    materiaisNaoConformes: 15,
-    totalMateriais: 100
-  },
-  {
-    id: '4',
-    nome: 'Fornecedor D',
-    indiceQualidade: 95,
-    materiaisNaoConformes: 5,
-    totalMateriais: 100
-  }
+  { id: '1', nome: 'Fornecedor A', indiceQualidade: 98, materiaisNaoConformes: 2, totalMateriais: 100 },
+  { id: '2', nome: 'Fornecedor B', indiceQualidade: 92, materiaisNaoConformes: 8, totalMateriais: 100 },
+  { id: '3', nome: 'Fornecedor C', indiceQualidade: 85, materiaisNaoConformes: 15, totalMateriais: 100 },
+  { id: '4', nome: 'Fornecedor D', indiceQualidade: 95, materiaisNaoConformes: 5, totalMateriais: 100 }
 ];
 
 export const integracoesSensores: IntegracaoSensor[] = [
-  {
-    id: '1',
-    nome: 'Câmara Fria',
-    tipo: 'Temperatura',
-    status: 'OK',
-    valor: '-18',
-    unidade: '°C',
-    limiteMin: -20,
-    limiteMax: -15,
-    ultimaAtualizacao: new Date()
-  },
-  {
-    id: '2',
-    nome: 'Controle de Umidade',
-    tipo: 'Umidade',
-    status: 'Alerta',
-    valor: '75',
-    unidade: '%',
-    limiteMin: 40,
-    limiteMax: 70,
-    ultimaAtualizacao: new Date()
-  },
-  {
-    id: '3',
-    nome: 'Sistema de Logística',
-    tipo: 'Sistema',
-    status: 'OK',
-    ultimaAtualizacao: new Date()
-  },
-  {
-    id: '4',
-    nome: 'Alarme de Segurança',
-    tipo: 'Alarme',
-    status: 'Desativado',
-    ultimaAtualizacao: new Date()
-  }
+  { id: '1', nome: 'Câmara Fria', tipo: 'Temperatura', status: 'OK', valor: '-18', unidade: '°C', limiteMin: -20, limiteMax: -15, ultimaAtualizacao: new Date() },
+  { id: '2', nome: 'Controle de Umidade', tipo: 'Umidade', status: 'Alerta', valor: '75', unidade: '%', limiteMin: 40, limiteMax: 70, ultimaAtualizacao: new Date() },
+  { id: '3', nome: 'Sistema de Logística', tipo: 'Sistema', status: 'OK', ultimaAtualizacao: new Date() },
+  { id: '4', nome: 'Alarme de Segurança', tipo: 'Alarme', status: 'Desativado', ultimaAtualizacao: new Date() }
 ];

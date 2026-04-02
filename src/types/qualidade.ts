@@ -44,9 +44,51 @@ export interface RegistroRastreabilidade {
 
 export type OrigemNC = string;
 export type TipoNC = string;
+export type TipoNCEnum = 'Legal/Regulatória' | 'Processo/Operacional' | 'Produto' | 'Gestão' | 'Fornecedor' | 'Segurança/Meio Ambiente';
 export type ImpactoNC = 'Crítico' | 'Moderado' | 'Leve';
 export type StatusNC = 'Aberta' | 'Em Análise' | 'Aguardando CAPA' | 'Resolvida' | 'Fechada';
 export type StatusCAPA = 'Pendente' | 'Em Andamento' | 'Concluída';
+
+export interface ProdutoLiberacaoNC {
+  id: string;
+  codigo: string;
+  referencia: string;
+  nome: string;
+  modelo: string;
+  fabricante: string;
+  marca: string;
+  linhaProduto: string;
+  apresentacao: ('primaria' | 'secundaria' | 'terciaria')[];
+  numeroSerieLote: string;
+  status: string;
+  liberadoRT: boolean;
+  dataLiberacao?: string;
+}
+
+export interface EquipamentoCAPADT {
+  equipamentoId: string;
+  numeroSerie: string;
+  modelo: string;
+  marca: string;
+  dataAcaoPreventiva: string;
+  dataAcaoCorretiva: string;
+  descricaoCorretiva: string;
+  prazoFinal: string;
+  solucionado: 'Sim' | 'Não' | '';
+  responsavel: string;
+}
+
+export interface CAPADT {
+  clienteNome: string;
+  tipoCliente: string;
+  razaoSocial: string;
+  nomeFantasia: string;
+  cnpjCpf: string;
+  cinRg: string;
+  nomeMantenedor: string;
+  cnpjMantenedor: string;
+  equipamentos: EquipamentoCAPADT[];
+}
 
 export interface AcaoCAPA {
   id: string;
@@ -56,6 +98,7 @@ export interface AcaoCAPA {
   prazoFinal: Date;
   status: StatusCAPA;
   responsavel: string;
+  capaDT?: CAPADT;
 }
 
 export interface NaoConformidade {
@@ -63,19 +106,43 @@ export interface NaoConformidade {
   numeroNC: string;
   origem: OrigemNC;
   tipo: TipoNC;
+  tipos?: TipoNCEnum[];
   impacto: ImpactoNC;
   responsavel: string;
+  responsaveis?: string[];
   prazo: Date;
   status: StatusNC;
   descricao: string;
   acaoImediata?: string;
-  ncSolucionada?: string;
+  acaoImediataValidada?: boolean;
+  acaoImediataValidadaPor?: string;
+  acaoImediataValidadaEm?: string;
+  acoesComplementares?: string;
+  responsavelComplementar?: string;
+  evidenciasTexto?: string;
+  evidenciasArquivos?: File[];
+  observacoesArquivos?: File[];
   acaoFinal?: string;
+  acaoFinalValidada?: boolean;
+  acaoFinalValidadaPor?: string;
+  acaoFinalValidadaEm?: string;
+  ncSolucionada?: string;
+  dataEncerramento?: string;
   dataAcao?: string;
   observacoes?: string;
   capa?: AcaoCAPA;
   dataCriacao: Date;
   dataAtualizacao?: Date;
+  // Campos condicionais Produto
+  produtoCodigo?: string;
+  produtoMarca?: string;
+  produtoModelo?: string;
+  produtoNomeFabricante?: string;
+  // Campos condicionais Fornecedor
+  fornecedorNomeFabricanteLegal?: string;
+  fornecedorUnidadeFabril?: string;
+  // Tabela de liberação
+  produtosLiberacao?: ProdutoLiberacaoNC[];
 }
 
 // Tipos para Análise de Dados e Indicadores
