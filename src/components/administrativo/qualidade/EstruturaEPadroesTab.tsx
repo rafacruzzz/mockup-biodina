@@ -74,6 +74,7 @@ export const EstruturaEPadroesTab = () => {
   const [manuaisPastas, setManuaisPastas] = useState(estruturaInicial.manuais);
   const [popPastas, setPopPastas] = useState(estruturaInicial.pop);
   const [itPastas, setItPastas] = useState(estruturaInicial.instrucoesTrabalho);
+  const [especPastas, setEspecPastas] = useState(estruturaInicial.especificacoes);
 
   return (
     <div className="space-y-6">
