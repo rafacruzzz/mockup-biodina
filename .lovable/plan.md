@@ -1,56 +1,59 @@
 
 
-## Plano: Remover Liberação de Produtos, ajustar tipos de mudança e adicionar notas de integração
+## Plano: Replicar funcionalidades da NC do módulo Qualidade para o módulo RT
 
-### 1. Remover tabela "Liberação de Produtos" do módulo RT
+### Resumo
+Reescrever completamente o `GestaoNCTab` do módulo RT para ter a mesma estrutura e funcionalidades do `GestaoNCTab` do módulo Qualidade, adaptando imports e dados para usar os tipos/mocks do RT.
 
-**Em `src/components/administrativo/rt/DocumentacaoTab.tsx`:**
-- Remover import de `LiberacaoProdutosTable`
-- Remover import de `mockLiberacaoProdutos`
-- Remover import do tipo `LiberacaoProduto`
-- Remover estado `produtos` e o bloco `<LiberacaoProdutosTable />`
+### Alterações
 
-### 2. Ajustar tipos de mudança — remover C e E, reletrar
+#### 1. Atualizar tipos em `src/types/rt.ts`
 
-**Em `src/types/rt.ts`:**
-- Alterar `TipoMudanca` de `'A' | 'B' | 'C' | 'D' | 'E' | 'F'` para `'A' | 'B' | 'C' | 'D'`
-- A = Dados Empresariais, B = Dados Mestres de Produtos, C = Atualizações Regulatórias (ANVISA), D = Outros
+Expandir `NaoConformidadeRT` para incluir todos os campos que existem em `NaoConformidade` (qualidade):
+- `tipos: TipoNCEnumRT[]` (multi-select) — mesmos valores: Legal/Regulatória, Processo/Operacional, Produto, Gestão, Fornecedor, Segurança/Meio Ambiente
+- `responsaveis: string[]` (multi-select setores)
+- `acaoImediataValidada`, `acaoImediataValidadaPor`, `acaoImediataValidadaEm`
+- `acoesComplementares`, `responsavelComplementar`
+- `evidenciasTexto`, `evidenciasArquivos`
+- `acaoFinalValidada`, `acaoFinalValidadaPor`, `acaoFinalValidadaEm`
+- `dataEncerramento`
+- Campos condicionais Produto: `produtoCodigo`, `produtoMarca`, `produtoModelo`, `produtoNomeFabricante`
+- Campos condicionais Fornecedor: `fornecedorNomeFabricanteLegal`, `fornecedorUnidadeFabril`
+- `produtosLiberacao: ProdutoLiberacaoNC[]` (reutilizar tipo de qualidade)
+- Adicionar tipo `TipoNCEnumRT`
 
-**Em `src/components/administrativo/rt/ControleMudancasTable.tsx`:**
-- Atualizar `getTipoMudancaLabel` com as 4 opções reletradas (A-D)
+#### 2. Atualizar mocks em `src/data/rtModules.ts`
 
-**Em `src/components/administrativo/rt/NovaMudancaModal.tsx`:**
-- Remover opções C (Processos de Negócio) e E (Melhorias de Performance)
-- Reletrar D→C, F→D nas opções do Select e no display do SelectValue
+- Adicionar `setoresEmpresaRT` (mesma lista de setores)
+- Atualizar `naoConformidadesRTMockadas` para incluir os novos campos (`tipos`, `responsaveis`, etc.)
+- Exportar `fabricantesComUnidades` e `produtosMockNC` (ou reutilizar os de qualidadeData)
 
-**Em `src/data/rtModules.ts`:**
-- Atualizar mock de mudanças: remover a de tipo C, reletrar D→C
-- Atualizar `descricoesTipoMudanca` com as 4 chaves corretas
+#### 3. Reescrever `src/components/administrativo/rt/GestaoNCTab.tsx`
 
-### 3. Adicionar notas de integração (origem dos dados)
+Replicar toda a estrutura do modal do Qualidade:
+- **Tabela**: colunas Tipo(s) com badges multi-select, Responsável(eis) com badges
+- **Modal com todos os campos na mesma ordem**:
+  - a) Data + Origem (escrita livre)
+  - b) Tipo — multi-select checkboxes (6 opções)
+  - c) Campos condicionais Produto (autocomplete) e Fornecedor (selects cascata)
+  - d) Impacto + Prazo de Execução (nota "somente RT e/ou Qualidade")
+  - e) Responsável — multi-select setores (checkboxes)
+  - f) Descrição da NC
+  - g) Ação Imediata
+  - h) Botão "Validar Ação Imediata (RT/Qualidade)"
+  - i) Ações Complementares + Responsável
+  - j) Evidências (textarea + anexo)
+  - k) Observações (textarea + anexo)
+  - l) Ação Final
+  - m) Botão "Validar Ação Final (RT/Qualidade)"
+  - n) NC Solucionada + Data de Encerramento
+  - o) Tabela de Liberação de Produtos (condicional)
+  - p) Seção CAPA com subseção DT (condicional)
 
-**Em `src/components/administrativo/rt/ControleMudancasTable.tsx`:**
-- Substituir o texto de integração existente por uma nota mais completa:
-  - "A - Dados Empresariais": dados vindos do módulo Institucional
-  - "B - Dados Mestres de Produtos": dados vindos do módulo Regulatório
-  - "C - Atualizações Regulatórias": dados vindos do módulo Regulatório
-  - "D - Outros": registro manual
-
-**Em `src/components/administrativo/rt/ListaMestraSection.tsx`:**
-- Adicionar nota: "Os itens LTCAT, PCMSO e PGR são alimentados pelo módulo RH"
-
-**Em `src/components/administrativo/rt/TreinamentosSection.tsx`:**
-- Adicionar nota: "Seção alimentada pelos módulos RT e RH"
-
-**Em `src/components/administrativo/rt/DocumentacaoTab.tsx` (seção POP):**
-- Adicionar nota: "Alterações em POP são sincronizadas com a seção 'POP - Procedimentos Operacionais Padrão' de 'Estrutura e Padrões' do módulo Qualidade, e vice-versa"
+Usar `format` de `date-fns`, `toast` de `sonner`, `Checkbox`, `ShieldCheck`, `Paperclip` — mesmos imports do Qualidade.
 
 ### Arquivos alterados
 - `src/types/rt.ts`
 - `src/data/rtModules.ts`
-- `src/components/administrativo/rt/DocumentacaoTab.tsx`
-- `src/components/administrativo/rt/ControleMudancasTable.tsx`
-- `src/components/administrativo/rt/NovaMudancaModal.tsx`
-- `src/components/administrativo/rt/ListaMestraSection.tsx`
-- `src/components/administrativo/rt/TreinamentosSection.tsx`
+- `src/components/administrativo/rt/GestaoNCTab.tsx`
 
