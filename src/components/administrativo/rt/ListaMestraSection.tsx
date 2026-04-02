@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FileText, Upload, X, Search } from "lucide-react";
+import { FileText, Upload, X, Search, Info } from "lucide-react";
 import { ListaMestra, ArquivoRT, PastaRT } from "@/types/rt";
 import { OrganizacaoDocumentos } from "./OrganizacaoDocumentos";
 import { toast } from "@/components/ui/use-toast";
@@ -139,6 +139,13 @@ export const ListaMestraSection = ({
               Nenhum item encontrado para "{searchTerm}"
             </div>
           )}
+        </div>
+
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-4">
+          <p className="text-xs text-amber-700 flex items-center gap-1">
+            <Info className="h-3 w-3" />
+            <strong>Origem dos dados:</strong> Os itens LTCAT, PCMSO e PGR são alimentados pelo módulo RH.
+          </p>
         </div>
       </div>
     </div>

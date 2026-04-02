@@ -19,7 +19,7 @@ import { Info } from "lucide-react";
 export const DocumentacaoTab = () => {
   const [listaMestra, setListaMestra] = useState<ListaMestra>(mockListaMestra);
   const [documentacoes, setDocumentacoes] = useState<DocumentacaoRT[]>(mockDocumentacoes);
-  const [produtos, setProdutos] = useState<LiberacaoProduto[]>(mockLiberacaoProdutos);
+  const [mudancas, setMudancas] = useState<Mudanca[]>(mockMudancas);
   const [mudancas, setMudancas] = useState<Mudanca[]>(mockMudancas);
   const [treinamentosRealizados, setTreinamentosRealizados] = useState<Treinamento[]>(mockTreinamentosRealizados);
   const [treinamentosFuturos, setTreinamentosFuturos] = useState<Treinamento[]>(mockTreinamentosFuturos);
@@ -68,6 +68,13 @@ export const DocumentacaoTab = () => {
             searchTerm={buscaDocumentacao}
           />
 
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+            <p className="text-xs text-amber-700 flex items-center gap-1">
+              <Info className="h-3 w-3" />
+              <strong>Origem dos dados:</strong> Alterações em POP são sincronizadas com a seção "POP - Procedimentos Operacionais Padrão" de "Estrutura e Padrões" do módulo Qualidade, e vice-versa.
+            </p>
+          </div>
+
           <OrganizacaoDocumentos
             titulo="Legislações Vigentes Pertinentes"
             estruturaPastas={legDoc?.estruturaPastas || []}
@@ -77,10 +84,6 @@ export const DocumentacaoTab = () => {
         </div>
       </div>
 
-      <LiberacaoProdutosTable
-        produtos={produtos}
-        onProdutosChange={setProdutos}
-      />
 
       <ControleMudancasTable
         mudancas={mudancas}
