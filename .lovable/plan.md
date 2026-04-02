@@ -1,30 +1,21 @@
 
 
-## Plano: Adicionar aba "Rastreabilidade" ao módulo RT
+## Plano: Permitir criação de múltiplas pastas principais
 
-### Resumo
-Inserir a aba "Rastreabilidade" no módulo RT, acima das abas existentes (primeira posição), reutilizando o mesmo componente `RastreabilidadeTab` já usado no módulo Qualidade.
+### Problema
+Quando você clica em uma pasta para selecioná-la, o estado `pastaSelecionada` fica definido. Ao clicar em "Nova Pasta", ela é automaticamente criada como subpasta da pasta selecionada. Não existe forma de desselecionar a pasta e criar uma nova pasta na raiz.
 
-### Alterações em `src/pages/Administrativo.tsx`
+### Solução
+Adicionar ao modal "Nova Pasta" um checkbox/toggle para escolher se a nova pasta será criada **na raiz** ou **dentro da pasta selecionada**. Também permitir desselecionar uma pasta clicando nela novamente.
 
-**1. Adicionar estado inicial do `rtTab` para "rastreabilidade"** (ou manter o atual e só adicionar a nova aba)
+### Alterações em `src/components/administrativo/rt/OrganizacaoDocumentos.tsx`
 
-**2. Expandir o grid de tabs de `grid-cols-3` para `grid-cols-4`**
+**1. Toggle de desseleção**: ao clicar numa pasta já selecionada, desselecionar (`setPastaSelecionada(null)`).
 
-**3. Inserir novo `TabsTrigger` como primeiro item:**
-```
-<TabsTrigger value="rastreabilidade">RASTREABILIDADE</TabsTrigger>
-```
+**2. Opção no modal "Nova Pasta"**: quando há pasta selecionada, mostrar um checkbox "Criar dentro de: [nome da pasta]" (marcado por padrão). Se o usuário desmarcar, a pasta será criada na raiz.
 
-**4. Inserir novo `TabsContent` antes dos existentes:**
-```
-<TabsContent value="rastreabilidade">
-  <RastreabilidadeTab />  // mesmo componente de qualidade
-</TabsContent>
-```
-
-**5. Importar `RastreabilidadeTab` de `@/components/administrativo/qualidade/RastreabilidadeTab`** (já existente, reutilizado)
+**3. Atualizar `criarNovaPasta`**: usar o valor do checkbox (e não apenas `pastaSelecionada`) para decidir se cria na raiz ou como subpasta.
 
 ### Arquivo alterado
-- `src/pages/Administrativo.tsx`
+- `src/components/administrativo/rt/OrganizacaoDocumentos.tsx`
 
