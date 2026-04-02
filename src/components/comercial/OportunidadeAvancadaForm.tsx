@@ -691,7 +691,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-48">
+              <div className="w-36">
                 {index === 0 && <Label className="text-xs text-muted-foreground mb-1">Valor Estimado</Label>}
                 <Input
                   type="number"
@@ -703,6 +703,34 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                     setFormData({...formData, produtos: updated});
                   }}
                   placeholder="0,00"
+                  disabled={isReadOnlyMode()}
+                />
+              </div>
+              <div className="w-40">
+                {index === 0 && <Label className="text-xs text-muted-foreground mb-1">Qtd Equip. / Total Est.</Label>}
+                <Input
+                  type="number"
+                  value={item.quantidadeEquipamentos || 0}
+                  onChange={(e) => {
+                    const updated = [...formData.produtos];
+                    updated[index] = { ...updated[index], quantidadeEquipamentos: Number(e.target.value) };
+                    setFormData({...formData, produtos: updated});
+                  }}
+                  placeholder="0"
+                  disabled={isReadOnlyMode()}
+                />
+              </div>
+              <div className="w-40">
+                {index === 0 && <Label className="text-xs text-muted-foreground mb-1">Qtd Exames / Total Est.</Label>}
+                <Input
+                  type="number"
+                  value={item.quantidadeExames || 0}
+                  onChange={(e) => {
+                    const updated = [...formData.produtos];
+                    updated[index] = { ...updated[index], quantidadeExames: Number(e.target.value) };
+                    setFormData({...formData, produtos: updated});
+                  }}
+                  placeholder="0"
                   disabled={isReadOnlyMode()}
                 />
               </div>
@@ -730,7 +758,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               onClick={() => {
                 setFormData({
                   ...formData,
-                  produtos: [...formData.produtos, { id: crypto.randomUUID(), produto: '', valorEstimado: 0 }]
+                  produtos: [...formData.produtos, { id: crypto.randomUUID(), produto: '', valorEstimado: 0, quantidadeEquipamentos: 0, quantidadeExames: 0 }]
                 });
               }}
               className="mt-1"
@@ -738,30 +766,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               <Plus className="h-4 w-4 mr-1" /> Adicionar Produto
             </Button>
           )}
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="quantidadeEquipamentos">Quantidade Equipamentos / Total Estimado</Label>
-            <Input
-              id="quantidadeEquipamentos"
-              type="number"
-              value={formData.quantidadeEquipamentos}
-              onChange={(e) => setFormData({...formData, quantidadeEquipamentos: Number(e.target.value)})}
-              placeholder="0"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="quantidadeExames">Quantidade Exames / Total Estimado</Label>
-            <Input
-              id="quantidadeExames"
-              type="number"
-              value={formData.quantidadeExames}
-              onChange={(e) => setFormData({...formData, quantidadeExames: Number(e.target.value)})}
-              placeholder="0"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
         </div>
 
         <div>
