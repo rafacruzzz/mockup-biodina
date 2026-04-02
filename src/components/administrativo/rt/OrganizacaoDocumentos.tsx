@@ -30,12 +30,14 @@ interface OrganizacaoDocumentosProps {
   titulo: string;
   estruturaPastas: PastaRT[];
   onEstruturaChange: (pastas: PastaRT[]) => void;
+  searchTerm?: string;
 }
 
 export const OrganizacaoDocumentos = ({
   titulo,
   estruturaPastas,
-  onEstruturaChange
+  onEstruturaChange,
+  searchTerm
 }: OrganizacaoDocumentosProps) => {
   const [pastaSelecionada, setPastaSelecionada] = useState<string | null>(null);
   const [showNovaPastaDialog, setShowNovaPastaDialog] = useState(false);
