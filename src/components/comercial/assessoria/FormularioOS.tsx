@@ -163,6 +163,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [checklistABL9, setChecklistABL9] = useState<Record<string, boolean>>({});
   const [checklistABL90, setChecklistABL90] = useState<Record<string, boolean>>({});
   const [checklistABL800, setChecklistABL800] = useState<Record<string, boolean>>({});
+  const [checklistAQT90, setChecklistAQT90] = useState<Record<string, boolean>>({});
 
   const tiposOS: { value: TipoOS; label: string }[] = [
     { value: "suporte_operacional", label: "Suporte Operacional" },
@@ -174,6 +175,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     { value: "treinamento_usuario_abl9", label: "Treinamento de Usuário: Modelo ABL9 - Radiometer" },
     { value: "treinamento_usuario_abl90", label: "Treinamento de Usuário: Modelo ABL90 FLEX PLUS - Radiometer" },
     { value: "treinamento_usuario_abl800", label: "Treinamento de Usuário: Modelo ABL800 - Radiometer" },
+    { value: "treinamento_usuario_aqt90", label: "Treinamento de Usuário: Modelo AQT90 FLEX - Radiometer" },
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
@@ -261,7 +263,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     }
 
     const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800"
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800" || t === "treinamento_usuario_aqt90"
     );
 
     if (ehTreinamento && listaParticipantes.length === 0) {
@@ -720,7 +722,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       </div>
 
       {/* Registro de Treinamento */}
-      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800") && (
+      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800" || t === "treinamento_usuario_aqt90") && (
         <>
           {/* Checklist MeterOmega */}
           {tiposSelecionados.includes("treinamento_usuario_meteromega") && (
@@ -1246,6 +1248,191 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                         }
                       />
                       <Label htmlFor={`abl800-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Checklist AQT90 FLEX - Radiometer */}
+          {tiposSelecionados.includes("treinamento_usuario_aqt90") && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Apresentação Geral</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "entrada_amostras", label: "Entrada de amostras" },
+                    { key: "codigo_barras", label: "Código de barras" },
+                    { key: "impressora", label: "Impressora" },
+                    { key: "cartucho_teste", label: "Cartucho teste" },
+                    { key: "cartucho_reagente", label: "Cartucho de reagente" },
+                    { key: "ligar_desligar", label: "Ligar e desligar o analisador" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`aqt90-${item.key}`}
+                        checked={!!checklistAQT90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistAQT90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`aqt90-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Tela</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "layout", label: "Apresentação do layout" },
+                    { key: "semaforo", label: "Interpretação do semáforo" },
+                    { key: "mensagens", label: "Interpretação de mensagens" },
+                    { key: "registro_dados", label: "Uso do registro de dados" },
+                    { key: "tutorial", label: "Uso do tutorial" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`aqt90-${item.key}`}
+                        checked={!!checklistAQT90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistAQT90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`aqt90-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Análise de Amostra</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "analise_amostra", label: "Análise de amostra" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`aqt90-${item.key}`}
+                        checked={!!checklistAQT90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistAQT90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`aqt90-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Trocas</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "cartucho_solucoes", label: "Cartucho de soluções" },
+                    { key: "cartucho_testes", label: "Cartucho de testes" },
+                    { key: "papel_impressora", label: "Papel da impressora" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`aqt90-${item.key}`}
+                        checked={!!checklistAQT90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistAQT90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`aqt90-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Calibração</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "calibracao_lote", label: "Calibração de um novo lote de testes" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`aqt90-${item.key}`}
+                        checked={!!checklistAQT90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistAQT90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`aqt90-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Limpeza</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "tubo_cartucho_limpeza", label: "Uso do tubo e cartucho limpeza" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`aqt90-${item.key}`}
+                        checked={!!checklistAQT90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistAQT90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`aqt90-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Controle de Qualidade</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "cadastro_lote", label: "Cadastro de novo lote" },
+                    { key: "uso_cq", label: "Uso do controle de qualidade" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`aqt90-${item.key}`}
+                        checked={!!checklistAQT90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistAQT90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`aqt90-${item.key}`} className="text-sm font-normal cursor-pointer">
                         {item.label}
                       </Label>
                     </div>
