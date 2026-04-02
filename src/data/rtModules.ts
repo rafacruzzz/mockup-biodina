@@ -527,7 +527,7 @@ export const alertasRTMockados: AlertaRT[] = [
       id: `alerta-capa-${nc.capa.id}`,
       tipo: 'capa_atrasado' as const,
       titulo: 'CAPA Atrasado',
-      mensagem: `${nc.capa.id} com prazo vencido em ${nc.capa.prazoFinal}. Responsável: ${nc.capa.responsavel}`,
+      mensagem: `${nc.capa.id} com prazo vencido em ${nc.capa.prazoFinal.toLocaleDateString('pt-BR')}. Responsável: ${nc.capa.responsavel}`,
       prioridade: 'alta' as const,
       dataCriacao: new Date().toISOString().split('T')[0],
       lido: false,
