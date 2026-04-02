@@ -1,41 +1,49 @@
 
 
-## Plano: Ajustes no Monitoramento e Auditoria do módulo RT
+## Plano: Reestruturar Cadastro de Kits
 
-### 1. Alertas Criticos - Adicionar notas de origem dos dados
+### Problema atual
+O KitModal usa um conceito de "Slots" com agrupamentos de produtos. O usuário precisa de uma estrutura mais simples e direta: uma tabela flat de produtos com colunas para Codigo, Nome (Anvisa), checkbox Sim/Nao (para marcar se entra no pedido), Quantidade, e seletor de quantidade de itens. Deve ser possivel adicionar novos produtos ao kit.
 
-**Em `src/components/administrativo/rt/AlertasCriticosSection.tsx`:**
-- Adicionar nota informativa (amber box com icone Info): "Origem dos dados: Não Conformidades (RT e Qualidade), CAPA (Qualidade) e Coleta de Dados e Inspeção (Qualidade)"
+### Nova estrutura do Kit (conforme imagens de referencia)
 
-### 2. Dashboard de KPIs - Ajustar descrições e lógica
+Cada kit terá:
+- **Informações basicas**: Nome, SKU, Descrição, Preço Base (manter)
+- **Tabela de Produtos do Kit** (substituir toda a logica de Slots):
+  - Coluna "Código do Produto"
+  - Coluna "Nome do Produto (Anvisa)"
+  - Coluna "Incluir no Pedido" (checkbox sim/nao)
+  - Coluna "Quantidade" (display da quantidade cadastrada)
+  - Coluna "Qtd. Itens" (input number para selecionar quantidade de itens)
+  - Botão "Adicionar Produto" para vincular novos produtos da base cadastrada
+  - Botão de remover produto (trash icon)
 
-**Em `src/components/administrativo/rt/DashboardKPIsSection.tsx`:**
-- No card "Índice de Performance": alterar texto explicativo para "Índice calculado com base na proporção de manutenções preventivas vs. corretivas (quanto mais preventivas e menos corretivas, melhor)"
-- Adicionar nota: "Os índices de performance estão relacionados aos CAPAs"
+### Alterações
 
-### 3. KPIs Indicadores de Performance - Adicionar notas de origem
+**Em `src/components/cadastro/KitModal.tsx`:**
 
-**Em `src/components/administrativo/rt/DashboardKPIsSection.tsx`:**
-- **Qualidade do Produto:**
-  - TNC: nota "Origem: N° de Não Conformidades"
-  - Acuracidade do Laudo/Certificado: nota "Origem: verificação se a empresa possui AFE"
-  - Adesão às Boas Práticas: nota "Origem: verificação se fornecedores e empresa possuem BP"
-- **Qualidade da Entrega:** nota geral "Origem: módulo Estoque"
-- **Qualidade do Suporte:** nota geral "Origem: módulos DT, Qualidade e Comercial"
+1. **Substituir interfaces**: remover `Slot`, `SlotProduto`. Criar `KitProduto` com campos: `id`, `codigo`, `nome`, `incluirNoPedido` (boolean), `quantidade` (string), `qtdItens` (string)
 
-### 4. Trilha de Auditoria - Adicionar filtro de Período e remover "Liberação de Produtos"
+2. **Substituir `slots` por `produtos`** no `KitFormData`: `produtos: KitProduto[]`
 
-**Em `src/components/administrativo/rt/TrilhaAuditoriaSection.tsx`:**
-- Adicionar um novo `Select` de "Período" ao lado do filtro de módulos, com opções: "Todos", "6 meses", "9 meses", "12 meses"
-- Adicionar estado `filtroPeriodo` e lógica de filtragem por data (comparar `dataHora` com a data atual menos o período selecionado)
-- No select de módulos, filtrar para excluir "Liberação de Produtos" da lista `modulosUnicos`
+3. **Remover toda logica de slots**: `addSlot`, `removeSlot`, `updateSlot`, `toggleSlotExpand`, `toggleProductSelector`, `addProductToSlot`, `removeProductFromSlot`
 
-**Em `src/data/rtModules.ts`:**
-- No registro `audit-003`, alterar `modulo` de "Liberação de Produtos" para outro módulo válido (ex: "Gestão de NC")
+4. **Nova logica**:
+   - `addProduto(product)`: adiciona produto da base ao kit
+   - `removeProduto(id)`: remove produto do kit
+   - `updateProduto(id, field, value)`: atualiza campo do produto (checkbox, qtd)
+   - `showProductSelector` / `toggleProductSelector`: controla visibilidade do seletor
 
-### Arquivos alterados
-- `src/components/administrativo/rt/AlertasCriticosSection.tsx`
-- `src/components/administrativo/rt/DashboardKPIsSection.tsx`
-- `src/components/administrativo/rt/TrilhaAuditoriaSection.tsx`
-- `src/data/rtModules.ts`
+5. **Nova UI**: substituir cards de slots por uma `Table` com as colunas da imagem de referencia:
+   - `TableHeader`: Código | Nome do Produto (Anvisa) | Incluir no Pedido | Quantidade | Qtd. Itens | Ações
+   - `TableBody`: uma row por produto com inputs inline
+   - Estado vazio com mensagem "Nenhum produto adicionado ao kit"
+   - Botão "Adicionar Produto" abre o `ProductSelector` (reutilizar com ajustes para mostrar codigo)
+
+6. **Atualizar `ProductSelector`**: mostrar codigo do produto alem do nome; ao selecionar, retornar `{ id, codigo, nome }`
+
+7. **Resumo**: atualizar para mostrar total de produtos e total marcados para pedido
+
+### Arquivo alterado
+- `src/components/cadastro/KitModal.tsx`
 
