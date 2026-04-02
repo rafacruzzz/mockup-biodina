@@ -767,30 +767,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             </Button>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="quantidadeEquipamentos">Quantidade Equipamentos / Total Estimado</Label>
-            <Input
-              id="quantidadeEquipamentos"
-              type="number"
-              value={formData.quantidadeEquipamentos}
-              onChange={(e) => setFormData({...formData, quantidadeEquipamentos: Number(e.target.value)})}
-              placeholder="0"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-          <div>
-            <Label htmlFor="quantidadeExames">Quantidade Exames / Total Estimado</Label>
-            <Input
-              id="quantidadeExames"
-              type="number"
-              value={formData.quantidadeExames}
-              onChange={(e) => setFormData({...formData, quantidadeExames: Number(e.target.value)})}
-              placeholder="0"
-              disabled={isReadOnlyMode()}
-            />
-          </div>
-        </div>
 
         <div>
           <Label htmlFor="haviaContratoAnterior">Fornecedor anterior?</Label>
