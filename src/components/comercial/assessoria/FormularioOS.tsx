@@ -167,6 +167,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     { value: "treinamento_inicial", label: "Treinamento Inicial" },
     { value: "treinamento_nova_equipe", label: "Treinamento de Nova Equipe" },
     { value: "treinamento_usuario_meteromega", label: "Treinamento de Usuário: Modelo MeterOmega" },
+    { value: "treinamento_usuario_setmedikal", label: "Treinamento de Usuário: Modelo SET Medikal" },
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
