@@ -59,24 +59,6 @@ export const ListaMestraSection = ({
     });
   };
 
-  const handleItemCodigoChange = (itemId: string, codigo: string) => {
-    onListaMestraChange({
-      ...listaMestra,
-      itens: listaMestra.itens.map(item =>
-        item.id === itemId ? { ...item, codigo } : item
-      )
-    });
-  };
-
-  const handleItemDataChange = (itemId: string, data: string) => {
-    onListaMestraChange({
-      ...listaMestra,
-      itens: listaMestra.itens.map(item =>
-        item.id === itemId ? { ...item, data } : item
-      )
-    });
-  };
-
   return (
     <div className="space-y-6">
       <div>
@@ -131,38 +113,6 @@ export const ListaMestraSection = ({
                 estruturaPastas={item.estruturaPastas}
                 onEstruturaChange={(pastas) => handleItemEstruturaChange(item.id, pastas)}
               />
-              
-              {/* Campos Código e Data abaixo do card */}
-              <Card className="mt-2 border-t-0 rounded-t-none">
-                <CardContent className="py-3">
-                  <div className="flex gap-6">
-                    <div className="flex items-center gap-2">
-                      <Label htmlFor={`codigo-${item.id}`} className="text-sm font-medium whitespace-nowrap">
-                        Código:
-                      </Label>
-                      <Input
-                        id={`codigo-${item.id}`}
-                        value={item.codigo || ""}
-                        onChange={(e) => handleItemCodigoChange(item.id, e.target.value)}
-                        placeholder="Ex: DOC-001"
-                        className="w-40 h-8"
-                      />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Label htmlFor={`data-${item.id}`} className="text-sm font-medium whitespace-nowrap">
-                        Data:
-                      </Label>
-                      <Input
-                        id={`data-${item.id}`}
-                        type="date"
-                        value={item.data || ""}
-                        onChange={(e) => handleItemDataChange(item.id, e.target.value)}
-                        className="w-40 h-8"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           ))}
         </div>

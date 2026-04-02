@@ -442,6 +442,26 @@ export const OrganizacaoDocumentos = ({
                   placeholder="Digite um subtítulo descritivo"
                 />
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="edit-codigo-pasta">Código (opcional)</Label>
+                  <Input
+                    id="edit-codigo-pasta"
+                    value={codigoPasta}
+                    onChange={(e) => setCodigoPasta(e.target.value)}
+                    placeholder="Ex: DOC-001"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-data-pasta">Data (opcional)</Label>
+                  <Input
+                    id="edit-data-pasta"
+                    type="date"
+                    value={dataPasta}
+                    onChange={(e) => setDataPasta(e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowEditarPastaDialog(false)}>
