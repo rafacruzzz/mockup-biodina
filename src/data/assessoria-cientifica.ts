@@ -596,7 +596,8 @@ export const getTipoOSLabel = (tipo: TipoOS): string => {
     treinamento_usuario_meteromega: "Treinamento de Usuário: Modelo MeterOmega",
     treinamento_usuario_setmedikal: "Treinamento de Usuário: Modelo SET Medikal",
     treinamento_usuario_abl9: "Treinamento de Usuário: Modelo ABL9 - Radiometer",
-    treinamento_usuario_abl90: "Treinamento de Usuário: Modelo ABL90 FLEX PLUS - Radiometer"
+    treinamento_usuario_abl90: "Treinamento de Usuário: Modelo ABL90 FLEX PLUS - Radiometer",
+    treinamento_usuario_abl800: "Treinamento de Usuário: Modelo ABL800 - Radiometer"
   };
   return labels[tipo];
 };
@@ -611,7 +612,8 @@ export const getTipoOSIcon = (tipo: TipoOS): string => {
     treinamento_usuario_meteromega: "🧪",
     treinamento_usuario_setmedikal: "🧪",
     treinamento_usuario_abl9: "🔬",
-    treinamento_usuario_abl90: "🔬"
+    treinamento_usuario_abl90: "🔬",
+    treinamento_usuario_abl800: "🔬"
   };
   return icons[tipo];
 };
