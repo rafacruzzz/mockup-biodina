@@ -164,6 +164,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [checklistABL90, setChecklistABL90] = useState<Record<string, boolean>>({});
   const [checklistABL800, setChecklistABL800] = useState<Record<string, boolean>>({});
   const [checklistAQT90, setChecklistAQT90] = useState<Record<string, boolean>>({});
+  const [checklistDxH520, setChecklistDxH520] = useState<Record<string, boolean>>({});
 
   const tiposOS: { value: TipoOS; label: string }[] = [
     { value: "suporte_operacional", label: "Suporte Operacional" },
@@ -176,6 +177,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     { value: "treinamento_usuario_abl90", label: "Treinamento de Usuário: Modelo ABL90 FLEX PLUS - Radiometer" },
     { value: "treinamento_usuario_abl800", label: "Treinamento de Usuário: Modelo ABL800 - Radiometer" },
     { value: "treinamento_usuario_aqt90", label: "Treinamento de Usuário: Modelo AQT90 FLEX - Radiometer" },
+    { value: "treinamento_usuario_dxh520", label: "Treinamento de Usuário: DxH 520 – Beckman Coulter" },
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
@@ -263,7 +265,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     }
 
     const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800" || t === "treinamento_usuario_aqt90"
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800" || t === "treinamento_usuario_aqt90" || t === "treinamento_usuario_dxh520"
     );
 
     if (ehTreinamento && listaParticipantes.length === 0) {
@@ -722,7 +724,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       </div>
 
       {/* Registro de Treinamento */}
-      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800" || t === "treinamento_usuario_aqt90") && (
+      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800" || t === "treinamento_usuario_aqt90" || t === "treinamento_usuario_dxh520") && (
         <>
           {/* Checklist MeterOmega */}
           {tiposSelecionados.includes("treinamento_usuario_meteromega") && (
@@ -1248,6 +1250,190 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                         }
                       />
                       <Label htmlFor={`abl800-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Checklist DxH 520 – Beckman Coulter */}
+          {tiposSelecionados.includes("treinamento_usuario_dxh520") && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Apresentação Geral</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "entrada_amostras", label: "Entrada de amostras (modo aberto/fechado)" },
+                    { key: "codigo_barras", label: "Código de barras" },
+                    { key: "impressora", label: "Impressora" },
+                    { key: "entrada_reagentes", label: "Entrada de reagentes" },
+                    { key: "ligar_desligar", label: "Ligar e desligar o analisador" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`dxh520-${item.key}`}
+                        checked={!!checklistDxH520[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistDxH520((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`dxh520-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Trocas</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "reagentes_com_sem_barras", label: "Reagentes com código de barras e sem código de barras" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`dxh520-${item.key}`}
+                        checked={!!checklistDxH520[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistDxH520((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`dxh520-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Controle de Qualidade</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "utilizacao_cq", label: "Utilização do controle de qualidade" },
+                    { key: "configuracao_cq", label: "Configuração do controle de qualidade" },
+                    { key: "avaliacao_grafico", label: "Avaliação gráfico diário" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`dxh520-${item.key}`}
+                        checked={!!checklistDxH520[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistDxH520((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`dxh520-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Calibrações</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "config_calibrador", label: "Configuração de um novo calibrador" },
+                    { key: "realizar_calibracao", label: "Realizar calibração" },
+                    { key: "validar_calibracao", label: "Validar calibração" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`dxh520-${item.key}`}
+                        checked={!!checklistDxH520[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistDxH520((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`dxh520-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Processamento de Amostra</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "inserir_amostra", label: "Inserir amostra" },
+                    { key: "resultado", label: "Resultado" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`dxh520-${item.key}`}
+                        checked={!!checklistDxH520[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistDxH520((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`dxh520-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Manutenções</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "verificacoes_diarias", label: "Verificações diárias (encerramento e contagem de fundo)" },
+                    { key: "limpeza_filtro_wbc", label: "Limpeza do filtro de WBC (mensal)" },
+                    { key: "ciclo_cloro", label: "Ciclo de cloro" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`dxh520-${item.key}`}
+                        checked={!!checklistDxH520[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistDxH520((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`dxh520-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Configurações</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "config_acessos", label: "Configuração de acessos" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`dxh520-${item.key}`}
+                        checked={!!checklistDxH520[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistDxH520((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`dxh520-${item.key}`} className="text-sm font-normal cursor-pointer">
                         {item.label}
                       </Label>
                     </div>
