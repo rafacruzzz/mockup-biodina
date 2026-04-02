@@ -19,7 +19,8 @@ export type TipoOS =
   | 'treinamento_usuario_abl800'
   | 'treinamento_usuario_aqt90'
   | 'treinamento_usuario_dxh520'
-  | 'treinamento_usuario_excelsior_as';
+  | 'treinamento_usuario_excelsior_as'
+  | 'treinamento_usuario_osmotech';
 
 export type DepartamentoOS = 'Assessoria Científica' | 'Departamento Técnico';
 
