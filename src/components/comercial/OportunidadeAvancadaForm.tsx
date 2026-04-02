@@ -822,13 +822,12 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           />
         </div>
 
-        {/* Botões de Solicitação */}
-        <div className="flex gap-3 flex-wrap">
+        {/* Botão Solicitar Análise da Assessoria Científica */}
+        <div>
           <Button
             variant={solicitouAnaliseCientifica ? "secondary" : "outline"}
             onClick={() => {
               setSolicitouAnaliseCientifica(true);
-              // Persistir no mock data para que a Assessoria Científica veja
               if (oportunidade?.id) {
                 const lic = licitacoes.find(l => l.id === oportunidade.id);
                 if (lic) {
@@ -843,42 +842,6 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           >
             <FlaskConical className="h-4 w-4" />
             {solicitouAnaliseCientifica ? "✓ Análise Científica Solicitada" : "Solicitar Análise da Assessoria Científica"}
-          </Button>
-          <Button
-            variant={solicitouEsclarecimento ? "secondary" : "outline"}
-            onClick={() => {
-              setSolicitouEsclarecimento(true);
-              toast({ title: "Solicitação enviada", description: "Pedido de Esclarecimento enviado à Análise Jurídica." });
-            }}
-            disabled={isReadOnlyMode() || solicitouEsclarecimento}
-            className="gap-2"
-          >
-            <Scale className="h-4 w-4" />
-            {solicitouEsclarecimento ? "✓ Esclarecimento Solicitado" : "Solicitar Análise Jurídica - Pedido de Esclarecimento"}
-          </Button>
-          <Button
-            variant={solicitouImpugnacao ? "secondary" : "outline"}
-            onClick={() => {
-              setSolicitouImpugnacao(true);
-              toast({ title: "Solicitação enviada", description: "Impugnação do Edital enviada à Análise Jurídica." });
-            }}
-            disabled={isReadOnlyMode() || solicitouImpugnacao}
-            className="gap-2"
-          >
-            <Scale className="h-4 w-4" />
-            {solicitouImpugnacao ? "✓ Impugnação Solicitada" : "Solicitar Análise Jurídica - Impugnação do Edital"}
-          </Button>
-          <Button
-            variant={solicitouAnaliseGerencial ? "secondary" : "outline"}
-            onClick={() => {
-              setSolicitouAnaliseGerencial(true);
-              toast({ title: "Solicitação enviada", description: "Análise Gerencial solicitada com sucesso." });
-            }}
-            disabled={isReadOnlyMode() || solicitouAnaliseGerencial}
-            className="gap-2"
-          >
-            <Briefcase className="h-4 w-4" />
-            {solicitouAnaliseGerencial ? "✓ Análise Gerencial Solicitada" : "Solicitar Análise Gerencial"}
           </Button>
         </div>
 
@@ -908,6 +871,47 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             )}
           </div>
         )}
+
+        {/* Análise Técnica (read-only) */}
+        <div className="space-y-2">
+          <Label htmlFor="analiseTecnicaDG">Análise Técnica</Label>
+          <Textarea
+            id="analiseTecnicaDG"
+            value={formData.analiseTecnica}
+            readOnly
+            placeholder="Preenchido pela Assessoria Científica (aba AC)"
+            rows={4}
+            className="bg-muted/50"
+          />
+        </div>
+
+        {/* Botões de Análise Jurídica */}
+        <div className="flex gap-3 flex-wrap">
+          <Button
+            variant={solicitouEsclarecimento ? "secondary" : "outline"}
+            onClick={() => {
+              setSolicitouEsclarecimento(true);
+              toast({ title: "Solicitação enviada", description: "Pedido de Esclarecimento enviado à Análise Jurídica." });
+            }}
+            disabled={isReadOnlyMode() || solicitouEsclarecimento}
+            className="gap-2"
+          >
+            <Scale className="h-4 w-4" />
+            {solicitouEsclarecimento ? "✓ Esclarecimento Solicitado" : "Solicitar Análise Jurídica - Pedido de Esclarecimento"}
+          </Button>
+          <Button
+            variant={solicitouImpugnacao ? "secondary" : "outline"}
+            onClick={() => {
+              setSolicitouImpugnacao(true);
+              toast({ title: "Solicitação enviada", description: "Impugnação do Edital enviada à Análise Jurídica." });
+            }}
+            disabled={isReadOnlyMode() || solicitouImpugnacao}
+            className="gap-2"
+          >
+            <Scale className="h-4 w-4" />
+            {solicitouImpugnacao ? "✓ Impugnação Solicitada" : "Solicitar Análise Jurídica - Impugnação do Edital"}
+          </Button>
+        </div>
 
         {/* Pedido de Esclarecimento (read-only, só aparece após solicitar) */}
         {solicitouEsclarecimento && (
