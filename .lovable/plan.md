@@ -1,54 +1,38 @@
 
 
-## Plano: Adicionar tipo de OS "Treinamento de Usuário: DxH 520 – Beckman Coulter"
+## Plano: Adicionar tipo de OS "Treinamento de Usuário: Excelsior AS"
 
-Seguindo o mesmo padrão dos demais treinamentos, com 7 categorias de checklist.
+Seguindo o mesmo padrão dos demais treinamentos, mas com uma estrutura diferente: 14 itens de checklist em um layout de cards por categoria. Como os itens não se agrupam em categorias claras (são todos tópicos independentes do equipamento), serão organizados em um único card "Conteúdo Programático do Treinamento".
 
 ### Alterações
 
 **1. `src/types/assessoria-cientifica.ts`**
-- Adicionar `'treinamento_usuario_dxh520'` ao type `TipoOS`
+- Adicionar `'treinamento_usuario_excelsior_as'` ao type `TipoOS`
 
 **2. `src/data/assessoria-cientifica.ts`**
-- Adicionar label `"Treinamento de Usuário: DxH 520 – Beckman Coulter"` e ícone `"🔬"`
+- Adicionar label `"Treinamento de Usuário: Excelsior AS"` e ícone `"🔬"`
 
 **3. `src/components/comercial/assessoria/FormularioOS.tsx`**
 - Adicionar opção no array `tiposOS`
 - Incluir nas condições de `ehTreinamento` (participantes, assinaturas, certificado)
-- Novo estado `checklistDxH520` (Record<string, boolean>)
-- Bloco condicional com cards de checkboxes:
+- Novo estado `checklistExcelsiorAS` (Record<string, boolean>)
+- Bloco condicional com checklist de checkboxes (14 itens):
 
-**Card "Apresentação Geral":**
-- Entrada de amostras (modo aberto/fechado)
-- Código de barras
-- Impressora
-- Entrada de reagentes
-- Ligar e desligar o analisador
-
-**Card "Trocas":**
-- Reagentes com código de barras e sem código de barras
-
-**Card "Controle de Qualidade":**
-- Utilização do controle de qualidade
-- Configuração do controle de qualidade
-- Avaliação gráfico diário
-
-**Card "Calibrações":**
-- Configuração de um novo calibrador
-- Realizar calibração
-- Validar calibração
-
-**Card "Processamento de Amostra":**
-- Inserir amostra
-- Resultado
-
-**Card "Manutenções":**
-- Verificações diárias (encerramento e contagem de fundo)
-- Limpeza do filtro de WBC (mensal)
-- Ciclo de cloro
-
-**Card "Configurações":**
-- Configuração de acessos
+**Itens do Checklist:**
+- Características/compartimentos físicos do equipamento
+- Material de consumo
+- Configurações do menu inicial
+- Configuração de protocolos/programas
+- Configurações de programas overnight
+- Controle de qualidade
+- Rotação de reagentes
+- Inspeção de reagentes
+- Substituição filtros
+- Substituição dos reagentes de lavagem
+- Instrução sobre a bateria backup
+- Instruções limpeza da câmara de reação antes do programa de lavagem
+- Instruções para limpeza em geral
+- Testes
 
 ### Arquivos alterados
 - `src/types/assessoria-cientifica.ts`
