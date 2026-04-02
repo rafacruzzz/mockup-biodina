@@ -151,22 +151,18 @@ export const NovaMudancaModal = ({
             <Label htmlFor="tipo-mudanca">Tipo de Mudança *</Label>
             <Select value={tipoMudanca} onValueChange={(value: TipoMudanca) => setTipoMudanca(value)}>
               <SelectTrigger id="tipo-mudanca">
-                <SelectValue>
+              <SelectValue>
                   {tipoMudanca === "A" && "A) Alterações de Dados Empresariais"}
                   {tipoMudanca === "B" && "B) Dados Mestres de Produtos"}
-                  {tipoMudanca === "C" && "C) Alterações em Processos de Negócio"}
-                  {tipoMudanca === "D" && "D) Atualizações Regulatórias (ANVISA)"}
-                  {tipoMudanca === "E" && "E) Melhorias de Performance"}
-                  {tipoMudanca === "F" && "F) Outros"}
+                  {tipoMudanca === "C" && "C) Atualizações Regulatórias (ANVISA)"}
+                  {tipoMudanca === "D" && "D) Outros"}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="A">A) Alterações de Dados Empresariais</SelectItem>
                 <SelectItem value="B">B) Dados Mestres de Produtos</SelectItem>
-                <SelectItem value="C">C) Alterações em Processos de Negócio</SelectItem>
-                <SelectItem value="D">D) Atualizações Regulatórias (ANVISA)</SelectItem>
-                <SelectItem value="E">E) Melhorias de Performance</SelectItem>
-                <SelectItem value="F">F) Outros</SelectItem>
+                <SelectItem value="C">C) Atualizações Regulatórias (ANVISA)</SelectItem>
+                <SelectItem value="D">D) Outros</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground mt-2">

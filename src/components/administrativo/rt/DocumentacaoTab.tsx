@@ -2,20 +2,19 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { OrganizacaoDocumentos } from "./OrganizacaoDocumentos";
-import { LiberacaoProdutosTable } from "./LiberacaoProdutosTable";
 import { ControleMudancasTable } from "./ControleMudancasTable";
 import { TreinamentosSection } from "./TreinamentosSection";
 import { ListaMestraSection } from "./ListaMestraSection";
 import { HistoricoIntegracaoRT } from "./HistoricoIntegracaoRT";
 import { 
   mockDocumentacoes, 
-  mockLiberacaoProdutos, 
   mockMudancas,
   mockTreinamentosRealizados,
   mockTreinamentosFuturos,
   mockListaMestra
 } from "@/data/rtModules";
-import { DocumentacaoRT, LiberacaoProduto, Mudanca, Treinamento, ListaMestra } from "@/types/rt";
+import { DocumentacaoRT, Mudanca, Treinamento, ListaMestra } from "@/types/rt";
+import { Info } from "lucide-react";
 
 export const DocumentacaoTab = () => {
   const [listaMestra, setListaMestra] = useState<ListaMestra>(mockListaMestra);

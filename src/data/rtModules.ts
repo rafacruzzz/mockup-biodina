@@ -176,19 +176,10 @@ export const mockMudancas: Mudanca[] = [
   },
   {
     id: "mud-3",
-    data: "2024-01-20",
-    parteInteressada: "TI",
-    responsavel: "João Oliveira",
-    tipoMudanca: "C",
-    descricao: "Implementação de novo fluxo de rastreabilidade de lotes",
-    status: "Pendente"
-  },
-  {
-    id: "mud-4",
     data: "2024-01-25",
     parteInteressada: "RT",
     responsavel: "Dr. Carlos Silva",
-    tipoMudanca: "D",
+    tipoMudanca: "C",
     descricao: "Adequação à nova RDC 665/2022 - Boas Práticas de Distribuição",
     status: "Aprovado"
   }
@@ -280,12 +271,10 @@ export const participantesDisponiveis = [
 
 // Descrições dos tipos de mudança
 export const descricoesTipoMudanca = {
-  A: "Alterações de Dados Empresariais - Alterações de endereço, sócios, vigilâncias sanitárias, etc.",
-  B: "Dados Mestres de Produtos - Modificações de registro ANVISA, classe de risco, especificações técnicas, validade, armazenamento",
-  C: "Alterações em Processos de Negócio - Mudanças na lógica de recebimento, inspeção, armazenamento, expedição, não conformidades",
-  D: "Atualizações Regulatórias (ANVISA) - Implementação de novas RDCs, guias ou requisitos",
-  E: "Melhorias de Performance - Alterações no escopo físico, ambiental e melhoria logística",
-  F: "Outros - Demais alterações"
+  A: "Alterações de Dados Empresariais - Alterações de endereço, sócios, vigilâncias sanitárias, etc. (Dados vindos do módulo Institucional)",
+  B: "Dados Mestres de Produtos - Modificações de registro ANVISA, classe de risco, especificações técnicas, validade, armazenamento (Dados vindos do módulo Regulatório)",
+  C: "Atualizações Regulatórias (ANVISA) - Implementação de novas RDCs, guias ou requisitos (Dados vindos do módulo Regulatório)",
+  D: "Outros - Demais alterações (Registro manual)"
 };
 
 // Dados mockados para Gestão de Não Conformidades RT
