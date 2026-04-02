@@ -1,16 +1,23 @@
 
 
-## Plano: Adicionar scroll na tabela de produtos do Kit
+## Plano: Mover campos de quantidade para dentro de cada produto na Licitação
 
-### Problema
-Após adicionar mais de 2 produtos ao kit, a tabela cresce sem limite e os produtos ficam invisíveis (não há scroll).
+### Problema atual
+Os campos "Quantidade Equipamentos / Total Estimado" e "Quantidade Exames / Total Estimado" estão como campos globais separados abaixo da lista de produtos. Conforme o requisito, cada produto deve ter seus próprios valores de "Valor Estimado", "Qtd Equipamentos / Total Estimado" e "Qtd Exames / Total Estimado".
 
-### Alteração
+### Alterações em `src/components/comercial/OportunidadeAvancadaForm.tsx`
 
-**Em `src/components/cadastro/KitModal.tsx` (linha 132):**
-- Envolver a tabela de produtos em um container com `max-h-[300px] overflow-y-auto` para limitar a altura e permitir scroll vertical
-- Manter o `TableHeader` visível com `sticky top-0 bg-background z-10`
+**1. Expandir a interface do produto:**
+- Adicionar `quantidadeEquipamentos: number` e `quantidadeExames: number` a cada item do array `produtos`
+- Atualizar o valor inicial ao adicionar produto para incluir esses campos
+
+**2. Mover campos para dentro de cada linha de produto:**
+- Cada linha terá: Select (Produto) | Input (Valor Estimado) | Input (Qtd Equipamentos/Total Estimado) | Input (Qtd Exames/Total Estimado) | Botão remover
+- Labels exibidas apenas na primeira linha (padrão já existente)
+
+**3. Remover campos globais:**
+- Remover os inputs `quantidadeEquipamentos` e `quantidadeExames` que estão no `grid grid-cols-2` abaixo dos produtos (linhas ~742-765)
 
 ### Arquivo alterado
-- `src/components/cadastro/KitModal.tsx`
+- `src/components/comercial/OportunidadeAvancadaForm.tsx`
 
