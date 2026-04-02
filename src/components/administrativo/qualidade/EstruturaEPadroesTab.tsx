@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Info } from "lucide-react";
 import { OrganizacaoDocumentos } from "../rt/OrganizacaoDocumentos";
 import { PastaRT } from "@/types/rt";
 
