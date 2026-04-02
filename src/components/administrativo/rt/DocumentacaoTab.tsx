@@ -20,7 +20,6 @@ export const DocumentacaoTab = () => {
   const [listaMestra, setListaMestra] = useState<ListaMestra>(mockListaMestra);
   const [documentacoes, setDocumentacoes] = useState<DocumentacaoRT[]>(mockDocumentacoes);
   const [mudancas, setMudancas] = useState<Mudanca[]>(mockMudancas);
-  const [mudancas, setMudancas] = useState<Mudanca[]>(mockMudancas);
   const [treinamentosRealizados, setTreinamentosRealizados] = useState<Treinamento[]>(mockTreinamentosRealizados);
   const [treinamentosFuturos, setTreinamentosFuturos] = useState<Treinamento[]>(mockTreinamentosFuturos);
   const [buscaDocumentacao, setBuscaDocumentacao] = useState("");
