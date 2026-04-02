@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Info } from "lucide-react";
 import { OrganizacaoDocumentos } from "../rt/OrganizacaoDocumentos";
 import { PastaRT } from "@/types/rt";
 
@@ -56,6 +57,16 @@ const estruturaInicial = {
       subPastas: [],
       expandido: false
     }
+  ] as PastaRT[],
+  especificacoes: [
+    {
+      id: "pasta-espec-1",
+      nome: "Especificações de Equipamentos",
+      subtitulo: "Especificações técnicas detalhadas",
+      arquivos: [],
+      subPastas: [],
+      expandido: false
+    }
   ] as PastaRT[]
 };
 
@@ -63,6 +74,7 @@ export const EstruturaEPadroesTab = () => {
   const [manuaisPastas, setManuaisPastas] = useState(estruturaInicial.manuais);
   const [popPastas, setPopPastas] = useState(estruturaInicial.pop);
   const [itPastas, setItPastas] = useState(estruturaInicial.instrucoesTrabalho);
+  const [especPastas, setEspecPastas] = useState(estruturaInicial.especificacoes);
 
   return (
     <div className="space-y-6">
@@ -93,6 +105,19 @@ export const EstruturaEPadroesTab = () => {
         estruturaPastas={itPastas}
         onEstruturaChange={setItPastas}
       />
+
+      {/* Seção 4: Especificações */}
+      <div className="space-y-2">
+        <OrganizacaoDocumentos
+          titulo="Especificações"
+          estruturaPastas={especPastas}
+          onEstruturaChange={setEspecPastas}
+        />
+        <div className="flex items-center gap-2 text-sm text-muted-foreground px-1">
+          <Info className="h-4 w-4 shrink-0" />
+          <span>As informações desta seção são alimentadas pela Assessoria Científica.</span>
+        </div>
+      </div>
     </div>
   );
 };
