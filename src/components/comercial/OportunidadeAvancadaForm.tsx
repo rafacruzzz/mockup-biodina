@@ -193,6 +193,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     descricao: oportunidade?.descricao || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || [],
     analiseTecnica: oportunidade?.analiseTecnica || '',
+    analiseTecnica2: oportunidade?.analiseTecnica2 || '',
     termometro: oportunidade?.termometro || 50,
     resultadoOportunidade: oportunidade?.resultadoOportunidade || 'em_andamento',
     motivoGanho: oportunidade?.motivoGanho || '',
@@ -247,6 +248,9 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
   // Estado para histórico de análises científicas versionadas
   const [historicoAnalisesCientificas, setHistoricoAnalisesCientificas] = useState<Array<{id: number; texto: string; data: string; numero: number}>>(
     oportunidade?.historicoAnalisesCientificas || []
+  );
+  const [historicoAnalisesCientificas2, setHistoricoAnalisesCientificas2] = useState<Array<{id: number; texto: string; data: string; numero: number}>>(
+    oportunidade?.historicoAnalisesCientificas2 || []
   );
 
 
@@ -846,9 +850,9 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         </div>
 
 
-        {/* Análise Técnica (read-only) */}
+        {/* Análise Técnica 1 (read-only) */}
         <div className="space-y-2">
-          <Label htmlFor="analiseTecnicaDG">Análise Técnica</Label>
+          <Label htmlFor="analiseTecnicaDG">Análise Técnica 1</Label>
           <Textarea
             id="analiseTecnicaDG"
             value={formData.analiseTecnica}
@@ -858,6 +862,21 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             className="bg-muted/50"
           />
         </div>
+
+        {/* Análise Técnica 2 (read-only, só aparece após solicitar análise científica) */}
+        {solicitouAnaliseCientifica && (
+          <div className="space-y-2">
+            <Label htmlFor="analiseTecnica2DG">Análise Técnica 2</Label>
+            <Textarea
+              id="analiseTecnica2DG"
+              value={formData.analiseTecnica2 || ''}
+              readOnly
+              placeholder="Preenchido pela Assessoria Científica (aba AC)"
+              rows={4}
+              className="bg-muted/50"
+            />
+          </div>
+        )}
 
         {/* Botões de Análise Jurídica - sempre visíveis */}
         <div className="flex gap-3 flex-wrap">
@@ -1417,10 +1436,26 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     toast({ title: "Análise salva", description: `Análise ${novaAnalise.numero} registrada com sucesso.` });
   };
 
+  const handleSalvarAnalise2 = () => {
+    if (!formData.analiseTecnica2?.trim()) {
+      toast({ title: "Campo vazio", description: "Escreva a análise antes de salvar.", variant: "destructive" });
+      return;
+    }
+    const novaAnalise = {
+      id: Date.now(),
+      texto: formData.analiseTecnica2,
+      data: new Date().toLocaleDateString('pt-BR') + ' ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      numero: historicoAnalisesCientificas2.length + 1
+    };
+    setHistoricoAnalisesCientificas2([...historicoAnalisesCientificas2, novaAnalise]);
+    setFormData({ ...formData, analiseTecnica2: '' });
+    toast({ title: "Análise salva", description: `Análise Técnica-Científica 2 - Análise ${novaAnalise.numero} registrada com sucesso.` });
+  };
+
   const renderAnaliseTecnica = () => (
     <div className="space-y-6">
       <div>
-        <Label htmlFor="analiseTecnicaCientifica">Análise Técnica-Científica</Label>
+        <Label htmlFor="analiseTecnicaCientifica">Análise Técnica-Científica 1</Label>
         <Textarea
           id="analiseTecnicaCientifica"
           value={formData.analiseTecnica}
@@ -1437,13 +1472,13 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
         </div>
       </div>
 
-      {/* Histórico de Análises */}
+      {/* Histórico de Análises 1 */}
       {historicoAnalisesCientificas.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              Histórico de Análises ({historicoAnalisesCientificas.length})
+              Histórico de Análises 1 ({historicoAnalisesCientificas.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -1460,6 +1495,54 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             ))}
           </CardContent>
         </Card>
+      )}
+
+      {/* Análise Técnica-Científica 2 - só aparece quando solicitada */}
+      {solicitouAnaliseCientifica && (
+        <>
+          <div>
+            <Label htmlFor="analiseTecnicaCientifica2">Análise Técnica-Científica 2</Label>
+            <Textarea
+              id="analiseTecnicaCientifica2"
+              value={formData.analiseTecnica2 || ''}
+              onChange={(e) => setFormData({...formData, analiseTecnica2: e.target.value})}
+              placeholder="Digite sua segunda análise técnica-científica aqui..."
+              rows={6}
+              disabled={isReadOnlyMode()}
+            />
+            <div className="flex justify-end mt-2">
+              <Button onClick={handleSalvarAnalise2} disabled={isReadOnlyMode() || !formData.analiseTecnica2?.trim()} className="gap-2">
+                <Save className="h-4 w-4" />
+                Salvar Análise 2
+              </Button>
+            </div>
+          </div>
+
+          {/* Histórico de Análises 2 */}
+          {historicoAnalisesCientificas2.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Histórico de Análises 2 ({historicoAnalisesCientificas2.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {historicoAnalisesCientificas2.map((analise) => (
+                  <Collapsible key={analise.id}>
+                    <CollapsibleTrigger className="flex items-center justify-between w-full p-3 rounded-md border hover:bg-accent text-left">
+                      <span className="font-medium text-sm">Análise {analise.numero}</span>
+                      <span className="text-xs text-muted-foreground">{analise.data}</span>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="p-3 border border-t-0 rounded-b-md bg-muted/30">
+                      <p className="text-sm whitespace-pre-wrap">{analise.texto}</p>
+                    </CollapsibleContent>
+                  </Collapsible>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+        </>
       )}
 
       {/* Análise da Concorrência */}
