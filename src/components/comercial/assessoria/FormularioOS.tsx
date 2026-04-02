@@ -161,6 +161,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [checklistMeterOmega, setChecklistMeterOmega] = useState<Record<string, boolean>>({});
   const [checklistSetMedikal, setChecklistSetMedikal] = useState<Record<string, boolean>>({});
   const [checklistABL9, setChecklistABL9] = useState<Record<string, boolean>>({});
+  const [checklistABL90, setChecklistABL90] = useState<Record<string, boolean>>({});
 
   const tiposOS: { value: TipoOS; label: string }[] = [
     { value: "suporte_operacional", label: "Suporte Operacional" },
@@ -170,6 +171,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     { value: "treinamento_usuario_meteromega", label: "Treinamento de Usuário: Modelo MeterOmega" },
     { value: "treinamento_usuario_setmedikal", label: "Treinamento de Usuário: Modelo SET Medikal" },
     { value: "treinamento_usuario_abl9", label: "Treinamento de Usuário: Modelo ABL9 - Radiometer" },
+    { value: "treinamento_usuario_abl90", label: "Treinamento de Usuário: Modelo ABL90 FLEX PLUS - Radiometer" },
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
@@ -257,7 +259,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     }
 
     const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9"
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90"
     );
 
     if (ehTreinamento && listaParticipantes.length === 0) {
@@ -716,7 +718,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       </div>
 
       {/* Registro de Treinamento */}
-      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9") && (
+      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90") && (
         <>
           {/* Checklist MeterOmega */}
           {tiposSelecionados.includes("treinamento_usuario_meteromega") && (
@@ -909,6 +911,170 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                         }
                       />
                       <Label htmlFor={`abl9-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Checklist ABL90 FLEX PLUS - Radiometer */}
+          {tiposSelecionados.includes("treinamento_usuario_abl90") && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Apresentação Geral</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "entrada_amostras_90", label: "Entrada de amostras" },
+                    { key: "codigo_barras_90", label: "Código de barras" },
+                    { key: "impressora_90", label: "Impressora" },
+                    { key: "cassete_eletrodos_90", label: "Cassete de eletrodos e pack de soluções" },
+                    { key: "registro_dados_usb_90", label: "Recursos para registro de dados externo e entradas USB" },
+                    { key: "portabilidade_bateria", label: "Portabilidade e uso com bateria" },
+                    { key: "ligar_desligar_90", label: "Ligar e desligar o analisador" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`abl90-${item.key}`}
+                        checked={!!checklistABL90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistABL90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`abl90-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Tela</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "layout_tela_90", label: "Apresentação do layout" },
+                    { key: "interpretacao_semaforo", label: "Interpretação do semáforo" },
+                    { key: "interpretacao_mensagens_90", label: "Interpretação de mensagens" },
+                    { key: "registro_dados_90", label: "Uso do registro de dados" },
+                    { key: "tutorial_90", label: "Uso do tutorial" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`abl90-${item.key}`}
+                        checked={!!checklistABL90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistABL90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`abl90-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Trocas</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "troca_cassete_90", label: "Cassete de eletrodos e pack de soluções" },
+                    { key: "troca_papel_90", label: "Papel" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`abl90-${item.key}`}
+                        checked={!!checklistABL90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistABL90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`abl90-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Controle de Qualidade</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "cq_automatico", label: "Utilização do controle de qualidade automático" },
+                    { key: "cq_nao_programavel", label: "Medição de controle de qualidade não programável" },
+                    { key: "cq_externo_90", label: "Uso de controle de qualidade externo" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`abl90-${item.key}`}
+                        checked={!!checklistABL90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistABL90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`abl90-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Processamento de Amostra</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "inserir_amostra_90", label: "Inserir amostra" },
+                    { key: "preenchimento_cadastro_90", label: "Preenchimento do cadastro" },
+                    { key: "resultado_interpretacao_90", label: "Resultado e interpretação de mensagens" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`abl90-${item.key}`}
+                        checked={!!checklistABL90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistABL90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`abl90-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Limpeza</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "limpeza_dispositivo_entrada", label: "Limpeza do dispositivo de entrada" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`abl90-${item.key}`}
+                        checked={!!checklistABL90[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistABL90((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`abl90-${item.key}`} className="text-sm font-normal cursor-pointer">
                         {item.label}
                       </Label>
                     </div>

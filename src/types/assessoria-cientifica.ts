@@ -14,7 +14,8 @@ export type TipoOS =
   | 'treinamento_nova_equipe'
   | 'treinamento_usuario_meteromega'
   | 'treinamento_usuario_setmedikal'
-  | 'treinamento_usuario_abl9';
+  | 'treinamento_usuario_abl9'
+  | 'treinamento_usuario_abl90';
 
 export type DepartamentoOS = 'Assessoria Científica' | 'Departamento Técnico';
 
