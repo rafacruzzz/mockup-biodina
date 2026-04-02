@@ -129,9 +129,9 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
                     <p className="text-sm">Clique em "Adicionar Produto" para começar</p>
                   </div>
                 ) : (
-                  <div className="border rounded-lg">
+                  <div className="border rounded-lg max-h-[300px] overflow-y-auto">
                     <Table>
-                      <TableHeader>
+                      <TableHeader className="sticky top-0 bg-background z-10">
                         <TableRow>
                           <TableHead className="w-[140px]">Código do Produto</TableHead>
                           <TableHead>Produto (Anvisa)</TableHead>
