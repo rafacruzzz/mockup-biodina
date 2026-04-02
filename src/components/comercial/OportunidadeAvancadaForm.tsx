@@ -193,6 +193,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
     descricao: oportunidade?.descricao || '',
     colaboradoresResponsaveis: oportunidade?.colaboradoresResponsaveis || [],
     analiseTecnica: oportunidade?.analiseTecnica || '',
+    analiseTecnica2: oportunidade?.analiseTecnica2 || '',
     termometro: oportunidade?.termometro || 50,
     resultadoOportunidade: oportunidade?.resultadoOportunidade || 'em_andamento',
     motivoGanho: oportunidade?.motivoGanho || '',
