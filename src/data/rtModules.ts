@@ -476,10 +476,9 @@ export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[
 ];
 
 // Função auxiliar para verificar se CAPA está atrasado
-const isCapaAtrasado = (prazoFinal: string): boolean => {
+const isCapaAtrasado = (prazoFinal: Date): boolean => {
   const hoje = new Date();
-  const prazo = new Date(prazoFinal);
-  return hoje > prazo;
+  return hoje > prazoFinal;
 };
 
 // Função auxiliar para contar NCs do mês atual
