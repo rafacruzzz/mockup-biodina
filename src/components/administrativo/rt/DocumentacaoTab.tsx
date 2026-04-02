@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 import { OrganizacaoDocumentos } from "./OrganizacaoDocumentos";
 import { LiberacaoProdutosTable } from "./LiberacaoProdutosTable";
 import { ControleMudancasTable } from "./ControleMudancasTable";
@@ -16,28 +18,19 @@ import {
 import { DocumentacaoRT, LiberacaoProduto, Mudanca, Treinamento, ListaMestra } from "@/types/rt";
 
 export const DocumentacaoTab = () => {
-  // Estado para Lista Mestra
   const [listaMestra, setListaMestra] = useState<ListaMestra>(mockListaMestra);
-
-  // Estados para documentações
   const [documentacoes, setDocumentacoes] = useState<DocumentacaoRT[]>(mockDocumentacoes);
-
-  // Estados para liberação de produtos
   const [produtos, setProdutos] = useState<LiberacaoProduto[]>(mockLiberacaoProdutos);
-
-  // Estados para controle de mudanças
   const [mudancas, setMudancas] = useState<Mudanca[]>(mockMudancas);
-
-  // Estados para treinamentos
   const [treinamentosRealizados, setTreinamentosRealizados] = useState<Treinamento[]>(mockTreinamentosRealizados);
   const [treinamentosFuturos, setTreinamentosFuturos] = useState<Treinamento[]>(mockTreinamentosFuturos);
+  const [buscaDocumentacao, setBuscaDocumentacao] = useState("");
 
   const handleTreinamentosChange = (realizados: Treinamento[], futuros: Treinamento[]) => {
     setTreinamentosRealizados(realizados);
     setTreinamentosFuturos(futuros);
   };
 
-  // Helpers para atualizar documentações
   const updateDocumentacao = (tipo: string, updates: Partial<DocumentacaoRT>) => {
     setDocumentacoes(prev => 
       prev.map(doc => doc.tipo === tipo ? { ...doc, ...updates } : doc)
@@ -45,65 +38,62 @@ export const DocumentacaoTab = () => {
   };
 
   const popDoc = documentacoes.find(d => d.tipo === 'pop');
-  const especDoc = documentacoes.find(d => d.tipo === 'especificacoes');
   const legDoc = documentacoes.find(d => d.tipo === 'legislacoes');
 
   return (
     <div className="space-y-8">
-      {/* Seção: Lista Mestra */}
       <ListaMestraSection
         listaMestra={listaMestra}
         onListaMestraChange={setListaMestra}
       />
 
-      {/* Seção: Documentação */}
       <div>
-        <h2 className="text-2xl font-bold mb-6">Documentação</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Documentação</h2>
+          <div className="relative w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar na Documentação..."
+              value={buscaDocumentacao}
+              onChange={(e) => setBuscaDocumentacao(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+        </div>
         
         <div className="space-y-6">
-          {/* POP - Procedimentos Operacionais Padrão */}
           <OrganizacaoDocumentos
             titulo="POP - Procedimentos Operacionais Padrão"
             estruturaPastas={popDoc?.estruturaPastas || []}
             onEstruturaChange={(pastas) => updateDocumentacao('pop', { estruturaPastas: pastas })}
+            searchTerm={buscaDocumentacao}
           />
 
-          {/* Especificações */}
-          <OrganizacaoDocumentos
-            titulo="Especificações"
-            estruturaPastas={especDoc?.estruturaPastas || []}
-            onEstruturaChange={(pastas) => updateDocumentacao('especificacoes', { estruturaPastas: pastas })}
-          />
-
-          {/* Legislações Vigentes Pertinentes */}
           <OrganizacaoDocumentos
             titulo="Legislações Vigentes Pertinentes"
             estruturaPastas={legDoc?.estruturaPastas || []}
             onEstruturaChange={(pastas) => updateDocumentacao('legislacoes', { estruturaPastas: pastas })}
+            searchTerm={buscaDocumentacao}
           />
         </div>
       </div>
 
-      {/* Seção 4: Liberação de Produtos */}
       <LiberacaoProdutosTable
         produtos={produtos}
         onProdutosChange={setProdutos}
       />
 
-      {/* Seção 5: Controle de Mudanças */}
       <ControleMudancasTable
         mudancas={mudancas}
         onMudancasChange={setMudancas}
       />
 
-      {/* Seção 6: Treinamentos */}
       <TreinamentosSection
         treinamentosRealizados={treinamentosRealizados}
         treinamentosFuturos={treinamentosFuturos}
         onTreinamentosChange={handleTreinamentosChange}
       />
 
-      {/* Seção 7: Histórico de Alterações */}
       <HistoricoIntegracaoRT />
     </div>
   );

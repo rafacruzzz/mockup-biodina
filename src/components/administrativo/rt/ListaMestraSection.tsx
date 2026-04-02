@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Upload, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { FileText, Upload, X, Search } from "lucide-react";
 import { ListaMestra, ArquivoRT, PastaRT } from "@/types/rt";
 import { OrganizacaoDocumentos } from "./OrganizacaoDocumentos";
 import { toast } from "@/components/ui/use-toast";
@@ -57,10 +58,29 @@ export const ListaMestraSection = ({
     });
   };
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredItens = searchTerm
+    ? listaMestra.itens.filter(item =>
+        item.titulo.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : listaMestra.itens;
+
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold mb-6">Lista Mestra</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Lista Mestra</h2>
+          <div className="relative w-72">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar na Lista Mestra..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+        </div>
         
         {/* Arquivo Geral da Lista Mestra */}
         <Card className="mb-6">
@@ -104,15 +124,21 @@ export const ListaMestraSection = ({
 
         {/* Itens da Lista Mestra */}
         <div className="space-y-6">
-          {listaMestra.itens.map((item) => (
+          {filteredItens.map((item) => (
             <div key={item.id}>
               <OrganizacaoDocumentos
                 titulo={item.titulo}
                 estruturaPastas={item.estruturaPastas}
                 onEstruturaChange={(pastas) => handleItemEstruturaChange(item.id, pastas)}
+                searchTerm={searchTerm}
               />
             </div>
           ))}
+          {filteredItens.length === 0 && searchTerm && (
+            <div className="text-center py-8 text-muted-foreground">
+              Nenhum item encontrado para "{searchTerm}"
+            </div>
+          )}
         </div>
       </div>
     </div>

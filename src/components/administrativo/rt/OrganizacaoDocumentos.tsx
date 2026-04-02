@@ -30,12 +30,14 @@ interface OrganizacaoDocumentosProps {
   titulo: string;
   estruturaPastas: PastaRT[];
   onEstruturaChange: (pastas: PastaRT[]) => void;
+  searchTerm?: string;
 }
 
 export const OrganizacaoDocumentos = ({
   titulo,
   estruturaPastas,
-  onEstruturaChange
+  onEstruturaChange,
+  searchTerm
 }: OrganizacaoDocumentosProps) => {
   const [pastaSelecionada, setPastaSelecionada] = useState<string | null>(null);
   const [showNovaPastaDialog, setShowNovaPastaDialog] = useState(false);
@@ -46,6 +48,26 @@ export const OrganizacaoDocumentos = ({
   const [dataPasta, setDataPasta] = useState("");
   const [pastaEditando, setPastaEditando] = useState<string | null>(null);
   const [criarComoSubpasta, setCriarComoSubpasta] = useState(true);
+
+  // Filtering logic for search
+  const filterPastas = (pastas: PastaRT[], term: string): PastaRT[] => {
+    if (!term) return pastas;
+    const lower = term.toLowerCase();
+    return pastas
+      .map(pasta => {
+        const match = pasta.nome.toLowerCase().includes(lower) ||
+          (pasta.subtitulo?.toLowerCase().includes(lower)) ||
+          (pasta.codigo?.toLowerCase().includes(lower));
+        const filteredSubs = pasta.subPastas ? filterPastas(pasta.subPastas, term) : [];
+        if (match || filteredSubs.length > 0) {
+          return { ...pasta, subPastas: match ? pasta.subPastas : filteredSubs, expandido: true };
+        }
+        return null;
+      })
+      .filter(Boolean) as PastaRT[];
+  };
+
+  const pastasVisiveis = searchTerm ? filterPastas(estruturaPastas, searchTerm) : estruturaPastas;
 
   const toggleExpandirPasta = (pastaId: string) => {
     const atualizarPastas = (pastas: PastaRT[]): PastaRT[] => {
@@ -306,13 +328,13 @@ export const OrganizacaoDocumentos = ({
                 Estrutura de Pastas
               </h4>
               <div className="space-y-1 max-h-[400px] overflow-y-auto">
-                {estruturaPastas.length === 0 ? (
+                {pastasVisiveis.length === 0 ? (
                   <div className="text-center py-8 text-muted-foreground">
                     <Folder className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Nenhuma pasta criada</p>
+                    <p className="text-sm">{searchTerm ? "Nenhuma pasta encontrada" : "Nenhuma pasta criada"}</p>
                   </div>
                 ) : (
-                  estruturaPastas.map(pasta => renderPasta(pasta))
+                  pastasVisiveis.map(pasta => renderPasta(pasta))
                 )}
               </div>
             </div>
