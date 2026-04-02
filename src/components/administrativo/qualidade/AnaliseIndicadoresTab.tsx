@@ -16,7 +16,7 @@ import {
   Legend, 
   ResponsiveContainer 
 } from 'recharts';
-import { TrendingDown, Repeat, CheckCircle2, Users, AlertTriangle, CheckCircle, TrendingUp, Package, Truck, Headphones, Activity } from 'lucide-react';
+import { TrendingDown, Repeat, CheckCircle2, Users, AlertTriangle, CheckCircle, TrendingUp, Package, Truck, Headphones, Activity, Info } from 'lucide-react';
 import { 
   dadosNCMensal, 
   dadosRetrabalho, 
