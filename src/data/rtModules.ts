@@ -588,7 +588,7 @@ export const trilhaAuditoriaMockada: RegistroAuditoria[] = [
     dataHora: '2024-11-27 16:45:33',
     usuario: 'Eng. Roberto Santos',
     acao: 'aprovacao',
-    modulo: 'Liberação de Produtos',
+    modulo: 'Gestão de NC',
     recurso: 'prod-1',
     detalhes: 'Produto DxH 520 aprovado para comercialização',
     ipAddress: '192.168.1.102'

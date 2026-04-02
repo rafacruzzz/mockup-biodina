@@ -20,6 +20,7 @@ import {
 import { FileText, Download, Search, Eye, Edit, Trash2, CheckCircle, XCircle, Upload as UploadIcon, Download as DownloadIcon } from 'lucide-react';
 import { RegistroAuditoria, TipoAcaoAuditoria } from '@/types/rt';
 import { useState } from 'react';
+import { subMonths, isAfter, parseISO } from 'date-fns';
 
 interface TrilhaAuditoriaSectionProps {
   registros: RegistroAuditoria[];
@@ -28,6 +29,7 @@ interface TrilhaAuditoriaSectionProps {
 export const TrilhaAuditoriaSection = ({ registros }: TrilhaAuditoriaSectionProps) => {
   const [filtroAcao, setFiltroAcao] = useState<string>('todas');
   const [filtroModulo, setFiltroModulo] = useState<string>('todos');
+  const [filtroPeriodo, setFiltroPeriodo] = useState<string>('todos');
   const [busca, setBusca] = useState('');
 
   const getIconeAcao = (acao: TipoAcaoAuditoria) => {
@@ -83,11 +85,23 @@ export const TrilhaAuditoriaSection = ({ registros }: TrilhaAuditoriaSectionProp
       reg.recurso.toLowerCase().includes(busca.toLowerCase()) ||
       reg.detalhes?.toLowerCase().includes(busca.toLowerCase());
     
-    return matchAcao && matchModulo && matchBusca;
+    let matchPeriodo = true;
+    if (filtroPeriodo !== 'todos') {
+      const meses = parseInt(filtroPeriodo);
+      const dataLimite = subMonths(new Date(), meses);
+      try {
+        const dataRegistro = parseISO(reg.dataHora.replace(' ', 'T'));
+        matchPeriodo = isAfter(dataRegistro, dataLimite);
+      } catch {
+        matchPeriodo = true;
+      }
+    }
+    
+    return matchAcao && matchModulo && matchBusca && matchPeriodo;
   });
 
-  // Obter módulos únicos
-  const modulosUnicos = Array.from(new Set(registros.map(r => r.modulo)));
+  // Obter módulos únicos (excluir "Liberação de Produtos")
+  const modulosUnicos = Array.from(new Set(registros.map(r => r.modulo))).filter(m => m !== 'Liberação de Produtos');
 
   const handleExportar = () => {
     // Simulação de exportação
@@ -148,6 +162,17 @@ export const TrilhaAuditoriaSection = ({ registros }: TrilhaAuditoriaSectionProp
                     {modulo}
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+            <Select value={filtroPeriodo} onValueChange={setFiltroPeriodo}>
+              <SelectTrigger>
+                <SelectValue placeholder="Período" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos os Períodos</SelectItem>
+                <SelectItem value="6">Últimos 6 meses</SelectItem>
+                <SelectItem value="9">Últimos 9 meses</SelectItem>
+                <SelectItem value="12">Últimos 12 meses</SelectItem>
               </SelectContent>
             </Select>
             <div className="flex items-center gap-2">
