@@ -8,23 +8,18 @@ import { MoneyInput } from "@/components/ui/money-input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2, ChevronDown, ChevronUp, Package, X, Search } from "lucide-react";
+import { Plus, Trash2, Package, Search } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell } from "@/components/ui/table";
 import { modules } from "@/data/cadastroModules";
 
-interface SlotProduto {
-  id: number;
-  nome: string;
-}
-
-interface Slot {
+interface KitProduto {
   id: string;
+  codigo: string;
   nome: string;
-  qtdMinima: string;
-  qtdMaxima: string;
-  produtos: SlotProduto[];
-  expanded: boolean;
-  showProductSelector: boolean;
+  incluirNoPedido: boolean;
+  quantidade: string;
+  qtdItens: string;
 }
 
 interface KitFormData {
@@ -32,7 +27,7 @@ interface KitFormData {
   sku: string;
   descricao: string;
   precoBase: string;
-  slots: Slot[];
+  produtos: KitProduto[];
 }
 
 interface KitModalProps {
@@ -47,8 +42,9 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
     sku: "",
     descricao: "",
     precoBase: "",
-    slots: []
+    produtos: []
   });
+  const [showProductSelector, setShowProductSelector] = useState(false);
 
   const availableProducts = modules.produtos?.subModules?.produtos?.data || [];
 
@@ -56,62 +52,27 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const addSlot = () => {
-    const newSlot: Slot = {
-      id: `slot-${Date.now()}`,
-      nome: "",
-      qtdMinima: "1",
-      qtdMaxima: "1",
-      produtos: [],
-      expanded: true,
-      showProductSelector: false
-    };
-    setFormData(prev => ({ ...prev, slots: [...prev.slots, newSlot] }));
-  };
-
-  const removeSlot = (slotId: string) => {
-    setFormData(prev => ({ ...prev, slots: prev.slots.filter(s => s.id !== slotId) }));
-  };
-
-  const updateSlot = (slotId: string, field: keyof Slot, value: any) => {
+  const addProduto = (product: { id: string; codigo: string; nome: string }) => {
+    if (formData.produtos.some(p => p.id === product.id)) return;
     setFormData(prev => ({
       ...prev,
-      slots: prev.slots.map(s => s.id === slotId ? { ...s, [field]: value } : s)
+      produtos: [...prev.produtos, { ...product, incluirNoPedido: true, quantidade: "1", qtdItens: "1" }]
     }));
   };
 
-  const toggleSlotExpand = (slotId: string) => {
-    updateSlot(slotId, "expanded", !formData.slots.find(s => s.id === slotId)?.expanded);
+  const removeProduto = (id: string) => {
+    setFormData(prev => ({ ...prev, produtos: prev.produtos.filter(p => p.id !== id) }));
   };
 
-  const toggleProductSelector = (slotId: string) => {
-    const slot = formData.slots.find(s => s.id === slotId);
-    updateSlot(slotId, "showProductSelector", !slot?.showProductSelector);
-  };
-
-  const addProductToSlot = (slotId: string, product: SlotProduto) => {
+  const updateProduto = (id: string, field: keyof KitProduto, value: any) => {
     setFormData(prev => ({
       ...prev,
-      slots: prev.slots.map(s => {
-        if (s.id !== slotId) return s;
-        if (s.produtos.some(p => p.id === product.id)) return s;
-        return { ...s, produtos: [...s.produtos, product] };
-      })
+      produtos: prev.produtos.map(p => p.id === id ? { ...p, [field]: value } : p)
     }));
   };
 
-  const removeProductFromSlot = (slotId: string, productId: number) => {
-    setFormData(prev => ({
-      ...prev,
-      slots: prev.slots.map(s => {
-        if (s.id !== slotId) return s;
-        return { ...s, produtos: s.produtos.filter(p => p.id !== productId) };
-      })
-    }));
-  };
-
-  const totalSlots = formData.slots.length;
-  const totalProducts = formData.slots.reduce((acc, s) => acc + s.produtos.length, 0);
+  const totalProdutos = formData.produtos.length;
+  const totalIncluidos = formData.produtos.filter(p => p.incluirNoPedido).length;
 
   const handleSave = () => {
     if (!formData.nome.trim()) {
@@ -127,13 +88,14 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
   };
 
   const handleClose = () => {
-    setFormData({ nome: "", sku: "", descricao: "", precoBase: "", slots: [] });
+    setFormData({ nome: "", sku: "", descricao: "", precoBase: "", produtos: [] });
+    setShowProductSelector(false);
     onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+      <DialogContent className="max-w-5xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             {editData ? "Editar Kit" : "Novo Kit"}
@@ -188,152 +150,106 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
               </CardContent>
             </Card>
 
-            {/* Slots de Componentes */}
+            {/* Produtos do Kit */}
             <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-base font-semibold">
-                    Slots de Componentes
+                    Produtos do Kit
                   </CardTitle>
-                  <Button type="button" size="sm" onClick={addSlot} className="gap-1">
+                  <Button type="button" size="sm" onClick={() => setShowProductSelector(!showProductSelector)} className="gap-1">
                     <Plus className="h-4 w-4" />
-                    Adicionar Slot
+                    Adicionar Produto
                   </Button>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                {formData.slots.length === 0 && (
-                  <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
-                    <Package className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                    <p>Nenhum slot configurado</p>
-                    <p className="text-sm">Clique em "Adicionar Slot" para começar</p>
-                  </div>
+                {showProductSelector && (
+                  <ProductSelector
+                    availableProducts={availableProducts}
+                    selectedIds={formData.produtos.map(p => p.id)}
+                    onSelect={addProduto}
+                    onClose={() => setShowProductSelector(false)}
+                  />
                 )}
 
-                {formData.slots.map((slot, index) => (
-                  <Card key={slot.id} className="border-l-4 border-l-primary">
-                    <CardHeader className="pb-2 pt-3 px-4">
-                      <div className="flex items-center justify-between">
-                        <button
-                          type="button"
-                          onClick={() => toggleSlotExpand(slot.id)}
-                          className="flex items-center gap-2 text-sm font-semibold hover:text-primary transition-colors"
-                        >
-                          {slot.expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                          Slot {index + 1}{slot.nome ? ` — ${slot.nome}` : ""}
-                          <span className="text-xs text-muted-foreground font-normal">
-                            ({slot.produtos.length} produto(s))
-                          </span>
-                        </button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeSlot(slot.id)}
-                          className="h-7 w-7 text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CardHeader>
-
-                    {slot.expanded && (
-                      <CardContent className="px-4 pb-4 space-y-4">
-                        <div className="grid grid-cols-3 gap-3">
-                          <div className="space-y-1">
-                            <Label className="text-xs">Nome do Slot *</Label>
-                            <Input
-                              value={slot.nome}
-                              onChange={e => updateSlot(slot.id, "nome", e.target.value)}
-                              placeholder="Ex: Reagentes"
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <Label className="text-xs">Qtd. Mínima</Label>
-                            <Input
-                              type="number"
-                              min="1"
-                              value={slot.qtdMinima}
-                              onChange={e => updateSlot(slot.id, "qtdMinima", e.target.value)}
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <Label className="text-xs">Qtd. Máxima</Label>
-                            <Input
-                              type="number"
-                              min="1"
-                              value={slot.qtdMaxima}
-                              onChange={e => updateSlot(slot.id, "qtdMaxima", e.target.value)}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Produtos vinculados */}
-                        <div>
-                          <div className="flex items-center justify-between mb-2">
-                            <Label className="text-xs font-semibold">Produtos neste slot</Label>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => toggleProductSelector(slot.id)}
-                              className="gap-1 h-7 text-xs"
-                            >
-                              <Plus className="h-3 w-3" />
-                              Adicionar Produtos
-                            </Button>
-                          </div>
-
-                          {slot.produtos.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-2">
-                              {slot.produtos.map(p => (
-                                <span
-                                  key={p.id}
-                                  className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full"
-                                >
-                                  {p.nome}
-                                  <button
-                                    type="button"
-                                    onClick={() => removeProductFromSlot(slot.id, p.id)}
-                                    className="hover:text-destructive"
-                                  >
-                                    <X className="h-3 w-3" />
-                                  </button>
-                                </span>
-                              ))}
-                            </div>
-                          )}
-
-                          {slot.produtos.length === 0 && !slot.showProductSelector && (
-                            <p className="text-xs text-muted-foreground italic">
-                              Nenhum produto vinculado a este slot.
-                            </p>
-                          )}
-
-                          {/* Seletor de produtos */}
-                          {slot.showProductSelector && (
-                            <ProductSelector
-                              availableProducts={availableProducts}
-                              selectedIds={slot.produtos.map(p => p.id)}
-                              onSelect={product => addProductToSlot(slot.id, product)}
-                              onClose={() => toggleProductSelector(slot.id)}
-                            />
-                          )}
-                        </div>
-                      </CardContent>
-                    )}
-                  </Card>
-                ))}
+                {formData.produtos.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+                    <Package className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                    <p>Nenhum produto adicionado ao kit</p>
+                    <p className="text-sm">Clique em "Adicionar Produto" para começar</p>
+                  </div>
+                ) : (
+                  <div className="border rounded-lg">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[140px]">Código do Produto</TableHead>
+                          <TableHead>Nome do Produto (Anvisa)</TableHead>
+                          <TableHead className="w-[130px] text-center">Incluir no Pedido</TableHead>
+                          <TableHead className="w-[100px] text-center">Quantidade</TableHead>
+                          <TableHead className="w-[100px] text-center">Qtd. Itens</TableHead>
+                          <TableHead className="w-[60px]"></TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {formData.produtos.map(produto => (
+                          <TableRow key={produto.id}>
+                            <TableCell className="font-mono text-sm">{produto.codigo}</TableCell>
+                            <TableCell>{produto.nome}</TableCell>
+                            <TableCell className="text-center">
+                              <div className="flex justify-center">
+                                <Checkbox
+                                  checked={produto.incluirNoPedido}
+                                  onCheckedChange={(checked) => updateProduto(produto.id, "incluirNoPedido", !!checked)}
+                                />
+                              </div>
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Input
+                                type="number"
+                                min="1"
+                                value={produto.quantidade}
+                                onChange={e => updateProduto(produto.id, "quantidade", e.target.value)}
+                                className="h-8 w-20 mx-auto text-center"
+                              />
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <Input
+                                type="number"
+                                min="1"
+                                value={produto.qtdItens}
+                                onChange={e => updateProduto(produto.id, "qtdItens", e.target.value)}
+                                className="h-8 w-20 mx-auto text-center"
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => removeProduto(produto.id)}
+                                className="h-7 w-7 text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
             {/* Resumo */}
-            {formData.slots.length > 0 && (
+            {formData.produtos.length > 0 && (
               <div className="flex items-center justify-between bg-muted/50 rounded-lg px-4 py-3 text-sm">
                 <span className="font-medium">Resumo do Kit</span>
                 <div className="flex gap-6 text-muted-foreground">
-                  <span><strong className="text-foreground">{totalSlots}</strong> slot(s) configurado(s)</span>
-                  <span><strong className="text-foreground">{totalProducts}</strong> produto(s) vinculado(s)</span>
+                  <span><strong className="text-foreground">{totalProdutos}</strong> produto(s) no kit</span>
+                  <span><strong className="text-foreground">{totalIncluidos}</strong> marcado(s) para pedido</span>
                 </div>
               </div>
             )}
@@ -354,8 +270,8 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
 /* ---- Seletor de Produtos inline ---- */
 interface ProductSelectorProps {
   availableProducts: any[];
-  selectedIds: number[];
-  onSelect: (product: SlotProduto) => void;
+  selectedIds: string[];
+  onSelect: (product: { id: string; codigo: string; nome: string }) => void;
   onClose: () => void;
 }
 
@@ -364,9 +280,11 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
 }) => {
   const [search, setSearch] = useState("");
 
-  const filtered = availableProducts.filter(p =>
-    (p.nome || p.nomeProduto || "").toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = availableProducts.filter(p => {
+    const nome = (p.nomeProduto || p.nome || "").toLowerCase();
+    const codigo = (p.codigo || p.sku || "").toLowerCase();
+    return nome.includes(search.toLowerCase()) || codigo.includes(search.toLowerCase());
+  });
 
   return (
     <Card className="border shadow-sm">
@@ -377,7 +295,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
             <Input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Buscar produto..."
+              placeholder="Buscar por nome ou código..."
               className="h-8 pl-7 text-xs"
             />
           </div>
@@ -390,15 +308,18 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
             <p className="text-xs text-muted-foreground text-center py-2">Nenhum produto encontrado</p>
           )}
           {filtered.map(p => {
-            const isSelected = selectedIds.includes(p.id);
+            const productId = String(p.id);
+            const isSelected = selectedIds.includes(productId);
             const productName = p.nomeProduto || p.nome || `Produto ${p.id}`;
+            const productCode = p.codigo || p.sku || `COD-${p.id}`;
             return (
               <div
                 key={p.id}
                 className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent cursor-pointer text-xs"
-                onClick={() => !isSelected && onSelect({ id: p.id, nome: productName })}
+                onClick={() => !isSelected && onSelect({ id: productId, codigo: productCode, nome: productName })}
               >
                 <Checkbox checked={isSelected} disabled={isSelected} />
+                <span className="font-mono text-muted-foreground">{productCode}</span>
                 <span className={isSelected ? "text-muted-foreground" : ""}>{productName}</span>
               </div>
             );
