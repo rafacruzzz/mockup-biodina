@@ -35,6 +35,7 @@ import { ControleImoveisTab } from '@/components/administrativo/institucional/Co
 import { ControleVeiculosTab } from '@/components/administrativo/institucional/ControleVeiculosTab';
 import { DocumentosEmpresaTab } from '@/components/administrativo/institucional/DocumentosEmpresaTab';
 import { RastreabilidadeRegulatorioTab } from '@/components/administrativo/regulatorio/rastreabilidade/RastreabilidadeRegulatorioTab';
+import { RastreabilidadeTab as RastreabilidadeTabRT } from '@/components/administrativo/qualidade/RastreabilidadeTab';
 import { BoasPraticasTab } from '@/components/administrativo/regulatorio/boas-praticas/BoasPraticasTab';
 import { modules } from '@/data/cadastroModules';
 import { toast } from '@/components/ui/use-toast';
@@ -185,11 +186,16 @@ const Administrativo = () => {
       </div>
       
       <Tabs value={rtTab} onValueChange={setRtTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="rastreabilidade">RASTREABILIDADE</TabsTrigger>
           <TabsTrigger value="documentacoes">INTEGRAÇÃO RT / CONTROLE DE QUALIDADE</TabsTrigger>
           <TabsTrigger value="gestao-nc">GESTÃO DE NÃO CONFORMIDADES</TabsTrigger>
           <TabsTrigger value="monitoramento-auditoria">MONITORAMENTO E AUDITORIA</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="rastreabilidade" className="mt-6">
+          <RastreabilidadeTabRT />
+        </TabsContent>
 
         <TabsContent value="documentacoes" className="mt-6">
           <DocumentacaoTab />
