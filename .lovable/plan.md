@@ -1,41 +1,56 @@
 
 
-## Plano: Busca por palavra nas seções + Mover "Especificações" para Qualidade
+## Plano: Remover Liberação de Produtos, ajustar tipos de mudança e adicionar notas de integração
 
-### Parte 1: Adicionar campo de busca nas seções Lista Mestra, Documentação e Treinamentos
+### 1. Remover tabela "Liberação de Produtos" do módulo RT
 
 **Em `src/components/administrativo/rt/DocumentacaoTab.tsx`:**
-- Adicionar 3 estados de busca: `buscaListaMestra`, `buscaDocumentacao`, `buscaTreinamentos`
-- Passar a prop `searchTerm` para `ListaMestraSection`, seção Documentação e `TreinamentosSection`
+- Remover import de `LiberacaoProdutosTable`
+- Remover import de `mockLiberacaoProdutos`
+- Remover import do tipo `LiberacaoProduto`
+- Remover estado `produtos` e o bloco `<LiberacaoProdutosTable />`
+
+### 2. Ajustar tipos de mudança — remover C e E, reletrar
+
+**Em `src/types/rt.ts`:**
+- Alterar `TipoMudanca` de `'A' | 'B' | 'C' | 'D' | 'E' | 'F'` para `'A' | 'B' | 'C' | 'D'`
+- A = Dados Empresariais, B = Dados Mestres de Produtos, C = Atualizações Regulatórias (ANVISA), D = Outros
+
+**Em `src/components/administrativo/rt/ControleMudancasTable.tsx`:**
+- Atualizar `getTipoMudancaLabel` com as 4 opções reletradas (A-D)
+
+**Em `src/components/administrativo/rt/NovaMudancaModal.tsx`:**
+- Remover opções C (Processos de Negócio) e E (Melhorias de Performance)
+- Reletrar D→C, F→D nas opções do Select e no display do SelectValue
+
+**Em `src/data/rtModules.ts`:**
+- Atualizar mock de mudanças: remover a de tipo C, reletrar D→C
+- Atualizar `descricoesTipoMudanca` com as 4 chaves corretas
+
+### 3. Adicionar notas de integração (origem dos dados)
+
+**Em `src/components/administrativo/rt/ControleMudancasTable.tsx`:**
+- Substituir o texto de integração existente por uma nota mais completa:
+  - "A - Dados Empresariais": dados vindos do módulo Institucional
+  - "B - Dados Mestres de Produtos": dados vindos do módulo Regulatório
+  - "C - Atualizações Regulatórias": dados vindos do módulo Regulatório
+  - "D - Outros": registro manual
 
 **Em `src/components/administrativo/rt/ListaMestraSection.tsx`:**
-- Receber prop `searchTerm`
-- Renderizar um `Input` com icone de `Search` acima do conteúdo, dentro do header "Lista Mestra"
-- Filtrar os itens da lista mestra (por titulo) e as pastas (por nome/subtitulo) com base no termo
-
-**Em `src/components/administrativo/rt/OrganizacaoDocumentos.tsx`:**
-- Receber prop opcional `searchTerm`
-- Quando presente, filtrar pastas cujo `nome`, `subtitulo` ou `codigo` contenham o termo (case-insensitive)
-- Auto-expandir pastas que contenham resultados
+- Adicionar nota: "Os itens LTCAT, PCMSO e PGR são alimentados pelo módulo RH"
 
 **Em `src/components/administrativo/rt/TreinamentosSection.tsx`:**
-- Receber prop `searchTerm`
-- Renderizar `Input` de busca no header
-- Filtrar treinamentos realizados e futuros por nome/responsável/tema
+- Adicionar nota: "Seção alimentada pelos módulos RT e RH"
 
-**Abordagem alternativa (mais simples):** Em vez de passar props para baixo, colocar o campo de busca diretamente em cada seção (`ListaMestraSection`, a div de Documentação, `TreinamentosSection`) com estado local. Isso é mais limpo e independente.
-
-### Parte 2: Retirar "Especificações" do RT e garantir que está no módulo Qualidade
-
-**Em `src/components/administrativo/rt/DocumentacaoTab.tsx`:**
-- Remover o bloco de `OrganizacaoDocumentos` com titulo "Especificações" (linhas 71-76)
-- Remover referência a `especDoc` (linha 48)
-
-**No módulo Qualidade (`EstruturaEPadroesTab.tsx`):** a seção "Especificações" já existe -- nenhuma alteração necessária.
+**Em `src/components/administrativo/rt/DocumentacaoTab.tsx` (seção POP):**
+- Adicionar nota: "Alterações em POP são sincronizadas com a seção 'POP - Procedimentos Operacionais Padrão' de 'Estrutura e Padrões' do módulo Qualidade, e vice-versa"
 
 ### Arquivos alterados
+- `src/types/rt.ts`
+- `src/data/rtModules.ts`
 - `src/components/administrativo/rt/DocumentacaoTab.tsx`
+- `src/components/administrativo/rt/ControleMudancasTable.tsx`
+- `src/components/administrativo/rt/NovaMudancaModal.tsx`
 - `src/components/administrativo/rt/ListaMestraSection.tsx`
-- `src/components/administrativo/rt/OrganizacaoDocumentos.tsx`
 - `src/components/administrativo/rt/TreinamentosSection.tsx`
 
