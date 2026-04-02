@@ -286,25 +286,67 @@ export const responsaveisNCRT = [
   "Maria Santos"
 ];
 
+export const setoresEmpresaRT = [
+  'RT',
+  'Qualidade',
+  'DT',
+  'Comercial',
+  'RH',
+  'Importação',
+  'Estoque',
+  'Assessoria Científica',
+  'Assessoria Técnica',
+  'Compliance',
+  'Jurídico',
+  'TI',
+  'Financeiro'
+];
+
+export const fabricantesComUnidadesRT = [
+  { nome: 'MedTech Brasil', unidades: ['Unidade São Paulo', 'Unidade Campinas', 'Unidade Manaus'] },
+  { nome: 'BioEquip International', unidades: ['Planta Principal - EUA', 'Planta México', 'Planta China'] },
+  { nome: 'SurgiCare Ltda', unidades: ['Fábrica Curitiba', 'Fábrica Belo Horizonte'] },
+  { nome: 'LabTech Solutions', unidades: ['Sede Alemanha', 'Filial Índia'] }
+];
+
+export const produtosMockNCRT = [
+  { codigo: 'PROD-001', marca: 'MedTech', modelo: 'MT-500', nomeFabricante: 'MedTech Brasil', referencia: 'REF-001', linhaProduto: 'Diagnóstico' },
+  { codigo: 'PROD-002', marca: 'BioEquip', modelo: 'BE-200', nomeFabricante: 'BioEquip International', referencia: 'REF-002', linhaProduto: 'Cirúrgico' },
+  { codigo: 'PROD-003', marca: 'SurgiCare', modelo: 'SC-100', nomeFabricante: 'SurgiCare Ltda', referencia: 'REF-003', linhaProduto: 'Implantes' },
+  { codigo: 'PROD-004', marca: 'LabTech', modelo: 'LT-300', nomeFabricante: 'LabTech Solutions', referencia: 'REF-004', linhaProduto: 'Laboratorial' },
+];
+
+export const equipamentosMockDTRT = [
+  { equipamentoId: 'eq-1', numeroSerie: 'SN-2024-0001', modelo: 'MT-500', marca: 'MedTech' },
+  { equipamentoId: 'eq-2', numeroSerie: 'SN-2024-0002', modelo: 'BE-200', marca: 'BioEquip' },
+  { equipamentoId: 'eq-3', numeroSerie: 'SN-2024-0003', modelo: 'SC-100', marca: 'SurgiCare' },
+];
+
 export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[] = [
   {
     id: "NC-RT-001",
     data: "2024-11-10",
     origem: "Auditoria",
     tipo: "Documentação Desatualizada",
+    tipos: ['Processo/Operacional'],
     impacto: "Crítico",
     descricao: "POPs de treinamento desatualizados desde última revisão regulatória",
     acaoImediata: "Suspensão temporária de novos treinamentos até atualização completa dos POPs",
+    acaoImediataValidada: true,
+    acaoImediataValidadaPor: 'RT',
+    acaoImediataValidadaEm: '10/11/2024',
     responsavel: "Dr. Carlos Silva",
+    responsaveis: ['RT', 'Qualidade'],
     prazoExecucao: "2024-11-20",
     status: "Em Análise",
     observacoes: "Impacta certificações de novos colaboradores",
+    dataCriacao: new Date("2024-11-10"),
     capa: {
       id: "CAPA-RT-001",
       acaoPreventiva: "Implementar sistema de revisão automática de documentação a cada 6 meses",
       acaoCorretiva: "Revisar e atualizar todos os POPs de treinamento conforme novas diretrizes ANVISA",
       gerenciamentoTarefas: "Atribuir equipe de documentação para revisão semanal. Criar checklist de atualização. Acompanhamento quinzenal com RT.",
-      prazoFinal: "2024-12-15",
+      prazoFinal: new Date("2024-12-15"),
       status: "Em Andamento",
       responsavel: "Dr. Carlos Silva"
     }
@@ -314,19 +356,22 @@ export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[
     data: "2024-11-08",
     origem: "Treinamento",
     tipo: "Treinamento Inadequado",
+    tipos: ['Gestão'],
     impacto: "Moderado",
     descricao: "Colaboradores apresentaram baixo desempenho em avaliação prática de manuseio de produtos controlados",
     acaoImediata: "Retreinamento imediato da equipe antes de retornar às atividades",
     responsavel: "Dra. Ana Paula",
+    responsaveis: ['RH', 'RT'],
     prazoExecucao: "2024-11-18",
     status: "Aguardando Ação",
     observacoes: "Identificada necessidade de material didático mais prático",
+    dataCriacao: new Date("2024-11-08"),
     capa: {
       id: "CAPA-RT-002",
       acaoPreventiva: "Criar módulo prático adicional com simulações de situações reais",
       acaoCorretiva: "Realizar treinamento complementar focado em práticas de manuseio",
       gerenciamentoTarefas: "Desenvolver material prático em 5 dias. Agendar sessões de treinamento. Avaliar competências pós-treinamento.",
-      prazoFinal: "2024-11-25",
+      prazoFinal: new Date("2024-11-25"),
       status: "Pendente",
       responsavel: "Dra. Ana Paula"
     }
@@ -336,19 +381,42 @@ export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[
     data: "2024-11-05",
     origem: "Liberação de Produto",
     tipo: "Produto Não Liberado",
+    tipos: ['Produto'],
     impacto: "Crítico",
     descricao: "Lote LOTE-20241105 expedido sem liberação formal do RT",
     acaoImediata: "Recall imediato do lote e bloqueio do sistema de expedição até aprovação RT",
     responsavel: "Eng. Roberto Santos",
+    responsaveis: ['Estoque', 'RT'],
     prazoExecucao: "2024-11-12",
     status: "Aberta",
     observacoes: "Falha no sistema de controle de liberação",
+    dataCriacao: new Date("2024-11-05"),
+    produtoCodigo: 'PROD-001',
+    produtoMarca: 'MedTech',
+    produtoModelo: 'MT-500',
+    produtoNomeFabricante: 'MedTech Brasil',
+    produtosLiberacao: [
+      {
+        id: 'lib-rt-1',
+        codigo: 'LIB-001',
+        referencia: 'REF-001',
+        nome: 'Equipamento MT-500',
+        modelo: 'MT-500',
+        fabricante: 'MedTech Brasil',
+        marca: 'MedTech',
+        linhaProduto: 'Diagnóstico',
+        apresentacao: ['primaria', 'secundaria'],
+        numeroSerieLote: 'LOTE-20241105',
+        status: 'Em análise',
+        liberadoRT: false,
+      }
+    ],
     capa: {
       id: "CAPA-RT-003",
       acaoPreventiva: "Implementar dupla verificação automatizada no sistema de expedição",
       acaoCorretiva: "Revisar e fortalecer processo de liberação de produtos",
       gerenciamentoTarefas: "Reunião com TI para desenvolver validação automática. Treinar equipe de expedição. Implementar testes em ambiente de homologação.",
-      prazoFinal: "2024-12-01",
+      prazoFinal: new Date("2024-12-01"),
       status: "Pendente",
       responsavel: "Eng. Roberto Santos"
     }
@@ -358,19 +426,22 @@ export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[
     data: "2024-11-03",
     origem: "Documentação",
     tipo: "Falha de Processo",
+    tipos: ['Legal/Regulatória'],
     impacto: "Leve",
     descricao: "Formulários de controle de mudanças não preenchidos corretamente em 3 ocasiões",
     acaoImediata: "Orientação imediata aos responsáveis sobre preenchimento correto",
     responsavel: "João Silva",
+    responsaveis: ['Compliance'],
     prazoExecucao: "2024-11-15",
     status: "Resolvida",
     observacoes: "Erro de interpretação do formulário",
+    dataCriacao: new Date("2024-11-03"),
     capa: {
       id: "CAPA-RT-004",
       acaoPreventiva: "Criar guia visual de preenchimento de formulários",
       acaoCorretiva: "Realizar sessão de orientação sobre preenchimento de documentos",
-      gerenciamentoTarefas: "Criar infográfico explicativo. Distribuir para equipe. Realizar workshop de 2 horas. Avaliar compreensão com exercícios práticos.",
-      prazoFinal: "2024-11-20",
+      gerenciamentoTarefas: "Criar infográfico explicativo. Distribuir para equipe. Realizar workshop de 2 horas.",
+      prazoFinal: new Date("2024-11-20"),
       status: "Concluída",
       responsavel: "João Silva"
     }
@@ -380,19 +451,24 @@ export const naoConformidadesRTMockadas: import('@/types/rt').NaoConformidadeRT[
     data: "2024-11-01",
     origem: "Outro",
     tipo: "Não Conformidade Regulatória",
+    tipos: ['Fornecedor'],
     impacto: "Moderado",
     descricao: "Identificada divergência entre procedimento interno e nova RDC publicada",
     acaoImediata: "Ajuste imediato do procedimento para conformidade regulatória",
     responsavel: "Maria Santos",
+    responsaveis: ['Importação', 'RT'],
     prazoExecucao: "2024-11-14",
     status: "Em Análise",
     observacoes: "Nova RDC publicada em outubro/2024",
+    dataCriacao: new Date("2024-11-01"),
+    fornecedorNomeFabricanteLegal: 'BioEquip International',
+    fornecedorUnidadeFabril: 'Planta Principal - EUA',
     capa: {
       id: "CAPA-RT-005",
       acaoPreventiva: "Estabelecer monitoramento semanal de publicações ANVISA",
       acaoCorretiva: "Atualizar procedimentos conforme nova RDC e comunicar equipe",
-      gerenciamentoTarefas: "Criar alerta automático de publicações. Designar responsável por análise semanal. Planejar atualização de documentos. Comunicar mudanças em reunião geral.",
-      prazoFinal: "2024-11-30",
+      gerenciamentoTarefas: "Criar alerta automático de publicações. Designar responsável por análise semanal.",
+      prazoFinal: new Date("2024-11-30"),
       status: "Em Andamento",
       responsavel: "Maria Santos"
     }
