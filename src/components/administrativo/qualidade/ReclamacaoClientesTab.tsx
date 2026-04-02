@@ -13,7 +13,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from '@/components/ui/badge';
-import { ClienteDataPanel } from './reclamacao/ClienteDataPanel';
+
 
 interface Cliente {
   id: number;
@@ -474,7 +474,39 @@ export const ReclamacaoClientesTab = () => {
               </div>
 
               {novaReclamacao.clienteId > 0 && (
-                <ClienteDataPanel data={novaReclamacao} />
+                <div className="bg-muted/50 p-4 rounded-lg space-y-3">
+                  <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Dados do Cliente</h5>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Tipo de Cliente</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.tipoCliente || '-'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Razão Social</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.razaoSocial || '-'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Nome Fantasia</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.nomeFantasia || '-'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">CNPJ/CPF</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.cnpjCpf || '-'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">CIN/RG</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.cinRg || '-'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Nome do Mantenedor</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.nomeMantenedor || '-'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">CNPJ do Mantenedor</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.cnpjMantenedor || '-'}</p>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
 
