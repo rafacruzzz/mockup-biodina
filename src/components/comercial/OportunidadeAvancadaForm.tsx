@@ -691,7 +691,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-48">
+              <div className="w-36">
                 {index === 0 && <Label className="text-xs text-muted-foreground mb-1">Valor Estimado</Label>}
                 <Input
                   type="number"
@@ -703,6 +703,34 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
                     setFormData({...formData, produtos: updated});
                   }}
                   placeholder="0,00"
+                  disabled={isReadOnlyMode()}
+                />
+              </div>
+              <div className="w-40">
+                {index === 0 && <Label className="text-xs text-muted-foreground mb-1">Qtd Equip. / Total Est.</Label>}
+                <Input
+                  type="number"
+                  value={item.quantidadeEquipamentos || 0}
+                  onChange={(e) => {
+                    const updated = [...formData.produtos];
+                    updated[index] = { ...updated[index], quantidadeEquipamentos: Number(e.target.value) };
+                    setFormData({...formData, produtos: updated});
+                  }}
+                  placeholder="0"
+                  disabled={isReadOnlyMode()}
+                />
+              </div>
+              <div className="w-40">
+                {index === 0 && <Label className="text-xs text-muted-foreground mb-1">Qtd Exames / Total Est.</Label>}
+                <Input
+                  type="number"
+                  value={item.quantidadeExames || 0}
+                  onChange={(e) => {
+                    const updated = [...formData.produtos];
+                    updated[index] = { ...updated[index], quantidadeExames: Number(e.target.value) };
+                    setFormData({...formData, produtos: updated});
+                  }}
+                  placeholder="0"
                   disabled={isReadOnlyMode()}
                 />
               </div>
