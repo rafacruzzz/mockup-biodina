@@ -13,7 +13,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from '@/components/ui/badge';
-import { ClienteDataPanel } from './reclamacao/ClienteDataPanel';
+
 
 interface Cliente {
   id: number;
@@ -96,6 +96,15 @@ interface Reclamacao extends ReclamacaoClienteData {
   solucao: string;
   geraNaoConformidade: 'sim' | 'nao' | '';
   observacoes: string;
+  contatoNomeReclamacao: string;
+  contatoTelefoneReclamacao: string;
+  contatoEmailReclamacao: string;
+  codigoProduto: string;
+  nomeProduto: string;
+  loteNumSerie: string;
+  quantidade: string;
+  notaFiscal: string;
+  dataEmissaoNF: string;
 }
 
 const emptyClienteData: ReclamacaoClienteData = {
@@ -218,7 +227,16 @@ export const ReclamacaoClientesTab = () => {
       descricaoProblema: 'Cliente relatou que o produto do lote 12345 apresentou não conformidade na embalagem. Solicitou informações sobre procedimento de devolução.',
       solucao: 'Realizada troca do produto e enviado novo lote conforme procedimento.',
       geraNaoConformidade: 'sim',
-      observacoes: 'Cliente satisfeito com a resolução.'
+      observacoes: 'Cliente satisfeito com a resolução.',
+      contatoNomeReclamacao: 'Dr. Carlos Mendes',
+      contatoTelefoneReclamacao: '(11) 99999-1234',
+      contatoEmailReclamacao: 'carlos.mendes@saolucas.com.br',
+      codigoProduto: 'PROD-001',
+      nomeProduto: 'Reagente Hematológico X',
+      loteNumSerie: 'LOTE-12345',
+      quantidade: '50',
+      notaFiscal: 'NF-98765',
+      dataEmissaoNF: '2025-01-10',
     },
     {
       id: '2',
@@ -259,7 +277,16 @@ export const ReclamacaoClientesTab = () => {
       descricaoProblema: 'Cliente questionou a temperatura ideal para armazenamento do produto XYZ.',
       solucao: 'Orientado conforme POP-ARM-001.',
       geraNaoConformidade: 'nao',
-      observacoes: ''
+      observacoes: '',
+      contatoNomeReclamacao: 'Ana Paula Silva',
+      contatoTelefoneReclamacao: '(21) 98888-5678',
+      contatoEmailReclamacao: 'ana.silva@clinicavida.com.br',
+      codigoProduto: 'PROD-045',
+      nomeProduto: 'Produto XYZ',
+      loteNumSerie: 'LOTE-67890',
+      quantidade: '10',
+      notaFiscal: 'NF-54321',
+      dataEmissaoNF: '2025-01-15',
     }
   ]);
 
@@ -269,7 +296,16 @@ export const ReclamacaoClientesTab = () => {
     descricaoProblema: '',
     solucao: '',
     geraNaoConformidade: '',
-    observacoes: ''
+    observacoes: '',
+    contatoNomeReclamacao: '',
+    contatoTelefoneReclamacao: '',
+    contatoEmailReclamacao: '',
+    codigoProduto: '',
+    nomeProduto: '',
+    loteNumSerie: '',
+    quantidade: '',
+    notaFiscal: '',
+    dataEmissaoNF: '',
   });
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -344,7 +380,16 @@ export const ReclamacaoClientesTab = () => {
       descricaoProblema: '',
       solucao: '',
       geraNaoConformidade: '',
-      observacoes: ''
+      observacoes: '',
+      contatoNomeReclamacao: '',
+      contatoTelefoneReclamacao: '',
+      contatoEmailReclamacao: '',
+      codigoProduto: '',
+      nomeProduto: '',
+      loteNumSerie: '',
+      quantidade: '',
+      notaFiscal: '',
+      dataEmissaoNF: '',
     });
     setMostrarFormulario(false);
 
@@ -429,11 +474,139 @@ export const ReclamacaoClientesTab = () => {
               </div>
 
               {novaReclamacao.clienteId > 0 && (
-                <ClienteDataPanel data={novaReclamacao} />
+                <div className="bg-muted/50 p-4 rounded-lg space-y-3">
+                  <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Dados do Cliente</h5>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Tipo de Cliente</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.tipoCliente || '-'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Razão Social</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.razaoSocial || '-'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Nome Fantasia</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.nomeFantasia || '-'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">CNPJ/CPF</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.cnpjCpf || '-'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">CIN/RG</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.cinRg || '-'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">Nome do Mantenedor</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.nomeMantenedor || '-'}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">CNPJ do Mantenedor</Label>
+                      <p className="text-sm font-medium">{novaReclamacao.cnpjMantenedor || '-'}</p>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
 
-            {/* Seção: Registro da Reclamação */}
+            {/* Seção: Contato */}
+            <div className="space-y-4">
+              <h4 className="font-semibold text-base border-b pb-2">Contato</h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="contatoNomeReclamacao">Nome</Label>
+                  <Input
+                    id="contatoNomeReclamacao"
+                    placeholder="Nome do contato"
+                    value={novaReclamacao.contatoNomeReclamacao}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, contatoNomeReclamacao: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contatoTelefoneReclamacao">Telefone</Label>
+                  <Input
+                    id="contatoTelefoneReclamacao"
+                    placeholder="Telefone do contato"
+                    value={novaReclamacao.contatoTelefoneReclamacao}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, contatoTelefoneReclamacao: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contatoEmailReclamacao">E-mail</Label>
+                  <Input
+                    id="contatoEmailReclamacao"
+                    type="email"
+                    placeholder="E-mail do contato"
+                    value={novaReclamacao.contatoEmailReclamacao}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, contatoEmailReclamacao: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Seção: Dados do Produto */}
+            <div className="space-y-4">
+              <h4 className="font-semibold text-base border-b pb-2">Dados do Produto</h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="codigoProduto">Código do Produto</Label>
+                  <Input
+                    id="codigoProduto"
+                    placeholder="Código do produto"
+                    value={novaReclamacao.codigoProduto}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, codigoProduto: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="nomeProduto">Nome do Produto</Label>
+                  <Input
+                    id="nomeProduto"
+                    placeholder="Nome do produto"
+                    value={novaReclamacao.nomeProduto}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, nomeProduto: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="loteNumSerie">Lote/Nº de Série</Label>
+                  <Input
+                    id="loteNumSerie"
+                    placeholder="Lote ou número de série"
+                    value={novaReclamacao.loteNumSerie}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, loteNumSerie: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="quantidade">Quantidade</Label>
+                  <Input
+                    id="quantidade"
+                    type="number"
+                    placeholder="Quantidade"
+                    value={novaReclamacao.quantidade}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, quantidade: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="notaFiscal">Nota Fiscal</Label>
+                  <Input
+                    id="notaFiscal"
+                    placeholder="Número da nota fiscal"
+                    value={novaReclamacao.notaFiscal}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, notaFiscal: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dataEmissaoNF">Data de Emissão da NF</Label>
+                  <Input
+                    id="dataEmissaoNF"
+                    type="date"
+                    value={novaReclamacao.dataEmissaoNF}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, dataEmissaoNF: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-4">
               <h4 className="font-semibold text-base border-b pb-2">Registro da Reclamação</h4>
               
