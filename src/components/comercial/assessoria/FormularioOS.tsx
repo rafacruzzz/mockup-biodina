@@ -255,7 +255,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     }
 
     const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega"
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal"
     );
 
     if (ehTreinamento && listaParticipantes.length === 0) {
@@ -714,7 +714,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       </div>
 
       {/* Registro de Treinamento */}
-      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega") && (
+      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal") && (
         <>
           {/* Checklist MeterOmega */}
           {tiposSelecionados.includes("treinamento_usuario_meteromega") && (
