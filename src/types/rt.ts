@@ -24,7 +24,7 @@ export interface PastaRT {
 
 // Controle de Mudanças
 export type ParteInteressada = 'Usuario' | 'TI' | 'CQ' | 'RT' | 'DT' | 'RH' | 'Outros';
-export type TipoMudanca = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+export type TipoMudanca = 'A' | 'B' | 'C' | 'D';
 export type StatusMudanca = 'Pendente' | 'Em Análise' | 'Aprovado' | 'Rejeitado';
 
 export interface Mudanca {

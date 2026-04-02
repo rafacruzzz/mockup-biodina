@@ -24,10 +24,8 @@ const getTipoMudancaLabel = (tipo: string) => {
   const labels = {
     A: "Dados Empresariais",
     B: "Dados Mestres de Produtos",
-    C: "Processos de Negócio",
-    D: "Atualizações Regulatórias",
-    E: "Melhorias de Performance",
-    F: "Outros"
+    C: "Atualizações Regulatórias",
+    D: "Outros"
   };
   return labels[tipo as keyof typeof labels] || tipo;
 };
@@ -91,11 +89,14 @@ export const ControleMudancasTable = ({
             </Button>
           </div>
 
-          <div className="text-sm text-muted-foreground">
-            <p>
-              <strong>Integração automática:</strong> Mudanças do tipo "B - Dados Mestres de Produtos" 
-              são geradas automaticamente quando há alterações no módulo Regulatório.
-            </p>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 space-y-1">
+            <p className="text-xs text-amber-700 font-medium">📋 Origem dos dados:</p>
+            <ul className="text-xs text-amber-700 list-disc list-inside space-y-0.5">
+              <li><strong>A - Dados Empresariais:</strong> dados vindos do módulo Institucional</li>
+              <li><strong>B - Dados Mestres de Produtos:</strong> dados vindos do módulo Regulatório (gerados automaticamente)</li>
+              <li><strong>C - Atualizações Regulatórias:</strong> dados vindos do módulo Regulatório</li>
+              <li><strong>D - Outros:</strong> registro manual</li>
+            </ul>
           </div>
 
           <div className="border rounded-lg">
