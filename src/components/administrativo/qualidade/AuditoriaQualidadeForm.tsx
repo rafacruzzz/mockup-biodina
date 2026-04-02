@@ -3,10 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Paperclip } from 'lucide-react';
 import { auditoresDisponiveis, auditoriasMockadas } from '@/data/qualidadeData';
 import { AuditoriaQualidade, PontoCritico } from '@/types/qualidade';
 import { format } from 'date-fns';
@@ -18,24 +19,25 @@ export const AuditoriaQualidadeForm = () => {
     data: '',
     auditor: '',
     resultado: 'Aprovado' as 'Aprovado' | 'Reprovado',
-    pontosCriticos: [] as PontoCritico[]
+    pontosCriticos: [] as PontoCritico[],
+    oportunidadesMelhorias: '',
+    arquivo: null as File | null,
   });
-  const [novoPonto, setNovoPonto] = useState({ descricao: '', status: 'Aprovado' as 'Aprovado' | 'Reaprovado' });
+  const [novoPontoDescricao, setNovoPontoDescricao] = useState('');
 
   const adicionarPontoCritico = () => {
-    if (novoPonto.descricao.trim()) {
+    if (novoPontoDescricao.trim()) {
       setFormData({
         ...formData,
         pontosCriticos: [
           ...formData.pontosCriticos,
           {
             id: Date.now().toString(),
-            descricao: novoPonto.descricao,
-            status: novoPonto.status
+            descricao: novoPontoDescricao,
           }
         ]
       });
-      setNovoPonto({ descricao: '', status: 'Aprovado' });
+      setNovoPontoDescricao('');
     }
   };
 
@@ -53,7 +55,9 @@ export const AuditoriaQualidadeForm = () => {
         data: new Date(formData.data),
         auditorResponsavel: formData.auditor,
         resultadoGeral: formData.resultado,
-        pontosCriticos: formData.pontosCriticos
+        pontosCriticos: formData.pontosCriticos,
+        oportunidadesMelhorias: formData.oportunidadesMelhorias || undefined,
+        arquivo: formData.arquivo?.name || undefined,
       };
       setAuditorias([novaAud, ...auditorias]);
       setNovaAuditoria(false);
@@ -61,7 +65,9 @@ export const AuditoriaQualidadeForm = () => {
         data: '',
         auditor: '',
         resultado: 'Aprovado',
-        pontosCriticos: []
+        pontosCriticos: [],
+        oportunidadesMelhorias: '',
+        arquivo: null,
       });
     }
   };
@@ -69,19 +75,20 @@ export const AuditoriaQualidadeForm = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Auditorias da Qualidade</h3>
+        <h3 className="text-lg font-semibold">Auditorias da Qualidade — Externa</h3>
         <Button onClick={() => setNovaAuditoria(!novaAuditoria)}>
           <Plus className="h-4 w-4 mr-2" />
-          Nova Auditoria
+          Nova Auditoria Externa
         </Button>
       </div>
 
       {novaAuditoria && (
         <Card>
           <CardHeader>
-            <CardTitle>Registrar Nova Auditoria</CardTitle>
+            <CardTitle>Registrar Nova Auditoria Externa</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* a) Data e Auditor */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label>Data da Auditoria</Label>
@@ -108,39 +115,15 @@ export const AuditoriaQualidadeForm = () => {
               </div>
             </div>
 
-            <div>
-              <Label>Resultado Geral</Label>
-              <Select value={formData.resultado} onValueChange={(value: 'Aprovado' | 'Reprovado') => setFormData({ ...formData, resultado: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Aprovado">Aprovado</SelectItem>
-                  <SelectItem value="Reprovado">Reprovado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
+            {/* b) Pontos Críticos — só texto */}
             <div className="space-y-2">
               <Label>Pontos Críticos</Label>
               <div className="flex gap-2">
                 <Input
                   placeholder="Descrição do ponto crítico"
-                  value={novoPonto.descricao}
-                  onChange={(e) => setNovoPonto({ ...novoPonto, descricao: e.target.value })}
+                  value={novoPontoDescricao}
+                  onChange={(e) => setNovoPontoDescricao(e.target.value)}
                 />
-                <Select
-                  value={novoPonto.status}
-                  onValueChange={(value: 'Aprovado' | 'Reaprovado') => setNovoPonto({ ...novoPonto, status: value })}
-                >
-                  <SelectTrigger className="w-[150px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Aprovado">Aprovado</SelectItem>
-                    <SelectItem value="Reaprovado">Reaprovado</SelectItem>
-                  </SelectContent>
-                </Select>
                 <Button onClick={adicionarPontoCritico}>
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -151,7 +134,6 @@ export const AuditoriaQualidadeForm = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Descrição</TableHead>
-                      <TableHead>Status</TableHead>
                       <TableHead className="w-[50px]"></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -159,11 +141,6 @@ export const AuditoriaQualidadeForm = () => {
                     {formData.pontosCriticos.map((ponto) => (
                       <TableRow key={ponto.id}>
                         <TableCell>{ponto.descricao}</TableCell>
-                        <TableCell>
-                          <Badge variant={ponto.status === 'Aprovado' ? 'default' : 'secondary'}>
-                            {ponto.status}
-                          </Badge>
-                        </TableCell>
                         <TableCell>
                           <Button
                             variant="ghost"
@@ -180,6 +157,48 @@ export const AuditoriaQualidadeForm = () => {
               )}
             </div>
 
+            {/* c) Oportunidades de Melhorias */}
+            <div>
+              <Label>Oportunidades de Melhorias</Label>
+              <Textarea
+                placeholder="Descreva as oportunidades de melhorias identificadas..."
+                value={formData.oportunidadesMelhorias}
+                onChange={(e) => setFormData({ ...formData, oportunidadesMelhorias: e.target.value })}
+                rows={4}
+              />
+            </div>
+
+            {/* d) Anexar Arquivo */}
+            <div>
+              <Label>Anexar Arquivo</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="file"
+                  onChange={(e) => setFormData({ ...formData, arquivo: e.target.files?.[0] || null })}
+                />
+                {formData.arquivo && (
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <Paperclip className="h-4 w-4" />
+                    <span>{formData.arquivo.name}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* e) Resultado Geral (movido para o final) */}
+            <div>
+              <Label>Resultado Geral</Label>
+              <Select value={formData.resultado} onValueChange={(value: 'Aprovado' | 'Reprovado') => setFormData({ ...formData, resultado: value })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Aprovado">Aprovado</SelectItem>
+                  <SelectItem value="Reprovado">Reprovado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="flex gap-2">
               <Button onClick={salvarAuditoria}>Salvar Auditoria</Button>
               <Button variant="outline" onClick={() => setNovaAuditoria(false)}>
@@ -192,7 +211,7 @@ export const AuditoriaQualidadeForm = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Histórico de Auditorias</CardTitle>
+          <CardTitle>Histórico de Auditorias Externas</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
@@ -202,6 +221,7 @@ export const AuditoriaQualidadeForm = () => {
                 <TableHead>Auditor</TableHead>
                 <TableHead>Resultado</TableHead>
                 <TableHead>Pontos Críticos</TableHead>
+                <TableHead>Oportunidades de Melhorias</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -217,14 +237,20 @@ export const AuditoriaQualidadeForm = () => {
                   <TableCell>
                     <div className="space-y-1">
                       {auditoria.pontosCriticos.map((ponto) => (
-                        <div key={ponto.id} className="text-sm flex items-center gap-2">
-                          <Badge variant={ponto.status === 'Aprovado' ? 'outline' : 'secondary'} className="text-xs">
-                            {ponto.status}
-                          </Badge>
-                          <span>{ponto.descricao}</span>
+                        <div key={ponto.id} className="text-sm">
+                          {ponto.descricao}
                         </div>
                       ))}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-sm">
+                      {auditoria.oportunidadesMelhorias
+                        ? auditoria.oportunidadesMelhorias.length > 60
+                          ? auditoria.oportunidadesMelhorias.substring(0, 60) + '...'
+                          : auditoria.oportunidadesMelhorias
+                        : '—'}
+                    </span>
                   </TableCell>
                 </TableRow>
               ))}

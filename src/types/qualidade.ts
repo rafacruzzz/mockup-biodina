@@ -3,7 +3,7 @@
 export interface PontoCritico {
   id: string;
   descricao: string;
-  status: 'Aprovado' | 'Reaprovado';
+  status?: 'Aprovado' | 'Reaprovado';
 }
 
 export interface AuditoriaQualidade {
@@ -12,6 +12,8 @@ export interface AuditoriaQualidade {
   auditorResponsavel: string;
   resultadoGeral: 'Aprovado' | 'Reprovado';
   pontosCriticos: PontoCritico[];
+  oportunidadesMelhorias?: string;
+  arquivo?: string;
   observacoes?: string;
 }
 
