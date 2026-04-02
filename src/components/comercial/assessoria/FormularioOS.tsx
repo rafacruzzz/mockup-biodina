@@ -165,6 +165,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [checklistABL800, setChecklistABL800] = useState<Record<string, boolean>>({});
   const [checklistAQT90, setChecklistAQT90] = useState<Record<string, boolean>>({});
   const [checklistDxH520, setChecklistDxH520] = useState<Record<string, boolean>>({});
+  const [checklistExcelsiorAS, setChecklistExcelsiorAS] = useState<Record<string, boolean>>({});
 
   const tiposOS: { value: TipoOS; label: string }[] = [
     { value: "suporte_operacional", label: "Suporte Operacional" },
@@ -178,6 +179,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     { value: "treinamento_usuario_abl800", label: "Treinamento de Usuário: Modelo ABL800 - Radiometer" },
     { value: "treinamento_usuario_aqt90", label: "Treinamento de Usuário: Modelo AQT90 FLEX - Radiometer" },
     { value: "treinamento_usuario_dxh520", label: "Treinamento de Usuário: DxH 520 – Beckman Coulter" },
+    { value: "treinamento_usuario_excelsior_as", label: "Treinamento de Usuário: Excelsior AS" },
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
@@ -265,7 +267,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     }
 
     const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800" || t === "treinamento_usuario_aqt90" || t === "treinamento_usuario_dxh520"
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800" || t === "treinamento_usuario_aqt90" || t === "treinamento_usuario_dxh520" || t === "treinamento_usuario_excelsior_as"
     );
 
     if (ehTreinamento && listaParticipantes.length === 0) {
@@ -1689,6 +1691,46 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                 </CardContent>
               </Card>
             </div>
+          )}
+
+          {/* Checklist Excelsior AS */}
+          {tiposSelecionados.includes("treinamento_usuario_excelsior_as") && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Conteúdo Programático do Treinamento</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {[
+                  { key: "caracteristicas_fisicas", label: "Características/compartimentos físicos do equipamento" },
+                  { key: "material_consumo", label: "Material de consumo" },
+                  { key: "config_menu_inicial", label: "Configurações do menu inicial" },
+                  { key: "config_protocolos", label: "Configuração de protocolos/programas" },
+                  { key: "config_overnight", label: "Configurações de programas overnight" },
+                  { key: "controle_qualidade", label: "Controle de qualidade" },
+                  { key: "rotacao_reagentes", label: "Rotação de reagentes" },
+                  { key: "inspecao_reagentes", label: "Inspeção de reagentes" },
+                  { key: "substituicao_filtros", label: "Substituição filtros" },
+                  { key: "substituicao_reagentes_lavagem", label: "Substituição dos reagentes de lavagem" },
+                  { key: "bateria_backup", label: "Instrução sobre a bateria backup" },
+                  { key: "limpeza_camara_reacao", label: "Instruções limpeza da câmara de reação antes do programa de lavagem" },
+                  { key: "limpeza_geral", label: "Instruções para limpeza em geral" },
+                  { key: "testes", label: "Testes" },
+                ].map((item) => (
+                  <div key={item.key} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`excelsior-${item.key}`}
+                      checked={!!checklistExcelsiorAS[item.key]}
+                      onCheckedChange={(checked) =>
+                        setChecklistExcelsiorAS((prev) => ({ ...prev, [item.key]: !!checked }))
+                      }
+                    />
+                    <Label htmlFor={`excelsior-${item.key}`} className="text-sm font-normal cursor-pointer">
+                      {item.label}
+                    </Label>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
           )}
 
           <Card>
