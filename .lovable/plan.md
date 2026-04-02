@@ -1,21 +1,41 @@
 
 
-## Plano: Permitir criação de múltiplas pastas principais
+## Plano: Busca por palavra nas seções + Mover "Especificações" para Qualidade
 
-### Problema
-Quando você clica em uma pasta para selecioná-la, o estado `pastaSelecionada` fica definido. Ao clicar em "Nova Pasta", ela é automaticamente criada como subpasta da pasta selecionada. Não existe forma de desselecionar a pasta e criar uma nova pasta na raiz.
+### Parte 1: Adicionar campo de busca nas seções Lista Mestra, Documentação e Treinamentos
 
-### Solução
-Adicionar ao modal "Nova Pasta" um checkbox/toggle para escolher se a nova pasta será criada **na raiz** ou **dentro da pasta selecionada**. Também permitir desselecionar uma pasta clicando nela novamente.
+**Em `src/components/administrativo/rt/DocumentacaoTab.tsx`:**
+- Adicionar 3 estados de busca: `buscaListaMestra`, `buscaDocumentacao`, `buscaTreinamentos`
+- Passar a prop `searchTerm` para `ListaMestraSection`, seção Documentação e `TreinamentosSection`
 
-### Alterações em `src/components/administrativo/rt/OrganizacaoDocumentos.tsx`
+**Em `src/components/administrativo/rt/ListaMestraSection.tsx`:**
+- Receber prop `searchTerm`
+- Renderizar um `Input` com icone de `Search` acima do conteúdo, dentro do header "Lista Mestra"
+- Filtrar os itens da lista mestra (por titulo) e as pastas (por nome/subtitulo) com base no termo
 
-**1. Toggle de desseleção**: ao clicar numa pasta já selecionada, desselecionar (`setPastaSelecionada(null)`).
+**Em `src/components/administrativo/rt/OrganizacaoDocumentos.tsx`:**
+- Receber prop opcional `searchTerm`
+- Quando presente, filtrar pastas cujo `nome`, `subtitulo` ou `codigo` contenham o termo (case-insensitive)
+- Auto-expandir pastas que contenham resultados
 
-**2. Opção no modal "Nova Pasta"**: quando há pasta selecionada, mostrar um checkbox "Criar dentro de: [nome da pasta]" (marcado por padrão). Se o usuário desmarcar, a pasta será criada na raiz.
+**Em `src/components/administrativo/rt/TreinamentosSection.tsx`:**
+- Receber prop `searchTerm`
+- Renderizar `Input` de busca no header
+- Filtrar treinamentos realizados e futuros por nome/responsável/tema
 
-**3. Atualizar `criarNovaPasta`**: usar o valor do checkbox (e não apenas `pastaSelecionada`) para decidir se cria na raiz ou como subpasta.
+**Abordagem alternativa (mais simples):** Em vez de passar props para baixo, colocar o campo de busca diretamente em cada seção (`ListaMestraSection`, a div de Documentação, `TreinamentosSection`) com estado local. Isso é mais limpo e independente.
 
-### Arquivo alterado
+### Parte 2: Retirar "Especificações" do RT e garantir que está no módulo Qualidade
+
+**Em `src/components/administrativo/rt/DocumentacaoTab.tsx`:**
+- Remover o bloco de `OrganizacaoDocumentos` com titulo "Especificações" (linhas 71-76)
+- Remover referência a `especDoc` (linha 48)
+
+**No módulo Qualidade (`EstruturaEPadroesTab.tsx`):** a seção "Especificações" já existe -- nenhuma alteração necessária.
+
+### Arquivos alterados
+- `src/components/administrativo/rt/DocumentacaoTab.tsx`
+- `src/components/administrativo/rt/ListaMestraSection.tsx`
 - `src/components/administrativo/rt/OrganizacaoDocumentos.tsx`
+- `src/components/administrativo/rt/TreinamentosSection.tsx`
 
