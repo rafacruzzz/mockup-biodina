@@ -227,7 +227,16 @@ export const ReclamacaoClientesTab = () => {
       descricaoProblema: 'Cliente relatou que o produto do lote 12345 apresentou não conformidade na embalagem. Solicitou informações sobre procedimento de devolução.',
       solucao: 'Realizada troca do produto e enviado novo lote conforme procedimento.',
       geraNaoConformidade: 'sim',
-      observacoes: 'Cliente satisfeito com a resolução.'
+      observacoes: 'Cliente satisfeito com a resolução.',
+      contatoNomeReclamacao: 'Dr. Carlos Mendes',
+      contatoTelefoneReclamacao: '(11) 99999-1234',
+      contatoEmailReclamacao: 'carlos.mendes@saolucas.com.br',
+      codigoProduto: 'PROD-001',
+      nomeProduto: 'Reagente Hematológico X',
+      loteNumSerie: 'LOTE-12345',
+      quantidade: '50',
+      notaFiscal: 'NF-98765',
+      dataEmissaoNF: '2025-01-10',
     },
     {
       id: '2',
@@ -268,7 +277,16 @@ export const ReclamacaoClientesTab = () => {
       descricaoProblema: 'Cliente questionou a temperatura ideal para armazenamento do produto XYZ.',
       solucao: 'Orientado conforme POP-ARM-001.',
       geraNaoConformidade: 'nao',
-      observacoes: ''
+      observacoes: '',
+      contatoNomeReclamacao: 'Ana Paula Silva',
+      contatoTelefoneReclamacao: '(21) 98888-5678',
+      contatoEmailReclamacao: 'ana.silva@clinicavida.com.br',
+      codigoProduto: 'PROD-045',
+      nomeProduto: 'Produto XYZ',
+      loteNumSerie: 'LOTE-67890',
+      quantidade: '10',
+      notaFiscal: 'NF-54321',
+      dataEmissaoNF: '2025-01-15',
     }
   ]);
 
