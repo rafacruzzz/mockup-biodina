@@ -1,38 +1,34 @@
 
 
-## Plano: Adicionar tipo de OS "Treinamento de Usuário: Excelsior AS"
+## Plano: Adicionar tipo de OS "Treinamento de Usuário: Osmômetro modelo OsmoTech"
 
-Seguindo o mesmo padrão dos demais treinamentos, mas com uma estrutura diferente: 14 itens de checklist em um layout de cards por categoria. Como os itens não se agrupam em categorias claras (são todos tópicos independentes do equipamento), serão organizados em um único card "Conteúdo Programático do Treinamento".
+Seguindo o mesmo padrão dos demais treinamentos, com um único card "Conteúdo Programático" contendo 10 itens de checklist (estrutura similar ao Excelsior AS).
 
 ### Alterações
 
 **1. `src/types/assessoria-cientifica.ts`**
-- Adicionar `'treinamento_usuario_excelsior_as'` ao type `TipoOS`
+- Adicionar `'treinamento_usuario_osmotech'` ao type `TipoOS`
 
 **2. `src/data/assessoria-cientifica.ts`**
-- Adicionar label `"Treinamento de Usuário: Excelsior AS"` e ícone `"🔬"`
+- Adicionar label `"Treinamento de Usuário: Osmômetro modelo OsmoTech"` e ícone `"🔬"`
 
 **3. `src/components/comercial/assessoria/FormularioOS.tsx`**
 - Adicionar opção no array `tiposOS`
 - Incluir nas condições de `ehTreinamento` (participantes, assinaturas, certificado)
-- Novo estado `checklistExcelsiorAS` (Record<string, boolean>)
-- Bloco condicional com checklist de checkboxes (14 itens):
+- Novo estado `checklistOsmoTech` (Record<string, boolean>)
+- Bloco condicional com card "Conteúdo Programático do Treinamento" contendo checkboxes:
 
 **Itens do Checklist:**
-- Características/compartimentos físicos do equipamento
-- Material de consumo
-- Configurações do menu inicial
-- Configuração de protocolos/programas
-- Configurações de programas overnight
-- Controle de qualidade
-- Rotação de reagentes
-- Inspeção de reagentes
-- Substituição filtros
-- Substituição dos reagentes de lavagem
-- Instrução sobre a bateria backup
-- Instruções limpeza da câmara de reação antes do programa de lavagem
-- Instruções para limpeza em geral
-- Testes
+- Características e funções externas do equipamento
+- Insumos básicos para o perfeito funcionamento do equipamento (padrões de calibração, kit ponteira e controle diário)
+- Características da interface/configuração
+- Calibração do equipamento com 03 pontos
+- Calibração e utilização da pipeta de 20 microlitros
+- Cadastro de usuários
+- Filtro de resultados
+- Estatísticas dos resultados
+- Exportação dos resultados via rede
+- Testes com amostras
 
 ### Arquivos alterados
 - `src/types/assessoria-cientifica.ts`
