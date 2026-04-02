@@ -592,7 +592,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
             </Select>
           </div>
           <div>
-            <Label htmlFor="numeroPregao">Nº Pregão / INEX / ATA / SRP</Label>
+            <Label htmlFor="numeroPregao"><Label htmlFor="numeroPregao">Nº Pregão Eletrônico/ INEX / ATA / SRP</Label></Label>
             <Input
               id="numeroPregao"
               value={formData.numeroPregao}
