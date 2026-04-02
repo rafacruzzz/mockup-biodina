@@ -1,36 +1,34 @@
 
 
-## Plano: Reestruturar Auditorias da Qualidade — Parte 1.1 (Auditoria Externa)
+## Plano: Reestruturar formulário de Reclamação de Clientes
 
-### Contexto
-O formulário atual de Auditorias será dividido em duas partes. Esta alteração trata da **Auditoria da Qualidade Externa** com as seguintes mudanças no formulário de registro:
+### Resumo
+Reorganizar o formulário para mostrar campos do cliente (puxados do cadastro), campos de contato (preenchidos na hora), dados do produto e depois data/descrição do problema — tudo antes da seção "Tratamento" que se mantém.
 
-### Alterações em `src/components/administrativo/qualidade/AuditoriaQualidadeForm.tsx`
+### Alterações em `src/components/administrativo/qualidade/ReclamacaoClientesTab.tsx`
 
-**1. Renomear título e estrutura geral:**
-- Título principal: "Auditorias da Qualidade — Externa"
-- Botão: "Nova Auditoria Externa"
+**1. Após o seletor "Buscar Cliente", substituir o `ClienteDataPanel` por campos read-only inline:**
+- Grid com: Tipo de Cliente, Razão Social, Nome Fantasia, CNPJ/CPF, CIN/RG, Nome do Mantenedor, CNPJ do Mantenedor
+- Todos preenchidos automaticamente ao selecionar cliente (dados já existem no estado)
 
-**2. Reordenar campos do formulário (de cima para baixo):**
-- a) Data da Auditoria + Auditor Responsável (mantém como está)
-- b) Pontos Críticos — **sem** o Select de "Aprovado/Reaprovado"; apenas Input de texto + botão adicionar. A tabela mostra só descrição + botão remover (sem coluna Status)
-- c) Oportunidades de Melhorias — campo Textarea para texto livre
-- d) Anexar Arquivo — input type="file" para upload
-- e) Resultado Geral — Select "Aprovado/Reprovado" movido para cá (era o item "a" original, agora fica no final)
+**2. Nova seção "Contato" (campos editáveis, preenchidos na hora):**
+- Nome, Telefone, E-mail (3 inputs em grid)
+- Adicionar `contatoNomeReclamacao`, `contatoTelefoneReclamacao`, `contatoEmailReclamacao` ao estado
 
-**3. Atualizar estado do formulário:**
-- Adicionar `oportunidadesMelhorias: string` e `arquivo: File | null` ao `formData`
-- Remover `status` do `novoPonto` (pontos críticos agora são só texto)
+**3. Nova seção "Dados do Produto":**
+- Campos editáveis: Código do Produto, Nome do Produto, Lote/Nº de Série, Quantidade, Nota Fiscal, Data de Emissão da Nota Fiscal
+- Adicionar ao estado: `codigoProduto`, `nomeProduto`, `loteNumSerie`, `quantidade`, `notaFiscal`, `dataEmissaoNF`
 
-**4. Atualizar tabela do Histórico:**
-- Coluna "Pontos Críticos" sem badges de status — exibir apenas lista de descrições
-- Adicionar coluna "Oportunidades de Melhorias" (texto resumido)
+**4. Seção "Registro da Reclamação" (já existe, manter):**
+- Data + Descrição do Problema (como está)
 
-**5. Atualizar tipos em `src/types/qualidade.ts`:**
-- `PontoCritico`: tornar `status` opcional (para manter compatibilidade)
-- `AuditoriaQualidade`: adicionar `oportunidadesMelhorias?: string` e `arquivo?: string`
+**5. Seção "Tratamento" (manter como está no print):**
+- Solução, Gera NC?, Observações
+
+**6. Atualizar interface `Reclamacao` e `emptyClienteData`** com os novos campos
+
+**7. Remover import e uso do `ClienteDataPanel`** (substituído pelos campos inline)
 
 ### Arquivos alterados
-- `src/types/qualidade.ts`
-- `src/components/administrativo/qualidade/AuditoriaQualidadeForm.tsx`
+- `src/components/administrativo/qualidade/ReclamacaoClientesTab.tsx`
 
