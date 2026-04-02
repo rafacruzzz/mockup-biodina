@@ -3,10 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { MoneyInput } from "@/components/ui/money-input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { Plus, Trash2, Package, Search } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -17,16 +15,13 @@ interface KitProduto {
   id: string;
   codigo: string;
   nome: string;
-  incluirNoPedido: boolean;
+  fazParteDoPedido: "sim" | "nao";
   quantidade: string;
   qtdItens: string;
 }
 
 interface KitFormData {
   nome: string;
-  sku: string;
-  descricao: string;
-  precoBase: string;
   produtos: KitProduto[];
 }
 
@@ -39,24 +34,17 @@ interface KitModalProps {
 const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
   const [formData, setFormData] = useState<KitFormData>(editData || {
     nome: "",
-    sku: "",
-    descricao: "",
-    precoBase: "",
     produtos: []
   });
   const [showProductSelector, setShowProductSelector] = useState(false);
 
   const availableProducts = modules.produtos?.subModules?.produtos?.data || [];
 
-  const handleFieldChange = (field: keyof KitFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
   const addProduto = (product: { id: string; codigo: string; nome: string }) => {
     if (formData.produtos.some(p => p.id === product.id)) return;
     setFormData(prev => ({
       ...prev,
-      produtos: [...prev.produtos, { ...product, incluirNoPedido: true, quantidade: "1", qtdItens: "1" }]
+      produtos: [...prev.produtos, { ...product, fazParteDoPedido: "sim", quantidade: "1", qtdItens: "1" }]
     }));
   };
 
@@ -72,15 +60,11 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
   };
 
   const totalProdutos = formData.produtos.length;
-  const totalIncluidos = formData.produtos.filter(p => p.incluirNoPedido).length;
+  const totalNoPedido = formData.produtos.filter(p => p.fazParteDoPedido === "sim").length;
 
   const handleSave = () => {
     if (!formData.nome.trim()) {
       toast({ title: "Nome do Kit é obrigatório", variant: "destructive" });
-      return;
-    }
-    if (!formData.sku.trim()) {
-      toast({ title: "SKU do Kit é obrigatório", variant: "destructive" });
       return;
     }
     toast({ title: editData ? "Kit atualizado com sucesso!" : "Kit criado com sucesso!" });
@@ -88,7 +72,7 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
   };
 
   const handleClose = () => {
-    setFormData({ nome: "", sku: "", descricao: "", precoBase: "", produtos: [] });
+    setFormData({ nome: "", produtos: [] });
     setShowProductSelector(false);
     onClose();
   };
@@ -104,57 +88,22 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
 
         <ScrollArea className="flex-1 pr-4">
           <div className="space-y-6 pb-4">
-            {/* Informações do Kit */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  <Package className="h-4 w-4" />
-                  Informações do Kit
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Nome do Kit *</Label>
-                    <Input
-                      value={formData.nome}
-                      onChange={e => handleFieldChange("nome", e.target.value)}
-                      placeholder="Ex: Kit Diagnóstico Completo"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>SKU do Kit *</Label>
-                    <Input
-                      value={formData.sku}
-                      onChange={e => handleFieldChange("sku", e.target.value)}
-                      placeholder="Ex: KIT-001"
-                    />
-                  </div>
-                  <div className="col-span-2 space-y-2">
-                    <Label>Descrição</Label>
-                    <Textarea
-                      value={formData.descricao}
-                      onChange={e => handleFieldChange("descricao", e.target.value)}
-                      placeholder="Descrição do kit..."
-                      rows={3}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Preço Base (R$)</Label>
-                    <MoneyInput
-                      value={formData.precoBase}
-                      onChange={v => handleFieldChange("precoBase", v)}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Nome do Kit */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Nome do Kit *</Label>
+              <Input
+                value={formData.nome}
+                onChange={e => setFormData(prev => ({ ...prev, nome: e.target.value }))}
+                placeholder="Ex: Kit Diagnóstico Completo"
+              />
+            </div>
 
             {/* Produtos do Kit */}
             <Card>
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-base font-semibold">
+                  <CardTitle className="text-base font-semibold flex items-center gap-2">
+                    <Package className="h-4 w-4" />
                     Produtos do Kit
                   </CardTitle>
                   <Button type="button" size="sm" onClick={() => setShowProductSelector(!showProductSelector)} className="gap-1">
@@ -185,8 +134,8 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
                       <TableHeader>
                         <TableRow>
                           <TableHead className="w-[140px]">Código do Produto</TableHead>
-                          <TableHead>Nome do Produto (Anvisa)</TableHead>
-                          <TableHead className="w-[130px] text-center">Incluir no Pedido</TableHead>
+                          <TableHead>Produto (Anvisa)</TableHead>
+                          <TableHead className="w-[160px] text-center">Faz parte do pedido?</TableHead>
                           <TableHead className="w-[100px] text-center">Quantidade</TableHead>
                           <TableHead className="w-[100px] text-center">Qtd. Itens</TableHead>
                           <TableHead className="w-[60px]"></TableHead>
@@ -198,12 +147,18 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
                             <TableCell className="font-mono text-sm">{produto.codigo}</TableCell>
                             <TableCell>{produto.nome}</TableCell>
                             <TableCell className="text-center">
-                              <div className="flex justify-center">
-                                <Checkbox
-                                  checked={produto.incluirNoPedido}
-                                  onCheckedChange={(checked) => updateProduto(produto.id, "incluirNoPedido", !!checked)}
-                                />
-                              </div>
+                              <Select
+                                value={produto.fazParteDoPedido}
+                                onValueChange={(val) => updateProduto(produto.id, "fazParteDoPedido", val)}
+                              >
+                                <SelectTrigger className="h-8 w-24 mx-auto text-xs">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="sim">Sim</SelectItem>
+                                  <SelectItem value="nao">Não</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </TableCell>
                             <TableCell className="text-center">
                               <Input
@@ -249,7 +204,7 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
                 <span className="font-medium">Resumo do Kit</span>
                 <div className="flex gap-6 text-muted-foreground">
                   <span><strong className="text-foreground">{totalProdutos}</strong> produto(s) no kit</span>
-                  <span><strong className="text-foreground">{totalIncluidos}</strong> marcado(s) para pedido</span>
+                  <span><strong className="text-foreground">{totalNoPedido}</strong> faz(em) parte do pedido</span>
                 </div>
               </div>
             )}
@@ -315,12 +270,12 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({
             return (
               <div
                 key={p.id}
-                className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent cursor-pointer text-xs"
+                className={`flex items-center gap-2 px-2 py-1.5 rounded text-xs ${isSelected ? "bg-muted text-muted-foreground cursor-default" : "hover:bg-accent cursor-pointer"}`}
                 onClick={() => !isSelected && onSelect({ id: productId, codigo: productCode, nome: productName })}
               >
-                <Checkbox checked={isSelected} disabled={isSelected} />
-                <span className="font-mono text-muted-foreground">{productCode}</span>
-                <span className={isSelected ? "text-muted-foreground" : ""}>{productName}</span>
+                <span className="font-mono text-muted-foreground w-20 shrink-0">{productCode}</span>
+                <span className="flex-1">{productName}</span>
+                {isSelected && <span className="text-xs text-muted-foreground italic">Já adicionado</span>}
               </div>
             );
           })}
