@@ -758,7 +758,7 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
               onClick={() => {
                 setFormData({
                   ...formData,
-                  produtos: [...formData.produtos, { id: crypto.randomUUID(), produto: '', valorEstimado: 0 }]
+                  produtos: [...formData.produtos, { id: crypto.randomUUID(), produto: '', valorEstimado: 0, quantidadeEquipamentos: 0, quantidadeExames: 0 }]
                 });
               }}
               className="mt-1"
