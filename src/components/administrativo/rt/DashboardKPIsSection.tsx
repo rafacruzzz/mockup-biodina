@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { TrendingUp, TrendingDown, Activity, Wrench, AlertCircle, Package, Truck, Headphones } from 'lucide-react';
+import { TrendingUp, TrendingDown, Activity, Wrench, AlertCircle, Package, Truck, Headphones, Info } from 'lucide-react';
 import { KPIRT } from '@/types/rt';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
@@ -144,8 +144,16 @@ export const DashboardKPIsSection = ({ kpis }: DashboardKPIsSectionProps) => {
                   </div>
                   <div className="pt-2 border-t">
                     <p className="text-xs text-muted-foreground text-center">
-                      Índice calculado com base em conformidades, treinamentos e liberações
+                      Índice calculado com base na proporção de manutenções preventivas vs. corretivas (quanto mais preventivas e menos corretivas, melhor)
                     </p>
+                  </div>
+                  <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-2">
+                    <div className="flex items-start gap-2">
+                      <Info className="h-3.5 w-3.5 text-amber-600 mt-0.5 shrink-0" />
+                      <p className="text-xs text-amber-700">
+                        <strong>Nota:</strong> Os índices de performance estão relacionados aos CAPAs
+                      </p>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -278,6 +286,15 @@ export const DashboardKPIsSection = ({ kpis }: DashboardKPIsSectionProps) => {
                       </div>
                     </div>
                     <div className="text-xs text-muted-foreground mt-1">Meta: {kpi.meta}{kpi.unidade}</div>
+                    {kpi.nome.includes('TNC') && (
+                      <div className="text-[10px] text-amber-600 mt-1">📌 Origem: N° de Não Conformidades</div>
+                    )}
+                    {kpi.nome.includes('Acuracidade') && (
+                      <div className="text-[10px] text-amber-600 mt-1">📌 Origem: verificação se a empresa possui AFE</div>
+                    )}
+                    {kpi.nome.includes('Boas Práticas') && (
+                      <div className="text-[10px] text-amber-600 mt-1">📌 Origem: verificação se fornecedores e empresa possuem BP</div>
+                    )}
                   </div>
                 ))}
               </CardContent>
@@ -291,6 +308,9 @@ export const DashboardKPIsSection = ({ kpis }: DashboardKPIsSectionProps) => {
                   <span className="text-emerald-800">Qualidade da Entrega</span>
                 </CardTitle>
                 <p className="text-xs text-emerald-600">(Logística)</p>
+                <div className="bg-amber-50 border border-amber-200 rounded p-1.5 mt-1">
+                  <p className="text-[10px] text-amber-700">📌 Origem dos dados: módulo Estoque</p>
+                </div>
               </CardHeader>
               <CardContent className="space-y-3">
                 {kpisQualidadeEntrega.map((kpi, index) => (
@@ -326,6 +346,9 @@ export const DashboardKPIsSection = ({ kpis }: DashboardKPIsSectionProps) => {
                   <span className="text-violet-800">Qualidade do Suporte</span>
                 </CardTitle>
                 <p className="text-xs text-violet-600">(Pós-venda)</p>
+                <div className="bg-amber-50 border border-amber-200 rounded p-1.5 mt-1">
+                  <p className="text-[10px] text-amber-700">📌 Origem dos dados: módulos DT, Qualidade e Comercial</p>
+                </div>
               </CardHeader>
               <CardContent className="space-y-3">
                 {kpisQualidadeSuporte.map((kpi, index) => (

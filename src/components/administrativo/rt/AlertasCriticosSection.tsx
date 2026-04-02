@@ -1,7 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, AlertTriangle, Bell, CheckCircle } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Bell, CheckCircle, Info } from 'lucide-react';
 import { AlertaRT } from '@/types/rt';
 import { useState } from 'react';
 
@@ -102,6 +102,14 @@ export const AlertasCriticosSection = ({ alertas }: AlertasCriticosSectionProps)
           </div>
         </CardHeader>
         <CardContent>
+          <div className="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-3">
+            <div className="flex items-start gap-2">
+              <Info className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+              <p className="text-xs text-amber-700">
+                <strong>Origem dos dados:</strong> Não Conformidades (RT e Qualidade), CAPA (Qualidade) e Coleta de Dados e Inspeção (Qualidade).
+              </p>
+            </div>
+          </div>
           {alertasState.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <CheckCircle className="h-12 w-12 mx-auto mb-2 text-success" />
