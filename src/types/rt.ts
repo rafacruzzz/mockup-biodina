@@ -14,6 +14,8 @@ export interface PastaRT {
   id: string;
   nome: string;
   subtitulo?: string;
+  codigo?: string;
+  data?: string;
   pastaId?: string | null; // ID da pasta pai
   arquivos: ArquivoRT[];
   subPastas?: PastaRT[];

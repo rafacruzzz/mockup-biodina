@@ -41,6 +41,8 @@ export const OrganizacaoDocumentos = ({
   const [showEditarPastaDialog, setShowEditarPastaDialog] = useState(false);
   const [nomePasta, setNomePasta] = useState("");
   const [subtituloPasta, setSubtituloPasta] = useState("");
+  const [codigoPasta, setCodigoPasta] = useState("");
+  const [dataPasta, setDataPasta] = useState("");
   const [pastaEditando, setPastaEditando] = useState<string | null>(null);
 
   const toggleExpandirPasta = (pastaId: string) => {
@@ -87,6 +89,8 @@ export const OrganizacaoDocumentos = ({
       id: `pasta-${Date.now()}`,
       nome: nomePasta,
       subtitulo: subtituloPasta,
+      codigo: codigoPasta || undefined,
+      data: dataPasta || undefined,
       pastaId: pastaSelecionada,
       arquivos: [],
       subPastas: [],
@@ -117,6 +121,8 @@ export const OrganizacaoDocumentos = ({
 
     setNomePasta("");
     setSubtituloPasta("");
+    setCodigoPasta("");
+    setDataPasta("");
     setShowNovaPastaDialog(false);
     toast({
       title: "Sucesso",
@@ -130,7 +136,7 @@ export const OrganizacaoDocumentos = ({
     const atualizarPastas = (pastas: PastaRT[]): PastaRT[] => {
       return pastas.map(pasta => {
         if (pasta.id === pastaEditando) {
-          return { ...pasta, nome: nomePasta, subtitulo: subtituloPasta };
+          return { ...pasta, nome: nomePasta, subtitulo: subtituloPasta, codigo: codigoPasta || undefined, data: dataPasta || undefined };
         }
         if (pasta.subPastas) {
           return { ...pasta, subPastas: atualizarPastas(pasta.subPastas) };
@@ -142,6 +148,8 @@ export const OrganizacaoDocumentos = ({
     onEstruturaChange(atualizarPastas(estruturaPastas));
     setNomePasta("");
     setSubtituloPasta("");
+    setCodigoPasta("");
+    setDataPasta("");
     setPastaEditando(null);
     setShowEditarPastaDialog(false);
     toast({
@@ -214,9 +222,15 @@ export const OrganizacaoDocumentos = ({
           )}
           
           <div className="flex-1">
-            <div className="font-medium text-sm">{pasta.nome}</div>
+            <div className="font-medium text-sm">
+              {pasta.nome}
+              {pasta.codigo && <span className="ml-2 text-xs text-muted-foreground">({pasta.codigo})</span>}
+            </div>
             {pasta.subtitulo && (
               <div className="text-xs text-muted-foreground">{pasta.subtitulo}</div>
+            )}
+            {pasta.data && (
+              <div className="text-xs text-muted-foreground">Data: {pasta.data}</div>
             )}
           </div>
 
@@ -229,6 +243,8 @@ export const OrganizacaoDocumentos = ({
                 setPastaEditando(pasta.id);
                 setNomePasta(pasta.nome);
                 setSubtituloPasta(pasta.subtitulo || "");
+                setCodigoPasta(pasta.codigo || "");
+                setDataPasta(pasta.data || "");
                 setShowEditarPastaDialog(true);
               }}
             >
@@ -370,6 +386,26 @@ export const OrganizacaoDocumentos = ({
                   placeholder="Digite um subtítulo descritivo"
                 />
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="codigo-pasta">Código (opcional)</Label>
+                  <Input
+                    id="codigo-pasta"
+                    value={codigoPasta}
+                    onChange={(e) => setCodigoPasta(e.target.value)}
+                    placeholder="Ex: DOC-001"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="data-pasta">Data (opcional)</Label>
+                  <Input
+                    id="data-pasta"
+                    type="date"
+                    value={dataPasta}
+                    onChange={(e) => setDataPasta(e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowNovaPastaDialog(false)}>
@@ -405,6 +441,26 @@ export const OrganizacaoDocumentos = ({
                   onChange={(e) => setSubtituloPasta(e.target.value)}
                   placeholder="Digite um subtítulo descritivo"
                 />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="edit-codigo-pasta">Código (opcional)</Label>
+                  <Input
+                    id="edit-codigo-pasta"
+                    value={codigoPasta}
+                    onChange={(e) => setCodigoPasta(e.target.value)}
+                    placeholder="Ex: DOC-001"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-data-pasta">Data (opcional)</Label>
+                  <Input
+                    id="edit-data-pasta"
+                    type="date"
+                    value={dataPasta}
+                    onChange={(e) => setDataPasta(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
             <DialogFooter>

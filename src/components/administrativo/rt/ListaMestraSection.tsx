@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { FileText, Upload, X } from "lucide-react";
 import { ListaMestra, ArquivoRT, PastaRT } from "@/types/rt";
 import { OrganizacaoDocumentos } from "./OrganizacaoDocumentos";
@@ -55,24 +53,6 @@ export const ListaMestraSection = ({
       ...listaMestra,
       itens: listaMestra.itens.map(item =>
         item.id === itemId ? { ...item, estruturaPastas: novaEstrutura } : item
-      )
-    });
-  };
-
-  const handleItemCodigoChange = (itemId: string, codigo: string) => {
-    onListaMestraChange({
-      ...listaMestra,
-      itens: listaMestra.itens.map(item =>
-        item.id === itemId ? { ...item, codigo } : item
-      )
-    });
-  };
-
-  const handleItemDataChange = (itemId: string, data: string) => {
-    onListaMestraChange({
-      ...listaMestra,
-      itens: listaMestra.itens.map(item =>
-        item.id === itemId ? { ...item, data } : item
       )
     });
   };
@@ -131,38 +111,6 @@ export const ListaMestraSection = ({
                 estruturaPastas={item.estruturaPastas}
                 onEstruturaChange={(pastas) => handleItemEstruturaChange(item.id, pastas)}
               />
-              
-              {/* Campos Código e Data abaixo do card */}
-              <Card className="mt-2 border-t-0 rounded-t-none">
-                <CardContent className="py-3">
-                  <div className="flex gap-6">
-                    <div className="flex items-center gap-2">
-                      <Label htmlFor={`codigo-${item.id}`} className="text-sm font-medium whitespace-nowrap">
-                        Código:
-                      </Label>
-                      <Input
-                        id={`codigo-${item.id}`}
-                        value={item.codigo || ""}
-                        onChange={(e) => handleItemCodigoChange(item.id, e.target.value)}
-                        placeholder="Ex: DOC-001"
-                        className="w-40 h-8"
-                      />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Label htmlFor={`data-${item.id}`} className="text-sm font-medium whitespace-nowrap">
-                        Data:
-                      </Label>
-                      <Input
-                        id={`data-${item.id}`}
-                        type="date"
-                        value={item.data || ""}
-                        onChange={(e) => handleItemDataChange(item.id, e.target.value)}
-                        className="w-40 h-8"
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           ))}
         </div>
