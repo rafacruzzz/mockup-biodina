@@ -859,80 +859,82 @@ const OportunidadeAvancadaForm = ({ isOpen, onClose, onSave, oportunidade }: Opo
           />
         </div>
 
-        {/* Botões de Análise Jurídica e Gerencial - só aparecem após análise científica solicitada */}
+        {/* Botões de Análise Jurídica - sempre visíveis */}
+        <div className="flex gap-3 flex-wrap">
+          <Button
+            variant={solicitouEsclarecimento ? "secondary" : "outline"}
+            onClick={() => {
+              setSolicitouEsclarecimento(true);
+              toast({ title: "Solicitação enviada", description: "Pedido de Esclarecimento enviado à Análise Jurídica." });
+            }}
+            disabled={isReadOnlyMode() || solicitouEsclarecimento}
+            className="gap-2"
+          >
+            <Scale className="h-4 w-4" />
+            {solicitouEsclarecimento ? "✓ Esclarecimento Solicitado" : "Solicitar Análise Jurídica - Pedido de Esclarecimento"}
+          </Button>
+          <Button
+            variant={solicitouImpugnacao ? "secondary" : "outline"}
+            onClick={() => {
+              setSolicitouImpugnacao(true);
+              toast({ title: "Solicitação enviada", description: "Impugnação do Edital enviada à Análise Jurídica." });
+            }}
+            disabled={isReadOnlyMode() || solicitouImpugnacao}
+            className="gap-2"
+          >
+            <Scale className="h-4 w-4" />
+            {solicitouImpugnacao ? "✓ Impugnação Solicitada" : "Solicitar Análise Jurídica - Impugnação do Edital"}
+          </Button>
+        </div>
+
+        {/* Pedido de Esclarecimento (read-only, só aparece após solicitar) */}
+        {solicitouEsclarecimento && (
+          <div>
+            <Label htmlFor="pedidoEsclarecimentoDG">Pedido de Esclarecimento</Label>
+            <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
+            <Textarea
+              id="pedidoEsclarecimentoDG"
+              value={formData.pedidoEsclarecimento}
+              readOnly
+              placeholder="Preenchido pela Análise Jurídica (aba AJ)"
+              rows={3}
+              className="bg-muted/50"
+            />
+          </div>
+        )}
+
+        {/* Impugnação do Edital (read-only, só aparece após solicitar) */}
+        {solicitouImpugnacao && (
+          <div>
+            <Label htmlFor="impugnacaoEditalDG">Impugnação do Edital</Label>
+            <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
+            <Textarea
+              id="impugnacaoEditalDG"
+              value={formData.impugnacaoEdital}
+              readOnly
+              placeholder="Preenchido pela Análise Jurídica (aba AJ)"
+              rows={3}
+              className="bg-muted/50"
+            />
+          </div>
+        )}
+
+        {/* Botão Solicitar Análise Gerencial - só aparece após análise científica solicitada */}
         {solicitouAnaliseCientifica && (
-          <>
-            <div className="flex gap-3 flex-wrap">
-              <Button
-                variant={solicitouEsclarecimento ? "secondary" : "outline"}
-                onClick={() => {
-                  setSolicitouEsclarecimento(true);
-                  toast({ title: "Solicitação enviada", description: "Pedido de Esclarecimento enviado à Análise Jurídica." });
-                }}
-                disabled={isReadOnlyMode() || solicitouEsclarecimento}
-                className="gap-2"
-              >
-                <Scale className="h-4 w-4" />
-                {solicitouEsclarecimento ? "✓ Esclarecimento Solicitado" : "Solicitar Análise Jurídica - Pedido de Esclarecimento"}
-              </Button>
-              <Button
-                variant={solicitouImpugnacao ? "secondary" : "outline"}
-                onClick={() => {
-                  setSolicitouImpugnacao(true);
-                  toast({ title: "Solicitação enviada", description: "Impugnação do Edital enviada à Análise Jurídica." });
-                }}
-                disabled={isReadOnlyMode() || solicitouImpugnacao}
-                className="gap-2"
-              >
-                <Scale className="h-4 w-4" />
-                {solicitouImpugnacao ? "✓ Impugnação Solicitada" : "Solicitar Análise Jurídica - Impugnação do Edital"}
-              </Button>
-              <Button
-                variant={solicitouAnaliseGerencial ? "secondary" : "outline"}
-                onClick={() => {
-                  setSolicitouAnaliseGerencial(true);
-                  toast({ title: "Solicitação enviada", description: "Análise Gerencial solicitada ao Gerente Comercial." });
-                }}
-                disabled={isReadOnlyMode() || solicitouAnaliseGerencial}
-                className="gap-2"
-              >
-                <Briefcase className="h-4 w-4" />
-                {solicitouAnaliseGerencial ? "✓ Análise Gerencial Solicitada" : "Solicitar Análise Gerencial"}
-              </Button>
-            </div>
-
-            {/* Pedido de Esclarecimento (read-only, só aparece após solicitar) */}
-            {solicitouEsclarecimento && (
-              <div>
-                <Label htmlFor="pedidoEsclarecimentoDG">Pedido de Esclarecimento</Label>
-                <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
-                <Textarea
-                  id="pedidoEsclarecimentoDG"
-                  value={formData.pedidoEsclarecimento}
-                  readOnly
-                  placeholder="Preenchido pela Análise Jurídica (aba AJ)"
-                  rows={3}
-                  className="bg-muted/50"
-                />
-              </div>
-            )}
-
-            {/* Impugnação do Edital (read-only, só aparece após solicitar) */}
-            {solicitouImpugnacao && (
-              <div>
-                <Label htmlFor="impugnacaoEditalDG">Impugnação do Edital</Label>
-                <p className="text-xs text-muted-foreground mb-1">Editável na aba AJ</p>
-                <Textarea
-                  id="impugnacaoEditalDG"
-                  value={formData.impugnacaoEdital}
-                  readOnly
-                  placeholder="Preenchido pela Análise Jurídica (aba AJ)"
-                  rows={3}
-                  className="bg-muted/50"
-                />
-              </div>
-            )}
-          </>
+          <div className="flex gap-3 flex-wrap">
+            <Button
+              variant={solicitouAnaliseGerencial ? "secondary" : "outline"}
+              onClick={() => {
+                setSolicitouAnaliseGerencial(true);
+                toast({ title: "Solicitação enviada", description: "Análise Gerencial solicitada ao Gerente Comercial." });
+              }}
+              disabled={isReadOnlyMode() || solicitouAnaliseGerencial}
+              className="gap-2"
+            >
+              <Briefcase className="h-4 w-4" />
+              {solicitouAnaliseGerencial ? "✓ Análise Gerencial Solicitada" : "Solicitar Análise Gerencial"}
+            </Button>
+          </div>
         )}
 
         {/* 3. Empresa Participante 1 + Valor Mínimo 1 */}
