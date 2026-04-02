@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,6 +45,7 @@ export const OrganizacaoDocumentos = ({
   const [codigoPasta, setCodigoPasta] = useState("");
   const [dataPasta, setDataPasta] = useState("");
   const [pastaEditando, setPastaEditando] = useState<string | null>(null);
+  const [criarComoSubpasta, setCriarComoSubpasta] = useState(true);
 
   const toggleExpandirPasta = (pastaId: string) => {
     const atualizarPastas = (pastas: PastaRT[]): PastaRT[] => {
@@ -85,19 +87,21 @@ export const OrganizacaoDocumentos = ({
       return;
     }
 
+    const parentId = (pastaSelecionada && criarComoSubpasta) ? pastaSelecionada : null;
+
     const novaPasta: PastaRT = {
       id: `pasta-${Date.now()}`,
       nome: nomePasta,
       subtitulo: subtituloPasta,
       codigo: codigoPasta || undefined,
       data: dataPasta || undefined,
-      pastaId: pastaSelecionada,
+      pastaId: parentId,
       arquivos: [],
       subPastas: [],
       expandido: false
     };
 
-    if (pastaSelecionada) {
+    if (parentId) {
       // Adicionar como subpasta
       const atualizarPastas = (pastas: PastaRT[]): PastaRT[] => {
         return pastas.map(pasta => {
@@ -123,6 +127,7 @@ export const OrganizacaoDocumentos = ({
     setSubtituloPasta("");
     setCodigoPasta("");
     setDataPasta("");
+    setCriarComoSubpasta(true);
     setShowNovaPastaDialog(false);
     toast({
       title: "Sucesso",
@@ -195,7 +200,7 @@ export const OrganizacaoDocumentos = ({
           className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-muted/50 group ${
             isSelected ? "bg-muted" : ""
           }`}
-          onClick={() => setPastaSelecionada(pasta.id)}
+          onClick={() => setPastaSelecionada(prev => prev === pasta.id ? null : pasta.id)}
         >
           <button
             onClick={(e) => {
@@ -282,7 +287,10 @@ export const OrganizacaoDocumentos = ({
               {titulo}
             </h3>
             <Button
-              onClick={() => setShowNovaPastaDialog(true)}
+              onClick={() => {
+                setCriarComoSubpasta(!!pastaSelecionada);
+                setShowNovaPastaDialog(true);
+              }}
               size="sm"
               className="gap-2"
             >
@@ -362,7 +370,7 @@ export const OrganizacaoDocumentos = ({
             <DialogHeader>
               <DialogTitle>Nova Pasta</DialogTitle>
               <DialogDescription>
-                {pastaSelecionadaObj 
+                {pastaSelecionadaObj && criarComoSubpasta
                   ? `Criar subpasta em "${pastaSelecionadaObj.nome}"`
                   : "Criar nova pasta na raiz"}
               </DialogDescription>
@@ -406,6 +414,18 @@ export const OrganizacaoDocumentos = ({
                   />
                 </div>
               </div>
+              {pastaSelecionadaObj && (
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="criar-subpasta"
+                    checked={criarComoSubpasta}
+                    onCheckedChange={(checked) => setCriarComoSubpasta(!!checked)}
+                  />
+                  <Label htmlFor="criar-subpasta" className="text-sm cursor-pointer">
+                    Criar dentro de: "{pastaSelecionadaObj.nome}"
+                  </Label>
+                </div>
+              )}
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setShowNovaPastaDialog(false)}>
