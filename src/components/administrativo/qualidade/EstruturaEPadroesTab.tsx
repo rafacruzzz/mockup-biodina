@@ -105,6 +105,19 @@ export const EstruturaEPadroesTab = () => {
         estruturaPastas={itPastas}
         onEstruturaChange={setItPastas}
       />
+
+      {/* Seção 4: Especificações */}
+      <div className="space-y-2">
+        <OrganizacaoDocumentos
+          titulo="Especificações"
+          estruturaPastas={especPastas}
+          onEstruturaChange={setEspecPastas}
+        />
+        <div className="flex items-center gap-2 text-sm text-muted-foreground px-1">
+          <Info className="h-4 w-4 shrink-0" />
+          <span>As informações desta seção são alimentadas pela Assessoria Científica.</span>
+        </div>
+      </div>
     </div>
   );
 };
