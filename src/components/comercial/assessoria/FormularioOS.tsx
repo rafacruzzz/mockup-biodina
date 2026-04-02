@@ -839,6 +839,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                 </CardContent>
               </Card>
             </div>
+          )}
 
           <Card>
             <CardHeader>
