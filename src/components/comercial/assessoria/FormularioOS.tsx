@@ -159,6 +159,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [assinaturaInstrutor, setAssinaturaInstrutor] = useState<string | null>(null);
   const [assinaturasParticipantes, setAssinaturasParticipantes] = useState<Record<number, string>>({});
   const [checklistMeterOmega, setChecklistMeterOmega] = useState<Record<string, boolean>>({});
+  const [checklistSetMedikal, setChecklistSetMedikal] = useState<Record<string, boolean>>({});
 
   const tiposOS: { value: TipoOS; label: string }[] = [
     { value: "suporte_operacional", label: "Suporte Operacional" },
@@ -166,6 +167,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     { value: "treinamento_inicial", label: "Treinamento Inicial" },
     { value: "treinamento_nova_equipe", label: "Treinamento de Nova Equipe" },
     { value: "treinamento_usuario_meteromega", label: "Treinamento de Usuário: Modelo MeterOmega" },
+    { value: "treinamento_usuario_setmedikal", label: "Treinamento de Usuário: Modelo SET Medikal" },
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
@@ -253,7 +255,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     }
 
     const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega"
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal"
     );
 
     if (ehTreinamento && listaParticipantes.length === 0) {
@@ -712,7 +714,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       </div>
 
       {/* Registro de Treinamento */}
-      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega") && (
+      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal") && (
         <>
           {/* Checklist MeterOmega */}
           {tiposSelecionados.includes("treinamento_usuario_meteromega") && (
@@ -767,6 +769,69 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                         }
                       />
                       <Label htmlFor={`mo-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Checklist SET Medikal */}
+          {tiposSelecionados.includes("treinamento_usuario_setmedikal") && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Apresentação Geral</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "disco_heparina", label: "Disco de heparina" },
+                    { key: "heparina_balanceada", label: "Heparina balanceada para eletrólitos" },
+                    { key: "tampa_pino", label: "Tampa com pino interno para eliminação de ar" },
+                    { key: "extremidade_luer_slip", label: "Extremidade luer slip" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`sm-${item.key}`}
+                        checked={!!checklistSetMedikal[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistSetMedikal((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`sm-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Utilização</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "posicao_embolo", label: "Posição do êmbolo antes da coleta" },
+                    { key: "volume_minmax", label: "Volume mínimo e máximo da coleta" },
+                    { key: "expulsao_bolhas", label: "Expulsão de bolhas de ar batendo na seringa" },
+                    { key: "eliminacao_ar", label: "Eliminação do ar" },
+                    { key: "colocacao_tampa", label: "Colocação da tampa" },
+                    { key: "homogeneizacao", label: "Homogeneização manual imediatamente" },
+                    { key: "transporte_armazenamento", label: "Transporte e armazenamento" },
+                    { key: "tempo_execucao", label: "Tempo até a execução da análise" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`sm-${item.key}`}
+                        checked={!!checklistSetMedikal[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistSetMedikal((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`sm-${item.key}`} className="text-sm font-normal cursor-pointer">
                         {item.label}
                       </Label>
                     </div>
