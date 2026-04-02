@@ -53,7 +53,7 @@ const Comercial = () => {
   const [activeTab, setActiveTab] = useState('indicadores');
   const [assessoriaTab, setAssessoriaTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade" | "analise-editais" | "repositorio">("agenda");
   const [departamentoTecnicoTab, setDepartamentoTecnicoTab] = useState<"agenda" | "chamados" | "os" | "rastreabilidade" | "emprestimos">("agenda");
-  const [propostasTab, setPropostasTab] = useState<'licitacao' | 'contratacao' | 'dt'>('licitacao');
+  const [propostasTab, setPropostasTab] = useState<'propostas' | 'tabela'>('propostas');
   const [osStatusFilter, setOsStatusFilter] = useState<StatusOS[] | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
@@ -1416,39 +1416,35 @@ const Comercial = () => {
         </Button>
       </div>
 
-      <Tabs value={propostasTab} onValueChange={(v) => setPropostasTab(v as 'licitacao' | 'contratacao' | 'dt')}>
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="licitacao">
-            <Gavel className="h-4 w-4 mr-2" />
-            Propostas - Licitação
-          </TabsTrigger>
-          <TabsTrigger value="contratacao">
-            <Building2 className="h-4 w-4 mr-2" />
-            Propostas - Contratação
-          </TabsTrigger>
-          <TabsTrigger value="dt">
+      <Tabs value={propostasTab} onValueChange={(v) => setPropostasTab(v as 'propostas' | 'tabela')}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="propostas">
             <FileText className="h-4 w-4 mr-2" />
-            Propostas - DT
+            Propostas
+          </TabsTrigger>
+          <TabsTrigger value="tabela">
+            <FileSpreadsheet className="h-4 w-4 mr-2" />
+            Tabela
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="licitacao">
+        <TabsContent value="propostas">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
-                <Gavel className="h-5 w-5" />
-                Propostas - Licitação
+                <FileText className="h-5 w-5" />
+                Propostas
               </CardTitle>
               <Button onClick={() => setPropostaLicitacaoModalOpen(true)}>
-                <Plus className="h-4 w-4 mr-1" /> Nova Proposta Licitação
+                <Plus className="h-4 w-4 mr-1" /> Nova Proposta
               </Button>
             </CardHeader>
             <CardContent>
               {propostasLicitacao.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                  <Gavel className="h-12 w-12 mb-4 opacity-50" />
-                  <p className="text-lg font-medium">Nenhuma proposta de licitação cadastrada</p>
-                  <p className="text-sm">Clique em "Nova Proposta Licitação" para criar</p>
+                  <FileText className="h-12 w-12 mb-4 opacity-50" />
+                  <p className="text-lg font-medium">Nenhuma proposta cadastrada</p>
+                  <p className="text-sm">Clique em "Nova Proposta" para criar</p>
                 </div>
               ) : (
                 <Table>
@@ -1489,120 +1485,22 @@ const Comercial = () => {
           />
         </TabsContent>
 
-        <TabsContent value="contratacao">
+        <TabsContent value="tabela">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Building2 className="h-5 w-5" />
-                Propostas - Contratação
+                <FileSpreadsheet className="h-5 w-5" />
+                Tabela de Produtos
               </CardTitle>
-              <Button onClick={() => setPropostaContratacaoModalOpen(true)}>
-                <Plus className="h-4 w-4 mr-1" /> Nova Proposta Contratação
-              </Button>
             </CardHeader>
             <CardContent>
-              {propostasContratacao.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                  <Building2 className="h-12 w-12 mb-4 opacity-50" />
-                  <p className="text-lg font-medium">Nenhuma proposta de contratação cadastrada</p>
-                  <p className="text-sm">Clique em "Nova Proposta Contratação" para criar</p>
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nº Proposta</TableHead>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead>Data</TableHead>
-                      <TableHead>Valor</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {propostasContratacao.map(p => (
-                      <TableRow key={p.id}>
-                        <TableCell className="font-medium">{p.numeroProposta}</TableCell>
-                        <TableCell>{p.cliente}</TableCell>
-                        <TableCell>{p.data}</TableCell>
-                        <TableCell>{p.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
-                        <TableCell>
-                          <Badge variant="secondary">{p.status}</Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+                <FileSpreadsheet className="h-12 w-12 mb-4 opacity-50" />
+                <p className="text-lg font-medium">Nenhuma tabela cadastrada</p>
+                <p className="text-sm">As tabelas criadas nas propostas aparecerão aqui</p>
+              </div>
             </CardContent>
           </Card>
-
-          <PropostaContratacaoModal
-            open={propostaContratacaoModalOpen}
-            onClose={() => setPropostaContratacaoModalOpen(false)}
-            onSave={(proposta) => {
-              setPropostasContratacao(prev => [...prev, proposta]);
-              setPropostaContratacaoModalOpen(false);
-            }}
-            totalPropostas={propostasContratacao.length}
-          />
-        </TabsContent>
-
-        <TabsContent value="dt">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Propostas - DT
-              </CardTitle>
-              <Button onClick={() => setPropostaDTModalOpen(true)}>
-                <Plus className="h-4 w-4 mr-1" /> Nova Proposta DT
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {propostasDT.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-                  <FileText className="h-12 w-12 mb-4 opacity-50" />
-                  <p className="text-lg font-medium">Nenhuma proposta DT cadastrada</p>
-                  <p className="text-sm">Clique em "Nova Proposta DT" para criar</p>
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nº Proposta</TableHead>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead>Data</TableHead>
-                      <TableHead>Valor</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {propostasDT.map(p => (
-                      <TableRow key={p.id}>
-                        <TableCell className="font-medium">{p.numeroProposta}</TableCell>
-                        <TableCell>{p.cliente}</TableCell>
-                        <TableCell>{p.data}</TableCell>
-                        <TableCell>{p.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
-                        <TableCell>
-                          <Badge variant="secondary">{p.status}</Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-
-          <PropostaDTModal
-            open={propostaDTModalOpen}
-            onClose={() => setPropostaDTModalOpen(false)}
-            onSave={(proposta) => {
-              setPropostasDT(prev => [...prev, proposta]);
-              setPropostaDTModalOpen(false);
-            }}
-            totalPropostas={propostasDT.length}
-          />
         </TabsContent>
       </Tabs>
     </div>
