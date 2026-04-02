@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table,
@@ -11,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { GraduationCap, Plus, Eye, Paperclip, CheckCircle } from "lucide-react";
+import { GraduationCap, Plus, Eye, Paperclip, CheckCircle, Search } from "lucide-react";
 import { Treinamento } from "@/types/rt";
 import { NovoTreinamentoModal } from "./NovoTreinamentoModal";
 import { toast } from "@/components/ui/use-toast";
@@ -29,6 +30,21 @@ export const TreinamentosSection = ({
 }: TreinamentosSectionProps) => {
   const [showNovoModal, setShowNovoModal] = useState(false);
   const [tipoModal, setTipoModal] = useState<'realizado' | 'futuro'>('realizado');
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filterTreinamentos = (lista: Treinamento[]) => {
+    if (!searchTerm) return lista;
+    const lower = searchTerm.toLowerCase();
+    return lista.filter(t =>
+      t.conteudo.toLowerCase().includes(lower) ||
+      t.ministrante.toLowerCase().includes(lower) ||
+      t.local.toLowerCase().includes(lower) ||
+      t.participantes.some(p => p.toLowerCase().includes(lower))
+    );
+  };
+
+  const realizadosFiltrados = filterTreinamentos(treinamentosRealizados);
+  const futurosFiltrados = filterTreinamentos(treinamentosFuturos);
 
   const handleNovoTreinamento = (treinamento: Treinamento) => {
     if (treinamento.tipo === 'realizado') {
