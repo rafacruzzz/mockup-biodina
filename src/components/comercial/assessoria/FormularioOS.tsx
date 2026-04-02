@@ -164,6 +164,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     { value: "acompanhamento_rotina", label: "Acompanhamento de Rotina" },
     { value: "treinamento_inicial", label: "Treinamento Inicial" },
     { value: "treinamento_nova_equipe", label: "Treinamento de Nova Equipe" },
+    { value: "treinamento_usuario_meteromega", label: "Treinamento de Usuário: Modelo MeterOmega" },
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
@@ -251,7 +252,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     }
 
     const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe"
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega"
     );
 
     if (ehTreinamento && listaParticipantes.length === 0) {
@@ -710,7 +711,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       </div>
 
       {/* Registro de Treinamento */}
-      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe") && (
+      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega") && (
         <>
           <Card>
             <CardHeader>
