@@ -96,6 +96,15 @@ interface Reclamacao extends ReclamacaoClienteData {
   solucao: string;
   geraNaoConformidade: 'sim' | 'nao' | '';
   observacoes: string;
+  contatoNomeReclamacao: string;
+  contatoTelefoneReclamacao: string;
+  contatoEmailReclamacao: string;
+  codigoProduto: string;
+  nomeProduto: string;
+  loteNumSerie: string;
+  quantidade: string;
+  notaFiscal: string;
+  dataEmissaoNF: string;
 }
 
 const emptyClienteData: ReclamacaoClienteData = {
@@ -269,7 +278,16 @@ export const ReclamacaoClientesTab = () => {
     descricaoProblema: '',
     solucao: '',
     geraNaoConformidade: '',
-    observacoes: ''
+    observacoes: '',
+    contatoNomeReclamacao: '',
+    contatoTelefoneReclamacao: '',
+    contatoEmailReclamacao: '',
+    codigoProduto: '',
+    nomeProduto: '',
+    loteNumSerie: '',
+    quantidade: '',
+    notaFiscal: '',
+    dataEmissaoNF: '',
   });
 
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
@@ -344,7 +362,16 @@ export const ReclamacaoClientesTab = () => {
       descricaoProblema: '',
       solucao: '',
       geraNaoConformidade: '',
-      observacoes: ''
+      observacoes: '',
+      contatoNomeReclamacao: '',
+      contatoTelefoneReclamacao: '',
+      contatoEmailReclamacao: '',
+      codigoProduto: '',
+      nomeProduto: '',
+      loteNumSerie: '',
+      quantidade: '',
+      notaFiscal: '',
+      dataEmissaoNF: '',
     });
     setMostrarFormulario(false);
 
