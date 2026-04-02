@@ -593,7 +593,8 @@ export const getTipoOSLabel = (tipo: TipoOS): string => {
     acompanhamento_rotina: "Acompanhamento de Rotina",
     treinamento_inicial: "Treinamento Inicial",
     treinamento_nova_equipe: "Treinamento de Nova Equipe",
-    treinamento_usuario_meteromega: "Treinamento de Usuário: Modelo MeterOmega"
+    treinamento_usuario_meteromega: "Treinamento de Usuário: Modelo MeterOmega",
+    treinamento_usuario_setmedikal: "Treinamento de Usuário: Modelo SET Medikal"
   };
   return labels[tipo];
 };
@@ -605,7 +606,8 @@ export const getTipoOSIcon = (tipo: TipoOS): string => {
     acompanhamento_rotina: "👁️",
     treinamento_inicial: "🎓",
     treinamento_nova_equipe: "📚",
-    treinamento_usuario_meteromega: "🧪"
+    treinamento_usuario_meteromega: "🧪",
+    treinamento_usuario_setmedikal: "🧪"
   };
   return icons[tipo];
 };

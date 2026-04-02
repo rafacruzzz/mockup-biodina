@@ -159,6 +159,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [assinaturaInstrutor, setAssinaturaInstrutor] = useState<string | null>(null);
   const [assinaturasParticipantes, setAssinaturasParticipantes] = useState<Record<number, string>>({});
   const [checklistMeterOmega, setChecklistMeterOmega] = useState<Record<string, boolean>>({});
+  const [checklistSetMedikal, setChecklistSetMedikal] = useState<Record<string, boolean>>({});
 
   const tiposOS: { value: TipoOS; label: string }[] = [
     { value: "suporte_operacional", label: "Suporte Operacional" },
