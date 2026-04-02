@@ -510,7 +510,103 @@ export const ReclamacaoClientesTab = () => {
               )}
             </div>
 
-            {/* Seção: Registro da Reclamação */}
+            {/* Seção: Contato */}
+            <div className="space-y-4">
+              <h4 className="font-semibold text-base border-b pb-2">Contato</h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="contatoNomeReclamacao">Nome</Label>
+                  <Input
+                    id="contatoNomeReclamacao"
+                    placeholder="Nome do contato"
+                    value={novaReclamacao.contatoNomeReclamacao}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, contatoNomeReclamacao: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contatoTelefoneReclamacao">Telefone</Label>
+                  <Input
+                    id="contatoTelefoneReclamacao"
+                    placeholder="Telefone do contato"
+                    value={novaReclamacao.contatoTelefoneReclamacao}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, contatoTelefoneReclamacao: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contatoEmailReclamacao">E-mail</Label>
+                  <Input
+                    id="contatoEmailReclamacao"
+                    type="email"
+                    placeholder="E-mail do contato"
+                    value={novaReclamacao.contatoEmailReclamacao}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, contatoEmailReclamacao: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Seção: Dados do Produto */}
+            <div className="space-y-4">
+              <h4 className="font-semibold text-base border-b pb-2">Dados do Produto</h4>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="codigoProduto">Código do Produto</Label>
+                  <Input
+                    id="codigoProduto"
+                    placeholder="Código do produto"
+                    value={novaReclamacao.codigoProduto}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, codigoProduto: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="nomeProduto">Nome do Produto</Label>
+                  <Input
+                    id="nomeProduto"
+                    placeholder="Nome do produto"
+                    value={novaReclamacao.nomeProduto}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, nomeProduto: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="loteNumSerie">Lote/Nº de Série</Label>
+                  <Input
+                    id="loteNumSerie"
+                    placeholder="Lote ou número de série"
+                    value={novaReclamacao.loteNumSerie}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, loteNumSerie: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="quantidade">Quantidade</Label>
+                  <Input
+                    id="quantidade"
+                    type="number"
+                    placeholder="Quantidade"
+                    value={novaReclamacao.quantidade}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, quantidade: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="notaFiscal">Nota Fiscal</Label>
+                  <Input
+                    id="notaFiscal"
+                    placeholder="Número da nota fiscal"
+                    value={novaReclamacao.notaFiscal}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, notaFiscal: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dataEmissaoNF">Data de Emissão da NF</Label>
+                  <Input
+                    id="dataEmissaoNF"
+                    type="date"
+                    value={novaReclamacao.dataEmissaoNF}
+                    onChange={(e) => setNovaReclamacao({ ...novaReclamacao, dataEmissaoNF: e.target.value })}
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-4">
               <h4 className="font-semibold text-base border-b pb-2">Registro da Reclamação</h4>
               
