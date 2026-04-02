@@ -162,6 +162,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [checklistSetMedikal, setChecklistSetMedikal] = useState<Record<string, boolean>>({});
   const [checklistABL9, setChecklistABL9] = useState<Record<string, boolean>>({});
   const [checklistABL90, setChecklistABL90] = useState<Record<string, boolean>>({});
+  const [checklistABL800, setChecklistABL800] = useState<Record<string, boolean>>({});
 
   const tiposOS: { value: TipoOS; label: string }[] = [
     { value: "suporte_operacional", label: "Suporte Operacional" },
@@ -172,6 +173,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     { value: "treinamento_usuario_setmedikal", label: "Treinamento de Usuário: Modelo SET Medikal" },
     { value: "treinamento_usuario_abl9", label: "Treinamento de Usuário: Modelo ABL9 - Radiometer" },
     { value: "treinamento_usuario_abl90", label: "Treinamento de Usuário: Modelo ABL90 FLEX PLUS - Radiometer" },
+    { value: "treinamento_usuario_abl800", label: "Treinamento de Usuário: Modelo ABL800 - Radiometer" },
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
