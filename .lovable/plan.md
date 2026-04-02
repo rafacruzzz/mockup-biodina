@@ -1,55 +1,54 @@
 
 
-## Plano: Adicionar tipo de OS "Treinamento de Usuário: Modelo AQT90 FLEX - Radiometer"
+## Plano: Adicionar tipo de OS "Treinamento de Usuário: DxH 520 – Beckman Coulter"
 
-Seguindo o mesmo padrão dos demais treinamentos (ABL9, ABL90, ABL800), com checklist específico.
+Seguindo o mesmo padrão dos demais treinamentos, com 7 categorias de checklist.
 
 ### Alterações
 
 **1. `src/types/assessoria-cientifica.ts`**
-- Adicionar `'treinamento_usuario_aqt90'` ao type `TipoOS`
+- Adicionar `'treinamento_usuario_dxh520'` ao type `TipoOS`
 
 **2. `src/data/assessoria-cientifica.ts`**
-- Adicionar label `"Treinamento de Usuário: Modelo AQT90 FLEX - Radiometer"` e ícone `"🔬"`
+- Adicionar label `"Treinamento de Usuário: DxH 520 – Beckman Coulter"` e ícone `"🔬"`
 
 **3. `src/components/comercial/assessoria/FormularioOS.tsx`**
 - Adicionar opção no array `tiposOS`
 - Incluir nas condições de `ehTreinamento` (participantes, assinaturas, certificado)
-- Novo estado `checklistAQT90` (Record<string, boolean>)
+- Novo estado `checklistDxH520` (Record<string, boolean>)
 - Bloco condicional com cards de checkboxes:
 
 **Card "Apresentação Geral":**
-- Entrada de amostras
+- Entrada de amostras (modo aberto/fechado)
 - Código de barras
 - Impressora
-- Cartucho teste
-- Cartucho de reagente
+- Entrada de reagentes
 - Ligar e desligar o analisador
 
-**Card "Tela":**
-- Apresentação do layout
-- Interpretação do semáforo
-- Interpretação de mensagens
-- Uso do registro de dados
-- Uso do tutorial
-
-**Card "Análise de Amostra":**
-- Análise de amostra
-
 **Card "Trocas":**
-- Cartucho de soluções
-- Cartucho de testes
-- Papel da impressora
-
-**Card "Calibração":**
-- Calibração de um novo lote de testes
-
-**Card "Limpeza":**
-- Uso do tubo e cartucho limpeza
+- Reagentes com código de barras e sem código de barras
 
 **Card "Controle de Qualidade":**
-- Cadastro de novo lote
-- Uso do controle de qualidade
+- Utilização do controle de qualidade
+- Configuração do controle de qualidade
+- Avaliação gráfico diário
+
+**Card "Calibrações":**
+- Configuração de um novo calibrador
+- Realizar calibração
+- Validar calibração
+
+**Card "Processamento de Amostra":**
+- Inserir amostra
+- Resultado
+
+**Card "Manutenções":**
+- Verificações diárias (encerramento e contagem de fundo)
+- Limpeza do filtro de WBC (mensal)
+- Ciclo de cloro
+
+**Card "Configurações":**
+- Configuração de acessos
 
 ### Arquivos alterados
 - `src/types/assessoria-cientifica.ts`
