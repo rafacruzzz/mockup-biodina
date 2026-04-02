@@ -1,13 +1,31 @@
 
 
-## Plano: Remover campo "Análises Científicas" condicional
+## Plano: Adicionar botão "Solicitar Análise Gerencial" e campos espelhados da aba AG
 
-### Problema
-Ao clicar em "Solicitar Análise da Assessoria Científica", aparece um bloco "Análises Científicas" (read-only) abaixo do botão. O campo "Análise Técnica" já está logo abaixo e cumpre esse papel, então o bloco condicional é desnecessário.
+### Requisitos
+- Adicionar botão "Solicitar Análise Gerencial" **abaixo do campo Análise Técnica**, junto com os botões jurídicos
+- Todos esses botões (Esclarecimento, Impugnação, Gerencial) só aparecem **após a análise científica ter sido solicitada** (`solicitouAnaliseCientifica === true`)
+- Ao clicar, aparece um bloco read-only espelhando os campos da aba AG: Empresas (1 e 2), Estratégia Comercial, Valor de Entrada e Valor Limite
 
-### Alteração em `src/components/comercial/OportunidadeAvancadaForm.tsx`
+### Alterações em `src/components/comercial/OportunidadeAvancadaForm.tsx`
 
-**Remover o bloco condicional das linhas 848-873** — todo o trecho `{solicitouAnaliseCientifica && (...)}` que exibe "Análises Científicas" com o histórico de cards. O botão continua funcionando normalmente (envia a solicitação e muda para "✓ Análise Científica Solicitada"), apenas não exibe mais esse campo extra.
+**1. Novo estado:**
+- Adicionar `solicitouAnaliseGerencial` / `setSolicitouAnaliseGerencial` (useState false)
+
+**2. Condicionar exibição dos botões jurídicos e gerencial:**
+- Envolver os botões de Esclarecimento, Impugnação e o novo botão Gerencial dentro de `{solicitouAnaliseCientifica && (...)}`
+- Os campos condicionais de cada um (Esclarecimento, Impugnação, Gerencial) também ficam dentro desse bloco
+
+**3. Adicionar botão "Solicitar Análise Gerencial":**
+- Ao lado dos botões jurídicos (mesma linha flex)
+- Mesmo padrão visual (variant outline/secondary, ícone Briefcase)
+- Ao clicar: `setSolicitouAnaliseGerencial(true)` + toast
+
+**4. Bloco condicional read-only (quando `solicitouAnaliseGerencial`):**
+- Card com campos read-only espelhando a aba AG:
+  - Empresa 1 (nome + CNPJ) e Empresa 2 (se preenchida)
+  - Estratégia Comercial (Textarea read-only, valor de `formData.estrategiaComercialAG`)
+  - Valor de Entrada e Valor Limite (inputs read-only, `formData.valorEntradaAG` e `formData.valorLimiteAG`)
 
 ### Arquivo alterado
 - `src/components/comercial/OportunidadeAvancadaForm.tsx`
