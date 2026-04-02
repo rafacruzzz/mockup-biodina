@@ -11,7 +11,8 @@ export type TipoOS =
   | 'suporte_operacional'
   | 'acompanhamento_rotina'
   | 'treinamento_inicial'
-  | 'treinamento_nova_equipe';
+  | 'treinamento_nova_equipe'
+  | 'treinamento_usuario_meteromega';
 
 export type DepartamentoOS = 'Assessoria Científica' | 'Departamento Técnico';
 

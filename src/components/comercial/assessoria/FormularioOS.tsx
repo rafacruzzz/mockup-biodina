@@ -158,12 +158,14 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   const [templateData, setTemplateData] = useState({ dataRegistro: "", nomeInstrutor: "", observacoes: "" });
   const [assinaturaInstrutor, setAssinaturaInstrutor] = useState<string | null>(null);
   const [assinaturasParticipantes, setAssinaturasParticipantes] = useState<Record<number, string>>({});
+  const [checklistMeterOmega, setChecklistMeterOmega] = useState<Record<string, boolean>>({});
 
   const tiposOS: { value: TipoOS; label: string }[] = [
     { value: "suporte_operacional", label: "Suporte Operacional" },
     { value: "acompanhamento_rotina", label: "Acompanhamento de Rotina" },
     { value: "treinamento_inicial", label: "Treinamento Inicial" },
     { value: "treinamento_nova_equipe", label: "Treinamento de Nova Equipe" },
+    { value: "treinamento_usuario_meteromega", label: "Treinamento de Usuário: Modelo MeterOmega" },
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
@@ -251,7 +253,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     }
 
     const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe"
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega"
     );
 
     if (ehTreinamento && listaParticipantes.length === 0) {
@@ -710,8 +712,70 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       </div>
 
       {/* Registro de Treinamento */}
-      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe") && (
+      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega") && (
         <>
+          {/* Checklist MeterOmega */}
+          {tiposSelecionados.includes("treinamento_usuario_meteromega") && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Apresentação Geral</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "heparina_jateada", label: "Heparina jateada" },
+                    { key: "heparina_balanceada", label: "Heparina balanceada para eletrólitos" },
+                    { key: "tampa_pino", label: "Tampa com pino interno para eliminação de ar" },
+                    { key: "extremidade_luer", label: "Extremidade luer lock" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`mo-${item.key}`}
+                        checked={!!checklistMeterOmega[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistMeterOmega((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`mo-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Utilização</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { key: "volume_minmax", label: "Volume mínimo e máximo da coleta" },
+                    { key: "expulsao_bolhas", label: "Expulsão de bolhas de ar batendo na seringa" },
+                    { key: "eliminacao_ar", label: "Eliminação do ar" },
+                    { key: "colocacao_tampa", label: "Colocação da tampa" },
+                    { key: "homogeneizacao", label: "Homogeneização manual imediatamente" },
+                    { key: "transporte_armazenamento", label: "Transporte e armazenamento" },
+                    { key: "tempo_execucao", label: "Tempo até a execução da análise" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`mo-${item.key}`}
+                        checked={!!checklistMeterOmega[item.key]}
+                        onCheckedChange={(checked) =>
+                          setChecklistMeterOmega((prev) => ({ ...prev, [item.key]: !!checked }))
+                        }
+                      />
+                      <Label htmlFor={`mo-${item.key}`} className="text-sm font-normal cursor-pointer">
+                        {item.label}
+                      </Label>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
           <Card>
             <CardHeader>
               <CardTitle>Registro de Treinamento</CardTitle>
