@@ -6,15 +6,17 @@ import { RastreabilidadeTab } from './RastreabilidadeTab';
 import { QueixaTecnicaTab } from './QueixaTecnicaTab';
 import { ReclamacaoClientesTab } from './ReclamacaoClientesTab';
 import { IntegracaoSensoresTab } from './IntegracaoSensoresTab';
+import { AuditoriaInternaTab } from './auditoria-interna/AuditoriaInternaTab';
 
 export const ColetaDadosTab = () => {
-  const [subTab, setSubTab] = useState('auditoria');
+  const [subTab, setSubTab] = useState('auditoria-externa');
 
   return (
     <div className="space-y-6">
       <Tabs value={subTab} onValueChange={setSubTab}>
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="auditoria">Auditoria da Qualidade</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-7">
+          <TabsTrigger value="auditoria-externa">Auditoria - Externa</TabsTrigger>
+          <TabsTrigger value="auditoria-interna">Auditoria - Interna</TabsTrigger>
           <TabsTrigger value="pesquisa">Pesquisa de Satisfação</TabsTrigger>
           <TabsTrigger value="rastreabilidade">Rastreabilidade</TabsTrigger>
           <TabsTrigger value="queixa-tecnica">Queixa Técnica (Notivisa/ANVISA)</TabsTrigger>
