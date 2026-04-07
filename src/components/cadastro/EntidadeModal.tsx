@@ -1684,17 +1684,16 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                         <thead className="bg-muted">
                           <tr>
                             <th className="text-left p-3 font-medium">Fábrica</th>
-                            <th className="text-left p-3 font-medium">Vencimento das ISOs</th>
+                            <th className="text-left p-3 font-medium">Vencimento</th>
                             <th className="text-left p-3 font-medium">Status</th>
                             <th className="text-left p-3 font-medium">Observação</th>
-                            <th className="text-left p-3 font-medium">Anexar ISO</th>
-                            <th className="text-left p-3 font-medium">Anexar Tradução</th>
+                            <th className="text-left p-3 font-medium">ISO</th>
+                            <th className="text-left p-3 font-medium">Tradução Juramentada</th>
                             <th className="text-center p-3 font-medium">Ações</th>
                           </tr>
                         </thead>
                         <tbody>
                           {isosVinculadas.map((iso, index) => {
-                            const status = getISOStatus(iso.vencimento, !!iso.nomeArquivoISO);
                             return (
                               <tr key={iso.id} className="border-t">
                                 <td className="p-3">
@@ -1704,11 +1703,18 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                                   <Input type="date" value={iso.vencimento} onChange={(e) => updateISO(index, 'vencimento', e.target.value)} className="min-w-[140px]" />
                                 </td>
                                 <td className="p-3">
-                                  {status.label !== '-' && (
-                                    <span className={`text-xs px-2 py-1 rounded whitespace-nowrap ${status.className}`}>
-                                      {status.label}
-                                    </span>
-                                  )}
+                                  <Select value={iso.status || ''} onValueChange={(value) => updateISO(index, 'status', value)}>
+                                    <SelectTrigger className="min-w-[180px]">
+                                      <SelectValue placeholder="Selecione o status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="pedido_fabrica">Pedido à fábrica</SelectItem>
+                                      <SelectItem value="aguardando_envio">Aguardando envio da fábrica</SelectItem>
+                                      <SelectItem value="traducao_juramentada">Tradução Juramentada</SelectItem>
+                                      <SelectItem value="junta_comercial">Junta Comercial</SelectItem>
+                                      <SelectItem value="finalizado">Finalizado</SelectItem>
+                                    </SelectContent>
+                                  </Select>
                                 </td>
                                 <td className="p-3">
                                   <Input value={iso.observacao} onChange={(e) => updateISO(index, 'observacao', e.target.value)} placeholder="Observação" className="min-w-[150px]" />
