@@ -1789,9 +1789,9 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                   <div key={item.key} className="flex items-center space-x-2">
                     <Checkbox
                       id={`excelsior-${item.key}`}
-                      checked={!!checklistExcelsior[item.key]}
+                      checked={!!checklistExcelsiorAS[item.key]}
                       onCheckedChange={(checked) =>
-                        setChecklistExcelsior((prev) => ({ ...prev, [item.key]: !!checked }))
+                        setChecklistExcelsiorAS((prev) => ({ ...prev, [item.key]: !!checked }))
                       }
                     />
                     <Label htmlFor={`excelsior-${item.key}`} className="text-sm font-normal cursor-pointer">
