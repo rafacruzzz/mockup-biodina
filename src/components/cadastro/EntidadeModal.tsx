@@ -983,6 +983,88 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
 
               </>
               )}
+
+              {isRepresentante && (
+              <>
+              <div className="space-y-3 border-t pt-4">
+                <h3 className="font-semibold text-sm">Telefones</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="telefone1">Telefone 1 do Representante Comercial</Label>
+                    <Input id="telefone1" value={formData.telefone1} onChange={(e) => handleInputChange("telefone1", e.target.value)} placeholder="(00) 00000-0000" />
+                  </div>
+                  <div>
+                    <Label htmlFor="telefone2">Telefone 2 do Representante Comercial</Label>
+                    <Input id="telefone2" value={formData.telefone2} onChange={(e) => handleInputChange("telefone2", e.target.value)} placeholder="(00) 00000-0000" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3 border-t pt-4">
+                <h3 className="font-semibold text-sm">Telefones Fixos</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="telefone_fixo1">Telefone Fixo 1 do Representante Comercial</Label>
+                    <Input id="telefone_fixo1" value={formData.telefone_fixo1} onChange={(e) => handleInputChange("telefone_fixo1", e.target.value)} placeholder="(00) 0000-0000" />
+                  </div>
+                  <div>
+                    <Label htmlFor="telefone_fixo2">Telefone Fixo 2 do Representante Comercial</Label>
+                    <Input id="telefone_fixo2" value={formData.telefone_fixo2} onChange={(e) => handleInputChange("telefone_fixo2", e.target.value)} placeholder="(00) 0000-0000" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3 border-t pt-4">
+                <h3 className="font-semibold text-sm">WhatsApp</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="telefone_whatsapp">Telefone WhatsApp do Representante Comercial</Label>
+                    <Input id="telefone_whatsapp" value={formData.telefone_whatsapp} onChange={(e) => handleInputChange("telefone_whatsapp", e.target.value)} placeholder="(00) 00000-0000" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3 border-t pt-4">
+                <h3 className="font-semibold text-sm">E-mails</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="email1">E-mail 1 do Representante Comercial</Label>
+                    <Input id="email1" type="email" value={formData.email1} onChange={(e) => handleInputChange("email1", e.target.value)} placeholder="email@exemplo.com" />
+                  </div>
+                  <div>
+                    <Label htmlFor="email2">E-mail 2 do Representante Comercial</Label>
+                    <Input id="email2" type="email" value={formData.email2} onChange={(e) => handleInputChange("email2", e.target.value)} placeholder="email@exemplo.com" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3 border-t pt-4">
+                <h3 className="font-semibold text-sm">Web e Redes Sociais</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="website">Website</Label>
+                    <Input id="website" value={formData.website} onChange={(e) => handleInputChange("website", e.target.value)} placeholder="https://www.exemplo.com" />
+                  </div>
+                  <div>
+                    <Label htmlFor="instagram">Instagram</Label>
+                    <Input id="instagram" value={formData.instagram} onChange={(e) => handleInputChange("instagram", e.target.value)} placeholder="@usuario" />
+                  </div>
+                  <div>
+                    <Label htmlFor="facebook">Facebook</Label>
+                    <Input id="facebook" value={formData.facebook} onChange={(e) => handleInputChange("facebook", e.target.value)} placeholder="/usuario" />
+                  </div>
+                  <div>
+                    <Label htmlFor="linkedin">LinkedIn</Label>
+                    <Input id="linkedin" value={formData.linkedin} onChange={(e) => handleInputChange("linkedin", e.target.value)} placeholder="/company/empresa" />
+                  </div>
+                  <div>
+                    <Label htmlFor="x_twitter">X (Twitter)</Label>
+                    <Input id="x_twitter" value={formData.x_twitter} onChange={(e) => handleInputChange("x_twitter", e.target.value)} placeholder="@usuario" />
+                  </div>
+                </div>
+              </div>
+              </>
+              )}
               <div className="space-y-3 border-t pt-4">
                 <h3 className="font-semibold text-sm">Serviço/Produto Oferecido</h3>
                 <Textarea
