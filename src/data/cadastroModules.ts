@@ -392,8 +392,6 @@ export const modules: ModulesConfig = {
       },
     }
   },
-  // ... rest continues below
-    }
   },
   servicos: {
     name: "Serviços",
