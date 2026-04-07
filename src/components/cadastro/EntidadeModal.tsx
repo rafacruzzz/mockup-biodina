@@ -235,6 +235,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     // Outros
     servico_produto_oferecido: "",
     observacoes: "",
+    segmento_cliente: "",
+    observacoes_analise_risco: "",
     
     // Campos legados mantidos para compatibilidade
     representante: "",
@@ -608,19 +610,34 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   </>
                 )}
 
-                {isCliente && editData && editData.segmento_lead && (
+                {isCliente && (
                   <div>
-                    <Label htmlFor="segmento_cliente">Segmento do Cliente (originado do Lead)</Label>
-                    <Select value={editData.segmento_lead} disabled>
-                      <SelectTrigger className="bg-muted">
-                        <SelectValue placeholder="Segmento do Lead" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {segmentos.map((segmento) => (
-                          <SelectItem key={segmento.id} value={segmento.value}>{segmento.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="segmento_cliente">
+                      {editData?.segmento_lead ? "Segmento do Cliente (originado do Lead)" : "Segmento do Cliente"}
+                    </Label>
+                    {editData?.segmento_lead ? (
+                      <Select value={editData.segmento_lead} disabled>
+                        <SelectTrigger className="bg-muted">
+                          <SelectValue placeholder="Segmento do Lead" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {segmentos.map((segmento) => (
+                            <SelectItem key={segmento.id} value={segmento.value}>{segmento.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Select value={formData.segmento_cliente} onValueChange={(value) => handleInputChange("segmento_cliente", value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o segmento..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {segmentos.map((segmento) => (
+                            <SelectItem key={segmento.id} value={segmento.value}>{segmento.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                   </div>
                 )}
 
@@ -1692,6 +1709,18 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   placeholder="Histórico de compras, preferências, informações relevantes para o relacionamento com o cliente..."
                 />
               </div>
+              {isCliente && (
+                <div>
+                  <Label htmlFor="observacoes_analise_risco">Observações de Análise de Risco</Label>
+                  <Textarea
+                    id="observacoes_analise_risco"
+                    value={formData.observacoes_analise_risco}
+                    onChange={(e) => handleInputChange("observacoes_analise_risco", e.target.value)}
+                    rows={10}
+                    placeholder="Registre aqui as observações de análise de risco do cliente..."
+                  />
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
