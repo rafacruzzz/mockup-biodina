@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { SecaoRoteiro, SecaoEstado, ItemEstado } from './SecaoRoteiro';
 import { LegendaClassificacao } from './LegendaClassificacao';
 import { secoesRoteiro } from './dadosRoteiro';
@@ -75,23 +74,22 @@ export const RoteiroAuditoriaModal = ({ open, onOpenChange }: RoteiroAuditoriaMo
           <DialogTitle className="text-lg font-bold text-center">ROTEIRO DE AUDITORIA</DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-hidden flex flex-col px-6">
-          <Tabs value={abaAtiva} onValueChange={setAbaAtiva} className="flex-1 flex flex-col overflow-hidden">
-            <ScrollArea className="w-full flex-shrink-0">
-              <TabsList className="inline-flex w-auto gap-1 mb-3">
+        <div className="flex-1 min-h-0 flex flex-col px-6">
+          <Tabs value={abaAtiva} onValueChange={setAbaAtiva} className="flex-1 min-h-0 flex flex-col">
+            <div className="flex-shrink-0 overflow-x-auto pb-2">
+              <TabsList className="inline-flex w-max min-w-full gap-1">
                 {secoesRoteiro.map((secao) => (
                   <TabsTrigger key={secao.id} value={secao.id} className="text-xs px-3 py-1.5 whitespace-nowrap">
                     {secao.id} - {secao.titulo.length > 20 ? secao.titulo.substring(0, 20) + '...' : secao.titulo}
                   </TabsTrigger>
                 ))}
               </TabsList>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
+            </div>
 
-            <ScrollArea className="flex-1">
+            <div className="flex-1 min-h-0 overflow-y-auto">
               {secoesRoteiro.map((secao) => (
                 <TabsContent key={secao.id} value={secao.id} className="mt-0">
-                  <div className="pb-2">
+                  <div className="pb-4">
                     <h3 className="text-sm font-bold text-foreground mb-3">
                       Parte {secao.id} — {secao.titulo}
                     </h3>
@@ -106,7 +104,7 @@ export const RoteiroAuditoriaModal = ({ open, onOpenChange }: RoteiroAuditoriaMo
                 </TabsContent>
               ))}
               <LegendaClassificacao />
-            </ScrollArea>
+            </div>
           </Tabs>
         </div>
 
