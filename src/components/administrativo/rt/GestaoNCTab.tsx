@@ -143,10 +143,9 @@ export function GestaoNCTab() {
   const adicionarProdutoLiberacao = () => {
     if (!ncSelecionada) return;
     const current = ncSelecionada.produtosLiberacao || [];
-    const novoCodigo = `LIB-${String(current.length + 1).padStart(3, '0')}`;
     const novo: ProdutoLiberacaoNCRT = {
       id: `lib-${Date.now()}`,
-      codigo: novoCodigo,
+      codigo: '',
       referencia: '',
       nome: '',
       modelo: '',
@@ -735,12 +734,12 @@ export function GestaoNCTab() {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Código</TableHead>
+                            <TableHead>Código do Produto</TableHead>
                             <TableHead>Referência</TableHead>
                             <TableHead>Nome</TableHead>
                             <TableHead>Modelo</TableHead>
-                            <TableHead>Fabricante</TableHead>
-                            <TableHead>Marca</TableHead>
+                            <TableHead>Unidade Fabril</TableHead>
+                            <TableHead>Nome do Fabricante Legal/Marca</TableHead>
                             <TableHead>Linha</TableHead>
                             <TableHead>Apresentação</TableHead>
                             <TableHead>Nº Série/Lote</TableHead>
@@ -752,7 +751,9 @@ export function GestaoNCTab() {
                         <TableBody>
                           {(ncSelecionada.produtosLiberacao || []).map((prod, idx) => (
                             <TableRow key={prod.id}>
-                              <TableCell className="font-mono text-xs">{prod.codigo}</TableCell>
+                              <TableCell>
+                                <Input className="min-w-[100px]" value={prod.codigo} onChange={(e) => atualizarProdutoLiberacao(idx, 'codigo', e.target.value)} placeholder="Código do produto" />
+                              </TableCell>
                               <TableCell>
                                 <Input className="min-w-[100px]" value={prod.referencia} onChange={(e) => atualizarProdutoLiberacao(idx, 'referencia', e.target.value)} />
                               </TableCell>
@@ -809,160 +810,6 @@ export function GestaoNCTab() {
                   </CardContent>
                 </Card>
               )}
-
-              {/* p) Seção CAPA */}
-              <Card className="border-2 border-primary/20">
-                <CardHeader>
-                  <CardTitle className="text-lg">CAPA - Ação Corretiva e Preventiva</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label>Ação Preventiva</Label>
-                    <Textarea
-                      value={ncSelecionada.capa?.acaoPreventiva || ''}
-                      onChange={(e) => updateCapa('acaoPreventiva', e.target.value)}
-                      rows={2}
-                      placeholder="Descreva a ação preventiva..."
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Ação Corretiva</Label>
-                    <Textarea
-                      value={ncSelecionada.capa?.acaoCorretiva || ''}
-                      onChange={(e) => updateCapa('acaoCorretiva', e.target.value)}
-                      rows={2}
-                      placeholder="Descreva a ação corretiva..."
-                    />
-                  </div>
-
-                  {ncSelecionada.capa?.gerenciamentoTarefas && (
-                    <div>
-                      <Label>Gerenciamento da Execução de Tarefas</Label>
-                      <Textarea value={ncSelecionada.capa.gerenciamentoTarefas} disabled className="min-h-[80px]" />
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label>Prazo Final</Label>
-                      <Input
-                        type="date"
-                        value={ncSelecionada.capa?.prazoFinal ? format(ncSelecionada.capa.prazoFinal, 'yyyy-MM-dd') : ''}
-                        onChange={(e) => updateCapa('prazoFinal', new Date(e.target.value))}
-                      />
-                    </div>
-                    <div>
-                      <Label>Status CAPA</Label>
-                      <div className="mt-2">
-                        {getStatusCAPABadge(ncSelecionada.capa?.status || 'Pendente')}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label>Responsável CAPA</Label>
-                    <Select
-                      value={ncSelecionada.capa?.responsavel || ''}
-                      onValueChange={(value) => updateCapa('responsavel', value)}
-                    >
-                      <SelectTrigger><SelectValue placeholder="Selecione o responsável" /></SelectTrigger>
-                      <SelectContent>
-                        {responsaveisNCRT.map((resp) => (
-                          <SelectItem key={resp} value={resp}>{resp}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* CAPA DT — Segurança/Meio Ambiente */}
-                  {mostrarCAPADT && (
-                    <Card className="border border-purple-200 bg-purple-50/30">
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-sm">CAPA — DT (Equipamentos do Cliente)</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                          <div>
-                            <Label className="text-xs">Nome do Cliente</Label>
-                            <Input value={ncSelecionada.capa?.capaDT?.clienteNome || ''} onChange={(e) => updateCapa('capaDT', { ...ncSelecionada.capa?.capaDT, clienteNome: e.target.value })} />
-                          </div>
-                          <div>
-                            <Label className="text-xs">Tipo de Cliente</Label>
-                            <Input value={ncSelecionada.capa?.capaDT?.tipoCliente || ''} disabled className="bg-muted" />
-                          </div>
-                          <div>
-                            <Label className="text-xs">Razão Social</Label>
-                            <Input value={ncSelecionada.capa?.capaDT?.razaoSocial || ''} disabled className="bg-muted" />
-                          </div>
-                          <div>
-                            <Label className="text-xs">Nome Fantasia</Label>
-                            <Input value={ncSelecionada.capa?.capaDT?.nomeFantasia || ''} disabled className="bg-muted" />
-                          </div>
-                          <div>
-                            <Label className="text-xs">CNPJ/CPF</Label>
-                            <Input value={ncSelecionada.capa?.capaDT?.cnpjCpf || ''} disabled className="bg-muted" />
-                          </div>
-                          <div>
-                            <Label className="text-xs">CIN/RG</Label>
-                            <Input value={ncSelecionada.capa?.capaDT?.cinRg || ''} disabled className="bg-muted" />
-                          </div>
-                          <div>
-                            <Label className="text-xs">Nome do Mantenedor</Label>
-                            <Input value={ncSelecionada.capa?.capaDT?.nomeMantenedor || ''} disabled className="bg-muted" />
-                          </div>
-                          <div>
-                            <Label className="text-xs">CNPJ do Mantenedor</Label>
-                            <Input value={ncSelecionada.capa?.capaDT?.cnpjMantenedor || ''} disabled className="bg-muted" />
-                          </div>
-                        </div>
-
-                        <div>
-                          <Label className="text-sm font-medium">Equipamentos</Label>
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead>Nº Série</TableHead>
-                                <TableHead>Modelo</TableHead>
-                                <TableHead>Marca</TableHead>
-                                <TableHead>Data Ação Preventiva</TableHead>
-                                <TableHead>Data Ação Corretiva</TableHead>
-                                <TableHead>Descrição Corretiva</TableHead>
-                                <TableHead>Prazo Final</TableHead>
-                                <TableHead>Solucionado</TableHead>
-                                <TableHead>Responsável</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {equipamentosMockDTRT.map((eq) => (
-                                <TableRow key={eq.equipamentoId}>
-                                  <TableCell className="font-mono text-xs">{eq.numeroSerie}</TableCell>
-                                  <TableCell>{eq.modelo}</TableCell>
-                                  <TableCell>{eq.marca}</TableCell>
-                                  <TableCell><Input type="date" className="min-w-[130px]" /></TableCell>
-                                  <TableCell><Input type="date" className="min-w-[130px]" /></TableCell>
-                                  <TableCell><Input className="min-w-[150px]" placeholder="Descrição..." /></TableCell>
-                                  <TableCell><Input type="date" className="min-w-[130px]" /></TableCell>
-                                  <TableCell>
-                                    <Select>
-                                      <SelectTrigger className="min-w-[80px]"><SelectValue placeholder="-" /></SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value="Sim">Sim</SelectItem>
-                                        <SelectItem value="Não">Não</SelectItem>
-                                      </SelectContent>
-                                    </Select>
-                                  </TableCell>
-                                  <TableCell><Input className="min-w-[120px]" placeholder="Responsável..." /></TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-                </CardContent>
-              </Card>
 
               {/* Botões de ação */}
               <div className="flex gap-2 justify-end">
