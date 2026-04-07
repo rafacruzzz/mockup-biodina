@@ -1,27 +1,22 @@
 
 
-## Plano: Criar aba "Documentos" no módulo Responsabilidade Técnica
+## Plano: Ajustes na Gestão de Não Conformidades (RT)
 
-### Resumo
-Adicionar uma 5ª aba "DOCUMENTOS" ao módulo RT com três seções (Cards) e funcionalidade de criação de pastas e upload de arquivos, reutilizando o componente `OrganizacaoDocumentos` já existente.
+### 1. Adicionar setores faltantes em `src/data/rtModules.ts`
+Acrescentar 'Regulatório', 'Institucional', 'Contabilidade' e 'Vendas' ao array `setoresEmpresaRT` (linha 289-303). "Assessoria Científica" já existe.
 
-### Alterações
+### 2. Mover tabela de Liberação de Produtos para após "NC Solucionada?" / "Data de Encerramento"
+No arquivo `src/components/administrativo/rt/GestaoNCTab.tsx`, mover o bloco da tabela de Liberação de Produtos (linhas 723-811) para logo depois do bloco "NC Solucionada? / Data de Encerramento" (após linha 721). Atualmente a tabela fica antes do CAPA; agora ficará entre "NC Solucionada?" e o final do formulário.
 
-#### 1. Novo componente: `src/components/administrativo/rt/DocumentosRTTab.tsx`
-- Três seções (Cards) com títulos:
-  - "Documentos do Responsável Legal"
-  - "Documentos do Responsável Técnico de Produtos e Empresas"
-  - "Documentos do Responsável Técnico de Obras e Serviços"
-- Cada seção usa o componente `OrganizacaoDocumentos` existente para gerenciar pastas e arquivos (criar pastas, nomear, anexar arquivos)
-- Estado local com `PastaRT[]` para cada seção
+### 3. Renomear colunas na tabela de Liberação de Produtos
+- "Fabricante" (linha 742) → "Unidade Fabril"
+- "Marca" (linha 743) → "Nome do Fabricante Legal/Marca"
+- O "Código" (linha 738) já é editável — alterar para que o código seja digitado pelo usuário (código do cadastro de produto), removendo a geração automática `LIB-001` no `adicionarProdutoLiberacao` (linha 146-149), deixando o campo vazio e editável.
 
-#### 2. Alteração: `src/components/administrativo/rt/` → `Administrativo.tsx` (linhas 188-211)
-- Mudar `grid-cols-4` para `grid-cols-5` na `TabsList`
-- Adicionar `<TabsTrigger value="documentos-rt">DOCUMENTOS</TabsTrigger>`
-- Adicionar `<TabsContent value="documentos-rt">` com o novo `DocumentosRTTab`
-- Importar o novo componente
+### 4. Remover seção CAPA inteira
+Remover o bloco CAPA (linhas 813-965) e o código auxiliar relacionado (`updateCapa`, `getStatusCAPABadge`, `mostrarCAPADT`). Também remover a inicialização do `capa` no `handleNovaNC`.
 
-### Arquivo afetado
-- `src/pages/Administrativo.tsx` (adicionar aba)
-- `src/components/administrativo/rt/DocumentosRTTab.tsx` (novo componente)
+### Arquivos afetados
+- `src/data/rtModules.ts` — adicionar setores
+- `src/components/administrativo/rt/GestaoNCTab.tsx` — reordenar tabela, renomear colunas, remover CAPA
 
