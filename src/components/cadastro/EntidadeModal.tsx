@@ -484,7 +484,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
   const getTabGridCols = () => {
     if (isFornecedorRevenda) return 'flex flex-wrap gap-1';
     if (isFornecedorUsoConsumo || isFornecedorServicos) return 'grid grid-cols-7 w-full';
-    if (isTransportadora) return 'grid grid-cols-8 w-full';
+    if (isTransportadora) return 'flex flex-wrap gap-1';
     if (isFornecedor) return 'grid grid-cols-9 w-full';
     if (isRepresentante) return 'grid grid-cols-9 w-full';
     return 'grid grid-cols-8 w-full';
@@ -494,7 +494,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-background rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] flex flex-col overflow-hidden">
+      <div className={`bg-background rounded-xl shadow-2xl w-full ${isTransportadora ? 'max-w-7xl' : 'max-w-6xl'} max-h-[90vh] flex flex-col overflow-hidden`}>
         <div className="flex-shrink-0 flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-bold">{editData ? 'Editar' : 'Cadastro de'} {getTipoLabel(tipoEntidade)}</h2>
           <Button variant="ghost" size="sm" onClick={onClose}>
