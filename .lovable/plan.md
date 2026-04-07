@@ -1,29 +1,42 @@
 
 
-## Plano: Ajustes na Gestão de Não Conformidades (Qualidade)
+## Plano: Melhorias no Novo Chamado da Assessoria Científica
 
-Aplicar as mesmas alterações já feitas no módulo RT ao módulo Qualidade.
+### Resumo
+Duas alterações principais: (1) auto-preenchimento cruzado dos campos Equipamento, Nº Série/Lote e Projeto-Mãe; (2) reestruturar o fluxo para que o formulário termine com um botão "Enviar" após o motivo, e a resposta de Vendas/DT apareça no detalhamento do chamado.
 
-### 1. Adicionar setores em `src/data/qualidadeData.ts`
-Acrescentar 'Regulatório', 'Institucional', 'Contabilidade' e 'Vendas' ao array `setoresEmpresa` (linha 71-85).
+### Alterações
 
-### 2. Mover tabela de Liberação de Produtos (linhas 736-824)
-A tabela já está posicionada após "NC Solucionada?" (linha 734). Confirmar que a ordem está correta — ela já aparece logo após esse bloco. Nenhuma movimentação necessária.
+#### 1. Auto-preenchimento cruzado — `NovoChamadoAssessoriaModal.tsx`
 
-### 3. Renomear colunas na tabela de Liberação de Produtos
-- "Fabricante" (linha 755) → "Unidade Fabril"
-- "Marca" (linha 756) → "Nome do Fabricante Legal/Marca"
-- Código (linha 751/768): tornar editável com `Input` para "Código do Produto" (manual), removendo a geração automática `LIB-XXX` na função `adicionarProdutoLiberacao` (linha 152), deixando `codigo: ''`.
+Criar mapeamento bidirecional entre equipamento, nº série/lote e projeto-mãe nos dados mock:
 
-### 4. Substituir labels na seção CAPA DT (linhas 891-976)
-Na subseção "CAPA — DT (Equipamentos do Cliente)":
-- "Nome do Mantenedor" (linha 924) → "Nome do Mantenedor" (manter — puxado do cadastro do cliente)
-- "CNPJ do Mantenedor" (linha 928) → "CNPJ do Mantenedor" (manter — puxado do cadastro do cliente)
-- Todos os 8 campos de cliente (Nome, Tipo, Razão Social, Nome Fantasia, CNPJ/CPF, CIN/RG, Nome do Mantenedor, CNPJ do Mantenedor) já são read-only/disabled — confirmar que continuam assim, pois serão "puxados" do cadastro do cliente. O campo "Nome do Cliente" (linha 901) permanece editável para busca/seleção.
+```
+EQUIPAMENTO_SERIE_PROJETO_MAP = {
+  "eq-001": { modelo: "ABL800", serie: "SN-20250101", projetoId: "proj-001", projetoNumero: "PROJ-HC-2024-089" },
+  "eq-002": { ... },
+  ...
+}
+```
 
-**Nota**: O usuário pediu para manter a seção CAPA no módulo Qualidade (diferente do RT onde foi removida) e substituir os campos dentro dela.
+- Ao selecionar **Equipamento**: preencher automaticamente `numeroSerieLote` e `projetoId`
+- Ao digitar **Nº Série/Lote** (match exato): preencher `equipamentoId` e `projetoId`
+- Ao selecionar **Projeto-Mãe**: preencher `equipamentoId` e `numeroSerieLote`
+
+#### 2. Botão "Enviar para [Destino]" — `NovoChamadoAssessoriaModal.tsx`
+
+- Renomear o botão de "Abrir Chamado" para "Enviar para Vendas" ou "Enviar para DT" dinamicamente com base no campo `destino` selecionado
+- Manter o botão no `DialogFooter` mas com texto dinâmico
+
+#### 3. Exibir resposta de Vendas/DT no detalhamento — `DetalhesChamadoSheet.tsx`
+
+A seção "Estratégia e Resultado" (linhas 214-265) já exibe `estrategiaResolucao` e `resultadoFinal` — que são os campos onde a resposta de Vendas/DT aparece. Renomear:
+- "Estratégia de Resolução" → "Resposta / Estratégia de Resolução (Vendas/DT)"
+- Manter "Resultado Final" como está
+
+Já funciona: os dados mock do chamado `cham-001` já possuem `estrategiaResolucao` preenchido. O fluxo é: Assessoria abre → Vendas/DT responde (preenche estratégia/resultado) → aparece no detalhamento.
 
 ### Arquivos afetados
-- `src/data/qualidadeData.ts` — adicionar setores
-- `src/components/administrativo/qualidade/GestaoNCTab.tsx` — renomear colunas, código editável
+- `src/components/comercial/assessoria/NovoChamadoAssessoriaModal.tsx` — auto-preenchimento + botão dinâmico
+- `src/components/comercial/assessoria/DetalhesChamadoSheet.tsx` — renomear label da resposta
 
