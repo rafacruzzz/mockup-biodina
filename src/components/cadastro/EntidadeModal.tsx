@@ -524,7 +524,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <TabsTrigger value="credito">Crédito/Restrições</TabsTrigger>
               )}
               {isTransportadora && (
-                <TabsTrigger value="area-atendida">Área atendida/Tabela de preços</TabsTrigger>
+                <TabsTrigger value="area-atendida"><TabsTrigger value="area-atendida">Área atendida</TabsTrigger></TabsTrigger>
               )}
               {isRepresentante && (
                 <TabsTrigger value="comissao">Comissão</TabsTrigger>
@@ -1351,7 +1351,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   value={formData.area_atendida}
                   onChange={(e) => handleInputChange("area_atendida", e.target.value)}
                   rows={6}
-                  placeholder="Descreva a área atendida pela transportadora e tabelas de preços..."
+                  placeholder="Descreva a área atendida pela transportadora..."
                 />
               </div>
             </TabsContent>
