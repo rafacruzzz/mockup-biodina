@@ -38,7 +38,6 @@ const Cadastro = () => {
   const [isProdutoUsoConsumoModalOpen, setIsProdutoUsoConsumoModalOpen] = useState(false);
   const [isKitModalOpen, setIsKitModalOpen] = useState(false);
   const [isEmpresaDetentoraModalOpen, setIsEmpresaDetentoraModalOpen] = useState(false);
-  const [isEmpresaDetentoraModalOpen, setIsEmpresaDetentoraModalOpen] = useState(false);
   const [isMarcaConcorrenteModalOpen, setIsMarcaConcorrenteModalOpen] = useState(false);
 
   // Estado para tipo de entidade
