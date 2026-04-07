@@ -52,6 +52,7 @@ interface ISOEntry {
   nomeArquivoISO: string;
   arquivoTraducao: File | null;
   nomeArquivoTraducao: string;
+  status: string;
 }
 
 const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editData }: EntidadeModalProps) => {
