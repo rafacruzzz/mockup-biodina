@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { SecaoRoteiro, SecaoEstado, ItemEstado } from './SecaoRoteiro';
 import { LegendaClassificacao } from './LegendaClassificacao';
 import { secoesRoteiro } from './dadosRoteiro';
@@ -85,6 +85,7 @@ export const RoteiroAuditoriaModal = ({ open, onOpenChange }: RoteiroAuditoriaMo
                   </TabsTrigger>
                 ))}
               </TabsList>
+              <ScrollBar orientation="horizontal" />
             </ScrollArea>
 
             <ScrollArea className="flex-1">
@@ -104,10 +105,9 @@ export const RoteiroAuditoriaModal = ({ open, onOpenChange }: RoteiroAuditoriaMo
                   </div>
                 </TabsContent>
               ))}
+              <LegendaClassificacao />
             </ScrollArea>
           </Tabs>
-
-          <LegendaClassificacao />
         </div>
 
         <DialogFooter className="px-6 pb-6 pt-3 flex-shrink-0 border-t">
