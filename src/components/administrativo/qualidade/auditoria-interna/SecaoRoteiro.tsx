@@ -39,17 +39,17 @@ const TabelaItens = ({
   if (!itens || itens.length === 0) return null;
 
   return (
-    <Table>
+    <Table className="table-fixed w-full">
       <TableHeader>
         <TableRow>
-          <TableHead className="w-14 text-center">Nº</TableHead>
-          <TableHead className="w-28">Quesito</TableHead>
-          <TableHead>Descrição</TableHead>
-          <TableHead className="w-12 text-center">OM</TableHead>
-          <TableHead className="w-12 text-center">NC</TableHead>
-          <TableHead className="w-12 text-center">C</TableHead>
-          <TableHead className="w-40">Evidência Objetiva</TableHead>
-          <TableHead className="w-40">Plano de Ação</TableHead>
+          <TableHead className="w-10 text-center">Nº</TableHead>
+          <TableHead className="w-24">Quesito</TableHead>
+          <TableHead className="w-[280px]">Descrição</TableHead>
+          <TableHead className="w-10 text-center">OM</TableHead>
+          <TableHead className="w-10 text-center">NC</TableHead>
+          <TableHead className="w-10 text-center">C</TableHead>
+          <TableHead className="min-w-[180px]">Evidência Objetiva</TableHead>
+          <TableHead className="min-w-[180px]">Plano de Ação</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -59,7 +59,7 @@ const TabelaItens = ({
             <TableRow key={item.numero}>
               <TableCell className="text-center font-medium">{item.numero}</TableCell>
               <TableCell className="text-xs">{item.quesito}</TableCell>
-              <TableCell className="text-xs">{item.descricao}</TableCell>
+              <TableCell className="text-xs whitespace-normal break-words max-w-[280px]">{item.descricao}</TableCell>
               <TableCell className="text-center">
                 <Checkbox
                   checked={itemEstado.om}
@@ -82,16 +82,16 @@ const TabelaItens = ({
                 <Textarea
                   value={itemEstado.evidencia}
                   onChange={(e) => onChangeItem(item.numero, 'evidencia', e.target.value)}
-                  className="min-h-[40px] text-xs resize-none"
-                  rows={1}
+                  className="min-h-[60px] text-xs resize-none"
+                  rows={2}
                 />
               </TableCell>
               <TableCell>
                 <Textarea
                   value={itemEstado.planoAcao}
                   onChange={(e) => onChangeItem(item.numero, 'planoAcao', e.target.value)}
-                  className="min-h-[40px] text-xs resize-none"
-                  rows={1}
+                  className="min-h-[60px] text-xs resize-none"
+                  rows={2}
                 />
               </TableCell>
             </TableRow>
