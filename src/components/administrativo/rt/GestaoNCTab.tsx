@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { AlertCircle, CheckCircle2, Clock, Plus, XCircle, ShieldCheck, Paperclip } from 'lucide-react';
-import { naoConformidadesRTMockadas, responsaveisNCRT, setoresEmpresaRT, fabricantesComUnidadesRT, produtosMockNCRT, equipamentosMockDTRT } from '@/data/rtModules';
+import { naoConformidadesRTMockadas, responsaveisNCRT, setoresEmpresaRT, fabricantesComUnidadesRT, produtosMockNCRT } from '@/data/rtModules';
 import type { NaoConformidadeRT, ImpactoNCRT, TipoNCEnumRT, ProdutoLiberacaoNCRT } from '@/types/rt';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
@@ -50,14 +50,6 @@ export function GestaoNCTab() {
       observacoes: '',
       dataCriacao: new Date(),
       produtosLiberacao: [],
-      capa: {
-        id: `capa-${novoId}`,
-        acaoPreventiva: '',
-        acaoCorretiva: '',
-        prazoFinal: new Date(),
-        status: 'Pendente',
-        responsavel: '',
-      },
     };
     setNcSelecionada(novaNC);
     setModoNovo(true);
@@ -245,20 +237,6 @@ export function GestaoNCTab() {
     }
   };
 
-  const getStatusCAPABadge = (status: string) => {
-    switch (status) {
-      case "Pendente":
-        return <Badge variant="outline">Pendente</Badge>;
-      case "Em Andamento":
-        return <Badge className="bg-blue-500 hover:bg-blue-600">Em Andamento</Badge>;
-      case "Concluída":
-        return <Badge className="bg-green-500 hover:bg-green-600">Concluída</Badge>;
-      case "Verificada":
-        return <Badge className="bg-purple-500 hover:bg-purple-600">Verificada</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
 
   const abrirDetalhesNC = (nc: NaoConformidadeRT) => {
     setNcSelecionada(nc);
@@ -278,22 +256,12 @@ export function GestaoNCTab() {
   const mostrarProduto = tiposExibem.includes('Produto');
   const mostrarFornecedor = tiposExibem.includes('Fornecedor');
   const mostrarTabelaLiberacao = mostrarProduto || mostrarFornecedor;
-  const mostrarCAPADT = tiposExibem.includes('Segurança/Meio Ambiente');
+  
 
   const unidadesFabrisDisponiveis = ncSelecionada?.fornecedorNomeFabricanteLegal
     ? fabricantesComUnidadesRT.find(f => f.nome === ncSelecionada.fornecedorNomeFabricanteLegal)?.unidades || []
     : [];
 
-  const updateCapa = (field: string, value: any) => {
-    if (!ncSelecionada) return;
-    setNcSelecionada({
-      ...ncSelecionada,
-      capa: {
-        ...ncSelecionada.capa,
-        [field]: value,
-      }
-    });
-  };
 
   return (
     <div className="space-y-6">
