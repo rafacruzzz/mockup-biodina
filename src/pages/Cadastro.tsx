@@ -16,7 +16,6 @@ import MarcaConcorrenteModal from "@/components/cadastro/MarcaConcorrenteModal";
 import ProdutoUsoConsumoModal from "@/components/cadastro/ProdutoUsoConsumoModal";
 import KitModal from "@/components/cadastro/KitModal";
 import EmpresaDetentoraModal from "@/components/cadastro/EmpresaDetentoraModal";
-import EmpresaDetentoraModal from "@/components/cadastro/EmpresaDetentoraModal";
 import GestaoFiliais from "@/components/cadastro/GestaoFiliais";
 import { modules } from "@/data/cadastroModules";
 import { useEmpresa } from "@/contexts/EmpresaContext";
