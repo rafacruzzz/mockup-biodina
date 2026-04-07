@@ -149,10 +149,9 @@ export const GestaoNCTab = () => {
   const adicionarProdutoLiberacao = () => {
     if (!ncSelecionada) return;
     const current = ncSelecionada.produtosLiberacao || [];
-    const novoCodigo = `LIB-${String(current.length + 1).padStart(3, '0')}`;
     const novo: ProdutoLiberacaoNC = {
       id: `lib-${Date.now()}`,
-      codigo: novoCodigo,
+      codigo: '',
       referencia: '',
       nome: '',
       modelo: '',
@@ -748,12 +747,12 @@ export const GestaoNCTab = () => {
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Código</TableHead>
+                            <TableHead>Código do Produto</TableHead>
                             <TableHead>Referência</TableHead>
                             <TableHead>Nome</TableHead>
                             <TableHead>Modelo</TableHead>
-                            <TableHead>Fabricante</TableHead>
-                            <TableHead>Marca</TableHead>
+                            <TableHead>Unidade Fabril</TableHead>
+                            <TableHead>Nome do Fabricante Legal/Marca</TableHead>
                             <TableHead>Linha</TableHead>
                             <TableHead>Apresentação</TableHead>
                             <TableHead>Nº Série/Lote</TableHead>
@@ -765,7 +764,9 @@ export const GestaoNCTab = () => {
                         <TableBody>
                           {(ncSelecionada.produtosLiberacao || []).map((prod, idx) => (
                             <TableRow key={prod.id}>
-                              <TableCell className="font-mono text-xs">{prod.codigo}</TableCell>
+                              <TableCell>
+                                <Input className="min-w-[120px]" value={prod.codigo} onChange={(e) => atualizarProdutoLiberacao(idx, 'codigo', e.target.value)} placeholder="Código do produto" />
+                              </TableCell>
                               <TableCell>
                                 <Input className="min-w-[100px]" value={prod.referencia} onChange={(e) => atualizarProdutoLiberacao(idx, 'referencia', e.target.value)} />
                               </TableCell>
