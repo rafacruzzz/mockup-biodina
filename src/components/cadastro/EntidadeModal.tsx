@@ -52,6 +52,7 @@ interface ISOEntry {
   nomeArquivoISO: string;
   arquivoTraducao: File | null;
   nomeArquivoTraducao: string;
+  status: string;
 }
 
 const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editData }: EntidadeModalProps) => {
@@ -101,6 +102,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
     metodo_contato: "",
     nome_fantasia: "",
     tin_tax_id: "",
+    tin_tax_id_fabricante: "",
     
     // Contatos expandidos
     telefone1: "",
@@ -299,7 +301,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
       arquivoISO: null,
       nomeArquivoISO: '',
       arquivoTraducao: null,
-      nomeArquivoTraducao: ''
+      nomeArquivoTraducao: '',
+      status: ''
     }]);
   };
 
@@ -747,7 +750,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                     </div>
 
                     <div>
-                      <Label htmlFor="cnpj_mantenedor">CNPJ do Mantenedor</Label>
+                      <Label htmlFor="cnpj_mantenedor">{isFornecedorRevenda ? "CNPJ do Fabricante Legal/Marca" : "CNPJ do Mantenedor"}</Label>
                       <Input
                         id="cnpj_mantenedor"
                         value={formData.cnpj_mantenedor}
@@ -759,15 +762,26 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 )}
 
                 {isFornecedorRevenda && (
-                  <div>
-                    <Label htmlFor="tin_tax_id">TIN (Tax Id Number)</Label>
-                    <Input
-                      id="tin_tax_id"
-                      value={formData.tin_tax_id}
-                      onChange={(e) => handleInputChange("tin_tax_id", e.target.value)}
-                      placeholder="Tax Identification Number"
-                    />
-                  </div>
+                  <>
+                    <div>
+                      <Label htmlFor="tin_tax_id">TIN (Tax Id Number) da Unidade Fabril</Label>
+                      <Input
+                        id="tin_tax_id"
+                        value={formData.tin_tax_id}
+                        onChange={(e) => handleInputChange("tin_tax_id", e.target.value)}
+                        placeholder="Tax Identification Number"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="tin_tax_id_fabricante">TIN (Tax Id Number) do Fabricante Legal/Marca</Label>
+                      <Input
+                        id="tin_tax_id_fabricante"
+                        value={formData.tin_tax_id_fabricante}
+                        onChange={(e) => handleInputChange("tin_tax_id_fabricante", e.target.value)}
+                        placeholder="Tax Identification Number"
+                      />
+                    </div>
+                  </>
                 )}
               </div>
 
@@ -777,7 +791,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <h3 className="font-semibold text-sm">Telefones</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="telefone1">Telefone 1 do {entityLabel}</Label>
+                    <Label htmlFor="telefone1">{isFornecedorRevenda ? "Telefone 1 da Unidade Fabril" : `Telefone 1 do ${entityLabel}`}</Label>
                     <Input
                       id="telefone1"
                       value={formData.telefone1}
@@ -786,7 +800,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                     />
                   </div>
                   <div>
-                    <Label htmlFor="telefone2">Telefone 2 do {entityLabel}</Label>
+                    <Label htmlFor="telefone2">{isFornecedorRevenda ? "Telefone 2 da Unidade Fabril" : `Telefone 2 do ${entityLabel}`}</Label>
                     <Input
                       id="telefone2"
                       value={formData.telefone2}
@@ -795,7 +809,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                     />
                   </div>
                   <div>
-                    <Label htmlFor="telefone3">Telefone 1 do Mantenedor</Label>
+                    <Label htmlFor="telefone3">{isFornecedorRevenda ? "Telefone 1 do Fabricante Legal/Marca" : "Telefone 1 do Mantenedor"}</Label>
                     <Input
                       id="telefone3"
                       value={formData.telefone3}
@@ -804,7 +818,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                     />
                   </div>
                   <div>
-                    <Label htmlFor="telefone4">Telefone 2 do Mantenedor</Label>
+                    <Label htmlFor="telefone4">{isFornecedorRevenda ? "Telefone 2 do Fabricante Legal/Marca" : "Telefone 2 do Mantenedor"}</Label>
                     <Input
                       id="telefone4"
                       value={formData.telefone4}
@@ -819,7 +833,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <h3 className="font-semibold text-sm">Telefones Fixos</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="telefone_fixo1">Telefone Fixo do {entityLabel}</Label>
+                    <Label htmlFor="telefone_fixo1">{isFornecedorRevenda ? "Telefone Fixo da Unidade Fabril" : `Telefone Fixo do ${entityLabel}`}</Label>
                     <Input
                       id="telefone_fixo1"
                       value={formData.telefone_fixo1}
@@ -828,7 +842,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                     />
                   </div>
                   <div>
-                    <Label htmlFor="telefone_fixo2">Telefone Fixo do Mantenedor</Label>
+                    <Label htmlFor="telefone_fixo2">{isFornecedorRevenda ? "Telefone Fixo do Fabricante Legal/Marca" : "Telefone Fixo do Mantenedor"}</Label>
                     <Input
                       id="telefone_fixo2"
                       value={formData.telefone_fixo2}
@@ -843,7 +857,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <h3 className="font-semibold text-sm">WhatsApp</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="telefone_whatsapp">Telefone WhatsApp do {entityLabel}</Label>
+                    <Label htmlFor="telefone_whatsapp">{isFornecedorRevenda ? "Telefone WhatsApp da Unidade Fabril" : `Telefone WhatsApp do ${entityLabel}`}</Label>
                     <Input
                       id="telefone_whatsapp"
                       value={formData.telefone_whatsapp}
@@ -852,7 +866,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                     />
                   </div>
                   <div>
-                    <Label htmlFor="telefone_whatsapp_mantenedor">Telefone WhatsApp do Mantenedor</Label>
+                    <Label htmlFor="telefone_whatsapp_mantenedor">{isFornecedorRevenda ? "Telefone WhatsApp do Fabricante Legal/Marca" : "Telefone WhatsApp do Mantenedor"}</Label>
                     <Input
                       id="telefone_whatsapp_mantenedor"
                       value={formData.telefone_whatsapp_mantenedor}
@@ -867,26 +881,26 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <h3 className="font-semibold text-sm">E-mails</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="email1">E-mail 1 do {entityLabel}</Label>
+                    <Label htmlFor="email1">{isFornecedorRevenda ? "E-mail 1 da Unidade Fabril" : `E-mail 1 do ${entityLabel}`}</Label>
                     <Input id="email1" type="email" value={formData.email1} onChange={(e) => handleInputChange("email1", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                   <div>
-                    <Label htmlFor="email2">E-mail 2 do {entityLabel}</Label>
+                    <Label htmlFor="email2">{isFornecedorRevenda ? "E-mail 2 da Unidade Fabril" : `E-mail 2 do ${entityLabel}`}</Label>
                     <Input id="email2" type="email" value={formData.email2} onChange={(e) => handleInputChange("email2", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                   <div>
-                    <Label htmlFor="email3">E-mail 1 do Mantenedor</Label>
+                    <Label htmlFor="email3">{isFornecedorRevenda ? "E-mail 1 do Fabricante Legal/Marca" : "E-mail 1 do Mantenedor"}</Label>
                     <Input id="email3" type="email" value={formData.email3} onChange={(e) => handleInputChange("email3", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                   <div>
-                    <Label htmlFor="email4">E-mail 2 do Mantenedor</Label>
+                    <Label htmlFor="email4">{isFornecedorRevenda ? "E-mail 2 do Fabricante Legal/Marca" : "E-mail 2 do Mantenedor"}</Label>
                     <Input id="email4" type="email" value={formData.email4} onChange={(e) => handleInputChange("email4", e.target.value)} placeholder="email@exemplo.com" />
                   </div>
                 </div>
               </div>
 
               <div className="space-y-3 border-t pt-4">
-                <h3 className="font-semibold text-sm">Web e Redes Sociais do {entityLabel}</h3>
+                <h3 className="font-semibold text-sm">{isFornecedorRevenda ? "Web e Redes Sociais da Unidade Fabril" : `Web e Redes Sociais do ${entityLabel}`}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="website">Website</Label>
@@ -912,7 +926,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               </div>
 
               <div className="space-y-3 border-t pt-4">
-                <h3 className="font-semibold text-sm">Web e Redes Sociais do Mantenedor</h3>
+                <h3 className="font-semibold text-sm">{isFornecedorRevenda ? "Web e Redes Sociais do Fabricante Legal/Marca" : "Web e Redes Sociais do Mantenedor"}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="website_mantenedor">Website</Label>
@@ -938,7 +952,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               </div>
 
               <div className="space-y-3 border-t pt-4">
-                <h3 className="font-semibold text-sm">Contato Comercial do {entityLabel}</h3>
+                <h3 className="font-semibold text-sm">{isFornecedorRevenda ? "Contato Comercial da Unidade Fabril" : `Contato Comercial do ${entityLabel}`}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="contato_nome">Nome</Label>
@@ -960,7 +974,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
               </div>
 
               <div className="space-y-3 border-t pt-4">
-                <h3 className="font-semibold text-sm">Contato Comercial do Mantenedor</h3>
+                <h3 className="font-semibold text-sm">{isFornecedorRevenda ? "Contato Comercial do Fabricante Legal/Marca" : "Contato Comercial do Mantenedor"}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="contato_nome_mantenedor">Nome</Label>
@@ -1670,17 +1684,16 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                         <thead className="bg-muted">
                           <tr>
                             <th className="text-left p-3 font-medium">Fábrica</th>
-                            <th className="text-left p-3 font-medium">Vencimento das ISOs</th>
+                            <th className="text-left p-3 font-medium">Vencimento</th>
                             <th className="text-left p-3 font-medium">Status</th>
                             <th className="text-left p-3 font-medium">Observação</th>
-                            <th className="text-left p-3 font-medium">Anexar ISO</th>
-                            <th className="text-left p-3 font-medium">Anexar Tradução</th>
+                            <th className="text-left p-3 font-medium">ISO</th>
+                            <th className="text-left p-3 font-medium">Tradução Juramentada</th>
                             <th className="text-center p-3 font-medium">Ações</th>
                           </tr>
                         </thead>
                         <tbody>
                           {isosVinculadas.map((iso, index) => {
-                            const status = getISOStatus(iso.vencimento, !!iso.nomeArquivoISO);
                             return (
                               <tr key={iso.id} className="border-t">
                                 <td className="p-3">
@@ -1690,11 +1703,18 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                                   <Input type="date" value={iso.vencimento} onChange={(e) => updateISO(index, 'vencimento', e.target.value)} className="min-w-[140px]" />
                                 </td>
                                 <td className="p-3">
-                                  {status.label !== '-' && (
-                                    <span className={`text-xs px-2 py-1 rounded whitespace-nowrap ${status.className}`}>
-                                      {status.label}
-                                    </span>
-                                  )}
+                                  <Select value={iso.status || ''} onValueChange={(value) => updateISO(index, 'status', value)}>
+                                    <SelectTrigger className="min-w-[180px]">
+                                      <SelectValue placeholder="Selecione o status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="pedido_fabrica">Pedido à fábrica</SelectItem>
+                                      <SelectItem value="aguardando_envio">Aguardando envio da fábrica</SelectItem>
+                                      <SelectItem value="traducao_juramentada">Tradução Juramentada</SelectItem>
+                                      <SelectItem value="junta_comercial">Junta Comercial</SelectItem>
+                                      <SelectItem value="finalizado">Finalizado</SelectItem>
+                                    </SelectContent>
+                                  </Select>
                                 </td>
                                 <td className="p-3">
                                   <Input value={iso.observacao} onChange={(e) => updateISO(index, 'observacao', e.target.value)} placeholder="Observação" className="min-w-[150px]" />
