@@ -299,7 +299,11 @@ export const setoresEmpresaRT = [
   'Compliance',
   'Jurídico',
   'TI',
-  'Financeiro'
+  'Financeiro',
+  'Regulatório',
+  'Institucional',
+  'Contabilidade',
+  'Vendas'
 ];
 
 export const fabricantesComUnidadesRT = [

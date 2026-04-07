@@ -183,7 +183,7 @@ export interface NaoConformidadeRT {
   fornecedorUnidadeFabril?: string;
   // Tabela de liberação
   produtosLiberacao?: ProdutoLiberacaoNCRT[];
-  capa: AcaoCAPART;
+  capa?: AcaoCAPART;
 }
 
 // Monitoramento e Auditoria
