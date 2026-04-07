@@ -24,8 +24,12 @@ export const ColetaDadosTab = () => {
           <TabsTrigger value="sensores">Integração Sensores/Máquinas</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="auditoria">
+        <TabsContent value="auditoria-externa">
           <AuditoriaQualidadeForm />
+        </TabsContent>
+
+        <TabsContent value="auditoria-interna">
+          <AuditoriaInternaTab />
         </TabsContent>
 
         <TabsContent value="pesquisa">
