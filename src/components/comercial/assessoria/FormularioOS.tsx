@@ -269,7 +269,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     }
 
     const ehTreinamento = tiposSelecionados.some(t => 
-      t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800" || t === "treinamento_usuario_aqt90" || t === "treinamento_usuario_dxh520" || t === "treinamento_usuario_excelsior_as" || t === "treinamento_usuario_osmotech"
+      t === "treinamento_inicial" || t === "treinamento_nova_equipe"
     );
 
     if (ehTreinamento && listaParticipantes.length === 0) {
@@ -332,13 +332,15 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
   };
 
   const templatesDisponiveis = [
-    { id: "dxh520", nome: "DxH 520", badge: "Hematologia" },
-    { id: "abl800", nome: "ABL800 FLEX", badge: "Gasometria" },
-    { id: "abl90", nome: "ABL90 FLEX", badge: "Gasometria Avançada" },
+    { id: "meteromega", nome: "MeterOmega", badge: "Coleta" },
+    { id: "setmedikal", nome: "SET Medikal", badge: "Coleta" },
     { id: "abl9", nome: "ABL9", badge: "Gasometria Premium" },
+    { id: "abl90", nome: "ABL90 FLEX", badge: "Gasometria Avançada" },
+    { id: "abl800", nome: "ABL800 FLEX", badge: "Gasometria" },
     { id: "aqt90", nome: "AQT 90 FLEX", badge: "Química Clínica" },
-    { id: "osmotech", nome: "OsmoTECH", badge: "Osmometria" },
+    { id: "dxh520", nome: "DxH 520", badge: "Hematologia" },
     { id: "excelsior", nome: "Excelsior Thermo Fisher Epredia", badge: "Histologia" },
+    { id: "osmotech", nome: "OsmoTECH", badge: "Osmometria" },
   ];
 
   const renderSelectedTemplate = () => {
@@ -728,10 +730,41 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
       </div>
 
       {/* Registro de Treinamento */}
-      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe" || t === "treinamento_usuario_meteromega" || t === "treinamento_usuario_setmedikal" || t === "treinamento_usuario_abl9" || t === "treinamento_usuario_abl90" || t === "treinamento_usuario_abl800" || t === "treinamento_usuario_aqt90" || t === "treinamento_usuario_dxh520" || t === "treinamento_usuario_excelsior_as" || t === "treinamento_usuario_osmotech") && (
+      {tiposSelecionados.some(t => t === "treinamento_inicial" || t === "treinamento_nova_equipe") && (
         <>
+          <Card>
+            <CardHeader>
+              <CardTitle>Registro de Treinamento</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label className="mb-3 block">Selecione o registro de treinamento:</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {templatesDisponiveis.map((t) => (
+                    <div
+                      key={t.id}
+                      className={`border rounded-lg p-3 cursor-pointer transition-all hover:border-primary ${
+                        selectedTemplate === t.id ? "border-primary bg-primary/5 ring-2 ring-primary/20" : "border-border"
+                      }`}
+                      onClick={() => setSelectedTemplate(selectedTemplate === t.id ? null : t.id)}
+                    >
+                      <p className="font-medium text-sm">{t.nome}</p>
+                      <Badge variant="outline" className="mt-1 text-xs">{t.badge}</Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {selectedTemplate && (
+                <div className="mt-4">
+                  {renderSelectedTemplate()}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Checklist MeterOmega */}
-          {tiposSelecionados.includes("treinamento_usuario_meteromega") && (
+          {selectedTemplate === "meteromega" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card>
                 <CardHeader>
@@ -793,7 +826,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
           )}
 
           {/* Checklist ABL9 - Radiometer */}
-          {tiposSelecionados.includes("treinamento_usuario_abl9") && (
+          {selectedTemplate === "abl9" && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Card>
                 <CardHeader>
@@ -931,7 +964,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
           )}
 
           {/* Checklist ABL90 FLEX PLUS - Radiometer */}
-          {tiposSelecionados.includes("treinamento_usuario_abl90") && (
+          {selectedTemplate === "abl90" && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Card>
                 <CardHeader>
@@ -1095,7 +1128,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
           )}
 
           {/* Checklist ABL800 - Radiometer */}
-          {tiposSelecionados.includes("treinamento_usuario_abl800") && (
+          {selectedTemplate === "abl800" && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Card>
                 <CardHeader>
@@ -1264,7 +1297,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
           )}
 
           {/* Checklist DxH 520 – Beckman Coulter */}
-          {tiposSelecionados.includes("treinamento_usuario_dxh520") && (
+          {selectedTemplate === "dxh520" && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Card>
                 <CardHeader>
@@ -1448,7 +1481,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
           )}
 
           {/* Checklist AQT90 FLEX - Radiometer */}
-          {tiposSelecionados.includes("treinamento_usuario_aqt90") && (
+          {selectedTemplate === "aqt90" && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Card>
                 <CardHeader>
@@ -1633,7 +1666,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
           )}
 
           {/* Checklist SET Medikal */}
-          {tiposSelecionados.includes("treinamento_usuario_setmedikal") && (
+          {selectedTemplate === "setmedikal" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card>
                 <CardHeader>
@@ -1696,7 +1729,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
           )}
 
           {/* Checklist OsmoTech */}
-          {tiposSelecionados.includes("treinamento_usuario_osmotech") && (
+          {selectedTemplate === "osmotech" && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">Conteúdo Programático do Treinamento</CardTitle>
@@ -1732,7 +1765,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
           )}
 
           {/* Checklist Excelsior AS */}
-          {tiposSelecionados.includes("treinamento_usuario_excelsior_as") && (
+          {selectedTemplate === "excelsior" && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">Conteúdo Programático do Treinamento</CardTitle>
@@ -1752,7 +1785,6 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
                   { key: "bateria_backup", label: "Instrução sobre a bateria backup" },
                   { key: "limpeza_camara_reacao", label: "Instruções limpeza da câmara de reação antes do programa de lavagem" },
                   { key: "limpeza_geral", label: "Instruções para limpeza em geral" },
-                  { key: "testes", label: "Testes" },
                 ].map((item) => (
                   <div key={item.key} className="flex items-center space-x-2">
                     <Checkbox
@@ -1770,37 +1802,6 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
               </CardContent>
             </Card>
           )}
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Registro de Treinamento</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label className="mb-3 block">Selecione o registro de treinamento:</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {templatesDisponiveis.map((t) => (
-                    <div
-                      key={t.id}
-                      className={`border rounded-lg p-3 cursor-pointer transition-all hover:border-primary ${
-                        selectedTemplate === t.id ? "border-primary bg-primary/5 ring-2 ring-primary/20" : "border-border"
-                      }`}
-                      onClick={() => setSelectedTemplate(selectedTemplate === t.id ? null : t.id)}
-                    >
-                      <p className="font-medium text-sm">{t.nome}</p>
-                      <Badge variant="outline" className="mt-1 text-xs">{t.badge}</Badge>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {selectedTemplate && (
-                <div className="mt-4">
-                  {renderSelectedTemplate()}
-                </div>
-              )}
-            </CardContent>
-          </Card>
 
           {/* Participantes */}
           <Card>
