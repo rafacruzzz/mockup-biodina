@@ -1351,7 +1351,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                   value={formData.area_atendida}
                   onChange={(e) => handleInputChange("area_atendida", e.target.value)}
                   rows={6}
-                  placeholder="placeholder="Descreva a área atendida pela transportadora...""
+                  placeholder="Descreva a área atendida pela transportadora..."
                 />
               </div>
             </TabsContent>
