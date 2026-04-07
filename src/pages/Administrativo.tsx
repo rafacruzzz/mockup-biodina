@@ -23,6 +23,7 @@ import { NovaTriagemModal } from '@/components/administrativo/NovaTriagemModal';
 import { DocumentacaoTab } from '@/components/administrativo/rt/DocumentacaoTab';
 import { GestaoNCTab as GestaoNCTabRT } from '@/components/administrativo/rt/GestaoNCTab';
 import { MonitoramentoAuditoriaTab } from '@/components/administrativo/rt/MonitoramentoAuditoriaTab';
+import { DocumentosRTTab } from '@/components/administrativo/rt/DocumentosRTTab';
 import { EstruturaEPadroesTab } from '@/components/administrativo/qualidade/EstruturaEPadroesTab';
 import { ColetaDadosTab } from '@/components/administrativo/qualidade/ColetaDadosTab';
 import { GestaoNCTab } from '@/components/administrativo/qualidade/GestaoNCTab';
@@ -186,11 +187,12 @@ const Administrativo = () => {
       </div>
       
       <Tabs value={rtTab} onValueChange={setRtTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="rastreabilidade">RASTREABILIDADE</TabsTrigger>
           <TabsTrigger value="documentacoes">INTEGRAÇÃO RT / CONTROLE DE QUALIDADE</TabsTrigger>
           <TabsTrigger value="gestao-nc">GESTÃO DE NÃO CONFORMIDADES</TabsTrigger>
           <TabsTrigger value="monitoramento-auditoria">MONITORAMENTO E AUDITORIA</TabsTrigger>
+          <TabsTrigger value="documentos-rt">DOCUMENTOS</TabsTrigger>
         </TabsList>
 
         <TabsContent value="rastreabilidade" className="mt-6">
@@ -207,6 +209,10 @@ const Administrativo = () => {
 
         <TabsContent value="monitoramento-auditoria" className="mt-6">
           <MonitoramentoAuditoriaTab />
+        </TabsContent>
+
+        <TabsContent value="documentos-rt" className="mt-6">
+          <DocumentosRTTab />
         </TabsContent>
       </Tabs>
     </div>
