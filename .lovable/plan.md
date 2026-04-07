@@ -1,24 +1,31 @@
 
 
-## Plano: Ajustes em Labels de Segmento, Telefone e Botão de Conversão
+## Plano: Ajustes no Cadastro de Cliente
 
-### Resumo
-Corrigir labels de segmento do lead, renomear campos de telefone fixo e confirmar que o botão "Converter para Cliente" já funciona em ambos os módulos (Cadastro e Comercial).
+### Alterações no arquivo `src/components/cadastro/EntidadeModal.tsx`
 
-### Alterações
+#### 1. Campo "Segmento do Cliente" — sempre visível para Clientes
+Atualmente o campo "Segmento do Cliente (originado do Lead)" só aparece se o cliente veio de um lead (`editData.segmento_lead` preenchido). Vamos torná-lo um campo editável para todos os clientes:
+- Se o cliente veio de lead, o campo vem pré-preenchido com o segmento do lead (somente leitura)
+- Se o cliente **não** veio de lead, exibir um Select editável com a mesma lista de segmentos, permitindo escolha manual
+- Adicionar `segmento_cliente` ao `formData`
 
-#### 1. `src/hooks/useSegmentoLeadManager.ts`
-- Linha 26: trocar `PÚBLICO - HOSPITAL - SECRETARIA DA SAÚDE` por `PÚBLICO - HOSPITAL - SECRETARIA DE SAÚDE`
-- Linha 36: trocar `PÚBLICO - LABORATÓRIO - SECRETARIA DA SAÚDE` por `PÚBLICO - LABORATÓRIO - SECRETARIA DE SAÚDE`
+#### 2. Labels de Telefone Fixo
+Os labels já foram corrigidos na última alteração. Verificar e confirmar que estão como:
+- "Telefone Fixo do Cliente" (linha 805) ✅ já correto
+- "Telefone Fixo do Mantenedor" (linha 814) ✅ já correto
 
-#### 2. `src/components/cadastro/EntidadeModal.tsx`
-- Linha 805: trocar `Telefone Fixo 1 do {entityLabel}` por `Telefone Fixo do {entityLabel}`
-- Linha 814: trocar `Telefone Fixo 2 do Mantenedor` por `Telefone Fixo do Mantenedor`
+**Nenhuma alteração necessária aqui.**
 
-### Sem alteração necessária
-- O botão **"Converter para Cliente"** já existe no rodapé do `EntidadeModal` quando o tipo é Lead e está em modo edição. Como ambos os módulos (Cadastro e Comercial) usam o mesmo `EntidadeModal`, a funcionalidade já está presente nos dois lugares.
+#### 3. Campo "Observações de análise de risco" na aba Observações
+Adicionar um novo campo de texto livre na aba "Observações", abaixo de "Observações Gerais":
+- Adicionar `observacoes_analise_risco` ao `formData` (inicializado como `""`)
+- Renderizar um `Textarea` com label "Observações de Análise de Risco" visível apenas para Clientes (`isCliente`)
+- Mesmo estilo do campo "Observações Gerais" (rows=10, placeholder descritivo)
 
-### Arquivos afetados
-- `src/hooks/useSegmentoLeadManager.ts`
-- `src/components/cadastro/EntidadeModal.tsx`
+### Detalhes técnicos
+- **Arquivo**: `src/components/cadastro/EntidadeModal.tsx`
+- Adicionar `segmento_cliente: ""` e `observacoes_analise_risco: ""` ao estado `formData`
+- Na aba "Dados Gerais": substituir o bloco condicional atual (linhas 611-625) por lógica que sempre mostra o campo para clientes — editável quando não veio de lead, somente leitura quando veio
+- Na aba "Observações": adicionar o novo Textarea após "Observações Gerais", condicional a `isCliente`
 
