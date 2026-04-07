@@ -1,18 +1,17 @@
 
 
-## Plano: Expandir modal da Transportadora e corrigir layout das abas
+## Plano: Ajustes no Cadastro de Transportadora
 
-### Problema
-O modal da Transportadora tem 8 abas em `grid-cols-8` dentro de `max-w-6xl`, causando sobreposição/empilhamento dos textos das abas.
+### Campos de Mantenedor
+Os campos de Mantenedor (telefones, e-mails, redes sociais, contato comercial) já estão ocultos para Transportadora — a condição `!isTransportadora` na linha 738 já exclui todo o bloco. **Nenhuma alteração necessária.**
 
-### Alterações em `src/components/cadastro/EntidadeModal.tsx`
+### Alteração necessária
 
-#### 1. Aumentar largura do modal para Transportadora (linha 497)
-- Trocar `max-w-6xl` por `max-w-7xl` quando `isTransportadora`, usando classe condicional
+**Arquivo: `src/components/cadastro/EntidadeModal.tsx`**
 
-#### 2. Corrigir grid das abas da Transportadora (linha 487)
-- Trocar `grid grid-cols-8` por `flex flex-wrap gap-1` para que as abas se ajustem naturalmente sem empilhar, seguindo o mesmo padrão já usado para `isFornecedorRevenda`
+#### Renomear aba (linha 527)
+- Trocar `Área atendida/Tabela de preços` por `Área atendida`
 
-### Arquivo afetado
-- `src/components/cadastro/EntidadeModal.tsx`
+#### Atualizar placeholder (linha 1354)
+- Trocar `"Descreva a área atendida pela transportadora e tabelas de preços..."` por `"Descreva a área atendida pela transportadora..."`
 
