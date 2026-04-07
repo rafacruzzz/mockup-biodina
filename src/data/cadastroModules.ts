@@ -291,6 +291,10 @@ export const modules: ModulesConfig = {
             pendente: true
           }
         ]
+      },
+      empresas_detentoras: {
+        name: "Empresas Detentoras de Registro",
+        data: []
       }
     }
   },
@@ -390,15 +394,8 @@ export const modules: ModulesConfig = {
         name: "Kits",
         data: []
       },
-      marcas: {
-        name: "Marcas",
-        data: []
-      },
-      empresas_detentoras: {
-        name: "Empresas Detentoras",
-        data: []
-      }
     }
+  },
   },
   servicos: {
     name: "Serviços",
