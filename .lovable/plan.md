@@ -1,17 +1,27 @@
 
 
-## Plano: Ajustes no Cadastro de Transportadora
+## Plano: Criar aba "Documentos" no módulo Responsabilidade Técnica
 
-### Campos de Mantenedor
-Os campos de Mantenedor (telefones, e-mails, redes sociais, contato comercial) já estão ocultos para Transportadora — a condição `!isTransportadora` na linha 738 já exclui todo o bloco. **Nenhuma alteração necessária.**
+### Resumo
+Adicionar uma 5ª aba "DOCUMENTOS" ao módulo RT com três seções (Cards) e funcionalidade de criação de pastas e upload de arquivos, reutilizando o componente `OrganizacaoDocumentos` já existente.
 
-### Alteração necessária
+### Alterações
 
-**Arquivo: `src/components/cadastro/EntidadeModal.tsx`**
+#### 1. Novo componente: `src/components/administrativo/rt/DocumentosRTTab.tsx`
+- Três seções (Cards) com títulos:
+  - "Documentos do Responsável Legal"
+  - "Documentos do Responsável Técnico de Produtos e Empresas"
+  - "Documentos do Responsável Técnico de Obras e Serviços"
+- Cada seção usa o componente `OrganizacaoDocumentos` existente para gerenciar pastas e arquivos (criar pastas, nomear, anexar arquivos)
+- Estado local com `PastaRT[]` para cada seção
 
-#### Renomear aba (linha 527)
-- Trocar `Área atendida/Tabela de preços` por `Área atendida`
+#### 2. Alteração: `src/components/administrativo/rt/` → `Administrativo.tsx` (linhas 188-211)
+- Mudar `grid-cols-4` para `grid-cols-5` na `TabsList`
+- Adicionar `<TabsTrigger value="documentos-rt">DOCUMENTOS</TabsTrigger>`
+- Adicionar `<TabsContent value="documentos-rt">` com o novo `DocumentosRTTab`
+- Importar o novo componente
 
-#### Atualizar placeholder (linha 1354)
-- Trocar `"Descreva a área atendida pela transportadora e tabelas de preços..."` por `"Descreva a área atendida pela transportadora..."`
+### Arquivo afetado
+- `src/pages/Administrativo.tsx` (adicionar aba)
+- `src/components/administrativo/rt/DocumentosRTTab.tsx` (novo componente)
 
