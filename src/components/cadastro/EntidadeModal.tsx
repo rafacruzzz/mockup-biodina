@@ -301,7 +301,8 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
       arquivoISO: null,
       nomeArquivoISO: '',
       arquivoTraducao: null,
-      nomeArquivoTraducao: ''
+      nomeArquivoTraducao: '',
+      status: ''
     }]);
   };
 
