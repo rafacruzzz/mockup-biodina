@@ -60,7 +60,7 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
   };
 
   const totalProdutos = formData.produtos.length;
-  const totalNoPedido = formData.produtos.filter(p => p.fazParteDoPedido === "sim").length;
+  
 
   const handleSave = () => {
     if (!formData.nome.trim()) {
@@ -135,9 +135,7 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
                         <TableRow>
                           <TableHead className="w-[140px]">Código do Produto</TableHead>
                           <TableHead>Produto (Anvisa)</TableHead>
-                          <TableHead className="w-[160px] text-center">Faz parte do pedido?</TableHead>
                           <TableHead className="w-[100px] text-center">Quantidade</TableHead>
-                          <TableHead className="w-[100px] text-center">Qtd. Itens</TableHead>
                           <TableHead className="w-[60px]"></TableHead>
                         </TableRow>
                       </TableHeader>
@@ -147,34 +145,11 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
                             <TableCell className="font-mono text-sm">{produto.codigo}</TableCell>
                             <TableCell>{produto.nome}</TableCell>
                             <TableCell className="text-center">
-                              <Select
-                                value={produto.fazParteDoPedido}
-                                onValueChange={(val) => updateProduto(produto.id, "fazParteDoPedido", val)}
-                              >
-                                <SelectTrigger className="h-8 w-24 mx-auto text-xs">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="sim">Sim</SelectItem>
-                                  <SelectItem value="nao">Não</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </TableCell>
-                            <TableCell className="text-center">
                               <Input
                                 type="number"
                                 min="1"
                                 value={produto.quantidade}
                                 onChange={e => updateProduto(produto.id, "quantidade", e.target.value)}
-                                className="h-8 w-20 mx-auto text-center"
-                              />
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Input
-                                type="number"
-                                min="1"
-                                value={produto.qtdItens}
-                                onChange={e => updateProduto(produto.id, "qtdItens", e.target.value)}
                                 className="h-8 w-20 mx-auto text-center"
                               />
                             </TableCell>
@@ -204,7 +179,6 @@ const KitModal: React.FC<KitModalProps> = ({ isOpen, onClose, editData }) => {
                 <span className="font-medium">Resumo do Kit</span>
                 <div className="flex gap-6 text-muted-foreground">
                   <span><strong className="text-foreground">{totalProdutos}</strong> produto(s) no kit</span>
-                  <span><strong className="text-foreground">{totalNoPedido}</strong> faz(em) parte do pedido</span>
                 </div>
               </div>
             )}
