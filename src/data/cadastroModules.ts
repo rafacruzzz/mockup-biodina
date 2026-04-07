@@ -390,14 +390,9 @@ export const modules: ModulesConfig = {
         name: "Kits",
         data: []
       },
-      marcas: {
-        name: "Marcas",
-        data: []
-      },
-      empresas_detentoras: {
-        name: "Empresas Detentoras",
-        data: []
-      }
+    }
+  },
+  // ... rest continues below
     }
   },
   servicos: {
