@@ -291,6 +291,10 @@ export const modules: ModulesConfig = {
             pendente: true
           }
         ]
+      },
+      empresas_detentoras: {
+        name: "Empresas Detentoras de Registro",
+        data: []
       }
     }
   },
