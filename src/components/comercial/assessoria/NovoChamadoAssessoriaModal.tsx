@@ -56,6 +56,18 @@ const PROJETOS_MOCK: Record<string, { id: string; numero: string }[]> = {
   "cli-010": [{ id: "proj-010", numero: "PROJ-CDA-2024-156" }],
 };
 
+// Mapeamento bidirecional entre equipamento, série/lote e projeto
+const EQUIPAMENTO_SERIE_PROJETO_MAP: { equipamentoId: string; serie: string; projetoId: string }[] = [
+  { equipamentoId: "eq-001", serie: "SN-20250101", projetoId: "proj-001" },
+  { equipamentoId: "eq-009", serie: "SN-20250202", projetoId: "proj-001" },
+  { equipamentoId: "eq-002", serie: "SN-20250303", projetoId: "proj-002" },
+  { equipamentoId: "eq-003", serie: "SN-20250404", projetoId: "proj-003" },
+  { equipamentoId: "eq-004", serie: "SN-20250505", projetoId: "proj-005" },
+  { equipamentoId: "eq-005", serie: "SN-20250606", projetoId: "proj-006" },
+  { equipamentoId: "eq-010", serie: "SN-20250707", projetoId: "proj-009" },
+  { equipamentoId: "eq-011", serie: "SN-20250808", projetoId: "proj-010" },
+];
+
 export function NovoChamadoAssessoriaModal({ isOpen, onClose, assessorNome = "Dr. Carlos Mendes", assessorId = "resp-001" }: NovoChamadoAssessoriaModalProps) {
   const [destino, setDestino] = useState<DestinoChamado | "">("");
   const [clienteId, setClienteId] = useState("");
@@ -176,7 +188,14 @@ export function NovoChamadoAssessoriaModal({ isOpen, onClose, assessorNome = "Dr
           {/* Equipamento */}
           <div className="space-y-2">
             <Label>Equipamento / Modelo</Label>
-            <Select value={equipamentoId} onValueChange={setEquipamentoId} disabled={!clienteId}>
+            <Select value={equipamentoId} onValueChange={(v) => {
+              setEquipamentoId(v);
+              const match = EQUIPAMENTO_SERIE_PROJETO_MAP.find(m => m.equipamentoId === v);
+              if (match) {
+                setNumeroSerieLote(match.serie);
+                setProjetoId(match.projetoId);
+              }
+            }} disabled={!clienteId}>
               <SelectTrigger><SelectValue placeholder="Selecione o equipamento" /></SelectTrigger>
               <SelectContent>
                 {equipamentos.map(e => (
@@ -189,13 +208,28 @@ export function NovoChamadoAssessoriaModal({ isOpen, onClose, assessorNome = "Dr
           {/* Nº Série/Lote */}
           <div className="space-y-2">
             <Label>Nº Série / Lote</Label>
-            <Input value={numeroSerieLote} onChange={(e) => setNumeroSerieLote(e.target.value)} placeholder="Ex: SN-20250101" />
+            <Input value={numeroSerieLote} onChange={(e) => {
+              const val = e.target.value;
+              setNumeroSerieLote(val);
+              const match = EQUIPAMENTO_SERIE_PROJETO_MAP.find(m => m.serie.toUpperCase() === val.toUpperCase());
+              if (match) {
+                setEquipamentoId(match.equipamentoId);
+                setProjetoId(match.projetoId);
+              }
+            }} placeholder="Ex: SN-20250101" />
           </div>
 
           {/* Projeto-Mãe */}
           <div className="space-y-2">
             <Label>Projeto-Mãe</Label>
-            <Select value={projetoId} onValueChange={setProjetoId} disabled={!clienteId}>
+            <Select value={projetoId} onValueChange={(v) => {
+              setProjetoId(v);
+              const match = EQUIPAMENTO_SERIE_PROJETO_MAP.find(m => m.projetoId === v);
+              if (match) {
+                setEquipamentoId(match.equipamentoId);
+                setNumeroSerieLote(match.serie);
+              }
+            }} disabled={!clienteId}>
               <SelectTrigger><SelectValue placeholder="Selecione o projeto" /></SelectTrigger>
               <SelectContent>
                 {projetos.map(p => (
@@ -245,7 +279,9 @@ export function NovoChamadoAssessoriaModal({ isOpen, onClose, assessorNome = "Dr
 
         <DialogFooter>
           <Button variant="outline" onClick={() => { resetForm(); onClose(); }}>Cancelar</Button>
-          <Button onClick={handleSalvar}>Abrir Chamado</Button>
+          <Button onClick={handleSalvar}>
+            {destino === "Vendas" ? "Enviar para Vendas" : destino === "Departamento Técnico" ? "Enviar para DT" : "Enviar Chamado"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

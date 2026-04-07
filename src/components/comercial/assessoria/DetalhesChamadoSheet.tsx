@@ -218,7 +218,7 @@ export function DetalhesChamadoSheet({ chamado, isOpen, onClose }: DetalhesChama
             </h4>
             <div className="space-y-3 text-sm">
               <div>
-                <p className="text-muted-foreground mb-1">Estratégia de Resolução</p>
+                <p className="text-muted-foreground mb-1">Resposta / Estratégia de Resolução (Vendas/DT)</p>
                 {chamado.estrategiaResolucao ? (
                   <p className="text-sm leading-relaxed bg-blue-50 p-3 rounded-md border border-blue-200">
                     {chamado.estrategiaResolucao}
