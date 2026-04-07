@@ -1,42 +1,45 @@
 
 
-## Plano: Melhorias no Novo Chamado da Assessoria Científica
+## Plano: Reestruturar seção "Registro de Treinamento" no formulário de OS
 
-### Resumo
-Duas alterações principais: (1) auto-preenchimento cruzado dos campos Equipamento, Nº Série/Lote e Projeto-Mãe; (2) reestruturar o fluxo para que o formulário termine com um botão "Enviar" após o motivo, e a resposta de Vendas/DT apareça no detalhamento do chamado.
+### Problema atual
+Quando se seleciona "Treinamento de Usuário: Modelo X" como tipo de OS, os checklists técnicos aparecem diretamente na página. O usuário quer que esses checklists/conteúdos programáticos apareçam **apenas** quando o tipo é "Treinamento Inicial" ou "Treinamento de Nova Equipe", dentro de uma seção "Registro de Treinamento" onde o usuário seleciona o modelo desejado.
 
-### Alterações
+### O que muda
 
-#### 1. Auto-preenchimento cruzado — `NovoChamadoAssessoriaModal.tsx`
+#### Arquivo: `src/components/comercial/assessoria/FormularioOS.tsx`
 
-Criar mapeamento bidirecional entre equipamento, nº série/lote e projeto-mãe nos dados mock:
+**1. Alterar a condição de exibição da seção de treinamento (linha 731)**
+- A seção inteira (checklists + "Registro de Treinamento" + participantes + assinaturas) só aparece quando `treinamento_inicial` ou `treinamento_nova_equipe` está selecionado
+- Remover da condição todos os tipos `treinamento_usuario_*`
 
-```
-EQUIPAMENTO_SERIE_PROJETO_MAP = {
-  "eq-001": { modelo: "ABL800", serie: "SN-20250101", projetoId: "proj-001", projetoNumero: "PROJ-HC-2024-089" },
-  "eq-002": { ... },
-  ...
-}
-```
+**2. Remover exibição direta dos checklists por tipo de OS (linhas 733-1772)**
+- Os checklists de MeterOmega, Set Medikal, ABL9, ABL90, ABL800, AQT90, DxH520, Excelsior AS e OsmoTech atualmente aparecem condicionados a `tiposSelecionados.includes("treinamento_usuario_xxx")`
+- Mudar para que apareçam condicionados ao `selectedTemplate` (seleção feita pelo usuário na lista de "Registro de Treinamento")
+- Ex: o checklist MeterOmega aparece quando `selectedTemplate === "meteromega"` em vez de `tiposSelecionados.includes("treinamento_usuario_meteromega")`
 
-- Ao selecionar **Equipamento**: preencher automaticamente `numeroSerieLote` e `projetoId`
-- Ao digitar **Nº Série/Lote** (match exato): preencher `equipamentoId` e `projetoId`
-- Ao selecionar **Projeto-Mãe**: preencher `equipamentoId` e `numeroSerieLote`
+**3. Adicionar MeterOmega e Set Medikal ao `templatesDisponiveis` (linha 334)**
+- Acrescentar: `{ id: "meteromega", nome: "MeterOmega", badge: "Coleta" }` e `{ id: "setmedikal", nome: "SET Medikal", badge: "Coleta" }`
+- Lista final com 9 opções
 
-#### 2. Botão "Enviar para [Destino]" — `NovoChamadoAssessoriaModal.tsx`
+**4. Reordenar o fluxo dentro da seção de treinamento**
+Ordem desejada:
+1. Card "Registro de Treinamento" com lista de seleção de modelos (já existe em linhas 1774-1803)
+2. Checklist técnico do modelo selecionado (movido para após a seleção)
+3. Template de registro (renderSelectedTemplate) — já incluso no card acima
+4. Assinatura do instrutor
+5. Participantes + assinaturas dos participantes
 
-- Renomear o botão de "Abrir Chamado" para "Enviar para Vendas" ou "Enviar para DT" dinamicamente com base no campo `destino` selecionado
-- Manter o botão no `DialogFooter` mas com texto dinâmico
+**5. Atualizar `ehTreinamento` (linha 271)**
+- Simplificar para verificar apenas `treinamento_inicial` e `treinamento_nova_equipe`
 
-#### 3. Exibir resposta de Vendas/DT no detalhamento — `DetalhesChamadoSheet.tsx`
+### Resultado
+- Ao selecionar "Treinamento Inicial" ou "Treinamento de Nova Equipe", surge a seção "Registro de Treinamento"
+- O usuário escolhe o modelo (MeterOmega, Set Medikal, ABL9, ABL90, ABL800, AQT90 FLEX, DxH520, Excelsior, OsmoTECH)
+- Aparece o checklist técnico + template de registro do modelo selecionado
+- Assinatura do instrutor e dos participantes seguem abaixo
+- Os tipos "Treinamento de Usuário: Modelo X" continuam disponíveis como tipo de OS, mas sem exibir checklists diretamente
 
-A seção "Estratégia e Resultado" (linhas 214-265) já exibe `estrategiaResolucao` e `resultadoFinal` — que são os campos onde a resposta de Vendas/DT aparece. Renomear:
-- "Estratégia de Resolução" → "Resposta / Estratégia de Resolução (Vendas/DT)"
-- Manter "Resultado Final" como está
-
-Já funciona: os dados mock do chamado `cham-001` já possuem `estrategiaResolucao` preenchido. O fluxo é: Assessoria abre → Vendas/DT responde (preenche estratégia/resultado) → aparece no detalhamento.
-
-### Arquivos afetados
-- `src/components/comercial/assessoria/NovoChamadoAssessoriaModal.tsx` — auto-preenchimento + botão dinâmico
-- `src/components/comercial/assessoria/DetalhesChamadoSheet.tsx` — renomear label da resposta
+### Arquivo afetado
+- `src/components/comercial/assessoria/FormularioOS.tsx`
 
