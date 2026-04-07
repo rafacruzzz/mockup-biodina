@@ -802,7 +802,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                 <h3 className="font-semibold text-sm">Telefones Fixos</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="telefone_fixo1">Telefone Fixo 1 do {entityLabel}</Label>
+                    <Label htmlFor="telefone_fixo1">Telefone Fixo do {entityLabel}</Label>
                     <Input
                       id="telefone_fixo1"
                       value={formData.telefone_fixo1}
@@ -811,7 +811,7 @@ const EntidadeModal = ({ isOpen, onClose, tipoEntidade, onConvertToClient, editD
                     />
                   </div>
                   <div>
-                    <Label htmlFor="telefone_fixo2">Telefone Fixo 2 do Mantenedor</Label>
+                    <Label htmlFor="telefone_fixo2">Telefone Fixo do Mantenedor</Label>
                     <Input
                       id="telefone_fixo2"
                       value={formData.telefone_fixo2}
