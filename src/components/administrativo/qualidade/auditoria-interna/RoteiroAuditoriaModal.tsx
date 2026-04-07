@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SecaoRoteiro, SecaoEstado, ItemEstado } from './SecaoRoteiro';
 import { LegendaClassificacao } from './LegendaClassificacao';
 import { secoesRoteiro } from './dadosRoteiro';
