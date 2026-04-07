@@ -1,22 +1,29 @@
 
 
-## Plano: Ajustes na Gestão de Não Conformidades (RT)
+## Plano: Ajustes na Gestão de Não Conformidades (Qualidade)
 
-### 1. Adicionar setores faltantes em `src/data/rtModules.ts`
-Acrescentar 'Regulatório', 'Institucional', 'Contabilidade' e 'Vendas' ao array `setoresEmpresaRT` (linha 289-303). "Assessoria Científica" já existe.
+Aplicar as mesmas alterações já feitas no módulo RT ao módulo Qualidade.
 
-### 2. Mover tabela de Liberação de Produtos para após "NC Solucionada?" / "Data de Encerramento"
-No arquivo `src/components/administrativo/rt/GestaoNCTab.tsx`, mover o bloco da tabela de Liberação de Produtos (linhas 723-811) para logo depois do bloco "NC Solucionada? / Data de Encerramento" (após linha 721). Atualmente a tabela fica antes do CAPA; agora ficará entre "NC Solucionada?" e o final do formulário.
+### 1. Adicionar setores em `src/data/qualidadeData.ts`
+Acrescentar 'Regulatório', 'Institucional', 'Contabilidade' e 'Vendas' ao array `setoresEmpresa` (linha 71-85).
+
+### 2. Mover tabela de Liberação de Produtos (linhas 736-824)
+A tabela já está posicionada após "NC Solucionada?" (linha 734). Confirmar que a ordem está correta — ela já aparece logo após esse bloco. Nenhuma movimentação necessária.
 
 ### 3. Renomear colunas na tabela de Liberação de Produtos
-- "Fabricante" (linha 742) → "Unidade Fabril"
-- "Marca" (linha 743) → "Nome do Fabricante Legal/Marca"
-- O "Código" (linha 738) já é editável — alterar para que o código seja digitado pelo usuário (código do cadastro de produto), removendo a geração automática `LIB-001` no `adicionarProdutoLiberacao` (linha 146-149), deixando o campo vazio e editável.
+- "Fabricante" (linha 755) → "Unidade Fabril"
+- "Marca" (linha 756) → "Nome do Fabricante Legal/Marca"
+- Código (linha 751/768): tornar editável com `Input` para "Código do Produto" (manual), removendo a geração automática `LIB-XXX` na função `adicionarProdutoLiberacao` (linha 152), deixando `codigo: ''`.
 
-### 4. Remover seção CAPA inteira
-Remover o bloco CAPA (linhas 813-965) e o código auxiliar relacionado (`updateCapa`, `getStatusCAPABadge`, `mostrarCAPADT`). Também remover a inicialização do `capa` no `handleNovaNC`.
+### 4. Substituir labels na seção CAPA DT (linhas 891-976)
+Na subseção "CAPA — DT (Equipamentos do Cliente)":
+- "Nome do Mantenedor" (linha 924) → "Nome do Mantenedor" (manter — puxado do cadastro do cliente)
+- "CNPJ do Mantenedor" (linha 928) → "CNPJ do Mantenedor" (manter — puxado do cadastro do cliente)
+- Todos os 8 campos de cliente (Nome, Tipo, Razão Social, Nome Fantasia, CNPJ/CPF, CIN/RG, Nome do Mantenedor, CNPJ do Mantenedor) já são read-only/disabled — confirmar que continuam assim, pois serão "puxados" do cadastro do cliente. O campo "Nome do Cliente" (linha 901) permanece editável para busca/seleção.
+
+**Nota**: O usuário pediu para manter a seção CAPA no módulo Qualidade (diferente do RT onde foi removida) e substituir os campos dentro dela.
 
 ### Arquivos afetados
-- `src/data/rtModules.ts` — adicionar setores
-- `src/components/administrativo/rt/GestaoNCTab.tsx` — reordenar tabela, renomear colunas, remover CAPA
+- `src/data/qualidadeData.ts` — adicionar setores
+- `src/components/administrativo/qualidade/GestaoNCTab.tsx` — renomear colunas, código editável
 
