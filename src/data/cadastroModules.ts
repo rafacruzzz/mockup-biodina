@@ -396,7 +396,6 @@ export const modules: ModulesConfig = {
       },
     }
   },
-  },
   servicos: {
     name: "Serviços",
     icon: Wrench,
