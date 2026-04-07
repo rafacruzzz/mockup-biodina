@@ -1,22 +1,17 @@
 
 
-## Plano: Ocultar campos de Mantenedor para Fornecedor – Uso e Consumo
+## Plano: Expandir modal da Transportadora e corrigir layout das abas
 
 ### Problema
-No cadastro de Fornecedor – Uso e Consumo, os campos de "Mantenedor" (telefones, e-mails, redes sociais e contato comercial) são exibidos, mas não se aplicam a este tipo de fornecedor.
+O modal da Transportadora tem 8 abas em `grid-cols-8` dentro de `max-w-6xl`, causando sobreposição/empilhamento dos textos das abas.
 
-### Alterações em `src/components/cadastro/EntidadeModal.tsx` — aba Dados Gerais
+### Alterações em `src/components/cadastro/EntidadeModal.tsx`
 
-Adicionar condição `!isFornecedorUsoConsumo` para ocultar os seguintes blocos:
+#### 1. Aumentar largura do modal para Transportadora (linha 497)
+- Trocar `max-w-6xl` por `max-w-7xl` quando `isTransportadora`, usando classe condicional
 
-1. **Telefones do Mantenedor** (linhas 811-828) — campos `telefone3` e `telefone4`
-2. **Telefone Fixo do Mantenedor** (linhas 844-852) — campo `telefone_fixo2`
-3. **WhatsApp do Mantenedor** (linhas 868-876) — campo `telefone_whatsapp_mantenedor`
-4. **E-mails do Mantenedor** (linhas 891-898) — campos `email3` e `email4`
-5. **Web e Redes Sociais do Mantenedor** (linhas 928-952) — bloco inteiro
-6. **Contato Comercial do Mantenedor** (linhas 976-996) — bloco inteiro
-
-Cada bloco será envolvido em `{!isFornecedorUsoConsumo && (...)}`. Os campos do próprio fornecedor (Telefone 1/2 do Fornecedor, Fixo, WhatsApp, E-mails, Web/Redes e Contato Comercial do Fornecedor) permanecem visíveis.
+#### 2. Corrigir grid das abas da Transportadora (linha 487)
+- Trocar `grid grid-cols-8` por `flex flex-wrap gap-1` para que as abas se ajustem naturalmente sem empilhar, seguindo o mesmo padrão já usado para `isFornecedorRevenda`
 
 ### Arquivo afetado
 - `src/components/cadastro/EntidadeModal.tsx`
