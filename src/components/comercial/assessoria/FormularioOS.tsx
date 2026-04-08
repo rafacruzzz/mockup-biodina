@@ -173,15 +173,7 @@ export function FormularioOS({ os, isNew, onClose }: FormularioOSProps) {
     { value: "acompanhamento_rotina", label: "Acompanhamento de Rotina" },
     { value: "treinamento_inicial", label: "Treinamento Inicial" },
     { value: "treinamento_nova_equipe", label: "Treinamento de Nova Equipe" },
-    { value: "treinamento_usuario_meteromega", label: "Treinamento de Usuário: Modelo MeterOmega" },
-    { value: "treinamento_usuario_setmedikal", label: "Treinamento de Usuário: Modelo SET Medikal" },
-    { value: "treinamento_usuario_abl9", label: "Treinamento de Usuário: Modelo ABL9 - Radiometer" },
-    { value: "treinamento_usuario_abl90", label: "Treinamento de Usuário: Modelo ABL90 FLEX PLUS - Radiometer" },
-    { value: "treinamento_usuario_abl800", label: "Treinamento de Usuário: Modelo ABL800 - Radiometer" },
-    { value: "treinamento_usuario_aqt90", label: "Treinamento de Usuário: Modelo AQT90 FLEX - Radiometer" },
-    { value: "treinamento_usuario_dxh520", label: "Treinamento de Usuário: DxH 520 – Beckman Coulter" },
-    { value: "treinamento_usuario_excelsior_as", label: "Treinamento de Usuário: Excelsior AS" },
-    { value: "treinamento_usuario_osmotech", label: "Treinamento de Usuário: Osmômetro modelo OsmoTech" },
+  
   ];
 
   const equipamentosDisponiveis = formData.clienteId 
