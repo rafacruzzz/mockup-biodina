@@ -189,10 +189,11 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
   const [pedidoOFExpandido, setPedidoOFExpandido] = useState<string | null>(null);
 
   // Mock de itens por pedido vinculado
-  const itensPorPedido: Record<string, Array<{ codigo: string; descricao: string; quantidade: number; valor: number }>> = {
+  const itensPorPedido: Record<string, Array<{ produto: string; quantidadeInicial: number; enviadoNoPedido: number }>> = {
     'PED-001': [
-      { codigo: 'COL-001', descricao: 'Coletor de sangue a vácuo', quantidade: 500, valor: 25000 },
-      { codigo: 'SRV-001', descricao: 'Manutenção preventiva', quantidade: 2, valor: 20000 },
+      { produto: 'Coletor de sangue a vácuo', quantidadeInicial: 500, enviadoNoPedido: 350 },
+      { produto: 'Manutenção preventiva', quantidadeInicial: 4, enviadoNoPedido: 2 },
+      { produto: 'Kit Reagente PCR', quantidadeInicial: 100, enviadoNoPedido: 100 },
     ],
   };
   const [empresaUploadSelecionada, setEmpresaUploadSelecionada] = useState<string>('geral');
@@ -1575,38 +1576,56 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                                   </div>
                                 </div>
 
-                                {/* Seção expansível — itens do pedido vinculado (clicado) */}
+                                {/* Seção expansível — detalhes do pedido vinculado */}
                                 {emp.pedidosVinculados.map(ped => {
                                   const key = `${emp.id}_${ped}`;
                                   if (pedidoExpandido !== key) return null;
                                   const itens = itensPorPedido[ped] || [];
                                   return (
-                                    <div key={key} className="border-t pt-4 space-y-3">
-                                      <Label className="text-sm font-semibold">Itens do Pedido {ped}</Label>
-                                      {itens.length === 0 ? (
-                                        <p className="text-sm text-muted-foreground text-center py-3">Nenhum item registrado para este pedido</p>
-                                      ) : (
-                                        <Table>
-                                          <TableHeader>
-                                            <TableRow>
-                                              <TableHead>Código</TableHead>
-                                              <TableHead>Descrição</TableHead>
-                                              <TableHead>Qtd.</TableHead>
-                                              <TableHead>Valor (R$)</TableHead>
-                                            </TableRow>
-                                          </TableHeader>
-                                          <TableBody>
-                                            {itens.map((item, idx) => (
-                                              <TableRow key={idx}>
-                                                <TableCell className="font-medium">{item.codigo}</TableCell>
-                                                <TableCell>{item.descricao}</TableCell>
-                                                <TableCell>{item.quantidade}</TableCell>
-                                                <TableCell>{item.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</TableCell>
+                                    <div key={key} className="border-t pt-4 space-y-4">
+                                      {/* Cabeçalho com Empenho e Pedido */}
+                                      <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                          <Label className="text-xs text-muted-foreground">Empenho</Label>
+                                          <p className="text-sm font-semibold">{emp.numeroEmpenho || '—'}</p>
+                                        </div>
+                                        <div>
+                                          <Label className="text-xs text-muted-foreground">Pedido</Label>
+                                          <p className="text-sm font-semibold">{ped}</p>
+                                        </div>
+                                      </div>
+
+                                      {/* Tabela Por Item */}
+                                      <div>
+                                        <Label className="text-sm font-semibold mb-2 block">Por Item</Label>
+                                        {itens.length === 0 ? (
+                                          <p className="text-sm text-muted-foreground text-center py-3">Nenhum item registrado para este pedido</p>
+                                        ) : (
+                                          <Table>
+                                            <TableHeader>
+                                              <TableRow>
+                                                <TableHead>Produto</TableHead>
+                                                <TableHead className="text-center">Quantidade Inicial</TableHead>
+                                                <TableHead className="text-center">Enviado no Pedido</TableHead>
+                                                <TableHead className="text-center">Saldo do Pedido (QNT)</TableHead>
                                               </TableRow>
-                                            ))}
-                                          </TableBody>
-                                        </Table>
-                                      )}
+                                            </TableHeader>
+                                            <TableBody>
+                                              {itens.map((item, idx) => {
+                                                const saldo = item.quantidadeInicial - item.enviadoNoPedido;
+                                                return (
+                                                  <TableRow key={idx}>
+                                                    <TableCell className="font-medium">{item.produto}</TableCell>
+                                                    <TableCell className="text-center">{item.quantidadeInicial}</TableCell>
+                                                    <TableCell className="text-center">{item.enviadoNoPedido}</TableCell>
+                                                    <TableCell className={`text-center font-semibold ${saldo < 0 ? 'text-destructive' : ''}`}>{saldo}</TableCell>
+                                                  </TableRow>
+                                                );
+                                              })}
+                                            </TableBody>
+                                          </Table>
+                                        )}
+                                      </div>
                                     </div>
                                   );
                                 })}
