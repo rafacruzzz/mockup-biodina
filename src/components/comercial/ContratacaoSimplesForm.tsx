@@ -1582,48 +1582,52 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                                   if (pedidoExpandido !== key) return null;
                                   const itens = itensPorPedido[ped] || [];
                                   return (
-                                    <div key={key} className="border-t pt-4 space-y-4">
+                                    <div key={key} className="bg-slate-50 border border-border rounded-lg p-4 mt-4 space-y-4">
                                       {/* Cabeçalho com Empenho e Pedido */}
                                       <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                          <Label className="text-xs text-muted-foreground">Empenho</Label>
-                                          <p className="text-sm font-semibold">{emp.numeroEmpenho || '—'}</p>
+                                        <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                                          <Label className="text-xs text-blue-600 font-medium">Empenho</Label>
+                                          <p className="text-sm font-semibold text-blue-900">{emp.numeroEmpenho || '—'}</p>
                                         </div>
-                                        <div>
-                                          <Label className="text-xs text-muted-foreground">Pedido</Label>
-                                          <p className="text-sm font-semibold">{ped}</p>
+                                        <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
+                                          <Label className="text-xs text-amber-600 font-medium">Pedido</Label>
+                                          <p className="text-sm font-semibold text-amber-900">{ped}</p>
                                         </div>
                                       </div>
 
                                       {/* Tabela Por Item */}
-                                      <div>
-                                        <Label className="text-sm font-semibold mb-2 block">Por Item</Label>
+                                      <div className="border-t border-border pt-3 mt-1">
+                                        <div className="flex items-center gap-2 mb-3">
+                                          <Badge variant="outline" className="text-xs">Por Item</Badge>
+                                        </div>
                                         {itens.length === 0 ? (
                                           <p className="text-sm text-muted-foreground text-center py-3">Nenhum item registrado para este pedido</p>
                                         ) : (
-                                          <Table>
-                                            <TableHeader>
-                                              <TableRow>
-                                                <TableHead>Produto</TableHead>
-                                                <TableHead className="text-center">Quantidade Inicial</TableHead>
-                                                <TableHead className="text-center">Enviado no Pedido</TableHead>
-                                                <TableHead className="text-center">Saldo do Pedido (QNT)</TableHead>
-                                              </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                              {itens.map((item, idx) => {
-                                                const saldo = item.quantidadeInicial - item.enviadoNoPedido;
-                                                return (
-                                                  <TableRow key={idx}>
-                                                    <TableCell className="font-medium">{item.produto}</TableCell>
-                                                    <TableCell className="text-center">{item.quantidadeInicial}</TableCell>
-                                                    <TableCell className="text-center">{item.enviadoNoPedido}</TableCell>
-                                                    <TableCell className={`text-center font-semibold ${saldo < 0 ? 'text-destructive' : ''}`}>{saldo}</TableCell>
-                                                  </TableRow>
-                                                );
-                                              })}
-                                            </TableBody>
-                                          </Table>
+                                          <div className="border border-border rounded-md overflow-hidden">
+                                            <Table>
+                                              <TableHeader>
+                                                <TableRow className="bg-muted/50">
+                                                  <TableHead>Produto</TableHead>
+                                                  <TableHead className="text-center">Quantidade Inicial</TableHead>
+                                                  <TableHead className="text-center">Enviado no Pedido</TableHead>
+                                                  <TableHead className="text-center">Saldo do Pedido (QNT)</TableHead>
+                                                </TableRow>
+                                              </TableHeader>
+                                              <TableBody>
+                                                {itens.map((item, idx) => {
+                                                  const saldo = item.quantidadeInicial - item.enviadoNoPedido;
+                                                  return (
+                                                    <TableRow key={idx}>
+                                                      <TableCell className="font-medium">{item.produto}</TableCell>
+                                                      <TableCell className="text-center">{item.quantidadeInicial}</TableCell>
+                                                      <TableCell className="text-center">{item.enviadoNoPedido}</TableCell>
+                                                      <TableCell className={`text-center font-semibold ${saldo < 0 ? 'text-destructive' : ''}`}>{saldo}</TableCell>
+                                                    </TableRow>
+                                                  );
+                                                })}
+                                              </TableBody>
+                                            </Table>
+                                          </div>
                                         )}
                                       </div>
                                     </div>
@@ -1864,45 +1868,49 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
                                   if (pedidoOFExpandido !== key) return null;
                                   const itens = itensPorPedido[ped] || [];
                                   return (
-                                    <div key={key} className="border-t pt-4 space-y-4">
+                                    <div key={key} className="bg-slate-50 border border-border rounded-lg p-4 mt-4 space-y-4">
                                       <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                          <Label className="text-xs text-muted-foreground">Ordem de Fornecimento</Label>
-                                          <p className="text-sm font-semibold">{of.numeroOF || '—'}</p>
+                                        <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                                          <Label className="text-xs text-blue-600 font-medium">Ordem de Fornecimento</Label>
+                                          <p className="text-sm font-semibold text-blue-900">{of.numeroOF || '—'}</p>
                                         </div>
-                                        <div>
-                                          <Label className="text-xs text-muted-foreground">Pedido</Label>
-                                          <p className="text-sm font-semibold">{ped}</p>
+                                        <div className="bg-amber-50 border border-amber-200 rounded-md p-3">
+                                          <Label className="text-xs text-amber-600 font-medium">Pedido</Label>
+                                          <p className="text-sm font-semibold text-amber-900">{ped}</p>
                                         </div>
                                       </div>
-                                      <div>
-                                        <Label className="text-sm font-semibold mb-2 block">Por Item</Label>
+                                      <div className="border-t border-border pt-3 mt-1">
+                                        <div className="flex items-center gap-2 mb-3">
+                                          <Badge variant="outline" className="text-xs">Por Item</Badge>
+                                        </div>
                                         {itens.length === 0 ? (
                                           <p className="text-sm text-muted-foreground text-center py-3">Nenhum item registrado para este pedido</p>
                                         ) : (
-                                          <Table>
-                                            <TableHeader>
-                                              <TableRow>
-                                                <TableHead>Produto</TableHead>
-                                                <TableHead className="text-center">Quantidade Inicial</TableHead>
-                                                <TableHead className="text-center">Enviado no Pedido</TableHead>
-                                                <TableHead className="text-center">Saldo do Pedido (QNT)</TableHead>
-                                              </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                              {itens.map((item, idx) => {
-                                                const saldo = item.quantidadeInicial - item.enviadoNoPedido;
-                                                return (
-                                                  <TableRow key={idx}>
-                                                    <TableCell className="font-medium">{item.produto}</TableCell>
-                                                    <TableCell className="text-center">{item.quantidadeInicial}</TableCell>
-                                                    <TableCell className="text-center">{item.enviadoNoPedido}</TableCell>
-                                                    <TableCell className={`text-center font-semibold ${saldo < 0 ? 'text-destructive' : ''}`}>{saldo}</TableCell>
-                                                  </TableRow>
-                                                );
-                                              })}
-                                            </TableBody>
-                                          </Table>
+                                          <div className="border border-border rounded-md overflow-hidden">
+                                            <Table>
+                                              <TableHeader>
+                                                <TableRow className="bg-muted/50">
+                                                  <TableHead>Produto</TableHead>
+                                                  <TableHead className="text-center">Quantidade Inicial</TableHead>
+                                                  <TableHead className="text-center">Enviado no Pedido</TableHead>
+                                                  <TableHead className="text-center">Saldo do Pedido (QNT)</TableHead>
+                                                </TableRow>
+                                              </TableHeader>
+                                              <TableBody>
+                                                {itens.map((item, idx) => {
+                                                  const saldo = item.quantidadeInicial - item.enviadoNoPedido;
+                                                  return (
+                                                    <TableRow key={idx}>
+                                                      <TableCell className="font-medium">{item.produto}</TableCell>
+                                                      <TableCell className="text-center">{item.quantidadeInicial}</TableCell>
+                                                      <TableCell className="text-center">{item.enviadoNoPedido}</TableCell>
+                                                      <TableCell className={`text-center font-semibold ${saldo < 0 ? 'text-destructive' : ''}`}>{saldo}</TableCell>
+                                                    </TableRow>
+                                                  );
+                                                })}
+                                              </TableBody>
+                                            </Table>
+                                          </div>
                                         )}
                                       </div>
                                     </div>
