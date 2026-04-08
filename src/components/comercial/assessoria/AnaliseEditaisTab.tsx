@@ -317,124 +317,183 @@ export function AnaliseEditaisTab() {
       {/* Modal de Detalhes - Simplificado */}
       {selectedLicitacao && (
         <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+           className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
           onClick={() => setSelectedLicitacao(null)}
         >
           <Card
-            className="max-w-3xl max-h-[80vh] overflow-y-auto"
+            className="max-w-4xl w-full max-h-[90vh] overflow-y-auto mx-4"
             onClick={(e) => e.stopPropagation()}
           >
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span>{selectedLicitacao.numeroPregao}</span>
+                <span>Análise de Edital — {selectedLicitacao.numeroPregao}</span>
                 <Badge className={getStatusColor(selectedLicitacao.status)}>
                   {getStatusLabel(selectedLicitacao.status)}
                 </Badge>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
+              {/* 1. Data da Licitação + Natureza da Operação */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Instituição
-                  </label>
-                  <p className="font-medium">{selectedLicitacao.nomeInstituicao}</p>
+                  <Label className="text-sm font-medium text-muted-foreground">Data da Licitação</Label>
+                  <Input value={formatDate(selectedLicitacao.dataAbertura)} disabled className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Localização
-                  </label>
-                  <p className="font-medium">
-                    {selectedLicitacao.municipio} - {selectedLicitacao.uf}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Data de Abertura
-                  </label>
-                  <p className="font-medium">
-                    {formatDate(selectedLicitacao.dataAbertura)}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Risco Estratégico
-                  </label>
-                  <p className={`font-medium ${getRiscoColor(selectedLicitacao.estrategiaRisco)}`}>
-                    {selectedLicitacao.estrategiaRisco?.toUpperCase() || "N/A"}
-                  </p>
+                  <Label className="text-sm font-medium text-muted-foreground">Qual Natureza da Operação</Label>
+                  <Input value={selectedLicitacao.naturezaOperacao || "N/A"} disabled className="mt-1" />
                 </div>
               </div>
 
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Objeto da Licitação
-                </label>
-                <p className="mt-1">{selectedLicitacao.objetoLicitacao}</p>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Resumo do Edital
-                </label>
-                <div className="mt-1 text-sm prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: selectedLicitacao.resumoEdital || '' }} />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">
-                  Análise Técnica
-                </label>
-                <p className="mt-1 text-sm">{selectedLicitacao.analiseTecnica}</p>
-              </div>
-
+              {/* 2. Nº Pregão + Nº Processo */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Valor de Entrada
-                  </label>
-                  <p className="font-medium">
-                    {formatCurrency(selectedLicitacao.estrategiaValorEntrada)}
-                  </p>
+                  <Label className="text-sm font-medium text-muted-foreground">Nº Pregão Eletrônico / INEX / ATA / SRP</Label>
+                  <Input value={selectedLicitacao.numeroPregao} disabled className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Valor Final
-                  </label>
-                  <p className="font-medium">
-                    {formatCurrency(selectedLicitacao.estrategiaValorFinal)}
-                  </p>
+                  <Label className="text-sm font-medium text-muted-foreground">Nº Processo</Label>
+                  <Input value={selectedLicitacao.numeroProcesso || "N/A"} disabled className="mt-1" />
                 </div>
               </div>
 
-              {selectedLicitacao.estrategiaObjetivo && (
+              {/* 3. Nº UASG + Qual Site */}
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4" />
-                    Objetivo Estratégico
-                  </label>
-                  <p className="mt-1 text-sm">{selectedLicitacao.estrategiaObjetivo}</p>
+                  <Label className="text-sm font-medium text-muted-foreground">Nº UASG</Label>
+                  <Input value={selectedLicitacao.numeroUasg || "N/A"} disabled className="mt-1" />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">Qual Site?</Label>
+                  <Input value={selectedLicitacao.qualSite || "N/A"} disabled className="mt-1" />
+                </div>
+              </div>
+
+              {/* 4. Permite Adesão */}
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Permite Adesão?</Label>
+                <div className="flex gap-4 mt-1">
+                  {["sim", "nao", "nao_menciona"].map((opt) => (
+                    <label key={opt} className="flex items-center gap-2 text-sm">
+                      <input
+                        type="radio"
+                        checked={selectedLicitacao.permiteAdesao === opt}
+                        disabled
+                        className="accent-primary"
+                      />
+                      {opt === "sim" ? "Sim" : opt === "nao" ? "Não" : "Não menciona"}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* 5. Tabela de Produtos */}
+              {selectedLicitacao.produtosLicitacao && selectedLicitacao.produtosLicitacao.length > 0 && (
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground mb-2 block">Produtos</Label>
+                  <div className="border rounded-lg">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Produto</TableHead>
+                          <TableHead>Valor Estimado</TableHead>
+                          <TableHead>Qtd Equip. / Total Est.</TableHead>
+                          <TableHead>Qtd Exames / Total Est.</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {selectedLicitacao.produtosLicitacao.map((prod, idx) => (
+                          <TableRow key={idx}>
+                            <TableCell>{prod.produto}</TableCell>
+                            <TableCell>{formatCurrency(prod.valorEstimado)}</TableCell>
+                            <TableCell>{prod.qtdEquipTotalEst}</TableCell>
+                            <TableCell>{prod.qtdExamesTotalEst}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </div>
               )}
 
-              {selectedLicitacao.observacoes && (
+              {/* 6. Fornecedor anterior */}
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Observações
-                  </label>
-                  <p className="mt-1 text-sm">{selectedLicitacao.observacoes}</p>
+                  <Label className="text-sm font-medium text-muted-foreground">Fornecedor anterior?</Label>
+                  <div className="flex gap-4 mt-1">
+                    <label className="flex items-center gap-2 text-sm">
+                      <input type="radio" checked={selectedLicitacao.fornecedorAnterior === true} disabled className="accent-primary" />
+                      Sim
+                    </label>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input type="radio" checked={selectedLicitacao.fornecedorAnterior === false} disabled className="accent-primary" />
+                      Não
+                    </label>
+                  </div>
                 </div>
-              )}
+                {selectedLicitacao.fornecedorAnterior && selectedLicitacao.fornecedorAnteriorQual && (
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Qual?</Label>
+                    <Input value={selectedLicitacao.fornecedorAnteriorQual} disabled className="mt-1" />
+                  </div>
+                )}
+              </div>
 
+              {/* 7. Data Assinatura ATA */}
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Data da Assinatura e Envio da ATA</Label>
+                <Input value={selectedLicitacao.dataAssinaturaAta ? formatDate(selectedLicitacao.dataAssinaturaAta) : "N/A"} disabled className="mt-1 max-w-xs" />
+              </div>
+
+              {/* 8. Resumo do Edital */}
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Resumo do Edital</Label>
+                <div className="mt-1 text-sm prose prose-sm max-w-none p-3 bg-muted/30 rounded-md border" dangerouslySetInnerHTML={{ __html: selectedLicitacao.resumoEdital || 'N/A' }} />
+              </div>
+
+              {/* 9. Análise Técnica-Científica 1 */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Análise Técnica-Científica</Label>
+                <Label className="text-sm font-medium">Análise Técnica-Científica 1</Label>
                 <Textarea
-                  rows={6}
+                  rows={5}
                   value={analiseTexto}
                   onChange={(e) => setAnaliseTexto(e.target.value)}
-                  placeholder="Digite aqui a análise técnica-científica do edital..."
+                  placeholder="Digite aqui a primeira análise técnica-científica do edital..."
                 />
               </div>
 
+              {/* 10. Pedido de Esclarecimento */}
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">
+                  Pedido de Esclarecimento <span className="text-xs italic">(editável na aba AJ)</span>
+                </Label>
+                <div className="mt-1 text-sm p-3 bg-muted/30 rounded-md border min-h-[60px]">
+                  {selectedLicitacao.pedidoEsclarecimento || "Nenhum pedido de esclarecimento registrado."}
+                </div>
+              </div>
+
+              {/* 11. Impugnação do Edital */}
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">
+                  Impugnação do Edital <span className="text-xs italic">(editável na aba AJ)</span>
+                </Label>
+                <div className="mt-1 text-sm p-3 bg-muted/30 rounded-md border min-h-[60px]">
+                  {selectedLicitacao.impugnacaoEdital || "Nenhuma impugnação registrada."}
+                </div>
+              </div>
+
+              {/* 12. Análise Técnica-Científica 2 */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">Análise Técnica-Científica 2</Label>
+                <Textarea
+                  rows={5}
+                  value={analiseTexto2}
+                  onChange={(e) => setAnaliseTexto2(e.target.value)}
+                  placeholder="Digite aqui a segunda análise técnica-científica do edital..."
+                />
+              </div>
+
+              {/* Botões */}
               <div className="flex justify-end gap-3 pt-4">
                 <Button variant="outline" onClick={() => setSelectedLicitacao(null)}>Fechar</Button>
                 <Button onClick={handleSalvarAnalise}>
