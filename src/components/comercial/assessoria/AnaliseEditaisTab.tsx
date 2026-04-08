@@ -19,10 +19,12 @@ export function AnaliseEditaisTab() {
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [selectedLicitacao, setSelectedLicitacao] = useState<Licitacao | null>(null);
   const [analiseTexto, setAnaliseTexto] = useState("");
+  const [analiseTexto2, setAnaliseTexto2] = useState("");
 
   useEffect(() => {
     if (selectedLicitacao) {
       setAnaliseTexto(selectedLicitacao.analiseTecnica || "");
+      setAnaliseTexto2(selectedLicitacao.analiseTecnica2 || "");
     }
   }, [selectedLicitacao]);
 
@@ -31,6 +33,7 @@ export function AnaliseEditaisTab() {
     const idx = licitacoes.findIndex((l) => l.id === selectedLicitacao.id);
     if (idx !== -1) {
       licitacoes[idx].analiseTecnica = analiseTexto;
+      licitacoes[idx].analiseTecnica2 = analiseTexto2;
     }
     toast({
       title: "Análise salva",
