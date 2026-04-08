@@ -2795,7 +2795,7 @@ const ContratacaoSimplesForm = ({ isOpen, onClose, onSave, oportunidade }: Contr
               Cancelar
             </Button>
             <Button onClick={handleSave} className="bg-biodina-gold hover:bg-biodina-gold/90">
-              {oportunidade ? 'Atualizar' : 'Salvar'} Oportunidade
+              {oportunidade ? 'Atualizar' : 'Salvar'} Contratação
             </Button>
           </div>
         </DialogContent>
