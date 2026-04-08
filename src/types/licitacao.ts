@@ -70,6 +70,25 @@ export interface Licitacao {
   // Solicitação de Análise Científica
   solicitouAnaliseCientifica?: boolean;
   dataSolicitacaoAC?: string;
+
+  // Campos adicionais do edital
+  naturezaOperacao?: string;
+  numeroProcesso?: string;
+  numeroUasg?: string;
+  qualSite?: string;
+  permiteAdesao?: 'sim' | 'nao' | 'nao_menciona';
+  produtosLicitacao?: {
+    produto: string;
+    valorEstimado: number;
+    qtdEquipTotalEst: string;
+    qtdExamesTotalEst: string;
+  }[];
+  fornecedorAnterior?: boolean;
+  fornecedorAnteriorQual?: string;
+  dataAssinaturaAta?: string;
+  pedidoEsclarecimento?: string;
+  impugnacaoEdital?: string;
+  analiseTecnica2?: string;
 }
 
 export interface Licitante {
